@@ -2,12 +2,10 @@ import { Badge } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import Link from 'next/link'
 import type { FC, ReactElement } from 'react'
-import type { EvmChainId } from 'sushi/evm'
-import type { StellarChainId } from 'sushi/stellar'
-import type { SvmChainId } from 'sushi/svm'
+import type { ChainId } from 'sushi'
 
 interface PortfolioInfoRow {
-  chainId: EvmChainId | SvmChainId | StellarChainId
+  chainId: ChainId
   icon: ReactElement<any>
   leftContent: ReactElement<any>
   rightContent: ReactElement<any> | null

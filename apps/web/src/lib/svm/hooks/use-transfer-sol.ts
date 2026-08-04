@@ -1,3 +1,4 @@
+import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
 import { getTransferSolInstruction } from '@solana-program/system'
 import { useKitTransactionSigner } from '@solana/connector'
 import {
@@ -12,6 +13,7 @@ import {
   setTransactionMessageLifetimeUsingBlockhash,
 } from '@solana/kit'
 import {
+  type NotificationVariant,
   createFailedToast,
   createInfoToast,
   createSuccessToast,
@@ -35,7 +37,10 @@ Amount in lamports.
 }
 
 export const useTransferSol = (params?: {
+  notifications?: boolean
   onSuccess?: (signature: string) => void
+  uiOptions?: SendTransactionModalUIOptions
+  variant?: NotificationVariant
 }) => {
   const address = useAccount('svm')
   const { signer } = useKitTransactionSigner()
@@ -75,8 +80,12 @@ export const useTransferSol = (params?: {
       const encodedTransaction =
         getTransactionEncoder().encode(transactionMessage)
 
-      const { base58TxSig: signature } =
-        await signAndSendTransaction(encodedTransaction)
+      const { base58TxSig: signature } = await signAndSendTransaction(
+        encodedTransaction,
+        {
+          uiOptions: params?.uiOptions,
+        },
+      )
       if (!signature) throw new Error('Failed to obtain transaction signature')
       await waitForSvmSignature(signature.toString())
 
@@ -84,6 +93,8 @@ export const useTransferSol = (params?: {
     },
 
     onMutate: (data) => {
+      if (params?.notifications === false) return
+
       const rawAmount = data.amount
       const formattedAmount = new Amount(
         SvmNative.fromChainId(SvmChainId.SOLANA),
@@ -99,15 +110,15 @@ export const useTransferSol = (params?: {
         timestamp: ts,
         groupTimestamp: ts,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
 
       return { ts, formattedAmount }
     },
 
     onSuccess: (signature, _vars, ctx) => {
-      if (!address || !ctx) return
       params?.onSuccess?.(signature)
+      if (params?.notifications === false || !address || !ctx) return
 
       createSuccessToast({
         summary: `Transferred ${ctx.formattedAmount} SOL successfully`,
@@ -117,11 +128,13 @@ export const useTransferSol = (params?: {
         timestamp: ctx.ts,
         groupTimestamp: ctx.ts,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
     },
 
     onError: (error, _vars, ctx) => {
+      if (params?.notifications === false) return
+
       const timestamp = ctx?.ts ?? Date.now()
       console.log(error)
       createFailedToast({
@@ -135,7 +148,7 @@ export const useTransferSol = (params?: {
         timestamp,
         groupTimestamp: timestamp,
         autoClose: 1000,
-        variant: 'perps',
+        variant: params?.variant ?? 'perps',
       })
     },
   })

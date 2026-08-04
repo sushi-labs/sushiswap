@@ -1,3 +1,4 @@
+import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
 import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import { useTransactionSigner } from '@solana/connector'
 import { type ReadonlyUint8Array, getBase58Decoder } from '@solana/kit'
@@ -11,7 +12,12 @@ export const useSvmSignAndSendTransaction = () => {
     useSignAndSendTransaction()
 
   const signAndSendTransaction = useCallback(
-    async (transaction: ReadonlyUint8Array<ArrayBuffer>) => {
+    async (
+      transaction: ReadonlyUint8Array<ArrayBuffer>,
+      options?: {
+        uiOptions?: SendTransactionModalUIOptions
+      },
+    ) => {
       if (
         privyEmbedded &&
         privyEmbedded?.address.toLowerCase() === signer?.address.toLowerCase()
@@ -19,6 +25,7 @@ export const useSvmSignAndSendTransaction = () => {
         const tx = await signAndSendTransactionWithPrivy({
           transaction: new Uint8Array(transaction),
           wallet: privyEmbedded,
+          options,
         })
 
         const base58TxSig = getBase58Decoder().decode(

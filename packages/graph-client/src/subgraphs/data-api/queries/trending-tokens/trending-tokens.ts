@@ -42,12 +42,16 @@ export async function getTrendingTokens<TChainId extends TrendingTokensChainId>(
   )
 
   if (result) {
-    return result.trendingTokens.map((token) => ({
-      ...token,
-      id: getIdFromChainIdAddress(variables.chainId, token.address),
-      chainId: variables.chainId,
-      address: token.address as AddressFor<TChainId>,
-    }))
+    return result.trendingTokens.map((token) => {
+      const address = token.address as AddressFor<TChainId>
+
+      return {
+        ...token,
+        id: getIdFromChainIdAddress(variables.chainId, address),
+        chainId: variables.chainId,
+        address,
+      }
+    })
   }
 
   throw new Error('No trending tokens found')

@@ -3,13 +3,18 @@
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import {
   ArrowLeftOnRectangleIcon,
+  CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   Cog6ToothIcon,
   DocumentDuplicateIcon,
+  KeyIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { PlusCircleIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import { useExportWallet as useExportEvmWallet } from '@privy-io/react-auth'
+import { useExportWallet as useExportSvmWallet } from '@privy-io/react-auth/solana'
+import { createErrorToast } from '@sushiswap/notifications'
 import {
   Badge,
   Button,
@@ -28,18 +33,19 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
 import { SwitchIcon } from '@sushiswap/ui/icons/SwitchIcon'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import {
   ENABLED_WALLET_NAMESPACES,
   type WalletConnection,
   type WalletNamespace,
   getNameFromNamespace,
+  usePrivyEmbeddedWallet,
   useWallets,
 } from 'src/lib/wallet'
 import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import { getChainById, shortenAddress } from 'sushi'
-import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import { useEnsName } from 'wagmi'
@@ -95,7 +101,7 @@ const ConnectedWalletInfo = ({
 
   return (
     <div className="flex justify-between w-full">
-      <div className="flex gap-2.5 items-center">
+      <div className="flex gap-1.5 items-center">
         <IconButton
           size="xs"
           onClick={close}
@@ -161,7 +167,11 @@ const ConnectedWalletInfo = ({
                         className="flex text-xs !justify-start items-center text-muted-foreground !p-0 !h-[unset] !min-h-[unset] leading-none"
                       >
                         {shortenAddress(wallet.account)}
-                        <DocumentDuplicateIcon className="w-2.5 h-2.5" />
+                        {isCopied ? (
+                          <CheckIcon className="w-2.5 h-2.5" />
+                        ) : (
+                          <DocumentDuplicateIcon className="w-2.5 h-2.5" />
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
@@ -174,7 +184,7 @@ const ConnectedWalletInfo = ({
           )}
         </div>
       </div>
-      <div className="flex gap-1 items-center">
+      <div className="flex gap-0.5 justify-end items-center">
         <IconButton
           size={utilButtonSize}
           variant="ghost"
@@ -182,7 +192,9 @@ const ConnectedWalletInfo = ({
           onClick={() => setView(SidebarView.Settings)}
           description="Settings"
           name="Settings"
+          tabIndex={-1}
         />
+        <ExportPrivateKeyButton wallet={wallet} size={utilButtonSize} />
         <DisconnectWalletButton
           onSuccess={() => {
             if (wallet?.namespace === 'stellar') {
@@ -200,6 +212,7 @@ const ConnectedWalletInfo = ({
             icon={ArrowLeftOnRectangleIcon}
             description="Disconnect"
             name="Disconnect"
+            tabIndex={-1}
           />
         </DisconnectWalletButton>
         <ConnectMoreWallets namespacesToConnectTo={namespacesToConnectTo}>
@@ -224,6 +237,66 @@ const ConnectedWalletInfo = ({
   )
 }
 
+function ExportPrivateKeyButton({
+  wallet,
+  size,
+}: {
+  wallet: WalletConnection | undefined
+  size: 'xs' | 'sm'
+}) {
+  const privyEvmWallet = usePrivyEmbeddedWallet('evm')
+  const privySvmWallet = usePrivyEmbeddedWallet('svm')
+  const { exportWallet: exportEvmWallet } = useExportEvmWallet()
+  const { exportWallet: exportSvmWallet } = useExportSvmWallet()
+  const [isExporting, setIsExporting] = useState(false)
+
+  const isPrivyEmbeddedWallet = useMemo(() => {
+    if (wallet?.namespace === 'evm') {
+      return (
+        wallet.account.toLowerCase() === privyEvmWallet?.address.toLowerCase()
+      )
+    }
+    if (wallet?.namespace === 'svm') {
+      return wallet.account === privySvmWallet?.address
+    }
+    return false
+  }, [wallet, privyEvmWallet, privySvmWallet])
+
+  const handleExportPrivateKey = useCallback(async () => {
+    setIsExporting(true)
+
+    try {
+      if (wallet?.namespace === 'evm' && privyEvmWallet) {
+        await exportEvmWallet({ address: privyEvmWallet.address })
+      } else if (wallet?.namespace === 'svm' && privySvmWallet) {
+        await exportSvmWallet({ address: privySvmWallet.address })
+      }
+    } catch (error) {
+      createErrorToast(
+        error instanceof Error ? error.message : 'Failed to export private key',
+        false,
+      )
+    } finally {
+      setIsExporting(false)
+    }
+  }, [wallet, privyEvmWallet, privySvmWallet, exportEvmWallet, exportSvmWallet])
+
+  if (!isPrivyEmbeddedWallet) return null
+
+  return (
+    <IconButton
+      size={size}
+      variant="ghost"
+      icon={KeyIcon}
+      onClick={handleExportPrivateKey}
+      disabled={isExporting}
+      description="Export Private Key"
+      name="Export Private Key"
+      tabIndex={-1}
+    />
+  )
+}
+
 const ConnectMoreWallets = ({
   namespacesToConnectTo,
   children,
@@ -241,6 +314,7 @@ const ConnectMoreWallets = ({
           icon={PlusCircleIcon}
           description="Wallet Options"
           name="Wallet Options"
+          tabIndex={-1}
         />
       </PopoverTrigger>
       <PopoverContent
@@ -353,19 +427,22 @@ const ConnectedWalletsPopover = ({
                   </div>
                 </div>
 
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-0.5 items-center">
                   <ClipboardController hideTooltip>
                     {({ setCopied, isCopied }) => (
                       <IconButton
                         size="xs"
                         variant="ghost"
-                        icon={DocumentDuplicateIcon}
+                        icon={isCopied ? CheckIcon : DocumentDuplicateIcon}
                         onClick={() => setCopied(wallet.account)}
                         description={isCopied ? 'Copied!' : 'Copy Address'}
                         name="Copy"
+                        tabIndex={-1}
                       />
                     )}
                   </ClipboardController>
+
+                  <ExportPrivateKeyButton wallet={wallet} size="xs" />
 
                   <DisconnectWalletButton namespace={wallet.namespace} asChild>
                     <IconButton
@@ -374,6 +451,7 @@ const ConnectedWalletsPopover = ({
                       icon={ArrowLeftOnRectangleIcon}
                       description="Disconnect"
                       name="Disconnect"
+                      tabIndex={-1}
                     />
                   </DisconnectWalletButton>
 
@@ -383,6 +461,7 @@ const ConnectedWalletsPopover = ({
                     icon={SwitchIcon}
                     description="Switch Wallet"
                     name="Switch Wallet"
+                    tabIndex={-1}
                     onClick={() =>
                       setView(SidebarView.Connect, {
                         action: 'switch',

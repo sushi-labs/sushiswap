@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "~aptos/*": ["src/app/(networks)/(non-evm)/aptos/*"],
-      "~stellar/*": ["src/app/(networks)/(non-evm)/stellar/*"],
-      "~evm/*": ["src/app/(networks)/(evm)/*"]
+      "node_modules/*": ["./node_modules/*"],
+      "public/*": ["./public/*"],
+      "src/*": ["./src/*"],
+      "test/*": ["./test/*"],
+      "tailwind.config.js": ["./tailwind.config.js"],
+      "~aptos/*": ["./src/app/(networks)/(non-evm)/aptos/*"],
+      "~stellar/*": ["./src/app/(networks)/(non-evm)/stellar/*"],
+      "~evm/*": ["./src/app/(networks)/(evm)/*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -34,9 +38,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"],
-  "paths": {
-    "~web/*": ["./src/*"],
-    "~test/*": ["./test/*"]
-  }
+  "exclude": ["node_modules"]
 }

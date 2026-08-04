@@ -11,7 +11,7 @@ import { TokenAvatar } from './token-avatar'
 
 export function TokenCardSkeleton() {
   return (
-    <PerpsCard className="h-full overflow-hidden" fullHeight fullWidth>
+    <PerpsCard className="min-h-[249px] overflow-hidden" fullWidth>
       <div className="h-px bg-gradient-to-r from-transparent via-perps-blue/20 to-transparent" />
       <div className="p-4">
         <div className="flex items-center gap-3">

@@ -16,6 +16,7 @@
       "coverage",
       "packages/graph-client/src/subgraphs/**/*.graphql",
       "packages/stellar",
+      ".design-sync/overrides",
       "apps/web/src/lib/wagmi/hooks/exploits/data/rp2-approvals.json",
       "**/*-env.d.ts",
       "**/*-cache.d.ts"
