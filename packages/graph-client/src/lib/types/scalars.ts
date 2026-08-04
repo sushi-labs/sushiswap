@@ -11,12 +11,7 @@ import type {
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
 } from 'sushi/evm'
-import type {
-  StellarAccountAddress,
-  StellarAddress,
-  StellarContractAddress,
-} from 'sushi/stellar'
-import type { SvmAddress } from 'sushi/svm'
+import type { StellarAccountAddress } from 'sushi/stellar'
 
 type JSONValue = string | number | boolean | null | JSONArray | JSONObject
 
@@ -27,13 +22,10 @@ export interface JSONObject {
 interface JSONArray extends Array<JSONValue> {}
 
 export type Scalars = {
-  Address: EvmAddress | SvmAddress | StellarAddress
-  ContractAddress: EvmAddress | SvmAddress | StellarContractAddress
   EvmAddress: EvmAddress
   PortfolioChainId: ChainId
   PortfolioTokenId: string
   StellarAccountAddress: StellarAccountAddress
-  SvmAddress: SvmAddress
 
   BigInt: string
   BigDecimal: string

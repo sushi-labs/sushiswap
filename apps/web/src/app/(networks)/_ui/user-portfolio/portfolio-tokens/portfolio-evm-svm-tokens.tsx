@@ -1,7 +1,7 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import React, { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useAccounts } from 'src/lib/wallet'
 import { formatPercent, formatUSD } from 'sushi'
 import { PortfolioTokensList } from './portfolio-tokens-list'
@@ -33,7 +33,11 @@ export const PortfolioEvmSvmTokens = () => {
     [evm.address, svm.address],
   )
 
-  const { data, isLoading, isError } = usePortfolioWallet(addresses)
+  const { data, isLoading, isError, refetch } = usePortfolioWallet(addresses)
+
+  const handleTransferConfirmed = useCallback(async (): Promise<void> => {
+    await refetch()
+  }, [refetch])
 
   return (
     <div className="flex flex-col gap-y-5 h-[calc(100%-180px)] overflow-hidden">
@@ -100,7 +104,10 @@ export const PortfolioEvmSvmTokens = () => {
           ))}
         </div>
       ) : data?.tokens?.length ? (
-        <PortfolioTokensList tokens={data.tokens} />
+        <PortfolioTokensList
+          tokens={data.tokens}
+          onTransferConfirmed={handleTransferConfirmed}
+        />
       ) : null}
     </div>
   )

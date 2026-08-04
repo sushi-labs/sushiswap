@@ -54,7 +54,7 @@
     "@solana/addresses": "catalog:web3",
     "gql.tada": "1.11.3",
     "graphql": "16.6.0",
-    "graphql-request": "7.1.0",
+    "graphql-request": "7.4.0",
     "json-bigint": "1.0.0",
     "sushi": "catalog:web3",
     "viem": "catalog:web3"
