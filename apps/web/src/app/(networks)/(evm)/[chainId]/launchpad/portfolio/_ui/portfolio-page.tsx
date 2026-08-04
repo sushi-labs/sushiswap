@@ -52,10 +52,23 @@ function PnlValue({
   pnlPercent,
   large = false,
 }: {
-  pnlUsd: number
-  pnlPercent: number
+  pnlUsd: number | null
+  pnlPercent: number | null
   large?: boolean
 }) {
+  if (pnlUsd === null || pnlPercent === null) {
+    return (
+      <span
+        className={classNames(
+          'font-semibold tracking-tight text-perps-muted',
+          large ? 'text-lg' : 'text-sm',
+        )}
+      >
+        -
+      </span>
+    )
+  }
+
   return (
     <div
       className={classNames(

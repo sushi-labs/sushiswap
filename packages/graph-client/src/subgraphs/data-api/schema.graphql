@@ -106,15 +106,16 @@ type LaunchpadUserStats {
 
   """
   Current holdings value plus indexed sell proceeds, minus indexed buy cost
-  across both open and fully exited launchpad positions.
+  across both open and fully exited launchpad positions. Null when any position
+  has no indexed cost basis.
   """
-  totalPnlUsd: Float!
+  totalPnlUsd: Float
 
   """
   Total PnL divided by gross indexed buy cost across both open and fully exited
-  launchpad positions. Returns zero without USD cost.
+  launchpad positions. Null when any position has no indexed cost basis.
   """
-  totalPnlPercent: Float!
+  totalPnlPercent: Float
   totalHoldingsUsd: Float!
 }
 
@@ -126,13 +127,14 @@ type LaunchpadUserHolding {
 
   """
   Current holding value plus indexed sell proceeds, minus indexed buy cost.
+  Null when the acquisition has no indexed USD cost basis yet.
   """
-  pnlUsd: Float!
+  pnlUsd: Float
 
   """
-  Token PnL divided by gross indexed buy cost. Returns zero without USD cost.
+  Token PnL divided by gross indexed buy cost. Null without indexed USD cost.
   """
-  pnlPercent: Float!
+  pnlPercent: Float
 }
 
 type LaunchpadUserHoldingToken {
