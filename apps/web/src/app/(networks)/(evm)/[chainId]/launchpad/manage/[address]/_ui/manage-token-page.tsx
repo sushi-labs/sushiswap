@@ -33,8 +33,8 @@ import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { formatPercent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
-import { isAddressEqual } from 'viem'
 import {
+  useBytecode,
   useConnection,
   usePublicClient,
   useSignTypedData,
@@ -50,6 +50,7 @@ import {
 } from '../../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
 import {
+  canSubmitLaunchpadMetadataSignature,
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
 } from '../../../_lib/launchpad-metadata'
@@ -98,6 +99,21 @@ export function ManageTokenPage({
     isPending,
     refetch,
   } = useLaunchpadToken(chainId, address)
+  const { data: creatorBytecode } = useBytecode({
+    address: token?.creator,
+    chainId,
+    query: {
+      enabled: Boolean(token),
+    },
+  })
+  const canSubmitMetadataSignature = token
+    ? canSubmitLaunchpadMetadataSignature({
+        connectedAddress,
+        creatorAddress: token.creator,
+        creatorBytecode,
+      })
+    : false
+  const isContractCreator = Boolean(creatorBytecode && creatorBytecode !== '0x')
   const {
     data: distributionSimulation,
     isError: isDistributionSimulationError,
@@ -164,9 +180,12 @@ export function ManageTokenPage({
 
     try {
       if (!token) throw new Error('Launch token is no longer available')
-      if (!connectedAddress) throw new Error('Connect the creator wallet first')
-      if (!isAddressEqual(connectedAddress, token.creator)) {
-        throw new Error('Connect the creator wallet first')
+      if (!connectedAddress || !canSubmitMetadataSignature) {
+        throw new Error(
+          isContractCreator
+            ? 'Connect a wallet authorized by the creator contract first'
+            : 'Connect the creator wallet first',
+        )
       }
       if (connectedChainId !== chainId) {
         throw new Error(
@@ -181,7 +200,8 @@ export function ManageTokenPage({
         expectedRevision: token.metadata.revision,
         values,
         logoFile: logo?.file,
-        signTypedData: (typedData) => signTypedDataAsync(typedData),
+        signTypedData: (typedData) =>
+          signTypedDataAsync({ ...typedData, account: connectedAddress }),
       })
       await refetch()
       setSaved(true)
@@ -475,11 +495,12 @@ export function ManageTokenPage({
                     hideChainName
                   >
                     <Checker.Guard
-                      guardWhen={
-                        !connectedAddress ||
-                        !isAddressEqual(connectedAddress, token.creator)
+                      guardWhen={!canSubmitMetadataSignature}
+                      guardText={
+                        isContractCreator
+                          ? 'Connect authorized wallet'
+                          : 'Connect creator wallet'
                       }
-                      guardText="Connect creator wallet"
                       fullWidth={false}
                       size="lg"
                       type="button"
@@ -540,8 +561,9 @@ export function ManageTokenPage({
               {token.creator}
             </p>
             <p className="mt-3 text-xs leading-5 text-perps-muted-50">
-              The backend verifies this immutable address independently for
-              every metadata and logo signature.
+              {isContractCreator
+                ? 'This contract verifies metadata and logo signatures through EIP-1271.'
+                : 'The backend verifies this immutable address independently for every metadata and logo signature.'}
             </p>
           </PerpsCard>
         </div>
