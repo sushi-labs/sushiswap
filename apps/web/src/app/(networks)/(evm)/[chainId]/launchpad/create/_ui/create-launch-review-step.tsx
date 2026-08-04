@@ -111,7 +111,12 @@ export function CreateLaunchReviewStep({
           <div className="text-sm font-semibold text-perps-muted">
             Ready to launch
           </div>
-          {launchedTokenAddress && !isWaitingForIndexing && tokenHref ? (
+          {isWaitingForIndexing ? (
+            <>
+              Waiting for indexing
+              <Dots />
+            </>
+          ) : launchedTokenAddress && tokenHref ? (
             <Button
               asChild
               fullWidth
@@ -152,6 +157,7 @@ export function CreateLaunchReviewStep({
                     initialBuyAmountRaw !== undefined &&
                     initialBuyAmountRaw > 0n
                   }
+                  variant="perps-default"
                 >
                   <Button
                     type="button"
@@ -168,16 +174,7 @@ export function CreateLaunchReviewStep({
                     }
                     onClick={onOpenLegalDialog}
                   >
-                    {isWaitingForIndexing ? (
-                      <>
-                        Waiting for indexing
-                        <Dots />
-                      </>
-                    ) : isLaunching ? (
-                      'Creating token…'
-                    ) : (
-                      'Create token'
-                    )}
+                    {isLaunching ? 'Creating token…' : 'Create token'}
                   </Button>
                 </Checker.ApproveERC20>
               </Checker.Network>
