@@ -80,6 +80,21 @@ type MetadataForm = z.infer<typeof metadataSchema>
 
 const SAVED_STATUS_DURATION_MS = ms('3s')
 
+const METADATA_GUARD_TEXT = {
+  pending: 'Checking creator',
+  unknown: 'Creator check failed',
+  contract: 'Connect authorized wallet',
+  eoa: 'Connect creator wallet',
+} as const
+
+const METADATA_SIGNER_ERROR = {
+  pending: 'Still checking the creator address, try again in a moment',
+  unknown:
+    'Could not check whether the creator is a contract, reload and try again',
+  contract: 'Connect a wallet authorized by the creator contract first',
+  eoa: 'Connect the creator wallet first',
+} as const
+
 export function ManageTokenPage({
   chainId,
   address,
@@ -99,7 +114,11 @@ export function ManageTokenPage({
     isPending,
     refetch,
   } = useLaunchpadToken(chainId, address)
-  const { data: creatorBytecode } = useBytecode({
+  const {
+    data: creatorBytecode,
+    isLoading: isCreatorBytecodeLoading,
+    isError: isCreatorBytecodeError,
+  } = useBytecode({
     address: token?.creator,
     chainId,
     query: {
@@ -114,6 +133,13 @@ export function ManageTokenPage({
       })
     : false
   const isContractCreator = Boolean(creatorBytecode && creatorBytecode !== '0x')
+  const creatorKind = isCreatorBytecodeLoading
+    ? 'pending'
+    : isCreatorBytecodeError
+      ? 'unknown'
+      : isContractCreator
+        ? 'contract'
+        : 'eoa'
   const {
     data: distributionSimulation,
     isError: isDistributionSimulationError,
@@ -181,11 +207,7 @@ export function ManageTokenPage({
     try {
       if (!token) throw new Error('Launch token is no longer available')
       if (!connectedAddress || !canSubmitMetadataSignature) {
-        throw new Error(
-          isContractCreator
-            ? 'Connect a wallet authorized by the creator contract first'
-            : 'Connect the creator wallet first',
-        )
+        throw new Error(METADATA_SIGNER_ERROR[creatorKind])
       }
       if (connectedChainId !== chainId) {
         throw new Error(
@@ -496,11 +518,7 @@ export function ManageTokenPage({
                   >
                     <Checker.Guard
                       guardWhen={!canSubmitMetadataSignature}
-                      guardText={
-                        isContractCreator
-                          ? 'Connect authorized wallet'
-                          : 'Connect creator wallet'
-                      }
+                      guardText={METADATA_GUARD_TEXT[creatorKind]}
                       fullWidth={false}
                       size="lg"
                       type="button"
@@ -561,9 +579,11 @@ export function ManageTokenPage({
               {token.creator}
             </p>
             <p className="mt-3 text-xs leading-5 text-perps-muted-50">
+              The backend verifies this immutable address independently for
+              every metadata and logo signature
               {isContractCreator
-                ? 'This contract verifies metadata and logo signatures through EIP-1271.'
-                : 'The backend verifies this immutable address independently for every metadata and logo signature.'}
+                ? ', including EIP-1271 signatures if this contract supports them.'
+                : '.'}
             </p>
           </PerpsCard>
         </div>
