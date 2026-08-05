@@ -1,7 +1,7 @@
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 
 const SLIPPAGE_PATTERN = /^(?:\d+|\d*\.\d{1,2})$/
-const MAX_SLIPPAGE_BASIS_POINTS = 5_000
+const MAX_SLIPPAGE_BASIS_POINTS = 10_000
 
 export function getSlippageToleranceBasisPoints(
   value: unknown,
