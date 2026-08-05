@@ -2,6 +2,8 @@ import React from 'react'
 
 import type { IconComponent } from '../types'
 
+export const SUSHI_ICON_ASPECT_RATIO = 990 / 916
+
 export const SushiIcon: IconComponent = (props) => {
   const id = React.useId()
 

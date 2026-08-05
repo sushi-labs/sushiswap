@@ -1,4 +1,7 @@
-import { SushiIconBase } from '@sushiswap/ui/icons/SushiIcon'
+import {
+  SUSHI_ICON_ASPECT_RATIO,
+  SushiIconBase,
+} from '@sushiswap/ui/icons/SushiIcon'
 import type { ReactNode } from 'react'
 import { ChainId } from 'sushi'
 import type { LaunchpadChainId } from '../constants'
@@ -483,7 +486,7 @@ function SushiMark({ size }: { size: number }) {
       gradientId="launchpad-embed-sushi-gradient"
       height={size}
       style={{ flexShrink: 0 }}
-      width={size}
+      width={size * SUSHI_ICON_ASPECT_RATIO}
     />
   )
 }
