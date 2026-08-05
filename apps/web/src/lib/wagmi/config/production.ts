@@ -1,7 +1,7 @@
 import { createConfig } from '@privy-io/wagmi'
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
-import { http, cookieStorage, createStorage } from 'wagmi'
+import { http } from 'wagmi'
 import type { util } from 'zod'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
@@ -72,15 +72,13 @@ export const createProductionConfig = () => {
     {} as util.Writeable<typeof publicTransports>,
   )
 
-  const storage = createStorage({
-    storage: cookieStorage,
-  })
-
+  // No explicit storage: wagmi defaults to localStorage (with an SSR-safe
+  // fallback). Nothing reads the wagmi state server-side any more, so keeping
+  // it in a cookie only added weight to every request.
   return createConfig({
     ...publicWagmiConfig,
     transports,
     pollingInterval,
-    storage,
     ssr: true,
   })
 }
