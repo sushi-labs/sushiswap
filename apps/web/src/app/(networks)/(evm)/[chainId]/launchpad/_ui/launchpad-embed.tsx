@@ -1,3 +1,4 @@
+import { SushiIconBase } from '@sushiswap/ui/icons/SushiIcon'
 import type { ReactNode } from 'react'
 import { ChainId } from 'sushi'
 import type { LaunchpadChainId } from '../constants'
@@ -42,7 +43,7 @@ export function LaunchpadDiscoverEmbed({
         }}
       >
         <div style={{ alignItems: 'center', display: 'flex', gap: 34 }}>
-          <MakiMark size={132} />
+          <SushiMark size={132} />
           <Wordmark size={118} />
         </div>
         <LaunchpadWord size={52} />
@@ -88,7 +89,7 @@ export function LaunchpadTokenEmbed({
         }}
       >
         <div style={{ alignItems: 'center', display: 'flex', gap: 18 }}>
-          <MakiMark size={46} />
+          <SushiMark size={46} />
           <Wordmark size={35} />
           <LaunchpadWord size={17} />
         </div>
@@ -476,88 +477,14 @@ function ChainMark({
   )
 }
 
-function MakiMark({ size }: { size: number }) {
+function SushiMark({ size }: { size: number }) {
   return (
-    <svg
+    <SushiIconBase
+      gradientId="launchpad-embed-sushi-gradient"
       height={size}
       style={{ flexShrink: 0 }}
-      viewBox="0 0 100 100"
       width={size}
-    >
-      <defs>
-        <linearGradient
-          id="launchpad-embed-maki-base"
-          x1="0"
-          x2="1"
-          y1="0"
-          y2="0.1"
-        >
-          <stop offset="0" stopColor="#EF4C9F" />
-          <stop offset="1" stopColor="#C4176F" />
-        </linearGradient>
-        <linearGradient
-          id="launchpad-embed-maki-nori"
-          x1="0"
-          x2="1"
-          y1="0"
-          y2="0.1"
-        >
-          <stop offset="0" stopColor="#FF9DD0" />
-          <stop offset="0.46" stopColor="#F5479F" />
-          <stop offset="1" stopColor="#D81B7B" />
-        </linearGradient>
-        <linearGradient
-          id="launchpad-embed-maki-rice"
-          x1="0.9"
-          x2="0.1"
-          y1="0"
-          y2="1"
-        >
-          <stop offset="0.62" stopColor="#FFFFFF" />
-          <stop offset="1" stopColor="#F6E7F0" />
-        </linearGradient>
-        <linearGradient
-          id="launchpad-embed-maki-fill"
-          x1="0.33"
-          x2="0.67"
-          y1="0"
-          y2="1"
-        >
-          <stop offset="0" stopColor="#FFA3D4" />
-          <stop offset="1" stopColor="#E32A8B" />
-        </linearGradient>
-      </defs>
-      <g transform="rotate(-12 50 50)">
-        <ellipse
-          cx="50"
-          cy="74"
-          fill="url(#launchpad-embed-maki-base)"
-          rx="47"
-          ry="22"
-        />
-        <rect
-          fill="url(#launchpad-embed-maki-nori)"
-          height="44"
-          width="94"
-          x="3"
-          y="30"
-        />
-        <ellipse
-          cx="50"
-          cy="30"
-          fill="url(#launchpad-embed-maki-rice)"
-          rx="47"
-          ry="22"
-        />
-        <ellipse
-          cx="50"
-          cy="30"
-          fill="url(#launchpad-embed-maki-fill)"
-          rx="21.6"
-          ry="10.1"
-        />
-      </g>
-    </svg>
+    />
   )
 }
 
