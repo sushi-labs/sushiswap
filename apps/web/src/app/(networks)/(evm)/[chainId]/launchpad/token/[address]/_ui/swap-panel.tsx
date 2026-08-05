@@ -1,10 +1,7 @@
 'use client'
 
 import { ChevronDownIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
-import {
-  SlippageToleranceStorageKey,
-  useSlippageTolerance,
-} from '@sushiswap/hooks'
+import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Button,
   Currency,
@@ -17,12 +14,13 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { DEFAULT_SLIPPAGE, type EvmToken, unwrapEvmToken } from 'sushi/evm'
+import { type EvmToken, unwrapEvmToken } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
   DerivedstateSimpleSwapProvider,
   useDerivedStateSimpleSwap,
+  useSimpleSwapSlippage,
   useSimpleSwapTradeQuote,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTradeButton } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-button'
@@ -121,12 +119,9 @@ function SwapPanelContent({
   launchToken: EvmToken
 }) {
   const [side, setSide] = useState<SwapSide>('BUY')
-  const [slippageTolerance] = useSlippageTolerance(
-    LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS.storageKey,
-    LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS.defaultValue,
-  )
+  const { autoSlippagePercentage, slippageTolerance } = useSimpleSwapSlippage()
   const displayedSlippage =
-    slippageTolerance === 'AUTO' ? DEFAULT_SLIPPAGE : slippageTolerance
+    slippageTolerance === 'AUTO' ? autoSlippagePercentage : slippageTolerance
   const {
     mutate: { setSwapAmount, setToken0, setToken1, switchTokens },
     state: { chainId, swapAmountString, token0, token1 },
@@ -258,7 +253,10 @@ function SwapPanelContent({
         <SettingsOverlay
           modules={[SettingsModule.SlippageTolerance]}
           options={{
-            slippageTolerance: LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
+            slippageTolerance: {
+              ...LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
+              autoValue: autoSlippagePercentage,
+            },
           }}
           theme="perps"
         >

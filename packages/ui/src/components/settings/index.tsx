@@ -49,6 +49,7 @@ interface SettingsOverlayProps {
       storageKey?: SlippageToleranceStorageKey
       defaultValue?: string
       title?: string
+      autoValue?: string
     }
     transactionDeadline?: {
       storageKey: TTLStorageKey

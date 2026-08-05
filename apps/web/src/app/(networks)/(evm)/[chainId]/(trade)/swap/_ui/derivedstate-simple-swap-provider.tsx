@@ -18,7 +18,12 @@ import {
 } from 'src/lib/hooks/react-query'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
+  AUTO_SLIPPAGE_MIN_BASIS_POINTS,
+  getAutoSlippageToleranceBasisPoints,
+} from 'src/lib/swap/auto-slippage'
+import {
   type DirectPool,
+  type UseDirectPoolTradeParams,
   combineEvmTradeQueries,
   useDirectPoolTrade,
   useDirectPoolTradeQuote,
@@ -26,10 +31,11 @@ import {
 import { useCarbonOffset } from 'src/lib/swap/use-carbon-offset'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet'
-import { Amount, type Percent, ZERO } from 'sushi'
+import { Amount, Percent, ZERO } from 'sushi'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import { useConnection, useGasPrice } from 'wagmi'
+import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import {
   getDefaultCurrency,
   getNativeIfNativeAndWNativeSupported,
@@ -436,24 +442,105 @@ function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
   return context
 }
 
+function useSimpleSwapSlippage() {
+  const { state } = useDerivedStateSimpleSwap()
+  const [configuredSlippagePercent, { slippageTolerance }] =
+    useSlippageTolerance(
+      state.slippageToleranceOptions?.storageKey,
+      state.slippageToleranceOptions?.defaultValue,
+    )
+  const isAuto = slippageTolerance === 'AUTO'
+  const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
+  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
+  const { data: prices } = usePrices({
+    chainId: evmChainId,
+    enabled: isAuto,
+  })
+
+  const baselineParams = useMemo<UseDirectPoolTradeParams | undefined>(() => {
+    if (!isAuto || !isEvmChainId(state.chainId)) return undefined
+
+    const evmState = state as State<typeof state.chainId>['state']
+
+    return {
+      chainId: evmState.chainId,
+      fromToken: evmState.token0,
+      toToken: evmState.token1,
+      amount: evmState.swapAmount,
+      slippagePercentage: (AUTO_SLIPPAGE_MIN_BASIS_POINTS / 100).toFixed(2),
+      gasPrice,
+      fee: evmState.fee,
+      recipient: evmState.recipient,
+      enabled: Boolean(evmState.swapAmount?.gt(ZERO)),
+      carbonOffset: false,
+      directPool: evmState.directPool,
+    }
+  }, [gasPrice, isAuto, state])
+
+  const aggregatorQuote = useEvmTradeQuote(baselineParams)
+  const directPoolQuote = useDirectPoolTradeQuote(baselineParams)
+  const baselineQuote = combineEvmTradeQueries(
+    aggregatorQuote,
+    directPoolQuote,
+    Boolean(baselineParams?.directPool),
+  )
+
+  const tradeValueUsd = useMemo(() => {
+    if (!prices || !baselineQuote.data) return undefined
+
+    const { amountIn, amountOut } = baselineQuote.data
+    const outputPrice = amountOut
+      ? prices.getFraction(amountOut.currency.wrap().address)
+      : undefined
+    const outputValueUsd =
+      amountOut && outputPrice
+        ? amountOut.mul(outputPrice).toString()
+        : undefined
+
+    if (outputValueUsd) return outputValueUsd
+
+    const inputPrice = amountIn
+      ? prices.getFraction(amountIn.currency.wrap().address)
+      : undefined
+
+    return amountIn && inputPrice
+      ? amountIn.mul(inputPrice).toString()
+      : undefined
+  }, [baselineQuote.data, prices])
+
+  const autoSlippageBasisPoints = getAutoSlippageToleranceBasisPoints({
+    gasCostUsd: baselineQuote.data?.gasSpentUsd,
+    tradeValueUsd,
+  })
+  const autoSlippagePercent = useMemo(
+    () =>
+      new Percent({
+        numerator: autoSlippageBasisPoints,
+        denominator: 10_000,
+      }),
+    [autoSlippageBasisPoints],
+  )
+  const slippagePercent =
+    isAuto && evmChainId ? autoSlippagePercent : configuredSlippagePercent
+
+  return useMemo(
+    () => ({
+      autoSlippagePercentage: isAuto
+        ? slippagePercent.toString({ fixed: 2 })
+        : undefined,
+      slippagePercent,
+      slippageTolerance,
+    }),
+    [isAuto, slippagePercent, slippageTolerance],
+  )
+}
+
 function useEvmSimpleSwapTrade(enabled = true) {
   const {
-    state: {
-      token0,
-      chainId,
-      swapAmount,
-      token1,
-      recipient,
-      fee,
-      directPool,
-      slippageToleranceOptions,
-    },
+    state: { token0, chainId, swapAmount, token1, recipient, fee, directPool },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
-  const [slippagePercent] = useSlippageTolerance(
-    slippageToleranceOptions?.storageKey,
-    slippageToleranceOptions?.defaultValue,
-  )
+  const { slippagePercent } = useSimpleSwapSlippage()
   const [carbonOffset] = useCarbonOffset()
 
   const evmChainId = isEvmChainId(chainId) ? chainId : undefined
@@ -489,10 +576,7 @@ function useEvmSimpleSwapTrade(enabled = true) {
 function useEvmSimpleSwapTradeQuote() {
   const { state } = useDerivedStateSimpleSwap()
 
-  const [slippagePercent] = useSlippageTolerance(
-    state.slippageToleranceOptions?.storageKey,
-    state.slippageToleranceOptions?.defaultValue,
-  )
+  const { slippagePercent } = useSimpleSwapSlippage()
   const [carbonOffset] = useCarbonOffset()
 
   const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
@@ -533,10 +617,7 @@ function useEvmSimpleSwapTradeQuote() {
 function useSvmSimpleSwapTradeQuote() {
   const { state } = useDerivedStateSimpleSwap()
 
-  const [slippagePercent] = useSlippageTolerance(
-    state.slippageToleranceOptions?.storageKey,
-    state.slippageToleranceOptions?.defaultValue,
-  )
+  const { slippagePercent } = useSimpleSwapSlippage()
 
   const params = useMemo(() => {
     if (isSvmChainId(state.chainId)) {
@@ -581,4 +662,5 @@ export {
   useEvmSimpleSwapTrade,
   useEvmSimpleSwapTradeQuote,
   useSvmSimpleSwapTradeQuote,
+  useSimpleSwapSlippage,
 }
