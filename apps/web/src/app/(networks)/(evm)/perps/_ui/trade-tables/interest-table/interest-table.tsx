@@ -32,7 +32,8 @@ const MOBILE_COLUMNS = [
   EARNED_COLUMN,
 ] as ColumnDef<UserBorrowLendInterestItemType, unknown>[]
 
-const startTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days ago
+export const INTEREST_HISTORY_START_TIME =
+  Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days ago
 
 export const InterestTable = ({
   isViewAll = false,
@@ -43,7 +44,7 @@ export const InterestTable = ({
   } = useActiveAccountState()
   const { data, isLoading, isError } = useUserBorrowLendInterest({
     address: activeAddress,
-    startTime,
+    startTime: INTEREST_HISTORY_START_TIME,
     isViewAll,
   })
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])

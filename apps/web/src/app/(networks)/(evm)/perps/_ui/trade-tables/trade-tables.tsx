@@ -1,10 +1,20 @@
+import type {
+  UserTwapHistoryEvent,
+  UserTwapSliceFillsEvent,
+} from '@nktkas/hyperliquid/api/subscription'
 import { Button, LinkInternal, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import {
   useBalances,
+  useFundingHistory,
+  useOrderHistory,
+  useTradeHistory,
   useUserActiveTwap,
+  useUserBorrowLendInterest,
+  useUserNonFundingLedgerUpdates,
   useUserOpenOrders,
   useUserPositions,
 } from 'src/lib/perps'
@@ -15,6 +25,7 @@ import { TableButton } from '../_common'
 import { PerpsCard } from '../_common/perps-card'
 import { ExportCsvButton } from './export-csv-button'
 import { TradeFilter } from './filters'
+import { INTEREST_HISTORY_START_TIME } from './interest-table'
 import {
   TRADE_TABLES_TABS,
   type TradeTablesTabValue,
@@ -55,12 +66,33 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [activeTab, TABS])
   const address = useAccount('evm')
   const {
-    state: { activeAddress },
+    state: { activeAddress, activeAccount },
   } = useActiveAccountState()
   const { data: twapOrders } = useUserActiveTwap({ address: activeAddress })
   const { data: balances } = useBalances()
   const { data: userPositions } = useUserPositions()
   const { data: openOrders } = useUserOpenOrders({})
+  const { data: tradeHistory } = useTradeHistory({ isViewAll: false })
+  const { data: fundingHistory } = useFundingHistory({ isViewAll: false })
+  const { data: orderHistory } = useOrderHistory({ isViewAll: false })
+  const { data: interestHistory } = useUserBorrowLendInterest({
+    address: activeAddress,
+    startTime: INTEREST_HISTORY_START_TIME,
+    enabled: activeTab === 'interest',
+  })
+  const { data: depositsWithdrawals } = useUserNonFundingLedgerUpdates({
+    address: activeAddress,
+    isVault: activeAccount?.type === 'vault',
+    enabled: activeTab === 'deposits-withdrawals',
+  })
+  const { data: twapHistory } = useQuery<UserTwapHistoryEvent>({
+    queryKey: ['useUserTwapHistory', activeAddress],
+    enabled: false,
+  })
+  const { data: twapFillHistory } = useQuery<UserTwapSliceFillsEvent>({
+    queryKey: ['useUserTwapFillHistory', activeAddress],
+    enabled: false,
+  })
   const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])
   const positionCount = useMemo(
     () => userPositions?.length ?? 0,
@@ -108,6 +140,41 @@ export const TradeTables = ({ className }: { className?: string }) => {
   const viewAll = useMemo(() => {
     return getViewAllHref(activeTab === 'twap' ? activeTwapTab : activeTab)
   }, [activeTab, activeTwapTab])
+
+  const hasRows = useMemo(() => {
+    switch (activeTab) {
+      case 'trade-history':
+        return tradeHistory.length > 0
+      case 'funding-history':
+        return fundingHistory.length > 0
+      case 'order-history':
+        return orderHistory.length > 0
+      case 'interest':
+        return Boolean(interestHistory?.length)
+      case 'deposits-withdrawals':
+        return Boolean(depositsWithdrawals?.length)
+      case 'twap':
+        if (activeTwapTab === 'history') {
+          return Boolean(twapHistory?.history.length)
+        }
+        if (activeTwapTab === 'fill-history') {
+          return Boolean(twapFillHistory?.twapSliceFills.length)
+        }
+        return false
+      default:
+        return false
+    }
+  }, [
+    activeTab,
+    activeTwapTab,
+    tradeHistory.length,
+    fundingHistory.length,
+    orderHistory.length,
+    interestHistory?.length,
+    depositsWithdrawals?.length,
+    twapHistory?.history.length,
+    twapFillHistory?.twapSliceFills.length,
+  ])
 
   return (
     <PerpsCard className={classNames('py-2', className ?? '')}>
@@ -188,7 +255,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
           </TabsContent>
         ))}
       </Tabs>
-      {viewAll && activeAddress ? (
+      {viewAll && activeAddress && hasRows ? (
         <div className="flex items-center gap-4 pl-2">
           <LinkInternal href={`${viewAll}/${activeAddress}`}>
             <TableButton className="text-xs">View All</TableButton>
@@ -196,6 +263,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
           <ExportCsvButton
             address={activeAddress}
             className="text-xs"
+            hasRows={hasRows}
             href={viewAll}
           />
         </div>

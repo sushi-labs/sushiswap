@@ -33,6 +33,7 @@ interface ExportCsvButtonProps {
   href: ViewAllHref
   address: EvmAddress
   className?: string
+  hasRows?: boolean
 }
 
 interface CsvExportButtonProps<T> {
@@ -40,6 +41,7 @@ interface CsvExportButtonProps<T> {
   className?: string
   columns: readonly CsvColumn<T>[]
   filePrefix: string
+  hasRows?: boolean
   isLoading?: boolean
   rows: readonly T[] | undefined
   refetchRows: () => Promise<readonly T[]>
@@ -222,17 +224,40 @@ export function ExportCsvButton({
   href,
   address,
   className,
+  hasRows,
 }: ExportCsvButtonProps) {
   switch (href) {
     case viewAllHrefs[0]:
-      return <TradeHistoryCsvButton address={address} className={className} />
+      return (
+        <TradeHistoryCsvButton
+          address={address}
+          className={className}
+          hasRows={hasRows}
+        />
+      )
     case viewAllHrefs[1]:
-      return <FundingHistoryCsvButton address={address} className={className} />
+      return (
+        <FundingHistoryCsvButton
+          address={address}
+          className={className}
+          hasRows={hasRows}
+        />
+      )
     case viewAllHrefs[3]:
-      return <InterestCsvButton address={address} className={className} />
+      return (
+        <InterestCsvButton
+          address={address}
+          className={className}
+          hasRows={hasRows}
+        />
+      )
     case viewAllHrefs[4]:
       return (
-        <DepositsWithdrawalsCsvButton address={address} className={className} />
+        <DepositsWithdrawalsCsvButton
+          address={address}
+          className={className}
+          hasRows={hasRows}
+        />
       )
     default:
       return null
@@ -242,6 +267,7 @@ export function ExportCsvButton({
 function TradeHistoryCsvButton({
   address,
   className,
+  hasRows,
 }: Omit<ExportCsvButtonProps, 'href'>) {
   const { data, isLoading, refetch } = useTradeHistory({
     isViewAll: true,
@@ -254,6 +280,7 @@ function TradeHistoryCsvButton({
       className={className}
       columns={tradeHistoryColumns}
       filePrefix="perps-trade-history"
+      hasRows={hasRows}
       isLoading={isLoading}
       rows={data}
       refetchRows={refetch}
@@ -264,6 +291,7 @@ function TradeHistoryCsvButton({
 function FundingHistoryCsvButton({
   address,
   className,
+  hasRows,
 }: Omit<ExportCsvButtonProps, 'href'>) {
   const { data, isLoading, refetch } = useFundingHistory({
     isViewAll: true,
@@ -276,6 +304,7 @@ function FundingHistoryCsvButton({
       className={className}
       columns={fundingHistoryColumns}
       filePrefix="perps-funding-history"
+      hasRows={hasRows}
       isLoading={isLoading}
       rows={data}
       refetchRows={refetch}
@@ -286,6 +315,7 @@ function FundingHistoryCsvButton({
 function InterestCsvButton({
   address,
   className,
+  hasRows,
 }: Omit<ExportCsvButtonProps, 'href'>) {
   const { data, isLoading, refetch } = useUserBorrowLendInterest({
     address,
@@ -303,6 +333,7 @@ function InterestCsvButton({
       className={className}
       columns={interestColumns}
       filePrefix="perps-interest"
+      hasRows={hasRows}
       isLoading={isLoading}
       rows={data}
       refetchRows={refetchRows}
@@ -313,6 +344,7 @@ function InterestCsvButton({
 function DepositsWithdrawalsCsvButton({
   address,
   className,
+  hasRows,
 }: Omit<ExportCsvButtonProps, 'href'>) {
   const {
     state: { activeAccount },
@@ -334,6 +366,7 @@ function DepositsWithdrawalsCsvButton({
       className={className}
       columns={depositsWithdrawalsColumns}
       filePrefix="perps-deposits-withdrawals"
+      hasRows={hasRows}
       isLoading={isLoading}
       rows={data}
       refetchRows={refetchRows}
@@ -346,6 +379,7 @@ function CsvExportButton<T>({
   className,
   columns,
   filePrefix,
+  hasRows,
   isLoading,
   rows,
   refetchRows,
@@ -367,6 +401,10 @@ function CsvExportButton<T>({
       setIsExporting(false)
     }
   }, [address, columns, filePrefix, refetchRows, rows])
+
+  if (hasRows === false || (hasRows === undefined && !rows?.length)) {
+    return null
+  }
 
   return (
     <TableButton
