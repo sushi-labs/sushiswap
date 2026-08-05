@@ -25,7 +25,6 @@ import { WagmiContext, useConnection, useDisconnect } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
 import { EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
-import { useRestoreEvmConnection } from './use-restore-evm-connection'
 
 function useInEvmContext(): boolean {
   const context = useContext(WagmiContext)
@@ -72,7 +71,6 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const { setActiveWallet } = useSetActiveWallet()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
   const { logout } = usePrivy()
-  useRestoreEvmConnection()
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {

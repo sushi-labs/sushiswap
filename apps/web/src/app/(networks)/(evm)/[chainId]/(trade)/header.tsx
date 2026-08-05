@@ -6,8 +6,8 @@ import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
 import React, { type FC } from 'react'
 import { headerElements } from 'src/app/_common/header-elements'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
-import { useResolvedChainId } from 'src/lib/wagmi/hooks/wallet/use-resolved-chain-id'
 import { ChainId } from 'sushi'
+import { useChainId } from 'wagmi'
 import { Header as _Header } from '~evm/[chainId]/header'
 
 interface HeaderProps {
@@ -27,7 +27,8 @@ const TransparentHeader: FC<HeaderProps> = ({
   chainId: _chainId,
   networks,
 }) => {
-  const { chainId, isLoading: isNetworkLoading } = useResolvedChainId(_chainId)
+  const connectedChainId = useChainId()
+  const chainId = _chainId ?? connectedChainId
 
   return (
     <div className="w-full h-[56px] z-20">
@@ -50,7 +51,6 @@ const TransparentHeader: FC<HeaderProps> = ({
             <WagmiHeaderComponents
               networks={networks}
               selectedNetwork={chainId}
-              isNetworkLoading={isNetworkLoading}
             />
           }
         />

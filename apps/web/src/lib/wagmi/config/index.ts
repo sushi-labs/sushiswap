@@ -1,4 +1,3 @@
-import { cookieToInitialState } from '@wagmi/core'
 import { createProductionConfig } from './production'
 import type { PublicWagmiConfig } from './public'
 import { createTestConfig } from './test'
@@ -30,8 +29,4 @@ export const getWagmiConfig = () => {
   }
 
   return wagmiConfigSingleton
-}
-
-export function getWagmiInitialState(cookie: string | null | undefined) {
-  return cookieToInitialState(getWagmiConfig(), cookie)
 }

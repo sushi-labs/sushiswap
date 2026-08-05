@@ -11,6 +11,7 @@ const WALLET_NAMESPACE_PROVIDERS: Record<
   evm: dynamic(() => import('../namespaces/evm/provider/evm-wallet-provider'), {
     ssr: false,
   }),
+
   svm: dynamic(() => import('../namespaces/svm/provider/svm-wallet-provider'), {
     ssr: false,
   }),
