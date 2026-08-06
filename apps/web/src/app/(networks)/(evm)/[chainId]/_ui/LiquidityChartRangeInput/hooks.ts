@@ -18,6 +18,17 @@ interface UseDensityChartData {
   enabled?: boolean
 }
 
+export function getDensityChartData(data: TickProcessed[]): ChartEntry[] {
+  return data.flatMap((tick) => {
+    const chartEntry = {
+      activeLiquidity: Number.parseFloat(tick.liquidityActive.toString()),
+      price0: Number.parseFloat(tick.price0),
+    }
+
+    return chartEntry.activeLiquidity >= 0 ? [chartEntry] : []
+  })
+}
+
 export function useDensityChartData({
   chainId,
   token0,
@@ -37,23 +48,9 @@ export function useDensityChartData({
     const data = activeLiquidity.data
     if (!data) return activeLiquidity
 
-    const newData: ChartEntry[] = []
-    for (let i = 0; i < data.length; i++) {
-      const t: TickProcessed = data[i]
-
-      const chartEntry = {
-        activeLiquidity: Number.parseFloat(t.liquidityActive.toString()),
-        price0: Number.parseFloat(t.price0),
-      }
-
-      if (chartEntry.activeLiquidity > 0) {
-        newData.push(chartEntry)
-      }
-    }
-
     return {
       ...activeLiquidity,
-      data: newData,
+      data: getDensityChartData(data),
     }
   }, [activeLiquidity])
 }

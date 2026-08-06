@@ -1,6 +1,10 @@
 import {
+  type LaunchpadCandle,
+  type LaunchpadCreator,
   type LaunchpadToken,
   type LaunchpadTokenConnection,
+  getLaunchpadCandles,
+  getLaunchpadCreator,
   getLaunchpadToken,
   getLaunchpadTokens,
 } from '@sushiswap/graph-client/data-api'
@@ -18,6 +22,7 @@ import type {
   PropertyValue,
   WebSite,
 } from 'schema-dts'
+import { shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
@@ -48,6 +53,41 @@ const getCachedLaunchpadTokens = unstable_cache(
   { revalidate: LAUNCHPAD_REVALIDATE_SECONDS },
 )
 
+const getCachedLaunchpadCreator = unstable_cache(
+  async (chainId: LaunchpadChainId, address: EvmAddress) =>
+    getLaunchpadCreator({
+      chainId,
+      address,
+      input: {
+        chainId,
+        creator: address,
+        first: 20,
+        sortBy: 'CREATED_AT',
+        sortDirection: 'DESC',
+      },
+    }),
+  ['launchpad-creator-seo'],
+  { revalidate: LAUNCHPAD_REVALIDATE_SECONDS },
+)
+
+const getCachedLaunchpadDayCandles = unstable_cache(
+  async (chainId: LaunchpadChainId, address: EvmAddress) => {
+    const to = Math.floor(Date.now() / 1000)
+    const { nodes } = await getLaunchpadCandles({
+      input: {
+        chainId,
+        tokenAddress: address,
+        interval: 'FIFTEEN_MINUTES',
+        from: to - 24 * 60 * 60,
+        to,
+      },
+    })
+    return nodes
+  },
+  ['launchpad-candles-seo'],
+  { revalidate: LAUNCHPAD_REVALIDATE_SECONDS },
+)
+
 export async function getLaunchpadTokenForSeo(
   chainId: LaunchpadChainId,
   address: EvmAddress,
@@ -69,6 +109,28 @@ export async function getLaunchpadTokensForSeo(
   }
 }
 
+export async function getLaunchpadCreatorForSeo(
+  chainId: LaunchpadChainId,
+  address: EvmAddress,
+): Promise<LaunchpadCreator | null> {
+  try {
+    return await getCachedLaunchpadCreator(chainId, address)
+  } catch {
+    return null
+  }
+}
+
+export async function getLaunchpadDayCandlesForSeo(
+  chainId: LaunchpadChainId,
+  address: EvmAddress,
+): Promise<LaunchpadCandle[] | null> {
+  try {
+    return await getCachedLaunchpadDayCandles(chainId, address)
+  } catch {
+    return null
+  }
+}
+
 export function getLaunchpadUrl(chainId: LaunchpadChainId): string {
   return `${SUSHI_URL}/${getEvmChainById(chainId).key}/launchpad`
 }
@@ -77,11 +139,57 @@ export function getLaunchpadTokenUrl(token: LaunchpadToken): string {
   return `${getLaunchpadUrl(token.chainId)}/token/${token.address}`
 }
 
+/**
+ * Relative on purpose: Next resolves it against metadataBase, which uses the
+ * Vercel deployment URL when available so previews point to their own card
+ * route.
+ */
+export function getLaunchpadTokenCardPath(
+  token: LaunchpadToken,
+  version: string,
+): string {
+  const chainKey = getEvmChainById(token.chainId).key
+  return `/${chainKey}/launchpad/token/${token.address}/card.png?v=${version}`
+}
+
+export function getLaunchpadCreateUrl(chainId: LaunchpadChainId): string {
+  return `${getLaunchpadUrl(chainId)}/create`
+}
+
+export function getLaunchpadCreatorUrl(
+  chainId: LaunchpadChainId,
+  address: EvmAddress,
+): string {
+  return `${getLaunchpadUrl(chainId)}/creator/${address}`
+}
+
+function getLaunchpadTokenCdnUrl(
+  token: Pick<LaunchpadToken, 'address' | 'chainId'>,
+  transformations: string[],
+): string {
+  return `https://cdn.sushi.com/image/upload/${transformations.join(',')}/tokens/${token.chainId}/${token.address}`
+}
+
 export function getLaunchpadTokenLogoUrl(
   token: Pick<LaunchpadToken, 'address' | 'chainId'>,
   width = 256,
 ): string {
-  return `https://cdn.sushi.com/image/upload/c_limit,w_${width},q_auto/tokens/${token.chainId}/${token.address}`
+  return getLaunchpadTokenCdnUrl(token, [`c_limit,w_${width}`, 'q_auto'])
+}
+
+/**
+ * Creators upload WebP logos, which satori cannot decode — ask the CDN to
+ * transcode so the embed never renders (or crashes) without the logo.
+ */
+export function getLaunchpadTokenEmbedLogoUrl(
+  token: Pick<LaunchpadToken, 'address' | 'chainId'>,
+  width = 256,
+): string {
+  return getLaunchpadTokenCdnUrl(token, [
+    `c_limit,w_${width}`,
+    'q_auto',
+    'f_png',
+  ])
 }
 
 export function getLaunchpadTokenDescription(token: LaunchpadToken): string {
@@ -188,7 +296,6 @@ function getTokenFinancialProduct(
 export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
   const url = getLaunchpadTokenUrl(token)
   const discoverUrl = getLaunchpadUrl(token.chainId)
-  const imageUrl = `${url}/embed`
   const metrics = token.metrics
   const marketMetrics = [
     getMarketMetric('Price', metrics?.priceUsd),
@@ -236,11 +343,11 @@ export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
     dateModified: metrics?.asOf || token.metadata.updatedAt || token.createdAt,
     isPartOf: { '@id': SUSHI_WEBSITE_ID },
     mainEntity: { '@id': `${url}#token` },
+    // The social card lives behind a build-hashed opengraph-image URL, so this
+    // points at the token logo — the one stable image of the page's subject.
     primaryImageOfPage: {
       '@type': 'ImageObject',
-      url: imageUrl,
-      width: { '@type': 'QuantitativeValue', value: 1200 },
-      height: { '@type': 'QuantitativeValue', value: 630 },
+      url: getLaunchpadTokenLogoUrl(token),
     },
     publisher: { '@id': SUSHI_ORGANIZATION_ID },
   }
@@ -329,12 +436,6 @@ export function getLaunchpadDiscoverJsonLd(
     dateModified: latestUpdate,
     isPartOf: { '@id': SUSHI_WEBSITE_ID },
     mainEntity: { '@id': `${url}#launches` },
-    primaryImageOfPage: {
-      '@type': 'ImageObject',
-      url: `${url}/embed`,
-      width: { '@type': 'QuantitativeValue', value: 1200 },
-      height: { '@type': 'QuantitativeValue', value: 630 },
-    },
     publisher: { '@id': SUSHI_ORGANIZATION_ID },
   }
 
@@ -348,6 +449,85 @@ export function getLaunchpadDiscoverJsonLd(
       itemList,
     ],
   }
+}
+
+export function getLaunchpadCreatorJsonLd(
+  chainId: LaunchpadChainId,
+  address: EvmAddress,
+  creator: LaunchpadCreator | null,
+): Graph {
+  const url = getLaunchpadCreatorUrl(chainId, address)
+  const discoverUrl = getLaunchpadUrl(chainId)
+  const chain = getEvmChainById(chainId)
+  const label = shortenAddress(address)
+  const tokens = creator?.launches.edges.map((edge) => edge.node) ?? []
+  const listItems: ListItem[] = tokens.map((token, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: getTokenFinancialProduct(token, false),
+  }))
+
+  const breadcrumb: BreadcrumbList = {
+    '@type': 'BreadcrumbList',
+    '@id': `${url}#breadcrumb`,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Sushi',
+        item: SUSHI_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Launchpad',
+        item: discoverUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: `Creator ${label}`,
+        item: url,
+      },
+    ],
+  }
+
+  const itemList: ItemList = {
+    '@type': 'ItemList',
+    '@id': `${url}#launches`,
+    name: `Tokens launched by ${label}`,
+    itemListElement: listItems,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: creator?.launchCount ?? 0,
+    url,
+  }
+
+  const page: CollectionPage = {
+    '@type': 'CollectionPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: `Tokens launched by ${label} on ${chain.name}`,
+    description: getLaunchpadCreatorDescription(address),
+    breadcrumb: { '@id': `${url}#breadcrumb` },
+    isPartOf: { '@id': SUSHI_WEBSITE_ID },
+    mainEntity: { '@id': `${url}#launches` },
+    publisher: { '@id': SUSHI_ORGANIZATION_ID },
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      getSushiOrganization(),
+      getSushiWebsite(),
+      page,
+      breadcrumb,
+      itemList,
+    ],
+  }
+}
+
+export function getLaunchpadCreatorDescription(address: EvmAddress): string {
+  return `Every token launched by ${shortenAddress(address)} on Sushi Launchpad, with live market data and permanently locked Sushi V3 liquidity.`
 }
 
 export function serializeLaunchpadJsonLd(jsonLd: Graph): string {

@@ -41,6 +41,7 @@ interface PoolChartProps {
   period: PoolChartPeriod
   pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool | BladePool
   protocol: SushiSwapProtocol
+  height?: number
 }
 
 const tailwind = resolveConfig(tailwindConfig)
@@ -59,6 +60,7 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
   period,
   pool,
   protocol,
+  height = 400,
 }) => {
   const {
     data: buckets,
@@ -268,16 +270,17 @@ export const PoolChartGraph: FC<PoolChartProps> = ({
         {isLoading ? (
           <SkeletonBox
             className={classNames(
-              'h-[400px] w-full dark:via-slate-800 dark:to-slate-900',
+              'w-full dark:via-slate-800 dark:to-slate-900',
             )}
+            style={{ height }}
           />
         ) : isError ? (
-          <div className="h-[400px] w-full" />
+          <div className="w-full" style={{ height }} />
         ) : (
           <ReactEchartsCore
             echarts={echarts}
             option={DEFAULT_OPTION}
-            style={{ height: 400 }}
+            style={{ height }}
           />
         )}
       </CardContent>

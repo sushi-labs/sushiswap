@@ -30,7 +30,7 @@ interface AreaProps {
  * - Clamp x-coordinates to [minX, maxX] so steps fill the visible area properly
  *   (also avoids issues with very large numbers that may not render correctly)
  */
-function prepareSeriesForRendering(
+export function prepareSeriesForRendering(
   series: ChartEntry[],
   xScale: ScaleLinear<number, number>,
   xValue: (d: ChartEntry) => number,
@@ -60,12 +60,19 @@ function prepareSeriesForRendering(
 
   // Slice and clamp x-coordinates to [minX, maxX]
   // This avoids rendering issues with very large numbers (scientific notation, etc.)
-  return series.slice(startIdx, endIdx).map((d) => {
+  const preparedSeries = series.slice(startIdx, endIdx).map((d) => {
     return {
       ...d,
       price0: Math.min(maxX, Math.max(d.price0, minX)),
     }
   })
+
+  const lastEntry = preparedSeries.at(-1)
+  if (lastEntry && lastEntry.price0 < maxX) {
+    preparedSeries.push({ ...lastEntry, price0: maxX })
+  }
+
+  return preparedSeries
 }
 
 export const Area: FC<AreaProps> = ({

@@ -192,8 +192,12 @@ export default function computeSurroundingTicks(
   // Iterate outwards (either up or down depending on direction) from the active tick,
   // building active liquidity for every tick.
   let processedTicks: TickProcessed[] = []
+  const pivotIsActiveTick =
+    Number(sortedTickData[pivot].tickIdx) === activeTickProcessed.tick
+  const startIndex = ascending ? pivot + 1 : pivot - (pivotIsActiveTick ? 1 : 0)
+
   for (
-    let i = pivot + (ascending ? 1 : -1);
+    let i = startIndex;
     ascending ? i < sortedTickData.length : i >= 0;
     ascending ? i++ : i--
   ) {

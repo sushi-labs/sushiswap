@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import type { EvmAddress } from 'sushi/evm'
 import { isAddress } from 'viem'
 import {
+  getLaunchpadCardValues,
+  getLaunchpadCardVersion,
+} from '../../_lib/launchpad-card'
+import {
+  getLaunchpadTokenCardPath,
   getLaunchpadTokenDescription,
   getLaunchpadTokenForSeo,
   getLaunchpadTokenJsonLd,
@@ -39,9 +44,17 @@ export async function generateMetadata({
 
   const { token } = result
   const url = getLaunchpadTokenUrl(token)
-  const imageUrl = `${url}/embed`
   const title = `${token.name} (${token.symbol})`
   const description = getLaunchpadTokenDescription(token)
+  // Not the opengraph-image convention: its URL only changes per deployment,
+  // and an id derived from the data would 404 every card already shared.
+  const values = getLaunchpadCardValues(token)
+  const image = {
+    url: getLaunchpadTokenCardPath(token, getLaunchpadCardVersion(values)),
+    width: 1200,
+    height: 630,
+    alt: `${token.name} (${token.symbol}) market overview on Sushi Launchpad`,
+  }
 
   return {
     title,
@@ -53,20 +66,13 @@ export async function generateMetadata({
       siteName: 'Sushi',
       title,
       description,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${token.name} (${token.symbol}) market overview`,
-        },
-      ],
+      images: [image],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [imageUrl],
+      images: [image],
     },
   }
 }
