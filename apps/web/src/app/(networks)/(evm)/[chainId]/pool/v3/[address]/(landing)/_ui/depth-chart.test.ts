@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { buildPoolDepthData } from './depth-chart'
+import {
+  buildPoolDepthData,
+  getInitialVisibleSteps,
+  getNextVisibleSteps,
+} from './depth-chart'
 
 describe('buildPoolDepthData', () => {
   it('builds cumulative sell and buy depth around the current price', () => {
@@ -58,5 +62,37 @@ describe('buildPoolDepthData', () => {
         token1Decimals: 18,
       }),
     ).toEqual({ sell: [], buy: [] })
+  })
+})
+
+describe('depth chart zoom', () => {
+  it('shows every point by default for sparse pools', () => {
+    expect(getInitialVisibleSteps(3)).toBe(3)
+    expect(getInitialVisibleSteps(8)).toBe(8)
+    expect(getInitialVisibleSteps(10)).toBe(4)
+  })
+
+  it('always changes the visible range when zooming is available', () => {
+    expect(
+      getNextVisibleSteps({
+        visibleSteps: 2,
+        maxSteps: 10,
+        direction: 'in',
+      }),
+    ).toBe(1)
+    expect(
+      getNextVisibleSteps({
+        visibleSteps: 2,
+        maxSteps: 10,
+        direction: 'out',
+      }),
+    ).toBe(3)
+    expect(
+      getNextVisibleSteps({
+        visibleSteps: 9,
+        maxSteps: 10,
+        direction: 'out',
+      }),
+    ).toBe(10)
   })
 })

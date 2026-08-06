@@ -36,6 +36,35 @@ export interface PoolDepthData {
   buy: DepthPoint[]
 }
 
+const SPARSE_POOL_MAX_STEPS = 8
+
+export function getInitialVisibleSteps(maxSteps: number): number {
+  if (maxSteps <= SPARSE_POOL_MAX_STEPS) return maxSteps
+  return Math.max(1, Math.ceil(maxSteps * 0.4))
+}
+
+export function getNextVisibleSteps({
+  visibleSteps,
+  maxSteps,
+  direction,
+}: {
+  visibleSteps: number
+  maxSteps: number
+  direction: 'in' | 'out'
+}): number {
+  if (direction === 'in') {
+    return Math.max(
+      1,
+      Math.min(visibleSteps - 1, Math.floor(visibleSteps / 1.5)),
+    )
+  }
+
+  return Math.min(
+    maxSteps,
+    Math.max(visibleSteps + 1, Math.ceil(visibleSteps * 1.5)),
+  )
+}
+
 function getBaseTokenDepth({
   liquidity,
   lowerPrice,
@@ -241,7 +270,7 @@ export function DepthChart({
     [currentPrice, series, token0Decimals, token1Decimals],
   )
   const maxSteps = Math.max(data.sell.length - 1, data.buy.length - 1, 1)
-  const initialVisibleSteps = Math.max(1, Math.ceil(maxSteps * 0.4))
+  const initialVisibleSteps = getInitialVisibleSteps(maxSteps)
   const [visibleSteps, setVisibleSteps] = useState(initialVisibleSteps)
   const [hoveredPoint, setHoveredPoint] = useState<DepthPoint | null>(null)
 
@@ -371,7 +400,13 @@ export function DepthChart({
           aria-label="Zoom in"
           disabled={visibleSteps <= 1}
           onClick={() =>
-            setVisibleSteps((steps) => Math.max(1, Math.ceil(steps / 1.5)))
+            setVisibleSteps((steps) =>
+              getNextVisibleSteps({
+                visibleSteps: steps,
+                maxSteps,
+                direction: 'in',
+              }),
+            )
           }
         >
           <MagnifyingGlassPlusIcon width={18} height={18} />
@@ -383,7 +418,11 @@ export function DepthChart({
           disabled={visibleSteps >= maxSteps}
           onClick={() =>
             setVisibleSteps((steps) =>
-              Math.min(maxSteps, Math.ceil(steps * 1.5)),
+              getNextVisibleSteps({
+                visibleSteps: steps,
+                maxSteps,
+                direction: 'out',
+              }),
             )
           }
         >
