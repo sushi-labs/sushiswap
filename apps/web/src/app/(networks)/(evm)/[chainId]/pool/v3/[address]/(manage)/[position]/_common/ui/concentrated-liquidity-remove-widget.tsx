@@ -43,6 +43,10 @@ import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import {
+  type SushiSwapV4LiquidityConfig,
+  encodeCLPositionManagerDecreaseLiquidityCalldata,
+} from 'src/lib/pool/v4'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
@@ -52,10 +56,11 @@ import {
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
+  type EvmAddress,
   type EvmCurrency,
   EvmNative,
   NonfungiblePositionManager,
-  type Position,
+  Position,
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   getEvmChainById,
@@ -75,11 +80,13 @@ import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch
 interface ConcentratedLiquidityRemoveWidget {
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
-  account: string | undefined
+  account: EvmAddress | undefined
   chainId: SushiSwapV3ChainId
   positionDetails: ConcentratedLiquidityPosition | undefined
   position: Position | undefined
   onChange?(val: string): void
+  infinity?: SushiSwapV4LiquidityConfig
+  tokenId?: bigint
 }
 
 export const ConcentratedLiquidityRemoveWidget: FC<
@@ -92,6 +99,8 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   chainId,
   position,
   positionDetails,
+  infinity,
+  tokenId,
 }) => {
   const { chain } = useConnection()
   const client = usePublicClient()
@@ -126,17 +135,19 @@ export const ConcentratedLiquidityRemoveWidget: FC<
 
       if (!position) return
 
-      sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
-        chain_id: chainId,
-        txHash: hash,
-        address: account,
-        source: LiquiditySource.V3,
-        label: [
-          position.amount0.currency.symbol,
-          position.amount1.currency.symbol,
-        ].join('/'),
-        ...trace,
-      })
+      if (!infinity) {
+        sendAnalyticsEvent(LiquidityEventName.REMOVE_LIQUIDITY_SUBMITTED, {
+          chain_id: chainId,
+          txHash: hash,
+          address: account,
+          source: LiquiditySource.V3,
+          label: [
+            position.amount0.currency.symbol,
+            position.amount1.currency.symbol,
+          ].join('/'),
+          ...trace,
+        })
+      }
 
       const receipt = client.waitForTransactionReceipt({ hash })
       receipt.then(() => {
@@ -159,7 +170,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
         groupTimestamp: ts,
       })
     },
-    [refetchBalances, client, position, account, chainId, trace],
+    [refetchBalances, client, position, account, chainId, infinity, trace],
   )
 
   const onError = useCallback((e: Error) => {
@@ -235,13 +246,45 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       expectedToken1 &&
       position &&
       account &&
-      positionDetails &&
+      (positionDetails || (infinity && tokenId !== undefined)) &&
       deadline &&
       liquidityValue0 &&
       liquidityValue1 &&
       liquidityPercentage.gt(ZERO) &&
       isSushiSwapV3ChainId(chainId)
     ) {
+      if (infinity && tokenId !== undefined) {
+        const liquidity = liquidityPercentage.mul(position.liquidity).quotient
+        const partialPosition = new Position({
+          pool: position.pool,
+          tickLower: position.tickLower,
+          tickUpper: position.tickUpper,
+          liquidity,
+        })
+        const { amount0, amount1 } =
+          partialPosition.burnAmountsWithSlippage(slippageTolerance)
+
+        return {
+          to: infinity.deployment.clPositionManager,
+          data: encodeCLPositionManagerDecreaseLiquidityCalldata({
+            tokenId,
+            poolKey: infinity.poolKey,
+            liquidity,
+            amount0Min: amount0,
+            amount1Min: amount1,
+            wrapAddress: receiveWrapped
+              ? nativeToken.wrap().address
+              : undefined,
+            recipient: account,
+            hookData: '0x',
+            deadline,
+          }),
+          value: 0n,
+        }
+      }
+
+      if (!positionDetails) return undefined
+
       const { calldata, value: _value } =
         NonfungiblePositionManager.removeCallParameters(position, {
           tokenId: positionDetails.tokenId.toString(),
@@ -256,20 +299,6 @@ export const ConcentratedLiquidityRemoveWidget: FC<
             recipient: account,
           },
         })
-
-      console.debug({
-        tokenId: positionDetails.tokenId.toString(),
-        liquidityPercentage,
-        slippageTolerance,
-        deadline: deadline.toString(),
-        collectOptions: {
-          expectedCurrencyOwed0:
-            feeValue0 ?? new Amount(liquidityValue0.currency, 0),
-          expectedCurrencyOwed1:
-            feeValue1 ?? new Amount(liquidityValue1.currency, 0),
-          recipient: account,
-        },
-      })
 
       return {
         to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
@@ -289,6 +318,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<
     debouncedValue,
     expectedToken0,
     expectedToken1,
+    infinity,
+    nativeToken,
+    receiveWrapped,
+    tokenId,
   ])
 
   const { isError: isSimulationError } = useCall({

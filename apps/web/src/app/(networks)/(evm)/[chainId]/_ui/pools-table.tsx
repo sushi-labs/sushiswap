@@ -14,6 +14,7 @@ import type {
   PoolChainId,
   Pools,
 } from '@sushiswap/graph-client/data-api'
+import { SUSHISWAP_V4 } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
@@ -71,7 +72,52 @@ const COLUMNS = [
   {
     id: 'actions',
     cell: ({ row }) =>
-      row.original.protocol === 'SUSHISWAP_V3' ? (
+      row.original.protocol === SUSHISWAP_V4 ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-fit">
+            <DropdownMenuLabel>
+              {row.original.name}
+              <Chip variant="blue" className="ml-2">
+                SushiSwap V4
+              </Chip>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(event) => event.stopPropagation()}
+                  shallow
+                  className="flex items-center"
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v4/${
+                    row.original.address
+                  }`}
+                >
+                  <ArrowDownRightIcon width={16} height={16} className="mr-2" />
+                  Pool details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  onClick={(event) => event.stopPropagation()}
+                  shallow
+                  className="flex items-center"
+                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v4/${
+                    row.original.address
+                  }/create`}
+                >
+                  <PlusIcon width={16} height={16} className="mr-2" />
+                  Create position
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : row.original.protocol === 'SUSHISWAP_V3' ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
@@ -287,7 +333,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
       search: Array.from(tokenSymbolsSet),
       onlyIncentivized: farmsOnly,
       onlySmartPools: smartPoolsOnly,
-      protocols,
+      protocols: protocols.length > 0 ? protocols : undefined,
       orderBy: sorting[0]?.id as GetPools['orderBy'],
       orderDirection: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : 'desc',
     }
@@ -371,7 +417,11 @@ export const PoolsTable: FC<PoolsTableProps> = ({
           loading={isLoading}
           linkFormatter={(row) =>
             `/${getEvmChainById(row.chainId).key}/pool/${
-              row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
+              row.protocol === SUSHISWAP_V4
+                ? 'v4'
+                : row.protocol === SushiSwapProtocol.SUSHISWAP_V2
+                  ? 'v2'
+                  : 'v3'
             }/${row.address}`
           }
           rowRenderer={rowRenderer}

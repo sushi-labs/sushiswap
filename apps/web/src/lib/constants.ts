@@ -1,4 +1,8 @@
 import {
+  SUSHISWAP_V4,
+  type SushiSwapV4Protocol,
+} from '@sushiswap/graph-client/data-api'
+import {
   SUSHI_DATA_API_HOST as PROD_SUSHI_DATA_API_HOST,
   SushiSwapProtocol,
 } from 'sushi/evm'
@@ -9,13 +13,20 @@ export const SUSHI_DATA_API_HOST =
   PROD_SUSHI_DATA_API_HOST
 
 export const SushiSwapCmsProtocols = [
+  SUSHISWAP_V4,
   SushiSwapProtocol.SUSHISWAP_V3,
   SushiSwapProtocol.SUSHISWAP_V2,
 ]
 
-export type SushiSwapCmsProtocol = (typeof SushiSwapCmsProtocols)[number]
+export type SushiSwapCmsProtocol =
+  | SushiSwapV4Protocol
+  | (typeof SushiSwapCmsProtocols)[number]
 
-export const PROTOCOL_MAP: Record<SushiSwapProtocol, string> = {
+export const PROTOCOL_MAP: Record<
+  SushiSwapCmsProtocol | typeof SushiSwapProtocol.BLADE,
+  string
+> = {
+  SUSHISWAP_V4: 'SushiSwap V4',
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
   BLADE: 'Blade',

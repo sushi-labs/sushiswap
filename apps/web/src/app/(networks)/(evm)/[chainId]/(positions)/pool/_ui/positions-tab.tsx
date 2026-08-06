@@ -15,9 +15,13 @@ import {
 import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
 
-import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
+import {
+  SUSHISWAP_V4,
+  isSmartPoolChainId,
+} from '@sushiswap/graph-client/data-api'
 import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
 import { useSearchParams } from 'next/navigation'
+import { isSushiSwapV4ChainId } from 'src/lib/pool/v4'
 import { SteerSmartPositionsTable } from 'src/lib/steer/components/steer-smart-positions-table'
 import {
   type BladeChainId,
@@ -34,6 +38,7 @@ import { ArbNovaNotice } from '~evm/[chainId]/_ui/arb-nova-notice'
 import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
+import { V4Positions } from '~evm/[chainId]/pool/v4/[poolId]/positions/v4-positions'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
@@ -49,6 +54,20 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
           <span>🍣</span>{' '}
           <span>
             SushiSwap <sup>v3</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'sushiswap-v4',
+      value: 'v4',
+      protocol: SUSHISWAP_V4,
+      disabled: !isSushiSwapV4ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v4</sup>
           </span>
         </div>
       ),
@@ -198,6 +217,11 @@ export const PositionsTab: FC<{
             hideClosedPositions={hideClosedPositions}
           />
         </TabsContent>
+        {isSushiSwapV4ChainId(chainId) ? (
+          <TabsContent value="v4">
+            <V4Positions chainId={chainId} />
+          </TabsContent>
+        ) : null}
         {isSushiSwapChainId(chainId) && (
           <TabsContent value="v2">
             <PositionsTable

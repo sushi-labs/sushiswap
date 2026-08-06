@@ -1,5 +1,6 @@
 'use client'
 
+import { TTLStorageKey } from '@sushiswap/hooks'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   LiquidityEventName,
@@ -8,11 +9,17 @@ import {
 } from '@sushiswap/telemetry'
 import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
+import {
+  type SushiSwapV4LiquidityConfig,
+  encodeCLPositionManagerDecreaseLiquidityCalldata,
+} from 'src/lib/pool/v4'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
 import { Amount, Fraction } from 'sushi'
 import {
   type EvmCurrency,
+  EvmNative,
   NonfungiblePositionManager,
   type Position,
   SUSHISWAP_V3_POSITION_MANAGER,
@@ -36,6 +43,9 @@ interface ConcentratedLiquidityCollectButton {
   token1: EvmCurrency | undefined
   account: `0x${string}` | undefined
   chainId: EvmChainId
+  infinity?: SushiSwapV4LiquidityConfig
+  tokenId?: bigint
+  receiveWrapped?: boolean
   children(
     params: Omit<
       ReturnType<typeof useSendTransaction>,
@@ -54,11 +64,18 @@ export const ConcentratedLiquidityCollectButton: FC<
   children,
   token0,
   token1,
+  infinity,
+  tokenId,
+  receiveWrapped = false,
 }) => {
   const { chain } = useConnection()
   const client = usePublicClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
+  const { data: deadline } = useTransactionDeadline({
+    storageKey: TTLStorageKey.RemoveLiquidity,
+    chainId,
+  })
 
   const prepare = useMemo(() => {
     if (
@@ -66,9 +83,33 @@ export const ConcentratedLiquidityCollectButton: FC<
       token1 &&
       position &&
       account &&
-      positionDetails &&
+      (positionDetails || (infinity && tokenId !== undefined)) &&
+      deadline &&
       isSushiSwapV3ChainId(chainId)
     ) {
+      if (infinity && tokenId !== undefined) {
+        return {
+          to: infinity.deployment.clPositionManager,
+          chainId,
+          data: encodeCLPositionManagerDecreaseLiquidityCalldata({
+            tokenId,
+            poolKey: infinity.poolKey,
+            liquidity: 0n,
+            amount0Min: 0n,
+            amount1Min: 0n,
+            wrapAddress: receiveWrapped
+              ? EvmNative.fromChainId(chainId).wrap().address
+              : undefined,
+            recipient: account,
+            hookData: '0x',
+            deadline,
+          }),
+          value: 0n,
+        } satisfies UseCallParameters
+      }
+
+      if (!positionDetails) return undefined
+
       const feeValue0 = positionDetails.fees
         ? new Amount(token0, positionDetails.fees[0])
         : undefined
@@ -98,7 +139,18 @@ export const ConcentratedLiquidityCollectButton: FC<
     }
 
     return undefined
-  }, [account, chainId, position, positionDetails, token0, token1])
+  }, [
+    account,
+    chainId,
+    deadline,
+    infinity,
+    position,
+    positionDetails,
+    receiveWrapped,
+    token0,
+    token1,
+    tokenId,
+  ])
 
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
@@ -171,12 +223,14 @@ export const ConcentratedLiquidityCollectButton: FC<
     return async () => {
       try {
         await sendTransactionAsync(prepare)
-        sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
-          chain_id: prepare.chainId,
-          address: account,
-          source: LiquiditySource.V3,
-          label: [token0?.symbol, token1?.symbol].join('/'),
-        })
+        if (!infinity) {
+          sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
+            chain_id: prepare.chainId,
+            address: account,
+            source: LiquiditySource.V3,
+            label: [token0?.symbol, token1?.symbol].join('/'),
+          })
+        }
       } catch {}
     }
   }, [
@@ -186,6 +240,7 @@ export const ConcentratedLiquidityCollectButton: FC<
     account,
     token0,
     token1,
+    infinity,
   ])
 
   return children({ ...rest, send })

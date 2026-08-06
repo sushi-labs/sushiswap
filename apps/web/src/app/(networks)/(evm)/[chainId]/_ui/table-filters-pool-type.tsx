@@ -1,6 +1,7 @@
 'use client'
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { SUSHISWAP_V4 } from '@sushiswap/graph-client/data-api'
 import { useMutationObserver } from '@sushiswap/hooks'
 import {
   Chip,
@@ -27,11 +28,14 @@ import { PROTOCOL_MAP, type SushiSwapCmsProtocol } from 'src/lib/constants'
 import { SushiSwapProtocol } from 'sushi/evm'
 
 export const POOL_TYPES = [
+  SUSHISWAP_V4,
   SushiSwapProtocol.SUSHISWAP_V3,
   SushiSwapProtocol.SUSHISWAP_V2,
 ]
 
 const POOL_DESCRIPTIONS = {
+  [SUSHISWAP_V4]:
+    'Infinity concentrated liquidity pools use a PoolKey and can optionally attach hooks that extend pool behavior.',
   [SushiSwapProtocol.SUSHISWAP_V3]:
     'A pool type known as concentrated liquidity, which maximizes capital efficiency by providing the liquidity in a pre-defined range around the current price of the pair. If a user’s position moves out of range, it will not be capturing fees and will need to adjust their range or wait for the price to return to it.',
   [SushiSwapProtocol.SUSHISWAP_V2]:

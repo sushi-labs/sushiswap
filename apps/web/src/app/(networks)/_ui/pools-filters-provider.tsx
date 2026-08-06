@@ -76,7 +76,7 @@ export const useSetPoolFilters = () => {
 
 const DEFAULT_STATE = {
   tokenSymbols: [],
-  protocols: POOL_TYPES,
+  protocols: [],
   farmsOnly: false,
   smartPoolsOnly: false,
 }

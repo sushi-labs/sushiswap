@@ -32,6 +32,12 @@ import {
 
 type FullRange = true
 
+export interface ConcentratedPoolState {
+  pool: SushiSwapV3Pool | null | undefined
+  isInitialLoading: boolean
+  isError: boolean
+}
+
 interface State {
   independentField: Field
   independentRangeField: Bound
@@ -223,6 +229,7 @@ export function useConcentratedDerivedMintInfo({
   chainId,
   feeAmount,
   existingPosition,
+  poolState,
 }: {
   account: string | undefined
   token0: EvmCurrency | undefined
@@ -231,6 +238,7 @@ export function useConcentratedDerivedMintInfo({
   chainId: SushiSwapV3ChainId
   feeAmount: SushiSwapV3FeeAmount | undefined
   existingPosition?: Position
+  poolState?: ConcentratedPoolState
 }): {
   pool?: SushiSwapV3Pool | null
   ticks: { [_bound in Bound]?: number | undefined }
@@ -298,14 +306,29 @@ export function useConcentratedDerivedMintInfo({
   )
 
   // pool
-  const usePool = useConcentratedLiquidityPool({
+  const v3PoolState = useConcentratedLiquidityPool({
     chainId,
     token0: currencies[Field.CURRENCY_A],
     token1: currencies[Field.CURRENCY_B],
     feeAmount,
+    enabled: !poolState,
   })
 
-  const { data: pool, isInitialLoading, isError } = usePool
+  const {
+    pool,
+    isInitialLoading,
+    isError,
+  }: {
+    pool: SushiSwapV3Pool | null | undefined
+    isInitialLoading: boolean
+    isError: boolean
+  } = poolState
+    ? poolState
+    : {
+        pool: v3PoolState.data,
+        isInitialLoading: v3PoolState.isInitialLoading,
+        isError: v3PoolState.isError,
+      }
   const noLiquidity = !isInitialLoading && !isError && !pool
 
   // note to parse inputs in reverse
@@ -754,7 +777,8 @@ export function useConcentratedDerivedMintInfo({
       depositBDisabled,
       invertPrice,
       ticksAtLimit,
-      ...usePool,
+      isLoading: poolState ? poolState.isInitialLoading : v3PoolState.isLoading,
+      isInitialLoading,
     }),
     [
       currencies,
@@ -777,7 +801,9 @@ export function useConcentratedDerivedMintInfo({
       rightBoundInput,
       ticks,
       ticksAtLimit,
-      usePool,
+      isInitialLoading,
+      poolState,
+      v3PoolState.isLoading,
     ],
   )
 }

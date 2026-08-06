@@ -5,11 +5,13 @@ import {
   CardCurrencyAmountItem,
   CardFooter,
   CardGroup,
+  CardItem,
   CardLabel,
   Switch,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
+import type { SushiSwapV4LiquidityConfig } from 'src/lib/pool/v4'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/Checker'
 import { Amount, formatUSD } from 'sushi'
@@ -33,6 +35,9 @@ interface ConcentratedLiquidityCollectWidget {
   address: EvmAddress | undefined
   amounts: undefined[] | Amount<EvmCurrency>[]
   fiatValuesAmounts: number[]
+  infinity?: SushiSwapV4LiquidityConfig
+  tokenId?: bigint
+  feesUnavailable?: boolean
 }
 
 export const ConcentratedLiquidityCollectWidget: FC<
@@ -47,6 +52,9 @@ export const ConcentratedLiquidityCollectWidget: FC<
   address,
   amounts,
   fiatValuesAmounts,
+  infinity,
+  tokenId,
+  feesUnavailable = false,
 }) => {
   const [receiveWrapped, setReceiveWrapped] = useState(false)
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
@@ -80,18 +88,24 @@ export const ConcentratedLiquidityCollectWidget: FC<
       <CardContent>
         <CardGroup>
           <CardLabel>Tokens</CardLabel>
-          <CardCurrencyAmountItem
-            amount={expectedAmount0}
-            isLoading={isLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[0])}
-            unwrap={false}
-          />
-          <CardCurrencyAmountItem
-            amount={expectedAmount1}
-            isLoading={isLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[1])}
-            unwrap={false}
-          />
+          {feesUnavailable ? (
+            <CardItem title="Fees are calculated by the Infinity position manager when collected." />
+          ) : (
+            <>
+              <CardCurrencyAmountItem
+                amount={expectedAmount0}
+                isLoading={isLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[0])}
+                unwrap={false}
+              />
+              <CardCurrencyAmountItem
+                amount={expectedAmount1}
+                isLoading={isLoading}
+                fiatValue={formatUSD(fiatValuesAmounts[1])}
+                unwrap={false}
+              />
+            </>
+          )}
         </CardGroup>
         {positionHasNativeToken ? (
           <div className="flex items-center justify-between">
@@ -113,6 +127,9 @@ export const ConcentratedLiquidityCollectWidget: FC<
           token1={expectedAmount1?.currency}
           account={address}
           chainId={chainId}
+          infinity={infinity}
+          tokenId={tokenId}
+          receiveWrapped={receiveWrapped}
         >
           {({ send, isPending }) => (
             <Checker.Connect fullWidth>

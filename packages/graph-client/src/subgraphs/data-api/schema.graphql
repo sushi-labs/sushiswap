@@ -774,6 +774,7 @@ enum OrderDirection {
 enum Protocol {
   SUSHISWAP_V2
   SUSHISWAP_V3
+  SUSHISWAP_V4
 }
 
 type Token {

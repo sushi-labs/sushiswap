@@ -31,6 +31,10 @@ import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
 import { logger } from 'src/lib/logger'
+import {
+  type SushiSwapV4LiquidityConfig,
+  addCLLiquidityMulticall,
+} from 'src/lib/pool/v4'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   getDefaultTTL,
@@ -47,7 +51,7 @@ import {
   getEvmChainById,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import type { Hex, SendTransactionReturnType } from 'viem'
+import { type Hex, type SendTransactionReturnType, zeroAddress } from 'viem'
 import {
   type UseCallParameters,
   useCall,
@@ -71,10 +75,11 @@ interface AddSectionReviewModalConcentratedProps
   input0: Amount<EvmCurrency> | undefined
   input1: Amount<EvmCurrency> | undefined
   existingPosition: Position | undefined
-  tokenId: number | string | undefined
+  tokenId: bigint | number | string | undefined
   children: ReactNode
   onSuccess: () => void
   successLink?: string
+  infinity?: SushiSwapV4LiquidityConfig
 }
 
 export const AddSectionReviewModalConcentrated: FC<
@@ -96,6 +101,7 @@ export const AddSectionReviewModalConcentrated: FC<
   tokenId,
   onSuccess: _onSuccess,
   successLink,
+  infinity,
 }) => {
   const { address, chain } = useConnection()
   const { data: deadline } = useTransactionDeadline({
@@ -161,21 +167,23 @@ export const AddSectionReviewModalConcentrated: FC<
 
       if (!token0 || !token1) return
 
-      sendAnalyticsEvent(LiquidityEventName.ADD_LIQUIDITY_SUBMITTED, {
-        chain_id: chainId,
-        address,
-        txHash: hash,
-        source: LiquiditySource.V3,
-        label: [token0.symbol, token1.symbol].join('/'),
-        token0_address:
-          token0.type === 'native' ? NativeAddress : token0.address,
-        token0_amount: input0?.amount,
-        token1_address:
-          token1.type === 'native' ? NativeAddress : token1.address,
-        token1_amount: input1?.amount,
-        create_pool: noLiquidity,
-        ...trace,
-      })
+      if (!infinity) {
+        sendAnalyticsEvent(LiquidityEventName.ADD_LIQUIDITY_SUBMITTED, {
+          chain_id: chainId,
+          address,
+          txHash: hash,
+          source: LiquiditySource.V3,
+          label: [token0.symbol, token1.symbol].join('/'),
+          token0_address:
+            token0.type === 'native' ? NativeAddress : token0.address,
+          token0_amount: input0?.amount,
+          token1_address:
+            token1.type === 'native' ? NativeAddress : token1.address,
+          token1_amount: input1?.amount,
+          create_pool: noLiquidity,
+          ...trace,
+        })
+      }
 
       const receipt = client.waitForTransactionReceipt({ hash })
       receipt.then(() => {
@@ -216,6 +224,7 @@ export const AddSectionReviewModalConcentrated: FC<
       trace,
       input0,
       input1,
+      infinity,
     ],
   )
 
@@ -242,6 +251,43 @@ export const AddSectionReviewModalConcentrated: FC<
       !deadline
     )
       return undefined
+
+    if (infinity) {
+      const { amount0, amount1 } =
+        position.mintAmountsWithSlippage(slippageTolerance)
+      const data = addCLLiquidityMulticall({
+        isInitialized: infinity.isInitialized,
+        sqrtPriceX96: position.pool.sqrtRatioX96,
+        tokenId:
+          hasExistingPosition && tokenId !== undefined
+            ? BigInt(tokenId)
+            : undefined,
+        positionConfig: {
+          poolKey: infinity.poolKey,
+          tickLower: position.tickLower,
+          tickUpper: position.tickUpper,
+        },
+        liquidity: position.liquidity,
+        recipient: address,
+        amount0Max: amount0,
+        amount1Max: amount1,
+        deadline,
+        modifyPositionHookData: '0x',
+      })
+
+      return {
+        to: infinity.deployment.clPositionManager,
+        account: address,
+        chainId,
+        data,
+        value:
+          infinity.poolKey.currency0 === zeroAddress
+            ? amount0
+            : infinity.poolKey.currency1 === zeroAddress
+              ? amount1
+              : 0n,
+      } as const satisfies UseCallParameters
+    }
 
     const useNative =
       token0.type === 'native'
@@ -283,6 +329,7 @@ export const AddSectionReviewModalConcentrated: FC<
     token0,
     token1,
     tokenId,
+    infinity,
   ])
 
   const { isError: isSimulationError } = useCall({

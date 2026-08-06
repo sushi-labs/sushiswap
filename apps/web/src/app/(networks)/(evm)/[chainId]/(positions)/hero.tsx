@@ -12,6 +12,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { isSushiSwapV4ChainId } from 'src/lib/pool/v4'
 import {
   EvmChainId,
   getEvmChainById,
@@ -72,6 +73,27 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    disabled={!isSushiSwapV4ChainId(chainId)}
+                    asChild
+                  >
+                    <LinkInternal
+                      href={`/${getEvmChainById(chainId).key}/pool/v4/add`}
+                      className="flex flex-col !items-start gap-1 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-1 font-medium leading-none">
+                        V4 Position
+                        <Chip variant="secondary">
+                          {isSushiSwapV4ChainId(chainId)
+                            ? 'Infinity'
+                            : 'Unavailable'}
+                        </Chip>
+                      </div>
+                      <p className="text-sm leading-snug text-muted-foreground">
+                        Provide concentrated liquidity with optional hooks.
+                      </p>
+                    </LinkInternal>
+                  </DropdownMenuItem>
                   <DropdownMenuItem disabled={!isBladeChain} asChild>
                     <LinkInternal
                       href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}

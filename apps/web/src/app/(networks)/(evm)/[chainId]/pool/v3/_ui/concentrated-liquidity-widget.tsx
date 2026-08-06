@@ -41,6 +41,10 @@ import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ZAP_LEGACY, Bound, Field } from 'src/lib/constants'
 import { useV3Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import {
+  InfinityPermit2Approval,
+  type SushiSwapV4LiquidityConfig,
+} from 'src/lib/pool/v4'
 import { warningSeverity } from 'src/lib/swap/warningSeverity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
@@ -61,6 +65,7 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import {
+  type ConcentratedPoolState,
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
@@ -79,11 +84,13 @@ interface ConcentratedLiquidityWidget {
   setToken0?(token: EvmCurrency): void
   setToken1?(token: EvmCurrency): void
   tokensLoading: boolean
-  tokenId: number | string | undefined
+  tokenId: bigint | number | string | undefined
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
   successLink?: string
   withTitleAndDescription?: boolean
+  poolState?: ConcentratedPoolState
+  infinity?: SushiSwapV4LiquidityConfig
 }
 
 export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
@@ -98,14 +105,20 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     tokenId,
     existingPosition,
     withTitleAndDescription = true,
+    poolState,
+    infinity,
   } = props
 
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const { data: owner, isInitialLoading: isOwnerLoading } =
-    useConcentratedPositionOwner({ chainId, tokenId })
+    useConcentratedPositionOwner({
+      chainId,
+      tokenId: infinity ? undefined : tokenId?.toString(),
+    })
 
-  const isOwner = owner === account
+  const positionOwner = infinity?.owner ?? owner
+  const isOwner = positionOwner === account
 
   const derivedMintInfo = useConcentratedDerivedMintInfo({
     chainId,
@@ -115,6 +128,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     baseToken: token0,
     feeAmount,
     existingPosition,
+    poolState,
   })
 
   // An arbitrarily picked threshold to show a warning when the current price is close to the min or max tick
@@ -133,7 +147,11 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
   const { outOfRange, invalidRange, pool } = derivedMintInfo
 
   const isZapSupported = Boolean(
-    isZapSupportedChainId(chainId) && !existingPosition && !tokenId && pool,
+    !infinity &&
+      isZapSupportedChainId(chainId) &&
+      !existingPosition &&
+      !tokenId &&
+      pool,
   )
 
   useEffect(() => {
@@ -150,7 +168,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
         <Message size="sm" variant="destructive">
           You are not the owner of this LP position. You will not be able to
           withdraw the liquidity from this position unless you own the following
-          address: {owner}
+          address: {positionOwner}
         </Message>
       ) : null}
       {outOfRange ? (
@@ -258,6 +276,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
   existingPosition,
   onChange,
   successLink,
+  infinity,
   derivedMintInfo: {
     dependentField,
     parsedAmounts,
@@ -430,46 +449,85 @@ const WidgetContent: FC<WidgetContentProps> = ({
                 fullWidth
                 id="approve-erc20-0"
                 amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                contract={
+                  infinity
+                    ? infinity.deployment.permit2
+                    : SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                }
                 enabled={!depositADisabled}
               >
                 <Checker.ApproveERC20
                   fullWidth
                   id="approve-erc20-1"
                   amount={parsedAmounts[Field.CURRENCY_B]}
-                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                  contract={
+                    infinity
+                      ? infinity.deployment.permit2
+                      : SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                  }
                   enabled={!depositBDisabled}
                 >
-                  <AddSectionReviewModalConcentrated
+                  <InfinityPermit2Approval
+                    amount={
+                      infinity ? parsedAmounts[Field.CURRENCY_A] : undefined
+                    }
                     chainId={chainId}
-                    feeAmount={feeAmount}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedAmounts[Field.CURRENCY_A]}
-                    input1={parsedAmounts[Field.CURRENCY_B]}
-                    position={position}
-                    noLiquidity={noLiquidity}
-                    price={price}
-                    pricesAtTicks={pricesAtTicks}
-                    ticksAtLimit={ticksAtLimit}
-                    tokenId={tokenId}
-                    existingPosition={existingPosition}
-                    onSuccess={() => {
-                      _onFieldAInput('')
-                      _onFieldBInput('')
-                    }}
-                    successLink={successLink}
+                    permit2={
+                      infinity?.deployment.permit2 ??
+                      SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                    }
+                    spender={
+                      infinity?.deployment.clPositionManager ??
+                      SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                    }
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        fullWidth
-                        size="xl"
-                        testId="add-liquidity-preview"
+                    <InfinityPermit2Approval
+                      amount={
+                        infinity ? parsedAmounts[Field.CURRENCY_B] : undefined
+                      }
+                      chainId={chainId}
+                      permit2={
+                        infinity?.deployment.permit2 ??
+                        SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                      }
+                      spender={
+                        infinity?.deployment.clPositionManager ??
+                        SUSHISWAP_V3_POSITION_MANAGER[chainId]
+                      }
+                    >
+                      <AddSectionReviewModalConcentrated
+                        chainId={chainId}
+                        feeAmount={feeAmount}
+                        token0={token0}
+                        token1={token1}
+                        input0={parsedAmounts[Field.CURRENCY_A]}
+                        input1={parsedAmounts[Field.CURRENCY_B]}
+                        position={position}
+                        noLiquidity={noLiquidity}
+                        price={price}
+                        pricesAtTicks={pricesAtTicks}
+                        ticksAtLimit={ticksAtLimit}
+                        tokenId={tokenId}
+                        existingPosition={existingPosition}
+                        infinity={infinity}
+                        onSuccess={() => {
+                          _onFieldAInput('')
+                          _onFieldBInput('')
+                        }}
+                        successLink={successLink}
                       >
-                        Preview
-                      </Button>
-                    </DialogTrigger>
-                  </AddSectionReviewModalConcentrated>
+                        <DialogTrigger asChild>
+                          <Button
+                            fullWidth
+                            size="xl"
+                            testId="add-liquidity-preview"
+                          >
+                            Preview
+                          </Button>
+                        </DialogTrigger>
+                      </AddSectionReviewModalConcentrated>
+                    </InfinityPermit2Approval>
+                  </InfinityPermit2Approval>
                 </Checker.ApproveERC20>
               </Checker.ApproveERC20>
             </Checker.Slippage>

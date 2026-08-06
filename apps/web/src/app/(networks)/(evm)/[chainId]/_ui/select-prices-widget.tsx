@@ -59,6 +59,7 @@ import { Amount, Fraction, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'
 import { LiquidityChartRangeInput } from './LiquidityChartRangeInput'
 import {
+  type ConcentratedPoolState,
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
@@ -105,6 +106,8 @@ interface SelectPricesWidget {
   tokenId: string | undefined
   children?: ReactNode
   showStartPrice?: boolean
+  poolState?: ConcentratedPoolState
+  hasExistingPosition?: boolean
 }
 
 export const SelectPricesWidget: FC<SelectPricesWidget> = ({
@@ -117,6 +120,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   tokenId,
   children,
   showStartPrice = true,
+  poolState,
+  hasExistingPosition: hasExistingPositionOverride,
 }) => {
   const isMounted = useIsMounted()
   const { address } = useConnection()
@@ -148,6 +153,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     baseToken: token0,
     feeAmount,
     existingPosition: undefined,
+    poolState,
   })
 
   const {
@@ -172,7 +178,8 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       chainId,
       tokenId,
     })
-  const hasExistingPosition = !!existingPosition && !positionLoading
+  const hasExistingPosition =
+    hasExistingPositionOverride ?? (!!existingPosition && !positionLoading)
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
