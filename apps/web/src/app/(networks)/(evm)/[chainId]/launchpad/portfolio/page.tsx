@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: 'Launchpad Portfolio',
   description:
     'View launchpad token holdings and performance for your connected wallet.',
+  // Wallet-specific, so there is nothing here worth indexing.
+  robots: { index: false, follow: true },
 }
 
 export default async function LaunchpadPortfolioPage({
