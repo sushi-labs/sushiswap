@@ -20,7 +20,7 @@ import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/typ
 
 const DEFAULT_CHART_WIDTH = 600
 const DEFAULT_CHART_HEIGHT = 380
-const MARGIN = { top: 18, right: 16, bottom: 38, left: 16 }
+const MARGIN = { top: 26, right: 16, bottom: 38, left: 16 }
 const SELL_COLOR = '#22c55e'
 const BUY_COLOR = '#ef4444'
 
