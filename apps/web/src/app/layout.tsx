@@ -13,10 +13,16 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
+const metadataBase = new URL(
+  process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://www.sushi.com',
+)
+
 export const metadata: Metadata = {
-  // Resolves file-convention images (opengraph-image) and any relative URL to
-  // the canonical host instead of the request origin.
-  metadataBase: new URL('https://www.sushi.com'),
+  // Resolve relative metadata URLs against the Vercel deployment so preview
+  // deployments point to routes that exist on that deployment.
+  metadataBase,
   title: {
     default: 'Sushi 🍣',
     template: '%s | Sushi 🍣',

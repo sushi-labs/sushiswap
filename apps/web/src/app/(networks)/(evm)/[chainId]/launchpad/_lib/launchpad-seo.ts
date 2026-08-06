@@ -140,8 +140,9 @@ export function getLaunchpadTokenUrl(token: LaunchpadToken): string {
 }
 
 /**
- * Relative on purpose: Next resolves it against metadataBase, which keeps the
- * card pointing at the deployment that rendered it (localhost, preview, prod).
+ * Relative on purpose: Next resolves it against metadataBase, which uses the
+ * Vercel deployment URL when available so previews point to their own card
+ * route.
  */
 export function getLaunchpadTokenCardPath(
   token: LaunchpadToken,
