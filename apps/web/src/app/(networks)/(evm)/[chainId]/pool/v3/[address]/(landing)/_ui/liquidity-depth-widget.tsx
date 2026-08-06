@@ -51,7 +51,7 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
 
   return (
     <>
-      {isLoading && <SkeletonBox className="h-[360px] w-full" />}
+      {isLoading && <SkeletonBox className="h-[380px] w-full" />}
       {!noLiquidity && !isLoading && data && current && poolStats && (
         <DepthChart
           series={data}

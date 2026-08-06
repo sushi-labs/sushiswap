@@ -47,7 +47,7 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
   }, [chart])
 
   return (
-    <Card>
+    <Card className="self-start overflow-hidden">
       <div className="border-b border-accent px-6 py-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex mx-auto">
           <PoolChartTypes
@@ -72,6 +72,7 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
           period={period}
           pool={pool}
           protocol={SushiSwapProtocol.SUSHISWAP_V3}
+          height={260}
         />
       )}
     </Card>

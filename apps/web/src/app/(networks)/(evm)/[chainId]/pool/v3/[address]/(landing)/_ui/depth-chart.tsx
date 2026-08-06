@@ -13,15 +13,14 @@ import React, {
   useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
 
-const CHART_WIDTH = 600
-const CHART_HEIGHT = 320
-const MARGIN = { top: 18, right: 68, bottom: 38, left: 16 }
-const INNER_WIDTH = CHART_WIDTH - MARGIN.left - MARGIN.right
-const INNER_HEIGHT = CHART_HEIGHT - MARGIN.top - MARGIN.bottom
+const DEFAULT_CHART_WIDTH = 600
+const DEFAULT_CHART_HEIGHT = 380
+const MARGIN = { top: 18, right: 16, bottom: 38, left: 16 }
 const SELL_COLOR = '#22c55e'
 const BUY_COLOR = '#ef4444'
 
@@ -224,6 +223,13 @@ export function DepthChart({
   token1Decimals,
 }: DepthChartProps) {
   const id = useId().replaceAll(':', '')
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [{ width: chartWidth, height: chartHeight }, setChartSize] = useState({
+    width: DEFAULT_CHART_WIDTH,
+    height: DEFAULT_CHART_HEIGHT,
+  })
+  const innerWidth = Math.max(1, chartWidth - MARGIN.left - MARGIN.right)
+  const innerHeight = Math.max(1, chartHeight - MARGIN.top - MARGIN.bottom)
   const data = useMemo(
     () =>
       buildPoolDepthData({
@@ -243,6 +249,19 @@ export function DepthChart({
     setVisibleSteps(initialVisibleSteps)
   }, [initialVisibleSteps])
 
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setChartSize({ width, height })
+    })
+    observer.observe(container)
+
+    return () => observer.disconnect()
+  }, [])
+
   const visibleData = useMemo(
     () => ({
       sell: data.sell.filter(
@@ -259,8 +278,8 @@ export function DepthChart({
     () =>
       scaleLinear()
         .domain([-visibleSteps - 0.5, visibleSteps + 0.5])
-        .range([0, INNER_WIDTH]),
-    [visibleSteps],
+        .range([0, innerWidth]),
+    [innerWidth, visibleSteps],
   )
   const maxDepth =
     max([...visibleData.sell, ...visibleData.buy], ({ depth }) => depth) ?? 0
@@ -268,9 +287,9 @@ export function DepthChart({
     () =>
       scaleLinear()
         .domain([0, maxDepth > 0 ? maxDepth * 1.08 : 1])
-        .range([INNER_HEIGHT, 0])
+        .range([innerHeight, 0])
         .nice(),
-    [maxDepth],
+    [innerHeight, maxDepth],
   )
 
   const createArea = useCallback(
@@ -278,9 +297,9 @@ export function DepthChart({
       area<DepthPoint>()
         .curve(curveStepAfter)
         .x(({ logicalIndex }) => xScale(logicalIndex))
-        .y0(INNER_HEIGHT)
+        .y0(innerHeight)
         .y1(({ depth }) => yScale(depth))(points) ?? undefined,
-    [xScale, yScale],
+    [innerHeight, xScale, yScale],
   )
   const renderData = useMemo(() => {
     const leftEdge = -visibleSteps - 0.5
@@ -302,7 +321,6 @@ export function DepthChart({
   const sellPath = createArea(renderData.sell)
   const buyPath = createArea(renderData.buy)
   const axisPoints = getAxisPoints(visibleData.sell, visibleData.buy)
-  const yTicks = yScale.ticks(4).filter((tick) => tick > 0)
   const interactivePoints = [...visibleData.sell, ...visibleData.buy].filter(
     ({ logicalIndex }) => logicalIndex !== 0,
   )
@@ -312,7 +330,7 @@ export function DepthChart({
       if (interactivePoints.length === 0) return
       const bounds = event.currentTarget.getBoundingClientRect()
       const chartX =
-        ((event.clientX - bounds.left) / bounds.width) * CHART_WIDTH -
+        ((event.clientX - bounds.left) / bounds.width) * chartWidth -
         MARGIN.left
       const logicalIndex = xScale.invert(chartX)
       const nearest = interactivePoints.reduce((closest, point) =>
@@ -323,7 +341,7 @@ export function DepthChart({
       )
       setHoveredPoint(nearest)
     },
-    [interactivePoints, xScale],
+    [chartWidth, interactivePoints, xScale],
   )
 
   const hoverX = hoveredPoint ? xScale(hoveredPoint.logicalIndex) : null
@@ -331,75 +349,68 @@ export function DepthChart({
   const rangePercent = hoveredPoint
     ? ((hoveredPoint.price - currentPrice) / currentPrice) * 100
     : 0
-  const tooltipLeft = hoverX ? ((hoverX + MARGIN.left) / CHART_WIDTH) * 100 : 50
+  const tooltipLeft = hoverX ? ((hoverX + MARGIN.left) / chartWidth) * 100 : 50
 
   if (data.sell.length <= 1 && data.buy.length <= 1) {
     return (
-      <div className="flex h-[360px] items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-[380px] items-center justify-center text-sm text-muted-foreground">
         Liquidity depth is unavailable for this pool.
       </div>
     )
   }
 
   return (
-    <div className="relative min-h-[360px] overflow-hidden px-4 pb-3 pt-5 sm:px-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="text-xs font-medium text-muted-foreground">
-            Current price
-          </div>
-          <div className="mt-1 text-lg font-semibold tracking-tight">
-            1 {baseSymbol} = {formatNumber(currentPrice)} {quoteSymbol}
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            aria-label="Zoom in"
-            disabled={visibleSteps <= 1}
-            onClick={() =>
-              setVisibleSteps((steps) => Math.max(1, Math.ceil(steps / 1.5)))
-            }
-          >
-            <MagnifyingGlassPlusIcon width={18} height={18} />
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            aria-label="Zoom out"
-            disabled={visibleSteps >= maxSteps}
-            onClick={() =>
-              setVisibleSteps((steps) =>
-                Math.min(maxSteps, Math.ceil(steps * 1.5)),
-              )
-            }
-          >
-            <MagnifyingGlassMinusIcon width={18} height={18} />
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            aria-label="Reset zoom"
-            disabled={visibleSteps === initialVisibleSteps}
-            onClick={() => setVisibleSteps(initialVisibleSteps)}
-          >
-            <ArrowPathIcon width={18} height={18} />
-          </Button>
-        </div>
+    <div
+      ref={containerRef}
+      className="relative h-[380px] w-full overflow-hidden"
+    >
+      <div className="absolute right-4 top-4 z-10 flex gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          aria-label="Zoom in"
+          disabled={visibleSteps <= 1}
+          onClick={() =>
+            setVisibleSteps((steps) => Math.max(1, Math.ceil(steps / 1.5)))
+          }
+        >
+          <MagnifyingGlassPlusIcon width={18} height={18} />
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          aria-label="Zoom out"
+          disabled={visibleSteps >= maxSteps}
+          onClick={() =>
+            setVisibleSteps((steps) =>
+              Math.min(maxSteps, Math.ceil(steps * 1.5)),
+            )
+          }
+        >
+          <MagnifyingGlassMinusIcon width={18} height={18} />
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          aria-label="Reset zoom"
+          disabled={visibleSteps === initialVisibleSteps}
+          onClick={() => setVisibleSteps(initialVisibleSteps)}
+        >
+          <ArrowPathIcon width={18} height={18} />
+        </Button>
       </div>
 
       <svg
         role="img"
         aria-label={`${baseSymbol} and ${quoteSymbol} liquidity depth`}
-        className="mt-3 h-auto w-full touch-none select-none"
-        viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
+        className="h-full w-full touch-none select-none"
+        viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         onPointerMove={handlePointerMove}
         onPointerLeave={() => setHoveredPoint(null)}
       >
         <defs>
           <clipPath id={`${id}-clip`}>
-            <rect width={INNER_WIDTH} height={INNER_HEIGHT} />
+            <rect width={innerWidth} height={innerHeight} />
           </clipPath>
           <linearGradient id={`${id}-sell`} x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor={SELL_COLOR} stopOpacity="0.42" />
@@ -409,44 +420,9 @@ export function DepthChart({
             <stop offset="0%" stopColor={BUY_COLOR} stopOpacity="0.42" />
             <stop offset="100%" stopColor={BUY_COLOR} stopOpacity="0.04" />
           </linearGradient>
-          <pattern
-            id={`${id}-dots`}
-            width="24"
-            height="24"
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx="1" cy="1" r="1" fill="currentColor" opacity="0.12" />
-          </pattern>
         </defs>
 
         <g transform={`translate(${MARGIN.left},${MARGIN.top})`}>
-          <rect
-            width={INNER_WIDTH}
-            height={INNER_HEIGHT}
-            fill={`url(#${id}-dots)`}
-            className="text-slate-400"
-          />
-          {yTicks.map((tick) => (
-            <g key={tick}>
-              <line
-                x1={0}
-                x2={INNER_WIDTH}
-                y1={yScale(tick)}
-                y2={yScale(tick)}
-                stroke="currentColor"
-                strokeDasharray="2 6"
-                className="text-slate-300 dark:text-slate-700"
-              />
-              <text
-                x={INNER_WIDTH + 10}
-                y={yScale(tick) + 4}
-                className="fill-slate-400 text-[10px]"
-              >
-                {formatNumber(tick)}
-              </text>
-            </g>
-          ))}
-
           <g clipPath={`url(#${id}-clip)`}>
             <path
               d={sellPath}
@@ -466,7 +442,7 @@ export function DepthChart({
               x1={xScale(0)}
               x2={xScale(0)}
               y1={0}
-              y2={INNER_HEIGHT}
+              y2={innerHeight}
               stroke="currentColor"
               strokeDasharray="4 5"
               className="text-slate-500"
@@ -477,7 +453,7 @@ export function DepthChart({
                   x1={hoverX}
                   x2={hoverX}
                   y1={0}
-                  y2={INNER_HEIGHT}
+                  y2={innerHeight}
                   stroke="currentColor"
                   strokeDasharray="3 4"
                   className="text-slate-400"
@@ -496,9 +472,9 @@ export function DepthChart({
 
           <line
             x1={0}
-            x2={INNER_WIDTH}
-            y1={INNER_HEIGHT}
-            y2={INNER_HEIGHT}
+            x2={innerWidth}
+            y1={innerHeight}
+            y2={innerHeight}
             stroke="currentColor"
             className="text-slate-300 dark:text-slate-700"
           />
@@ -506,30 +482,13 @@ export function DepthChart({
             <text
               key={`${point.side}-${point.logicalIndex}`}
               x={xScale(point.logicalIndex)}
-              y={INNER_HEIGHT + 24}
+              y={innerHeight + 24}
               textAnchor="middle"
               className="fill-slate-400 text-[10px]"
             >
               {formatNumber(point.price)}
             </text>
           ))}
-          <text
-            x={4}
-            y={14}
-            fill={SELL_COLOR}
-            className="text-[10px] font-medium"
-          >
-            Sell {baseSymbol}
-          </text>
-          <text
-            x={INNER_WIDTH - 4}
-            y={14}
-            textAnchor="end"
-            fill={BUY_COLOR}
-            className="text-[10px] font-medium"
-          >
-            Buy {baseSymbol}
-          </text>
         </g>
       </svg>
 
@@ -538,7 +497,7 @@ export function DepthChart({
           className="pointer-events-none absolute z-20 min-w-44 rounded-xl border border-accent bg-background/95 p-3 text-xs shadow-xl backdrop-blur"
           style={{
             left: `${tooltipLeft}%`,
-            top: 86,
+            top: 56,
             transform:
               tooltipLeft > 70 ? 'translateX(-100%)' : 'translateX(8px)',
           }}
