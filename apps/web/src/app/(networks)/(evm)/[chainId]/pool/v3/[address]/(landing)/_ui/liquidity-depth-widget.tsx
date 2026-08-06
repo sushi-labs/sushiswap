@@ -2,13 +2,12 @@
 
 import { SkeletonBox } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { Bound } from 'src/lib/constants'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import type { SushiSwapV3ChainId } from 'sushi/evm'
 import type { Address } from 'viem'
-import { LiquidityChartRangeInput } from '~evm/[chainId]/_ui/LiquidityChartRangeInput'
 import { useDensityChartData } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/hooks'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { DepthChart } from './depth-chart'
 
 interface LiquidityDepthWidget {
   address: Address
@@ -52,29 +51,15 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
 
   return (
     <>
-      {isLoading && <SkeletonBox className="w-full h-full" />}
+      {isLoading && <SkeletonBox className="h-[380px] w-full" />}
       {!noLiquidity && !isLoading && data && current && poolStats && (
-        <LiquidityChartRangeInput
-          chainId={chainId}
-          currencyA={poolStats.token0}
-          currencyB={poolStats.token1}
-          feeAmount={poolStats.feeAmount}
-          ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
-          price={
-            price
-              ? Number.parseFloat(
-                  (invertPrice ? price.invert() : price).toSignificant(8),
-                )
-              : undefined
-          }
-          weightLockedCurrencyBase={undefined}
-          priceRange={undefined}
-          priceLower={undefined}
-          priceUpper={undefined}
-          interactive={false}
-          hideBrushes={true}
-          onLeftRangeInput={() => {}}
-          onRightRangeInput={() => {}}
+        <DepthChart
+          series={data}
+          currentPrice={current}
+          baseSymbol={poolStats.token0.symbol ?? 'Token 0'}
+          quoteSymbol={poolStats.token1.symbol ?? 'Token 1'}
+          token0Decimals={poolStats.token0.decimals}
+          token1Decimals={poolStats.token1.decimals}
         />
       )}
     </>
