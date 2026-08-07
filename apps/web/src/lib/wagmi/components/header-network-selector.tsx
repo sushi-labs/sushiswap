@@ -3,7 +3,7 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { type FC, Suspense, useCallback } from 'react'
+import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useSwitchChain } from 'src/lib/wallet'
@@ -72,18 +72,16 @@ export const HeaderNetworkSelector: FC<{
         testId="network-selector"
         className={className}
       >
-        <Suspense fallback={null}>
-          <NetworkIcon
-            chainId={selectedNetwork ?? chainId}
-            width={20}
-            height={20}
-          />
-          {hideNetworkName ? null : (
-            <div className="hidden xl:block">
-              {getNetworkName(selectedNetwork ?? chainId)}
-            </div>
-          )}
-        </Suspense>
+        <NetworkIcon
+          chainId={selectedNetwork ?? chainId}
+          width={20}
+          height={20}
+        />
+        {hideNetworkName ? null : (
+          <div className="hidden xl:block">
+            {getNetworkName(selectedNetwork ?? chainId)}
+          </div>
+        )}
       </Button>
     </NetworkSelector>
   )
