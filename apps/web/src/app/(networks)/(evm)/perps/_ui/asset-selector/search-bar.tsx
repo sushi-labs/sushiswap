@@ -1,7 +1,7 @@
 import { XIcon } from '@heroicons/react-v1/solid'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { useBreakpoint } from '@sushiswap/hooks'
-import { IconButton, TextField } from '@sushiswap/ui'
+import { IconButton, TextField, classNames } from '@sushiswap/ui'
 import { useAssetSelectorState } from './asset-selector-provider'
 
 export const SearchBar = () => {
@@ -10,25 +10,29 @@ export const SearchBar = () => {
     mutate: { setSearch, setOpen },
   } = useAssetSelectorState()
   const { isLg } = useBreakpoint('lg')
+
   return (
-    <div className="relative border-b border-white/[0.03] mb-2">
-      <TextField
-        placeholder="Search"
-        icon={MagnifyingGlassIcon}
-        iconProps={{
-          className: 'text-perps-muted',
-        }}
-        type="text"
-        value={search}
-        onValueChange={setSearch}
-        className="!bg-transparent mr-10"
-        autoFocus={isLg}
-        id="asset-search"
-      />
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:block hidden">
-        <CommandK />
+    <div className="flex items-center gap-2 border-b border-white/[0.03] mb-2 pr-2">
+      <div className="relative min-w-0 flex-1">
+        <TextField
+          placeholder="Search"
+          icon={MagnifyingGlassIcon}
+          iconProps={{
+            className: 'text-perps-muted',
+          }}
+          type="text"
+          value={search}
+          onValueChange={setSearch}
+          className="!bg-transparent lg:pr-12"
+          autoFocus={isLg}
+          id="asset-search"
+        />
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 lg:block hidden">
+          <CommandK />
+        </div>
       </div>
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden block">
+      <AssetListModeToggle />
+      <div className="lg:hidden block">
         <IconButton
           icon={XIcon}
           name="close assets"
@@ -37,6 +41,42 @@ export const SearchBar = () => {
           size="sm"
         />
       </div>
+    </div>
+  )
+}
+
+const AssetListModeToggle = () => {
+  const {
+    state: { listMode },
+    mutate: { setListMode },
+  } = useAssetSelectorState()
+
+  return (
+    <div
+      className="flex h-7 shrink-0 items-center rounded-md border border-white/[0.08] bg-white/[0.04] p-0.5"
+      aria-label="Asset list mode"
+      role="group"
+    >
+      {(['strict', 'all'] as const).map((mode) => {
+        const selected = listMode === mode
+
+        return (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => setListMode(mode)}
+            className={classNames(
+              'h-6 min-w-[48px] px-2 text-xs font-medium capitalize rounded-[4px] transition-colors',
+              selected
+                ? 'bg-white/[0.1] text-white'
+                : 'text-perps-muted hover:text-white',
+            )}
+          >
+            {mode}
+          </button>
+        )
+      })}
     </div>
   )
 }

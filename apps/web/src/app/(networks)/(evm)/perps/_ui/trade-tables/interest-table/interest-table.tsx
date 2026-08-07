@@ -1,5 +1,9 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
-import type { ColumnDef, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  PaginationState,
+  TableState,
+} from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import {
   type UserBorrowLendInterestItemType,
@@ -28,18 +32,26 @@ const MOBILE_COLUMNS = [
   EARNED_COLUMN,
 ] as ColumnDef<UserBorrowLendInterestItemType, unknown>[]
 
-const startTime = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days ago
+export const INTEREST_HISTORY_START_TIME =
+  Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 30 // 30 days ago
 
-export const InterestTable = () => {
+export const InterestTable = ({
+  isViewAll = false,
+}: { isViewAll?: boolean }) => {
   const { isLg } = useBreakpoint('lg')
   const {
     state: { activeAddress },
   } = useActiveAccountState()
   const { data, isLoading, isError } = useUserBorrowLendInterest({
     address: activeAddress,
-    startTime,
+    startTime: INTEREST_HISTORY_START_TIME,
+    isViewAll,
   })
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  })
 
   const tableData = useMemo(() => {
     if (isError || !data) return []
@@ -48,6 +60,12 @@ export const InterestTable = () => {
   }, [data, isError])
 
   const state: Partial<TableState> = useMemo(() => {
+    if (isViewAll) {
+      return {
+        sorting,
+        pagination: paginationState,
+      }
+    }
     return {
       sorting,
       pagination: {
@@ -55,9 +73,9 @@ export const InterestTable = () => {
         pageSize: tableData.length,
       },
     }
-  }, [tableData, sorting])
+  }, [tableData, sorting, isViewAll, paginationState])
 
-  return isLg ? (
+  return isLg || isViewAll ? (
     <DataTableVirtual
       state={state}
       loading={isLoading}
@@ -67,6 +85,9 @@ export const InterestTable = () => {
       thClassName="!h-8 !px-0"
       hideScrollbar={true}
       trClassName={tableRowClassName}
+      pagination={isViewAll}
+      onPaginationChange={isViewAll ? setPaginationState : undefined}
+      skeletonRowCount={isViewAll ? 25 : 10}
     />
   ) : (
     <MobileTable

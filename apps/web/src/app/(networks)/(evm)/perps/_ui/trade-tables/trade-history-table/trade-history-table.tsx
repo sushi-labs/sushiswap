@@ -1,5 +1,9 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
-import type { ColumnDef, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  PaginationState,
+  TableState,
+} from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TradeHistoryItemType, useTradeHistory } from 'src/lib/perps'
 import { MobileTable, tableRowClassName } from '../_common'
@@ -37,10 +41,16 @@ const MOBILE_COLUMNS = [
   CLOSED_PNL_COLUMN(true),
 ] as ColumnDef<TradeHistoryItemType, unknown>[]
 
-export const TradeHistoryTable = () => {
+export const TradeHistoryTable = ({
+  isViewAll = false,
+}: { isViewAll?: boolean }) => {
   const { isLg } = useBreakpoint('lg')
-  const { data, isLoading, isError } = useTradeHistory()
+  const { data, isLoading, isError } = useTradeHistory({ isViewAll })
   const [sorting, setSorting] = useState([{ id: 'time', desc: true }])
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  })
   const {
     state: { tradeFilter, expandAll },
   } = useTradeTables()
@@ -73,6 +83,12 @@ export const TradeHistoryTable = () => {
     return _data
   }, [data, isError, filterValue])
   const state: Partial<TableState> = useMemo(() => {
+    if (isViewAll) {
+      return {
+        sorting,
+        pagination: paginationState,
+      }
+    }
     return {
       sorting,
       pagination: {
@@ -80,9 +96,9 @@ export const TradeHistoryTable = () => {
         pageSize: tableData.length,
       },
     }
-  }, [tableData, sorting])
+  }, [tableData, sorting, isViewAll, paginationState])
 
-  return isLg ? (
+  return isLg || isViewAll ? (
     <DataTableVirtual
       state={state}
       loading={isLoading}
@@ -92,6 +108,9 @@ export const TradeHistoryTable = () => {
       thClassName="!h-8 !px-0"
       hideScrollbar={true}
       trClassName={tableRowClassName}
+      pagination={isViewAll}
+      onPaginationChange={isViewAll ? setPaginationState : undefined}
+      skeletonRowCount={isViewAll ? 25 : 10}
     />
   ) : (
     <MobileTable
