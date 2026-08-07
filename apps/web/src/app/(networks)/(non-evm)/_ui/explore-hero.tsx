@@ -4,7 +4,7 @@ import {
   LinkInternal,
   typographyVariants,
 } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
 import type { FC } from 'react'
 import { type ChainId, getChainById } from 'sushi'
 

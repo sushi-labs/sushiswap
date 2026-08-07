@@ -11,11 +11,11 @@ vi.mock('@sushiswap/ui', () => ({
   classNames: (...values: unknown[]) => values.filter(Boolean).join(' '),
 }))
 
-vi.mock('@sushiswap/ui/icons/CheckMarkIcon', () => ({
+vi.mock('@sushiswap/ui/icons/check-mark-icon', () => ({
   CheckMarkIcon: () => null,
 }))
 
-vi.mock('@sushiswap/ui/icons/FailedMarkIcon', () => ({
+vi.mock('@sushiswap/ui/icons/failed-mark-icon', () => ({
   FailedMarkIcon: () => null,
 }))
 

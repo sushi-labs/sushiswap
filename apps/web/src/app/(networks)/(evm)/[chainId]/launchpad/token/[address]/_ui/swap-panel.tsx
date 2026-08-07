@@ -14,7 +14,7 @@ import {
 } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
 import { DEFAULT_SLIPPAGE, type EvmToken, unwrapEvmToken } from 'sushi/evm'

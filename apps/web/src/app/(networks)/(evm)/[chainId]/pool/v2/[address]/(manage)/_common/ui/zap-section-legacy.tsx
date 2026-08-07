@@ -22,18 +22,18 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { APPROVE_TAG_ZAP_LEGACY, NativeAddress } from 'src/lib/constants'
 import { useV2Zap } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import {
   Checker,
   SLIPPAGE_WARNING_THRESHOLD,
-} from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/systems/checker'
 import {
   CheckerProvider,
   useApproved,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, Percent } from 'sushi'
 import {
   type EvmCurrency,

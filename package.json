@@ -5,6 +5,7 @@
   "scripts": {
     "build": "dotenv -- turbo run build",
     "check": "turbo run check --no-cache",
+    "check:names": "node scripts/check-file-names.mjs",
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "dotenv -- turbo run dev --no-cache --parallel --continue",
     "disable-remote-caching": "turbo unlink && rm -rf ./node_modules/.cache/turbo",
@@ -13,7 +14,7 @@
     "generate": "dotenv -- turbo run generate --no-cache --parallel --continue",
     "preinstall": "node scripts/require-trading-view-gh-read-token.js && pnpx only-allow pnpm",
     "postinstall": "node scripts/validate-deps.js",
-    "lint": "biome check .",
+    "lint": "pnpm check:names && biome check .",
     "lint:fix": "biome check . --apply",
     "sort": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json'",
     "sort-check": "sort-package-json 'package.json' 'apis/*/package.json' 'apps/*/package.json' 'config/*/package.json' 'packages/*/package.json' --check",

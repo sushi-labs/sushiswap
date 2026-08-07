@@ -2,10 +2,10 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { IconButton, type IconButtonProps } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
 import * as React from 'react'
 
-import { ViewGroup } from '../components/View'
+import { ViewGroup } from '../components/view'
 
 const variants: IconButtonProps['variant'][] = [
   'default',
@@ -18,7 +18,7 @@ const variants: IconButtonProps['variant'][] = [
 const sizes: IconButtonProps['size'][] = ['xs', 'sm', 'default', 'lg', 'xl']
 
 const meta = {
-  title: 'Primitives/IconButton',
+  title: 'Primitives/iconButton',
   component: IconButton,
   argTypes: {
     variant: {

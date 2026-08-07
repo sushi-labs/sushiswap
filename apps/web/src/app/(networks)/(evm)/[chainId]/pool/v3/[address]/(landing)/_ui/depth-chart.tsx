@@ -16,7 +16,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
+import type { ChartEntry } from '~evm/[chainId]/_ui/liquidity-chart-range-input/types'
 
 const DEFAULT_CHART_WIDTH = 600
 const DEFAULT_CHART_HEIGHT = 380

@@ -5,8 +5,8 @@ import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
 } from 'src/lib/hooks/react-query'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker'
+import { warningSeverity } from 'src/lib/swap/warning-severity'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker'
 import type { Percent } from 'sushi'
 
 export type UseSimpleSwapTradeReviewBaseReturn = {

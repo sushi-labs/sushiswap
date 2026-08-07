@@ -20,8 +20,8 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
 import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityImportActions } from 'src/lib/wagmi/components/token-security-import-actions'

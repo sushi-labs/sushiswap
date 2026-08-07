@@ -1,7 +1,7 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { getEvmChainById } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'

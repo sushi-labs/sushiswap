@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, cloudinaryFetchLoader } from '@sushiswap/ui'
-import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
+import { JazzIcon } from '@sushiswap/ui/icons/jazz-icon'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'

@@ -1,8 +1,8 @@
 'use client'
 
 import { Button, Loader } from '@sushiswap/ui'
-import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
-import { FailedMarkIcon } from '@sushiswap/ui/icons/FailedMarkIcon'
+import { CheckMarkIcon } from '@sushiswap/ui/icons/check-mark-icon'
+import { FailedMarkIcon } from '@sushiswap/ui/icons/failed-mark-icon'
 import { useMutation } from '@tanstack/react-query'
 import { resendCodeAction } from './resend-code-action'
 

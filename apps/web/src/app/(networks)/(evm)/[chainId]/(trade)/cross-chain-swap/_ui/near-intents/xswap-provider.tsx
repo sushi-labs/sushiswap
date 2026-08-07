@@ -9,7 +9,7 @@ import {
   useMemo,
   useRef,
 } from 'react'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
   getCurrencyParam,
   isNearIntentsChainId,

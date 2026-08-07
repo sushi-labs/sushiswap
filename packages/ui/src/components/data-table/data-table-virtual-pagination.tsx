@@ -6,7 +6,7 @@ import {
 } from '@radix-ui/react-icons'
 import type { Table } from '@tanstack/react-table'
 
-import { DownTriangleIcon } from '../../icons/DownTriangleIcon'
+import { DownTriangleIcon } from '../../icons/down-triangle-icon'
 import { Button } from '../button'
 import {
   Select,

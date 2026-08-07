@@ -1,6 +1,6 @@
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 import { SkeletonBox } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'

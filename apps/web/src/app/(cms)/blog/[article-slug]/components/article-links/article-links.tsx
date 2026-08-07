@@ -1,6 +1,6 @@
 import { MailIcon } from '@heroicons/react-v1/outline'
 import type { BlogArticle } from '@sushiswap/graph-client/strapi'
-import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
+import { TwitterIcon } from '@sushiswap/ui/icons/twitter-icon'
 import type { FC } from 'react'
 import { ArticleLinksClient } from './article-links-client'
 

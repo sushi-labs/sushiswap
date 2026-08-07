@@ -12,15 +12,15 @@ import {
   SkeletonText,
   Switch,
 } from '@sushiswap/ui'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/currency-fiat-icon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 import {
   getPoolNameFromGroupedTokens,
   getPoolTokensGrouped,
 } from 'src/lib/pool/blade'
-import { useBladeUserPositions } from 'src/lib/pool/blade/useBladeUserPositions'
+import { useBladeUserPositions } from 'src/lib/pool/blade/use-blade-user-positions'
 import { formatPercent, formatUSD } from 'sushi'
 import { type BladeChainId, getEvmChainById } from 'sushi/evm'
 import { useConnection } from 'wagmi'

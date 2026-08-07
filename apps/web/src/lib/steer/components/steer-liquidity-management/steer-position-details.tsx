@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatUSD } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { useConnection } from 'wagmi'

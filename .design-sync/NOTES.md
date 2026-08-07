@@ -181,7 +181,7 @@ index, plus the 3 extra TextField stories the cap would have dropped.
 
 - **TextField was captured with `--max-stories 9`** (the default cap is 6 and
   `[STORY_CAP]` flagged it). Its 9 stories are genuinely distinct variants
-  (Default/Numeric/Percent/Icon/Unit/Adornments/Description/Variants/Sizes). Keep passing
+  (Default/Numeric/Percent/icon/Unit/Adornments/Description/Variants/Sizes). Keep passing
   `--max-stories 9` for TextField, or the tail three ride on verified-by-upload without
   ever having been graded individually.
 - **Interaction-driven stories render their closed state on BOTH panels** and are graded

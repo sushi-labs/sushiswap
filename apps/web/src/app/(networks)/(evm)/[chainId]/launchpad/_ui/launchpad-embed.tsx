@@ -1,7 +1,7 @@
 import {
   SUSHI_ICON_ASPECT_RATIO,
   SushiIconBase,
-} from '@sushiswap/ui/icons/SushiIcon'
+} from '@sushiswap/ui/icons/sushi-icon'
 import type { ReactNode } from 'react'
 import { ChainId } from 'sushi'
 import type { LaunchpadChainId } from '../constants'

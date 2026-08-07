@@ -2,7 +2,7 @@
 
 import { Button, Dots } from '@sushiswap/ui'
 import { type FC, useCallback } from 'react'
-import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
+import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/use-blade-withdraw'
 import type { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useConnection } from 'wagmi'

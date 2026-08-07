@@ -3,7 +3,7 @@
 import { EnvelopeIcon, LinkIcon } from '@heroicons/react/24/outline'
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { ClipboardController } from '@sushiswap/ui'
-import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
+import { TwitterIcon } from '@sushiswap/ui/icons/twitter-icon'
 import type { FC } from 'react'
 import { getShareText } from 'src/app/(cms)/constants'
 

@@ -1,6 +1,6 @@
 import { Button, classNames } from '@sushiswap/ui'
-import { CandleSticksIcon } from '@sushiswap/ui/icons/CandleSticksIcon'
-import { SushiSubIcon } from '@sushiswap/ui/icons/SushiSubIcon'
+import { CandleSticksIcon } from '@sushiswap/ui/icons/candle-sticks-icon'
+import { SushiSubIcon } from '@sushiswap/ui/icons/sushi-sub-icon'
 import { PerpsCard } from '../_common/perps-card'
 import { useAssetSelectorState } from '../asset-selector'
 import type { PerpsMobileViewType } from './mobile-layout'

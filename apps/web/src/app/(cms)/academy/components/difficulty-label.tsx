@@ -1,6 +1,6 @@
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
-import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
+import { CircleIcon } from '@sushiswap/ui/icons/circle-icon'
 import { DIFFICULTY_ELEMENTS } from '../constants'
 
 interface DifficultyLabel {

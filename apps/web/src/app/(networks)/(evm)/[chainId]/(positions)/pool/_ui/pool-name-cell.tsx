@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { FC, JSX } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks'
 import { formatNumber } from 'sushi'

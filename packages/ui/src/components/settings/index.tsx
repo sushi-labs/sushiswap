@@ -26,10 +26,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../tooltip'
-import { CarbonOffset } from './CarbonOffset'
-import { ExpertMode } from './ExpertMode'
-import { SlippageTolerance } from './SlippageTolerance'
-import { TransactionDeadline } from './TransactionDeadline'
+import { CarbonOffset } from './carbon-offset'
+import { ExpertMode } from './expert-mode'
+import { SlippageTolerance } from './slippage-tolerance'
+import { TransactionDeadline } from './transaction-deadline'
 
 export enum SettingsModule {
   CarbonOffset = 'CarbonOffset',

@@ -31,8 +31,8 @@ import {
   TooltipTrigger,
   useBreakpoint,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { SwitchIcon } from '@sushiswap/ui/icons/SwitchIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { SwitchIcon } from '@sushiswap/ui/icons/switch-icon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import {

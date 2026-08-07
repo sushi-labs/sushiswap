@@ -1,6 +1,6 @@
 'use client'
 import { classNames } from '@sushiswap/ui'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
+import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
 import { useEffect, useMemo, useState } from 'react'
 import { type PerpOrSpotAsset, getHyperliquidCoinIconUrl } from 'src/lib/perps'
 

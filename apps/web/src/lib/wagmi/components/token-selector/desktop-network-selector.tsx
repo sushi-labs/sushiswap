@@ -10,7 +10,7 @@ import {
   CommandItem,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { useChainIds } from 'src/lib/wallet'

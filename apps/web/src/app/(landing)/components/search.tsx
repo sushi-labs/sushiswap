@@ -7,7 +7,7 @@
 // import { LinkInternal, classNames } from '@sushiswap/ui'
 // import { Currency } from '@sushiswap/ui'
 // import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-// import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+// import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 // import { useQuery } from '@tanstack/react-query'
 // import { type FC, useEffect, useMemo, useRef, useState } from 'react'
 // import {

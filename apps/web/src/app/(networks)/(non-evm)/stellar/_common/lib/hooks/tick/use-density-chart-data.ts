@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
+import type { ChartEntry } from '~evm/[chainId]/_ui/liquidity-chart-range-input/types'
 import type { PoolInfo } from '../../types/pool.type'
 import {
   type TickProcessed,

@@ -3,8 +3,8 @@ import {
   HandThumbUpIcon,
 } from '@heroicons/react/24/solid'
 import { Explainer, Loader, SkeletonText, classNames } from '@sushiswap/ui'
-import { DeFiIcon } from '@sushiswap/ui/icons/DeFiIcon'
-import { GoPlusLabsIcon } from '@sushiswap/ui/icons/GoPlusLabsIcon'
+import { DeFiIcon } from '@sushiswap/ui/icons/de-fi-icon'
+import { GoPlusLabsIcon } from '@sushiswap/ui/icons/go-plus-labs-icon'
 import { useMemo } from 'react'
 import {
   type TokenSecurity,

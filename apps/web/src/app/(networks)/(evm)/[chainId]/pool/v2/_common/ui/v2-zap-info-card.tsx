@@ -6,7 +6,7 @@ import {
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
-import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
+import { EnsoIcon } from '@sushiswap/ui/icons/enso-icon'
 import { type FC, memo, useMemo } from 'react'
 import { EVM_UI_FEE_PERCENT } from 'src/config'
 import type { V2ZapResponse } from 'src/lib/hooks'
@@ -14,8 +14,8 @@ import { getFeeString } from 'src/lib/swap/fee'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+} from 'src/lib/swap/warning-severity'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/use-total-supply'
 import { Amount, Percent, ZERO, formatUSD } from 'sushi'
 import { type EvmChainId, type EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
 import { useConnection } from 'wagmi'

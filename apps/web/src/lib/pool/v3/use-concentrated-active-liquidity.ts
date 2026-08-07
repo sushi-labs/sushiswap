@@ -9,7 +9,7 @@ import {
   tickToPrice,
 } from 'sushi/evm'
 
-import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import computeSurroundingTicks from '../../functions'
 import { useTicks } from './use-ticks'
 

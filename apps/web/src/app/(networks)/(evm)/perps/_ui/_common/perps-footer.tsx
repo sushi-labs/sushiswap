@@ -1,7 +1,7 @@
 import { LinkExternal } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { TelegramIcon } from '@sushiswap/ui/icons/TelegramIcon'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
+import { TelegramIcon } from '@sushiswap/ui/icons/telegram-icon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import { HlApiStatus } from './hl-api-status'
 
 export const PerpsFooter = () => {

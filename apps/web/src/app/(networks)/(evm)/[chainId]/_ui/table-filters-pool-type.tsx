@@ -17,7 +17,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Command, CommandGroup, CommandItem } from '@sushiswap/ui'
-import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
+import { CheckIcon } from '@sushiswap/ui/icons/check-icon'
 import React, { type FC, useCallback, useState, useTransition } from 'react'
 import {
   usePoolFilters,

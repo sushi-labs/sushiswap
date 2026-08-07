@@ -1,4 +1,4 @@
-import { CurrencyInput } from './Currency'
+import { CurrencyInput } from './currency'
 import { EnsInput } from './ens'
 
 export interface Web3Input {

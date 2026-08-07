@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@sushiswap/ui'
-import { SortIcon } from '@sushiswap/ui/icons/SortIcon'
+import { SortIcon } from '@sushiswap/ui/icons/sort-icon'
 import {
   TRADE_FILTER_VALUES,
   type TradeFilterValueString,

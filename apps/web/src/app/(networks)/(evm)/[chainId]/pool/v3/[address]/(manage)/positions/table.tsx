@@ -3,7 +3,7 @@
 import { type RawV3Pool, hydrateV3Pool } from '@sushiswap/graph-client/data-api'
 import { Switch } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
+import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/concentrated-positions-table/concentrated-positions-table'
 
 export function ManageV3PoolPositionsTable({
   pool: rawPool,

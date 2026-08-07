@@ -2,7 +2,7 @@ import { Container } from '@sushiswap/ui'
 import React from 'react'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { LegacyPositionsTable } from './table/LegacyPositionsTable'
+import { LegacyPositionsTable } from './table/legacy-positions-table'
 
 export default function Page() {
   return (

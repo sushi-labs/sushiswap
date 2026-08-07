@@ -3,7 +3,7 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useState } from 'react'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import type { EvmCurrency } from 'sushi/evm'
 import { BladeAddSectionWidget } from './blade-add-section-widget'
 

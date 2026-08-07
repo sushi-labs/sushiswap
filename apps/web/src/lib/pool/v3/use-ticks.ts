@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {
   type EvmCurrency,
   SUSHISWAP_V3_FACTORY_ADDRESS,

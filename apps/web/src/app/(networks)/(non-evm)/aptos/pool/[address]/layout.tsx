@@ -1,6 +1,6 @@
 import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
-import { PoolHeader } from '~aptos/_common/components/PoolSection/pool-header'
+import { PoolHeader } from '~aptos/_common/components/pool-section/pool-header'
 
 export default async function Layout(props: {
   children: React.ReactNode

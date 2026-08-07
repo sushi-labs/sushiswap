@@ -5,8 +5,8 @@ import React, { type FC, useMemo } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
 import type { SushiSwapV3ChainId } from 'sushi/evm'
 import type { Address } from 'viem'
-import { useDensityChartData } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/hooks'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { useDensityChartData } from '~evm/[chainId]/_ui/liquidity-chart-range-input/hooks'
 import { DepthChart } from './depth-chart'
 
 interface LiquidityDepthWidget {

@@ -1,4 +1,4 @@
-import { OrbsIcon } from '@sushiswap/ui/icons/OrbsIcon'
+import { OrbsIcon } from '@sushiswap/ui/icons/orbs-icon'
 
 export const OrbsBanner = () => {
   return (

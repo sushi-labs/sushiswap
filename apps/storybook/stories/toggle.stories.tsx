@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Toggle, type ToggleProps } from '@sushiswap/ui'
 import * as React from 'react'
 
-import { ViewGroup } from '../components/View'
+import { ViewGroup } from '../components/view'
 
 const variants: ToggleProps['variant'][] = ['default', 'outline']
 const sizes: ToggleProps['size'][] = ['xs', 'sm', 'default', 'lg']

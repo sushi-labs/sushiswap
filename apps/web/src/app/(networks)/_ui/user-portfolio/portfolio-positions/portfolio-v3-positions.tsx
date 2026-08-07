@@ -6,7 +6,7 @@ import {
   Currency,
   classNames,
 } from '@sushiswap/ui'
-import { BagIcon } from '@sushiswap/ui/icons/BagIcon'
+import { BagIcon } from '@sushiswap/ui/icons/bag-icon'
 import React, { type FC } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'

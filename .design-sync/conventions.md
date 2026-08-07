@@ -82,10 +82,10 @@ Library components for the controls, DS utilities for your own layout:
       <CardContent>
         <List>
           <List.Control>
-            <List.KeyValue title="Network">Ethereum</List.KeyValue>
-            <List.KeyValue title="Fee">0.05%</List.KeyValue>
-          </List.Control>
-        </List>
+            <List.KeyValue title="Network">Ethereum</list.KeyValue>
+            <List.KeyValue title="Fee">0.05%</list.KeyValue>
+          </list.Control>
+        </list>
       </CardContent>
       <CardFooter>
         <Button size="lg">Confirm</Button>

@@ -16,12 +16,12 @@ import {
 } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, Percent, getNativeAddress } from 'sushi'
 import { type EvmAddress, EvmChainId } from 'sushi/evm'

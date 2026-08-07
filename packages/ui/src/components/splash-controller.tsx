@@ -1,6 +1,6 @@
 import React, { type FC, type ReactNode } from 'react'
 
-import { SushiIcon } from '../icons/SushiIcon'
+import { SushiIcon } from '../icons/sushi-icon'
 
 const Splash: FC = () => {
   return (

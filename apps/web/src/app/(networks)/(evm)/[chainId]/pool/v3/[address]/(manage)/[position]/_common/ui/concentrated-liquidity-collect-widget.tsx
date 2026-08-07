@@ -11,7 +11,7 @@ import {
 import { Button } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatUSD } from 'sushi'
 import {
   type EvmAddress,

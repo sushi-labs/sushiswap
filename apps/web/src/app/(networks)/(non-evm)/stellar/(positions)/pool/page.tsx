@@ -2,7 +2,7 @@ import { Container } from '@sushiswap/ui'
 import React from 'react'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { PositionsTable } from '~stellar/_common/ui/Pools/PositionsTable/PositionsTable'
+import { PositionsTable } from '~stellar/_common/ui/pools/positions-table/positions-table'
 
 export default function Page() {
   return (

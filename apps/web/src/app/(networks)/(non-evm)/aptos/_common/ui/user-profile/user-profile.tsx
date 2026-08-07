@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@sushiswap/ui'
-import { JazzIcon } from '@sushiswap/ui/icons/JazzIcon'
+import { JazzIcon } from '@sushiswap/ui/icons/jazz-icon'
 import React, { useState } from 'react'
 import { useBaseTokens } from '~aptos/_common/lib/common/use-base-tokens'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'

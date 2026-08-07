@@ -6,7 +6,7 @@ import { ChainId } from 'sushi'
 import { SUSHI, USDT } from 'sushi/evm'
 
 const meta = {
-  title: 'Primitives/CurrencyIcon',
+  title: 'Primitives/currencyIcon',
   component: Currency.Icon,
   argTypes: {
     width: {
@@ -36,7 +36,7 @@ export const Outline = {
 } satisfies Story
 
 export const List = {
-  title: 'Primitives/CurrencyIconList',
+  title: 'Primitives/currencyIconList',
   component: Currency.IconList,
   args: {
     children: () => {

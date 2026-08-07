@@ -20,8 +20,8 @@ import {
 } from 'src/lib/hooks/react-query'
 import { useLiFiStatus } from 'src/lib/swap/cross-chain'
 import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { useAccount } from 'src/lib/wallet'
 import {
   Amount,

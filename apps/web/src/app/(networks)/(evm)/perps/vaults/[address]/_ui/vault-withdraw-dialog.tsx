@@ -12,7 +12,7 @@ import {
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import { useVaultTransfer } from 'src/lib/perps/vaults/use-vault-transfer'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, USDC } from 'sushi/evm'

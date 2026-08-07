@@ -1,5 +1,5 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/icons/WalletIcon'
+import { WalletIcon } from '@sushiswap/ui/icons/wallet-icon'
 import React, { type FC, useMemo } from 'react'
 import { Fraction } from 'sushi'
 

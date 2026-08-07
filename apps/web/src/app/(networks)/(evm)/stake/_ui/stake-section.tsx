@@ -3,12 +3,12 @@
 import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { APPROVE_TAG_STAKE } from 'src/lib/constants'
-import { useBarDeposit } from 'src/lib/wagmi/hooks/bar/useBarDeposit'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useBarDeposit } from 'src/lib/wagmi/hooks/bar/use-bar-deposit'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { Amount } from 'sushi'
 import { EvmChainId, SUSHI, XSUSHI_ADDRESS } from 'sushi/evm'
 import { StakeSectionWidget } from './stake-section-widget'

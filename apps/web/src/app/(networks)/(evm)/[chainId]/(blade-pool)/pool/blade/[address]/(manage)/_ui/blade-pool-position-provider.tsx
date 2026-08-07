@@ -11,7 +11,7 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { useVestingDeposit } from 'src/lib/pool/blade/useVestingDeposit'
+import { useVestingDeposit } from 'src/lib/pool/blade/use-vesting-deposit'
 import type { Amount } from 'sushi'
 import { type EvmCurrency, EvmToken } from 'sushi/evm'
 import { useConnection } from 'wagmi'

@@ -1,7 +1,7 @@
 import { createToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { useCallback, useMemo, useState } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, USDC, erc20Abi_transfer } from 'sushi/evm'

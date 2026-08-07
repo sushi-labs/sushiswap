@@ -1,5 +1,5 @@
 import { Button, FormSection, SelectIcon } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import React, { type FC, memo } from 'react'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'

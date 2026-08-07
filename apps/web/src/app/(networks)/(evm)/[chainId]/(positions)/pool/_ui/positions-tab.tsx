@@ -16,7 +16,7 @@ import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
 
 import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
-import { BladeIcon } from '@sushiswap/ui/icons/BladeIcon'
+import { BladeIcon } from '@sushiswap/ui/icons/blade-icon'
 import { useSearchParams } from 'next/navigation'
 import { SteerSmartPositionsTable } from 'src/lib/steer/components/steer-smart-positions-table'
 import {
@@ -33,7 +33,7 @@ import {
 import { ArbNovaNotice } from '~evm/[chainId]/_ui/arb-nova-notice'
 import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
-import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/ConcentratedPositionsTable/concentrated-positions-table'
+import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/concentrated-positions-table/concentrated-positions-table'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
