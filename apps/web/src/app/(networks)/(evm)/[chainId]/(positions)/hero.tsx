@@ -85,7 +85,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                         V4 Position
                         <Chip variant="secondary">
                           {isSushiSwapV4ChainId(chainId)
-                            ? 'Infinity'
+                            ? 'New 🔥'
                             : 'Unavailable'}
                         </Chip>
                       </div>
@@ -120,11 +120,6 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
-                        <Chip variant="secondary">
-                          {isSushiSwapV3ChainId(chainId)
-                            ? 'New 🔥'
-                            : 'Unavailable'}
-                        </Chip>
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
                         Provide liquidity to a V3 liquidity pool.

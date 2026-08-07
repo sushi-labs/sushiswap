@@ -45,20 +45,6 @@ import { PositionsTable } from './positions-table'
 const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
   return [
     {
-      id: 'sushiswap-v3',
-      value: 'v3',
-      protocol: SushiSwapProtocol.SUSHISWAP_V3,
-      disabled: !isSushiSwapV3ChainId(chainId),
-      children: (
-        <div className="flex items-center gap-2">
-          <span>🍣</span>{' '}
-          <span>
-            SushiSwap <sup>v3</sup>
-          </span>
-        </div>
-      ),
-    },
-    {
       id: 'sushiswap-v4',
       value: 'v4',
       protocol: SUSHISWAP_V4,
@@ -68,6 +54,20 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
           <span>🍣</span>{' '}
           <span>
             SushiSwap <sup>v4</sup>
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: 'sushiswap-v3',
+      value: 'v3',
+      protocol: SushiSwapProtocol.SUSHISWAP_V3,
+      disabled: !isSushiSwapV3ChainId(chainId),
+      children: (
+        <div className="flex items-center gap-2">
+          <span>🍣</span>{' '}
+          <span>
+            SushiSwap <sup>v3</sup>
           </span>
         </div>
       ),
