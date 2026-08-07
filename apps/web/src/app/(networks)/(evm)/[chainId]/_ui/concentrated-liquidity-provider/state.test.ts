@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   concentratedLiquidityReducer,
   initialConcentratedLiquidityState,
-} from './concentrated-liquidity-state'
+} from './state'
 
 describe('concentratedLiquidityReducer', () => {
   it('updates amount and range fields independently', () => {
