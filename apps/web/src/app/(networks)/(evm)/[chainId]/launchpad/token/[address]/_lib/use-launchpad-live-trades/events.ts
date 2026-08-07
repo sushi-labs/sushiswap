@@ -2,7 +2,10 @@ import ms from 'ms'
 import { type EvmAddress, type EvmTxHash, szevm } from 'sushi/evm'
 import { isAddressEqual, isHash } from 'viem'
 import { z } from 'zod'
-import { type LaunchpadChainId, isLaunchpadChainId } from '../../../constants'
+import {
+  type LaunchpadChainId,
+  isLaunchpadChainId,
+} from '../../../../constants'
 
 const evmAddressSchema = szevm.address()
 const transactionHashSchema = z.custom<EvmTxHash>(

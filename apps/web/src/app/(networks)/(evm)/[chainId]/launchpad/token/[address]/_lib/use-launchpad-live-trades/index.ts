@@ -15,20 +15,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import type { EvmAddress } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
-import type { LaunchpadTradesInput } from '../../../types'
-import {
-  closedStreamRetryDelay,
-  isExpectedStream,
-  parseStreamEvent,
-  streamCandleRemoveSchema,
-  streamCandleSchema,
-  streamIdentitySchema,
-  streamMetricsSchema,
-  streamResetSchema,
-  streamTradeRemoveSchema,
-  streamTradeSchema,
-  unsignedIntegerSchema,
-} from './launchpad-live-trade-events'
+import type { LaunchpadTradesInput } from '../../../../types'
 import {
   EMPTY_TRADE_CONNECTION,
   type LaunchpadTradeMutation,
@@ -42,7 +29,20 @@ import {
   publishLaunchpadCandleUpdate,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleSnapshot,
-} from './launchpad-stream'
+} from '../launchpad-stream'
+import {
+  closedStreamRetryDelay,
+  isExpectedStream,
+  parseStreamEvent,
+  streamCandleRemoveSchema,
+  streamCandleSchema,
+  streamIdentitySchema,
+  streamMetricsSchema,
+  streamResetSchema,
+  streamTradeRemoveSchema,
+  streamTradeSchema,
+  unsignedIntegerSchema,
+} from './events'
 
 function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
   const query = useInfiniteQuery({
