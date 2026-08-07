@@ -27,7 +27,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
 
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, blade, combinedTVL, currentDate] = useMemo(() => {
+  const [v2, v3, v4, blade, combinedTVL, currentDate] = useMemo(() => {
     const xData = (
       data.v2.length || data.v3.length
         ? data.v2.length > data.v3.length
@@ -42,18 +42,20 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     const v3 = xData
       .map((xData, i) => [xData, data.v3[i]?.liquidityUSD ?? 0])
       .reverse()
+    const v4: [number, number][] = []
     const blade = xData
       .map((xData, i) => [xData, data.blade[i]?.liquidityUSD ?? 0])
       .reverse()
 
     const v2TVL = v2[v2.length - 1]?.[1] ?? 0
     const v3TVL = v3[v3.length - 1]?.[1] ?? 0
+    const v4TVL = v4[v4.length - 1]?.[1] ?? 0
     const bladeTVL = blade[blade.length - 1]?.[1] ?? 0
-    const combinedTVL = v2TVL + v3TVL + bladeTVL
+    const combinedTVL = v2TVL + v3TVL + v4TVL + bladeTVL
 
     const currentDate = xData[0]
 
-    return [v2, v3, blade, combinedTVL, currentDate]
+    return [v2, v3, v4, blade, combinedTVL, currentDate]
   }, [data])
 
   const zIndex = useMemo(() => {
@@ -67,44 +69,50 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     }
   }, [v2, v3])
 
-  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
-    if (!params[0].data || !params[1].data) return ''
+  const onMouseOver = useCallback(
+    (params: { data?: number[]; seriesName?: string }[]) => {
+      const v2Data = params.find(({ seriesName }) => seriesName === 'v2')?.data
+      const v3Data = params.find(({ seriesName }) => seriesName === 'v3')?.data
+      const v4Data = params.find(({ seriesName }) => seriesName === 'v4')?.data
+      const bladeData = params.find(
+        ({ seriesName }) => seriesName === 'blade',
+      )?.data
 
-    const tvlNode = document.getElementById('hoveredTVL')
-    const v2TVLNode = document.getElementById('hoveredV2TVL')
-    const v3TVLNode = document.getElementById('hoveredV3TVL')
-    const bladeTVLNode = document.getElementById('hoveredBladeTVL')
-    const dateNode = document.getElementById('hoveredTVLDate')
+      if (!v2Data || !v3Data) return ''
 
-    if (tvlNode)
-      tvlNode.innerHTML = formatUSD(
-        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0),
-      )
-    if (dateNode)
-      dateNode.innerHTML = format(
-        new Date(params[0].data[0]),
-        "dd MMM yyyy'<br>'hh:mm aa",
-      )
-    if (v2TVLNode)
-      v2TVLNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
-    if (v3TVLNode)
-      v3TVLNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
-    if (bladeTVLNode)
-      bladeTVLNode.innerHTML = params[2]?.data?.[1]
-        ? formatUSD(params[2].data[1])
-        : ''
+      const tvlNode = document.getElementById('hoveredTVL')
+      const v2TVLNode = document.getElementById('hoveredV2TVL')
+      const v3TVLNode = document.getElementById('hoveredV3TVL')
+      const v4TVLNode = document.getElementById('hoveredV4TVL')
+      const bladeTVLNode = document.getElementById('hoveredBladeTVL')
+      const dateNode = document.getElementById('hoveredTVLDate')
 
-    return ''
-  }, [])
+      if (tvlNode)
+        tvlNode.innerHTML = formatUSD(
+          v2Data[1] + v3Data[1] + (v4Data?.[1] ?? 0) + (bladeData?.[1] ?? 0),
+        )
+      if (dateNode)
+        dateNode.innerHTML = format(
+          new Date(v2Data[0]),
+          "dd MMM yyyy'<br>'hh:mm aa",
+        )
+      if (v2TVLNode) v2TVLNode.innerHTML = v2Data[1] ? formatUSD(v2Data[1]) : ''
+      if (v3TVLNode) v3TVLNode.innerHTML = v3Data[1] ? formatUSD(v3Data[1]) : ''
+      if (v4TVLNode)
+        v4TVLNode.innerHTML = v4Data?.[1] ? formatUSD(v4Data[1]) : ''
+      if (bladeTVLNode)
+        bladeTVLNode.innerHTML = bladeData?.[1] ? formatUSD(bladeData[1]) : ''
+
+      return ''
+    },
+    [],
+  )
 
   const onMouseLeave = useCallback(() => {
     const tvlNode = document.getElementById('hoveredTVL')
     const v2TVLNode = document.getElementById('hoveredV2TVL')
     const v3TVLNode = document.getElementById('hoveredV3TVL')
+    const v4TVLNode = document.getElementById('hoveredV4TVL')
     const bladeTVLNode = document.getElementById('hoveredBladeTVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
@@ -116,6 +124,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
       )
     if (v2TVLNode) v2TVLNode.innerHTML = ''
     if (v3TVLNode) v3TVLNode.innerHTML = ''
+    if (v4TVLNode) v4TVLNode.innerHTML = ''
     if (bladeTVLNode) bladeTVLNode.innerHTML = ''
   }, [combinedTVL, currentDate])
 
@@ -133,7 +142,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
         formatter: (params) =>
           onMouseOver(Array.isArray(params) ? params : [params]),
       },
-      color: ['#3B7EF6', '#A755DD', '#F23BF6'],
+      color: ['#3B7EF6', '#A755DD', '#FA52A0', '#F23BF6'],
       grid: {
         top: 0,
         left: 0,
@@ -219,6 +228,22 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
           data: v3,
           z: zIndex.v3,
         },
+        {
+          name: 'v4',
+          type: 'line',
+          stack: 'v4',
+          smooth: true,
+          lineStyle: {
+            width: 0,
+          },
+          showSymbol: false,
+          areaStyle: {
+            color: '#FA52A0',
+            opacity: 1,
+          },
+          data: v4,
+          z: 3,
+        },
         ...(showBlade
           ? [
               {
@@ -235,13 +260,13 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
                   opacity: 1,
                 },
                 data: blade,
-                z: 3,
+                z: 4,
               },
             ]
           : []),
       ],
     }),
-    [onMouseOver, v2, v3, blade, zIndex, resolvedTheme, showBlade],
+    [onMouseOver, v2, v3, v4, blade, zIndex, resolvedTheme, showBlade],
   )
 
   return (
@@ -279,6 +304,13 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
               <span className="flex gap-1 items-center">
                 <span className="font-medium">v3</span>
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
+              </span>
+            </div>
+            <div className="flex justify-between items-center gap-2 text-sm">
+              <span id="hoveredV4TVL" />
+              <span className="flex gap-1 items-center">
+                <span className="font-medium">v4</span>
+                <span className="bg-[#FA52A0] rounded-[4px] w-3 h-3" />
               </span>
             </div>
             {showBlade && (
