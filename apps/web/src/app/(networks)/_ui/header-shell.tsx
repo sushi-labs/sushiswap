@@ -1,8 +1,8 @@
 'use client'
 
 import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
-import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
-import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
+import { SushiIcon } from '@sushiswap/ui/icons/sushi-icon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/sushi-with-text-icon'
 import type { ReactNode } from 'react'
 import { headerElements } from 'src/app/_common/header-elements'
 import type { ChainId } from 'sushi'
