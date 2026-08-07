@@ -6,7 +6,7 @@ import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
 import * as React from 'react'
 
 const meta = {
-  title: 'Primitives/list',
+  title: 'Primitives/List',
   component: List,
   parameters: {
     docs: {

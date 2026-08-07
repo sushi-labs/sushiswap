@@ -18,7 +18,7 @@ const variants: IconButtonProps['variant'][] = [
 const sizes: IconButtonProps['size'][] = ['xs', 'sm', 'default', 'lg', 'xl']
 
 const meta = {
-  title: 'Primitives/iconButton',
+  title: 'Primitives/IconButton',
   component: IconButton,
   argTypes: {
     variant: {

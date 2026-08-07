@@ -11,7 +11,7 @@ function getSize() {
   }
 }
 
-// https://usehooks.com/use-window-size/
+// https://usehooks.com/useWindowSize/
 export const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(getSize)
 
