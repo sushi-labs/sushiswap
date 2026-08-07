@@ -823,6 +823,9 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: 2.1.9
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@24.13.3)(jsdom@20.0.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(less@4.2.0)(terser@5.37.0)
 
   packages/hooks:
     dependencies:
@@ -863,6 +866,9 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: 2.1.9
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@24.13.3)(jsdom@20.0.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(less@4.2.0)(terser@5.37.0)
 
   packages/notifications:
     dependencies:
@@ -906,6 +912,9 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: 2.1.9
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@24.13.3)(jsdom@20.0.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(less@4.2.0)(terser@5.37.0)
 
   packages/stellar/contract-bindings/factory:
     dependencies:
@@ -1017,8 +1026,6 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  packages/sushiswap: {}
-
   packages/telemetry:
     devDependencies:
       '@tsconfig/node24':
@@ -1045,6 +1052,9 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: 2.1.9
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@24.13.3)(jsdom@20.0.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(less@4.2.0)(terser@5.37.0)
 
   packages/ui:
     dependencies:

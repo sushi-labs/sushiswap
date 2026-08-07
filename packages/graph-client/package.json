@@ -47,6 +47,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc --watch",
     "prepublishOnly": "pnpm build",
+    "test": "vitest run",
     "update-data-api-types": "tsx scripts/update-data-api-types.ts",
     "update-schemas": "tsx scripts/update-schemas.ts"
   },
@@ -67,6 +68,7 @@
     "@types/node": "24.13.3",
     "tsc-alias": "1.8.10",
     "tsx": "4.23.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "2.1.9"
   }
 }

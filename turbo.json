@@ -57,7 +57,7 @@
         ".eslint.js",
         ".eslintrc.js"
       ],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^lint"]
     },
     "start": {
       "dependsOn": ["^build", "generate"],
@@ -72,7 +72,7 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "outputs": ["coverage/**/*"]
     }
   }

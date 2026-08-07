@@ -29,18 +29,11 @@ import {
   priceToClosestTick,
   tickToPrice,
 } from 'sushi/evm'
-
-type FullRange = true
-
-interface State {
-  independentField: Field
-  independentRangeField: Bound
-  typedValue: string
-  startPriceTypedValue: string // for the case when there's no liquidity
-  leftRangeTypedValue: string | FullRange
-  rightRangeTypedValue: string | FullRange
-  weightLockedCurrencyBase: number | undefined
-}
+import {
+  type ConcentratedLiquidityState,
+  concentratedLiquidityReducer,
+  initialConcentratedLiquidityState,
+} from './concentrated-liquidity-state'
 
 type Api = {
   onFieldAInput(typedValue: string, noLiquidity: boolean | undefined): void
@@ -54,61 +47,9 @@ type Api = {
   setIndependentRangeField(value: Bound): void
 }
 
-const initialState: State = {
-  independentField: Field.CURRENCY_A,
-  independentRangeField: Bound.LOWER,
-  typedValue: '',
-  startPriceTypedValue: '',
-  leftRangeTypedValue: '',
-  rightRangeTypedValue: '',
-  weightLockedCurrencyBase: undefined,
-}
-
-type Actions =
-  | { type: 'resetMintState' }
-  | { type: 'typeLeftRangeInput'; typedValue: string }
-  | {
-      type: 'typeInput'
-      field: Field
-      typedValue: string
-      noLiquidity: boolean
-    }
-  | { type: 'typeRightRangeInput'; typedValue: string }
-  | { type: 'setFullRange' }
-  | { type: 'typeStartPriceInput'; typedValue: string }
-  | { type: 'setWeightLockedCurrencyBase'; value: number | undefined }
-  | { type: 'setIndependentRangeField'; value: Bound }
-
-const ConcentratedLiquidityStateContext = createContext<State>(initialState)
+const ConcentratedLiquidityStateContext =
+  createContext<ConcentratedLiquidityState>(initialConcentratedLiquidityState)
 const ConcentratedLiquidityActionsContext = createContext<Api>({} as Api)
-
-const reducer = (state: State, action: Actions): State => {
-  switch (action.type) {
-    case 'resetMintState':
-      return initialState
-    case 'setFullRange':
-      return { ...state, leftRangeTypedValue: true, rightRangeTypedValue: true }
-    case 'typeStartPriceInput':
-      return { ...state, startPriceTypedValue: action.typedValue }
-    case 'typeLeftRangeInput':
-      return { ...state, leftRangeTypedValue: action.typedValue }
-    case 'typeRightRangeInput':
-      return { ...state, rightRangeTypedValue: action.typedValue }
-    case 'typeInput': {
-      return {
-        ...state,
-        independentField: action.field,
-        typedValue: action.typedValue,
-      }
-    }
-    case 'setWeightLockedCurrencyBase': {
-      return { ...state, weightLockedCurrencyBase: action.value }
-    }
-    case 'setIndependentRangeField': {
-      return { ...state, independentRangeField: action.value }
-    }
-  }
-}
 
 /*
   Provider only used whenever a user selects Concentrated Liquidity
@@ -116,7 +57,10 @@ const reducer = (state: State, action: Actions): State => {
 export const ConcentratedLiquidityProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(
+    concentratedLiquidityReducer,
+    initialConcentratedLiquidityState,
+  )
 
   const api = useMemo(() => {
     const onFieldAInput = (
