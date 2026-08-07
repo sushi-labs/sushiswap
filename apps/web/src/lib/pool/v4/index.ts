@@ -1,5 +1,6 @@
 export * from './config'
 export * from './contract-abi'
+export * from './get-sushi-swap-v4-position-ids'
 export * from './infinity-permit2-approval'
 export * from './liquidity'
 export * from './pool-key'

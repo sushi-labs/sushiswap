@@ -9,6 +9,7 @@ import { INFINITY_CL_POSITION_MANAGER_ABI } from './contract-abi'
 import {
   addCLLiquidityMulticall,
   encodeCLPositionManagerDecreaseLiquidityCalldata,
+  encodeCLPositionManagerMulticall,
 } from './liquidity'
 import type { SushiSwapV4PoolKey } from './types'
 
@@ -98,6 +99,17 @@ describe('Infinity CL liquidity calldata', () => {
       }).functionName,
     ).toBe('initializePool')
     expect(getModifyPlan(calls[1]).actions).toBe('0x020d14')
+  })
+
+  it('batches position-manager calls for claiming multiple positions', () => {
+    const calls = [getAddCall({}), getAddCall({ tokenId: 7n })]
+    const decoded = decodeFunctionData({
+      abi: INFINITY_CL_POSITION_MANAGER_ABI,
+      data: encodeCLPositionManagerMulticall(calls),
+    })
+
+    expect(decoded.functionName).toBe('multicall')
+    expect(decoded.args?.[0]).toEqual(calls)
   })
 
   it('encodes increase liquidity with the same settlement actions', () => {

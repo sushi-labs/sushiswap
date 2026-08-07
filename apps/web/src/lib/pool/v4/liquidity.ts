@@ -180,6 +180,20 @@ function encodeIncreaseLiquidityAction({
   }
 }
 
+export function encodeCLPositionManagerMulticall(calls: Hex[]): Hex {
+  if (calls.length === 0) {
+    throw new Error('Infinity PositionManager multicall requires a call')
+  }
+
+  return calls.length === 1
+    ? calls[0]
+    : encodeFunctionData({
+        abi: INFINITY_CL_POSITION_MANAGER_ABI,
+        functionName: 'multicall',
+        args: [calls],
+      })
+}
+
 export function addCLLiquidityMulticall({
   isInitialized,
   sqrtPriceX96,
@@ -247,13 +261,7 @@ export function addCLLiquidityMulticall({
     ),
   )
 
-  return calls.length === 1
-    ? calls[0]
-    : encodeFunctionData({
-        abi: INFINITY_CL_POSITION_MANAGER_ABI,
-        functionName: 'multicall',
-        args: [calls],
-      })
+  return encodeCLPositionManagerMulticall(calls)
 }
 
 export function encodeCLPositionManagerDecreaseLiquidityCalldata({

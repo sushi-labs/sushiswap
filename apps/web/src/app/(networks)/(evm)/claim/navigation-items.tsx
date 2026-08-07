@@ -4,8 +4,18 @@ import { PathnameButton } from 'src/app/_ui/pathname-button'
 export function NavigationItems() {
   return (
     <>
+      <LinkInternal shallow={true} scroll={false} href="/claim/v4">
+        <PathnameButton id="fees-v4" pathname="/claim/v4" asChild size="sm">
+          <span className="flex items-center gap-2">
+            <span>💸</span>{' '}
+            <span>
+              Fees <sup>v4</sup>
+            </span>
+          </span>
+        </PathnameButton>
+      </LinkInternal>
       <LinkInternal shallow={true} scroll={false} href={`/claim`}>
-        <PathnameButton id="fees" pathname={`/claim`} asChild size="sm">
+        <PathnameButton id="fees-v3" pathname={`/claim`} asChild size="sm">
           <span className="flex items-center gap-2">
             <span>💰</span>{' '}
             <span>
