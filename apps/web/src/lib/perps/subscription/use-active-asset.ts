@@ -1,4 +1,5 @@
 'use client'
+import type { SpotMetaResponse } from '@nktkas/hyperliquid'
 import {
   type ActiveAssetCtxEvent,
   type ActiveSpotAssetCtxEvent,
@@ -7,8 +8,10 @@ import {
 } from '@nktkas/hyperliquid/api/subscription'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { useSpotMeta } from '../info/use-spot-meta'
 import { hlWebSocketTransport } from '../transports'
 import { isSpotCoinString } from '../utils'
+import { findSpotAssetMetadata } from './spot-asset-metadata'
 
 const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
   const ctx = activeAssetCtxEvent.ctx
@@ -37,11 +40,19 @@ const formatPerpCtxs = (activeAssetCtxEvent: ActiveAssetCtxEvent) => {
     openInterestUsd: String(openInterestUsd),
     volume24hUsd: ctx.dayNtlVlm ?? ctx.dayBaseVlm,
     marketCap: undefined,
+    isCanonical: false,
+    spotId: undefined,
+    baseTokenId: undefined,
+    quoteTokenId: undefined,
   }
 }
 
-const formatSpotCtxs = (activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent) => {
+const formatSpotCtxs = (
+  activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent,
+  spotMeta: SpotMetaResponse | undefined,
+) => {
   const ctx = activeSpotAssetCtxEvent.ctx
+  const metadata = findSpotAssetMetadata(spotMeta, activeSpotAssetCtxEvent.coin)
   const markPrice = Number.parseFloat(ctx.midPx ?? ctx.markPx)
   const last = markPrice
   const prev = Number.parseFloat(ctx.prevDayPx)
@@ -66,6 +77,10 @@ const formatSpotCtxs = (activeSpotAssetCtxEvent: ActiveSpotAssetCtxEvent) => {
     funding8hPct: undefined,
     funding1year: undefined,
     fundingPct: undefined,
+    isCanonical: metadata?.isCanonical ?? false,
+    spotId: metadata?.spotId,
+    baseTokenId: metadata?.baseTokenId,
+    quoteTokenId: metadata?.quoteTokenId,
   }
 }
 
@@ -75,6 +90,7 @@ export type ActiveAsset = ActivePerp | ActiveSpot
 
 export const useActiveAsset = ({ assetString }: { assetString: string }) => {
   const queryClient = useQueryClient()
+  const { data: spotMeta } = useSpotMeta()
   const query = useQuery<ActiveAsset>({
     queryKey: ['active-asset', assetString],
     staleTime: Number.POSITIVE_INFINITY,
@@ -94,7 +110,7 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
             queryClient.setQueryData(
               ['active-asset', assetString],
               (_prev: ActiveAsset | undefined) => ({
-                ...formatSpotCtxs(activeSpotAssetCtxEvent),
+                ...formatSpotCtxs(activeSpotAssetCtxEvent, spotMeta),
               }),
             )
           },
@@ -123,7 +139,26 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
     return () => {
       void unsubscribe?.()
     }
-  }, [queryClient, assetString])
+  }, [queryClient, assetString, spotMeta])
+
+  useEffect(() => {
+    if (!isSpotCoinString(assetString)) return
+
+    const metadata = findSpotAssetMetadata(spotMeta, assetString)
+    if (!metadata) return
+
+    queryClient.setQueryData(
+      ['active-asset', assetString],
+      (prev: ActiveAsset | undefined) => {
+        if (!prev || prev.marketType !== 'spot') return prev
+
+        return {
+          ...prev,
+          ...metadata,
+        }
+      },
+    )
+  }, [queryClient, assetString, spotMeta])
 
   const isReady = Boolean(query.data)
 

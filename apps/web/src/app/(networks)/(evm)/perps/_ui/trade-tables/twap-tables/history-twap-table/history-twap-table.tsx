@@ -1,5 +1,9 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
-import type { ColumnDef, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  PaginationState,
+  TableState,
+} from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TwapHistoryItemType, useTwapHistory } from 'src/lib/perps'
 import { MobileTable, tableRowClassName } from '../../_common'
@@ -43,10 +47,16 @@ const MOBILE_COLUMNS = [
   STATUS_COLUMN,
 ] as ColumnDef<TwapHistoryItemType, unknown>[]
 
-export const HistoryTwapTable = () => {
+export const HistoryTwapTable = ({
+  isViewAll = false,
+}: { isViewAll?: boolean }) => {
   const { isLg } = useBreakpoint('lg')
-  const { data, isLoading, isError } = useTwapHistory()
+  const { data, isLoading, isError } = useTwapHistory({ isViewAll })
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  })
   const {
     state: { tradeFilter },
   } = useTradeTables()
@@ -81,6 +91,12 @@ export const HistoryTwapTable = () => {
   }, [data, isError, filterValue])
 
   const state: Partial<TableState> = useMemo(() => {
+    if (isViewAll) {
+      return {
+        sorting,
+        pagination: paginationState,
+      }
+    }
     return {
       sorting,
       pagination: {
@@ -88,9 +104,9 @@ export const HistoryTwapTable = () => {
         pageSize: tableData.length,
       },
     }
-  }, [tableData, sorting])
+  }, [tableData, sorting, isViewAll, paginationState])
 
-  return isLg ? (
+  return isLg || isViewAll ? (
     <DataTableVirtual
       state={state}
       loading={isLoading}
@@ -100,6 +116,9 @@ export const HistoryTwapTable = () => {
       thClassName="!h-8 !px-0"
       hideScrollbar={true}
       trClassName={tableRowClassName}
+      pagination={isViewAll}
+      onPaginationChange={isViewAll ? setPaginationState : undefined}
+      skeletonRowCount={isViewAll ? 25 : 10}
     />
   ) : (
     <MobileTable

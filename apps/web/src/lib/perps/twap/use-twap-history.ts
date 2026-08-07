@@ -1,9 +1,36 @@
+import {
+  type TwapHistoryResponse,
+  twapHistory,
+} from '@nktkas/hyperliquid/api/info'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserTwapHistory } from '../subscription/use-user-twap-history'
+import { hlHttpTransport } from '../transports'
 
-export const useTwapHistory = () => {
+const formatTwapHistory = (
+  history: TwapHistoryResponse,
+  assetList: ReturnType<
+    typeof useAssetListState
+  >['state']['assetListQuery']['data'],
+) => {
+  return history.map((i) => {
+    const asset = assetList?.get(i.state.coin)
+
+    return {
+      ...i.state,
+      assetSymbol: asset?.marketType === 'perp' ? i.state.coin : asset?.symbol,
+      marketType: asset?.marketType,
+      status: i.status,
+      timestamp: i.time,
+      twapId: i.twapId,
+      perpsDex: asset?.dex,
+    }
+  })
+}
+
+export const useTwapHistory = ({ isViewAll }: { isViewAll: boolean }) => {
   const {
     state: { activeAddress },
   } = useActiveAccountState()
@@ -22,26 +49,34 @@ export const useTwapHistory = () => {
       },
     },
   } = useAssetListState()
-  const isLoading = isLoadingTwapHistory || isAssetListLoading
-  const isError = isErrorTwapHistory || isAssetListError
+  const allTwapHistoryQuery = useQuery({
+    queryKey: ['useTwapHistory', 'all', address],
+    queryFn: async ({ signal }) => {
+      if (!address) {
+        throw new Error('address is undefined')
+      }
+
+      return await twapHistory(
+        { transport: hlHttpTransport },
+        { user: address },
+        signal,
+      )
+    },
+    enabled: Boolean(address && isViewAll),
+  })
+
+  const history = isViewAll ? allTwapHistoryQuery.data : data?.history
+  const isLoading = isViewAll
+    ? allTwapHistoryQuery.isLoading || isAssetListLoading
+    : isLoadingTwapHistory || isAssetListLoading
+  const isError = isViewAll
+    ? allTwapHistoryQuery.isError || isAssetListError
+    : isErrorTwapHistory || isAssetListError
 
   const formattedData = useMemo(() => {
-    if (!data) return []
-    return data.history.map((i) => {
-      const asset = assetList?.get(i.state.coin)
-
-      return {
-        ...i.state,
-        assetSymbol:
-          asset?.marketType === 'perp' ? i.state.coin : asset?.symbol,
-        marketType: asset?.marketType,
-        status: i.status,
-        timestamp: i.time,
-        twapId: i.twapId,
-        perpsDex: asset?.dex,
-      }
-    })
-  }, [data, assetList])
+    if (!history) return []
+    return formatTwapHistory(history, assetList)
+  }, [history, assetList])
 
   return useMemo(() => {
     if (!address) {

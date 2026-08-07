@@ -7,9 +7,14 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
 import { hlHttpTransport } from '../transports'
-import { perpsNumberFormatter } from '../utils'
+import { SPOT_ASSETS_TO_REWRITE, perpsNumberFormatter } from '../utils'
 
 const HYPERUNIT_API = 'https://api.hyperunit.xyz'
+const ARBITRUM_CHAIN_ID = 42161
+const HYPERLIQUID_BRIDGE_CHAIN_ID = 1337
+const ARBITRUM_USDC_BRIDGE_FEE = 0.2
+const HYPEREVM_SYSTEM_ADDRESS = '0x2222222222222222222222222222222222222222'
+const HYPEREVM_SYSTEM_ADDRESS_PREFIX = '0x200000000000000000000000'
 
 type HyperunitOperation = {
   operationId: string
@@ -148,36 +153,20 @@ function parseHyperliquidTx(
   const hlTransfer = matchHlTransfer(tx, hlTransfers)
   const subAccountAddresses = getAddressesFromSubAccounts(subAccounts)
 
-  if (hlTransfer && 'fee' in d && 'amount' in d && 'token' in d) {
-    const incoming = hlTransfer.destinationChainId === 1337
-    return {
-      action: 'Transfer',
-      source: incoming ? 'HyperEVM' : 'Spot',
-      destination: incoming ? 'Spot' : 'HyperEVM',
-      feeAmount: Number(d.fee),
-      accountValueChange: incoming
-        ? `${perpsNumberFormatter({ value: d.amount })} ${d.token}`
-        : `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-      accValChange: Number(d.amount) * (incoming ? 1 : -1),
-    }
-  }
-
   if (op && 'fee' in d && 'amount' in d && 'token' in d) {
     const incoming = op.destinationAddress.toLowerCase() === me
+    const feeAmount = getHyperunitFeeAmount(op, d.amount)
+    const token = formatToken(d.token)
+
     return {
-      action: 'Deposit',
-      source:
-        op.sourceChain === 'hyperliquid'
-          ? 'Spot'
-          : `${op.sourceChain.charAt(0).toUpperCase()}${op.sourceChain.slice(1)}`,
-      destination:
-        op.destinationChain === 'hyperliquid'
-          ? 'Spot'
-          : `${op.destinationChain.charAt(0).toUpperCase()}${op.destinationChain.slice(1)}`,
-      feeAmount: Number(d.fee),
+      action: incoming ? 'Deposit' : 'Withdrawal',
+      source: formatChainName(op.sourceChain),
+      destination: formatChainName(op.destinationChain),
+      feeAmount,
+      feeToken: token,
       accountValueChange: incoming
-        ? `${perpsNumberFormatter({ value: d.amount })} ${d.token}`
-        : `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
+        ? `${perpsNumberFormatter({ value: d.amount })} ${token}`
+        : `-${perpsNumberFormatter({ value: d.amount })} ${token}`,
       accValChange: Number(d.amount) * (incoming ? 1 : -1),
     }
   }
@@ -200,49 +189,63 @@ function parseHyperliquidTx(
         action: 'Withdrawal',
         source: 'Perps',
         destination: 'Arbitrum',
-        feeAmount: Number(-d.fee),
+        feeAmount: Number(d.fee),
+        feeToken: 'USDC',
         accountValueChange: `-${perpsNumberFormatter({ value: d.usdc })} USDC`,
         accValChange: Number(-d.usdc),
       }
 
     // ── internal transfers / spot↔perps moves ─────────────────────────────
     case 'send': {
-      const src = mapDex(d.sourceDex)
-      const dst = mapDex(d.destinationDex)
-      const isSelf = d.user.toLowerCase() === d.destination.toLowerCase()
-      const isMe = d.destination.toLowerCase() === me
-      const sign = src === 'Perps' || isSelf ? '' : '-'
+      const incoming = isSameAddress(d.destination, me)
+      const isSelf = isSameAddress(d.user, d.destination)
       const isSubAccount =
         subAccountAddresses.has(d.destination.toLowerCase()) ||
         subAccountAddresses.has(d.user.toLowerCase())
+      const isHyperEvmTransfer = isHyperEvmTransferDelta(d)
+      const token = formatToken(d.token)
+      const fee = getTransferFee(d)
+      let action = isSubAccount ? 'Sub-Account Transfer' : 'Send'
+      let source = mapDex(d.sourceDex, d.user)
+      let destination = mapDex(d.destinationDex, d.destination)
+      let feeAmount = fee.feeAmount
+      let feeToken = fee.feeToken
 
-      const incoming = isMe
-      if (!isSelf) {
-        // Cross-address send — show from viewer's perspective
-        return {
-          action: isSubAccount
-            ? 'Sub-Account Transfer'
-            : incoming
-              ? 'Deposit'
-              : 'Send',
-          source: src === 'spot' ? 'HyperEVM' : src || 'Perps',
-          destination: dst === 'spot' ? 'HyperEVM' : dst || 'Perps',
-          feeAmount: 0,
-          accountValueChange: incoming
-            ? `${perpsNumberFormatter({ value: d.amount })} ${d.token}`
-            : `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-          accValChange: Number(d.amount) * (incoming ? 1 : -1),
+      if (!isSubAccount) {
+        if (hlTransfer?.destinationChainId === ARBITRUM_CHAIN_ID) {
+          action = 'Withdrawal'
+          destination = 'Arbitrum'
+          const bridgeFee = getArbitrumBridgeFee(d)
+          feeAmount = bridgeFee.feeAmount
+          feeToken = bridgeFee.feeToken
+        } else if (
+          incoming &&
+          hlTransfer?.originChainId === ARBITRUM_CHAIN_ID
+        ) {
+          action = 'Deposit'
+          source = 'Arbitrum'
+          const bridgeFee = getArbitrumBridgeFee(d)
+          feeAmount = bridgeFee.feeAmount
+          feeToken = bridgeFee.feeToken
+        } else if (
+          isSelf ||
+          isHyperEvmTransfer ||
+          hlTransfer?.destinationChainId === HYPERLIQUID_BRIDGE_CHAIN_ID
+        ) {
+          action = 'Transfer'
         }
       }
 
-      // Self-transfer = spot↔perps or spot↔xyz move
       return {
-        action: isSubAccount ? 'Sub-Account Transfer' : 'Transfer',
-        source: src || 'Perps',
-        destination: dst || 'Perps',
-        feeAmount: 0,
-        accountValueChange: `${sign}${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-        accValChange: Number(d.amount) * (sign === '' ? 1 : -1),
+        action,
+        source,
+        destination,
+        feeAmount,
+        feeToken,
+        accountValueChange: `${incoming ? '' : '-'}${perpsNumberFormatter({
+          value: d.amount,
+        })} ${token}`,
+        accValChange: Number(d.amount) * (incoming ? 1 : -1),
       }
     }
 
@@ -273,16 +276,28 @@ function parseHyperliquidTx(
       }
 
     // ── internalTransfer (platform-level credit, e.g. referral/fee rebate) ─
-    //  Always incoming to the viewer; source is "Perps", dest is "Perps".
-    case 'internalTransfer':
+    //  Source and destination stay within Perps.
+    case 'internalTransfer': {
+      const isInternalIncoming = d.destination.toLowerCase() === me
+      const isInternalSubAccount =
+        subAccountAddresses.has(d.destination.toLowerCase()) ||
+        subAccountAddresses.has(d.user.toLowerCase())
       return {
-        action: 'Internal Transfer',
+        action: isInternalSubAccount ? 'Sub-Account Transfer' : 'Send',
         source: 'Perps',
         destination: 'Perps',
-        feeAmount: Number(-d.fee),
-        accountValueChange: `${perpsNumberFormatter({ value: d.usdc })} USDC`,
-        accValChange: Number(d.usdc),
+        feeAmount: Number(d.fee),
+        feeToken: 'USDC',
+        accountValueChange: `${perpsNumberFormatter({
+          value: isInternalIncoming
+            ? Number(d.usdc) - Number(d.fee)
+            : -Number(d.usdc),
+        })} USDC`,
+        accValChange: isInternalIncoming
+          ? Number(d.usdc) - Number(d.fee)
+          : -Number(d.usdc),
       }
+    }
 
     // ── vault deposit ─────────────────────────────────────────────────────
     //  UI: Action "Vault Deposit", Source: Perps, Dest: Perps, negative
@@ -303,8 +318,8 @@ function parseHyperliquidTx(
     //  Use netWithdrawnUsd for the value shown.
     case 'vaultWithdraw': {
       const value = isVault
-        ? -Number(d.netWithdrawnUsd)
-        : Number(d.netWithdrawnUsd)
+        ? -(Number(d.netWithdrawnUsd) + Number(d.commission))
+        : Number(d.netWithdrawnUsd) + Number(d.commission)
       return {
         action: `Vault Withdrawal`,
         source: 'Perps',
@@ -354,39 +369,65 @@ function parseHyperliquidTx(
       }
 
     // ── earn / borrow-lend supply ─────────────────────────────────────────
-    case 'borrowLend':
+    case 'borrowLend': {
+      const borrowLendValue =
+        d.operation === 'borrow' || d.operation === 'withdraw'
+          ? Number(d.amount)
+          : -Number(d.amount)
       return {
-        action: 'Supply',
-        source: 'Spot',
-        destination: 'Earn',
+        action: borrowLendValue < 0 ? 'Supply' : 'Withdrawal',
+        source: borrowLendValue < 0 ? 'Spot' : 'Earn',
+        destination: borrowLendValue < 0 ? 'Earn' : 'Spot',
         feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-        accValChange: Number(-d.amount),
+        accountValueChange: `${perpsNumberFormatter({
+          value: borrowLendValue,
+        })} ${formatToken(d.token)}`,
+        accValChange: borrowLendValue,
       }
+    }
 
     // ── staking ───────────────────────────────────────────────────────────
-    case 'cStakingTransfer':
+    case 'cStakingTransfer': {
+      const stakingValue = d.isDeposit ? -Number(d.amount) : Number(d.amount)
       return {
         action: 'Transfer',
-        source: 'Spot',
-        destination: 'Staking',
+        source: stakingValue > 0 ? 'Staking' : 'Spot',
+        destination: stakingValue > 0 ? 'Spot' : 'Staking',
         feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
-        accValChange: Number(-d.amount),
+        accountValueChange: `${perpsNumberFormatter({
+          value: stakingValue,
+        })} ${formatToken(d.token)}`,
+        accValChange: stakingValue,
       }
+    }
 
     // ── spot transfers (HyperEVM ↔ Spot, or external → Spot) ─────────────
     case 'spotTransfer': {
-      const incoming = d.destination.toLowerCase() === me
+      const incoming = isSameAddress(d.destination, me)
+      const isSubAccount =
+        subAccountAddresses.has(d.destination.toLowerCase()) ||
+        subAccountAddresses.has(d.user.toLowerCase())
+      const isHyperEvmTransfer = isHyperEvmTransferDelta(d)
+      const token = formatToken(d.token)
+      const fee = getTransferFee(d)
 
       return {
-        action: incoming ? 'Deposit' : 'Transfer',
-        source: incoming ? 'HyperEVM' : 'Spot',
-        destination: incoming ? 'Spot' : 'HyperEVM',
-        feeAmount: Number(d.fee),
+        action: isSubAccount
+          ? 'Sub-Account Transfer'
+          : isHyperEvmTransfer
+            ? 'Transfer'
+            : 'Send',
+        source: incoming ? (isHyperEvmTransfer ? 'HyperEVM' : 'Spot') : 'Spot',
+        destination: incoming
+          ? 'Spot'
+          : isHyperEvmTransfer
+            ? 'HyperEVM'
+            : 'Spot',
+        feeAmount: fee.feeAmount,
+        feeToken: fee.feeToken,
         accountValueChange: incoming
-          ? `${perpsNumberFormatter({ value: d.amount })} ${d.token}`
-          : `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
+          ? `${perpsNumberFormatter({ value: d.amount })} ${token}`
+          : `-${perpsNumberFormatter({ value: d.amount })} ${token}`,
         accValChange: Number(d.amount) * (incoming ? 1 : -1),
       }
     }
@@ -397,7 +438,8 @@ function parseHyperliquidTx(
         action: 'Vault Create',
         source: 'Perps',
         destination: 'Perps',
-        feeAmount: isVault ? 0 : 10_000,
+        feeAmount: isVault ? 0 : Number('fee' in d ? d.fee : 0),
+        feeToken: 'USDC',
         accountValueChange: `${isVault ? '' : '-'}${perpsNumberFormatter({ value: d.usdc })} USDC`,
         accValChange: Number(d.usdc) * (isVault ? 1 : -1),
       }
@@ -410,28 +452,30 @@ function parseHyperliquidTx(
         source: 'Perps',
         destination: 'Perps',
         feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: Math.abs(amount).toString() })} USDC`,
-        accValChange: amount * -1,
+        accountValueChange: `${perpsNumberFormatter({
+          value: isVault ? -amount : amount,
+        })} USDC`,
+        accValChange: amount * (isVault ? -1 : 1),
       }
     }
 
     case 'deployGasAuction':
       return {
         action: 'Deploy Gas Auction',
-        source: 'Perps',
-        destination: 'Perps',
+        source: 'Spot',
+        destination: 'Spot',
         feeAmount: 0,
-        accountValueChange: `-${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
+        accountValueChange: `-${perpsNumberFormatter({ value: d.amount })} ${formatToken(d.token)}`,
         accValChange: Number(-d.amount),
       }
 
     case 'activateDexAbstraction':
       return {
         action: 'Activate Dex Abstraction',
-        source: mapDex(d.dex),
-        destination: mapDex(d.dex),
+        source: `Perps (${d.dex})`,
+        destination: d.token === 'USDC' ? 'Perps' : 'Spot',
         feeAmount: 0,
-        accountValueChange: `${perpsNumberFormatter({ value: d.amount })} ${d.token}`,
+        accountValueChange: `${perpsNumberFormatter({ value: d.amount })} ${formatToken(d.token)}`,
         accValChange: Number(d.amount),
       }
     case 'vaultLeaderCommission':
@@ -446,10 +490,105 @@ function parseHyperliquidTx(
   }
 }
 
-function mapDex(dex: string) {
+function isSameAddress(
+  addressA: string | undefined,
+  addressB: string,
+): boolean {
+  return addressA?.toLowerCase() === addressB.toLowerCase()
+}
+
+function isHyperEvmAddress(address: string | undefined): boolean {
+  const lowerAddress = address?.toLowerCase()
+
+  return Boolean(
+    lowerAddress &&
+      (lowerAddress === HYPEREVM_SYSTEM_ADDRESS ||
+        lowerAddress.startsWith(HYPEREVM_SYSTEM_ADDRESS_PREFIX)),
+  )
+}
+
+function isHyperEvmTransferDelta(
+  delta: UserNonFundingLedgerUpdatesResponse[number]['delta'],
+): boolean {
+  if (delta.type !== 'send' && delta.type !== 'spotTransfer') return false
+
+  return isHyperEvmAddress(delta.destination) || isHyperEvmAddress(delta.user)
+}
+
+function mapDex(dex: string, address?: string) {
   if (!dex || dex === '') return 'Perps'
-  if (dex === 'spot') return 'Spot'
+  if (dex === 'spot') return isHyperEvmAddress(address) ? 'HyperEVM' : 'Spot'
   return `Perps (${dex})`
+}
+
+function formatToken(token: string): string {
+  return SPOT_ASSETS_TO_REWRITE.get(token) ?? token
+}
+
+function formatChainName(chain: string): string {
+  if (chain === 'hyperliquid') return 'Spot'
+
+  return `${chain.charAt(0).toUpperCase()}${chain.slice(1)}`
+}
+
+function getTransferFee(
+  delta: Extract<
+    UserNonFundingLedgerUpdatesResponse[number]['delta'],
+    { type: 'send' | 'spotTransfer' }
+  >,
+): { feeAmount: number; feeToken: string } {
+  const nativeTokenFee = Number(delta.nativeTokenFee ?? 0)
+  if (nativeTokenFee > 0) {
+    return {
+      feeAmount: nativeTokenFee,
+      feeToken: 'HYPE',
+    }
+  }
+
+  return {
+    feeAmount: Number(delta.fee ?? 0),
+    feeToken: delta.feeToken ? formatToken(delta.feeToken) : 'USDC',
+  }
+}
+
+function getArbitrumBridgeFee(
+  delta: Extract<
+    UserNonFundingLedgerUpdatesResponse[number]['delta'],
+    { type: 'send' | 'spotTransfer' }
+  >,
+): { feeAmount: number; feeToken: string } {
+  const fee = getTransferFee(delta)
+  if (fee.feeToken !== 'USDC') {
+    return {
+      feeAmount: ARBITRUM_USDC_BRIDGE_FEE,
+      feeToken: 'USDC',
+    }
+  }
+
+  return {
+    feeAmount: roundFee(fee.feeAmount + ARBITRUM_USDC_BRIDGE_FEE),
+    feeToken: 'USDC',
+  }
+}
+
+function getHyperunitFeeAmount(
+  op: HyperunitOperation,
+  receivedAmount: number | string,
+): number {
+  const sourceAmount = Number(op.sourceAmount)
+  const sweepFeeAmount = Number(op.sweepFeeAmount)
+  const destinationFeeAmount = Number(op.destinationFeeAmount)
+  const received = Number(receivedAmount)
+  const rawReceived = sourceAmount - sweepFeeAmount - destinationFeeAmount
+  const scale = rawReceived / received
+
+  if (!Number.isFinite(scale) || scale <= 0) return 0
+
+  return (sweepFeeAmount + destinationFeeAmount) / scale
+}
+
+function roundFee(value: number): number {
+  return Math.round((value + Number.EPSILON) * 100) / 100
 }
 
 function detectBridge(tx: UserNonFundingLedgerUpdatesResponse[number]): string {
@@ -465,7 +604,7 @@ const formatNonFundingLedgerUpdates = (
   subAccounts: SubAccounts2Response,
   isVault: boolean,
 ) => {
-  return data.map((item) => {
+  return addVaultLeaderCommissionRows(data).map((item) => {
     return {
       timestamp: item.time,
       status: 'Completed', //no status field in response, assuming all are completed
@@ -481,26 +620,60 @@ const formatNonFundingLedgerUpdates = (
   })
 }
 
+function addVaultLeaderCommissionRows(
+  data: UserNonFundingLedgerUpdatesResponse,
+): UserNonFundingLedgerUpdatesResponse {
+  return data.flatMap((item) => {
+    if (
+      item.delta.type !== 'vaultWithdraw' ||
+      Number(item.delta.commission) <= 0
+    ) {
+      return [item]
+    }
+
+    return [
+      item,
+      {
+        time: item.time - 10,
+        hash: item.hash,
+        delta: {
+          type: 'vaultLeaderCommission',
+          user: item.delta.user,
+          usdc: String(-Number(item.delta.commission)),
+        },
+      },
+    ]
+  })
+}
+
 export const useUserNonFundingLedgerUpdates = ({
   address,
   startTime,
   endTime,
   isVault = false,
+  isViewAll = false,
+  enabled = true,
 }: {
   address: EvmAddress | undefined
   startTime?: number
   endTime?: number
   isVault?: boolean
+  isViewAll?: boolean
+  enabled?: boolean
 }) => {
+  const queryStartTime = isViewAll ? undefined : startTime
+  const queryEndTime = isViewAll ? undefined : endTime
+
   return useQuery({
     queryKey: [
       'useUserNonFundingLedgerUpdates',
       address,
-      startTime,
-      endTime,
+      queryStartTime,
+      queryEndTime,
       isVault,
+      isViewAll,
     ],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!address) {
         throw new Error('address is undefined')
       }
@@ -511,9 +684,10 @@ export const useUserNonFundingLedgerUpdates = ({
           },
           {
             user: address,
-            startTime: startTime || undefined,
-            endTime: endTime || undefined,
+            startTime: queryStartTime ?? undefined,
+            endTime: queryEndTime ?? undefined,
           },
+          signal,
         ),
         fetchHyperunitOps(address),
         getHlTransfers(address),
@@ -524,6 +698,7 @@ export const useUserNonFundingLedgerUpdates = ({
           {
             user: address,
           },
+          signal,
         ),
       ])
       return formatNonFundingLedgerUpdates(
@@ -535,7 +710,7 @@ export const useUserNonFundingLedgerUpdates = ({
         isVault,
       )
     },
-    enabled: !!address,
+    enabled: Boolean(enabled && address),
   })
 }
 
