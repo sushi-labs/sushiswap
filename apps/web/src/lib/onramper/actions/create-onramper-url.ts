@@ -3,7 +3,6 @@
 import { isAddress } from 'viem'
 import { signWidgetUrlV2 } from '../sign-widget-url-v2'
 
-const DEFAULT_ONRAMPER_API_KEY = 'pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ'
 const ONRAMPER_PRODUCTION_WIDGET_URL = 'https://buy.onramper.com'
 const ONRAMPER_STAGING_WIDGET_URL = 'https://buy.onramper.dev'
 const DEFAULT_CRYPTO_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/
@@ -41,8 +40,10 @@ export async function createOnramperUrl({
     throw new Error('Invalid Onramper default crypto')
   }
 
-  const apiKey =
-    process.env.ONRAMPER_API_KEY?.trim() || DEFAULT_ONRAMPER_API_KEY
+  const apiKey = process.env.ONRAMPER_API_KEY?.trim()
+  if (!apiKey) {
+    throw new Error('ONRAMPER_API_KEY is not set')
+  }
   const widgetUrl = apiKey.startsWith('pk_test_')
     ? ONRAMPER_STAGING_WIDGET_URL
     : ONRAMPER_PRODUCTION_WIDGET_URL
