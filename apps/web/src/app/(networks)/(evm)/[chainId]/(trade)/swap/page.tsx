@@ -4,16 +4,19 @@ import { DetailsInteractionTrackerProvider } from '../_ui/details-interaction-tr
 import { DerivedstateSimpleSwapProvider } from './_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapWidget } from './_ui/simple-swap-widget'
 import { SimpleSwapWidgetSkeleton } from './_ui/simple-swap-widget-skeleton'
+import { Providers } from './providers'
 
 export default function SwapSimplePage() {
   return (
     <Container maxWidth="lg">
       <Suspense fallback={<SimpleSwapWidgetSkeleton />}>
-        <DerivedstateSimpleSwapProvider>
-          <DetailsInteractionTrackerProvider>
-            <SimpleSwapWidget />
-          </DetailsInteractionTrackerProvider>
-        </DerivedstateSimpleSwapProvider>
+        <Providers>
+          <DerivedstateSimpleSwapProvider>
+            <DetailsInteractionTrackerProvider>
+              <SimpleSwapWidget />
+            </DetailsInteractionTrackerProvider>
+          </DerivedstateSimpleSwapProvider>
+        </Providers>
       </Suspense>
     </Container>
   )
