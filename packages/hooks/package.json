@@ -21,7 +21,8 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "test": "node --test src/*.test.mjs && vitest run src/slippage-tolerance.test.ts"
   },
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
@@ -37,7 +38,8 @@
     "react-dom": "catalog:react",
     "sushi": "catalog:web3",
     "tailwindcss": "catalog:ui",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "2.1.9"
   },
   "peerDependencies": {
     "react": "*",
