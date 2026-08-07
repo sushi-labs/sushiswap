@@ -33,7 +33,7 @@ import {
   type ConcentratedLiquidityState,
   concentratedLiquidityReducer,
   initialConcentratedLiquidityState,
-} from './concentrated-liquidity-state'
+} from './state'
 
 type Api = {
   onFieldAInput(typedValue: string, noLiquidity: boolean | undefined): void
