@@ -15,6 +15,7 @@ import { useEffect } from 'react'
 import { useSpotMeta } from '../info/use-spot-meta'
 import { hlHttpTransport, hlWebSocketTransport } from '../transports'
 import { SPOT_ASSETS_TO_REWRITE } from '../utils'
+import { getSpotAssetMetadata } from './spot-asset-metadata'
 
 type CollateralToken = SpotMetaResponse['tokens'][number]
 
@@ -39,6 +40,10 @@ export type PerpOrSpotAsset = {
   maxLeverage: number | undefined
   marginMode?: 'strictIsolated' | 'noCross'
   marketCap?: string
+  isCanonical: boolean
+  spotId?: string
+  baseTokenId?: string
+  quoteTokenId?: string
   isDelisted: boolean
   marginTableId: number | undefined
   decimals: number
@@ -57,6 +62,7 @@ const formatSpotCtxs = (
     const tokens = u.tokens.map((tokenIndex) => _tokens[tokenIndex])
     //if u.token index is missing, skip
     if (tokens.some((t) => !t)) return acc
+    const metadata = getSpotAssetMetadata(meta, u)
     const markPrice = Number.parseFloat(ctx.markPx)
     const last = ctx.midPx ? Number.parseFloat(ctx.midPx) : markPrice
     const prev = Number.parseFloat(ctx.prevDayPx)
@@ -100,6 +106,10 @@ const formatSpotCtxs = (
       maxLeverage: undefined,
       marginMode: undefined,
       isDelisted: false,
+      isCanonical: metadata.isCanonical,
+      spotId: metadata.spotId,
+      baseTokenId: metadata.baseTokenId,
+      quoteTokenId: metadata.quoteTokenId,
       marginTableId: undefined,
     })
     return acc
@@ -173,6 +183,7 @@ export const formatPerpCtxs = (
         maxLeverage: u.maxLeverage,
         marginMode: u.marginMode,
         marketCap: undefined,
+        isCanonical: false,
         isDelisted: u.isDelisted ?? false,
         marginTableId: u.marginTableId,
       })

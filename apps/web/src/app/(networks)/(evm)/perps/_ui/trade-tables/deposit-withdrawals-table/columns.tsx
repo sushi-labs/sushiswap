@@ -149,6 +149,7 @@ export const FEE_COLUMN: ColumnDef<
   sortingFn: 'alphanumeric',
   cell: (props) => {
     const feeAmount = props.row.original.feeAmount
+    const feeToken = props.row.original.feeToken ?? 'USDC'
     if (feeAmount === 0) {
       return <span className="font-medium lg:whitespace-nowrap">--</span>
     }
@@ -160,7 +161,7 @@ export const FEE_COLUMN: ColumnDef<
           getTextColorClass(-1),
         )}
       >
-        {perpsNumberFormatter({ value: feeAmount })} USDC
+        {perpsNumberFormatter({ value: feeAmount })} {feeToken}
       </span>
     )
   },

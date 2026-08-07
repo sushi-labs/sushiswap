@@ -9,6 +9,10 @@ import {
   useMemo,
   useState,
 } from 'react'
+import {
+  type ViewAllHref,
+  viewAllHrefs,
+} from '../../[...viewAll]/view-all-hrefs'
 import { CancelAllOpenOrdersDialog, CloseAllPositionsDialog } from '../exchange'
 import { BalanceTable } from './balance-table'
 import { DepositsWithdrawalsTable } from './deposit-withdrawals-table'
@@ -90,26 +94,31 @@ export const TRADE_TABLES_TABS = [
         <ExpandAll label="Trades" />
       </>
     ),
+    viewAllHref: viewAllHrefs[0],
   },
   {
     name: 'Funding History',
     value: 'funding-history' as const,
     content: FundingHistoryTable,
+    viewAllHref: viewAllHrefs[1],
   },
   {
     name: 'Order History',
     value: 'order-history' as const,
     content: OrderHistoryTable,
+    viewAllHref: viewAllHrefs[2],
   },
   {
     name: 'Interest',
     value: 'interest' as const,
     content: InterestTable,
+    viewAllHref: viewAllHrefs[3],
   },
   {
     name: 'Deposits and Withdrawals',
     value: 'deposits-withdrawals' as const,
     content: DepositsWithdrawalsTable,
+    viewAllHref: viewAllHrefs[4],
   },
 ]
 
@@ -125,11 +134,13 @@ export const TWAP_TABLES_TABS = [
     name: 'History',
     value: 'history' as const,
     content: HistoryTwapTable,
+    viewAllHref: viewAllHrefs[5],
   },
   {
     name: 'Fill History',
     value: 'fill-history' as const,
     content: FillHistoryTwapTable,
+    viewAllHref: viewAllHrefs[6],
   },
 ]
 
@@ -143,6 +154,24 @@ const TradeTablesContext = createContext<State>({} as State)
 
 interface TradeTablesProviderProps {
   children: React.ReactNode
+}
+
+export const getViewAllHref = (
+  tab: TradeTablesTabValue | TwapTableTabValue,
+): ViewAllHref | undefined => {
+  const viewAllHrefByTab = {
+    'trade-history': viewAllHrefs[0],
+    'funding-history': viewAllHrefs[1],
+    'order-history': viewAllHrefs[2],
+    interest: viewAllHrefs[3],
+    'deposits-withdrawals': viewAllHrefs[4],
+    history: viewAllHrefs[5],
+    'fill-history': viewAllHrefs[6],
+  } satisfies Partial<
+    Record<TradeTablesTabValue | TwapTableTabValue, ViewAllHref>
+  >
+
+  return viewAllHrefByTab[tab as keyof typeof viewAllHrefByTab]
 }
 
 const TradeTablesProvider: FC<TradeTablesProviderProps> = ({ children }) => {
