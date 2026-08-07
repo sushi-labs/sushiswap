@@ -23,9 +23,9 @@ export async function generateMetadata({
 
   const chain = getEvmChainById(chainId)
   const url = getLaunchpadUrl(chainId)
-  const imageUrl = `${url}/embed`
   const title = `Sushi Launchpad on ${chain.name}`
 
+  // Images come from the opengraph-image file convention.
   return {
     title,
     description: DESCRIPTION,
@@ -36,20 +36,11 @@ export async function generateMetadata({
       siteName: 'Sushi',
       title,
       description: DESCRIPTION,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: 'Discover tokens on Sushi Launchpad',
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description: DESCRIPTION,
-      images: [imageUrl],
     },
   }
 }

@@ -5,6 +5,7 @@ import type {
 import { describe, expect, it } from 'vitest'
 import {
   getLaunchpadDiscoverJsonLd,
+  getLaunchpadTokenEmbedLogoUrl,
   getLaunchpadTokenJsonLd,
   getLaunchpadTokenLogoUrl,
   serializeLaunchpadJsonLd,
@@ -79,6 +80,12 @@ describe('launchpad JSON-LD', () => {
   it('uses the extensionless CDN public ID for token logos', () => {
     expect(getLaunchpadTokenLogoUrl(token, 56)).toBe(
       'https://cdn.sushi.com/image/upload/c_limit,w_56,q_auto/tokens/4663/0x1111111111111111111111111111111111111111',
+    )
+  })
+
+  it('asks the CDN to transcode embed logos to png', () => {
+    expect(getLaunchpadTokenEmbedLogoUrl(token, 256)).toBe(
+      'https://cdn.sushi.com/image/upload/c_limit,w_256,q_auto,f_png/tokens/4663/0x1111111111111111111111111111111111111111',
     )
   })
 
