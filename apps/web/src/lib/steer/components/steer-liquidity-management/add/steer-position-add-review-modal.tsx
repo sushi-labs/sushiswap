@@ -22,11 +22,11 @@ import {
 } from '@sushiswap/ui'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_STEER } from 'src/lib/constants'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { steerPeripheryAbi } from 'src/lib/steer/abi/steer-periphery'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
 import { useSteerAccountPosition } from 'src/lib/steer/hooks/use-steer-account-position'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, formatUSD, subtractSlippage } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import {

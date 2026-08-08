@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { getChainById } from 'sushi'

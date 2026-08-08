@@ -9,7 +9,7 @@ import { type FC, use, useEffect, useMemo, useState } from 'react'
 import { SelectSmartPoolStrategyWidget } from 'src/lib/steer/components/select-smart-pool-strategy-widget'
 import { SmartPoolLiquidityWidget } from 'src/lib/steer/components/smart-pool-liquidity-widget'
 import { useVaults } from 'src/lib/steer/hooks'
-import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
+import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
 import {
   type EvmAddress,
   SUSHISWAP_V3_FACTORY_ADDRESS,

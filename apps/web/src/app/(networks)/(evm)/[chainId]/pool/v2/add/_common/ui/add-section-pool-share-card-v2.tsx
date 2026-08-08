@@ -7,7 +7,7 @@ import {
   StatValue,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import { type Amount, formatPercent } from 'sushi'
 import type { EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
 

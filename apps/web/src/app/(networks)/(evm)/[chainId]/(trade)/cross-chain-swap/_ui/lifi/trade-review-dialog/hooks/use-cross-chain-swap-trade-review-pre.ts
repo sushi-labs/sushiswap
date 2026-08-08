@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { StepState } from '../../confirmation-dialog'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from '../../xswap-provider'
 

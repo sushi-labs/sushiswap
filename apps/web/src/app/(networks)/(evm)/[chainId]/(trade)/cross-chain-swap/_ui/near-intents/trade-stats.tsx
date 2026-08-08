@@ -17,7 +17,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
+import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
 import { useEffect, useMemo, useState } from 'react'
 import {
   NEAR_INTENTS_UI_FEE_DECIMAL,

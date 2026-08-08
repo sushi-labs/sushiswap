@@ -11,8 +11,8 @@ import {
   TextField,
 } from '@sushiswap/ui'
 import { useCallback } from 'react'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { WalletNamespace } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { type Amount, getChainById } from 'sushi'

@@ -1,5 +1,5 @@
 import { Badge } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
 import type { FC, ReactElement } from 'react'
 import type { ChainId } from 'sushi'

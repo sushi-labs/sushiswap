@@ -3,7 +3,7 @@ import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import React from 'react'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { PoolsTable } from '~stellar/_common/ui/ExplorePools/PoolsTable'
+import { PoolsTable } from '~stellar/_common/ui/explore-pools/pools-table'
 
 export default async function ExplorePoolsPage() {
   return (

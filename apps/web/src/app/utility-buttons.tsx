@@ -10,10 +10,10 @@ import {
   PopoverTrigger,
   Separator,
 } from '@sushiswap/ui'
-import { BrowserCookieIcon } from '@sushiswap/ui/icons/BrowserCookieIcon'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { BrowserCookieIcon } from '@sushiswap/ui/icons/browser-cookie-icon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
+import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import Link from 'next/link'
 import { Fragment } from 'react'
 import { CookieDialogContainer } from './_common/cookies/cookie-dialog-container'

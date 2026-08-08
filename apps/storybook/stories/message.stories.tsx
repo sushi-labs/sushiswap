@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Message, type MessageProps } from '@sushiswap/ui'
 import * as React from 'react'
 
-import { ViewGroup } from '../components/View'
+import { ViewGroup } from '../components/view'
 
 const variants: MessageProps['variant'][] = [
   'info',

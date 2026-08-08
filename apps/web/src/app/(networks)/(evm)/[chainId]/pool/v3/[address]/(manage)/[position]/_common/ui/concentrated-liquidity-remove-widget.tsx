@@ -41,15 +41,15 @@ import {
 import { Button } from '@sushiswap/ui'
 import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
   useTransactionDeadline,
-} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   type EvmCurrency,

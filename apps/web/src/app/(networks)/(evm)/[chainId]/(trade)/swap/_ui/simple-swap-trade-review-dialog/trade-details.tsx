@@ -10,7 +10,7 @@ import type {
 import {
   type warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
+} from 'src/lib/swap/warning-severity'
 import { ChainId, type Percent, ZERO, getChainById } from 'sushi'
 import { EvmNative } from 'sushi/evm'
 import { SvmNative, isSvmChainId } from 'sushi/svm'

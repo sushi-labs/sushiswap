@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import React, { useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'

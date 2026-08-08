@@ -13,7 +13,7 @@ import { Widget, WidgetHeader } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 

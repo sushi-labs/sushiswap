@@ -1,5 +1,5 @@
 import { Button } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { PerpsCard } from '../_common/perps-card'
 import { UpdateLeverageDialog, UpdateMarginModeDialog } from '../exchange'
 import { useAssetState } from './asset-state-provider'

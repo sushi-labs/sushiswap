@@ -4,7 +4,7 @@ import {
   NavigationElementType,
   Separator,
 } from '@sushiswap/ui'
-import { SushiLabsIcon } from '@sushiswap/ui/icons/SushiLabsIcon'
+import { SushiLabsIcon } from '@sushiswap/ui/icons/sushi-labs-icon'
 import { getSessionData } from '../../lib/client-config'
 import { HeaderProfile } from './header-profile'
 

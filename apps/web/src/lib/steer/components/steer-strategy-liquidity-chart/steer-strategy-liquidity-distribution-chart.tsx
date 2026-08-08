@@ -12,7 +12,7 @@ import 'echarts/lib/component/toolbox'
 import 'echarts/lib/component/grid'
 import 'echarts/lib/component/dataZoom'
 import * as echarts from 'echarts/lib/echarts'
-import type { ChartEntry } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/types'
+import type { ChartEntry } from '~evm/[chainId]/_ui/liquidity-chart-range-input/types'
 
 interface SteerStrategyLiquidityDistributionChart {
   series: ChartEntry[]

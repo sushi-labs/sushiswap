@@ -9,7 +9,7 @@ import React, {
   useContext,
   useMemo,
 } from 'react'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import {
   EvmChainId,
   type EvmCurrency,

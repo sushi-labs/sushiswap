@@ -10,7 +10,7 @@ import {
 } from '@sushiswap/ui'
 import * as React from 'react'
 
-import { ViewGroup } from '../components/View'
+import { ViewGroup } from '../components/view'
 
 const variants: TextFieldBaseProps['variant'][] = ['default', 'outline']
 const sizes: TextFieldBaseProps['size'][] = ['sm', 'default']

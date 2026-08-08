@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import type React from 'react'
 import { type FC, Fragment } from 'react'
 
-import { SushiIcon } from '../icons/SushiIcon'
+import { SushiIcon } from '../icons/sushi-icon'
 
 interface LoaderProps extends React.ComponentProps<'svg'> {
   size?: number

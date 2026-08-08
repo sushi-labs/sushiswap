@@ -1,1 +1,1 @@
-export * from './useActiveBanners'
+export * from './use-active-banners'

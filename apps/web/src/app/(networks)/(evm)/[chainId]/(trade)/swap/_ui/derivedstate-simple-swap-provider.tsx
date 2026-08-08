@@ -16,15 +16,15 @@ import {
   useEvmTradeQuote,
   useSvmTradeQuote,
 } from 'src/lib/hooks/react-query'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
   type DirectPool,
   combineEvmTradeQueries,
   useDirectPoolTrade,
   useDirectPoolTradeQuote,
 } from 'src/lib/swap/direct-pool'
-import { useCarbonOffset } from 'src/lib/swap/useCarbonOffset'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useCarbonOffset } from 'src/lib/swap/use-carbon-offset'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, type Percent, ZERO } from 'sushi'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'

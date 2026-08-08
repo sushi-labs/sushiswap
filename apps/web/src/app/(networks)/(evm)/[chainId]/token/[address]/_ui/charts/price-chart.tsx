@@ -11,7 +11,7 @@ import * as echarts from 'echarts'
 import ReactEcharts, { type EChartsOption } from 'echarts-for-react'
 import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo, useState } from 'react'
-import { useTokenPriceChart } from 'src/lib/hooks/api/useTokenPriceChart'
+import { useTokenPriceChart } from 'src/lib/hooks/api/use-token-price-chart'
 import { formatPercent, formatUSD } from 'sushi'
 import type { SerializedEvmToken, SushiSwapChainId } from 'sushi/evm'
 

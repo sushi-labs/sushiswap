@@ -26,10 +26,10 @@ import {
   useUserHandle,
   useUserPool,
 } from '../lib/common/use-user-handle'
-import { AddSectionStake } from './AddSection/add-section-stake'
-import { AddSectionWidget } from './AddSection/add-section-widget'
-import { RemoveSectionLegacy } from './RemoveSection/remove-section-legacy'
-import { RemoveSectionUnstake } from './RemoveSection/remove-section-unstake'
+import { AddSectionStake } from './add-section/add-section-stake'
+import { AddSectionWidget } from './add-section/add-section-widget'
+import { RemoveSectionLegacy } from './remove-section/remove-section-legacy'
+import { RemoveSectionUnstake } from './remove-section/remove-section-unstake'
 
 export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
   const [tab, setTab] = useState<string>('add')

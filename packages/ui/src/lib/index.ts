@@ -1,4 +1,4 @@
-export * from './getOnrampURL'
+export * from './get-onramp-url'
 export * from './gtag'
-export * from './syncScrollLockSafeArea'
-export * from './useBreakpoint'
+export * from './sync-scroll-lock-safe-area'
+export * from './use-breakpoint'

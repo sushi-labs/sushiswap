@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@sushiswap/ui'
-import { SortIcon } from '@sushiswap/ui/icons/SortIcon'
+import { SortIcon } from '@sushiswap/ui/icons/sort-icon'
 import { useCallback } from 'react'
 import {
   USER_VAULTS_FILTERS,

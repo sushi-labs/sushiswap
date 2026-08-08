@@ -20,7 +20,7 @@ import { type Amount, ZERO } from 'sushi'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
-import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { usePoolPosition } from '../../../_common/ui/pool-position-provider'
 
 interface RemoveSectionWidgetProps {

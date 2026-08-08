@@ -20,7 +20,7 @@ import {
   useTokensFromPool,
   useUnderlyingTokenBalanceFromPool,
 } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import {
   EvmNative,
@@ -37,20 +37,20 @@ import { getTokenPermitId } from 'src/lib/wagmi/hooks/approvals/hooks/token-perm
 import {
   type PermitInfo,
   PermitType,
-} from 'src/lib/wagmi/hooks/approvals/hooks/useTokenPermit'
-import { useSushiSwapRouterContract } from 'src/lib/wagmi/hooks/contracts/useSushiSwapRouter'
+} from 'src/lib/wagmi/hooks/approvals/hooks/use-token-permit'
+import { useSushiSwapRouterContract } from 'src/lib/wagmi/hooks/contracts/use-sushi-swap-router'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,
-} from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
-import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/use-total-supply'
+import { useTransactionDeadline } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   useApproved,
   useSignature,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import {
   type UseCallParameters,
   useCall,

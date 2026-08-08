@@ -1,1 +1,1 @@
-export * from './useLifiScanLink'
+export * from './use-lifi-scan-link'

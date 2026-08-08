@@ -15,8 +15,8 @@ import {
 import { getAddress } from 'viem'
 import * as z from 'zod'
 import { CORS } from '../../cors'
-import { getPool } from './getPool'
-import { getPosition } from './getPosition'
+import { getPool } from './get-pool'
+import { getPosition } from './get-position'
 
 async function getPrices({
   chainId,

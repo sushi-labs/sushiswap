@@ -8,8 +8,8 @@ import {
   getCrossChainFeesBreakdown,
   useLiFiStatus,
 } from 'src/lib/swap/cross-chain'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/Checker/slippage'
+import { warningSeverity } from 'src/lib/swap/warning-severity'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, getChainById } from 'sushi'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'

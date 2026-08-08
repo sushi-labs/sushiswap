@@ -7,7 +7,7 @@ import {
 import { Button, Dots, Message } from '@sushiswap/ui'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { LAUNCHPAD_ADDRESS } from '../../_lib/launchpad-contract'

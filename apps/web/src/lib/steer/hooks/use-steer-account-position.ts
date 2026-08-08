@@ -3,7 +3,7 @@ import { useReadContracts } from 'wagmi'
 import type { Address } from 'viem'
 
 import { useMemo } from 'react'
-import { useWatchByInterval } from 'src/lib/wagmi/hooks/watch/useWatchByInterval'
+import { useWatchByInterval } from 'src/lib/wagmi/hooks/watch/use-watch-by-interval'
 import type { EvmID } from 'sushi/evm'
 import {
   getBalanceOfsContracts,

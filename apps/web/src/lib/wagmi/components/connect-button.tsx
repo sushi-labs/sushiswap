@@ -5,7 +5,7 @@ import React, { type FC } from 'react'
 import type { WalletNamespace } from 'src/lib/wallet'
 import { SelectWalletButton } from 'src/lib/wallet/components/select-wallet-button'
 import { useConnectors } from 'wagmi'
-import { useConnect } from '../hooks/wallet/useConnect'
+import { useConnect } from '../hooks/wallet/use-connect'
 
 interface ConnectButtonProps extends ButtonProps {
   namespace?: WalletNamespace

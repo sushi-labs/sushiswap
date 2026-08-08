@@ -1,1 +1,1 @@
-export * from './useAllPrices'
+export * from './use-all-prices'

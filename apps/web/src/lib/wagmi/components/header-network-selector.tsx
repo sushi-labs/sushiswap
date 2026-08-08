@@ -2,7 +2,7 @@
 
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'

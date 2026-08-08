@@ -4,7 +4,7 @@ import { Card, SkeletonBox } from '@sushiswap/ui'
 import { TooltipWithBounds, defaultStyles, useTooltip } from '@visx/tooltip'
 import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
-import { usePoolPairsChartData } from 'src/lib/pool/blade/usePoolPairsChartData'
+import { usePoolPairsChartData } from 'src/lib/pool/blade/use-pool-pairs-chart-data'
 import type { BladeChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import {

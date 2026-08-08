@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import {
   getNativeBalanceReserve,
   getSpendableNativeBalance,
-} from 'src/lib/wagmi/components/web3-input/Currency/native-balance-reserve'
+} from 'src/lib/wagmi/components/web3-input/currency/native-balance-reserve'
 import { useAccount } from 'src/lib/wallet'
 import { Amount, isAddressEqual } from 'sushi'
 import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'

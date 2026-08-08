@@ -9,7 +9,7 @@ import { useCrossChainTradeStep } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import type { EvmAddress, EvmChainId } from 'sushi/evm'
 import {

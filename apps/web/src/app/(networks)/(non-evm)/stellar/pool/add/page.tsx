@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import {
   type StellarAccountAddress,
@@ -29,8 +29,8 @@ import {
   isAddressLower,
 } from '~stellar/_common/lib/soroban'
 import { FEE_TIERS } from '~stellar/_common/lib/utils/ticks'
-import { TickRangeSelector } from '~stellar/_common/ui/TickRangeSelector/TickRangeSelector'
-import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
+import { TickRangeSelector } from '~stellar/_common/ui/tick-range-selector/tick-range-selector'
+import { CreateTrustlineButton } from '~stellar/_common/ui/trustline/create-trustline-button'
 import { useStellarWallet } from '~stellar/providers'
 
 export default function AddPoolPage() {

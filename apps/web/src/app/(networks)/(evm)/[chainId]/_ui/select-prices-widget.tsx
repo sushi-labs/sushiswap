@@ -54,16 +54,16 @@ import { Radio, RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
 import { Amount, Fraction, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'
-import { LiquidityChartRangeInput } from './LiquidityChartRangeInput'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from './concentrated-liquidity-provider'
+import { LiquidityChartRangeInput } from './liquidity-chart-range-input'
 
 enum PriceRange {
   FULL_RANGE = 0,

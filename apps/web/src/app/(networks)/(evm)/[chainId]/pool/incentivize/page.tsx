@@ -33,17 +33,17 @@ import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
 import { useRewardTokens } from 'src/lib/hooks/react-query'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPool'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {
   AngleConditionsState,
   useAcceptAngleConditions,
-} from 'src/lib/wagmi/hooks/rewards/hooks/useAcceptAngleConditions'
-import { useIncentivizePoolWithRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useIncentivizePoolWithRewards'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/hooks/rewards/hooks/use-accept-angle-conditions'
+import { useIncentivizePoolWithRewards } from 'src/lib/wagmi/hooks/rewards/hooks/use-incentivize-pool-with-rewards'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { Amount } from 'sushi'
 import {
   type EvmAddress,

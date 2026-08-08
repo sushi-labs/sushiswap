@@ -20,13 +20,13 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
+import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
 import { EVM_UI_FEE_PERCENT, type LifiXSwapSupportedChainId } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
+} from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'

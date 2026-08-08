@@ -1,2 +1,2 @@
-export * from './useCoinGeckoTokenInfo'
-export * from './useTokenSecurity'
+export * from './use-coin-gecko-token-info'
+export * from './use-token-security'

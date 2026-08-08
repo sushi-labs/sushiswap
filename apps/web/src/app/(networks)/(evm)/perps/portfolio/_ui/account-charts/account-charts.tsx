@@ -8,7 +8,7 @@ import {
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { useMemo, useState } from 'react'
 import { usePortfolio } from 'src/lib/perps'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'

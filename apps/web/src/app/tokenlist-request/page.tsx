@@ -26,12 +26,12 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import { useTokenAnalysis } from 'src/lib/hooks/api/useTokenAnalysis'
+import { useTokenAnalysis } from 'src/lib/hooks/api/use-token-analysis'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { ChainId, formatNumber, formatUSD, getChainById } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'

@@ -17,9 +17,9 @@ import {
   OnramperButton,
   Separator,
 } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
+import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import Link from 'next/link'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'

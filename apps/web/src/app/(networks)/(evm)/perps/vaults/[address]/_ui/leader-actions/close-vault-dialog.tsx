@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useCallback, useState } from 'react'
 import { useVaultDistribute } from 'src/lib/perps'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 

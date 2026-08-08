@@ -40,23 +40,23 @@ import { Button } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
 } from 'src/lib/wagmi/hooks/migrate/hooks/use-v3-migrate'
 import type { V3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
-import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/useTotalSupply'
+import { useSushiSwapV2Pool } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
+import { useTotalSupply } from 'src/lib/wagmi/hooks/tokens/use-total-supply'
 import {
   getDefaultTTL,
   useTransactionDeadline,
-} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, type Fraction, Price, ZERO, formatUSD } from 'sushi'
 import {
   Position,

@@ -1,9 +1,9 @@
 import type { ImageProps } from 'next/image'
 import type { FC } from 'react'
 
-import { Icon, type IconProps } from './Icon'
-import { IconList, type IconListProps } from './IconList'
-import { List, type ListComponent } from './List'
+import { Icon, type IconProps } from './icon'
+import { IconList, type IconListProps } from './icon-list'
+import { List, type ListComponent } from './list'
 
 type Currency = {
   List: ListComponent

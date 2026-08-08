@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
-import { SushiSubIcon } from '@sushiswap/ui/icons/SushiSubIcon'
+import { SushiSubIcon } from '@sushiswap/ui/icons/sushi-sub-icon'
 import { useMemo } from 'react'
 import {
   getSignForValue,

@@ -4,7 +4,7 @@ import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
 import type { StellarToken } from 'sushi/stellar'
 import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
-import { CreateTrustlineButton } from '~stellar/_common/ui/Trustline/CreateTrustlineButton'
+import { CreateTrustlineButton } from '~stellar/_common/ui/trustline/create-trustline-button'
 
 interface TrustlineProps extends ButtonProps {
   token: StellarToken | undefined

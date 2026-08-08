@@ -9,8 +9,8 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_ADD_STEER, Field } from 'src/lib/constants'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import {
   useSteerPositionAddActions,
   useSteerPositionAddDerivedInfo,

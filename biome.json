@@ -69,9 +69,15 @@
       "style": {
         "noNonNullAssertion": "off",
         "noParameterAssign": "off",
-        "useShorthandArrayType": "error",
         "noUselessElse": "off",
-        "noUnusedTemplateLiteral": "off"
+        "noUnusedTemplateLiteral": "off",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "filenameCases": ["kebab-case"]
+          }
+        },
+        "useShorthandArrayType": "error"
       },
       "suspicious": {
         "noArrayIndexKey": "off",
@@ -100,6 +106,23 @@
   "organizeImports": {
     "enabled": true
   },
+  "overrides": [
+    {
+      "include": [
+        "**/abi/**",
+        "**/abis/**",
+        "**/contract-bindings/**",
+        "packages/graph-client/src/subgraphs/*/types/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ],
   "vcs": {
     "enabled": true,
     "clientKind": "git",

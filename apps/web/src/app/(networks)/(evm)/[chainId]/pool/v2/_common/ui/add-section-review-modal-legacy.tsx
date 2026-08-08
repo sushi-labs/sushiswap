@@ -26,15 +26,15 @@ import { Dots } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import {
   getDefaultTTL,
   useTransactionDeadline,
-} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { type Amount, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,

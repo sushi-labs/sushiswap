@@ -8,7 +8,7 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
 import {
   type NearIntentsActiveExecution,

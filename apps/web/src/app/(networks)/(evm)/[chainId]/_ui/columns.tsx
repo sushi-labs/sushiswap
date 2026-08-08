@@ -9,7 +9,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi'

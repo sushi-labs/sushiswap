@@ -1,4 +1,4 @@
-export * from './Trace'
-export * from './TraceEvent'
+export * from './trace'
+export * from './trace-event'
 export * from './events'
-export * from './sendAnalyticsEvent'
+export * from './send-analytics-event'

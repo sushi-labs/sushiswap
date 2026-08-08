@@ -7,7 +7,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { useState } from 'react'
 import { formatPerpsPercent, useFees } from 'src/lib/perps'
 import { PerpsCard } from '~evm/perps/_ui/_common'

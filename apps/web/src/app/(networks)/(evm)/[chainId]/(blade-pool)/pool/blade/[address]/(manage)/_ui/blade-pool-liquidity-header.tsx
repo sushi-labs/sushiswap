@@ -8,8 +8,8 @@ import {
   LinkExternal,
   LinkInternal,
 } from '@sushiswap/ui'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/currency-fiat-icon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import React, { type FC, useMemo, useState, Fragment } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'
 import { formatUSD, shortenAddress } from 'sushi'

@@ -1,7 +1,7 @@
 'use client'
 
 import { AutoApplyInvite, AutoDarkMode } from 'src/lib/perps'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { UserSettingsProvider } from './_ui/account-management'
 import {
   AssetListProvider,

@@ -13,7 +13,7 @@ import {
 } from '@sushiswap/ui'
 import type { UseFormReturn } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { type Amount, formatUSD } from 'sushi'
 import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'

@@ -4,11 +4,11 @@ import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_BLADE } from 'src/lib/constants'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   CheckerProvider,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { useBladePoolOnchainData } from '../../../_ui/blade-pool-onchain-data-provider'
 import { useBladePoolPosition } from '../blade-pool-position-provider'
 import { BladeRemoveLiquidityReviewModal } from './blade-remove-liquidity-review-modal'

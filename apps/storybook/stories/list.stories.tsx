@@ -2,7 +2,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { List } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
 import * as React from 'react'
 
 const meta = {

@@ -13,7 +13,7 @@ import {
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { useDepositAddress, useHUEstimateFees } from 'src/lib/perps'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { formatUSD } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'

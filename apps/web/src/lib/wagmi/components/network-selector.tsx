@@ -11,7 +11,7 @@ import {
   PopoverPrimitive,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { NEW_CHAIN_IDS, SUPPORTED_NETWORKS } from 'src/config'
