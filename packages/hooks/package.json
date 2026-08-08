@@ -22,7 +22,7 @@
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsc -w",
-    "test": "node --test src/*.test.mjs && vitest run src/slippage-tolerance.test.ts"
+    "test": "vitest run"
   },
   "dependencies": {
     "copy-to-clipboard": "3.3.3",
