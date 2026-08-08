@@ -8,7 +8,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Suspense fallback={null}>
         <Header />
       </Suspense>
-      <div className="h-full">{children}</div>
+      <Suspense fallback={null}>
+        <div className="h-full">{children}</div>
+      </Suspense>
     </Providers>
   )
 }
