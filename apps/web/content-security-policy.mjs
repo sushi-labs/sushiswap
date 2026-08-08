@@ -134,6 +134,7 @@ const FRAME_SOURCES = [
   'https://hcaptcha.com',
   'https://*.hcaptcha.com',
   'https://buy.onramper.com',
+  'https://buy.onramper.dev',
   'https://widget.swapped.com',
   'https://www.googletagmanager.com',
   'https://id.porto.sh',
