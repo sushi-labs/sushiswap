@@ -1,5 +1,6 @@
 import { getFaqCategories } from '@sushiswap/graph-client/strapi'
 import { Container } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import {
   type Sidebar,
   SidebarDesktop,
@@ -43,6 +44,9 @@ function CategoryLayoutMobile({
 }
 
 export async function CategoryLayout({ children }: CategoryLayoutProps) {
+  'use cache'
+  cacheLife({ revalidate: 900 })
+
   const categories = await getFaqCategories({ sort: ['id'] })
   const sidebarEntries = categories.map((category) => {
     return {

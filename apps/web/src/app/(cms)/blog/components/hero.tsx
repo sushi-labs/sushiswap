@@ -1,9 +1,13 @@
 import { getBlogArticles } from '@sushiswap/graph-client/strapi'
 import { Button, Container, LinkInternal } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import { ArticleAuthors } from './article-authors'
 import { ArticleHeader } from './article-header'
 
 export async function Hero() {
+  'use cache'
+  cacheLife({ revalidate: 300 })
+
   const { articles } = await getBlogArticles({
     pagination: { start: 0, limit: 1 },
   })

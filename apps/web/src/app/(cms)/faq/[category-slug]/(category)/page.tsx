@@ -2,8 +2,16 @@ import {
   type FaqCategory,
   getFaqCategory,
 } from '@sushiswap/graph-client/strapi'
+import { cacheLife } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+async function getCachedFaqCategory(slug: string) {
+  'use cache'
+  cacheLife({ revalidate: 900 })
+
+  return getFaqCategory({ slug })
+}
 
 function AnswerGroup({
   category,
@@ -39,7 +47,7 @@ export default async function FaqCategoryPage(props: {
   let category
 
   try {
-    category = await getFaqCategory({ slug: params['category-slug'] })
+    category = await getCachedFaqCategory(params['category-slug'])
   } catch {
     return notFound()
   }

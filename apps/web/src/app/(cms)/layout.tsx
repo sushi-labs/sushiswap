@@ -7,8 +7,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <Providers>
       <Suspense fallback={null}>
         <Header />
-        <div className="h-full">{children}</div>
       </Suspense>
+      <div className="h-full">{children}</div>
     </Providers>
   )
 }

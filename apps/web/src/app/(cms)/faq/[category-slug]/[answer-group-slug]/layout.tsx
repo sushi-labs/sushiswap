@@ -1,8 +1,16 @@
 import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { Breadcrumb, Container, typographyVariants } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { AnswerGroupLayout } from './components/answer-group-layout'
+
+async function getCachedFaqAnswerGroup(slug: string) {
+  'use cache'
+  cacheLife({ revalidate: 900 })
+
+  return getFaqAnswerGroup({ slug })
+}
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -15,9 +23,7 @@ export default async function Layout(props: {
   let answerGroup
 
   try {
-    answerGroup = await getFaqAnswerGroup({
-      slug: params['answer-group-slug'],
-    })
+    answerGroup = await getCachedFaqAnswerGroup(params['answer-group-slug'])
   } catch {
     return notFound()
   }

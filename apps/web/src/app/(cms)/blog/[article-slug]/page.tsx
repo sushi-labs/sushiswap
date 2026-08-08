@@ -2,6 +2,7 @@ import { ChevronLeftIcon } from '@heroicons/react-v1/solid'
 import { getBlogArticles } from '@sushiswap/graph-client/strapi'
 import { Container, LinkInternal } from '@sushiswap/ui'
 import type { Metadata } from 'next'
+import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type { Article, WithContext } from 'schema-dts'
 import { getGhostBody } from '../../lib/ghost/ghost'
@@ -17,11 +18,27 @@ interface Props {
   }>
 }
 
+async function getCachedBlogArticles(
+  input: Parameters<typeof getBlogArticles>[0],
+) {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
+  return getBlogArticles(input)
+}
+
+async function getCachedGhostBody(slug: string) {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
+  return getGhostBody(slug)
+}
+
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const {
     articles: [article],
-  } = await getBlogArticles({
+  } = await getCachedBlogArticles({
     filters: { slug: { eq: params['article-slug'] } },
   })
 
@@ -71,19 +88,19 @@ export default async function Page(props: Props) {
   let body
 
   try {
-    const articleP = getBlogArticles({
+    const articleP = getCachedBlogArticles({
       filters: { slug: { eq: params['article-slug'] } },
       pagination: { limit: 1 },
     })
 
-    const moreArticlesP = getBlogArticles({
+    const moreArticlesP = getCachedBlogArticles({
       filters: { slug: { ne: params['article-slug'] } },
       pagination: { limit: 2 },
     })
 
     article = (await articleP).articles[0]
     if (!article.ghostSlug) return notFound()
-    body = await getGhostBody(article.ghostSlug).then(({ html }) => html)
+    body = await getCachedGhostBody(article.ghostSlug).then(({ html }) => html)
     moreArticles = (await moreArticlesP).articles
   } catch {
     return notFound()

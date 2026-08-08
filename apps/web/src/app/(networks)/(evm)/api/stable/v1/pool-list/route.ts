@@ -5,6 +5,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
+import { cacheLife } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import {
   type SushiSwapCmsProtocol,
@@ -47,6 +48,19 @@ const schema = z.object({
 
 export const maxDuration = 30
 
+async function getCachedPoolAddresses({
+  chainId,
+  protocol,
+}: {
+  chainId: PoolChainId
+  protocol: SushiSwapCmsProtocol
+}) {
+  'use cache'
+  cacheLife({ revalidate: 300 })
+
+  return getPoolAddresses({ chainId, protocols: [protocol] })
+}
+
 export async function GET(request: NextRequest) {
   const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '1 h'))
   if (ratelimit) {
@@ -65,9 +79,9 @@ export async function GET(request: NextRequest) {
 
   const args = result.data
 
-  const data = await getPoolAddresses({
+  const data = await getCachedPoolAddresses({
     chainId: args.chainId,
-    protocols: [args.protocol],
+    protocol: args.protocol,
   })
 
   return NextResponse.json(data, { headers: CORS })

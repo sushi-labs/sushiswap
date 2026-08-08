@@ -2,6 +2,7 @@ import NextImage from 'next/legacy/image'
 
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import { Container, classNames } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import { DEFAULT_SIDE_PADDING } from '../constants'
 import background from './assets/background.png'
 import { ArticleList } from './components/article-list/article-list'
@@ -14,6 +15,9 @@ import { TopicProductBar } from './components/topic-product-bar/topic-product-ba
 import { ViewMoreButton } from './components/view-more-button'
 
 export default async function Page() {
+  'use cache'
+  cacheLife({ revalidate: 300 })
+
   const { articles, meta } = await getAcademyArticles({
     pagination: { limit: 6 },
   })
