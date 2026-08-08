@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import NextTopLoader from 'nextjs-toploader'
+import { Suspense } from 'react'
 import { getSessionData } from './_common/lib/client-config'
 import { Header } from './_common/ui/header/header'
 import { Providers } from './providers'
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function Layout({
-  children,
-}: { children: React.ReactNode }) {
+async function Portal({ children }: { children: React.ReactNode }) {
   const authSession = await getSessionData()
 
   return (
@@ -25,5 +24,13 @@ export default async function Layout({
         {children}
       </div>
     </Providers>
+  )
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={null}>
+      <Portal>{children}</Portal>
+    </Suspense>
   )
 }

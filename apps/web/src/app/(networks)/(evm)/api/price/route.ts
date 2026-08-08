@@ -15,8 +15,6 @@ const schema = z.object({
     .transform((transform) => transform ?? Currency.USD),
 })
 
-export const revalidate = 600
-
 export async function GET(request: NextRequest) {
   const result = schema.safeParse({
     currency: request.nextUrl.searchParams.get('currency'),

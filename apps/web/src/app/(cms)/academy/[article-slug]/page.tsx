@@ -1,6 +1,7 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import { Container, classNames } from '@sushiswap/ui'
 import type { Metadata } from 'next'
+import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type { Article, WithContext } from 'schema-dts'
 import { DEFAULT_SIDE_PADDING } from '../../constants'
@@ -18,13 +19,27 @@ interface Props {
   }>
 }
 
-export const revalidate = 3600
+async function getCachedAcademyArticles(
+  input: Parameters<typeof getAcademyArticles>[0],
+) {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
+  return getAcademyArticles(input)
+}
+
+async function getCachedGhostBody(slug: string) {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
+  return getGhostBody(slug)
+}
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const {
     articles: [article],
-  } = await getAcademyArticles({
+  } = await getCachedAcademyArticles({
     filters: { slug: { eq: params['article-slug'] } },
   })
 
@@ -74,19 +89,19 @@ export default async function Page(props: Props) {
   let body: string
 
   try {
-    const articleP = getAcademyArticles({
+    const articleP = getCachedAcademyArticles({
       filters: { slug: { eq: params['article-slug'] } },
       pagination: { limit: 1 },
     })
 
-    const moreArticlesP = getAcademyArticles({
+    const moreArticlesP = getCachedAcademyArticles({
       filters: { slug: { ne: params['article-slug'] } },
       pagination: { limit: 3 },
     })
 
     article = (await articleP).articles[0]
     if (!article.ghostSlug) return notFound()
-    body = await getGhostBody(article.ghostSlug).then(({ html }) => html)
+    body = await getCachedGhostBody(article.ghostSlug).then(({ html }) => html)
     moreArticles = (await moreArticlesP).articles
   } catch {
     return notFound()

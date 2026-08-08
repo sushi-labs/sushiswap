@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  defaultSwapEdgeConfig,
-  parseSwapEdgeConfig,
-} from './get-swap-edge-config'
+import { defaultSwapEdgeConfig, parseSwapEdgeConfig } from './swap-edge-config'
 
 describe('parseSwapEdgeConfig', () => {
   it('accepts a valid maintenance config', () => {

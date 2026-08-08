@@ -4,8 +4,6 @@ import {
 } from 'src/lib/swap/near-intents/sdk'
 import { normalizeNearIntentsTokens } from '../schemas'
 
-export const revalidate = 30
-
 export async function GET() {
   try {
     const response = await nearIntentsSdk.getTokens()

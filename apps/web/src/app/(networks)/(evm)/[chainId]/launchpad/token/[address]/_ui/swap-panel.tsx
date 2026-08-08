@@ -26,7 +26,7 @@ import {
   useSimpleSwapTradeQuote,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTradeButton } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-button'
-import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
+import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-config'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'

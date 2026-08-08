@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import * as z from 'zod'
 
@@ -23,6 +24,9 @@ const schema = z
   )
 
 async function getLatestVersion({ network }: { network: SupportedNetwork }) {
+  'use cache'
+  cacheLife({ revalidate: 1800 })
+
   const response = await fetch(`${chains[network]}/v1`)
   if (response.status !== 200) {
     throw new Error('Failed to fetch block')
@@ -51,8 +55,6 @@ async function getVersionTimestamp({
 
   return Math.floor(Number(data.block_timestamp) / 1000000)
 }
-
-export const revalidate = 1800
 
 export async function GET(request: NextRequest) {
   const params = schema.safeParse(

@@ -1,9 +1,10 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import type { MetadataRoute } from 'next'
-
-export const revalidate = 0
+import { connection } from 'next/server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection()
+
   try {
     const { articles } = await getAcademyArticles({
       pagination: { pageSize: 10000 },
