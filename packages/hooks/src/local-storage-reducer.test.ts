@@ -1,10 +1,12 @@
-import { deepStrictEqual } from 'node:assert'
-import { describe, it } from 'node:test'
-import { localStorageReducer } from './local-storage-reducer.ts'
+import { describe, expect, it } from 'vitest'
+import {
+  type LocalStorageState,
+  localStorageReducer,
+} from './local-storage-reducer'
 
 describe('localStorageReducer', () => {
   it('sequences back-to-back functional updates', () => {
-    const initial = {
+    const initial: LocalStorageState<string[]> = {
       value: [],
       persistence: 'none',
       revision: 0,
@@ -19,7 +21,7 @@ describe('localStorageReducer', () => {
       value: (wallets) => [...wallets, 'wallet-b'],
     })
 
-    deepStrictEqual(withBothWallets, {
+    expect(withBothWallets).toEqual({
       value: ['wallet-a', 'wallet-b'],
       persistence: 'set',
       revision: 2,
@@ -27,16 +29,15 @@ describe('localStorageReducer', () => {
   })
 
   it('does not persist values received from another hook instance', () => {
-    deepStrictEqual(
+    expect(
       localStorageReducer(
         { value: ['wallet-a'], persistence: 'set', revision: 1 },
         { type: 'sync', value: ['wallet-a', 'wallet-b'] },
       ),
-      {
-        value: ['wallet-a', 'wallet-b'],
-        persistence: 'none',
-        revision: 1,
-      },
-    )
+    ).toEqual({
+      value: ['wallet-a', 'wallet-b'],
+      persistence: 'none',
+      revision: 1,
+    })
   })
 })
