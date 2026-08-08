@@ -1,0 +1,14 @@
+{
+  "code": 1,
+  "message": "OK",
+  "result": {
+    "0xa7de087329bfcda5639247f96140f9dabe3deed1": {
+      "buy_tax": "1",
+      "cannot_buy": "1",
+      "cannot_sell_all": "1",
+      "is_honeypot": "1",
+      "sell_tax": "1.0000",
+      "transfer_tax": "1"
+    }
+  }
+}

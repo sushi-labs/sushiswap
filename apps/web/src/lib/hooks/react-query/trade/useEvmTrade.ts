@@ -106,7 +106,10 @@ export const useEvmTradeQuery = (
       }
 
       if (source !== undefined) params.searchParams.set('source', `${source}`)
-      if (process.env.NEXT_PUBLIC_APP_ENV === 'test')
+      if (
+        process.env.NEXT_PUBLIC_APP_ENV === 'test' &&
+        process.env.NEXT_PUBLIC_AGENTIC_TEST !== 'true'
+      )
         params.searchParams.set('simulate', 'false')
       else params.searchParams.set('simulate', 'true')
       if (onlyPools)

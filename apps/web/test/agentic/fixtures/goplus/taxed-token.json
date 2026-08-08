@@ -1,0 +1,23 @@
+{
+  "code": 1,
+  "message": "OK",
+  "result": {
+    "0xa7de087329bfcda5639247f96140f9dabe3deed1": {
+      "anti_whale_modifiable": "0",
+      "buy_tax": "0.003",
+      "cannot_buy": "0",
+      "cannot_sell_all": "0",
+      "is_anti_whale": "0",
+      "is_blacklisted": "1",
+      "is_honeypot": "0",
+      "is_whitelisted": "0",
+      "owner_change_balance": "0",
+      "personal_slippage_modifiable": "1",
+      "sell_tax": "0.0100",
+      "slippage_modifiable": "1",
+      "trading_cooldown": "1",
+      "transfer_pausable": "0",
+      "transfer_tax": "0.01"
+    }
+  }
+}
