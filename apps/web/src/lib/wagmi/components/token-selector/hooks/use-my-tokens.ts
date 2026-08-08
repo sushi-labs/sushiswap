@@ -3,7 +3,7 @@ import {
   type TokenListChainId,
   getTokenListBalances,
 } from '@sushiswap/graph-client/data-api'
-import { useCustomTokens } from '@sushiswap/hooks'
+import { type CustomTokenMetadata, useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
@@ -27,6 +27,32 @@ type UseMyTokensDataReturn<TChainId extends TokenListChainId> = {
     | undefined
 }
 
+export const getCustomTokensArrayForChainId = <
+  TChainId extends TokenListChainId,
+>(
+  data: Record<string, TokenFor<TChainId, CustomTokenMetadata>>,
+  chainId: TChainId | undefined,
+) => {
+  return Object.values(data)
+    .filter((token) => token.chainId === chainId)
+    .map((token) => token.address)
+}
+
+export const myTokensQueryKey = <TChainId extends TokenListChainId>({
+  chainId,
+  includeNative,
+  customTokens,
+  account,
+}: {
+  chainId: TChainId | undefined
+  includeNative: boolean | undefined
+  customTokens: TokenFor<TChainId, CustomTokenMetadata>['address'][]
+  account?: WalletAddressFor<TChainId>
+}) => [
+  'data-api-token-list-balances',
+  { chainId, account, includeNative, customTokens },
+]
+
 export function useMyTokens<TChainId extends TokenListChainId>({
   chainId,
   account,
@@ -35,16 +61,16 @@ export function useMyTokens<TChainId extends TokenListChainId>({
   const { data } = useCustomTokens({ chainId })
 
   const customTokens = useMemo(() => {
-    return Object.values(data)
-      .filter((token) => token.chainId === chainId)
-      .map((token) => token.address)
+    return getCustomTokensArrayForChainId(data, chainId)
   }, [chainId, data])
 
   const query = useQuery({
-    queryKey: [
-      'data-api-token-list-balances',
-      { chainId, account, customTokens, includeNative },
-    ],
+    queryKey: myTokensQueryKey({
+      chainId,
+      account,
+      includeNative,
+      customTokens,
+    }),
     queryFn: async () => {
       if (!account) throw new Error('Account is required')
       if (!chainId) throw new Error('ChainId is required')
@@ -57,7 +83,7 @@ export function useMyTokens<TChainId extends TokenListChainId>({
       })
     },
     enabled: Boolean(account && chainId),
-    refetchInterval: ms('10s'),
+    refetchInterval: ms('5s'),
   })
 
   return useMemo(() => {

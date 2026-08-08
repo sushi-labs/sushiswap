@@ -15,7 +15,6 @@ import {
   EVM_TRADE_GAS_MARGIN_PERCENT,
   type UseEvmTradeReturn,
 } from 'src/lib/hooks/react-query'
-import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -44,6 +43,7 @@ import { isUnwrapTrade, isWrapTrade } from '../common'
 import {
   useDerivedStateSimpleSwap,
   useEvmSimpleSwapTrade,
+  useSimpleSwapSlippage,
 } from '../derivedstate-simple-swap-provider'
 import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 import type { UseSimpleSwapTradeReviewBaseReturn } from './use-simple-swap-trade-review'
@@ -84,7 +84,6 @@ function useEvmSimpleSwapTradeReviewForState({
 }): UseSimpleSwapTradeReviewBaseReturn {
   const {
     mutate: { setSwapAmount },
-    state: { slippageToleranceOptions },
   } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
 
   const {
@@ -100,10 +99,7 @@ function useEvmSimpleSwapTradeReviewForState({
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
 
-  const [slippagePercent] = useSlippageTolerance(
-    slippageToleranceOptions?.storageKey,
-    slippageToleranceOptions?.defaultValue,
-  )
+  const { slippagePercent } = useSimpleSwapSlippage()
 
   const enabled = Boolean(
     chainId && approved && address && (confirmDialogOpen || reviewDialogOpen),

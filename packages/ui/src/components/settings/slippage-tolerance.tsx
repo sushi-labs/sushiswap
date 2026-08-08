@@ -31,6 +31,7 @@ export const SlippageTolerance: FC<{
     storageKey?: SlippageToleranceStorageKey
     defaultValue?: string
     title?: string
+    autoValue?: string
   }
   className?: string
   showAutoSelector?: boolean
@@ -178,7 +179,7 @@ export const SlippageTolerance: FC<{
             )}
           >
             {slippageTolerance === 'AUTO'
-              ? `${DEFAULT_SLIPPAGE}%`
+              ? `${options?.autoValue ?? DEFAULT_SLIPPAGE}%`
               : `${slippageTolerance}%`}
           </span>
         </div>
