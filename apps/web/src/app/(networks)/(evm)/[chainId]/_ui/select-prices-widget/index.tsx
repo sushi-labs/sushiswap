@@ -52,13 +52,13 @@ import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/poo
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
 import { Amount, Fraction, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'
-import { LiquidityChartRangeInput } from '../liquidity-chart-range-input'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
   useRangeHopCallbacks,
 } from '../concentrated-liquidity-provider'
+import { LiquidityChartRangeInput } from '../liquidity-chart-range-input'
 import { PriceBlock } from './price-block'
 
 enum PriceRange {
