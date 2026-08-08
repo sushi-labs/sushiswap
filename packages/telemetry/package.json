@@ -27,7 +27,8 @@
     "build": "tsc",
     "check": "tsc --pretty --noEmit",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@tsconfig/node24": "catalog:tsconfig",
@@ -37,7 +38,8 @@
     "@types/react-dom": "catalog:react",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "2.1.9"
   },
   "peerDependencies": {
     "react": "catalog:react",
