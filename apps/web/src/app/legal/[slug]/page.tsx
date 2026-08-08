@@ -1,5 +1,6 @@
 import { Container, Separator } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
+import { notFound } from 'next/navigation'
 import React from 'react'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
 import { legalPages } from '../config'
@@ -9,12 +10,26 @@ export async function generateStaticParams() {
 }
 
 type Props = {
-  params: Promise<{ slug: keyof typeof legalPages }>
+  params: Promise<{ slug: string }>
+}
+
+type LegalPageSlug = keyof typeof legalPages
+
+function isLegalPageSlug(slug: string): slug is LegalPageSlug {
+  return Object.hasOwn(legalPages, slug)
+}
+
+function getLegalPage(slug: string): (typeof legalPages)[LegalPageSlug] {
+  if (!isLegalPageSlug(slug)) {
+    notFound()
+  }
+
+  return legalPages[slug]
 }
 
 export async function generateMetadata(props: Props) {
   const params = await props.params
-  const page = legalPages[params.slug]
+  const page = getLegalPage(params.slug)
 
   return {
     title: page.title,
@@ -23,7 +38,7 @@ export async function generateMetadata(props: Props) {
 
 export default async function Page(props: Props) {
   const params = await props.params
-  const page = legalPages[params.slug]
+  const page = getLegalPage(params.slug)
 
   const {
     title,
