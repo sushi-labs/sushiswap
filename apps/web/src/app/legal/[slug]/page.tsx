@@ -4,10 +4,6 @@ import React from 'react'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
 import { legalPages } from '../config'
 
-export const revalidate = 86400
-
-export const dynamicParams = false
-
 export async function generateStaticParams() {
   return Object.keys(legalPages).map((slug) => ({ slug: slug }))
 }

@@ -16,8 +16,6 @@ const IMAGE_SIZE = {
   height: 630,
 }
 
-export const revalidate = 60
-
 /** Formats satori can rasterize. Anything else takes the initial fallback. */
 const SUPPORTED_LOGO_CONTENT_TYPES = ['image/png', 'image/jpeg']
 

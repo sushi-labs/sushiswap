@@ -6,11 +6,10 @@ const schema = z.object({
   maintenance: z.boolean(),
 })
 
-export const runtime = 'edge'
-
-export const revalidate = 60
-
 export async function GET() {
-  const data = await get('swap')
-  return NextResponse.json(schema.safeParse(data))
+  try {
+    return NextResponse.json(schema.safeParse(await get('swap')))
+  } catch {
+    return NextResponse.json(schema.safeParse(undefined))
+  }
 }

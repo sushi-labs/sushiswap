@@ -18,15 +18,6 @@ const createWagmiConfig = () => {
   return config as PublicWagmiConfig
 }
 
-let wagmiConfigSingleton: PublicWagmiConfig | undefined = undefined
-export const getWagmiConfig = () => {
-  if (typeof window === 'undefined') {
-    return createWagmiConfig()
-  }
+const wagmiConfigSingleton = createWagmiConfig()
 
-  if (!wagmiConfigSingleton) {
-    wagmiConfigSingleton = createWagmiConfig()
-  }
-
-  return wagmiConfigSingleton
-}
+export const getWagmiConfig = () => wagmiConfigSingleton

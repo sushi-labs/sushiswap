@@ -2,8 +2,6 @@ import { getFaqAnswer } from '@sushiswap/graph-client/strapi'
 import { notFound } from 'next/navigation'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
 
-export const revalidate = 3600
-
 export default async function AnswerPage(props: {
   params: Promise<{ 'answer-slug': string }>
 }) {

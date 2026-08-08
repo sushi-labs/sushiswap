@@ -2,8 +2,6 @@ import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { notFound, redirect } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 
-export const revalidate = 3600
-
 export async function GET(request: NextRequest) {
   const pathname = new URL(request.url).pathname
   const answerGroupId = pathname.split('/').slice(-1)[0]

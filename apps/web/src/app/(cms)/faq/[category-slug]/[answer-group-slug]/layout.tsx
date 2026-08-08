@@ -4,8 +4,6 @@ import { notFound } from 'next/navigation'
 import type React from 'react'
 import { AnswerGroupLayout } from './components/answer-group-layout'
 
-export const revalidate = 900
-
 export default async function Layout(props: {
   children: React.ReactNode
   params: Promise<{ 'answer-group-slug': string }>

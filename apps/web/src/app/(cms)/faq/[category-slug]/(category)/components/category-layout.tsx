@@ -6,8 +6,6 @@ import {
   SidebarMobile,
 } from '../../../components/sidebar'
 
-export const revalidate = 900
-
 interface CategoryLayoutProps {
   children: React.ReactNode
 }

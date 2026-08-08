@@ -14,8 +14,6 @@ import Link from 'next/link'
 import { getUnauthenticatedStyroClient } from '../_common/lib/styro/styro-client'
 import { PlanCard } from '../_common/ui/plans/plan-card'
 
-export const revalidate = 3600
-
 const enterpriseFeatures = [
   'Custom requests',
   'Dedicated support',
