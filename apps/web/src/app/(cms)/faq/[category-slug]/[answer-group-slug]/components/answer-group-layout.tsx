@@ -1,5 +1,6 @@
 import { getFaqAnswerGroup } from '@sushiswap/graph-client/strapi'
 import { Container } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import {
   type Sidebar,
   SidebarDesktop,
@@ -47,6 +48,9 @@ export async function AnswerGroupLayout({
   children,
   params,
 }: AnswerGroupLayoutProps) {
+  'use cache'
+  cacheLife({ revalidate: 900 })
+
   const answerGroup = await getFaqAnswerGroup({
     slug: params['answer-group-slug'],
   })

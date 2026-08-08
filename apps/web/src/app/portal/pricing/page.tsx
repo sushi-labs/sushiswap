@@ -10,6 +10,7 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import Link from 'next/link'
 import { getUnauthenticatedStyroClient } from '../_common/lib/styro/styro-client'
 import { PlanCard } from '../_common/ui/plans/plan-card'
@@ -56,6 +57,9 @@ function EnterpriseCard() {
 }
 
 export default async function Page() {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
   const client = getUnauthenticatedStyroClient()
   const response = await client.getPlans()
 
