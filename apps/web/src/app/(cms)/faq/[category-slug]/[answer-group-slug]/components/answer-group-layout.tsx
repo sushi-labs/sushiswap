@@ -6,8 +6,6 @@ import {
   SidebarMobile,
 } from '../../../components/sidebar'
 
-export const revalidate = 900
-
 interface AnswerGroupLayoutProps {
   children: React.ReactNode
   params: { 'answer-group-slug': string }

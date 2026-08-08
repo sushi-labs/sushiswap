@@ -52,8 +52,6 @@ async function getVersionTimestamp({
   return Math.floor(Number(data.block_timestamp) / 1000000)
 }
 
-export const revalidate = 1800
-
 export async function GET(request: NextRequest) {
   const params = schema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams),

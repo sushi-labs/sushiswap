@@ -1,7 +1,9 @@
-import type { NextRequest } from 'next/server'
+import { type NextRequest, connection } from 'next/server'
 import { JUPITER_ULTRA_API_BASE_URL } from 'src/lib/swap/jupiter-ultra-api'
 
 export async function GET(request: NextRequest) {
+  await connection()
+
   try {
     const query = request.nextUrl.searchParams
 

@@ -1,7 +1,5 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 
-export const revalidate = 3600
-
 // For Mava's scraper
 export default async function Page() {
   const { articles } = await getAcademyArticles({

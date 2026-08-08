@@ -7,8 +7,6 @@ import { getDirectPoolQuoteContractParameters } from 'src/lib/swap/direct-pool/u
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
 import { createPublicClient } from 'viem'
 
-export const revalidate = 2
-
 export async function GET(request: NextRequest): Promise<Response> {
   const result = directPoolQuoteInputSchema.safeParse(
     Object.fromEntries(request.nextUrl.searchParams.entries()),

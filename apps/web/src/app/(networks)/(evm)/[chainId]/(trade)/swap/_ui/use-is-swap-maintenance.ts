@@ -4,7 +4,7 @@ import { useEdgeConfig } from 'src/providers/edge-config-provider'
 import {
   type SwapEdgeConfig,
   parseSwapEdgeConfig,
-} from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
+} from '~evm/[chainId]/(trade)/swap/swap-edge-config'
 
 export const useIsSwapMaintenance = () => {
   const { maintenance } = useEdgeConfig<SwapEdgeConfig>()

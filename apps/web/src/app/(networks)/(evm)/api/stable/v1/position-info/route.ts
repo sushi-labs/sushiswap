@@ -45,7 +45,6 @@ const schema = z.object({
   positionId: z.coerce.bigint().positive(),
 })
 
-export const revalidate = 30
 export const maxDuration = 10
 
 export async function GET(request: NextRequest) {

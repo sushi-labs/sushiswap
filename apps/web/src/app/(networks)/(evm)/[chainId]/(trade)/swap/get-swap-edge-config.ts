@@ -1,22 +1,15 @@
 import { get } from '@vercel/edge-config'
-import * as z from 'zod'
-
-const swapEdgeConfigSchema = z.object({
-  maintenance: z.boolean(),
-})
-
-type SwapEdgeConfig = z.infer<typeof swapEdgeConfigSchema>
-
-const defaultSwapEdgeConfig: SwapEdgeConfig = {
-  maintenance: false,
-}
-
-function parseSwapEdgeConfig(value: unknown): SwapEdgeConfig {
-  const result = swapEdgeConfigSchema.safeParse(value)
-  return result.success ? result.data : defaultSwapEdgeConfig
-}
+import { cacheLife } from 'next/cache'
+import {
+  type SwapEdgeConfig,
+  defaultSwapEdgeConfig,
+  parseSwapEdgeConfig,
+} from './swap-edge-config'
 
 async function getSwapEdgeConfig(): Promise<SwapEdgeConfig> {
+  'use cache'
+  cacheLife('minutes')
+
   try {
     return parseSwapEdgeConfig(await get('swap'))
   } catch {
@@ -24,10 +17,4 @@ async function getSwapEdgeConfig(): Promise<SwapEdgeConfig> {
   }
 }
 
-export {
-  type SwapEdgeConfig,
-  defaultSwapEdgeConfig,
-  getSwapEdgeConfig,
-  parseSwapEdgeConfig,
-  swapEdgeConfigSchema,
-}
+export { getSwapEdgeConfig }

@@ -1,4 +1,5 @@
 import { get } from '@vercel/edge-config'
+import { cacheLife } from 'next/cache'
 import { NextResponse } from 'next/server'
 import * as z from 'zod'
 
@@ -8,9 +9,17 @@ const schema = z.object({
 
 // export const runtime = 'edge'
 
-export const revalidate = 60
+async function getXSwapConfig() {
+  'use cache'
+  cacheLife('minutes')
+
+  try {
+    return schema.safeParse(await get('xswap'))
+  } catch {
+    return schema.safeParse(undefined)
+  }
+}
 
 export async function GET() {
-  const data = await get('xswap')
-  return NextResponse.json(schema.safeParse(data))
+  return NextResponse.json(await getXSwapConfig())
 }

@@ -5,8 +5,6 @@ import { HelpByProducts } from './components/help-by-products'
 import { MostSearchedQuestions } from './components/most-searched-questions'
 import { SearchBox } from './components/search-box'
 
-export const revalidate = 3600
-
 export default async function Page() {
   return (
     <div className="w-full flex items-center flex-col pb-40 animate-slide">

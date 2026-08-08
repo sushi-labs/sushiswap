@@ -5,8 +5,6 @@ import {
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 900
-
 function AnswerGroup({
   category,
   answerGroup,

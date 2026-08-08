@@ -18,8 +18,6 @@ const schema = z.object({
   address: z.string().transform((from) => getAddress(from)),
 })
 
-export const revalidate = 900000
-
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
 

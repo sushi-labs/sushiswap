@@ -45,7 +45,6 @@ const schema = z.object({
     .optional(),
 })
 
-export const revalidate = 300
 export const maxDuration = 30
 
 export async function GET(request: NextRequest) {
