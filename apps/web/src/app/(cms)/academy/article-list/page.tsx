@@ -1,8 +1,9 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import { cacheLife } from 'next/cache'
+import { connection } from 'next/server'
 
 // For Mava's scraper
-export default async function Page() {
+async function ArticleListPage() {
   'use cache'
   cacheLife({ revalidate: 3600 })
 
@@ -21,4 +22,10 @@ export default async function Page() {
       ))}
     </div>
   )
+}
+
+export default async function Page() {
+  await connection()
+
+  return <ArticleListPage />
 }
