@@ -50,7 +50,7 @@ const contentSecurityPolicyHeader =
 const nextConfig = bundleAnalyzer({
   reactCompiler: process.env.REACT_COMPILER !== 'false',
   reactStrictMode: true,
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   poweredByHeader: false,
   staticPageGenerationTimeout: 180,
   turbopack: {
