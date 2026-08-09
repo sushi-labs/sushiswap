@@ -2,6 +2,8 @@ import { LinkIcon } from '@heroicons/react/24/outline'
 import type { TokenInfo as TokenInfoType } from '@sushiswap/graph-client/data-api'
 import { LinkExternal } from '@sushiswap/ui'
 import type { FC } from 'react'
+import { getSafeExternalUrl } from 'src/lib/safe-external-url'
+import { sanitizeTokenDescriptionHtml } from 'src/lib/sanitize-html'
 import { type EvmToken, getEvmChainById } from 'sushi/evm'
 import { TokenCollapsedDescription } from './token-collapsed-description'
 
@@ -11,6 +13,13 @@ interface TokenInfoProps {
 }
 
 export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
+  // Token metadata is issuer-controlled: only allow http(s) links,
+  // and sanitize the description on the server before it reaches the client.
+  const websiteUrl = getSafeExternalUrl(tokenInfo?.website)
+  const description = tokenInfo?.description
+    ? sanitizeTokenDescriptionHtml(tokenInfo.description)
+    : undefined
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -27,9 +36,9 @@ export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
               <LinkIcon width={16} height={16} />
             </div>
           </LinkExternal>
-          {tokenInfo?.website ? (
+          {websiteUrl ? (
             <LinkExternal
-              href={tokenInfo.website}
+              href={websiteUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -77,8 +86,8 @@ export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
           ) : null}
         </div>
       </div>
-      {tokenInfo?.description ? (
-        <TokenCollapsedDescription description={tokenInfo.description} />
+      {description ? (
+        <TokenCollapsedDescription description={description} />
       ) : null}
     </div>
   )
