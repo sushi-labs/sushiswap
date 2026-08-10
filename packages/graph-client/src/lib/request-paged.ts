@@ -1,7 +1,7 @@
 import type { ResultOf, TadaDocumentNode, VariablesOf } from 'gql.tada'
-import { type RequestOptions, request as _request } from 'src/lib/request.js'
 import { type EvmChainId, MAX_FIRST } from 'sushi/evm'
 import { FetchError } from './fetch-error.js'
+import { type RequestOptions, request as _request } from './request.js'
 
 interface RequestPaged<T extends TadaDocumentNode<Record<string, unknown>>> {
   chainId: EvmChainId
