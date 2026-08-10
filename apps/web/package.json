@@ -93,7 +93,7 @@
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/telemetry": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@tanstack/react-query": "5.90.20",
+    "@tanstack/react-query": "5.90.21",
     "@tanstack/react-table": "8.9.1",
     "@tanstack/react-virtual": "3.13.23",
     "@tryghost/content-api": "1.11.17",
