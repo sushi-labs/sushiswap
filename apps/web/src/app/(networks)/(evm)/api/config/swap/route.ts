@@ -1,6 +1,11 @@
-import { NextResponse } from 'next/server'
-import { getSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
+import { NextResponse, connection } from 'next/server'
+import { readSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
 
+// Incident kill switch polled by the client every minute — never cached.
 export async function GET() {
-  return NextResponse.json(await getSwapEdgeConfig())
+  await connection()
+
+  return NextResponse.json(await readSwapEdgeConfig(), {
+    headers: { 'Cache-Control': 'no-store' },
+  })
 }

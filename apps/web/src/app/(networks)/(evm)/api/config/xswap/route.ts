@@ -1,25 +1,22 @@
 import { get } from '@vercel/edge-config'
-import { cacheLife } from 'next/cache'
-import { NextResponse } from 'next/server'
+import { NextResponse, connection } from 'next/server'
 import * as z from 'zod'
 
 const schema = z.object({
   maintenance: z.boolean(),
 })
 
-// export const runtime = 'edge'
-
-async function getXSwapConfig() {
-  'use cache'
-  cacheLife('minutes')
+// Incident kill switch polled by the client every minute — never cached.
+export async function GET() {
+  await connection()
 
   try {
-    return schema.safeParse(await get('xswap'))
+    return NextResponse.json(schema.safeParse(await get('xswap')), {
+      headers: { 'Cache-Control': 'no-store' },
+    })
   } catch {
-    return schema.safeParse(undefined)
+    return NextResponse.json(schema.safeParse(undefined), {
+      headers: { 'Cache-Control': 'no-store' },
+    })
   }
-}
-
-export async function GET() {
-  return NextResponse.json(await getXSwapConfig())
 }
