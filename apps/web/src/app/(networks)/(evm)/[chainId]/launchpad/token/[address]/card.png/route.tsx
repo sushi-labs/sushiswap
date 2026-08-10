@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache'
 import { ImageResponse } from 'next/og'
 import { getEvmChainById, isEvmAddress } from 'sushi/evm'
 import { getLaunchpadCardValues } from '../../../_lib/launchpad-card'
@@ -39,6 +40,35 @@ async function getLogoDataUrl(url: string): Promise<string | undefined> {
 }
 
 /**
+ * Every uncached hit costs two data-api round trips, a logo fetch and a satori
+ * render, and this endpoint is public and crawler-driven. Cache the payload the
+ * way `export const revalidate = 60` used to.
+ */
+async function getCardData(chainId: number, address: string) {
+  'use cache'
+  cacheLife({ revalidate: 60 })
+
+  const isSupportedChain = isLaunchpadChainId(chainId)
+  const token =
+    isSupportedChain && isEvmAddress(address)
+      ? await getLaunchpadTokenForSeo(chainId, address)
+      : null
+  const [logoDataUrl, candles] = await Promise.all([
+    token ? getLogoDataUrl(getLaunchpadTokenEmbedLogoUrl(token)) : undefined,
+    token && isSupportedChain
+      ? getLaunchpadDayCandlesForSeo(chainId, token.address)
+      : null,
+  ])
+
+  return {
+    chainName: isSupportedChain ? getEvmChainById(chainId).name : 'Sushi',
+    logoDataUrl,
+    sparkline: buildLaunchpadEmbedSparkline(candles),
+    values: getLaunchpadCardValues(token),
+  }
+}
+
+/**
  * The `v` query is a cache buster for social platforms and is deliberately
  * ignored here — an already-shared URL keeps rendering current data instead of
  * going stale or 404ing.
@@ -49,25 +79,13 @@ export async function GET(
 ) {
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
-  const isSupportedChain = isLaunchpadChainId(chainId)
-  const token =
-    isSupportedChain && isEvmAddress(address)
-      ? await getLaunchpadTokenForSeo(chainId, address)
-      : null
-  const [logoDataUrl, candles, fonts] = await Promise.all([
-    token ? getLogoDataUrl(getLaunchpadTokenEmbedLogoUrl(token)) : undefined,
-    token && isSupportedChain
-      ? getLaunchpadDayCandlesForSeo(chainId, token.address)
-      : null,
-    getLaunchpadEmbedFonts(),
-  ])
-  const chainName = isSupportedChain ? getEvmChainById(chainId).name : 'Sushi'
-  const sparkline = buildLaunchpadEmbedSparkline(candles)
-  const values = getLaunchpadCardValues(token)
+  const embedChainId = isLaunchpadChainId(chainId) ? chainId : undefined
+  const [{ chainName, logoDataUrl, sparkline, values }, fonts] =
+    await Promise.all([getCardData(chainId, address), getLaunchpadEmbedFonts()])
 
   return new ImageResponse(
     <LaunchpadTokenEmbed
-      chainId={isSupportedChain ? chainId : undefined}
+      chainId={embedChainId}
       chainName={chainName}
       changePercent={sparkline?.changePercent ?? null}
       logoDataUrl={logoDataUrl}
@@ -80,6 +98,9 @@ export async function GET(
     {
       ...IMAGE_SIZE,
       ...(fonts.length === 0 ? {} : { fonts }),
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
     },
   )
 }
