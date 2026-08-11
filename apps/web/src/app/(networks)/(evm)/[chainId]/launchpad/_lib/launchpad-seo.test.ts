@@ -21,10 +21,6 @@ const token: LaunchpadToken = {
   symbol: 'TEST',
   decimals: 18,
   initialSupply: '1000000000000000000000000000',
-  feeSplit: {
-    sushiFeeBps: 50,
-    creatorFeeBps: 50,
-  },
   indexingStatus: 'CONFIRMED',
   pool: {
     address: '0x4444444444444444444444444444444444444444',
