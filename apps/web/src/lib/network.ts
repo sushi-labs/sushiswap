@@ -1,5 +1,5 @@
+import { isSushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import { type ChainId, getChainById } from 'sushi'
-import { isSushiSwapChainId } from 'sushi/evm'
 
 export const getNetworkName = (network: ChainId) => {
   return getChainById(network).name
