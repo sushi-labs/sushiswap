@@ -12,8 +12,10 @@ import {
 } from './launchpad-seo'
 
 const token: LaunchpadToken = {
+  __typename: 'SushiV1LaunchpadToken',
   id: '4663:0x1111111111111111111111111111111111111111',
   chainId: 4663,
+  provider: 'SUSHI_V1',
   address: '0x1111111111111111111111111111111111111111',
   creator: '0x2222222222222222222222222222222222222222',
   factoryAddress: '0x3333333333333333333333333333333333333333',
@@ -21,6 +23,7 @@ const token: LaunchpadToken = {
   symbol: 'TEST',
   decimals: 18,
   initialSupply: '1000000000000000000000000000',
+  initialFdvUsd: '5000',
   indexingStatus: 'CONFIRMED',
   pool: {
     address: '0x4444444444444444444444444444444444444444',
@@ -72,6 +75,16 @@ const token: LaunchpadToken = {
   createdAt: '2026-07-24T12:00:00.000Z',
 }
 
+const poolsFunToken: LaunchpadToken = {
+  ...token,
+  __typename: 'PoolsFunV1LaunchpadToken',
+  id: '4663:0x6666666666666666666666666666666666666666',
+  provider: 'POOLS_FUN_V1',
+  address: '0x6666666666666666666666666666666666666666',
+  name: 'Pools.fun Test Token',
+  symbol: 'PFTEST',
+}
+
 describe('launchpad JSON-LD', () => {
   it('uses the extensionless CDN public ID for token logos', () => {
     expect(getLaunchpadTokenLogoUrl(token, 56)).toBe(
@@ -100,6 +113,8 @@ describe('launchpad JSON-LD', () => {
             '@type': 'FinancialProduct',
             name: 'Test Token',
             alternateName: 'TEST',
+            brand: { '@id': 'https://www.sushi.com/#organization' },
+            provider: { '@id': 'https://www.sushi.com/#organization' },
           }),
           expect.objectContaining({
             '@type': 'Dataset',
@@ -128,7 +143,7 @@ describe('launchpad JSON-LD', () => {
 
   it('describes the discover page as an ordered token collection', () => {
     const connection: LaunchpadTokenConnection = {
-      edges: [{ cursor: 'cursor', node: token }],
+      edges: [{ cursor: 'cursor', node: poolsFunToken }],
       pageInfo: { endCursor: 'cursor', hasNextPage: true },
       totalCount: 42,
     }
@@ -136,6 +151,11 @@ describe('launchpad JSON-LD', () => {
     expect(getLaunchpadDiscoverJsonLd(4663, connection)).toEqual(
       expect.objectContaining({
         '@graph': expect.arrayContaining([
+          expect.objectContaining({
+            '@type': 'Organization',
+            '@id': 'https://pools.fun/#organization',
+            name: 'Pools.fun',
+          }),
           expect.objectContaining({
             '@type': 'CollectionPage',
             name: 'Sushi Launchpad on Robinhood Chain',
@@ -149,7 +169,9 @@ describe('launchpad JSON-LD', () => {
                 position: 1,
                 item: expect.objectContaining({
                   '@type': 'FinancialProduct',
-                  name: 'Test Token',
+                  name: 'Pools.fun Test Token',
+                  brand: { '@id': 'https://pools.fun/#organization' },
+                  provider: { '@id': 'https://pools.fun/#organization' },
                 }),
               }),
             ],

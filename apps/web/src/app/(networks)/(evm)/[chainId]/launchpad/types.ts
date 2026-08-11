@@ -1,5 +1,6 @@
 export type {
   LaunchpadIndexingStatus,
+  LaunchpadProvider,
   LaunchpadToken,
   LaunchpadTokensInput,
   LaunchpadTokenSortField,

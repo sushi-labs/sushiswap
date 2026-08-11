@@ -184,6 +184,30 @@ export function applyLaunchpadTradeMutations(
   return next
 }
 
+export function reconcileLaunchpadTradeResetSnapshot(
+  snapshot: LaunchpadTradeConnection,
+  resetEventId: string,
+  bufferedMutations: Iterable<LaunchpadTradeMutation>,
+  includeSmallTrades: boolean,
+): {
+  connection: LaunchpadTradeConnection
+  mutations: LaunchpadTradeMutation[]
+} | null {
+  if (BigInt(snapshot.streamCursor) < BigInt(resetEventId)) return null
+
+  const mutations = [...bufferedMutations].filter(
+    (mutation) => BigInt(mutation.eventId) > BigInt(snapshot.streamCursor),
+  )
+  return {
+    connection: applyLaunchpadTradeMutations(
+      snapshot,
+      mutations,
+      includeSmallTrades,
+    ),
+    mutations,
+  }
+}
+
 export function minimumLaunchpadStreamCursor(
   ...streamCursors: [string, ...string[]]
 ): string {

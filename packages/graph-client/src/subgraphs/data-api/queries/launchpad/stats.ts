@@ -5,9 +5,12 @@ import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
 
 export const LaunchpadStatsQuery = graphql(`
-  query Launchpad($chainId: LaunchpadChainId!) {
+  query Launchpad(
+    $chainId: LaunchpadChainId!
+    $providers: [LaunchpadProvider!]! = [SUSHI_V1]
+  ) {
     launchpad {
-      stats(chainId: $chainId) {
+      stats(chainId: $chainId, providers: $providers) {
         totalLiquidityUsd
         totalTokensLaunched
         totalVolumeUsd24h

@@ -1,6 +1,7 @@
 import {
   type LaunchpadCandle,
   type LaunchpadCreator,
+  type LaunchpadProvider,
   type LaunchpadToken,
   type LaunchpadTokenConnection,
   getLaunchpadCandles,
@@ -26,10 +27,13 @@ import { shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
+import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 
 const SUSHI_URL = 'https://www.sushi.com'
 const SUSHI_ORGANIZATION_ID = `${SUSHI_URL}/#organization`
 const SUSHI_WEBSITE_ID = `${SUSHI_URL}/#website`
+const POOLS_FUN_URL = 'https://pools.fun'
+const POOLS_FUN_ORGANIZATION_ID = `${POOLS_FUN_URL}/#organization`
 const LAUNCHPAD_REVALIDATE_SECONDS = 60
 
 const getCachedLaunchpadToken = unstable_cache(
@@ -44,6 +48,7 @@ const getCachedLaunchpadTokens = unstable_cache(
     getLaunchpadTokens({
       input: {
         chainId,
+        providers: getLaunchpadProvidersForFilter('all'),
         first: 20,
         sortBy: 'MARKET_CAPITALIZATION',
         sortDirection: 'DESC',
@@ -61,6 +66,7 @@ const getCachedLaunchpadCreator = unstable_cache(
       input: {
         chainId,
         creator: address,
+        providers: getLaunchpadProvidersForFilter('sushi'),
         first: 20,
         sortBy: 'CREATED_AT',
         sortDirection: 'DESC',
@@ -215,6 +221,33 @@ function getSushiOrganization(): Organization {
   }
 }
 
+function getPoolsFunOrganization(): Organization {
+  return {
+    '@type': 'Organization',
+    '@id': POOLS_FUN_ORGANIZATION_ID,
+    name: 'Pools.fun',
+    url: POOLS_FUN_URL,
+  }
+}
+
+const PROVIDER_ORGANIZATION_IDS = {
+  SUSHI_V1: SUSHI_ORGANIZATION_ID,
+  POOLS_FUN_V1: POOLS_FUN_ORGANIZATION_ID,
+} as const satisfies Record<LaunchpadProvider, string>
+
+const PROVIDER_ORGANIZATIONS = {
+  SUSHI_V1: getSushiOrganization,
+  POOLS_FUN_V1: getPoolsFunOrganization,
+} as const satisfies Record<LaunchpadProvider, () => Organization>
+
+function getLaunchpadProviderOrganizations(
+  tokens: readonly LaunchpadToken[],
+): Organization[] {
+  const providers = new Set<LaunchpadProvider>(['SUSHI_V1'])
+  for (const token of tokens) providers.add(token.provider)
+  return [...providers].map((provider) => PROVIDER_ORGANIZATIONS[provider]())
+}
+
 function getSushiWebsite(): WebSite {
   return {
     '@type': 'WebSite',
@@ -261,6 +294,7 @@ function getTokenFinancialProduct(
 ): FinancialProduct {
   const url = getLaunchpadTokenUrl(token)
   const sameAs = getHttpMetadataLinks(token)
+  const provider = { '@id': PROVIDER_ORGANIZATION_IDS[token.provider] }
 
   return {
     '@type': 'FinancialProduct',
@@ -284,7 +318,8 @@ function getTokenFinancialProduct(
       },
     ],
     logo: getLaunchpadTokenLogoUrl(token),
-    provider: { '@id': SUSHI_ORGANIZATION_ID },
+    brand: provider,
+    provider,
     ...(sameAs.length === 0 ? {} : { sameAs }),
     ...(includeMarketData
       ? { subjectOf: { '@id': `${url}#market-data` } }
@@ -368,7 +403,7 @@ export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      getSushiOrganization(),
+      ...getLaunchpadProviderOrganizations([token]),
       getSushiWebsite(),
       page,
       breadcrumb,
@@ -442,7 +477,7 @@ export function getLaunchpadDiscoverJsonLd(
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      getSushiOrganization(),
+      ...getLaunchpadProviderOrganizations(tokens),
       getSushiWebsite(),
       page,
       breadcrumb,
@@ -517,7 +552,7 @@ export function getLaunchpadCreatorJsonLd(
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      getSushiOrganization(),
+      ...getLaunchpadProviderOrganizations(tokens),
       getSushiWebsite(),
       page,
       breadcrumb,

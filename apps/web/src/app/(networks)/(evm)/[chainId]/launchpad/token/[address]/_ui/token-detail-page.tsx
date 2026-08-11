@@ -45,8 +45,14 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_lib/format'
+import { launchpadProviderHasCapability } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { DetailList } from '../../../_ui/detail-list'
+import {
+  LaunchpadCreatorButton,
+  LaunchpadCreatorLink,
+} from '../../../_ui/launchpad-creator-link'
+import { LaunchpadProviderBadge } from '../../../_ui/launchpad-provider-badge'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 import { PriceSensitiveText } from '../../../_ui/price-sensitive-text'
 import { PageState } from '../../../_ui/state-card'
@@ -335,6 +341,12 @@ export function TokenDetailPage({
       detail: 'Launch pool volume',
     },
   ]
+  const supportsLockedPositions = launchpadProviderHasCapability(
+    token.provider,
+    'lockedPositions',
+  )
+  const showLockedPositions =
+    supportsLockedPositions && token.positions.length > 0
 
   return (
     <Container
@@ -364,6 +376,7 @@ export function TokenDetailPage({
                 ${token.symbol}
               </span>
               <StatusPill status={token.indexingStatus} />
+              <LaunchpadProviderBadge provider={token.provider} />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
               <CopyableExplorerAddress
@@ -482,18 +495,14 @@ export function TokenDetailPage({
               <TokenAvatar token={token} size="sm" />
               <div className="min-w-0 flex-1">
                 <div className="text-xs text-perps-muted-50">Created by</div>
-                <Link
-                  href={`/${chainKey}/launchpad/creator/${token.creator}`}
+                <LaunchpadCreatorLink
+                  token={token}
                   className="mt-0.5 block truncate text-sm font-medium text-perps-blue hover:underline"
                 >
                   {shortenAddress(token.creator, 6)}
-                </Link>
+                </LaunchpadCreatorLink>
               </div>
-              <Button asChild variant="perps-secondary" size="xs">
-                <Link href={`/${chainKey}/launchpad/creator/${token.creator}`}>
-                  Profile
-                </Link>
-              </Button>
+              <LaunchpadCreatorButton token={token} />
             </div>
           </PerpsCard>
 
@@ -512,50 +521,54 @@ export function TokenDetailPage({
                   `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
                 ],
                 ['Pool fee', `${token.pool.feeTier / 10_000}%`],
-                ['Starting FDV', '$5,000'],
-                ['Liquidity', 'Single maximum-bound position'],
+                ['Starting FDV', formatUsd(Number(token.initialFdvUsd))],
+                ...(supportsLockedPositions
+                  ? [['Liquidity', 'Single maximum-bound position']]
+                  : []),
               ].map(([label, value]) => ({ label, value }))}
             />
           </PerpsCard>
 
-          <PerpsCard className="overflow-hidden" fullWidth>
-            <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
-              <h2 className="font-semibold text-perps-muted">
-                Locked positions
-              </h2>
-            </div>
-            <div className="divide-y divide-white/[0.06]">
-              {token.positions.map((position) => (
-                <div key={position.positionIndex} className="p-4 text-sm">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="font-medium text-perps-muted">
-                      Position #{position.positionId}
-                    </span>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                    <div>
-                      <div className="text-perps-muted-50">Tick range</div>
-                      <div className="mt-1 text-perps-muted">
-                        {position.tickLower.toLocaleString()} →{' '}
-                        {position.tickUpper.toLocaleString()}
+          {showLockedPositions ? (
+            <PerpsCard className="overflow-hidden" fullWidth>
+              <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
+                <h2 className="font-semibold text-perps-muted">
+                  Locked positions
+                </h2>
+              </div>
+              <div className="divide-y divide-white/[0.06]">
+                {token.positions.map((position) => (
+                  <div key={position.positionIndex} className="p-4 text-sm">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-medium text-perps-muted">
+                        Position #{position.positionId}
+                      </span>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
+                      <div>
+                        <div className="text-perps-muted-50">Tick range</div>
+                        <div className="mt-1 text-perps-muted">
+                          {position.tickLower.toLocaleString()} →{' '}
+                          {position.tickUpper.toLocaleString()}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-perps-muted-50">Allocation</div>
+                        <div className="mt-1 truncate text-perps-muted">
+                          {formatRawAmount(
+                            position.desiredAmount,
+                            token.decimals,
+                            0,
+                          )}{' '}
+                          {token.symbol}
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-perps-muted-50">Allocation</div>
-                      <div className="mt-1 truncate text-perps-muted">
-                        {formatRawAmount(
-                          position.desiredAmount,
-                          token.decimals,
-                          0,
-                        )}{' '}
-                        {token.symbol}
-                      </div>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </PerpsCard>
+                ))}
+              </div>
+            </PerpsCard>
+          ) : null}
         </aside>
       </div>
     </Container>

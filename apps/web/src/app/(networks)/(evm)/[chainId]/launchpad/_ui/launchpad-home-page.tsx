@@ -20,6 +20,11 @@ import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd } from '../_lib/format'
+import {
+  LAUNCHPAD_PROVIDER_FILTERS,
+  getLaunchpadProvidersForFilter,
+  parseLaunchpadProviderFilter,
+} from '../_lib/launchpad-provider'
 import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
@@ -38,6 +43,9 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
+  const providerFilter = parseLaunchpadProviderFilter(
+    searchParams.get('provider'),
+  )
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
   const [creator, setCreator] = useState(urlCreator)
@@ -71,9 +79,14 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     [pathname, router, searchParams],
   )
 
+  const providers = useMemo(
+    () => getLaunchpadProvidersForFilter(providerFilter),
+    [providerFilter],
+  )
   const input = useMemo(
     () => ({
       chainId,
+      providers,
       search: urlSearch || undefined,
       creator:
         urlCreator && isAddress(urlCreator, { strict: false })
@@ -83,7 +96,19 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
       sortBy,
       sortDirection: 'DESC' as const,
     }),
-    [chainId, sortBy, urlCreator, urlSearch],
+    [chainId, providers, sortBy, urlCreator, urlSearch],
+  )
+  const infiniteScrollKey = useMemo(
+    () =>
+      JSON.stringify({
+        chainId: input.chainId,
+        providers: input.providers,
+        search: input.search ?? null,
+        creator: input.creator ?? null,
+        sortBy: input.sortBy,
+        sortDirection: input.sortDirection,
+      }),
+    [input],
   )
   const {
     data,
@@ -94,7 +119,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     refetch,
   } = useLaunchpadTokens(input, true)
   const tokens = data.edges.map((edge) => edge.node)
-  const { data: stats, isLoading } = useLaunchpadStats({ chainId })
+  const { data: stats, isLoading } = useLaunchpadStats({ chainId, providers })
 
   return (
     <>
@@ -211,6 +236,33 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 }
               />
             </div>
+            <div
+              className="mt-3 flex flex-wrap items-center gap-2"
+              role="group"
+              aria-label="Filter launches by provider"
+            >
+              {LAUNCHPAD_PROVIDER_FILTERS.map((option) => (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="sm"
+                  variant={
+                    option.value === providerFilter
+                      ? 'perps-default'
+                      : 'perps-secondary'
+                  }
+                  aria-pressed={option.value === providerFilter}
+                  onClick={() =>
+                    updateParams({
+                      provider:
+                        option.value === 'all' ? undefined : option.value,
+                    })
+                  }
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
           </PerpsCard>
 
           <div className="mt-6">
@@ -227,6 +279,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               />
             ) : (
               <InfiniteScroll
+                key={infiniteScrollKey}
                 dataLength={tokens.length}
                 next={fetchNextPage}
                 hasMore={data.pageInfo.hasNextPage}

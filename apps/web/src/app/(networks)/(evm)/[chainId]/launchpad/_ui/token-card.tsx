@@ -5,7 +5,10 @@ import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, getSelectedMetric, shortenAddress } from '../_lib/format'
+import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
+import { LaunchpadCreatorLink } from './launchpad-creator-link'
+import { LaunchpadProviderBadge } from './launchpad-provider-badge'
 import { PriceSensitiveText } from './price-sensitive-text'
 import { TokenAvatar } from './token-avatar'
 
@@ -61,9 +64,10 @@ export function TokenCard({
     token,
     sortBy.startsWith('VOLUME_') ? sortBy : 'VOLUME_24H',
   )
-  const href = manage
-    ? `/${chainKey}/launchpad/manage/${token.address}`
-    : `/${chainKey}/launchpad/token/${token.address}`
+  const href =
+    manage && launchpadProviderHasCapability(token.provider, 'manage')
+      ? `/${chainKey}/launchpad/manage/${token.address}`
+      : `/${chainKey}/launchpad/token/${token.address}`
 
   return (
     <PerpsCard
@@ -93,6 +97,7 @@ export function TokenCard({
               </div>
             </div>
           </div>
+          <LaunchpadProviderBadge provider={token.provider} />
         </div>
 
         <div className="mt-4">
@@ -127,12 +132,12 @@ export function TokenCard({
         </div>
 
         <div className="mt-3 flex items-center justify-between text-xs">
-          <Link
-            href={`/${chainKey}/launchpad/creator/${token.creator}`}
+          <LaunchpadCreatorLink
+            token={token}
             className="relative z-10 text-perps-muted-50 transition hover:text-perps-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50"
           >
             by {shortenAddress(token.creator)}
-          </Link>
+          </LaunchpadCreatorLink>
           <div className="flex items-center gap-1">
             <span className="text-perps-muted">
               {formatUsd(token.metrics?.currentTvlUsd)}
