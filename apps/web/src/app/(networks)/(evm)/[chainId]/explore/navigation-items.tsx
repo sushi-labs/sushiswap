@@ -1,11 +1,10 @@
+import {
+  isPoolChainId,
+  isSushiSwapChainId,
+} from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import {
-  type EvmChainId,
-  getEvmChainById,
-  isBladeChainId,
-  isSushiSwapChainId,
-} from 'sushi/evm'
+import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
 
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const chainKey = getEvmChainById(chainId).key
@@ -23,7 +22,7 @@ export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
       <NavigationItem
         pathname={`/${chainKey}/explore/pools`}
         id="pools"
-        disabled={!isSushiSwapChainId(chainId)}
+        disabled={!isPoolChainId(chainId)}
       >
         Pools
       </NavigationItem>

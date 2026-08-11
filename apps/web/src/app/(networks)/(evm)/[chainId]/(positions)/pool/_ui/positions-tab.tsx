@@ -26,7 +26,6 @@ import {
   SushiSwapProtocol,
   getEvmChainById,
   isBladeChainId,
-  isSushiSwapChainId,
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
@@ -198,7 +197,7 @@ export const PositionsTab: FC<{
             hideClosedPositions={hideClosedPositions}
           />
         </TabsContent>
-        {isSushiSwapChainId(chainId) && (
+        {isSushiSwapV2ChainId(chainId) && (
           <TabsContent value="v2">
             <PositionsTable
               chainId={chainId}

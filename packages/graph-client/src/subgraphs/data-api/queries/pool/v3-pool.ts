@@ -200,12 +200,8 @@ export async function getV3Pool(
 }
 
 export type RawV3Pool = NonNullable<Awaited<ReturnType<typeof getV3Pool>>>
-type FullV3Pool = PoolHasSteerVaults<
+export type V3Pool = PoolHasSteerVaults<
   PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
->
-export type V3Pool = Omit<
-  FullV3Pool,
-  'observationIndex' | 'feeGrowthGlobal0X128' | 'feeGrowthGlobal1X128'
 >
 
 export function hydrateV3Pool(pool: RawV3Pool | V3Pool) {

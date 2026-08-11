@@ -61,11 +61,7 @@ export const V3PoolsQuery = graphql(
 )
 
 export type GetV3BasePools = VariablesOf<typeof V3PoolsQuery>
-type RemovedV3PoolFields =
-  | 'observationIndex'
-  | 'feeGrowthGlobal0X128'
-  | 'feeGrowthGlobal1X128'
-export type V3BasePool = Omit<PoolV3<PoolBase>, RemovedV3PoolFields>
+export type V3BasePool = PoolV3<PoolBase>
 
 export async function getV3BasePools(
   variables: GetV3BasePools,

@@ -3,8 +3,10 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import type {
   PoolChainId,
+  SushiSwapChainId,
   TokenInfo as TokenInfoType,
 } from '@sushiswap/graph-client/data-api'
+import { SushiSwapChainIds } from '@sushiswap/graph-client/data-api'
 import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
 import { Button, Container, LinkInternal } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -15,13 +17,7 @@ import { type FC, useMemo } from 'react'
 import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
-import {
-  EvmToken,
-  SUSHISWAP_SUPPORTED_CHAIN_IDS,
-  type SerializedEvmToken,
-  type SushiSwapChainId,
-  getEvmChainById,
-} from 'sushi/evm'
+import { EvmToken, type SerializedEvmToken, getEvmChainById } from 'sushi/evm'
 import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
@@ -34,11 +30,16 @@ const SwapWidget = dynamic(() =>
 )
 
 interface TokenPageProps {
+  chainId: SushiSwapChainId
   token: SerializedEvmToken
   tokenInfo: TokenInfoType
 }
 
-export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
+export const TokenPage: FC<TokenPageProps> = ({
+  chainId,
+  token: _token,
+  tokenInfo,
+}) => {
   const token = useMemo(() => EvmToken.fromJSON(_token), [_token])
 
   const router = useRouter()
@@ -98,7 +99,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
             <div className="flex flex-col gap-10 mt-6">
               <div className="flex gap-6">
                 <div className="flex-auto min-w-0">
-                  <TokenChart token={token} />
+                  <TokenChart chainId={chainId} token={token} />
                 </div>
                 <div className="min-[854px]:w-[420px] max-[854px]:hidden">
                   <AnimatePresence>
@@ -130,7 +131,7 @@ export const TokenPage: FC<TokenPageProps> = ({ token: _token, tokenInfo }) => {
                     <TableFiltersPoolType />
                     <TableFiltersNetwork
                       network={token.chainId}
-                      supportedNetworks={SUSHISWAP_SUPPORTED_CHAIN_IDS}
+                      supportedNetworks={SushiSwapChainIds}
                       unsupportedNetworkHref="/ethereum/explore/tokens"
                       onSelect={(network) =>
                         router.push(
