@@ -53,9 +53,6 @@ export const V3PoolQuery = graphql(
       liquidity
       sqrtPrice
       tick
-      observationIndex
-      feeGrowthGlobal0X128
-      feeGrowthGlobal1X128
       volumeUSD
       liquidityUSD
       token0Price
@@ -137,9 +134,6 @@ export async function getV3Pool(
 
         sqrtPrice: BigInt(pool.sqrtPrice),
         tick: BigInt(pool.tick),
-        observationIndex: BigInt(pool.observationIndex),
-        feeGrowthGlobal0X128: BigInt(pool.feeGrowthGlobal0X128),
-        feeGrowthGlobal1X128: BigInt(pool.feeGrowthGlobal1X128),
 
         liquidityUSD: pool.liquidityUSD,
         volumeUSD: pool.volumeUSD,
@@ -206,8 +200,12 @@ export async function getV3Pool(
 }
 
 export type RawV3Pool = NonNullable<Awaited<ReturnType<typeof getV3Pool>>>
-export type V3Pool = PoolHasSteerVaults<
+type FullV3Pool = PoolHasSteerVaults<
   PoolWithAprs<PoolWithIncentives<PoolHistory1D<PoolV3<PoolBase>>>>
+>
+export type V3Pool = Omit<
+  FullV3Pool,
+  'observationIndex' | 'feeGrowthGlobal0X128' | 'feeGrowthGlobal1X128'
 >
 
 export function hydrateV3Pool(pool: RawV3Pool | V3Pool) {

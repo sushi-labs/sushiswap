@@ -51,9 +51,6 @@ export const V3PoolsQuery = graphql(
       token1Price
       sqrtPrice
       tick
-      observationIndex
-      feeGrowthGlobal0X128
-      feeGrowthGlobal1X128
       volumeUSD
       liquidityUSD
       feesUSD
@@ -64,11 +61,16 @@ export const V3PoolsQuery = graphql(
 )
 
 export type GetV3BasePools = VariablesOf<typeof V3PoolsQuery>
+type RemovedV3PoolFields =
+  | 'observationIndex'
+  | 'feeGrowthGlobal0X128'
+  | 'feeGrowthGlobal1X128'
+export type V3BasePool = Omit<PoolV3<PoolBase>, RemovedV3PoolFields>
 
 export async function getV3BasePools(
   variables: GetV3BasePools,
   options?: RequestOptions,
-): Promise<PoolV3<PoolBase>[]> {
+): Promise<V3BasePool[]> {
   const url = SUSHI_DATA_API_GRAPHQL_URL
   const chainId = variables.chainId as EvmChainId
 
@@ -122,20 +124,13 @@ export async function getV3BasePools(
 
           sqrtPrice: BigInt(pool.sqrtPrice),
           tick: BigInt(pool.tick),
-          observationIndex: BigInt(pool.observationIndex),
-          feeGrowthGlobal0X128: BigInt(pool.feeGrowthGlobal0X128),
-          feeGrowthGlobal1X128: BigInt(pool.feeGrowthGlobal1X128),
 
           liquidityUSD: pool.liquidityUSD,
           volumeUSD: pool.volumeUSD,
           feesUSD: pool.feesUSD,
           txCount: pool.txCount,
-        }) satisfies PoolV3<PoolBase>,
+        }) satisfies V3BasePool,
     )
   }
   return []
 }
-
-export type V3BasePool = NonNullable<
-  Awaited<ReturnType<typeof getV3BasePools>>
->[0]
