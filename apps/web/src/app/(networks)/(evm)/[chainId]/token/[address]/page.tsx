@@ -86,6 +86,7 @@ export default async function TokenPage(props: {
 
   return (
     <_TokenPage
+      chainId={chainId}
       token={
         token && typeof token.toJSON === 'function' ? token.toJSON() : token
       }

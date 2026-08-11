@@ -1,5 +1,6 @@
 'use client'
 
+import type { SushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import {
   SkeletonChartLoadingStateMask,
   SkeletonChartXAxe,
@@ -13,7 +14,7 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { useTokenPriceChart } from 'src/lib/hooks/api/use-token-price-chart'
 import { formatPercent, formatUSD } from 'sushi'
-import type { SerializedEvmToken, SushiSwapChainId } from 'sushi/evm'
+import type { EvmAddress } from 'sushi/evm'
 
 enum CHART_DURATION {
   DAY = 'DAY',
@@ -23,17 +24,18 @@ enum CHART_DURATION {
 }
 
 interface PriceChartProps {
-  token: SerializedEvmToken
+  chainId: SushiSwapChainId
+  address: EvmAddress
 }
 
-export const PriceChart: FC<PriceChartProps> = ({ token }) => {
+export const PriceChart: FC<PriceChartProps> = ({ chainId, address }) => {
   const { resolvedTheme } = useTheme()
 
   const [duration, setDuration] = useState<CHART_DURATION>(CHART_DURATION.DAY)
 
   const { data, isLoading } = useTokenPriceChart({
-    chainId: token.chainId as SushiSwapChainId,
-    address: token.address,
+    chainId,
+    address,
     duration,
   })
 

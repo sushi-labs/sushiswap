@@ -4,14 +4,13 @@ import { type RequestOptions, request } from 'src/lib/request.js'
 import {
   type EvmID,
   EvmToken,
-  type PoolBase,
-  type PoolV3,
   SushiSwapProtocol,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { Address } from 'viem'
 import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
+import type { V3BasePool } from './pools.js'
 
 export const V3PoolsByTokensQuery = graphql(
   `
@@ -49,9 +48,6 @@ export const V3PoolsByTokensQuery = graphql(
         token1Price
         sqrtPrice
         tick
-        observationIndex
-        feeGrowthGlobal0X128
-        feeGrowthGlobal1X128
         volumeUSD
         liquidityUSD
         feesUSD
@@ -66,7 +62,7 @@ export type GetV3BasePoolsByTokens = VariablesOf<typeof V3PoolsByTokensQuery>
 export async function getV3BasePoolsByToken(
   variables: GetV3BasePoolsByTokens,
   options?: RequestOptions,
-): Promise<PoolV3<PoolBase>[]> {
+): Promise<V3BasePool[]> {
   const url = SUSHI_DATA_API_GRAPHQL_URL
   const chainId = variables.chainId
 
@@ -126,15 +122,12 @@ export async function getV3BasePoolsByToken(
 
           sqrtPrice: BigInt(pool.sqrtPrice),
           tick: BigInt(pool.tick),
-          observationIndex: BigInt(pool.observationIndex),
-          feeGrowthGlobal0X128: BigInt(pool.feeGrowthGlobal0X128),
-          feeGrowthGlobal1X128: BigInt(pool.feeGrowthGlobal1X128),
 
           liquidityUSD: pool.liquidityUSD,
           volumeUSD: pool.volumeUSD,
           feesUSD: pool.feesUSD,
           txCount: pool.txCount,
-        }) satisfies PoolV3<PoolBase>,
+        }) satisfies V3BasePool,
     )
   }
 
