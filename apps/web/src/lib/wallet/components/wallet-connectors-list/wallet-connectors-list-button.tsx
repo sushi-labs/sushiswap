@@ -1,5 +1,5 @@
 import { Button, Chip, Loader } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { getChainById } from 'sushi'
 import { DEFAULT_CHAIN_ID_BY_NAMESPACE } from '../../config'
 import { useWalletState } from '../../provider/wallet-state-provider'

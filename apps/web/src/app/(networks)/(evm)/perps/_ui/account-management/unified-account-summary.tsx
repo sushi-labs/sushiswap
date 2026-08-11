@@ -6,7 +6,7 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { MeterIcon } from '@sushiswap/ui/icons/MeterIcon'
+import { MeterIcon } from '@sushiswap/ui/icons/meter-icon'
 import {
   currencyFormatter,
   getTextColorClass,

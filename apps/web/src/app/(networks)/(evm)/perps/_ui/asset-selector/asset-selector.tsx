@@ -14,7 +14,7 @@ import {
   PerpsDialogTrigger,
   SkeletonBox,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { useEffect, useMemo } from 'react'
 // import { ShortcutMenu } from './shortcut-menu'
 import { AssetIcon } from '../_common'

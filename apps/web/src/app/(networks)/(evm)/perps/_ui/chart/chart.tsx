@@ -4,7 +4,7 @@ import { formatPrice } from '@nktkas/hyperliquid/utils'
 import { useIsMounted } from '@sushiswap/hooks'
 import { createFailedToast } from '@sushiswap/notifications'
 import { classNames } from '@sushiswap/ui'
-import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import { SushiIcon } from '@sushiswap/ui/icons/sushi-icon'
 import { useTheme } from 'next-themes'
 import type {
   IChartingLibraryWidget,

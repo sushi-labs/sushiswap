@@ -1,7 +1,7 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import { SushiIcon } from '@sushiswap/ui/icons/sushi-icon'
 import { useTheme } from 'next-themes'
 import type {
   ChartingLibraryWidgetOptions,

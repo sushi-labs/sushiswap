@@ -15,11 +15,11 @@ import {
   EVM_TRADE_GAS_MARGIN_PERCENT,
   type UseEvmTradeReturn,
 } from 'src/lib/hooks/react-query'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useApproved } from 'src/lib/wagmi/systems/Checker/provider'
+import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,

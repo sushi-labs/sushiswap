@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { legalPages } from './_config'
+import { legalPages } from './config'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return Object.keys(legalPages).map(

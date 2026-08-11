@@ -28,7 +28,7 @@ import {
   useConcentratedLiquidityPoolStats,
   useRewardCampaigns,
 } from 'src/lib/hooks/react-query'
-import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/useConcentratedLiquidityPoolReserves'
+import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool-reserves'
 import { formatUSD } from 'sushi'
 import { getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'

@@ -47,7 +47,7 @@ import {
 } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import {
   type EvmAddress,
   type EvmChainId,

@@ -27,11 +27,11 @@ import {
   classNames,
   useBreakpoint,
 } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { MediumIcon } from '@sushiswap/ui/icons/MediumIcon'
-import { TelegramIcon } from '@sushiswap/ui/icons/TelegramIcon'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
+import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
+import { MediumIcon } from '@sushiswap/ui/icons/medium-icon'
+import { TelegramIcon } from '@sushiswap/ui/icons/telegram-icon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import Link from 'next/link'
 import { useRef } from 'react'
 import type { EvmAddress } from 'sushi/evm'

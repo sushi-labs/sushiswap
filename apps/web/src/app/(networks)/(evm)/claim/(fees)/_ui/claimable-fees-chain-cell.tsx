@@ -1,4 +1,4 @@
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import { getEvmChainById } from 'sushi/evm'

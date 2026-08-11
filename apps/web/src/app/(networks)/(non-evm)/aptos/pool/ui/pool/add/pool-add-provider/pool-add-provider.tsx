@@ -11,18 +11,18 @@ import { getBaseTokensWithoutKey } from '~aptos/_common/lib/common/use-base-toke
 import { useNetwork } from '~aptos/_common/lib/common/use-network'
 import type { Token } from '~aptos/_common/lib/types/token'
 import type { PoolReserve } from '~aptos/pool/lib/use-pools-reserves'
-import { setAmount0 } from './actions/setAmount0'
-import { setAmount1 } from './actions/setAmount1'
-import { setPoolPairRatio } from './actions/setPoolPairRatio'
-import { setSlippageAmount0 } from './actions/setSlippageAmount0'
-import { setSlippageAmount1 } from './actions/setSlippageAmount1'
+import { setAmount0 } from './actions/set-amount0'
+import { setAmount1 } from './actions/set-amount1'
+import { setPoolPairRatio } from './actions/set-pool-pair-ratio'
+import { setSlippageAmount0 } from './actions/set-slippage-amount0'
+import { setSlippageAmount1 } from './actions/set-slippage-amount1'
 import {
   parseSlippageTolerance,
   setSlippageTolerance,
-} from './actions/setSlippageTolerance'
-import { setToken0 } from './actions/setToken0'
-import { setToken1 } from './actions/setToken1'
-import { swapTokens } from './actions/swapTokens'
+} from './actions/set-slippage-tolerance'
+import { setToken0 } from './actions/set-token0'
+import { setToken1 } from './actions/set-token1'
+import { swapTokens } from './actions/swap-tokens'
 import type { Actions, PoolApi, State } from './types'
 
 interface PoolProviderProps {

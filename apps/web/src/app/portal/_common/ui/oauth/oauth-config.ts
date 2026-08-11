@@ -1,6 +1,6 @@
 import type { IconComponent } from '@sushiswap/ui'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { GoogleIcon } from '@sushiswap/ui/icons/GoogleIcon'
+import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
+import { GoogleIcon } from '@sushiswap/ui/icons/google-icon'
 
 export enum OAuthProvider {
   Github = 0,

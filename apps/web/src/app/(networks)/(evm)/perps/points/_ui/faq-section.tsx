@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
   LinkExternal,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { formatUSD } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
 import { DEFAULT_TIERS } from './overview'

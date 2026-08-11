@@ -1,5 +1,5 @@
 import { type EvmAddress, EvmChainId } from 'sushi/evm'
-import { useRewardCampaigns } from './useRewardCampaigns'
+import { useRewardCampaigns } from './use-reward-campaigns'
 
 interface UseKatanaRewardCampaignsParams {
   pool: EvmAddress | undefined

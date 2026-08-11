@@ -18,12 +18,12 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import differenceInDays from 'date-fns/differenceInDays'
 import React, { useMemo, useState } from 'react'
-import { usePendingTokens } from 'src/lib/hooks/api/usePendingTokenListings'
+import { usePendingTokens } from 'src/lib/hooks/api/use-pending-token-listings'
 import {
   type TokenSecurity,
   isTokenSecurityIssue,

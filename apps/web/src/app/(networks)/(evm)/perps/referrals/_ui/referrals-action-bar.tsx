@@ -26,7 +26,7 @@ import {
   useRedeemSushiReferralCode,
   useSushiReferralOverview,
 } from 'src/lib/perps'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { formatUnits } from 'viem'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'

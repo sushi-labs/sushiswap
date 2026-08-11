@@ -17,7 +17,7 @@ import {
   PerpsDialogTitle,
   PerpsDialogTrigger,
 } from '@sushiswap/ui'
-import { XIcon } from '@sushiswap/ui/icons/XIcon'
+import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import {
   type JSX,
   type ReactNode,

@@ -12,8 +12,8 @@ import {
   navigationElementShowMap,
   navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
-import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/sushi-with-text-icon'
 
 function getLaunchpadNavigationLinks(
   chainKey: string,

@@ -7,7 +7,7 @@ import {
   type DatePickerProps as ReactDatePickerProps,
 } from 'react-datepicker'
 
-import { CalendarIcon } from '../icons/CalendarIcon'
+import { CalendarIcon } from '../icons/calendar-icon'
 import { textFieldVariants } from './text-field'
 
 type DateFieldProps = ReactDatePickerProps &

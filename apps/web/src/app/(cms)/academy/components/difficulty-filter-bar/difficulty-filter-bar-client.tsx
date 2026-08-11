@@ -1,7 +1,7 @@
 'use client'
 
 import type { Difficulty } from '@sushiswap/graph-client/strapi'
-import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
+import { CircleIcon } from '@sushiswap/ui/icons/circle-icon'
 import { useCallback, useState } from 'react'
 import { DIFFICULTY_ELEMENTS } from '../../constants'
 import {

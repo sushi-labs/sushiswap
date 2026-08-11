@@ -2,9 +2,9 @@
 
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { Badge, Button, Currency, LinkExternal } from '@sushiswap/ui'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
-import { SushiIcon } from '@sushiswap/ui/icons/SushiIcon'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/currency-fiat-icon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { SushiIcon } from '@sushiswap/ui/icons/sushi-icon'
 import Link from 'next/link'
 import { type FC, Fragment, useMemo, useState } from 'react'
 import { getPoolTokensGrouped } from 'src/lib/pool/blade'

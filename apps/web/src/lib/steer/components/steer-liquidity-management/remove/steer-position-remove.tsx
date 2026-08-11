@@ -19,10 +19,10 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import React, { type FC, useCallback, useMemo, useState } from 'react'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { steerMultiPositionManagerAbi } from 'src/lib/steer/abi/steer-multi-position-manager'
 import { useSteerAccountPosition } from 'src/lib/steer/hooks'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'

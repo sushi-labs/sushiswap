@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import type { TimeInForceType } from 'src/lib/perps'
 import { TIME_IN_FORCE, useAssetState } from '../../asset-state-provider'
 

@@ -14,7 +14,7 @@ import {
   SkeletonCircle,
   SkeletonText,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { Fraction } from 'sushi'
 import { EvmChainId, type EvmCurrency, XSUSHI } from 'sushi/evm'
 import { SUSHI_ETH_SLP } from './voting-power-provider'

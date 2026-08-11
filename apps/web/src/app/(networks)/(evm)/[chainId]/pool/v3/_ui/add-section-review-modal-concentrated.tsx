@@ -29,13 +29,13 @@ import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   getDefaultTTL,
   useTransactionDeadline,
-} from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
+} from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,

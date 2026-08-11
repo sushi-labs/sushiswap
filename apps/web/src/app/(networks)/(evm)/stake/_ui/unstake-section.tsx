@@ -2,9 +2,9 @@
 
 import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/useBarWithdraw'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { withCheckerRoot } from 'src/lib/wagmi/systems/Checker/provider'
+import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/use-bar-withdraw'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { withCheckerRoot } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount } from 'sushi'
 import { EvmChainId, XSUSHI } from 'sushi/evm'
 import { UnstakeSectionWidget } from './unstake-section-widget'

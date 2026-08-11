@@ -28,19 +28,19 @@ import {
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useV2Zap } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
+import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import {
   Checker,
   SLIPPAGE_WARNING_THRESHOLD,
-} from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/systems/checker'
 import {
   CheckerProvider,
   useApproved,
-} from 'src/lib/wagmi/systems/Checker/provider'
-import { PoolFinder } from 'src/lib/wagmi/systems/PoolFinder/pool-finder'
+} from 'src/lib/wagmi/systems/checker/provider'
+import { PoolFinder } from 'src/lib/wagmi/systems/pool-finder/pool-finder'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   type EvmChainId,

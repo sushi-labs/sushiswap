@@ -1,5 +1,5 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useUserSettingsState } from '../../account-management'
 import { PerpsChecker } from '../../perps-checker'
 import { useAssetState } from '../asset-state-provider'

@@ -1,3 +1,3 @@
 export * from './utils'
 export * from './types'
-export * from './getCachedBladePool'
+export * from './get-cached-blade-pool'

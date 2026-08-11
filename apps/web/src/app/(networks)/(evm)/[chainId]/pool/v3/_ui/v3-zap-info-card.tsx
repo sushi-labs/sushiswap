@@ -5,7 +5,7 @@ import {
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
-import { EnsoIcon } from '@sushiswap/ui/icons/EnsoIcon'
+import { EnsoIcon } from '@sushiswap/ui/icons/enso-icon'
 import { type FC, memo, useMemo } from 'react'
 import { EVM_UI_FEE_PERCENT } from 'src/config'
 import type { V3ZapResponse } from 'src/lib/hooks'
@@ -13,7 +13,7 @@ import { getFeeString } from 'src/lib/swap/fee'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
+} from 'src/lib/swap/warning-severity'
 import { type Amount, Percent, ZERO, formatUSD } from 'sushi'
 import {
   type EvmCurrency,

@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type {
   ColumnDef,
   PaginationState,

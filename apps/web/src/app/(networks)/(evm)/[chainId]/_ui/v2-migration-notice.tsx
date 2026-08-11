@@ -16,7 +16,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 import { useInitiateClaim, useSnapshotCheck } from 'src/lib/migration-claim'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useConnection, useSignTypedData } from 'wagmi'
 
 export const V2MigrationNotice = ({ className }: { className?: string }) => {

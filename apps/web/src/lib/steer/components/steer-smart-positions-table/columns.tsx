@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ColumnDef } from '@tanstack/react-table'
 import { formatPercent, formatUSD } from 'sushi'
 import { type EvmID, SushiSwapProtocol, unwrapEvmToken } from 'sushi/evm'

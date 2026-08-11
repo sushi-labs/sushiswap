@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { SafeIcon } from '@sushiswap/ui/icons/SafeIcon'
+import { SafeIcon } from '@sushiswap/ui/icons/safe-icon'
 import {
   type ReactNode,
   useCallback,

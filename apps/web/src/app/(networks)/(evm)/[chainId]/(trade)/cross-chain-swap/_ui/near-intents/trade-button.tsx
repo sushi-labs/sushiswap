@@ -2,7 +2,7 @@
 
 import { Button, DialogTrigger, Dots } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { type StellarToken, isStellarChainId } from 'sushi/stellar'

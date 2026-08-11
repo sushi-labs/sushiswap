@@ -1,8 +1,8 @@
 import { LinkExternal, classNames } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/DiscordIcon'
-import { GithubIcon } from '@sushiswap/ui/icons/GithubIcon'
-import { TwitterIcon } from '@sushiswap/ui/icons/TwitterIcon'
-import { YoutubeIcon } from '@sushiswap/ui/icons/YoutubeIcon'
+import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
+import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
+import { TwitterIcon } from '@sushiswap/ui/icons/twitter-icon'
+import { YoutubeIcon } from '@sushiswap/ui/icons/youtube-icon'
 import { DEFAULT_SIDE_PADDING } from '../../constants'
 
 const heroIconProps = {

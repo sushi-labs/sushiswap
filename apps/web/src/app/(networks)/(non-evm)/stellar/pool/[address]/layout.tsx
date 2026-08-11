@@ -2,7 +2,7 @@ import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { isStellarContractAddress } from 'sushi/stellar'
-import { PoolHeader } from '~stellar/_common/ui/PoolDetails/PoolHeader'
+import { PoolHeader } from '~stellar/_common/ui/pool-details/pool-header'
 
 export default async function PoolLayout(props: {
   children: React.ReactNode

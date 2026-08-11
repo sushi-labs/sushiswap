@@ -1,7 +1,7 @@
 import { GlobeAltIcon, Square2StackIcon } from '@heroicons/react/24/outline'
 import type { PortfolioTransaction } from '@sushiswap/graph-client/data-api'
 import { ClipboardController, FormattedNumber, IconButton } from '@sushiswap/ui'
-import { SushiLiteIcon } from '@sushiswap/ui/icons/SushiLiteIcon'
+import { SushiLiteIcon } from '@sushiswap/ui/icons/sushi-lite-icon'
 import { format, fromUnixTime } from 'date-fns'
 import React, { type FC } from 'react'
 import { type EvmChainId, getEvmChainById, shortenHash } from 'sushi/evm'

@@ -8,7 +8,7 @@ import {
   SkeletonBox,
   classNames,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { useMemo, useState } from 'react'
 import { useVaultDetails } from 'src/lib/perps/info/use-vault-details'
 import type { EvmAddress } from 'sushi/evm'

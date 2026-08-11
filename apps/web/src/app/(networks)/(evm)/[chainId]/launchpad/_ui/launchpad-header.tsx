@@ -1,7 +1,7 @@
 'use client'
 
 import { LinkInternal, Navigation, classNames } from '@sushiswap/ui'
-import { SushiWithTextIcon } from '@sushiswap/ui/icons/SushiWithTextIcon'
+import { SushiWithTextIcon } from '@sushiswap/ui/icons/sushi-with-text-icon'
 import type { FC } from 'react'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'

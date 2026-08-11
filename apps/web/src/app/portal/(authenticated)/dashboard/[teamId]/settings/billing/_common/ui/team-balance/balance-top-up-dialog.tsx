@@ -22,7 +22,7 @@ import {
   formClassnames,
   useForm,
 } from '@sushiswap/ui'
-import { CheckMarkIcon } from '@sushiswap/ui/icons/CheckMarkIcon'
+import { CheckMarkIcon } from '@sushiswap/ui/icons/check-mark-icon'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'

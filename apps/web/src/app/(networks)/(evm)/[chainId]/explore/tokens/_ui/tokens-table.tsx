@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import type { Token } from '@sushiswap/graph-client/data-api'
+import type { SushiSwapChainId, Token } from '@sushiswap/graph-client/data-api'
 import {
   Card,
   CardHeader,
@@ -23,7 +23,7 @@ import React, {
   useState,
 } from 'react'
 import { useTokens } from 'src/lib/hooks'
-import { type SushiSwapChainId, getEvmChainById } from 'sushi/evm'
+import { getEvmChainById } from 'sushi/evm'
 import {
   FDV_COLUMN,
   PRICE_CHANGE_1D_COLUMN,

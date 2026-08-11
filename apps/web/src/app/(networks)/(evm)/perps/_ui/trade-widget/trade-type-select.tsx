@@ -10,7 +10,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@sushiswap/ui'
-import { DownTriangleIcon } from '@sushiswap/ui/icons/DownTriangleIcon'
+import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { useMemo } from 'react'
 import { PerpsCard } from '../_common/perps-card'
 import { type TradeType, useAssetState } from './asset-state-provider'

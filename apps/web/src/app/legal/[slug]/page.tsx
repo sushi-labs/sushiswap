@@ -2,7 +2,7 @@ import { Container, Separator } from '@sushiswap/ui'
 import { unstable_cache } from 'next/cache'
 import React from 'react'
 import { getGhostBody } from 'src/app/(cms)/lib/ghost/ghost'
-import { legalPages } from '../_config'
+import { legalPages } from '../config'
 
 export const revalidate = 86400
 

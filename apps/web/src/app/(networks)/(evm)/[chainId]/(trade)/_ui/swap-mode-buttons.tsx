@@ -12,7 +12,7 @@ import {
   HoverCardTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { ShuffleIcon } from '@sushiswap/ui/icons/ShuffleIcon'
+import { ShuffleIcon } from '@sushiswap/ui/icons/shuffle-icon'
 import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'

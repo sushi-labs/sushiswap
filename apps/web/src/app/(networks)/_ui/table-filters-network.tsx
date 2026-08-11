@@ -16,8 +16,8 @@ import {
   CommandInput,
   CommandItem,
 } from '@sushiswap/ui'
-import { CheckIcon } from '@sushiswap/ui/icons/CheckIcon'
-import { NetworkIcon } from '@sushiswap/ui/icons/NetworkIcon'
+import { CheckIcon } from '@sushiswap/ui/icons/check-icon'
+import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { type FC, useCallback, useState } from 'react'
 import { SUPPORTED_NETWORKS } from 'src/config'

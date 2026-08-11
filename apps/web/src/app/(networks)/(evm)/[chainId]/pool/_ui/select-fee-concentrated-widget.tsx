@@ -23,7 +23,7 @@ import {
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import React, { type FC, memo, useCallback, useMemo } from 'react'
-import { usePoolsByTokenPair } from 'src/lib/hooks/usePoolsByTokenPair'
+import { usePoolsByTokenPair } from 'src/lib/hooks/use-pools-by-token-pair'
 import {
   EvmChainId,
   type EvmCurrency,

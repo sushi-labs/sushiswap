@@ -7,13 +7,13 @@ import { type FC, useCallback, useMemo, useState } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useTokensFromPool } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,
-} from 'src/lib/wagmi/hooks/pools/hooks/useSushiSwapV2Pools'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
-import { CheckerProvider } from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount } from 'sushi'
 import {
   type EvmCurrency,

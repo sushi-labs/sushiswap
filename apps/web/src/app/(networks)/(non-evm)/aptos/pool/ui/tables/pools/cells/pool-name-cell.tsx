@@ -1,6 +1,6 @@
 import { Badge, TooltipContent } from '@sushiswap/ui'
 import { Tooltip, TooltipProvider, TooltipTrigger } from '@sushiswap/ui'
-import { AptosCircle } from '@sushiswap/ui/icons/network/circle/AptosCircle'
+import { AptosCircle } from '@sushiswap/ui/icons/network/circle/aptos-circle'
 import React, { type FC } from 'react'
 // import { ProtocolBadge } from 'src/ui/pool/pool-name-cell'
 import { formatNumber } from 'sushi'

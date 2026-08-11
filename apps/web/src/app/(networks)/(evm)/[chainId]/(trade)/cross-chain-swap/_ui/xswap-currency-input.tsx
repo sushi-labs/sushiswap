@@ -2,7 +2,7 @@
 
 import { classNames } from '@sushiswap/ui'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import type { CurrencyInputProps } from 'src/lib/wagmi/components/web3-input/Currency'
+import type { CurrencyInputProps } from 'src/lib/wagmi/components/web3-input/currency'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 
 type XSwapCurrencyInputProps<

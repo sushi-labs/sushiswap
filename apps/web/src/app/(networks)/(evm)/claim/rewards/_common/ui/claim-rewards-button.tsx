@@ -1,7 +1,7 @@
 import { Button } from '@sushiswap/ui'
 import type { FC } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { useClaimRewards } from 'src/lib/wagmi/hooks/rewards/hooks/useClaimRewards'
+import { useClaimRewards } from 'src/lib/wagmi/hooks/rewards/hooks/use-claim-rewards'
 
 export const ClaimRewardsButton: FC<{ rewards: ClaimableRewards }> = ({
   rewards,

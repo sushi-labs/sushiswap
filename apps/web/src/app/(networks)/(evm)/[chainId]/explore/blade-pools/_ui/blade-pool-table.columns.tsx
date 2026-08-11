@@ -5,7 +5,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/currency-fiat-icon'
 import type { ColumnDef } from '@tanstack/react-table'
 import {
   getPoolNameFromGroupedTokens,

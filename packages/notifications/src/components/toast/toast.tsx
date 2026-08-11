@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { type ToastOptions, toast } from 'react-toastify'
 
-import { addNotification } from '../../functions/addNotification'
+import { addNotification } from '../../functions/add-notification'
 import type {
   NotificationVariant,
   PromiseNotification,

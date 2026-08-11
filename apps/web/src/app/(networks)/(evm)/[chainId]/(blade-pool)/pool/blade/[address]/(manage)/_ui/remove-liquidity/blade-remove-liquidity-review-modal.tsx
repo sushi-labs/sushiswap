@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
-import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/useBladeWithdraw'
+import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/use-blade-withdraw'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount, Percent, withoutScientificNotation } from 'sushi'

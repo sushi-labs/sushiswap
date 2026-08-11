@@ -1,4 +1,4 @@
-import { HalfCircleIcon } from '@sushiswap/ui/icons/HalfCircleIcon'
+import { HalfCircleIcon } from '@sushiswap/ui/icons/half-circle-icon'
 import type { FC } from 'react'
 import { getChainById } from 'sushi'
 

@@ -9,8 +9,8 @@ import {
   TickMath,
   tickToPrice,
 } from 'sushi/evm'
-import { useDensityChartData } from '~evm/[chainId]/_ui/LiquidityChartRangeInput/hooks'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { useDensityChartData } from '~evm/[chainId]/_ui/liquidity-chart-range-input/hooks'
 import type { SteerStrategyGeneric } from '../steer-strategies'
 import { SteerStrategyLiquidityDistributionChart } from './steer-strategy-liquidity-distribution-chart'
 

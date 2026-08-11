@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React, { use } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import {
   type StellarContractAddress,
   isStellarContractAddress,
@@ -21,8 +21,8 @@ import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-ini
 import {
   ManageLiquidityCard,
   PoolLiquidity,
-} from '~stellar/_common/ui/PoolDetails'
-import { MyPosition } from '~stellar/_common/ui/PoolDetails/MyPosition'
+} from '~stellar/_common/ui/pool-details'
+import { MyPosition } from '~stellar/_common/ui/pool-details/my-position'
 
 interface PoolPageProps {
   params: Promise<{

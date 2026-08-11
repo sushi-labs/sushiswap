@@ -8,7 +8,10 @@ import type { EvmChainId, EvmCurrency, RouterLiquiditySource } from 'sushi/evm'
 import type { SvmAddress, SvmChainId, SvmCurrency } from 'sushi/svm'
 import type { Address, Hex } from 'viem'
 import type * as z from 'zod'
-import type { SvmExecuteResponse, SvmOrderResponse } from './svmUltraValidator'
+import type {
+  SvmExecuteResponse,
+  SvmOrderResponse,
+} from './svm-ultra-validator'
 import type { legValidator, tradeValidator01 } from './validator01'
 import type { tradeValidator02 } from './validator02'
 

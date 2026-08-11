@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 import { Chip } from '@sushiswap/ui'
-import { CircleIcon } from '@sushiswap/ui/icons/CircleIcon'
+import { CircleIcon } from '@sushiswap/ui/icons/circle-icon'
 
 import {
   type Difficulty,

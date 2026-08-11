@@ -2,7 +2,7 @@ import { Button } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { getEvmChainById } from 'sushi/evm'
 import { ClaimRewardsButton } from './claim-rewards-button'
 

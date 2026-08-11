@@ -9,7 +9,7 @@ import {
   useMemo,
 } from 'react'
 import { type BladePoolTokenAsset, getPoolAssets } from 'src/lib/pool/blade'
-import { usePoolTokensBalance } from 'src/lib/pool/blade/usePoolTokensBalance'
+import { usePoolTokensBalance } from 'src/lib/pool/blade/use-pool-tokens-balance'
 import { Amount } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 

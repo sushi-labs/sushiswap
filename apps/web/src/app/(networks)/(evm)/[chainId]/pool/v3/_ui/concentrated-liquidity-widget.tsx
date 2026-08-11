@@ -40,18 +40,18 @@ import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ZAP_LEGACY, Bound, Field } from 'src/lib/constants'
 import { useV3Zap } from 'src/lib/hooks'
-import { useSlippageTolerance } from 'src/lib/hooks/useSlippageTolerance'
-import { warningSeverity } from 'src/lib/swap/warningSeverity'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-owner'
 import {
   Checker,
   SLIPPAGE_WARNING_THRESHOLD,
-} from 'src/lib/wagmi/systems/Checker'
+} from 'src/lib/wagmi/systems/checker'
 import {
   useApproved,
   withCheckerRoot,
-} from 'src/lib/wagmi/systems/Checker/provider'
+} from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, Percent } from 'sushi'
 import type { SendTransactionReturnType } from 'viem'
 import {

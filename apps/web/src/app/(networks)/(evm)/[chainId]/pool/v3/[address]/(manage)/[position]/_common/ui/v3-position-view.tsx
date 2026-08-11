@@ -48,12 +48,12 @@ import {
   useKatanaRewardCampaigns,
   useRewardCampaigns,
 } from 'src/lib/hooks/react-query'
-import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionInfo'
-import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionOwner'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/useConcentratedPositionsFromTokenId'
-import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/useTokenWithCache'
-import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/useTransactionDeadline'
-import { Checker } from 'src/lib/wagmi/systems/Checker'
+import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
+import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-owner'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
+import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
+import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmAddress,

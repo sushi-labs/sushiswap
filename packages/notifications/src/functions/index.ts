@@ -1,3 +1,3 @@
-export * from './addNotification'
-export * from './clearNotifications'
-export * from './getNotifications'
+export * from './add-notification'
+export * from './clear-notifications'
+export * from './get-notifications'

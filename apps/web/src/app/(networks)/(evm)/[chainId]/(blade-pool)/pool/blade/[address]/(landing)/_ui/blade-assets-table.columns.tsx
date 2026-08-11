@@ -1,5 +1,5 @@
 import { Currency, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
-import { CurrencyFiatIcon } from '@sushiswap/ui/icons/CurrencyFiatIcon'
+import { CurrencyFiatIcon } from '@sushiswap/ui/icons/currency-fiat-icon'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { BladePoolAsset } from 'src/lib/pool/blade'
 import { formatPercent, formatUSD } from 'sushi'

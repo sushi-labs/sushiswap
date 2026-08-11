@@ -16,13 +16,13 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import { GasIcon } from '@sushiswap/ui/icons/GasIcon'
+import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
 import React, { useEffect, useMemo, type FC } from 'react'
 import { getUiFeePercent } from 'src/config'
 import {
   warningSeverity,
   warningSeverityClassName,
-} from 'src/lib/swap/warningSeverity'
+} from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet'
 import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'

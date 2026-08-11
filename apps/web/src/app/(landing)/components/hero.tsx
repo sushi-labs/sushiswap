@@ -5,7 +5,7 @@ import { Button } from '@sushiswap/ui'
 import { Container } from '@sushiswap/ui'
 import { motion } from 'framer-motion'
 import React, { type FC, useEffect, useState } from 'react'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/Currency'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { ChainId } from 'sushi'
 import { EvmNative, SUSHI } from 'sushi/evm'
 

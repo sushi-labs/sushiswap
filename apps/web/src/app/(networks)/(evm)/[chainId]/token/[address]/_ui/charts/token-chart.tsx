@@ -2,6 +2,7 @@
 
 import { DocumentDuplicateIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import type { SushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import {
   ClipboardController,
   Currency,
@@ -25,10 +26,11 @@ import { PriceChart } from './price-chart'
 type ChartType = 'Price' // | 'Volume' | 'TVL'
 
 interface TokenChartProps {
+  chainId: SushiSwapChainId
   token: SerializedEvmToken
 }
 
-export const TokenChart: FC<TokenChartProps> = ({ token }) => {
+export const TokenChart: FC<TokenChartProps> = ({ chainId, token }) => {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('Price')
 
   return (
@@ -91,7 +93,11 @@ export const TokenChart: FC<TokenChartProps> = ({ token }) => {
 
       <Separator />
 
-      <div>{selectedChartType === 'Price' && <PriceChart token={token} />}</div>
+      <div>
+        {selectedChartType === 'Price' && (
+          <PriceChart chainId={chainId} address={token.address} />
+        )}
+      </div>
     </div>
   )
 }

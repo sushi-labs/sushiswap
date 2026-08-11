@@ -2,7 +2,7 @@ import { useReadContract, useReadContracts, useSimulateContract } from 'wagmi'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
-import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/useWatchByBlock'
+import { useWatchByBlock } from 'src/lib/wagmi/hooks/watch/use-watch-by-block'
 import { getChainIdAddressFromId } from 'sushi'
 import type { EvmID } from 'sushi/evm'
 import {

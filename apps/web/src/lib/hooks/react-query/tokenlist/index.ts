@@ -1,1 +1,1 @@
-export * from './useApplyForTokenList'
+export * from './use-apply-for-token-list'

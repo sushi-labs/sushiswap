@@ -18,8 +18,8 @@ import {
 import { type ChainId, type TxHashFor, getChainById } from 'sushi'
 
 import type { EvmChainId } from 'sushi/evm'
-import { CheckMarkIcon } from '../icons/CheckMarkIcon'
-import { FailedMarkIcon } from '../icons/FailedMarkIcon'
+import { CheckMarkIcon } from '../icons/check-mark-icon'
+import { FailedMarkIcon } from '../icons/failed-mark-icon'
 import {
   Button,
   Dots,
