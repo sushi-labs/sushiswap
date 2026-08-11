@@ -7,6 +7,7 @@ import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import Image from 'next/legacy/image'
 import { type MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import { getOptimizedMedia } from 'src/app/(cms)/lib/media'
+import { getSafeExternalUrl } from 'src/lib/safe-external-url'
 
 export function StrapiBannerContent({
   banner,
@@ -42,9 +43,12 @@ export function StrapiBannerContent({
 
   const image = banner.image.attributes
 
+  // CMS-controlled link: only allow http(s) targets.
+  const href = getSafeExternalUrl(banner.link)
+
   return (
     <a
-      href={banner.link ?? undefined}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="text-white"

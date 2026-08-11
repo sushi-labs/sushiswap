@@ -51,10 +51,8 @@ export const maxDuration = 10
 export async function GET(request: NextRequest) {
   const ratelimit = rateLimit(Ratelimit.slidingWindow(200, '5 m'))
   if (ratelimit) {
-    const { remaining } = await ratelimit.limit(
-      ipAddress(request) || '127.0.0.1',
-    )
-    if (!remaining) {
+    const { success } = await ratelimit.limit(ipAddress(request) || '127.0.0.1')
+    if (!success) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
   }
