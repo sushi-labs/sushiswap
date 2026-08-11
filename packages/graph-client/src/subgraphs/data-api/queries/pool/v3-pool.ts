@@ -53,9 +53,6 @@ export const V3PoolQuery = graphql(
       liquidity
       sqrtPrice
       tick
-      observationIndex
-      feeGrowthGlobal0X128
-      feeGrowthGlobal1X128
       volumeUSD
       liquidityUSD
       token0Price
@@ -137,9 +134,6 @@ export async function getV3Pool(
 
         sqrtPrice: BigInt(pool.sqrtPrice),
         tick: BigInt(pool.tick),
-        observationIndex: BigInt(pool.observationIndex),
-        feeGrowthGlobal0X128: BigInt(pool.feeGrowthGlobal0X128),
-        feeGrowthGlobal1X128: BigInt(pool.feeGrowthGlobal1X128),
 
         liquidityUSD: pool.liquidityUSD,
         volumeUSD: pool.volumeUSD,

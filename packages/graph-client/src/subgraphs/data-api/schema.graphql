@@ -834,9 +834,6 @@ type V3Pool {
   liquidity: String!
   sqrtPrice: String!
   tick: String!
-  observationIndex: String!
-  feeGrowthGlobal0X128: String!
-  feeGrowthGlobal1X128: String!
   volumeUSD: Float!
   liquidityUSD: Float!
   token0Price: Float!
@@ -878,9 +875,6 @@ type V3BasePool {
   token1Price: Float!
   sqrtPrice: String!
   tick: String!
-  observationIndex: String!
-  feeGrowthGlobal0X128: String!
-  feeGrowthGlobal1X128: String!
   volumeUSD: Float!
   liquidityUSD: Float!
   feesUSD: Float!

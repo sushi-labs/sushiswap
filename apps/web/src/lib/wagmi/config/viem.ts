@@ -142,6 +142,12 @@ export const publicTransports = {
   [EvmChainId.ROBINHOOD]: http(
     `https://lb.drpc.live/ogrpc?network=robinhood&dkey=${drpcId}`,
   ),
+  [EvmChainId.UNICHAIN]: http(
+    `https://lb.drpc.live/ogrpc?network=unichain&dkey=${drpcId}`,
+  ),
+  [EvmChainId.WORLDCHAIN]: http(
+    `https://lb.drpc.live/ogrpc?network=worldchain&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
