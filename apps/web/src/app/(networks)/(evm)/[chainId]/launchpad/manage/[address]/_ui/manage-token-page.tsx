@@ -30,7 +30,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
-import { formatPercent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import {
@@ -639,19 +638,10 @@ export function ManageTokenPage({
               </p>
             </div>
             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
-              <DetailList
-                className="space-y-3"
-                items={[
-                  {
-                    label: 'Sushi recipient',
-                    value: formatPercent(token.feeSplit.sushiFeeBps / 10_000),
-                  },
-                  {
-                    label: 'Creator recipient',
-                    value: formatPercent(token.feeSplit.creatorFeeBps / 10_000),
-                  },
-                ]}
-              />
+              <p className="text-sm text-perps-muted-50">
+                Distribution follows the fee configuration recorded by the
+                launch contract.
+              </p>
               <Checker.Connect
                 namespace="evm"
                 fullWidth

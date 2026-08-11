@@ -12,10 +12,6 @@ export const LaunchpadTokenFragment = graphql(`
     symbol
     decimals
     initialSupply
-    feeSplit {
-      sushiFeeBps
-      creatorFeeBps
-    }
     indexingStatus
     pool {
       address
