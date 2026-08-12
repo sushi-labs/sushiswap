@@ -36,11 +36,15 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+async function createOnramperUrl() {
+  return 'https://buy.onramper.com'
+}
+
 export const Default = {
   args: {},
   render: (args) => {
     return (
-      <OnramperProvider>
+      <OnramperProvider createOnramperUrl={createOnramperUrl}>
         <Navigation {...args} />
       </OnramperProvider>
     )
@@ -53,7 +57,7 @@ export const Transparent = {
   },
   render: (args) => {
     return (
-      <OnramperProvider>
+      <OnramperProvider createOnramperUrl={createOnramperUrl}>
         <Navigation {...args} />
       </OnramperProvider>
     )
