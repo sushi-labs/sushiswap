@@ -20,9 +20,15 @@ import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd } from '../_lib/format'
+import {
+  LAUNCHPAD_PROVIDER_FILTERS,
+  getLaunchpadProvidersForFilter,
+  parseLaunchpadProviderFilter,
+} from '../_lib/launchpad-provider'
 import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
+import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import { MetricStrip, MetricStripItem } from './metric-strip'
 import { CollectionStateCard } from './state-card'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
@@ -38,6 +44,9 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
+  const providerFilter = parseLaunchpadProviderFilter(
+    searchParams.get('provider'),
+  )
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
   const [creator, setCreator] = useState(urlCreator)
@@ -71,9 +80,14 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     [pathname, router, searchParams],
   )
 
+  const providers = useMemo(
+    () => getLaunchpadProvidersForFilter(providerFilter),
+    [providerFilter],
+  )
   const input = useMemo(
     () => ({
       chainId,
+      providers,
       search: urlSearch || undefined,
       creator:
         urlCreator && isAddress(urlCreator, { strict: false })
@@ -83,7 +97,19 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
       sortBy,
       sortDirection: 'DESC' as const,
     }),
-    [chainId, sortBy, urlCreator, urlSearch],
+    [chainId, providers, sortBy, urlCreator, urlSearch],
+  )
+  const infiniteScrollKey = useMemo(
+    () =>
+      JSON.stringify({
+        chainId: input.chainId,
+        providers: input.providers,
+        search: input.search ?? null,
+        creator: input.creator ?? null,
+        sortBy: input.sortBy,
+        sortDirection: input.sortDirection,
+      }),
+    [input],
   )
   const {
     data,
@@ -94,7 +120,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     refetch,
   } = useLaunchpadTokens(input, true)
   const tokens = data.edges.map((edge) => edge.node)
-  const { data: stats, isLoading } = useLaunchpadStats({ chainId })
+  const { data: stats, isLoading } = useLaunchpadStats({ chainId, providers })
 
   return (
     <>
@@ -162,7 +188,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   Market feeds
                 </div>
                 <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none" />
                   Live
                 </div>
               </div>
@@ -211,6 +237,51 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 }
               />
             </div>
+            <div
+              className="mt-3 flex flex-wrap items-center gap-2"
+              role="group"
+              aria-label="Filter launches by provider"
+            >
+              {LAUNCHPAD_PROVIDER_FILTERS.map((option) => (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="sm"
+                  variant={
+                    option.value === providerFilter
+                      ? 'perps-default'
+                      : 'perps-secondary'
+                  }
+                  aria-pressed={option.value === providerFilter}
+                  onClick={() =>
+                    updateParams({
+                      provider:
+                        option.value === 'all' ? undefined : option.value,
+                    })
+                  }
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span className="flex items-center" aria-hidden>
+                      {getLaunchpadProvidersForFilter(option.value).map(
+                        (provider, index) => (
+                          <LaunchpadProviderMark
+                            key={provider}
+                            provider={provider}
+                            size="sm"
+                            className={
+                              index > 0
+                                ? '-ml-1 rounded-full ring-2 ring-perps-background'
+                                : undefined
+                            }
+                          />
+                        ),
+                      )}
+                    </span>
+                    {option.label}
+                  </span>
+                </Button>
+              ))}
+            </div>
           </PerpsCard>
 
           <div className="mt-6">
@@ -227,6 +298,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
               />
             ) : (
               <InfiniteScroll
+                key={infiniteScrollKey}
                 dataLength={tokens.length}
                 next={fetchNextPage}
                 hasMore={data.pageInfo.hasNextPage}

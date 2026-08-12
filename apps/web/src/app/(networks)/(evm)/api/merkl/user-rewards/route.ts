@@ -1,4 +1,6 @@
 import { MERKL_BASE_URL } from 'src/lib/hooks/react-query/rewards/merkl-base-url'
+import { isChainId } from 'sushi'
+import { isEvmAddress } from 'sushi/evm'
 
 const apiKey = process.env.MERKL_API_KEY
 
@@ -8,10 +10,14 @@ export async function GET(request: Request) {
   const chainId = searchParams.get('chainId')
   const account = searchParams.get('account')
   if (!test) return new Response('Missing test parameter', { status: 400 })
-  if (!chainId)
-    return new Response('Missing chainId parameter', { status: 400 })
-  if (!account)
-    return new Response('Missing account parameter', { status: 400 })
+  if (!chainId || !isChainId(+chainId))
+    return new Response('Missing or invalid chainId parameter', {
+      status: 400,
+    })
+  if (!account || !isEvmAddress(account))
+    return new Response('Missing or invalid account parameter', {
+      status: 400,
+    })
   const url = new URL(`${MERKL_BASE_URL}/users/${account}/rewards`)
   url.searchParams.set('test', test)
   url.searchParams.set('chainId', chainId)

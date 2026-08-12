@@ -29,6 +29,7 @@ import {
   minimumLaunchpadStreamCursor,
   publishLaunchpadCandleRemove,
   publishLaunchpadCandleUpdate,
+  reconcileLaunchpadTradeResetSnapshot,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleSnapshot,
 } from './launchpad-stream'
@@ -47,6 +48,8 @@ const launchpadChainIdSchema = z.custom<LaunchpadChainId>(
 )
 const unsignedIntegerSchema = z.string().regex(/^(0|[1-9][0-9]*)$/)
 const closedStreamRetryDelay = ms('2s')
+const tradeSnapshotRetryBaseDelay = ms('2s')
+const tradeSnapshotRetryMaxDelay = ms('30s')
 const streamIdentitySchema = z.object({
   chainId: launchpadChainIdSchema,
   tokenAddress: evmAddressSchema,
@@ -134,6 +137,18 @@ function parseStreamEvent<T>(
   }
 }
 
+export function parseLaunchpadMetricsStreamEvent(
+  event: MessageEvent<string>,
+): z.infer<typeof streamMetricsSchema> | null {
+  return parseStreamEvent(event, streamMetricsSchema)
+}
+
+export function parseLaunchpadTradeResetStreamEvent(
+  event: MessageEvent<string>,
+): z.infer<typeof streamIdentitySchema> | null {
+  return parseStreamEvent(event, streamIdentitySchema)
+}
+
 function isExpectedStream(
   chainId: LaunchpadChainId,
   tokenAddress: EvmAddress,
@@ -184,6 +199,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
   const mutations = useRef(new Map<string, LaunchpadTradeMutation>())
   const hasSnapshot = useRef(false)
   const synchronization = useRef(0)
+  const tradeSnapshotGeneration = useRef(0)
   const refetch = useRef(snapshot.refetch)
   const includeSmallTrades = input.includeSmallTrades ?? false
   const includeSmallTradesRef = useRef(includeSmallTrades)
@@ -197,13 +213,23 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
   useEffect(() => {
     if (previousIncludeSmallTrades.current === includeSmallTrades) return
     previousIncludeSmallTrades.current = includeSmallTrades
+    if (!hasSnapshot.current) return
+    const currentTradeSnapshotGeneration = tradeSnapshotGeneration.current
     let cancelled = false
 
     void refetch
       .current()
       .then((result) => {
         const pages = result.data?.pages
-        if (cancelled || result.isError || !pages?.[0]) return
+        if (
+          cancelled ||
+          result.isError ||
+          !pages?.[0] ||
+          !hasSnapshot.current ||
+          currentTradeSnapshotGeneration !== tradeSnapshotGeneration.current
+        ) {
+          return
+        }
 
         hasSnapshot.current = true
         setData(
@@ -243,9 +269,11 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     let source: EventSource | undefined
     let sourceAfterCursor: string | undefined
     let snapshotRetryTimer: ReturnType<typeof setTimeout> | undefined
+    let tradeSnapshotRetryTimer: ReturnType<typeof setTimeout> | undefined
     let closedStreamRetryTimer: ReturnType<typeof setTimeout> | undefined
     let candleSnapshotCursor: string | undefined
     let tradeSnapshotCursor: string | undefined
+    let tradeSnapshotRetryAttempt = 0
 
     function isExpected(event: {
       chainId: number
@@ -282,6 +310,12 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       if (closedStreamRetryTimer === undefined) return
       clearTimeout(closedStreamRetryTimer)
       closedStreamRetryTimer = undefined
+    }
+
+    function clearTradeSnapshotRetry(): void {
+      if (tradeSnapshotRetryTimer === undefined) return
+      clearTimeout(tradeSnapshotRetryTimer)
+      tradeSnapshotRetryTimer = undefined
     }
 
     function handleReady(currentSource: EventSource): void {
@@ -367,6 +401,28 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       )
     }
 
+    function handleTradeReset(event: Event) {
+      const payload = parseLaunchpadTradeResetStreamEvent(
+        event as MessageEvent<string>,
+      )
+      if (!payload || !isExpected(payload)) return
+
+      const currentTradeSnapshotGeneration = ++tradeSnapshotGeneration.current
+      const currentSynchronization = synchronization.current
+      clearTradeSnapshotRetry()
+      tradeSnapshotRetryAttempt = 0
+      tradeSnapshotCursor = undefined
+      hasSnapshot.current = false
+      mutations.current.clear()
+      setData(EMPTY_TRADE_CONNECTION)
+      setLastEventAt(null)
+      void refreshTradeSnapshot(
+        payload.eventId,
+        currentTradeSnapshotGeneration,
+        currentSynchronization,
+      )
+    }
+
     function handleCandleUpdate(event: Event) {
       const payload = parseStreamEvent(
         event as MessageEvent<string>,
@@ -430,9 +486,8 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     }
 
     function handleMetricsUpdate(event: Event) {
-      const payload = parseStreamEvent(
+      const payload = parseLaunchpadMetricsStreamEvent(
         event as MessageEvent<string>,
-        streamMetricsSchema,
       )
       if (!payload || !isExpected(payload)) return
 
@@ -496,6 +551,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       nextSource.addEventListener('stream.ready', markReady)
       nextSource.addEventListener('trade.upsert', handleTradeUpsert)
       nextSource.addEventListener('trade.remove', handleTradeRemove)
+      nextSource.addEventListener('trade.reset', handleTradeReset)
       nextSource.addEventListener('candle.update', handleCandleUpdate)
       nextSource.addEventListener('candle.remove', handleCandleRemove)
       nextSource.addEventListener('candle.reset', handleCandleReset)
@@ -536,6 +592,103 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       }, ms('2s'))
     }
 
+    function scheduleTradeSnapshotRetry(
+      resetEventId: string,
+      currentTradeSnapshotGeneration: number,
+      currentSynchronization: number,
+    ): void {
+      if (
+        disposed ||
+        tradeSnapshotRetryTimer !== undefined ||
+        currentTradeSnapshotGeneration !== tradeSnapshotGeneration.current ||
+        currentSynchronization !== synchronization.current
+      ) {
+        return
+      }
+
+      const retryDelay = Math.min(
+        tradeSnapshotRetryBaseDelay * 2 ** tradeSnapshotRetryAttempt,
+        tradeSnapshotRetryMaxDelay,
+      )
+      tradeSnapshotRetryAttempt += 1
+      tradeSnapshotRetryTimer = setTimeout(() => {
+        tradeSnapshotRetryTimer = undefined
+        void refreshTradeSnapshot(
+          resetEventId,
+          currentTradeSnapshotGeneration,
+          currentSynchronization,
+        )
+      }, retryDelay)
+    }
+
+    async function refreshTradeSnapshot(
+      resetEventId: string,
+      currentTradeSnapshotGeneration: number,
+      currentSynchronization: number,
+    ): Promise<void> {
+      const includeSmallTrades = includeSmallTradesRef.current
+      try {
+        const result = await refetch.current()
+        if (
+          disposed ||
+          currentTradeSnapshotGeneration !== tradeSnapshotGeneration.current ||
+          currentSynchronization !== synchronization.current
+        ) {
+          return
+        }
+
+        const pages = result.data?.pages
+        if (result.isError || !pages?.[0]) {
+          scheduleTradeSnapshotRetry(
+            resetEventId,
+            currentTradeSnapshotGeneration,
+            currentSynchronization,
+          )
+          return
+        }
+
+        const next = flattenLaunchpadTradePages(pages)
+        const reconciliation = unsignedIntegerSchema.safeParse(
+          next.streamCursor,
+        ).success
+          ? reconcileLaunchpadTradeResetSnapshot(
+              next,
+              resetEventId,
+              mutations.current.values(),
+              includeSmallTrades,
+            )
+          : null
+        if (
+          !reconciliation ||
+          includeSmallTrades !== includeSmallTradesRef.current
+        ) {
+          scheduleTradeSnapshotRetry(
+            resetEventId,
+            currentTradeSnapshotGeneration,
+            currentSynchronization,
+          )
+          return
+        }
+
+        const pendingMutations = new Map<string, LaunchpadTradeMutation>()
+        for (const mutation of reconciliation.mutations) {
+          const trade = mutation.type === 'upsert' ? mutation.trade : mutation
+          pendingMutations.set(getLaunchpadTradeKey(trade), mutation)
+        }
+        mutations.current = pendingMutations
+        tradeSnapshotCursor = next.streamCursor
+        tradeSnapshotRetryAttempt = 0
+        hasSnapshot.current = true
+        setData(reconciliation.connection)
+      } catch {
+        scheduleTradeSnapshotRetry(
+          resetEventId,
+          currentTradeSnapshotGeneration,
+          currentSynchronization,
+        )
+      }
+    }
+
     async function refreshActiveCandleSnapshots(): Promise<{
       streamCursor: string | null
       synchronized: boolean
@@ -557,6 +710,9 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       refetchCandles: boolean,
     ): Promise<void> {
       const currentSynchronization = ++synchronization.current
+      tradeSnapshotGeneration.current += 1
+      clearTradeSnapshotRetry()
+      tradeSnapshotRetryAttempt = 0
       if (snapshotRetryTimer !== undefined) {
         clearTimeout(snapshotRetryTimer)
         snapshotRetryTimer = undefined
@@ -670,9 +826,11 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     return () => {
       disposed = true
       synchronization.current += 1
+      tradeSnapshotGeneration.current += 1
       if (snapshotRetryTimer !== undefined) {
         clearTimeout(snapshotRetryTimer)
       }
+      clearTradeSnapshotRetry()
       clearClosedStreamRetry()
       unsubscribeCandleSnapshot()
       source?.close()

@@ -1,5 +1,6 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List, classNames } from '@sushiswap/ui'
+import { useEffect } from 'react'
 import { useAccount } from 'src/lib/wallet'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
@@ -45,11 +46,15 @@ export function TokenSelectorMyTokens<TChainId extends TokenListChainId>({
 }: TokenSelectorMyTokens<TChainId>) {
   const address = useAccount(chainId)
 
-  const { data, isError, isLoading } = useMyTokens({
+  const { data, isError, isLoading, refetch } = useMyTokens({
     chainId,
     account: address,
     includeNative,
   })
+
+  useEffect(() => {
+    refetch()
+  }, [refetch])
 
   const { data: pricesMap } = usePrices({
     chainId,

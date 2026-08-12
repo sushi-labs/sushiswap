@@ -3,8 +3,10 @@ import { graphql } from '../../graphql.js'
 
 export const LaunchpadTokenFragment = graphql(`
   fragment LaunchpadTokenFragment on LaunchpadToken @_unmask {
+    __typename
     id
     chainId
+    provider
     address
     creator
     factoryAddress
@@ -12,10 +14,7 @@ export const LaunchpadTokenFragment = graphql(`
     symbol
     decimals
     initialSupply
-    feeSplit {
-      sushiFeeBps
-      creatorFeeBps
-    }
+    initialFdvUsd
     indexingStatus
     pool {
       address
@@ -75,6 +74,7 @@ export const LaunchpadTokenFragment = graphql(`
 
 export type LaunchpadToken = ResultOf<typeof LaunchpadTokenFragment>
 export type LaunchpadIndexingStatus = LaunchpadToken['indexingStatus']
+export type LaunchpadProvider = LaunchpadToken['provider']
 export type LaunchpadPosition = LaunchpadToken['positions'][number]
 export type LaunchpadMetadata = LaunchpadToken['metadata']
 export type LaunchpadMetadataLink = LaunchpadMetadata['links'][number]

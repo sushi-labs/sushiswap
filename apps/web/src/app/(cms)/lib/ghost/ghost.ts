@@ -1,6 +1,7 @@
 import GhostContentAPI, {
   type GhostContentAPIOptions,
 } from '@tryghost/content-api'
+import { sanitizeCmsHtml } from 'src/lib/sanitize-html'
 
 interface CustomGhostContentAPIOptions extends GhostContentAPIOptions {
   makeRequest: (options: {
@@ -52,5 +53,7 @@ export async function getGhostBody(slug: string) {
     slug,
   })
 
-  return { html: html ? processVideos(html) : '', ...rest }
+  // Ghost HTML is rendered with dangerouslySetInnerHTML while the app CSP
+  // allows inline scripts, so CMS content must be sanitized at this boundary.
+  return { html: html ? sanitizeCmsHtml(processVideos(html)) : '', ...rest }
 }

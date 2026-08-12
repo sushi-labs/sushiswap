@@ -30,7 +30,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
-import { formatPercent } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
 import {
@@ -54,6 +53,10 @@ import {
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
 } from '../../../_lib/launchpad-metadata'
+import {
+  getLaunchpadProviderConfig,
+  launchpadProviderHasCapability,
+} from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { DetailList } from '../../../_ui/detail-list'
 import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
@@ -114,6 +117,12 @@ export function ManageTokenPage({
     isPending,
     refetch,
   } = useLaunchpadToken(chainId, address)
+  const canManage = token
+    ? launchpadProviderHasCapability(token.provider, 'manage')
+    : false
+  const canManageMetadata = token
+    ? launchpadProviderHasCapability(token.provider, 'metadata')
+    : false
   const {
     data: creatorBytecode,
     isLoading: isCreatorBytecodeLoading,
@@ -122,16 +131,17 @@ export function ManageTokenPage({
     address: token?.creator,
     chainId,
     query: {
-      enabled: Boolean(token),
+      enabled: canManageMetadata,
     },
   })
-  const canSubmitMetadataSignature = token
-    ? canSubmitLaunchpadMetadataSignature({
-        connectedAddress,
-        creatorAddress: token.creator,
-        creatorBytecode,
-      })
-    : false
+  const canSubmitMetadataSignature =
+    token && canManageMetadata
+      ? canSubmitLaunchpadMetadataSignature({
+          connectedAddress,
+          creatorAddress: token.creator,
+          creatorBytecode,
+        })
+      : false
   const isContractCreator = Boolean(creatorBytecode && creatorBytecode !== '0x')
   const creatorKind = isCreatorBytecodeLoading
     ? 'pending'
@@ -151,7 +161,7 @@ export function ManageTokenPage({
     functionName: 'distributeFees',
     args: [address],
     query: {
-      enabled: Boolean(token),
+      enabled: canManage,
       retry: false,
       refetchInterval: ms('1m'),
       refetchOnWindowFocus: true,
@@ -206,6 +216,9 @@ export function ManageTokenPage({
 
     try {
       if (!token) throw new Error('Launch token is no longer available')
+      if (!canManageMetadata) {
+        throw new Error('This provider does not support metadata updates here')
+      }
       if (!connectedAddress || !canSubmitMetadataSignature) {
         throw new Error(METADATA_SIGNER_ERROR[creatorKind])
       }
@@ -243,6 +256,9 @@ export function ManageTokenPage({
 
     try {
       if (!token) throw new Error('Launch token is no longer available')
+      if (!canManage) {
+        throw new Error('This provider is not managed through Sushi')
+      }
       if (connectedChainId !== chainId) {
         throw new Error(
           `Switch your wallet to ${getEvmChainById(chainId).name}`,
@@ -341,6 +357,28 @@ export function ManageTokenPage({
         }
       />
     )
+  }
+
+  if (!canManage) {
+    const provider = getLaunchpadProviderConfig(token.provider)
+    return (
+      <PageState
+        title={`${provider.label} manages this launch`}
+        description="Trading and market data are available here, but creator tools stay with the launch provider."
+        action={
+          provider.websiteUrl ? (
+            <Button asChild variant="perps-secondary">
+              <a href={provider.websiteUrl} target="_blank" rel="noreferrer">
+                Open {provider.label}
+              </a>
+            </Button>
+          ) : undefined
+        }
+      />
+    )
+  }
+  if (token.__typename !== 'SushiV1LaunchpadToken') {
+    throw new Error('Manageable launchpad token is not a Sushi V1 launch')
   }
 
   return (
@@ -639,19 +677,10 @@ export function ManageTokenPage({
               </p>
             </div>
             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
-              <DetailList
-                className="space-y-3"
-                items={[
-                  {
-                    label: 'Sushi recipient',
-                    value: formatPercent(token.feeSplit.sushiFeeBps / 10_000),
-                  },
-                  {
-                    label: 'Creator recipient',
-                    value: formatPercent(token.feeSplit.creatorFeeBps / 10_000),
-                  },
-                ]}
-              />
+              <p className="text-sm text-perps-muted-50">
+                Distribution follows the fee configuration recorded by the
+                launch contract.
+              </p>
               <Checker.Connect
                 namespace="evm"
                 fullWidth

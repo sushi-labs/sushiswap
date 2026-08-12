@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { getEvmChainById } from 'sushi/evm'
 import { LAUNCHPAD_SUPPORTED_CHAIN_IDS } from '../constants'
 import type { LaunchpadChainId } from '../constants'
+import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 import { getLaunchpadCreateUrl, getLaunchpadTokenUrl } from './launchpad-seo'
 
 const SITEMAP_REVALIDATE_SECONDS = 60 * 60
@@ -25,6 +26,7 @@ const getCachedLaunchpadSitemapTokens = unstable_cache(
       const connection = await getLaunchpadTokens({
         input: {
           chainId,
+          providers: getLaunchpadProvidersForFilter('all'),
           first: TOKENS_PER_PAGE,
           after,
           sortBy: 'CREATED_AT',

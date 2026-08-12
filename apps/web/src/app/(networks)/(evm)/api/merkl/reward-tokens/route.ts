@@ -1,12 +1,16 @@
 import { MERKL_BASE_URL } from 'src/lib/hooks/react-query/rewards/merkl-base-url'
+import { isChainId } from 'sushi'
 
 const apiKey = process.env.MERKL_API_KEY
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const chainId = searchParams.get('chainId')
-  if (!chainId)
-    return new Response('Missing chainId parameter', { status: 400 })
+  // `chainId` is embedded into the upstream request path: validate strictly.
+  if (!chainId || !isChainId(+chainId))
+    return new Response('Missing or invalid chainId parameter', {
+      status: 400,
+    })
 
   const url = new URL(`${MERKL_BASE_URL}/tokens/reward/${chainId}`)
   const response = await fetch(

@@ -9,12 +9,13 @@ import ms from 'ms'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
 import type { LaunchpadTokensInput } from '../types'
+import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 import { EMPTY_LAUNCHPAD_TOKEN_CONNECTION } from './launchpad-query-fallbacks'
 
 export function useLaunchpadCreator(
   chainId: LaunchpadChainId,
   address: EvmAddress | undefined,
-  filters: Omit<LaunchpadTokensInput, 'chainId' | 'creator'> = {},
+  filters: Omit<LaunchpadTokensInput, 'chainId' | 'creator' | 'providers'> = {},
 ) {
   const query = useQuery({
     queryKey: ['launchpad', 'creator', { chainId, address, filters }],
@@ -27,6 +28,7 @@ export function useLaunchpadCreator(
           ...filters,
           chainId,
           creator: address,
+          providers: getLaunchpadProvidersForFilter('sushi'),
         },
       })
     },
