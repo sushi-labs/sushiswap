@@ -28,6 +28,7 @@ import {
 import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
+import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import { MetricStrip, MetricStripItem } from './metric-strip'
 import { CollectionStateCard } from './state-card'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
@@ -187,7 +188,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   Market feeds
                 </div>
                 <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none" />
                   Live
                 </div>
               </div>
@@ -259,7 +260,25 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                     })
                   }
                 >
-                  {option.label}
+                  <span className="flex items-center gap-1.5">
+                    <span className="flex items-center" aria-hidden>
+                      {getLaunchpadProvidersForFilter(option.value).map(
+                        (provider, index) => (
+                          <LaunchpadProviderMark
+                            key={provider}
+                            provider={provider}
+                            size="sm"
+                            className={
+                              index > 0
+                                ? '-ml-1 rounded-full ring-2 ring-perps-background'
+                                : undefined
+                            }
+                          />
+                        ),
+                      )}
+                    </span>
+                    {option.label}
+                  </span>
                 </Button>
               ))}
             </div>

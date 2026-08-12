@@ -59,7 +59,8 @@ export function TokenCard({
   sortBy?: LaunchpadTokenSortField
   manage?: boolean
 }) {
-  const chainKey = getEvmChainById(token.chainId).key
+  const chain = getEvmChainById(token.chainId)
+  const chainKey = chain.key
   const volumeMetric = getSelectedMetric(
     token,
     sortBy.startsWith('VOLUME_') ? sortBy : 'VOLUME_24H',
@@ -79,7 +80,16 @@ export function TokenCard({
       <div className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <TokenAvatar token={token} size="lg" />
+            <TokenAvatar
+              token={token}
+              size="lg"
+              badge={
+                <LaunchpadProviderBadge
+                  provider={token.provider}
+                  variant="mark"
+                />
+              }
+            />
             <div className="min-w-0">
               <Link
                 href={href}
@@ -93,11 +103,10 @@ export function TokenCard({
                 <span>{token.symbol}</span>
                 <span>·</span>
                 <NetworkIcon chainId={token.chainId} width={13} height={13} />
-                <span>Robinhood</span>
+                <span>{chain.name}</span>
               </div>
             </div>
           </div>
-          <LaunchpadProviderBadge provider={token.provider} />
         </div>
 
         <div className="mt-4">
