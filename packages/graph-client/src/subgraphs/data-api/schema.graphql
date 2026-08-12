@@ -8,7 +8,7 @@ scalar LaunchpadChainId
 
 type LaunchpadQueries {
   quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
-  stats(chainId: LaunchpadChainId!): LaunchpadStats!
+  stats(chainId: LaunchpadChainId!, providers: [LaunchpadProvider!]! = [SUSHI_V1]): LaunchpadStats!
   userStats(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadUserStats!
   userHoldings(input: LaunchpadUserHoldingsInput!): LaunchpadUserHoldingConnection!
   tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
@@ -35,9 +35,15 @@ enum LaunchpadIndexingStatus {
   ORPHANED
 }
 
-type LaunchpadToken {
+enum LaunchpadProvider {
+  SUSHI_V1
+  POOLS_FUN_V1
+}
+
+interface LaunchpadToken {
   id: ID!
   chainId: LaunchpadChainId!
+  provider: LaunchpadProvider!
   address: EvmAddress!
   creator: EvmAddress!
   factoryAddress: EvmAddress!
@@ -45,7 +51,50 @@ type LaunchpadToken {
   symbol: String!
   decimals: Int!
   initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+}
+
+type SushiV1LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  provider: LaunchpadProvider!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
   feeSplit: LaunchpadFeeSplit!
+}
+
+type PoolsFunV1LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  provider: LaunchpadProvider!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
   indexingStatus: LaunchpadIndexingStatus!
   pool: LaunchpadPool!
   positions: [LaunchpadPosition!]!
@@ -171,6 +220,7 @@ type LaunchpadUserHoldingEdge {
 
 input LaunchpadTokensInput {
   chainId: LaunchpadChainId!
+  providers: [LaunchpadProvider!]! = [SUSHI_V1]
   creator: EvmAddress
   search: String
   first: Int = 20
@@ -217,7 +267,6 @@ type LaunchpadPageInfo {
 type LaunchpadMetrics {
   version: BigInt!
   priceUsd: Float
-  circulatingSupply: BigInt!
   marketCapitalizationUsd: Float
   fullyDilutedValuationUsd: Float
   currentTvlUsd: Float

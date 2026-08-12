@@ -5,6 +5,7 @@ import type {
 import type { EvmTxHash } from 'sushi/evm'
 import { describe, expect, it, vi } from 'vitest'
 import {
+  type LaunchpadTradeMutation,
   applyLaunchpadCandleStreamMutations,
   applyLaunchpadTradeMutation,
   flattenLaunchpadTradePages,
@@ -12,10 +13,15 @@ import {
   minimumLaunchpadStreamCursor,
   publishLaunchpadCandleRemove,
   publishLaunchpadCandleUpdate,
+  reconcileLaunchpadTradeResetSnapshot,
   refetchLaunchpadCandleSnapshots,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleStream,
 } from './launchpad-stream'
+import {
+  parseLaunchpadMetricsStreamEvent,
+  parseLaunchpadTradeResetStreamEvent,
+} from './use-launchpad-live-trades'
 
 const CHAIN_ID = 4663
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111'
@@ -62,6 +68,49 @@ function createConnection(
 }
 
 describe('launchpad stream', () => {
+  it('parses trade resets created from an empty stream payload', () => {
+    const payload = parseLaunchpadTradeResetStreamEvent(
+      new MessageEvent('trade.reset', {
+        data: JSON.stringify({
+          chainId: CHAIN_ID,
+          tokenAddress: TOKEN_ADDRESS,
+          eventId: '41',
+        }),
+      }),
+    )
+
+    expect(payload).toEqual({
+      chainId: CHAIN_ID,
+      tokenAddress: TOKEN_ADDRESS,
+      eventId: '41',
+    })
+  })
+
+  it('accepts metrics updates', () => {
+    const payload = parseLaunchpadMetricsStreamEvent(
+      new MessageEvent('metrics', {
+        data: JSON.stringify({
+          chainId: CHAIN_ID,
+          tokenAddress: TOKEN_ADDRESS,
+          eventId: '41',
+          version: '2',
+          metrics: {
+            priceUsd: 1,
+            marketCapitalizationUsd: 1_000_000,
+            fullyDilutedValuationUsd: 1_000_000,
+            currentTvlUsd: 100_000,
+            volumeUsd: { h1: 1, h6: 2, h12: 3, h24: 4 },
+            tvlChangePercent: { h1: null, h6: null, h12: null, h24: null },
+            asOf: '2026-07-25T00:00:00.000Z',
+            source: 'launchpad',
+            isStale: false,
+          },
+        }),
+      }),
+    )
+    expect(payload?.metrics.marketCapitalizationUsd).toBe(1_000_000)
+  })
+
   it('keeps the full decimal stream cursor in the EventSource URL', () => {
     const url = new URL(
       launchpadEventsUrl({
@@ -157,6 +206,52 @@ describe('launchpad stream', () => {
 
     expect(next.edges).toEqual([])
     expect(next.totalCount).toBe(0)
+  })
+
+  it('accepts reset snapshots only after the boundary and reapplies newer events', () => {
+    const resetEventId = '900719925474099312345678950'
+    const snapshotEventId = '900719925474099312345678951'
+    const newerEventId = '900719925474099312345678952'
+    const snapshotTrade = createTrade({ id: 'trade-2', logIndex: 2 })
+    const newerTrade = createTrade({ id: 'trade-3', logIndex: 3 })
+    const bufferedMutations: LaunchpadTradeMutation[] = [
+      {
+        eventId: snapshotEventId,
+        type: 'upsert',
+        trade: snapshotTrade,
+      },
+      { eventId: newerEventId, type: 'upsert', trade: newerTrade },
+    ]
+    const emptySnapshot = {
+      ...createConnection(),
+      edges: [],
+      totalCount: 0,
+    }
+
+    expect(
+      reconcileLaunchpadTradeResetSnapshot(
+        {
+          ...emptySnapshot,
+          streamCursor: '900719925474099312345678949',
+        },
+        resetEventId,
+        bufferedMutations,
+        false,
+      ),
+    ).toBeNull()
+
+    const reconciled = reconcileLaunchpadTradeResetSnapshot(
+      { ...emptySnapshot, streamCursor: snapshotEventId },
+      resetEventId,
+      bufferedMutations,
+      false,
+    )
+
+    expect(reconciled?.mutations).toEqual([bufferedMutations[1]])
+    expect(reconciled?.connection.edges).toEqual([
+      { cursor: newerEventId, node: newerTrade },
+    ])
+    expect(reconciled?.connection.totalCount).toBe(1)
   })
 
   it('merges candle updates and removals after the snapshot cursor', async () => {
