@@ -24,7 +24,7 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
     },
   },
   POOLS_FUN_V1: {
-    label: 'Pools.fun',
+    label: 'Pools',
     websiteUrl: 'https://pools.fun',
     capabilities: {
       creatorProfile: false,
@@ -40,7 +40,7 @@ export type LaunchpadProviderFilter = 'all' | 'sushi' | 'pools-fun'
 export const LAUNCHPAD_PROVIDER_FILTERS = [
   { label: 'All', value: 'all' },
   { label: 'Sushi', value: 'sushi' },
-  { label: 'Pools.fun', value: 'pools-fun' },
+  { label: 'Pools', value: 'pools-fun' },
 ] as const satisfies readonly {
   label: string
   value: LaunchpadProviderFilter

@@ -32,27 +32,8 @@ export function LaunchpadProviderBadge({
 
   const classes = classNames(
     'inline-flex h-7 items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.05] pl-1.5 pr-2.5 text-xs font-medium text-perps-muted',
-    config.websiteUrl && 'relative z-10',
-    config.websiteUrl &&
-      'transition hover:border-perps-blue/30 hover:bg-perps-blue/10 hover:text-perps-blue',
     className,
   )
-
-  if (config.websiteUrl) {
-    return (
-      <a
-        href={config.websiteUrl}
-        target="_blank"
-        rel="noreferrer"
-        className={classes}
-        aria-label={`Visit ${config.label}`}
-      >
-        <LaunchpadProviderMark provider={provider} size="sm" />
-        {config.label}
-        <ArrowTopRightOnSquareIcon aria-hidden className="h-3 w-3" />
-      </a>
-    )
-  }
 
   return (
     <span className={classes}>
