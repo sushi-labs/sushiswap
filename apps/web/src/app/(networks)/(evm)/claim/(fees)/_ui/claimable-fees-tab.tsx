@@ -64,6 +64,12 @@ export const ClaimableFeesTab: FC = () => {
     const positionsByChain = _data.reduce(
       (accum, cur) => {
         accum[cur.chainId] = accum[cur.chainId] || []
+        if (
+          cur.chainId === 1 &&
+          cur.address.toLowerCase() ===
+            '0x94faab05cd5b148ddff4354dc4e979642df062c4'.toLowerCase()
+        )
+          return accum
         accum[cur.chainId].push(cur)
         return accum
       },
@@ -80,7 +86,6 @@ export const ClaimableFeesTab: FC = () => {
         const chainId = +_chainId as SushiSwapV3ChainId
 
         const feeAmounts = {} as Record<string, Amount<EvmCurrency>>
-
         positions.forEach((position) => {
           if (
             !position.fees ||
