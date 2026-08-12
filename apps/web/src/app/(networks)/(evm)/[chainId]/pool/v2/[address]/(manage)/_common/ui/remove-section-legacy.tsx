@@ -33,7 +33,6 @@ import { type SendTransactionReturnType, encodeFunctionData } from 'viem'
 import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { getTokenPermitId } from 'src/lib/wagmi/hooks/approvals/hooks/token-permit-id'
 import {
   type PermitInfo,
   PermitType,
@@ -75,13 +74,7 @@ interface RemoveSectionLegacyProps {
 export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
   withCheckerRoot(({ pool: _pool }) => {
     const { token0, token1, liquidityToken } = useTokensFromPool(_pool)
-    const { signature } = useSignature(
-      getTokenPermitId(
-        APPROVE_TAG_REMOVE_LEGACY,
-        _pool.chainId,
-        liquidityToken?.wrap().address,
-      ),
-    )
+    const { signature } = useSignature(APPROVE_TAG_REMOVE_LEGACY)
     const { approved } = useApproved(APPROVE_TAG_REMOVE_LEGACY)
     const isMounted = useIsMounted()
     const client = usePublicClient()
@@ -98,9 +91,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
     )
 
     const [percentage, setPercentage] = useState<string>('0')
+    const [denominator, setDenominator] = useState<number>(100)
     const percentToRemove = useMemo(
-      () => new Percent({ numerator: percentage, denominator: 100 }),
-      [percentage],
+      () => new Percent({ numerator: percentage, denominator: denominator }),
+      [percentage, denominator],
     )
     const percentToRemoveDebounced = useDebounce(percentToRemove, 300)
 
@@ -459,7 +453,10 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           token1={token1}
           token0Minimum={minAmount0}
           token1Minimum={minAmount1}
+          denominator={denominator}
           setPercentage={setPercentage}
+          setDenominator={setDenominator}
+          amountToRemove={amountToRemove}
         >
           <Checker.Connect fullWidth>
             <Checker.Guard

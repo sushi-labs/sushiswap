@@ -16,7 +16,7 @@ import { IconButton } from '@sushiswap/ui'
 import { SettingsModule, SettingsOverlay } from '@sushiswap/ui'
 import { Widget, WidgetHeader, WidgetTitle } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
-import { type Amount, ZERO } from 'sushi'
+import { type Amount, Percent, ZERO } from 'sushi'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
@@ -33,7 +33,18 @@ interface RemoveSectionWidgetProps {
   token1Minimum?: Amount<EvmCurrency>
   setPercentage(percentage: string): void
   children: ReactNode
+  denominator: number
+  setDenominator(denominator: number): void
+  amountToRemove: Amount<EvmCurrency> | undefined
 }
+const DENOMINATOR_OPTIONS = [
+  { value: 100, label: '0' },
+  { value: 1000, label: '1' },
+  { value: 10000, label: '2' },
+  { value: 100000, label: '3' },
+  { value: 1000000, label: '4' },
+  { value: 10000000, label: '5' },
+]
 
 export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   chainId,
@@ -42,6 +53,9 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
   token0Minimum,
   token1Minimum,
   children,
+  denominator,
+  setDenominator,
+  amountToRemove,
 }) => {
   const { balance } = usePoolPosition()
 
@@ -88,49 +102,34 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
       >
         <div className="flex flex-col gap-6">
           <Card variant="outline" className="p-6">
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-betwee flex-col gap-4">
               <div>
                 <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
-                  {percentage}%
+                  {new Percent({
+                    numerator: percentage,
+                    denominator: denominator,
+                  }).toString({ fixed: denominator.toString().length - 3 })}
+                  %
                 </h1>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  fullWidth
-                  variant={percentage === '25' ? 'default' : 'secondary'}
-                  onClick={() => setPercentage('25')}
-                  testId="remove-liquidity-25"
-                >
-                  25%
-                </Button>
-                <Button
-                  size="sm"
-                  fullWidth
-                  variant={percentage === '50' ? 'default' : 'secondary'}
-                  onClick={() => setPercentage('50')}
-                  testId="remove-liquidity-50"
-                >
-                  50%
-                </Button>
-                <Button
-                  size="sm"
-                  fullWidth
-                  variant={percentage === '75' ? 'default' : 'secondary'}
-                  onClick={() => setPercentage('75')}
-                  testId="remove-liquidity-75"
-                >
-                  75%
-                </Button>
-                <Button
-                  size="sm"
-                  fullWidth
-                  variant={percentage === '100' ? 'default' : 'secondary'}
-                  onClick={() => setPercentage('100')}
-                  testId="remove-liquidity-max"
-                >
-                  MAX
-                </Button>
+                {DENOMINATOR_OPTIONS.map((option) => (
+                  <Button
+                    key={option.value}
+                    size="sm"
+                    fullWidth
+                    variant={
+                      denominator === option.value ? 'default' : 'secondary'
+                    }
+                    onClick={() => {
+                      setPercentage('0')
+                      setDenominator(option.value)
+                    }}
+                    testId={`remove-liquidity-denominator-${option.value}`}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
               </div>
             </div>
             <div className="px-1 pt-2 pb-3">
@@ -139,7 +138,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                 onChange={(e) => setPercentage(e.target.value)}
                 type="range"
                 min="1"
-                max="100"
+                max={denominator.toString()}
                 className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
               />
             </div>
@@ -147,6 +146,7 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
           <Card variant="outline" className="p-6">
             <CardGroup>
               <CardLabel>You&apos;ll receive at least:</CardLabel>
+              <CardCurrencyAmountItem amount={amountToRemove} />
               <CardCurrencyAmountItem amount={token0Minimum} />
               <CardCurrencyAmountItem amount={token1Minimum} />
             </CardGroup>
