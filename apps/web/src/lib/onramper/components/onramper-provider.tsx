@@ -3,7 +3,7 @@
 import { OnramperProvider as OnramperProviderInternal } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
 import { useAccount } from 'wagmi'
-import { signOnramperData } from '../actions/sign-onramper-data'
+import { createOnramperUrl } from '../actions/create-onramper-url'
 
 export const OnramperProvider: FC<{
   children: ReactNode
@@ -11,7 +11,7 @@ export const OnramperProvider: FC<{
   const { address } = useAccount()
   return (
     <OnramperProviderInternal
-      signOnramperData={signOnramperData}
+      createOnramperUrl={createOnramperUrl}
       address={address}
     >
       {children}

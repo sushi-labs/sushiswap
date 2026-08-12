@@ -61,45 +61,64 @@ export const OnramperButton: FC<{
   )
 }
 
-type SignOnramperDataFn = (data: string) => Promise<string>
-
 type OnramperNamespace = 'eth' // | 'btc'
+
+interface CreateOnramperUrlInput {
+  address?: string
+  defaultCrypto: string
+  namespace: OnramperNamespace
+}
+
+type CreateOnramperUrlFn = (input: CreateOnramperUrlInput) => Promise<string>
 
 interface OnramperPanelProps {
   address?: string
   namespace?: OnramperNamespace
-  signOnramperData?: SignOnramperDataFn
+  createOnramperUrl: CreateOnramperUrlFn
   defaultCrypto?: string
 }
 
 export const OnramperPanel: FC<OnramperPanelProps> = ({
   address,
   namespace = 'eth',
-  signOnramperData,
+  createOnramperUrl,
   defaultCrypto = 'ETH',
 }) => {
   const { open, setOpen } = useOnramperContext()
-  const [signature, setSignature] = useState<string | undefined>(undefined)
-
-  const isSignaturePending = Boolean(open && address && !signature)
+  const [src, setSrc] = useState<string | undefined>(undefined)
+  const [urlError, setUrlError] = useState(false)
+  const isUrlPending = Boolean(open && !src && !urlError)
 
   useEffect(() => {
-    if (signOnramperData && open && address) {
-      signOnramperData(`wallets=${namespace}:${address}`).then((signature) => {
-        setSignature(signature)
-      })
-    } else {
-      setSignature(undefined)
+    if (!open) {
+      setSrc(undefined)
+      setUrlError(false)
+      return
     }
-  }, [signOnramperData, namespace, address, open])
 
-  let src = `https://buy.onramper.com?themeName=sushi&apiKey=pk_prod_01GTYEN8CHRVPKES7HK2S9JXDJ&defaultCrypto=${defaultCrypto}`
-  if (address && signature) {
-    src += `&wallets=${namespace}:${address}&signature=${signature}`
-  }
+    let cancelled = false
+    setSrc(undefined)
+    setUrlError(false)
+
+    createOnramperUrl({ address, defaultCrypto, namespace })
+      .then((url) => {
+        if (!cancelled) {
+          setSrc(url)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUrlError(true)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [createOnramperUrl, namespace, address, defaultCrypto, open])
 
   return (
-    <Dialog open={open && !isSignaturePending} onOpenChange={() => {}}>
+    <Dialog open={open && !isUrlPending} onOpenChange={() => {}}>
       <DialogPrimitive.Portal>
         <DialogOverlay />
         <DialogPrimitive.Content
@@ -118,14 +137,20 @@ export const OnramperPanel: FC<OnramperPanelProps> = ({
             />
           </div>
           <div className="flex items-center justify-center w-full h-[75vh] sm:h-[620px] rounded-t-2xl sm:rounded-2xl overflow-hidden">
-            <iframe
-              src={src}
-              height="100%"
-              width="100%"
-              title="Onramper widget"
-              allow="accelerometer; autoplay; camera; gyroscope; payment"
-              sandbox="allow-scripts allow-popups allow-same-origin"
-            />
+            {src ? (
+              <iframe
+                src={src}
+                height="100%"
+                width="100%"
+                title="Onramper widget"
+                allow="accelerometer; autoplay; camera; gyroscope; payment"
+                sandbox="allow-scripts allow-popups allow-same-origin"
+              />
+            ) : (
+              <p role="alert" className="px-6 text-center text-sm">
+                Onramper could not be loaded. Close this dialog and try again.
+              </p>
+            )}
           </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -142,7 +167,7 @@ interface OnramperContext {
 const OnramperContext = createContext<OnramperContext | undefined>(undefined)
 
 interface ProviderProps {
-  signOnramperData: SignOnramperDataFn
+  createOnramperUrl: CreateOnramperUrlFn
   address?: string
   namespace?: OnramperNamespace
   children:
@@ -157,7 +182,7 @@ export const OnramperProvider: FC<ProviderProps> = ({
   children,
   address,
   namespace,
-  signOnramperData,
+  createOnramperUrl,
 }) => {
   const [open, setOpen] = useState(false)
   const [defaultCrypto, setDefaultCrypto] = useState('ETH')
@@ -167,7 +192,7 @@ export const OnramperProvider: FC<ProviderProps> = ({
       {typeof children === 'function' ? children({ open, setOpen }) : children}
       <OnramperPanel
         defaultCrypto={defaultCrypto}
-        signOnramperData={signOnramperData}
+        createOnramperUrl={createOnramperUrl}
         address={address}
         namespace={namespace}
       />
