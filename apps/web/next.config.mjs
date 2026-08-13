@@ -200,7 +200,12 @@ const nextConfig = bundleAnalyzer({
     ]
   },
   async rewrites() {
-    return []
+    return [
+      {
+        source: '/launch',
+        destination: '/4663/launchpad',
+      },
+    ]
   },
 })
 

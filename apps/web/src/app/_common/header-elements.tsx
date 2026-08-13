@@ -49,7 +49,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     },
     {
       title: 'Launchpad',
-      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
+      href: '/launch',
       description: 'Discover and launch tokens with locked Sushi liquidity.',
     },
     {
@@ -248,7 +248,7 @@ export const headerElements = ({
     },
     {
       title: 'Launchpad',
-      href: `/${getChainById(ChainId.ROBINHOOD).key}/launchpad`,
+      href: '/launch',
       show: 'desktop',
       type: NavigationElementType.Single,
     },
