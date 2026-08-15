@@ -271,7 +271,6 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                 <TokenGrid
                   tokens={tokens}
                   sortBy={sortBy}
-                  ranked
                   isFetchingNextPage={isFetchingNextPage}
                 />
               </InfiniteScroll>

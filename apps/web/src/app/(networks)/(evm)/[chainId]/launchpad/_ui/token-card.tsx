@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
-import { SkeletonBox, classNames } from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
@@ -60,17 +60,14 @@ export function TokenCardSkeleton() {
 export function TokenCard({
   token,
   sortBy = 'VOLUME_24H',
-  rank,
   manage = false,
 }: {
   token: LaunchpadToken
   sortBy?: LaunchpadTokenSortField
-  rank?: number
   manage?: boolean
 }) {
   const chain = getEvmChainById(token.chainId)
   const chainKey = chain.key
-  const isNewFeed = sortBy === 'CREATED_AT'
   const selectedMetric = getSelectedMetric(
     token,
     sortBy === 'MARKET_CAPITALIZATION' || sortBy === 'CURRENT_TVL'
@@ -119,18 +116,6 @@ export function TokenCard({
               </div>
             </div>
           </div>
-          {rank !== undefined && !isNewFeed ? (
-            <span
-              className={classNames(
-                'flex h-[22px] shrink-0 items-center rounded-md px-2 text-[11px] font-semibold tabular-nums',
-                rank === 0
-                  ? 'bg-perps-blue/[0.14] text-perps-blue'
-                  : 'bg-white/[0.06] text-perps-muted-50',
-              )}
-            >
-              #{rank + 1}
-            </span>
-          ) : null}
         </div>
 
         <div className="mt-4">
