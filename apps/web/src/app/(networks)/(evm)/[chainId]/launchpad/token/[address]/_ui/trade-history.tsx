@@ -160,8 +160,9 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
     lastEventAt,
   } = useLaunchpadLiveTrades(input)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [loadMoreTarget, setLoadMoreTarget] =
-    useState<HTMLDivElement | null>(null)
+  const [loadMoreTarget, setLoadMoreTarget] = useState<HTMLDivElement | null>(
+    null,
+  )
 
   useEffect(() => {
     const root = scrollRef.current
