@@ -32,11 +32,14 @@ export function TokenGrid({
   tokens,
   sortBy,
   manage,
+  ranked = false,
   isFetchingNextPage = false,
 }: {
   tokens: LaunchpadToken[]
   sortBy?: LaunchpadTokenSortField
   manage?: boolean
+  /** Number the cards by their position in the feed. */
+  ranked?: boolean
   isFetchingNextPage?: boolean
 }) {
   if (tokens.length === 0) {
@@ -55,11 +58,12 @@ export function TokenGrid({
 
   return (
     <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-      {tokens.map((token) => (
+      {tokens.map((token, index) => (
         <TokenCard
           key={token.id}
           token={token}
           sortBy={sortBy}
+          rank={ranked ? index : undefined}
           manage={manage}
         />
       ))}

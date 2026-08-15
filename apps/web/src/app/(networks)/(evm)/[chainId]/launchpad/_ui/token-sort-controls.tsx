@@ -1,138 +1,125 @@
 'use client'
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  classNames,
-} from '@sushiswap/ui'
+  ArrowTrendingUpIcon,
+  FireIcon,
+  SparklesIcon,
+  TrophyIcon,
+} from '@heroicons/react/24/outline'
+import { classNames } from '@sushiswap/ui'
+import { useState } from 'react'
+import {
+  LAUNCHPAD_FEED_WINDOWS,
+  type LaunchpadFeed,
+  getLaunchpadFeed,
+  getLaunchpadFeedSortField,
+  getLaunchpadFeedWindow,
+  isWindowedLaunchpadFeed,
+} from '../_lib/launchpad-feed'
 import type { LaunchpadTokenSortField } from '../types'
+import {
+  SEGMENTED_GROUP,
+  SEGMENTED_ITEM,
+  SEGMENTED_ITEM_ACCENT,
+  SEGMENTED_ITEM_IDLE,
+  SEGMENTED_ITEM_SELECTED,
+} from './segmented-control'
 
-type SortMetric =
-  | 'VOLUME'
-  | 'MARKET_CAPITALIZATION'
-  | 'CURRENT_TVL'
-  | 'CREATED_AT'
-type VolumePeriod = '1H' | '6H' | '12H' | '24H'
-
-const SORT_METRICS: Array<{ value: SortMetric; label: string }> = [
-  { value: 'VOLUME', label: 'Volume' },
-  { value: 'MARKET_CAPITALIZATION', label: 'Marketcap' },
-  { value: 'CURRENT_TVL', label: 'Liquidity' },
-  { value: 'CREATED_AT', label: 'Newest' },
-]
-
-const VOLUME_PERIODS: VolumePeriod[] = ['1H', '6H', '12H', '24H']
-
-const VOLUME_SORT_FIELDS = {
-  '1H': 'VOLUME_1H',
-  '6H': 'VOLUME_6H',
-  '12H': 'VOLUME_12H',
-  '24H': 'VOLUME_24H',
-} as const satisfies Record<VolumePeriod, LaunchpadTokenSortField>
-
-const SORT_FIELDS = new Set<LaunchpadTokenSortField>([
-  ...Object.values(VOLUME_SORT_FIELDS),
-  'MARKET_CAPITALIZATION',
-  'CURRENT_TVL',
-  'CREATED_AT',
-])
-
-export const DEFAULT_LAUNCHPAD_TOKEN_SORT = 'MARKET_CAPITALIZATION' as const
-
-export function parseLaunchpadTokenSortField(
-  value: string | null,
-): LaunchpadTokenSortField {
-  const requestedSort = value as LaunchpadTokenSortField
-  return SORT_FIELDS.has(requestedSort)
-    ? requestedSort
-    : DEFAULT_LAUNCHPAD_TOKEN_SORT
-}
-
-function getSortMetric(sortBy: LaunchpadTokenSortField): SortMetric {
-  if (
-    sortBy === 'MARKET_CAPITALIZATION' ||
-    sortBy === 'CURRENT_TVL' ||
-    sortBy === 'CREATED_AT'
-  ) {
-    return sortBy
-  }
-  return 'VOLUME'
-}
-
-function getVolumePeriod(sortBy: LaunchpadTokenSortField): VolumePeriod {
-  const period = VOLUME_PERIODS.find(
-    (candidate) => VOLUME_SORT_FIELDS[candidate] === sortBy,
-  )
-  return period ?? '24H'
-}
+const FEEDS = [
+  { value: 'HOT', label: 'Hot', icon: FireIcon },
+  { value: 'NEW', label: 'New', icon: SparklesIcon },
+  { value: 'CLIMBING', label: 'Climbing', icon: ArrowTrendingUpIcon },
+  { value: 'TOP', label: 'Top', icon: TrophyIcon },
+] as const satisfies readonly {
+  value: LaunchpadFeed
+  label: string
+  icon: typeof FireIcon
+}[]
 
 export function TokenSortControls({
   sortBy,
   onSortByChange,
-  ariaLabel = 'Sort launches by',
+  ariaLabel = 'Launch feeds',
 }: {
   sortBy: LaunchpadTokenSortField
   onSortByChange: (sortBy: LaunchpadTokenSortField) => void
   ariaLabel?: string
 }) {
-  const sortMetric = getSortMetric(sortBy)
-  const volumePeriod = getVolumePeriod(sortBy)
+  const feed = getLaunchpadFeed(sortBy)
+  const windowed = isWindowedLaunchpadFeed(feed)
+
+  // New and Top carry no window, so the chosen one has to be remembered while
+  // they're active — otherwise a detour through Top silently resets Hot to 1H.
+  const sortWindow = getLaunchpadFeedWindow(sortBy)
+  const [lastWindow, setLastWindow] = useState(sortWindow)
+  if (windowed && lastWindow !== sortWindow) setLastWindow(sortWindow)
+  const activeWindow = windowed ? sortWindow : lastWindow
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
-      <Select
-        value={sortMetric}
-        onValueChange={(value) => {
-          const metric = value as SortMetric
-          onSortByChange(
-            metric === 'VOLUME' ? VOLUME_SORT_FIELDS[volumePeriod] : metric,
-          )
-        }}
-      >
-        <SelectTrigger
-          aria-label={ariaLabel}
-          className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue md:w-[150px]"
-        >
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent className="!bg-black/10 backdrop-blur-2xl">
-          {SORT_METRICS.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <div
-        role="radiogroup"
-        aria-label="Volume period"
-        aria-disabled={sortMetric !== 'VOLUME'}
+        role="tablist"
+        aria-label={ariaLabel}
         className={classNames(
-          'flex h-10 shrink-0 items-center rounded-lg border border-white/[0.06] bg-white/[0.04] p-1 transition-opacity justify-between md:justify-start',
-          sortMetric !== 'VOLUME' && 'opacity-40',
+          SEGMENTED_GROUP,
+          'justify-between sm:justify-start',
         )}
       >
-        {VOLUME_PERIODS.map((period) => {
-          const selected = sortMetric === 'VOLUME' && volumePeriod === period
+        {FEEDS.map((option) => {
+          const selected = option.value === feed
           return (
             <button
-              key={period}
+              key={option.value}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() =>
+                onSortByChange(
+                  getLaunchpadFeedSortField(option.value, activeWindow),
+                )
+              }
+              className={classNames(
+                SEGMENTED_ITEM,
+                'w-full sm:w-auto',
+                selected ? SEGMENTED_ITEM_ACCENT : SEGMENTED_ITEM_IDLE,
+              )}
+            >
+              <option.icon className="h-4 w-4 shrink-0" aria-hidden />
+              {option.label}
+            </button>
+          )
+        })}
+      </div>
+      <div
+        role="radiogroup"
+        aria-label="Time window"
+        aria-disabled={!windowed}
+        className={classNames(
+          SEGMENTED_GROUP,
+          'justify-between transition-opacity sm:justify-start',
+          !windowed && 'opacity-40',
+        )}
+      >
+        {LAUNCHPAD_FEED_WINDOWS.map((option) => {
+          const selected = option === activeWindow
+          return (
+            <button
+              key={option}
               type="button"
               role="radio"
               aria-checked={selected}
-              disabled={sortMetric !== 'VOLUME'}
-              onClick={() => onSortByChange(VOLUME_SORT_FIELDS[period])}
+              disabled={!windowed}
+              onClick={() => {
+                setLastWindow(option)
+                onSortByChange(getLaunchpadFeedSortField(feed, option))
+              }}
               className={classNames(
-                'h-8 min-w-10 w-full rounded-md px-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50 disabled:cursor-not-allowed',
-                selected
-                  ? 'bg-white/[0.09] text-perps-muted shadow-sm'
-                  : 'text-perps-muted-50 hover:text-perps-muted disabled:hover:text-perps-muted-50',
+                SEGMENTED_ITEM,
+                'w-full min-w-10 px-2 text-xs tabular-nums sm:w-auto',
+                selected ? SEGMENTED_ITEM_SELECTED : SEGMENTED_ITEM_IDLE,
               )}
             >
-              {period}
+              {option}
             </button>
           )
         })}

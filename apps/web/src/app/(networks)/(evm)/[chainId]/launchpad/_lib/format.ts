@@ -134,6 +134,4 @@ export function getSelectedMetric(
         value: format(new Date(token.createdAt), 'MMM d'),
       }
   }
-
-  return { label: 'Launched', value: '—' }
 }
