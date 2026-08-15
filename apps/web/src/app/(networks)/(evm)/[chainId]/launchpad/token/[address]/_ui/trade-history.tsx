@@ -160,11 +160,13 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
     lastEventAt,
   } = useLaunchpadLiveTrades(input)
   const scrollRef = useRef<HTMLDivElement>(null)
-  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const [loadMoreTarget, setLoadMoreTarget] = useState<HTMLDivElement | null>(
+    null,
+  )
 
   useEffect(() => {
     const root = scrollRef.current
-    const target = loadMoreRef.current
+    const target = loadMoreTarget
     if (!root || !target || !hasNextPage) return
 
     const observer = new IntersectionObserver(
@@ -178,7 +180,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
     observer.observe(target)
 
     return () => observer.disconnect()
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, loadMoreTarget])
 
   useEffect(() => {
     setNow(Date.now())
@@ -281,7 +283,7 @@ export function TradeHistory({ token }: { token: LaunchpadToken }) {
                 ))}
                 {(hasNextPage || isFetchingNextPage) && (
                   <div
-                    ref={loadMoreRef}
+                    ref={setLoadMoreTarget}
                     className="flex min-h-8 items-center justify-center text-[11px] text-perps-muted-50"
                   >
                     {isFetchingNextPage ? (
