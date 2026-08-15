@@ -1,10 +1,17 @@
+'use client'
+
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { formatUsd, getSelectedMetric, shortenAddress } from '../_lib/format'
+import {
+  formatLaunchpadPriceUsd,
+  formatUsd,
+  getSelectedMetric,
+  shortenAddress,
+} from '../_lib/format'
 import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 import { LaunchpadCreatorLink } from './launchpad-creator-link'
@@ -61,9 +68,11 @@ export function TokenCard({
 }) {
   const chain = getEvmChainById(token.chainId)
   const chainKey = chain.key
-  const volumeMetric = getSelectedMetric(
+  const selectedMetric = getSelectedMetric(
     token,
-    sortBy.startsWith('VOLUME_') ? sortBy : 'VOLUME_24H',
+    sortBy === 'MARKET_CAPITALIZATION' || sortBy === 'CURRENT_TVL'
+      ? 'VOLUME_24H'
+      : sortBy,
   )
   const href =
     manage && launchpadProviderHasCapability(token.provider, 'manage')
@@ -113,7 +122,7 @@ export function TokenCard({
           <div className="text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
             MC
           </div>
-          <div className="mt-1 text-xl font-semibold tracking-tight text-perps-muted">
+          <div className="mt-1 text-xl font-semibold tracking-tight text-perps-muted tabular-nums">
             {formatUsd(token.metrics?.marketCapitalizationUsd)}
           </div>
         </div>
@@ -123,19 +132,16 @@ export function TokenCard({
             <div className="text-xs text-perps-muted-50">Price</div>
             <div className="mt-1 text-sm font-medium text-perps-muted">
               <PriceSensitiveText price={token.metrics?.priceUsd}>
-                {token.metrics?.priceUsd === null ||
-                token.metrics?.priceUsd === undefined
-                  ? '—'
-                  : `$${token.metrics.priceUsd.toPrecision(4)}`}
+                {formatLaunchpadPriceUsd(token.metrics?.priceUsd)}
               </PriceSensitiveText>
             </div>
           </div>
           <div className="text-right">
             <div className="text-xs text-perps-muted-50">
-              {volumeMetric.label}
+              {selectedMetric.label}
             </div>
             <div className="mt-1 text-sm font-medium text-perps-muted">
-              {volumeMetric.value}
+              {selectedMetric.value}
             </div>
           </div>
         </div>

@@ -11,15 +11,13 @@ import { useMemo, useState } from 'react'
 import { type EvmAddress, EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useEnsName } from 'wagmi'
 import { formatUsd, shortenAddress } from '../../../_lib/format'
+import { DEFAULT_LAUNCHPAD_TOKEN_SORT } from '../../../_lib/launchpad-feed'
 import { useLaunchpadCreator } from '../../../_lib/use-launchpad-creator'
 import { MetricCard } from '../../../_ui/metric-card'
 import { PageHeading } from '../../../_ui/page-heading'
 import { CollectionStateCard } from '../../../_ui/state-card'
 import { TokenGrid } from '../../../_ui/token-grid'
-import {
-  DEFAULT_LAUNCHPAD_TOKEN_SORT,
-  TokenSortControls,
-} from '../../../_ui/token-sort-controls'
+import { TokenSortControls } from '../../../_ui/token-sort-controls'
 import type { LaunchpadChainId } from '../../../constants'
 import type { LaunchpadTokenSortField } from '../../../types'
 
@@ -123,7 +121,7 @@ export function CreatorPage({
                 Confirmed launches created by this address.
               </p>
             </div>
-            <div className="grid gap-3 md:grid-cols-[260px_auto]">
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
               <TextField
                 type="text"
                 value={search}
@@ -132,6 +130,7 @@ export function CreatorPage({
                 placeholder="Search launches"
                 aria-label="Search creator launches"
                 className="!bg-white/[0.04] !text-perps-muted"
+                wrapperClassName="min-w-0 xl:w-[260px]"
               />
               <TokenSortControls
                 sortBy={sortBy}
