@@ -5,7 +5,7 @@ import {
 } from './launchpad-card'
 
 const values: LaunchpadCardValues = {
-  marketCap: '$4.82M',
+  marketCap: '$4.82B',
   name: 'Onigiri',
   stats: [
     { label: '24h volume', value: '$1.24M' },
