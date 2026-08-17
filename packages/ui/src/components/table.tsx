@@ -118,7 +118,6 @@ const TableCellAsLink = React.forwardRef<
 >(({ external, className, children, href, ...props }, ref) => (
   <td className="!p-0 h-[76px]" ref={ref} {...props}>
     <Link
-      scroll={false}
       shallow={true}
       href={href}
       target={external ? '_blank' : '_self'}
