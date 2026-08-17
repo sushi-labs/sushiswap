@@ -47,6 +47,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { usePoolsInfinite } from 'src/lib/hooks'
 import {
+  type EvmAddress,
   EvmNative,
   SushiSwapProtocol,
   getEvmChainById,
@@ -262,13 +263,13 @@ const COLUMNS = [
 interface PoolsTableProps {
   chainId: PoolChainId
   onRowClick?(row: Pools[number]): void
-  forcedTokenSymbols?: string[]
+  forcedTokenAddresses?: EvmAddress[]
 }
 
 export const PoolsTable: FC<PoolsTableProps> = ({
   chainId,
   onRowClick,
-  forcedTokenSymbols,
+  forcedTokenAddresses,
 }) => {
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
@@ -280,7 +281,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
     const tokenSymbolsSet = new Set([
       ...tokenSymbols.map((symbol) => symbol.toLowerCase()),
-      ...(forcedTokenSymbols ?? []).map((symbol) => symbol.toLowerCase()),
+      ...(forcedTokenAddresses ?? []).map((address) => address.toLowerCase()),
     ])
     return {
       chainId,
@@ -294,7 +295,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   }, [
     chainId,
     tokenSymbols,
-    forcedTokenSymbols,
+    forcedTokenAddresses,
     farmsOnly,
     smartPoolsOnly,
     sorting,
