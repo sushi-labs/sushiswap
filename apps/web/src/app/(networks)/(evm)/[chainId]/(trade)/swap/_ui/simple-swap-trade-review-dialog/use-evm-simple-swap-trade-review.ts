@@ -53,7 +53,7 @@ export function useEvmSimpleSwapTradeReview({
 }: {
   variant: SimpleSwapTradeReviewDialogVariant | undefined
 }): UseSimpleSwapTradeReviewBaseReturn & {
-  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetch']
+  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetchTrade']
   writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
 } {
   const { state: _state } = useDerivedStateSimpleSwap<
@@ -85,7 +85,7 @@ function useEvmSimpleSwapTradeReviewForState({
   token1: EvmCurrency | undefined
   variant: SimpleSwapTradeReviewDialogVariant | undefined
 }): UseSimpleSwapTradeReviewBaseReturn & {
-  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetch']
+  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetchTrade']
   writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
 } {
   const {
@@ -388,7 +388,7 @@ function useEvmSimpleSwapTradeReviewForState({
     tradeRef: tradeRef,
     write,
     writeTrade,
-    refetchTrade: tradeQuery.refetch,
+    refetchTrade: tradeQuery.refetchTrade,
     isWritePending,
     txHash,
     status,

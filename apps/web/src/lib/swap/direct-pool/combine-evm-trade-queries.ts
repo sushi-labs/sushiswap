@@ -16,15 +16,6 @@ export function combineEvmTradeQueries(
     (!aggregator.isFetching || aggregator.isError) &&
     (!direct.isFetching || direct.isError)
 
-  const refetch: typeof aggregator.refetch = async (options) => {
-    const [aggregatorResult, directResult] = await Promise.all([
-      aggregator.refetch(options),
-      direct.refetch(options),
-    ])
-
-    return combineEvmTradeQueries(aggregatorResult, directResult)
-  }
-
   return {
     ...source,
     data,
@@ -34,6 +25,5 @@ export function combineEvmTradeQueries(
     isError: !data && bothSettled && (aggregator.isError || direct.isError),
     error:
       !data && bothSettled ? (aggregator.error ?? direct.error) : source.error,
-    refetch,
   } as UseQueryResult<UseEvmTradeReturn, Error>
 }
