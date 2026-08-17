@@ -4,10 +4,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
 import { Header } from '../../header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
 import { TokensFiltersProvider } from './_ui/tokens-filters-provider'
+
 export const metadata: Metadata = {
   title: 'Tokens',
   description: 'Explore SushiSwap tokens.',
@@ -29,7 +31,10 @@ export default async function ExploreLayout(props: {
 
   return (
     <>
-      <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
+      <Header
+        chainId={chainId}
+        networks={POOL_SUPPORTED_NETWORKS.filter(isEvmChainId)}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />
