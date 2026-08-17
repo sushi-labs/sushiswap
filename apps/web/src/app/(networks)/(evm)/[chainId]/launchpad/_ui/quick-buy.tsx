@@ -22,7 +22,7 @@ import { useAccount, useSwitchChain } from 'src/lib/wallet'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { Amount } from 'sushi'
 import { EvmNative, EvmToken } from 'sushi/evm'
-import { useChainId } from 'wagmi'
+import { useChainId, useGasPrice } from 'wagmi'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
   DerivedstateSimpleSwapProvider,
@@ -72,6 +72,10 @@ export function QuickBuyProvider({
   const { data: nativePrice } = useCurrencyPrice({
     currency: nativeCurrency,
   })
+  const { data: gasPrice, refetch: refetchGasPrice } = useGasPrice({
+    chainId,
+    query: { enabled: false },
+  })
   const { open } = useSidebar()
   const { mutateAsync: switchChainAsync } = useSwitchChain({
     mutation: {
@@ -82,20 +86,24 @@ export function QuickBuyProvider({
     activeChainId,
     address,
     chainId,
+    gasPrice,
     nativeBalance,
     nativeCurrency,
     nativePrice,
     open,
+    refetchGasPrice,
     switchChainAsync,
   })
   runtimeRef.current = {
     activeChainId,
     address,
     chainId,
+    gasPrice,
     nativeBalance,
     nativeCurrency,
     nativePrice,
     open,
+    refetchGasPrice,
     switchChainAsync,
   }
 
@@ -122,6 +130,19 @@ export function QuickBuyProvider({
         try {
           await runtime.switchChainAsync?.({ chainId: token.chainId })
         } catch {
+          return
+        }
+      }
+
+      if (runtimeRef.current.gasPrice === undefined) {
+        const { data: loadedGasPrice } =
+          await runtimeRef.current.refetchGasPrice()
+        if (loadedGasPrice === undefined) {
+          createErrorToast(
+            'Unable to load the current gas price for this quick buy.',
+            false,
+            'perps',
+          )
           return
         }
       }
