@@ -6,6 +6,7 @@ import {
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
+import { useDebounce } from '@sushiswap/hooks'
 import {
   Button,
   Container,
@@ -13,7 +14,7 @@ import {
   SkeletonBox,
   TextField,
 } from '@sushiswap/ui'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { getEvmChainById } from 'sushi/evm'
@@ -21,15 +22,14 @@ import { isAddress } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd } from '../_lib/format'
 import {
-  LAUNCHPAD_PROVIDER_FILTERS,
   getLaunchpadProvidersForFilter,
   parseLaunchpadProviderFilter,
 } from '../_lib/launchpad-provider'
 import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
-import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import { MetricStrip, MetricStripItem } from './metric-strip'
+import { ProviderFilterControls } from './provider-filter-controls'
 import { CollectionStateCard } from './state-card'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
 import {
@@ -40,7 +40,6 @@ import {
 export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const pathname = usePathname()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
@@ -49,6 +48,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   )
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
+  const debouncedSearch = useDebounce(search, 250)
   const [creator, setCreator] = useState(urlCreator)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
@@ -67,17 +67,15 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
 
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {
-      const next = new URLSearchParams(searchParams.toString())
+      const next = new URLSearchParams(window.location.search)
       for (const [key, value] of Object.entries(updates)) {
         if (value) next.set(key, value)
         else next.delete(key)
       }
       const query = next.toString()
-      router.replace(query ? `${pathname}?${query}` : pathname, {
-        scroll: false,
-      })
+      history.replaceState(null, '', query ? `${pathname}?${query}` : pathname)
     },
-    [pathname, router, searchParams],
+    [pathname],
   )
 
   const providers = useMemo(
@@ -88,7 +86,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     () => ({
       chainId,
       providers,
-      search: urlSearch || undefined,
+      search: debouncedSearch || undefined,
       creator:
         urlCreator && isAddress(urlCreator, { strict: false })
           ? urlCreator
@@ -97,7 +95,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
       sortBy,
       sortDirection: 'DESC' as const,
     }),
-    [chainId, providers, sortBy, urlCreator, urlSearch],
+    [chainId, debouncedSearch, providers, sortBy, urlCreator],
   )
   const infiniteScrollKey = useMemo(
     () =>
@@ -200,20 +198,31 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
       <section id="discover" className="border-t border-white/[0.04] py-8">
         <Container maxWidth="7xl" className="w-full px-4">
           <PerpsCard className="p-3 sm:p-4" fullWidth>
-            <div className="grid gap-3 md:grid-cols-[minmax(240px,1fr)_auto]">
-              <TextField
-                type="text"
-                value={search}
-                onChange={(event) => {
-                  const value = event.target.value
-                  setSearch(value)
-                  updateParams({ search: value || undefined })
-                }}
-                icon={MagnifyingGlassIcon}
-                placeholder="Search name, symbol, or address"
-                aria-label="Search launches"
-                className="!bg-white/[0.04] !text-perps-muted xl:!max-w-[480px]"
-              />
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <TextField
+                  type="text"
+                  value={search}
+                  onChange={(event) => {
+                    const value = event.target.value
+                    setSearch(value)
+                    updateParams({ search: value || undefined })
+                  }}
+                  icon={MagnifyingGlassIcon}
+                  placeholder="Search name, symbol, or address"
+                  aria-label="Search launches"
+                  className="!bg-white/[0.04] !text-perps-muted"
+                  wrapperClassName="min-w-0 sm:w-[300px] xl:w-[400px]"
+                />
+                <ProviderFilterControls
+                  filter={providerFilter}
+                  onFilterChange={(nextFilter) =>
+                    updateParams({
+                      provider: nextFilter === 'all' ? undefined : nextFilter,
+                    })
+                  }
+                />
+              </div>
               <TextField
                 type="text"
                 value={creator}
@@ -236,51 +245,6 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
                   })
                 }
               />
-            </div>
-            <div
-              className="mt-3 flex flex-wrap items-center gap-2"
-              role="group"
-              aria-label="Filter launches by provider"
-            >
-              {LAUNCHPAD_PROVIDER_FILTERS.map((option) => (
-                <Button
-                  key={option.value}
-                  type="button"
-                  size="sm"
-                  variant={
-                    option.value === providerFilter
-                      ? 'perps-default'
-                      : 'perps-secondary'
-                  }
-                  aria-pressed={option.value === providerFilter}
-                  onClick={() =>
-                    updateParams({
-                      provider:
-                        option.value === 'all' ? undefined : option.value,
-                    })
-                  }
-                >
-                  <span className="flex items-center gap-1.5">
-                    <span className="flex items-center" aria-hidden>
-                      {getLaunchpadProvidersForFilter(option.value).map(
-                        (provider, index) => (
-                          <LaunchpadProviderMark
-                            key={provider}
-                            provider={provider}
-                            size="sm"
-                            className={
-                              index > 0
-                                ? '-ml-1 rounded-full ring-2 ring-perps-background'
-                                : undefined
-                            }
-                          />
-                        ),
-                      )}
-                    </span>
-                    {option.label}
-                  </span>
-                </Button>
-              ))}
             </div>
           </PerpsCard>
 
