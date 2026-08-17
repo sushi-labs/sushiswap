@@ -10,11 +10,12 @@ import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 import { LaunchpadCreatorLink } from './launchpad-creator-link'
 import { LaunchpadProviderBadge } from './launchpad-provider-badge'
 import { PriceSensitiveText } from './price-sensitive-text'
+import { QuickBuy } from './quick-buy'
 import { TokenAvatar } from './token-avatar'
 
 export function TokenCardSkeleton() {
   return (
-    <PerpsCard className="min-h-[249px] overflow-hidden" fullWidth>
+    <PerpsCard className="min-h-[309px] overflow-hidden" fullWidth>
       <div className="h-px bg-gradient-to-r from-transparent via-perps-blue/20 to-transparent" />
       <div className="p-4">
         <div className="flex items-center gap-3">
@@ -44,6 +45,18 @@ export function TokenCardSkeleton() {
         <div className="mt-3 flex items-center justify-between gap-3">
           <SkeletonBox className="h-3 w-24 rounded-sm" />
           <SkeletonBox className="h-3 w-28 rounded-sm" />
+        </div>
+
+        <div className="mt-4 border-t border-white/[0.06] pt-3">
+          <div className="flex items-center justify-between">
+            <SkeletonBox className="h-3 w-16 rounded-sm" />
+            <SkeletonBox className="h-3 w-8 rounded-sm" />
+          </div>
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {['10', '25', '50', '100'].map((amount) => (
+              <SkeletonBox key={amount} className="h-8 rounded-lg" />
+            ))}
+          </div>
         </div>
       </div>
     </PerpsCard>
@@ -153,6 +166,9 @@ export function TokenCard({
             </span>
             <span className="text-perps-muted-50">of Liquidity</span>
           </div>
+        </div>
+        <div className="mt-4 border-t border-white/[0.06] pt-3">
+          <QuickBuy token={token} />
         </div>
       </div>
     </PerpsCard>

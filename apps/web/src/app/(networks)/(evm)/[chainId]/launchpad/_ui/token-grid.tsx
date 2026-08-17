@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
+import { QuickBuyProvider } from './quick-buy'
 import { CollectionStateCard } from './state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
 
@@ -39,7 +40,9 @@ export function TokenGrid({
   manage?: boolean
   isFetchingNextPage?: boolean
 }) {
-  if (tokens.length === 0) {
+  const [firstToken] = tokens
+
+  if (!firstToken) {
     return (
       <CollectionStateCard
         icon={
@@ -54,20 +57,22 @@ export function TokenGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-      {tokens.map((token) => (
-        <TokenCard
-          key={token.id}
-          token={token}
-          sortBy={sortBy}
-          manage={manage}
-        />
-      ))}
-      {isFetchingNextPage
-        ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
-            <TokenCardSkeleton key={`next-${skeleton}`} />
-          ))
-        : null}
-    </div>
+    <QuickBuyProvider chainId={firstToken.chainId}>
+      <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        {tokens.map((token) => (
+          <TokenCard
+            key={token.id}
+            token={token}
+            sortBy={sortBy}
+            manage={manage}
+          />
+        ))}
+        {isFetchingNextPage
+          ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
+              <TokenCardSkeleton key={`next-${skeleton}`} />
+            ))
+          : null}
+      </div>
+    </QuickBuyProvider>
   )
 }

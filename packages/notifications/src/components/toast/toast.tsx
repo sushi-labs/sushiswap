@@ -102,7 +102,10 @@ export const createErrorToast = (
           code={code}
           variant={variant || 'default'}
         />
-        <ToastButtons onDismiss={() => toast.dismiss(toastId)} />
+        <ToastButtons
+          variant={variant || 'default'}
+          onDismiss={() => toast.dismiss(toastId)}
+        />
       </>
     ),
     {

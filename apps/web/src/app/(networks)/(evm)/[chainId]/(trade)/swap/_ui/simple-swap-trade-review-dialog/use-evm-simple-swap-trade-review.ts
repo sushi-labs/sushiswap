@@ -52,7 +52,10 @@ export function useEvmSimpleSwapTradeReview({
   variant,
 }: {
   variant: SimpleSwapTradeReviewDialogVariant | undefined
-}): UseSimpleSwapTradeReviewBaseReturn {
+}): UseSimpleSwapTradeReviewBaseReturn & {
+  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetch']
+  writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
+} {
   const { state: _state } = useDerivedStateSimpleSwap<
     EvmChainId & SupportedChainId
   >()
@@ -81,7 +84,10 @@ function useEvmSimpleSwapTradeReviewForState({
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
   variant: SimpleSwapTradeReviewDialogVariant | undefined
-}): UseSimpleSwapTradeReviewBaseReturn {
+}): UseSimpleSwapTradeReviewBaseReturn & {
+  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetch']
+  writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
+} {
   const {
     mutate: { setSwapAmount },
     state: { slippageToleranceOptions },
@@ -109,13 +115,14 @@ function useEvmSimpleSwapTradeReviewForState({
     chainId && approved && address && (confirmDialogOpen || reviewDialogOpen),
   )
 
+  const tradeQuery = useEvmSimpleSwapTrade(enabled)
   const {
     data: trade,
     isFetching: isSwapQueryFetching,
     isSuccess: isSwapQuerySuccess,
     isError: isSwapQueryError,
     error: swapQueryError,
-  } = useEvmSimpleSwapTrade(enabled)
+  } = tradeQuery
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
@@ -132,7 +139,8 @@ function useEvmSimpleSwapTradeReviewForState({
 
   const onSwapSuccess = useCallback(
     async (hash: SendTransactionReturnType) => {
-      if (!trade || !chainId) return
+      const submittedTrade = tradeRef.current
+      if (!submittedTrade || !chainId) return
 
       try {
         setStatus('pending')
@@ -165,27 +173,27 @@ function useEvmSimpleSwapTradeReviewForState({
           summary: {
             pending: `${
               isWrap ? 'Wrapping' : isUnwrap ? 'Unwrapping' : 'Swapping'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
+            } ${submittedTrade.amountIn?.toSignificant(6)} ${
+              submittedTrade.amountIn?.currency.symbol
             } ${
               isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
+            } ${submittedTrade.amountOut?.toSignificant(6)} ${
+              submittedTrade.amountOut?.currency.symbol
             }`,
             completed: `${
               isWrap ? 'Wrap' : isUnwrap ? 'Unwrap' : 'Swap'
-            } ${trade.amountIn?.toSignificant(6)} ${
-              trade.amountIn?.currency.symbol
+            } ${submittedTrade.amountIn?.toSignificant(6)} ${
+              submittedTrade.amountIn?.currency.symbol
             } ${
               isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.toSignificant(6)} ${
-              trade.amountOut?.currency.symbol
+            } ${submittedTrade.amountOut?.toSignificant(6)} ${
+              submittedTrade.amountOut?.currency.symbol
             }`,
             failed: `Something went wrong when trying to ${
               isWrap ? 'wrap' : isUnwrap ? 'unwrap' : 'swap'
-            } ${trade.amountIn?.currency.symbol} ${
+            } ${submittedTrade.amountIn?.currency.symbol} ${
               isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-            } ${trade.amountOut?.currency.symbol}`,
+            } ${submittedTrade.amountOut?.currency.symbol}`,
           },
           timestamp: ts,
           groupTimestamp: ts,
@@ -277,7 +285,6 @@ function useEvmSimpleSwapTradeReviewForState({
     },
     [
       setSwapAmount,
-      trade,
       chainId,
       client,
       address,
@@ -300,13 +307,14 @@ function useEvmSimpleSwapTradeReviewForState({
         return
       }
 
-      const tokenFrom = trade?.amountIn?.currency
-        ? getEvmCurrencyAddress(trade?.amountIn.currency)
+      const submittedTrade = tradeRef.current
+      const tokenFrom = submittedTrade?.amountIn?.currency
+        ? getEvmCurrencyAddress(submittedTrade.amountIn.currency)
         : 'unknown'
-      const tokenTo = trade?.amountOut?.currency
-        ? getEvmCurrencyAddress(trade?.amountOut.currency)
+      const tokenTo = submittedTrade?.amountOut?.currency
+        ? getEvmCurrencyAddress(submittedTrade.amountOut.currency)
         : 'unknown'
-      const tx = stringify(trade?.tx)
+      const tx = stringify(submittedTrade?.tx)
 
       logger.error(e, {
         location: 'SimpleSwapTradeReviewDialog',
@@ -322,7 +330,7 @@ function useEvmSimpleSwapTradeReviewForState({
       })
       createErrorToast(e.message, false, variant)
     },
-    [trade?.amountIn?.currency, trade?.amountOut?.currency, trade?.tx, variant],
+    [variant],
   )
 
   const {
@@ -331,28 +339,23 @@ function useEvmSimpleSwapTradeReviewForState({
     data: txHash,
   } = useSendTransaction({
     mutation: {
-      onMutate: () => {
-        // Set reference of current trade
-        if (tradeRef && trade) {
-          tradeRef.current = trade
-        }
-      },
       onSuccess: onSwapSuccess,
       onError: onSwapError,
     },
   })
 
-  const write = useMemo(() => {
-    if (
-      !trade?.tx ||
-      activeChainId !== chainId ||
-      address?.toLowerCase() !== trade.tx.from.toLowerCase()
-    )
-      return undefined
+  const writeTrade = useCallback(
+    async (trade: UseEvmTradeReturn, confirm: () => void) => {
+      if (
+        !trade.tx ||
+        activeChainId !== chainId ||
+        address?.toLowerCase() !== trade.tx.from.toLowerCase()
+      )
+        return
 
-    const { to, gas, data, value } = trade.tx
+      tradeRef.current = trade
+      const { to, gas, data, value } = trade.tx
 
-    return async (confirm: () => void) => {
       try {
         await sendTransactionAsync({
           chainId,
@@ -365,13 +368,27 @@ function useEvmSimpleSwapTradeReviewForState({
         })
         confirm()
       } catch {}
-    }
-  }, [activeChainId, address, chainId, trade?.tx, sendTransactionAsync])
+    },
+    [activeChainId, address, chainId, sendTransactionAsync],
+  )
+
+  const write = useMemo(() => {
+    if (
+      !trade?.tx ||
+      activeChainId !== chainId ||
+      address?.toLowerCase() !== trade.tx.from.toLowerCase()
+    )
+      return undefined
+
+    return async (confirm: () => void) => writeTrade(trade, confirm)
+  }, [activeChainId, address, chainId, trade, writeTrade])
 
   return {
     trade,
     tradeRef: tradeRef,
     write,
+    writeTrade,
+    refetchTrade: tradeQuery.refetch,
     isWritePending,
     txHash,
     status,
