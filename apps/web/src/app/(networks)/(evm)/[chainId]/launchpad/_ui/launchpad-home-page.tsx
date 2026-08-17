@@ -6,6 +6,7 @@ import {
   MagnifyingGlassIcon,
   SignalIcon,
 } from '@heroicons/react/24/outline'
+import { useDebounce } from '@sushiswap/hooks'
 import {
   Button,
   Container,
@@ -13,7 +14,7 @@ import {
   SkeletonBox,
   TextField,
 } from '@sushiswap/ui'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { getEvmChainById } from 'sushi/evm'
@@ -40,7 +41,6 @@ import {
 export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const pathname = usePathname()
-  const router = useRouter()
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
@@ -49,6 +49,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   )
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const [search, setSearch] = useState(urlSearch)
+  const debouncedSearch = useDebounce(search, 250)
   const [creator, setCreator] = useState(urlCreator)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
@@ -67,17 +68,15 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
 
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {
-      const next = new URLSearchParams(searchParams.toString())
+      const next = new URLSearchParams(window.location.search)
       for (const [key, value] of Object.entries(updates)) {
         if (value) next.set(key, value)
         else next.delete(key)
       }
       const query = next.toString()
-      router.replace(query ? `${pathname}?${query}` : pathname, {
-        scroll: false,
-      })
+      history.replaceState(null, '', query ? `${pathname}?${query}` : pathname)
     },
-    [pathname, router, searchParams],
+    [pathname],
   )
 
   const providers = useMemo(
@@ -88,7 +87,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     () => ({
       chainId,
       providers,
-      search: urlSearch || undefined,
+      search: debouncedSearch || undefined,
       creator:
         urlCreator && isAddress(urlCreator, { strict: false })
           ? urlCreator
@@ -97,7 +96,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
       sortBy,
       sortDirection: 'DESC' as const,
     }),
-    [chainId, providers, sortBy, urlCreator, urlSearch],
+    [chainId, debouncedSearch, providers, sortBy, urlCreator],
   )
   const infiniteScrollKey = useMemo(
     () =>
