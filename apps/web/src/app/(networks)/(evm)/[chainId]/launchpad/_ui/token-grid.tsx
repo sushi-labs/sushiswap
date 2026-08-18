@@ -13,12 +13,16 @@ const TOKEN_CARD_SKELETONS = [
   'sixth',
   'seventh',
   'eighth',
+  'ninth',
+  'tenth',
+  'eleventh',
+  'twelth',
 ] as const
 
-export function TokenGridSkeleton({ count = 8 }: { count?: number }) {
+export function TokenGridSkeleton({ count = 12 }: { count?: number }) {
   return (
     <div
-      className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+      className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6"
       aria-label="Loading launches"
       aria-busy="true"
     >
@@ -58,7 +62,7 @@ export function TokenGrid({
 
   return (
     <QuickBuyProvider chainId={firstToken.chainId}>
-      <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
         {tokens.map((token) => (
           <TokenCard
             key={token.id}
