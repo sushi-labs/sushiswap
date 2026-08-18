@@ -10,7 +10,7 @@ import type { ComponentProps } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { SUSHI_V2_LAUNCHPAD_ADDRESS } from '../../_providers/sushi-v2/contract'
+import { LAUNCHPAD_ADDRESS } from '../../_lib/launchpad-contract'
 import { DetailList, type DetailListItem } from '../../_ui/detail-list'
 import type { LaunchpadChainId } from '../../constants'
 import type { CreateLaunchForm } from './create-launch-types'
@@ -83,10 +83,9 @@ export function CreateLaunchReviewStep({
         <div className="mt-6 flex items-start gap-3 rounded-xl bg-white/[0.04] p-4 text-sm text-perps-muted-50">
           <LockClosedIcon className="mt-0.5 h-5 w-5 shrink-0 text-perps-blue" />
           <p className="leading-6">
-            Token name, symbol, supply, starting valuation, quote asset, and
-            liquidity mode are fixed. The creator may be transferred, and the
-            fee mode may only move toward more burning. The contract is
-            upgradeable; liquidity custody is not.
+            Token name, symbol, supply, fixed starting valuation, quote asset,
+            creator, and liquidity position are immutable. Description, links,
+            and logo can be updated later.
           </p>
         </div>
         {isFactoryTermsError ? (
@@ -152,7 +151,7 @@ export function CreateLaunchReviewStep({
                       ? initialBuyAmount
                       : undefined
                   }
-                  contract={SUSHI_V2_LAUNCHPAD_ADDRESS}
+                  contract={LAUNCHPAD_ADDRESS}
                   enabled={
                     !isNativeInitialBuy &&
                     initialBuyAmountRaw !== undefined &&
