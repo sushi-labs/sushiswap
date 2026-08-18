@@ -32,6 +32,7 @@ export function CreateLaunchBuyStep({
   isQuoteTokenListPending,
   isQuoteTokenListError,
   onQuoteTokenSelect,
+  isSushiQuoteToken,
   isWethQuoteToken,
   wethPaymentMode,
   onWethPaymentModeChange,
@@ -55,6 +56,7 @@ export function CreateLaunchBuyStep({
   isQuoteTokenListPending: boolean
   isQuoteTokenListError: boolean
   onQuoteTokenSelect: (address: EvmAddress) => void
+  isSushiQuoteToken: boolean
   isWethQuoteToken: boolean
   wethPaymentMode: WethPaymentMode
   onWethPaymentModeChange: (mode: WethPaymentMode) => void
@@ -119,6 +121,12 @@ export function CreateLaunchBuyStep({
         <Message variant="destructive" size="sm" className="mb-6">
           Quote assets could not be loaded. Try again before reviewing your
           launch.
+        </Message>
+      ) : null}
+      {isSushiQuoteToken ? (
+        <Message variant="info" size="sm" className="mb-6">
+          Using SUSHI as the quote asset reduces Sushi&apos;s LP fee share from
+          30% to 20%.
         </Message>
       ) : null}
 

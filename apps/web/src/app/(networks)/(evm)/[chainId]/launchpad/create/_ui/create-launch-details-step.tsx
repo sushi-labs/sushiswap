@@ -6,6 +6,11 @@ import {
   FormItem,
   FormLabel,
   FormSection,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   TextField,
 } from '@sushiswap/ui'
 import type { UseFormReturn } from 'react-hook-form'
@@ -97,15 +102,25 @@ export function CreateLaunchDetailsStep({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Liquidity mode</FormLabel>
-                <FormControl>
-                  <select
-                    {...field}
-                    className="h-10 w-full rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 text-sm text-perps-muted outline-none"
-                  >
-                    <option value="MOON">Moon · $10K, seven ranges</option>
-                    <option value="STANDARD">Standard · $5K, one range</option>
-                  </select>
-                </FormControl>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="!bg-black/10 backdrop-blur-2xl">
+                    <SelectItem value="MOON">Moon</SelectItem>
+                    <SelectItem value="STANDARD">Standard</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormItem>
             )}
           />
@@ -115,27 +130,34 @@ export function CreateLaunchDetailsStep({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Creator fee mode</FormLabel>
-                <FormControl>
-                  <select
-                    {...field}
-                    className="h-10 w-full rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 text-sm text-perps-muted outline-none"
-                  >
-                    <option value="BUYBACK_AND_BURN">Buyback &amp; burn</option>
-                    <option value="BURN_LAUNCH_TOKEN_FEES">
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="!bg-black/10 backdrop-blur-2xl">
+                    <SelectItem value="BUYBACK_AND_BURN">
+                      Buyback &amp; burn
+                    </SelectItem>
+                    <SelectItem value="BURN_LAUNCH_TOKEN_FEES">
                       Burn token fees
-                    </option>
-                    <option value="DIRECT_PAYOUT">Direct payout</option>
-                  </select>
-                </FormControl>
+                    </SelectItem>
+                    <SelectItem value="DIRECT_PAYOUT">Direct payout</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormItem>
             )}
           />
         </div>
-        <p className="text-xs leading-5 text-perps-muted-50">
-          Moon spreads liquidity across seven contiguous ranges; it does not
-          prevent sniping. Fee modes can only move toward more burning after
-          launch, and buyback execution depends on market conditions.
-        </p>
       </FormSection>
 
       <div className="my-3 border-t border-white/[0.06]" />
