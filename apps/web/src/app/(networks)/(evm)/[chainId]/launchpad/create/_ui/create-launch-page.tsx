@@ -15,6 +15,7 @@ import {
   type EvmAddress,
   EvmNative,
   EvmToken,
+  SUSHI,
   WNATIVE,
   getEvmChainById,
 } from 'sushi/evm'
@@ -272,9 +273,13 @@ export function SushiV2CreateLaunchPage({
     [quoteTokens],
   )
   const defaultQuoteToken =
-    quoteTokens.find(
-      (quoteToken) => quoteToken.address === WNATIVE[chainId].address,
-    ) ?? quoteTokens[0]
+    quoteTokens.find((quoteToken) =>
+      isAddressEqual(quoteToken.address, SUSHI[chainId].address),
+    ) ??
+    quoteTokens.find((quoteToken) =>
+      isAddressEqual(quoteToken.address, WNATIVE[chainId].address),
+    ) ??
+    quoteTokens[0]
   const selectedQuoteToken =
     quoteTokens.find(
       (quoteToken) => quoteToken.address === selectedQuoteTokenAddress,
@@ -314,6 +319,10 @@ export function SushiV2CreateLaunchPage({
   const isWethQuoteToken = Boolean(
     selectedQuoteToken &&
       isAddressEqual(selectedQuoteToken.address, WNATIVE[chainId].address),
+  )
+  const isSushiQuoteToken = Boolean(
+    selectedQuoteToken &&
+      isAddressEqual(selectedQuoteToken.address, SUSHI[chainId].address),
   )
   const isNativeInitialBuy = isWethQuoteToken && wethPaymentMode === 'native'
   const nativeCurrency = useMemo(
@@ -772,6 +781,7 @@ export function SushiV2CreateLaunchPage({
               isQuoteTokenListPending={isQuoteTokenListPending}
               isQuoteTokenListError={isQuoteTokenListError}
               onQuoteTokenSelect={setSelectedQuoteTokenAddress}
+              isSushiQuoteToken={isSushiQuoteToken}
               isWethQuoteToken={isWethQuoteToken}
               wethPaymentMode={wethPaymentMode}
               onWethPaymentModeChange={setWethPaymentMode}
