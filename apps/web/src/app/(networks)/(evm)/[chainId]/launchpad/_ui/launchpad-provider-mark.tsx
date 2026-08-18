@@ -45,6 +45,7 @@ function PoolsFunProviderMark({ className, pixels }: ProviderMarkProps) {
 
 const PROVIDER_MARKS = {
   SUSHI_V1: SushiProviderMark,
+  SUSHI_V2: SushiProviderMark,
   POOLS_FUN_V1: PoolsFunProviderMark,
 } as const satisfies Record<LaunchpadProvider, typeof SushiProviderMark>
 

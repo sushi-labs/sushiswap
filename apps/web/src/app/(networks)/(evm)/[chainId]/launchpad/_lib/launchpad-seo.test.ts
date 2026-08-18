@@ -35,7 +35,10 @@ const token: LaunchpadToken = {
       decimals: 6,
     },
   },
-  positions: [],
+  feeSplit: {
+    sushiFeeBps: 3_000,
+    creatorFeeBps: 7_000,
+  },
   metadata: {
     description: 'A test launchpad token.',
     links: [
