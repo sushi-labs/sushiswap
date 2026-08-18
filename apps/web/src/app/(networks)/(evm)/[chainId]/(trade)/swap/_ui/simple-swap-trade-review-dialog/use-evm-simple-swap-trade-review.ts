@@ -52,10 +52,7 @@ export function useEvmSimpleSwapTradeReview({
   variant,
 }: {
   variant: SimpleSwapTradeReviewDialogVariant | undefined
-}): UseSimpleSwapTradeReviewBaseReturn & {
-  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetchTrade']
-  writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
-} {
+}): UseSimpleSwapTradeReviewBaseReturn {
   const { state: _state } = useDerivedStateSimpleSwap<
     EvmChainId & SupportedChainId
   >()
@@ -84,10 +81,7 @@ function useEvmSimpleSwapTradeReviewForState({
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
   variant: SimpleSwapTradeReviewDialogVariant | undefined
-}): UseSimpleSwapTradeReviewBaseReturn & {
-  refetchTrade: ReturnType<typeof useEvmSimpleSwapTrade>['refetchTrade']
-  writeTrade: (trade: UseEvmTradeReturn, confirm: () => void) => Promise<void>
-} {
+}): UseSimpleSwapTradeReviewBaseReturn {
   const {
     mutate: { setSwapAmount },
     state: { slippageToleranceOptions },
@@ -105,7 +99,6 @@ function useEvmSimpleSwapTradeReviewForState({
   const { approved } = useApproved(APPROVE_TAG_SWAP)
   const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
   const { open: reviewDialogOpen } = useDialog(DialogType.Review)
-
   const [slippagePercent] = useSlippageTolerance(
     slippageToleranceOptions?.storageKey,
     slippageToleranceOptions?.defaultValue,
@@ -115,14 +108,13 @@ function useEvmSimpleSwapTradeReviewForState({
     chainId && approved && address && (confirmDialogOpen || reviewDialogOpen),
   )
 
-  const tradeQuery = useEvmSimpleSwapTrade(enabled)
   const {
     data: trade,
     isFetching: isSwapQueryFetching,
     isSuccess: isSwapQuerySuccess,
     isError: isSwapQueryError,
     error: swapQueryError,
-  } = tradeQuery
+  } = useEvmSimpleSwapTrade(enabled)
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
@@ -344,7 +336,7 @@ function useEvmSimpleSwapTradeReviewForState({
     },
   })
 
-  const writeTrade = useCallback(
+  const executeTrade = useCallback(
     async (trade: UseEvmTradeReturn, confirm: () => void) => {
       if (
         !trade.tx ||
@@ -380,15 +372,13 @@ function useEvmSimpleSwapTradeReviewForState({
     )
       return undefined
 
-    return async (confirm: () => void) => writeTrade(trade, confirm)
-  }, [activeChainId, address, chainId, trade, writeTrade])
+    return async (confirm: () => void) => executeTrade(trade, confirm)
+  }, [activeChainId, address, chainId, executeTrade, trade])
 
   return {
     trade,
     tradeRef: tradeRef,
     write,
-    writeTrade,
-    refetchTrade: tradeQuery.refetchTrade,
     isWritePending,
     txHash,
     status,

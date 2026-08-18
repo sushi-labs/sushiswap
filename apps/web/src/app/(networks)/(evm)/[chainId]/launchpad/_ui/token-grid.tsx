@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import { QuickBuyProvider } from './quick-buy'
+import { QuickBuyProvider } from './quick-buy/quick-buy-provider'
 import { CollectionStateCard } from './state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
 

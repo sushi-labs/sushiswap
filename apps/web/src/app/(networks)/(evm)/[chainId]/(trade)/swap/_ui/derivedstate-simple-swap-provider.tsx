@@ -484,18 +484,7 @@ function useEvmSimpleSwapTrade(enabled = true) {
     Boolean(directPool),
   )
 
-  const refetchTrade: typeof aggregatorTrade.refetch = async (options) => {
-    if (!directPool) return aggregatorTrade.refetch(options)
-
-    const [aggregatorResult, directPoolResult] = await Promise.all([
-      aggregatorTrade.refetch(options),
-      directPoolTrade.refetch(options),
-    ])
-
-    return combineEvmTradeQueries(aggregatorResult, directPoolResult)
-  }
-
-  return { ...trade, refetchTrade }
+  return trade
 }
 
 function useEvmSimpleSwapTradeQuote() {

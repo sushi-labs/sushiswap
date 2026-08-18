@@ -13,7 +13,7 @@ import {
 import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 import { LaunchpadProviderBadge } from './launchpad-provider-badge'
-import { QuickBuy } from './quick-buy'
+import { QuickBuy } from './quick-buy/quick-buy'
 import { TokenAvatar } from './token-avatar'
 
 export function TokenCardSkeleton() {
