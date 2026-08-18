@@ -87,8 +87,62 @@ export function CreateLaunchDetailsStep({
       <div className="my-3 border-t border-white/[0.06]" />
 
       <FormSection
+        title="Launch configuration"
+        description="Choose the initial liquidity curve and how non-protocol trading fees are handled."
+      >
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField
+            control={methods.control}
+            name="liquidityMode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Liquidity mode</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="h-10 w-full rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 text-sm text-perps-muted outline-none"
+                  >
+                    <option value="MOON">Moon · $10K, seven ranges</option>
+                    <option value="STANDARD">Standard · $5K, one range</option>
+                  </select>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={methods.control}
+            name="feeDisposition"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Creator fee mode</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="h-10 w-full rounded-lg border border-white/[0.06] bg-white/[0.04] px-3 text-sm text-perps-muted outline-none"
+                  >
+                    <option value="BUYBACK_AND_BURN">Buyback &amp; burn</option>
+                    <option value="BURN_LAUNCH_TOKEN_FEES">
+                      Burn token fees
+                    </option>
+                    <option value="DIRECT_PAYOUT">Direct payout</option>
+                  </select>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <p className="text-xs leading-5 text-perps-muted-50">
+          Moon spreads liquidity across seven contiguous ranges; it does not
+          prevent sniping. Fee modes can only move toward more burning after
+          launch, and buyback execution depends on market conditions.
+        </p>
+      </FormSection>
+
+      <div className="my-3 border-t border-white/[0.06]" />
+
+      <FormSection
         title="Project details"
-        description="This metadata can be edited later by the immutable creator wallet."
+        description="This metadata can be edited later by the current creator wallet."
       >
         <LaunchpadLogoInput
           id="launch-logo"

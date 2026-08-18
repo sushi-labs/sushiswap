@@ -12,12 +12,16 @@ describe('launchpad provider policy', () => {
     expect(parseLaunchpadProviderFilter('unknown')).toBe('all')
     expect(getLaunchpadProvidersForFilter('all')).toEqual([
       'SUSHI_V1',
+      'SUSHI_V2',
       'POOLS_FUN_V1',
     ])
   })
 
-  it('maps provider filters to one versioned provider', () => {
-    expect(getLaunchpadProvidersForFilter('sushi')).toEqual(['SUSHI_V1'])
+  it('maps provider filters to provider families', () => {
+    expect(getLaunchpadProvidersForFilter('sushi')).toEqual([
+      'SUSHI_V1',
+      'SUSHI_V2',
+    ])
     expect(getLaunchpadProvidersForFilter('pools-fun')).toEqual([
       'POOLS_FUN_V1',
     ])
