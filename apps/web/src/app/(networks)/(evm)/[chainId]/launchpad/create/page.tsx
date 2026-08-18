@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { getEvmChainById } from 'sushi/evm'
 import { getLaunchpadCreateUrl } from '../_lib/launchpad-seo'
 import { isLaunchpadChainId } from '../constants'
-import { CreateLaunchPage } from './_ui/create-launch-page'
+import { SushiV2CreateLaunchPage } from './_ui/create-launch-page'
 
 const DESCRIPTION =
   'Launch a token in minutes with a live market and permanently locked Sushi V3 liquidity.'
@@ -47,5 +47,5 @@ export default async function CreatePage({
   const chainId = Number((await params).chainId)
   if (!isLaunchpadChainId(chainId)) return notFound()
 
-  return <CreateLaunchPage chainId={chainId} />
+  return <SushiV2CreateLaunchPage chainId={chainId} />
 }
