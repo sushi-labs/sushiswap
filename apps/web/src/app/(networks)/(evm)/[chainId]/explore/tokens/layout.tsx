@@ -1,11 +1,10 @@
-import {
-  SushiSwapChainIds,
-  isSushiSwapChainId,
-} from '@sushiswap/graph-client/data-api'
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
+import { POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
 import { Header } from '../../header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
@@ -26,13 +25,16 @@ export default async function ExploreLayout(props: {
 
   const chainId = +params.chainId
 
-  if (!isSushiSwapChainId(chainId)) {
+  if (!isPoolChainId(chainId)) {
     return notFound()
   }
 
   return (
     <>
-      <Header chainId={chainId} networks={SushiSwapChainIds} />
+      <Header
+        chainId={chainId}
+        networks={POOL_SUPPORTED_NETWORKS.filter(isEvmChainId)}
+      />
       <main className="flex flex-col h-full flex-1 animate-slide">
         <Container maxWidth="7xl" className="px-4 py-4">
           <GlobalStatsCharts chainId={chainId} />

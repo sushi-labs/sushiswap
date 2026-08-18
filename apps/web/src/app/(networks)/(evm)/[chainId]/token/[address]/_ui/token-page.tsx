@@ -145,8 +145,8 @@ export const TokenPage: FC<TokenPageProps> = ({
                   </div>
                   <PoolsTable
                     chainId={token.chainId as PoolChainId}
-                    forcedTokenSymbols={
-                      token.symbol ? [token.symbol] : undefined
+                    forcedTokenAddresses={
+                      token.address ? [token.address] : undefined
                     }
                   />
                 </Container>
