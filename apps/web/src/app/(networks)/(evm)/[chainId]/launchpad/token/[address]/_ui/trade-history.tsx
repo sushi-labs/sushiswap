@@ -94,7 +94,19 @@ function TradeRow({
           {formatRawAmount(trade.tokenAmount, token.decimals)} {token.symbol}
         </div>
         <div className="mt-1 flex items-center gap-1.5 truncate text-[11px] text-perps-muted-50">
-          <span>{trade.trader ? shortenAddress(trade.trader) : 'Unknown'}</span>
+          {trade.trader ? (
+            <a
+              href={getEvmChainById(trade.chainId).getAccountUrl(trade.trader)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-blue focus-visible:text-blue"
+              aria-label={`View sender ${trade.trader} in block explorer`}
+            >
+              {shortenAddress(trade.trader)}
+            </a>
+          ) : (
+            <span>Unknown</span>
+          )}
           <span>·</span>
           <span>{trade.isLaunchPool ? 'Launch Pool' : 'V3'}</span>
         </div>
