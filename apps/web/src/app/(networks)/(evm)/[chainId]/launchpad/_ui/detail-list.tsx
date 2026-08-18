@@ -13,7 +13,7 @@ export function DetailList({
   valueClassName,
 }: {
   items: readonly DetailListItem[]
-  variant?: 'bordered' | 'compact' | 'spaced'
+  variant?: 'bordered' | 'spaced'
   className?: string
   valueClassName?: string
 }) {
@@ -22,9 +22,7 @@ export function DetailList({
       className={classNames(
         variant === 'bordered'
           ? 'divide-y divide-white/[0.06] rounded-xl border border-white/[0.06]'
-          : variant === 'compact'
-            ? 'divide-y divide-white/[0.06]'
-            : 'space-y-4',
+          : 'space-y-4',
         className,
       )}
     >
@@ -35,9 +33,7 @@ export function DetailList({
             'flex justify-between text-sm',
             variant === 'bordered'
               ? 'items-center gap-5 px-4 py-3'
-              : variant === 'compact'
-                ? 'items-center gap-4 py-2'
-                : 'items-start gap-4',
+              : 'items-start gap-4',
           )}
         >
           <dt className="text-perps-muted-50">{label}</dt>

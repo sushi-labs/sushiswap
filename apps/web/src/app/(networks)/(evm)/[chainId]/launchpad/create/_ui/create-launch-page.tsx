@@ -4,6 +4,7 @@ import { toNestErrors } from '@hookform/resolvers'
 import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Container, Form } from '@sushiswap/ui'
+import { getUnixTime } from 'date-fns'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -29,17 +30,12 @@ import {
 import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { formatRawAmount } from '../../_lib/format'
+import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
 import {
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
 } from '../../_lib/launchpad-metadata'
-import {
-  SUSHI_V2_FEE_DISPOSITION,
-  SUSHI_V2_LAUNCHPAD_ABI,
-  SUSHI_V2_LAUNCHPAD_ADDRESS,
-  SUSHI_V2_LIQUIDITY_MODE,
-} from '../../_providers/sushi-v2/contract'
 import { PageHeading } from '../../_ui/page-heading'
 import type { LaunchpadChainId } from '../../constants'
 import { useLaunchpadQuoteTokens } from '../_lib/use-launchpad-quote-tokens'
@@ -54,8 +50,7 @@ import type {
 import { CreateStepNavigation } from './create-step-navigation'
 import { LegalAcknowledgementDialog } from './legal-acknowledgement-dialog'
 
-const STANDARD_INITIAL_FDV_USD = 5_000
-const MOON_INITIAL_FDV_USD = 10_000
+const INITIAL_FDV_USD = 5_000
 const MAX_INITIAL_BUY_USD = 1_000
 const INITIAL_BUY_STEP_USD = 10
 const INITIAL_BUY_SLIPPAGE = new Percent({ numerator: 1, denominator: 100 })
@@ -101,12 +96,6 @@ const createLaunchSchema = z.object({
       MAX_INITIAL_BUY_USD,
       `Initial buy must be at most $${MAX_INITIAL_BUY_USD.toLocaleString()}`,
     ),
-  liquidityMode: z.enum(['STANDARD', 'MOON']),
-  feeDisposition: z.enum([
-    'DIRECT_PAYOUT',
-    'BURN_LAUNCH_TOKEN_FEES',
-    'BUYBACK_AND_BURN',
-  ]),
 })
 
 const createLaunchDetailsSchema = createLaunchSchema.pick({
@@ -116,8 +105,6 @@ const createLaunchDetailsSchema = createLaunchSchema.pick({
   homepage: true,
   x: true,
   telegram: true,
-  liquidityMode: true,
-  feeDisposition: true,
 })
 
 const createLaunchResolver: Resolver<CreateLaunchForm> = async (
@@ -157,8 +144,6 @@ const DETAIL_FIELDS: Array<keyof z.infer<typeof createLaunchDetailsSchema>> = [
   'homepage',
   'x',
   'telegram',
-  'liquidityMode',
-  'feeDisposition',
 ]
 
 const INDEXING_ATTEMPTS = 10
@@ -227,11 +212,7 @@ async function waitForLaunchpadIndexing(
   return null
 }
 
-export function SushiV2CreateLaunchPage({
-  chainId,
-}: {
-  chainId: LaunchpadChainId
-}) {
+export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
   const chain = getEvmChainById(chainId)
   const router = useRouter()
   const { address: account } = useConnection()
@@ -295,8 +276,6 @@ export function SushiV2CreateLaunchPage({
       x: '',
       telegram: '',
       initialBuyUsd: 0,
-      liquidityMode: 'MOON',
-      feeDisposition: 'BUYBACK_AND_BURN',
     },
   })
   const values = methods.watch()
@@ -338,22 +317,29 @@ export function SushiV2CreateLaunchPage({
     allowFailure: false,
     contracts: [
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-        abi: SUSHI_V2_LAUNCHPAD_ABI,
+        address: LAUNCHPAD_ADDRESS,
+        abi: LAUNCHPAD_ABI,
         chainId,
         functionName: 'launchFee',
       },
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-        abi: SUSHI_V2_LAUNCHPAD_ABI,
+        address: LAUNCHPAD_ADDRESS,
+        abi: LAUNCHPAD_ABI,
+        chainId,
+        functionName: 'protocolReserveBps',
+      },
+      {
+        address: LAUNCHPAD_ADDRESS,
+        abi: LAUNCHPAD_ABI,
         chainId,
         functionName: 'defaultSushiFeeBps',
       },
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-        abi: SUSHI_V2_LAUNCHPAD_ABI,
+        address: LAUNCHPAD_ADDRESS,
+        abi: LAUNCHPAD_ABI,
         chainId,
-        functionName: 'canonicalSushi',
+        functionName: 'calculateStartTick',
+        args: [selectedQuoteToken?.address ?? WNATIVE[chainId].address],
       },
     ],
     query: {
@@ -361,13 +347,8 @@ export function SushiV2CreateLaunchPage({
       refetchInterval: ms('15s'),
     },
   })
-  const [launchFee, defaultSushiFeeBps, canonicalSushi] = factoryTerms ?? []
-  const initialSushiFeeBps =
-    canonicalSushi &&
-    selectedQuoteToken &&
-    isAddressEqual(canonicalSushi, selectedQuoteToken.address)
-      ? 2_000
-      : defaultSushiFeeBps
+  const [launchFee, protocolReserveBps, defaultSushiFeeBps, startTick] =
+    factoryTerms ?? []
   const launchFeeAmount = useMemo(
     () =>
       launchFee === undefined
@@ -451,29 +432,23 @@ export function SushiV2CreateLaunchPage({
       }
 
       const currentLaunchFee = await publicClient.readContract({
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-        abi: SUSHI_V2_LAUNCHPAD_ABI,
+        address: LAUNCHPAD_ADDRESS,
+        abi: LAUNCHPAD_ABI,
         functionName: 'launchFee',
       })
+      const deadline = BigInt(getUnixTime(new Date()) + 15 * 60)
       const tokenConfig = {
         name: formValues.name,
         symbol: formValues.symbol,
       } as const
-      const liquidityMode = SUSHI_V2_LIQUIDITY_MODE[formValues.liquidityMode]
-      const feeDisposition = SUSHI_V2_FEE_DISPOSITION[formValues.feeDisposition]
       let hash: `0x${string}`
 
       if (amountIn === 0n) {
         const launchParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-          abi: SUSHI_V2_LAUNCHPAD_ABI,
+          address: LAUNCHPAD_ADDRESS,
+          abi: LAUNCHPAD_ABI,
           functionName: 'launch',
-          args: [
-            tokenConfig,
-            selectedQuoteToken.address,
-            liquidityMode,
-            feeDisposition,
-          ],
+          args: [tokenConfig, selectedQuoteToken.address, deadline],
           value: currentLaunchFee,
         } as const
 
@@ -484,13 +459,12 @@ export function SushiV2CreateLaunchPage({
         hash = await writeContractAsync(launchParameters)
       } else if (isNativeInitialBuy) {
         const quoteParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-          abi: SUSHI_V2_LAUNCHPAD_ABI,
+          address: LAUNCHPAD_ADDRESS,
+          abi: LAUNCHPAD_ABI,
           functionName: 'launchAndBuyNative',
           args: [
             tokenConfig,
-            liquidityMode,
-            feeDisposition,
+            deadline,
             {
               amountIn,
               amountOutMinimum: 0n,
@@ -510,8 +484,7 @@ export function SushiV2CreateLaunchPage({
           ...quoteParameters,
           args: [
             tokenConfig,
-            liquidityMode,
-            feeDisposition,
+            deadline,
             {
               amountIn,
               amountOutMinimum,
@@ -527,14 +500,13 @@ export function SushiV2CreateLaunchPage({
         hash = await writeContractAsync(launchParameters)
       } else {
         const quoteParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
-          abi: SUSHI_V2_LAUNCHPAD_ABI,
+          address: LAUNCHPAD_ADDRESS,
+          abi: LAUNCHPAD_ABI,
           functionName: 'launchAndBuy',
           args: [
             tokenConfig,
             selectedQuoteToken.address,
-            liquidityMode,
-            feeDisposition,
+            deadline,
             {
               amountIn,
               amountOutMinimum: 0n,
@@ -555,8 +527,7 @@ export function SushiV2CreateLaunchPage({
           args: [
             tokenConfig,
             selectedQuoteToken.address,
-            liquidityMode,
-            feeDisposition,
+            deadline,
             {
               amountIn,
               amountOutMinimum,
@@ -593,16 +564,16 @@ export function SushiV2CreateLaunchPage({
 
       const receipt = await receiptPromise
       const launchEvents = parseEventLogs({
-        abi: SUSHI_V2_LAUNCHPAD_ABI,
+        abi: LAUNCHPAD_ABI,
         eventName: 'TokenLaunched',
         logs: receipt.logs.filter((log) =>
-          isAddressEqual(log.address, SUSHI_V2_LAUNCHPAD_ADDRESS),
+          isAddressEqual(log.address, LAUNCHPAD_ADDRESS),
         ),
         strict: true,
       })
       const launchEvent = launchEvents.find(
         (event) =>
-          isAddressEqual(event.args.launchCreator, account) &&
+          isAddressEqual(event.args.creator, account) &&
           event.args.name === formValues.name &&
           event.args.symbol === formValues.symbol,
       )
@@ -682,14 +653,7 @@ export function SushiV2CreateLaunchPage({
           ? 'Unavailable'
           : `${formatUSD(quotePriceUsd)} / ${selectedQuoteToken.symbol}`,
     },
-    {
-      label: 'Starting FDV',
-      value: formatUSD(
-        values.liquidityMode === 'MOON'
-          ? MOON_INITIAL_FDV_USD
-          : STANDARD_INITIAL_FDV_USD,
-      ),
-    },
+    { label: 'Starting FDV', value: formatUSD(INITIAL_FDV_USD) },
     {
       label: 'Initial buy',
       value:
@@ -703,29 +667,27 @@ export function SushiV2CreateLaunchPage({
             )} ${initialBuyCurrency?.symbol ?? selectedQuoteToken.symbol} · ${formatUSD(values.initialBuyUsd)}`
           : 'None',
     },
-    { label: 'Pool fee tier', value: '1%' },
     {
-      label: 'Liquidity mode',
-      value:
-        values.liquidityMode === 'MOON'
-          ? 'Moon · seven contiguous ranges'
-          : 'Standard · single maximum-bound range',
+      label: 'Contract start tick',
+      value: startTick?.toString() ?? 'Loading…',
     },
+    { label: 'Pool fee tier', value: '1%' },
+    { label: 'Liquidity position', value: 'Single maximum-bound range' },
     {
-      label: 'Creator fee mode',
-      value: values.feeDisposition
-        .replaceAll('_', ' ')
-        .toLowerCase()
-        .replace(/\b\w/g, (character) => character.toUpperCase()),
+      label: 'Protocol reserve',
+      value:
+        protocolReserveBps === undefined
+          ? 'Loading…'
+          : `${formatBps(protocolReserveBps)} · locked 365 days`,
     },
     {
       label: 'LP fee split',
       value:
-        initialSushiFeeBps === undefined
+        defaultSushiFeeBps === undefined
           ? 'Loading…'
-          : `${formatBps(initialSushiFeeBps)} Sushi · ${formatBps(
-              10_000 - initialSushiFeeBps,
-            )} non-Sushi`,
+          : `${formatBps(defaultSushiFeeBps)} Sushi · ${formatBps(
+              10_000 - defaultSushiFeeBps,
+            )} creator`,
     },
     {
       label: 'Launch fee',
