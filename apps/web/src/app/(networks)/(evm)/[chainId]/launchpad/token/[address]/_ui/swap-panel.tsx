@@ -55,10 +55,10 @@ const LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS = {
 // }
 
 const BUY_PRESET_VALUES = [
+  { value: 1n, decimals: 2 },
+  { value: 25n, decimals: 3 },
+  { value: 5n, decimals: 2 },
   { value: 1n, decimals: 1 },
-  { value: 25n, decimals: 2 },
-  { value: 5n, decimals: 1 },
-  { value: 1n, decimals: 0 },
 ] as const
 
 function getBuyPresetAmounts(price: number | undefined): string[] {
@@ -250,9 +250,6 @@ function SwapPanelContent({
         <div>
           <div className="font-semibold text-perps-muted">
             Trade {token.symbol}
-          </div>
-          <div className="mt-0.5 text-xs text-perps-muted-50">
-            Best price from the aggregator or launch pool
           </div>
         </div>
         <SettingsOverlay

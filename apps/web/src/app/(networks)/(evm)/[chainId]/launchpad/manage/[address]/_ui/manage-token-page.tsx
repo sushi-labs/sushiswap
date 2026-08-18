@@ -32,6 +32,7 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
+import { isAddress } from 'viem'
 import {
   useBytecode,
   useConnection,
@@ -43,10 +44,6 @@ import {
 import * as z from 'zod'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount, shortenAddress } from '../../../_lib/format'
-import {
-  LAUNCHPAD_ABI,
-  LAUNCHPAD_ADDRESS,
-} from '../../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
 import {
   canSubmitLaunchpadMetadataSignature,
@@ -58,6 +55,19 @@ import {
   launchpadProviderHasCapability,
 } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
+import { ProviderManagementActions } from '../../../_providers/provider-management-actions'
+import {
+  SUSHI_V1_LAUNCHPAD_ABI,
+  SUSHI_V1_LAUNCHPAD_ADDRESS,
+} from '../../../_providers/sushi-v1/contract'
+import {
+  type DistributionPreview,
+  SUSHI_V2_FEE_DISPOSITION,
+  SUSHI_V2_LAUNCHPAD_ABI,
+  SUSHI_V2_LAUNCHPAD_ADDRESS,
+  type SushiV2FeeDisposition,
+  normalizeSushiV2Distribution,
+} from '../../../_providers/sushi-v2/contract'
 import { DetailList } from '../../../_ui/detail-list'
 import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
 import { PageState } from '../../../_ui/state-card'
@@ -123,6 +133,13 @@ export function ManageTokenPage({
   const canManageMetadata = token
     ? launchpadProviderHasCapability(token.provider, 'metadata')
     : false
+  const isSushiV2 = token?.__typename === 'SushiV2LaunchpadToken'
+  const managementAddress = isSushiV2
+    ? SUSHI_V2_LAUNCHPAD_ADDRESS
+    : SUSHI_V1_LAUNCHPAD_ADDRESS
+  const managementAbi = isSushiV2
+    ? SUSHI_V2_LAUNCHPAD_ABI
+    : SUSHI_V1_LAUNCHPAD_ABI
   const {
     data: creatorBytecode,
     isLoading: isCreatorBytecodeLoading,
@@ -155,8 +172,8 @@ export function ManageTokenPage({
     isError: isDistributionSimulationError,
     refetch: refetchDistributionSimulation,
   } = useSimulateContract({
-    address: LAUNCHPAD_ADDRESS,
-    abi: LAUNCHPAD_ABI,
+    address: managementAddress,
+    abi: managementAbi,
     chainId,
     functionName: 'distributeFees',
     args: [address],
@@ -167,13 +184,15 @@ export function ManageTokenPage({
       refetchOnWindowFocus: true,
     },
   })
-  const distributionPreview =
-    !isDistributionSimulationError && distributionSimulation?.result
-      ? {
-          quoteCollected: distributionSimulation.result[0],
-          tokenCollected: distributionSimulation.result[1],
-        }
-      : null
+  const distributionPreview: DistributionPreview | null = (() => {
+    if (isDistributionSimulationError || !distributionSimulation?.result) {
+      return null
+    }
+    const result = distributionSimulation.result
+    return 'quoteToSushi' in result
+      ? normalizeSushiV2Distribution(result)
+      : { quoteCollected: result[0], tokenCollected: result[1] }
+  })()
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [distributed, setDistributed] = useState(false)
@@ -181,6 +200,9 @@ export function ManageTokenPage({
   const [distributionError, setDistributionError] = useState<string | null>(
     null,
   )
+  const [newCreator, setNewCreator] = useState('')
+  const [managementError, setManagementError] = useState<string | null>(null)
+  const [isUpdatingManagement, setIsUpdatingManagement] = useState(false)
   const [logo, setLogo] = useState<PreparedLaunchpadLogoFile | null>(null)
   const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const metadataDefaults = useMemo<MetadataForm>(
@@ -269,8 +291,8 @@ export function ManageTokenPage({
       }
 
       const distributionParameters = {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: managementAddress,
+        abi: managementAbi,
         chainId,
         functionName: 'distributeFees',
         args: [address],
@@ -314,6 +336,74 @@ export function ManageTokenPage({
       }
     } finally {
       setIsDistributing(false)
+    }
+  }
+
+  async function writeSushiV2Management(
+    functionName: 'setFeeDisposition' | 'transferCreator',
+    args: readonly [EvmAddress, number | EvmAddress],
+  ): Promise<void> {
+    if (!connectedAddress || !publicClient || !token || !isSushiV2) return
+    if (connectedChainId !== chainId) {
+      throw new Error(`Switch your wallet to ${getEvmChainById(chainId).name}`)
+    }
+
+    const parameters = {
+      address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+      abi: SUSHI_V2_LAUNCHPAD_ABI,
+      chainId,
+      functionName,
+      args,
+    } as const
+    await publicClient.simulateContract({
+      ...parameters,
+      account: connectedAddress,
+    })
+    const hash = await writeContractAsync(parameters)
+    await publicClient.waitForTransactionReceipt({ hash })
+    await refetch()
+  }
+
+  async function transferCreator(): Promise<void> {
+    setManagementError(null)
+    if (
+      !isAddress(newCreator) ||
+      newCreator === '0x0000000000000000000000000000000000000000'
+    ) {
+      setManagementError('Enter a non-zero EVM address')
+      return
+    }
+    setIsUpdatingManagement(true)
+    try {
+      await writeSushiV2Management('transferCreator', [address, newCreator])
+      setNewCreator('')
+    } catch (error) {
+      if (!isUserRejectedError(error)) {
+        setManagementError(
+          error instanceof Error ? error.message : 'Creator transfer failed',
+        )
+      }
+    } finally {
+      setIsUpdatingManagement(false)
+    }
+  }
+
+  async function setFeeDisposition(next: SushiV2FeeDisposition): Promise<void> {
+    setManagementError(null)
+    setIsUpdatingManagement(true)
+    try {
+      await writeSushiV2Management('setFeeDisposition', [
+        address,
+        SUSHI_V2_FEE_DISPOSITION[next],
+      ])
+    } catch (error) {
+      if (!isUserRejectedError(error)) {
+        setManagementError(
+          error instanceof Error ? error.message : 'Fee mode update failed',
+        )
+      }
+    } finally {
+      setIsUpdatingManagement(false)
     }
   }
 
@@ -377,10 +467,6 @@ export function ManageTokenPage({
       />
     )
   }
-  if (token.__typename !== 'SushiV1LaunchpadToken') {
-    throw new Error('Manageable launchpad token is not a Sushi V1 launch')
-  }
-
   return (
     <Container maxWidth="6xl" className="w-full px-4 py-10 sm:py-14">
       <div className="flex items-center gap-2 text-sm text-perps-muted-50">
@@ -601,7 +687,6 @@ export function ManageTokenPage({
                 ],
                 ['Decimals', `${token.decimals}`],
                 ['Pool tier', `${token.pool.feeTier / 10_000}%`],
-                ['Positions', `${token.positions.length}`],
               ].map(([label, value]) => ({ label, value }))}
             />
           </PerpsCard>
@@ -617,8 +702,8 @@ export function ManageTokenPage({
               {token.creator}
             </p>
             <p className="mt-3 text-xs leading-5 text-perps-muted-50">
-              The backend verifies this immutable address independently for
-              every metadata and logo signature
+              The backend verifies this {isSushiV2 ? 'current' : 'immutable'}{' '}
+              address independently for every metadata and logo signature
               {isContractCreator
                 ? ', including EIP-1271 signatures if this contract supports them.'
                 : '.'}
@@ -626,6 +711,17 @@ export function ManageTokenPage({
           </PerpsCard>
         </div>
       </div>
+
+      <ProviderManagementActions
+        token={token}
+        connectedAddress={connectedAddress}
+        newCreator={newCreator}
+        isUpdating={isUpdatingManagement}
+        error={managementError}
+        onNewCreatorChange={setNewCreator}
+        onTransferCreator={() => void transferCreator()}
+        onSetFeeDisposition={(next) => void setFeeDisposition(next)}
+      />
 
       <div className="mt-5">
         <PerpsCard className="overflow-hidden" fullWidth>
@@ -672,6 +768,70 @@ export function ManageTokenPage({
                   </div>
                 </div>
               </div>
+              {distributionPreview?.breakdown ? (
+                <DetailList
+                  className="mt-4"
+                  items={[
+                    {
+                      label: 'Quote to Sushi',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.quoteToSushi,
+                        token.pool.quoteToken.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Quote to receiver',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.quoteToReceiver,
+                        token.pool.quoteToken.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Quote used for buyback',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.quoteUsedForBuyback,
+                        token.pool.quoteToken.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Token fees burned',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.launchTokenFeesBurned,
+                        token.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Launch token to Sushi',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.launchTokenToSushi,
+                        token.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Launch token to receiver',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown.launchTokenToReceiver,
+                        token.decimals,
+                        6,
+                      ),
+                    },
+                    {
+                      label: 'Bought and burned',
+                      value: formatRawAmount(
+                        distributionPreview.breakdown
+                          .launchTokenBoughtAndBurned,
+                        token.decimals,
+                        6,
+                      ),
+                    },
+                  ]}
+                />
+              ) : null}
               <p className="mt-4 text-xs leading-5 text-perps-muted-50">
                 Distribution is permissionless. Anyone can do it.
               </p>

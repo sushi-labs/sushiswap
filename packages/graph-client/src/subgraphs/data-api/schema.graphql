@@ -8,7 +8,7 @@ scalar LaunchpadChainId
 
 type LaunchpadQueries {
   quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
-  stats(chainId: LaunchpadChainId!, providers: [LaunchpadProvider!]! = [SUSHI_V1]): LaunchpadStats!
+  stats(chainId: LaunchpadChainId!, providers: [LaunchpadProvider!]! = [SUSHI_V1, SUSHI_V2]): LaunchpadStats!
   userStats(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadUserStats!
   userHoldings(input: LaunchpadUserHoldingsInput!): LaunchpadUserHoldingConnection!
   tokens(input: LaunchpadTokensInput!): LaunchpadTokenConnection!
@@ -37,6 +37,7 @@ enum LaunchpadIndexingStatus {
 
 enum LaunchpadProvider {
   SUSHI_V1
+  SUSHI_V2
   POOLS_FUN_V1
 }
 
@@ -81,6 +82,64 @@ type SushiV1LaunchpadToken implements LaunchpadToken {
   creationTransactionHash: Bytes!
   createdAt: String!
   feeSplit: LaunchpadFeeSplit!
+}
+
+type SushiV2LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  provider: LaunchpadProvider!
+  address: EvmAddress!
+  creator: EvmAddress!
+  launchCreator: EvmAddress!
+  factoryAddress: EvmAddress!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  currentSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+  feeReceiver: EvmAddress!
+  liquidityMode: SushiV2LiquidityMode!
+  feeDisposition: SushiV2FeeDisposition!
+  feeSplit: SushiV2FeeSplit!
+  devBuy: SushiV2DevBuy
+  burns: SushiV2Burns!
+  poolInitializedAt: String!
+}
+
+enum SushiV2LiquidityMode {
+  STANDARD
+  MOON
+}
+
+enum SushiV2FeeDisposition {
+  DIRECT_PAYOUT
+  BURN_LAUNCH_TOKEN_FEES
+  BUYBACK_AND_BURN
+}
+
+type SushiV2FeeSplit {
+  sushiFeeBps: Int!
+  nonSushiFeeBps: Int!
+}
+
+type SushiV2DevBuy {
+  quoteSpent: BigInt!
+  launchTokenReceived: BigInt!
+}
+
+type SushiV2Burns {
+  directFeeBurned: BigInt!
+  buybackBurned: BigInt!
+  protocolBurned: BigInt!
+  totalBurned: BigInt!
 }
 
 type PoolsFunV1LaunchpadToken implements LaunchpadToken {
@@ -220,7 +279,7 @@ type LaunchpadUserHoldingEdge {
 
 input LaunchpadTokensInput {
   chainId: LaunchpadChainId!
-  providers: [LaunchpadProvider!]! = [SUSHI_V1]
+  providers: [LaunchpadProvider!]! = [SUSHI_V1, SUSHI_V2]
   creator: EvmAddress
   search: String
   first: Int = 20
