@@ -1,6 +1,7 @@
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
+import { useMemo } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {
@@ -9,8 +10,6 @@ import {
   formatUsd,
   getSelectedMetric,
 } from '../_lib/format'
-
-import { useMemo } from 'node_modules/@types/react'
 import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
 import { LaunchpadProviderBadge } from './launchpad-provider-badge'
