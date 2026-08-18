@@ -27,7 +27,6 @@ export function TokenCardSkeleton() {
               <SkeletonBox className="h-24 w-24 shrink-0 rounded-full" />
               <SkeletonBox className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full" />
             </div>
-            <SkeletonBox className="col-start-3 row-start-1 h-4 w-8 justify-self-end rounded-sm" />
           </div>
           <div className="flex w-full min-w-0 flex-col items-center">
             <SkeletonBox className="h-5 w-3/5 rounded-md" />
@@ -103,26 +102,19 @@ export function TokenCard({
       <div className="h-px bg-gradient-to-r from-transparent via-perps-blue/70 to-transparent" />
       <div className="p-3">
         <div className="flex flex-col items-center gap-1">
-          <div className="grid w-full grid-cols-[1fr_auto_1fr] items-start">
-            <div className="col-start-2 row-start-1">
-              <TokenAvatar
-                token={token}
-                size="2xl"
-                badge={
-                  <LaunchpadProviderBadge
-                    provider={token.provider}
-                    variant="mark"
-                  />
-                }
-              />
-            </div>
-            <div
-              title={formatLaunchpadAgeLabel(age)}
-              className="col-start-3 row-start-1 shrink-0 justify-self-end text-right text-xs tabular-nums text-perps-muted-50"
-            >
-              {age}
-            </div>
+          <div>
+            <TokenAvatar
+              token={token}
+              size="2xl"
+              badge={
+                <LaunchpadProviderBadge
+                  provider={token.provider}
+                  variant="mark"
+                />
+              }
+            />
           </div>
+
           <div className="flex w-full min-w-0 flex-1 flex-col items-center text-center">
             <div className="flex w-full min-w-0 justify-center text-center">
               <Link
@@ -140,7 +132,7 @@ export function TokenCard({
             >
               {token.symbol}
             </div>
-            <div className="mt-1 flex max-w-full items-center justify-center gap-1.5 text-[10px] text-perps-muted-50">
+            <div className="mt-1 flex max-w-full items-center justify-center gap-1 text-[10px] text-perps-muted-50">
               <span
                 role="img"
                 aria-label={`${chain.name} network`}
@@ -155,6 +147,13 @@ export function TokenCard({
                 />
               </span>
               <span className="min-w-0 truncate">{chain.name}</span>
+              <span>·</span>
+              <div
+                title={formatLaunchpadAgeLabel(age)}
+                className="tabular-nums"
+              >
+                {age}
+              </div>
             </div>
           </div>
         </div>
