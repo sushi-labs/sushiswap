@@ -2,6 +2,7 @@ import type { LaunchpadProvider } from '@sushiswap/graph-client/data-api'
 
 interface LaunchpadProviderCapabilities {
   creatorProfile: boolean
+  lockedPositions: boolean
   manage: boolean
   metadata: boolean
 }
@@ -17,14 +18,7 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
     label: 'Sushi',
     capabilities: {
       creatorProfile: true,
-      manage: true,
-      metadata: true,
-    },
-  },
-  SUSHI_V2: {
-    label: 'Sushi V2',
-    capabilities: {
-      creatorProfile: true,
+      lockedPositions: true,
       manage: true,
       metadata: true,
     },
@@ -34,6 +28,7 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
     websiteUrl: 'https://pools.fun',
     capabilities: {
       creatorProfile: false,
+      lockedPositions: false,
       manage: false,
       metadata: false,
     },
@@ -52,8 +47,8 @@ export const LAUNCHPAD_PROVIDER_FILTERS = [
 }[]
 
 const PROVIDERS_BY_FILTER = {
-  all: ['SUSHI_V1', 'SUSHI_V2', 'POOLS_FUN_V1'],
-  sushi: ['SUSHI_V1', 'SUSHI_V2'],
+  all: ['SUSHI_V1', 'POOLS_FUN_V1'],
+  sushi: ['SUSHI_V1'],
   'pools-fun': ['POOLS_FUN_V1'],
 } as const satisfies Record<
   LaunchpadProviderFilter,
