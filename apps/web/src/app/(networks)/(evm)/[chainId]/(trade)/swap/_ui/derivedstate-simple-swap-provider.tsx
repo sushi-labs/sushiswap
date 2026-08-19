@@ -478,12 +478,13 @@ function useEvmSimpleSwapTrade(enabled = true) {
   }
   const aggregatorTrade = useEvmTrade(params)
   const directPoolTrade = useDirectPoolTrade(params)
-
-  return combineEvmTradeQueries(
+  const trade = combineEvmTradeQueries(
     aggregatorTrade,
     directPoolTrade,
     Boolean(directPool),
   )
+
+  return trade
 }
 
 function useEvmSimpleSwapTradeQuote() {

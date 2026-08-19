@@ -55,7 +55,7 @@ export function ProviderFilterControls({
                     className={classNames(
                       'transition-opacity',
                       index > 0 &&
-                        '-ml-1.5 rounded-full ring-2 ring-perps-background',
+                        '-ml-1.5 rounded-full ring-2 ring-perps-background bg-perps-background',
                       !selected && 'opacity-60',
                     )}
                   />

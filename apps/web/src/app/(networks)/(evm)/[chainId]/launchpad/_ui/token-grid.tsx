@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
+import { QuickBuyProvider } from './quick-buy/quick-buy-provider'
 import { CollectionStateCard } from './state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
 
@@ -12,12 +13,16 @@ const TOKEN_CARD_SKELETONS = [
   'sixth',
   'seventh',
   'eighth',
+  'ninth',
+  'tenth',
+  'eleventh',
+  'twelth',
 ] as const
 
-export function TokenGridSkeleton({ count = 8 }: { count?: number }) {
+export function TokenGridSkeleton({ count = 12 }: { count?: number }) {
   return (
     <div
-      className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+      className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6"
       aria-label="Loading launches"
       aria-busy="true"
     >
@@ -39,7 +44,9 @@ export function TokenGrid({
   manage?: boolean
   isFetchingNextPage?: boolean
 }) {
-  if (tokens.length === 0) {
+  const [firstToken] = tokens
+
+  if (!firstToken) {
     return (
       <CollectionStateCard
         icon={
@@ -54,20 +61,22 @@ export function TokenGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-      {tokens.map((token) => (
-        <TokenCard
-          key={token.id}
-          token={token}
-          sortBy={sortBy}
-          manage={manage}
-        />
-      ))}
-      {isFetchingNextPage
-        ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
-            <TokenCardSkeleton key={`next-${skeleton}`} />
-          ))
-        : null}
-    </div>
+    <QuickBuyProvider chainId={firstToken.chainId}>
+      <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
+        {tokens.map((token) => (
+          <TokenCard
+            key={token.id}
+            token={token}
+            sortBy={sortBy}
+            manage={manage}
+          />
+        ))}
+        {isFetchingNextPage
+          ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
+              <TokenCardSkeleton key={`next-${skeleton}`} />
+            ))
+          : null}
+      </div>
+    </QuickBuyProvider>
   )
 }
