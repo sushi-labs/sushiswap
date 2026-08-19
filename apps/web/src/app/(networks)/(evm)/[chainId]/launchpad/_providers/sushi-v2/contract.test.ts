@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
   SUSHI_V2_FEE_DISPOSITION,
+  SUSHI_V2_FEE_DISPOSITION_ORDER,
   SUSHI_V2_LIQUIDITY_MODE,
   getSushiV2FeeDispositionTransitions,
+  getSushiV2FeeRoutes,
   normalizeSushiV2Distribution,
 } from './contract'
 
@@ -25,6 +27,29 @@ describe('Sushi V2 launchpad contract adapter', () => {
       getSushiV2FeeDispositionTransitions('BURN_LAUNCH_TOKEN_FEES'),
     ).toEqual(['BUYBACK_AND_BURN'])
     expect(getSushiV2FeeDispositionTransitions('BUYBACK_AND_BURN')).toEqual([])
+  })
+
+  it('orders dispositions by how committed they are', () => {
+    expect(
+      SUSHI_V2_FEE_DISPOSITION_ORDER.map(
+        (disposition) => SUSHI_V2_FEE_DISPOSITION[disposition],
+      ),
+    ).toEqual([0, 1, 2])
+  })
+
+  it('routes each fee side by disposition', () => {
+    expect(getSushiV2FeeRoutes('DIRECT_PAYOUT')).toEqual({
+      launchToken: ['SUSHI', 'FEE_RECEIVER'],
+      quote: ['SUSHI', 'FEE_RECEIVER'],
+    })
+    expect(getSushiV2FeeRoutes('BURN_LAUNCH_TOKEN_FEES')).toEqual({
+      launchToken: ['SUSHI', 'BURN'],
+      quote: ['SUSHI', 'FEE_RECEIVER'],
+    })
+    expect(getSushiV2FeeRoutes('BUYBACK_AND_BURN')).toEqual({
+      launchToken: ['SUSHI', 'BURN'],
+      quote: ['SUSHI', 'BUYBACK'],
+    })
   })
 
   it('normalizes all distributed quote and launch-token fees', () => {
