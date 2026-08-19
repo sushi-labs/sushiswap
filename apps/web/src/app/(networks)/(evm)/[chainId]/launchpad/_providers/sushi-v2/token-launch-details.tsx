@@ -4,12 +4,7 @@ import { getEvmChainById } from 'sushi/evm'
 import { formatRawAmount, formatUsd, shortenAddress } from '../../_lib/format'
 import { LaunchDetailsCard } from '../launch-details-card'
 import type { LaunchpadTokenFor } from '../provider-types'
-
-const FEE_DISPOSITION_LABELS = {
-  DIRECT_PAYOUT: 'Direct payout',
-  BURN_LAUNCH_TOKEN_FEES: 'Burn token fees',
-  BUYBACK_AND_BURN: 'Buyback & burn',
-} as const
+import { SUSHI_V2_FEE_DISPOSITION_LABELS } from './contract'
 
 function AddressLink({
   address,
@@ -65,11 +60,7 @@ export function SushiV2TokenLaunchDetails({
               },
               {
                 label: 'Fee mode',
-                value: FEE_DISPOSITION_LABELS[token.feeDisposition],
-              },
-              {
-                label: 'Fee split',
-                value: `${token.feeSplit.sushiFeeBps / 100}% Sushi · ${token.feeSplit.nonSushiFeeBps / 100}% other`,
+                value: SUSHI_V2_FEE_DISPOSITION_LABELS[token.feeDisposition],
               },
             ],
           },
