@@ -65,7 +65,7 @@ export function QuickBuyTradeReview({
         >
           <DetailsInteractionTrackerProvider>
             <Checker.Success tag={APPROVE_TAG_SWAP}>
-              <SimpleSwapTradeReviewDialog variant="perps">
+              <SimpleSwapTradeReviewDialog autoConfirm variant="perps">
                 {() => (
                   <QuickBuyTradeReviewTrigger
                     amount={amount}

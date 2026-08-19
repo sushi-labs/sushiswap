@@ -8,7 +8,7 @@ export const LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS = {
   defaultValue: '10',
 } as const
 
-export const QUICK_BUY_USD_AMOUNTS = [10, 25, 50, 100] as const
+export const QUICK_BUY_USD_AMOUNTS = [1, 25, 50, 100] as const
 
 export function getQuickBuyNativeAmount(
   usdAmount: number,
