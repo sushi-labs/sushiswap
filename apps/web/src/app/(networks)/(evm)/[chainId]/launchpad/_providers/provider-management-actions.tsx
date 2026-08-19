@@ -6,11 +6,15 @@ import { SushiV2ManagementActions } from './sushi-v2/management-actions'
 interface ProviderManagementActionsProps {
   token: LaunchpadToken
   connectedAddress: EvmAddress | undefined
+  isLaunchpadOwner: boolean
   newCreator: string
+  newFeeReceiver: string
   isUpdating: boolean
   error: string | null
   onNewCreatorChange: (address: string) => void
+  onNewFeeReceiverChange: (address: string) => void
   onTransferCreator: () => void
+  onSetFeeReceiver: () => void
   onSetFeeDisposition: (next: SushiV2FeeDisposition) => void
 }
 

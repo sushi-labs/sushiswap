@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import type { EvmAddress } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { isEvmAddress } from 'sushi/evm'
 import { isLaunchpadChainId } from '../../constants'
 import { ManageTokenPage } from './_ui/manage-token-page'
 
@@ -21,9 +20,9 @@ export default async function ManageTokenRoute({
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
 
-  if (!isLaunchpadChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isLaunchpadChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
 
-  return <ManageTokenPage chainId={chainId} address={address as EvmAddress} />
+  return <ManageTokenPage chainId={chainId} address={address} />
 }
