@@ -14,33 +14,53 @@ import type { TokenSelectorChainId } from './config'
 import { useMyTokens } from './hooks/use-my-tokens'
 import { useSearchTokens } from './hooks/use-search-tokens'
 import { useTrendingTokens } from './hooks/use-trending-tokens'
+import type { TokenSelectorSelection } from './selection'
 import { TokenSelectorChipBar } from './token-lists/token-selector-chip-bar'
 import { TokenSelectorCustomList } from './token-lists/token-selector-custom-list'
 import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
 import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
 
-interface TokenSelectorStates<TChainId extends TokenSelectorChainId> {
+interface TokenSelectorStates<
+  TChainId extends TokenSelectorChainId,
+  TAllowPairSelection extends boolean = false,
+> {
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
   account?: WalletAddressFor<TChainId>
-  onSelect(currency: CurrencyFor<TChainId>): void
+  onSelect(
+    selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
+  ): void
+  allowPairSelection?: TAllowPairSelection
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
   currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]
   includeNative?: boolean
   search?: string
 }
 
-export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
-  selected,
-  chainId,
-  account,
-  onSelect,
-  onShowInfo,
-  currencies,
-  includeNative,
-  search,
-}: TokenSelectorStates<TChainId>) {
+export function TokenSelectorStates<
+  TChainId extends TokenSelectorChainId,
+  TAllowPairSelection extends boolean = false,
+>(props: TokenSelectorStates<TChainId, TAllowPairSelection>): React.JSX.Element
+export function TokenSelectorStates<TChainId extends TokenSelectorChainId>(
+  props: TokenSelectorStates<TChainId, boolean>,
+) {
+  const {
+    selected,
+    chainId,
+    account,
+    onSelect,
+    allowPairSelection,
+    onShowInfo,
+    currencies,
+    includeNative,
+    search,
+  } = props
+
+  function onSelectCurrency(currency: CurrencyFor<TChainId>) {
+    onSelect(currency)
+  }
+
   // Ensure that the user's tokens are loaded
   useMyTokens({
     chainId: isTokenListChainId(chainId) ? chainId : undefined,
@@ -82,7 +102,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
         chainId={chainId}
         account={account}
         currencies={currencies}
-        onSelect={onSelect}
+        onSelect={onSelectCurrency}
         selected={selected}
         search={search}
         includeNative={includeNative}
@@ -96,6 +116,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
       <TokenSelectorSearch
         chainId={chainId}
         onSelect={onSelect}
+        allowPairSelection={allowPairSelection}
         onShowInfo={onShowInfo}
         search={search}
         selected={selected}
@@ -108,14 +129,14 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
       <>
         <TokenSelectorChipBar
           chainId={chainId}
-          onSelect={onSelect}
+          onSelect={onSelectCurrency}
           includeNative={includeNative}
         />
 
         {account ? (
           <TokenSelectorMyTokens
             chainId={chainId}
-            onSelect={onSelect}
+            onSelect={onSelectCurrency}
             onShowInfo={onShowInfo}
             selected={selected}
             includeNative={includeNative}
@@ -124,7 +145,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
 
         <TokenSelectorSearch
           chainId={chainId}
-          onSelect={onSelect}
+          onSelect={onSelectCurrency}
           onShowInfo={onShowInfo}
           selected={selected}
           search={''}
@@ -141,14 +162,14 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
       <>
         <TokenSelectorChipBar
           chainId={chainId}
-          onSelect={onSelect}
+          onSelect={onSelectCurrency}
           includeNative={includeNative}
         />
 
         {account ? (
           <TokenSelectorMyTokens
             chainId={chainId}
-            onSelect={onSelect}
+            onSelect={onSelectCurrency}
             onShowInfo={onShowInfo}
             selected={selected}
             includeNative={includeNative}
@@ -158,7 +179,9 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
         <TokenSelectorTrendingTokens
           chainId={trendingChainId}
           onSelect={
-            onSelect as (currency: CurrencyFor<TTrendingChainId>) => void
+            onSelectCurrency as (
+              currency: CurrencyFor<TTrendingChainId>,
+            ) => void
           }
           onShowInfo={
             onShowInfo as (
@@ -176,7 +199,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>({
       chainId={chainId}
       account={account}
       currencies={defaultBases}
-      onSelect={onSelect}
+      onSelect={onSelectCurrency}
       selected={selected}
       search={search}
       includeNative={includeNative}

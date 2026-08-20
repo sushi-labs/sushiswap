@@ -31,6 +31,7 @@ import type { TokenSelectorChainId } from './config'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
+import type { TokenSelectorSelection } from './selection'
 import { TokenSelectorStates } from './token-selector-states'
 import {
   type TokenSelectorTheme,
@@ -40,11 +41,15 @@ import {
 interface TokenSelectorProps<
   TChainId extends TokenSelectorChainId,
   TNetwork extends TokenSelectorChainId = TChainId,
+  TAllowPairSelection extends boolean = false,
 > {
   id?: string
   selected: CurrencyFor<TChainId> | undefined
   chainId: TChainId
-  onSelect?(currency: CurrencyFor<TChainId>): void
+  onSelect?(
+    selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
+  ): void
+  allowPairSelection?: TAllowPairSelection
   children: ReactNode
   currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
   includeNative?: boolean
@@ -58,19 +63,21 @@ interface TokenSelectorProps<
 export function TokenSelector<
   TChainId extends TokenSelectorChainId,
   TNetwork extends TokenSelectorChainId = TChainId,
->({
-  includeNative = true,
-  selected,
-  onSelect,
-  chainId,
-  children,
-  currencies: _currencies,
-  hideSearch,
-  networks,
-  selectedNetwork,
-  onNetworkSelect,
-  theme = 'default',
-}: TokenSelectorProps<TChainId, TNetwork>) {
+  TAllowPairSelection extends boolean = false,
+>(props: TokenSelectorProps<TChainId, TNetwork, TAllowPairSelection>) {
+  const {
+    includeNative = true,
+    selected,
+    allowPairSelection,
+    chainId,
+    children,
+    currencies: _currencies,
+    hideSearch,
+    networks,
+    selectedNetwork,
+    onNetworkSelect,
+    theme = 'default',
+  } = props
   const address = useAccount(chainId)
 
   const [query, setQuery] = useState('')
@@ -100,14 +107,12 @@ export function TokenSelector<
   }, [_currencies])
 
   const _onSelect = useCallback(
-    (currency: CurrencyFor<TChainId>) => {
-      if (onSelect) {
-        onSelect(currency)
-      }
+    (selection: TokenSelectorSelection<TChainId, TAllowPairSelection>) => {
+      props.onSelect?.(selection)
 
       setOpen(false)
     },
-    [onSelect],
+    [props.onSelect],
   )
 
   const _onNetworkSelect = useCallback(
@@ -159,8 +164,9 @@ export function TokenSelector<
           <DialogDescription
             className={classNames(theme === 'perps' && '!text-perps-muted-50')}
           >
-            Select a token from our default list or search for a token by symbol
-            or address.
+            {allowPairSelection
+              ? 'Select a token from our default list or search by token symbol, token address, or pool address.'
+              : 'Select a token from our default list or search for a token by symbol or address.'}
           </DialogDescription>
         </DialogHeader>
         {networks && selectedNetwork && onNetworkSelect && !isMd ? (
@@ -173,7 +179,11 @@ export function TokenSelector<
         {!hideSearch ? (
           <div className="flex gap-2">
             <TextField
-              placeholder="Search by token or address"
+              placeholder={
+                allowPairSelection
+                  ? 'Search by token or pool address'
+                  : 'Search by token or address'
+              }
               icon={MagnifyingGlassIcon}
               iconProps={{
                 className: classNames(
@@ -200,6 +210,7 @@ export function TokenSelector<
             chainId={chainId}
             account={address}
             onSelect={_onSelect}
+            allowPairSelection={allowPairSelection}
             currencies={currencies}
             includeNative={includeNative}
             search={query}

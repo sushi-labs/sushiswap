@@ -1,5 +1,6 @@
 'use client'
 
+import { isTokenSelectorPair } from 'src/lib/wagmi/components/token-selector/selection'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { isWNativeSupported } from 'sushi'
 import {
@@ -10,7 +11,7 @@ import {
 export const SimpleSwapToken1Input = () => {
   const {
     state: { chainId, token1 },
-    mutate: { setToken1 },
+    mutate: { setToken1, setTokens },
     isToken1Loading: tokenLoading,
   } = useDerivedStateSimpleSwap()
 
@@ -28,7 +29,12 @@ export const SimpleSwapToken1Input = () => {
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
-      onSelect={setToken1}
+      onSelect={(selection) =>
+        isTokenSelectorPair(selection)
+          ? setTokens(...selection)
+          : setToken1(selection)
+      }
+      allowPairSelection
       currency={token1}
       loading={isLoading}
       fetching={isFetching}
