@@ -1,4 +1,7 @@
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowRightIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline'
 import {
   Button,
   FormControl,
@@ -6,6 +9,9 @@ import {
   FormItem,
   FormLabel,
   FormSection,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -16,6 +22,11 @@ import {
 import type { UseFormReturn } from 'react-hook-form'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
+import {
+  SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS,
+  SUSHI_V2_FEE_DISPOSITION_LABELS,
+  SUSHI_V2_FEE_DISPOSITION_ORDER,
+} from '../../_providers/sushi-v2/contract'
 import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
 import type { CreateLaunchForm } from './create-launch-types'
 
@@ -129,7 +140,35 @@ export function CreateLaunchDetailsStep({
             name="feeDisposition"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Creator fee mode</FormLabel>
+                <FormLabel className="flex items-center gap-1">
+                  <span>Creator fee mode</span>
+                  <HoverCard openDelay={0} closeDelay={0}>
+                    <HoverCardTrigger asChild>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Explain creator fee modes"
+                        className="inline-flex text-perps-muted-50 outline-none transition-colors hover:text-perps-muted focus-visible:text-perps-muted"
+                      >
+                        <InformationCircleIcon className="h-4 w-4" />
+                      </span>
+                    </HoverCardTrigger>
+                    <HoverCardContent
+                      forceMount
+                      side="top"
+                      className="max-w-[320px] space-y-2 whitespace-normal !bg-black/10 !px-3 !py-2 text-left text-xs"
+                    >
+                      {SUSHI_V2_FEE_DISPOSITION_ORDER.map((disposition) => (
+                        <p key={disposition}>
+                          <span className="font-semibold">
+                            {SUSHI_V2_FEE_DISPOSITION_LABELS[disposition]}:
+                          </span>{' '}
+                          {SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS[disposition]}
+                        </p>
+                      ))}
+                    </HoverCardContent>
+                  </HoverCard>
+                </FormLabel>
                 <Select
                   name={field.name}
                   value={field.value}
