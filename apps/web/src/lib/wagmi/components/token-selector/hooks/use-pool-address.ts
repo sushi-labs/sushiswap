@@ -1,11 +1,15 @@
+import {
+  type TokenListChainId,
+  getTokenList,
+} from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import { readContracts } from '@wagmi/core'
 import ms from 'ms'
-import { type EvmAddress, type EvmChainId, EvmToken } from 'sushi/evm'
+import type { EvmAddress, EvmChainId, EvmToken } from 'sushi/evm'
 import { parseAbi, zeroAddress } from 'viem'
 import type { Config } from 'wagmi'
 import { useConfig } from 'wagmi'
-import { getToken } from '../../../actions/get-token'
+import { createTokenListToken } from './token-list-token'
 
 const poolAbi = parseAbi([
   'function token0() view returns (address)',
@@ -23,8 +27,25 @@ export interface TokenSelectorPool {
 
 interface GetPoolByAddress {
   address: EvmAddress
-  chainId: EvmChainId
+  chainId: EvmChainId & TokenListChainId
   config: Config
+}
+
+async function getPoolToken(
+  chainId: EvmChainId & TokenListChainId,
+  address: EvmAddress,
+): Promise<EvmToken> {
+  const [token] = await getTokenList({
+    chainId,
+    first: 1,
+    search: address,
+  })
+
+  if (!token) {
+    throw new Error(`Token ${address} was not returned by the token list`)
+  }
+
+  return createTokenListToken(chainId, token)
 }
 
 export async function getPoolByAddress({
@@ -62,22 +83,22 @@ export async function getPoolByAddress({
 
   if (!version) return null
 
-  const [token0Data, token1Data] = await Promise.all([
-    getToken(config, { address: token0Result.result, chainId }),
-    getToken(config, { address: token1Result.result, chainId }),
+  const [token0, token1] = await Promise.all([
+    getPoolToken(chainId, token0Result.result),
+    getPoolToken(chainId, token1Result.result),
   ])
 
   return {
     address,
-    token0: new EvmToken({ ...token0Data, metadata: { approved: false } }),
-    token1: new EvmToken({ ...token1Data, metadata: { approved: false } }),
+    token0,
+    token1,
     version,
   }
 }
 
 interface UsePoolAddress {
   address: EvmAddress | undefined
-  chainId: EvmChainId | undefined
+  chainId: (EvmChainId & TokenListChainId) | undefined
   enabled?: boolean
 }
 
