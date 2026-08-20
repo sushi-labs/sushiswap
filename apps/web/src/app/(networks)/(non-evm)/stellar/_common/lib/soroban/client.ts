@@ -6,12 +6,15 @@ import { Client as PositionManagerContractClient } from '@sushiswap/stellar-cont
 import { Client as RouterContractClient } from '@sushiswap/stellar-contract-binding-router'
 import { Client as TokenContractClient } from '@sushiswap/stellar-contract-binding-token'
 import { Client as ZapRouterContractClient } from '@sushiswap/stellar-contract-binding-zap-router'
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { NETWORK_PASSPHRASE, RPC_HEADERS, RPC_URL } from '../constants'
 import { contractAddresses } from './contracts'
 
 // Initialize Soroban RPC server
 // See https://developers.stellar.org/docs/data/apis/api-providers#publicly-accessible-apis
-export const SorobanClient = new Server(RPC_URL, { allowHttp: true })
+export const SorobanClient = new Server(RPC_URL, {
+  allowHttp: true,
+  headers: RPC_HEADERS,
+})
 
 type ContractClientParams = {
   contractId: string
@@ -33,6 +36,7 @@ export const getFactoryContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -44,6 +48,7 @@ export const getRouterContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -55,6 +60,7 @@ export const getPoolContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -66,6 +72,7 @@ export const getPoolLensContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -77,6 +84,7 @@ export const getTokenContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -95,6 +103,7 @@ export const getPositionManagerContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
 
@@ -106,5 +115,6 @@ export const getZapRouterContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    headers: RPC_HEADERS,
     publicKey: publicKey,
   })
