@@ -8,6 +8,7 @@ import { useCustomTokens } from '@sushiswap/hooks'
 import {
   Badge,
   Button,
+  Currency,
   Dialog,
   DialogContent,
   DialogFooter,
@@ -21,7 +22,6 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
 import React, { useCallback } from 'react'
 import { useTokenSecurity } from 'src/lib/hooks/react-query'
 import { TokenSecurityImportActions } from 'src/lib/wagmi/components/token-security-import-actions'
@@ -85,7 +85,6 @@ export const SimpleSwapTokenNotFoundDialog = () => {
     isError: isToken0SecurityError,
     isFetching: isToken0SecurityFetching,
     isLoading: isToken0SecurityLoading,
-    refetch: refetchToken0Security,
   } = useTokenSecurity({
     currency: token0NotInList && token0?.type === 'token' ? token0 : undefined,
     enabled: Boolean(token0NotInList && token0?.type === 'token'),
@@ -96,7 +95,6 @@ export const SimpleSwapTokenNotFoundDialog = () => {
     isError: isToken1SecurityError,
     isFetching: isToken1SecurityFetching,
     isLoading: isToken1SecurityLoading,
-    refetch: refetchToken1Security,
   } = useTokenSecurity({
     currency: token1NotInList && token1?.type === 'token' ? token1 : undefined,
     enabled: Boolean(token1NotInList && token1?.type === 'token'),
@@ -135,8 +133,8 @@ export const SimpleSwapTokenNotFoundDialog = () => {
       onOpenChange={(open) => !open && reset()}
     >
       <DialogContent className="!flex max-h-[calc(100dvh-16px)] flex-col overflow-hidden md:max-h-[80vh]">
-        <DialogHeader className="!text-left !space-y-3 shrink-0">
-          <DialogTitle>
+        <DialogHeader className="!text-left shrink-0">
+          <DialogTitle className="flex items-center gap-3">
             <div
               className={classNames(
                 'inline-flex items-center px-2 py-1.5 gap-1 rounded-full',
@@ -157,22 +155,22 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                 <ExclamationCircleIcon width={28} height={28} />
               )}
             </div>
+            {isTokenSecurityLoading ? (
+              <span className="w-52">
+                <SkeletonText fontSize="xl" />
+              </span>
+            ) : (
+              <span className="text-xl font-semibold">
+                {isHoneypot
+                  ? 'Honeypot Token Detected'
+                  : isFoT
+                    ? 'Tax Token Deteceted'
+                    : isRisky
+                      ? 'Token Flagged for Risks'
+                      : `Unverified Token${token0NotInList && token1NotInList ? 's' : ''}`}
+              </span>
+            )}
           </DialogTitle>
-          {isTokenSecurityLoading ? (
-            <span className="w-52">
-              <SkeletonText fontSize="xl" />
-            </span>
-          ) : (
-            <span className="text-xl font-semibold">
-              {isHoneypot
-                ? 'Honeypot Token Detected'
-                : isFoT
-                  ? 'Tax Token Deteceted'
-                  : isRisky
-                    ? 'Token Flagged for Risks'
-                    : `Unverified Token${token0NotInList && token1NotInList ? 's' : ''}`}
-            </span>
-          )}
         </DialogHeader>
         <div className="min-h-0 overflow-y-auto">
           <div className="flex flex-col gap-4">
@@ -218,7 +216,12 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                           }
                         >
                           <div className="w-10 h-10">
-                            <UnknownTokenIcon width={40} height={40} />
+                            <Currency.Icon
+                              disableLink
+                              currency={token0}
+                              width={40}
+                              height={40}
+                            />
                           </div>
                         </Badge>
                         <div className="flex flex-col">
@@ -311,7 +314,12 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                           }
                         >
                           <div className="w-10 h-10">
-                            <UnknownTokenIcon width={40} height={40} />
+                            <Currency.Icon
+                              disableLink
+                              currency={token1}
+                              width={40}
+                              height={40}
+                            />
                           </div>
                         </Badge>
                         <div className="flex flex-col">
@@ -371,7 +379,7 @@ export const SimpleSwapTokenNotFoundDialog = () => {
           {isHoneypot
             ? 'Honeypot tokens restrict selling. Sushi does not support this token type.'
             : tokenSecurityImportState === 'unavailable'
-              ? 'The token security scan is unavailable. Retry the scan or explicitly import without security results.'
+              ? 'The token security scan is unavailable. You can explicitly import without security results.'
               : isFoT
                 ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
                 : isRisky
@@ -394,14 +402,6 @@ export const SimpleSwapTokenNotFoundDialog = () => {
                   token1?.type === 'token' ? token1 : undefined,
                 ])
               }
-              onRetry={() => {
-                if (token0SecurityState === 'unavailable') {
-                  void refetchToken0Security()
-                }
-                if (token1SecurityState === 'unavailable') {
-                  void refetchToken1Security()
-                }
-              }}
               onCancel={reset}
             />
           )}

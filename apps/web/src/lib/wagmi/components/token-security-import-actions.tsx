@@ -18,7 +18,7 @@ interface TokenSecurityImportActionsProps {
   state: TokenSecurityImportState
   hasSecurityRisk: boolean
   onImport(): void
-  onRetry(): void
+  onRetry?(): void
   onCancel(): void
   telemetry?: ImportTelemetry
 }
@@ -54,7 +54,8 @@ export function TokenSecurityImportActions({
 }: TokenSecurityImportActionsProps) {
   const theme = useTokenSelectorTheme()
   const isPerps = theme === 'perps'
-  const hasScanActions = state === 'scanning' || state === 'unavailable'
+  const hasScanActions =
+    state === 'scanning' || (state === 'unavailable' && Boolean(onRetry))
   const importWithoutScan = withImportTelemetry(
     <Button
       fullWidth
@@ -62,7 +63,7 @@ export function TokenSecurityImportActions({
       onClick={onImport}
       variant={isPerps ? 'perps-short' : 'warning'}
     >
-      Force import without scan
+      Import without scan
     </Button>,
     telemetry,
   )
@@ -74,55 +75,62 @@ export function TokenSecurityImportActions({
         !hasScanActions && 'sm:flex-row',
       )}
     >
-      {state === 'scanning' ? (
-        <>
-          <Button
-            fullWidth
-            size="xl"
-            loading
-            disabled
-            variant={isPerps ? 'perps-default' : 'default'}
-          >
-            Checking token security
-          </Button>
-          {importWithoutScan}
-        </>
-      ) : state === 'unavailable' ? (
-        <>
-          <Button
-            fullWidth
-            size="xl"
-            onClick={onRetry}
-            variant={isPerps ? 'perps-default' : 'default'}
-          >
-            Retry security scan
-          </Button>
-          {importWithoutScan}
-        </>
-      ) : (
-        withImportTelemetry(
-          <Button
-            fullWidth
-            size="xl"
-            onClick={onImport}
-            variant={
-              isPerps
-                ? hasSecurityRisk
-                  ? 'perps-short'
-                  : 'perps-default'
-                : hasSecurityRisk
-                  ? 'destructive'
-                  : 'default'
-            }
-          >
-            {hasSecurityRisk ? 'Import Anyway' : 'Confirm Import'}
-          </Button>,
-          telemetry,
-        )
-      )}
+      <div className="flex flex-col gap-3 sm:order-2 sm:flex-1 sm:flex-row">
+        {state === 'scanning' ? (
+          <>
+            <Button
+              fullWidth
+              size="xl"
+              loading
+              disabled
+              variant={isPerps ? 'perps-default' : 'default'}
+            >
+              Checking token security
+            </Button>
+            {importWithoutScan}
+          </>
+        ) : state === 'unavailable' ? (
+          onRetry ? (
+            <>
+              <Button
+                fullWidth
+                size="xl"
+                onClick={onRetry}
+                variant={isPerps ? 'perps-default' : 'default'}
+              >
+                Retry security scan
+              </Button>
+              {importWithoutScan}
+            </>
+          ) : (
+            importWithoutScan
+          )
+        ) : (
+          withImportTelemetry(
+            <Button
+              fullWidth
+              size="xl"
+              onClick={onImport}
+              variant={
+                isPerps
+                  ? hasSecurityRisk
+                    ? 'perps-short'
+                    : 'perps-default'
+                  : hasSecurityRisk
+                    ? 'destructive'
+                    : 'default'
+              }
+            >
+              {hasSecurityRisk ? 'Import Anyway' : 'Confirm Import'}
+            </Button>,
+            telemetry,
+          )
+        )}
+      </div>
       <Button
         fullWidth
         size="xl"
+        className="sm:order-1"
         onClick={onCancel}
         variant={isPerps ? 'perps-secondary' : 'secondary'}
       >
