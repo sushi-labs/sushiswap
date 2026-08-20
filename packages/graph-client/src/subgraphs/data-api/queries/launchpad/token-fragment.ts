@@ -26,14 +26,33 @@ export const LaunchpadTokenFragment = graphql(`
         decimals
       }
     }
-    positions {
-      positionIndex
-      positionId
-      tickLower
-      tickUpper
-      desiredAmount
-      usedAmount
-      liquidity
+    ... on SushiV1LaunchpadToken {
+      feeSplit {
+        sushiFeeBps
+        creatorFeeBps
+      }
+    }
+    ... on SushiV2LaunchpadToken {
+      launchCreator
+      currentSupply
+      feeReceiver
+      liquidityMode
+      feeDisposition
+      feeSplit {
+        sushiFeeBps
+        nonSushiFeeBps
+      }
+      devBuy {
+        quoteSpent
+        launchTokenReceived
+      }
+      burns {
+        directFeeBurned
+        buybackBurned
+        protocolBurned
+        totalBurned
+      }
+      poolInitializedAt
     }
     metadata {
       description
@@ -75,7 +94,6 @@ export const LaunchpadTokenFragment = graphql(`
 export type LaunchpadToken = ResultOf<typeof LaunchpadTokenFragment>
 export type LaunchpadIndexingStatus = LaunchpadToken['indexingStatus']
 export type LaunchpadProvider = LaunchpadToken['provider']
-export type LaunchpadPosition = LaunchpadToken['positions'][number]
 export type LaunchpadMetadata = LaunchpadToken['metadata']
 export type LaunchpadMetadataLink = LaunchpadMetadata['links'][number]
 export type LaunchpadMetrics = NonNullable<LaunchpadToken['metrics']>

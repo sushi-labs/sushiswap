@@ -1,4 +1,7 @@
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowRightIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline'
 import {
   Button,
   FormControl,
@@ -6,11 +9,24 @@ import {
   FormItem,
   FormLabel,
   FormSection,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   TextField,
 } from '@sushiswap/ui'
 import type { UseFormReturn } from 'react-hook-form'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
+import {
+  SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS,
+  SUSHI_V2_FEE_DISPOSITION_LABELS,
+  SUSHI_V2_FEE_DISPOSITION_ORDER,
+} from '../../_providers/sushi-v2/contract'
 import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
 import type { CreateLaunchForm } from './create-launch-types'
 
@@ -87,8 +103,107 @@ export function CreateLaunchDetailsStep({
       <div className="my-3 border-t border-white/[0.06]" />
 
       <FormSection
+        title="Launch configuration"
+        description="Choose the initial liquidity curve and how non-protocol trading fees are handled."
+      >
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField
+            control={methods.control}
+            name="liquidityMode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Liquidity mode</FormLabel>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="!bg-black/10 backdrop-blur-2xl">
+                    <SelectItem value="MOON">Moon</SelectItem>
+                    <SelectItem value="STANDARD">Standard</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={methods.control}
+            name="feeDisposition"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  <span>Creator fee mode</span>
+                  <HoverCard openDelay={0} closeDelay={0}>
+                    <HoverCardTrigger asChild>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Explain creator fee modes"
+                        className="inline-flex text-perps-muted-50 outline-none transition-colors hover:text-perps-muted focus-visible:text-perps-muted"
+                      >
+                        <InformationCircleIcon className="h-4 w-4" />
+                      </span>
+                    </HoverCardTrigger>
+                    <HoverCardContent
+                      forceMount
+                      side="top"
+                      className="max-w-[320px] space-y-2 whitespace-normal !bg-black/10 !px-3 !py-2 text-left text-xs"
+                    >
+                      {SUSHI_V2_FEE_DISPOSITION_ORDER.map((disposition) => (
+                        <p key={disposition}>
+                          <span className="font-semibold">
+                            {SUSHI_V2_FEE_DISPOSITION_LABELS[disposition]}:
+                          </span>{' '}
+                          {SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS[disposition]}
+                        </p>
+                      ))}
+                    </HoverCardContent>
+                  </HoverCard>
+                </FormLabel>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      ref={field.ref}
+                      onBlur={field.onBlur}
+                      className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="!bg-black/10 backdrop-blur-2xl">
+                    <SelectItem value="BUYBACK_AND_BURN">
+                      Buyback &amp; burn
+                    </SelectItem>
+                    <SelectItem value="BURN_LAUNCH_TOKEN_FEES">
+                      Burn token fees
+                    </SelectItem>
+                    <SelectItem value="DIRECT_PAYOUT">Direct payout</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        </div>
+      </FormSection>
+
+      <div className="my-3 border-t border-white/[0.06]" />
+
+      <FormSection
         title="Project details"
-        description="This metadata can be edited later by the immutable creator wallet."
+        description="This metadata can be edited later by the current creator wallet."
       >
         <LaunchpadLogoInput
           id="launch-logo"

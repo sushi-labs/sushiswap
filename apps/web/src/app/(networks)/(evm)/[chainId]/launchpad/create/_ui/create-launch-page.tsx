@@ -4,7 +4,6 @@ import { toNestErrors } from '@hookform/resolvers'
 import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { Container, Form } from '@sushiswap/ui'
-import { getUnixTime } from 'date-fns'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -16,6 +15,7 @@ import {
   type EvmAddress,
   EvmNative,
   EvmToken,
+  SUSHI,
   WNATIVE,
   getEvmChainById,
 } from 'sushi/evm'
@@ -30,12 +30,17 @@ import {
 import * as z from 'zod'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { formatRawAmount } from '../../_lib/format'
-import { LAUNCHPAD_ABI, LAUNCHPAD_ADDRESS } from '../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
 import {
   launchpadMetadataDescriptionSchema,
   saveLaunchpadMetadata,
 } from '../../_lib/launchpad-metadata'
+import {
+  SUSHI_V2_FEE_DISPOSITION,
+  SUSHI_V2_LAUNCHPAD_ABI,
+  SUSHI_V2_LAUNCHPAD_ADDRESS,
+  SUSHI_V2_LIQUIDITY_MODE,
+} from '../../_providers/sushi-v2/contract'
 import { PageHeading } from '../../_ui/page-heading'
 import type { LaunchpadChainId } from '../../constants'
 import { useLaunchpadQuoteTokens } from '../_lib/use-launchpad-quote-tokens'
@@ -50,7 +55,8 @@ import type {
 import { CreateStepNavigation } from './create-step-navigation'
 import { LegalAcknowledgementDialog } from './legal-acknowledgement-dialog'
 
-const INITIAL_FDV_USD = 5_000
+const STANDARD_INITIAL_FDV_USD = 5_000
+const MOON_INITIAL_FDV_USD = 10_000
 const MAX_INITIAL_BUY_USD = 1_000
 const INITIAL_BUY_STEP_USD = 10
 const INITIAL_BUY_SLIPPAGE = new Percent({ numerator: 1, denominator: 100 })
@@ -96,6 +102,12 @@ const createLaunchSchema = z.object({
       MAX_INITIAL_BUY_USD,
       `Initial buy must be at most $${MAX_INITIAL_BUY_USD.toLocaleString()}`,
     ),
+  liquidityMode: z.enum(['STANDARD', 'MOON']),
+  feeDisposition: z.enum([
+    'DIRECT_PAYOUT',
+    'BURN_LAUNCH_TOKEN_FEES',
+    'BUYBACK_AND_BURN',
+  ]),
 })
 
 const createLaunchDetailsSchema = createLaunchSchema.pick({
@@ -105,6 +117,8 @@ const createLaunchDetailsSchema = createLaunchSchema.pick({
   homepage: true,
   x: true,
   telegram: true,
+  liquidityMode: true,
+  feeDisposition: true,
 })
 
 const createLaunchResolver: Resolver<CreateLaunchForm> = async (
@@ -144,6 +158,8 @@ const DETAIL_FIELDS: Array<keyof z.infer<typeof createLaunchDetailsSchema>> = [
   'homepage',
   'x',
   'telegram',
+  'liquidityMode',
+  'feeDisposition',
 ]
 
 const INDEXING_ATTEMPTS = 10
@@ -212,7 +228,11 @@ async function waitForLaunchpadIndexing(
   return null
 }
 
-export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
+export function SushiV2CreateLaunchPage({
+  chainId,
+}: {
+  chainId: LaunchpadChainId
+}) {
   const chain = getEvmChainById(chainId)
   const router = useRouter()
   const { address: account } = useConnection()
@@ -253,9 +273,13 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     [quoteTokens],
   )
   const defaultQuoteToken =
-    quoteTokens.find(
-      (quoteToken) => quoteToken.address === WNATIVE[chainId].address,
-    ) ?? quoteTokens[0]
+    quoteTokens.find((quoteToken) =>
+      isAddressEqual(quoteToken.address, SUSHI[chainId].address),
+    ) ??
+    quoteTokens.find((quoteToken) =>
+      isAddressEqual(quoteToken.address, WNATIVE[chainId].address),
+    ) ??
+    quoteTokens[0]
   const selectedQuoteToken =
     quoteTokens.find(
       (quoteToken) => quoteToken.address === selectedQuoteTokenAddress,
@@ -276,6 +300,8 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       x: '',
       telegram: '',
       initialBuyUsd: 0,
+      liquidityMode: 'MOON',
+      feeDisposition: 'BUYBACK_AND_BURN',
     },
   })
   const values = methods.watch()
@@ -293,6 +319,10 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
   const isWethQuoteToken = Boolean(
     selectedQuoteToken &&
       isAddressEqual(selectedQuoteToken.address, WNATIVE[chainId].address),
+  )
+  const isSushiQuoteToken = Boolean(
+    selectedQuoteToken &&
+      isAddressEqual(selectedQuoteToken.address, SUSHI[chainId].address),
   )
   const isNativeInitialBuy = isWethQuoteToken && wethPaymentMode === 'native'
   const nativeCurrency = useMemo(
@@ -317,29 +347,22 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
     allowFailure: false,
     contracts: [
       {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
         functionName: 'launchFee',
       },
       {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
-        chainId,
-        functionName: 'protocolReserveBps',
-      },
-      {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
         functionName: 'defaultSushiFeeBps',
       },
       {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
-        functionName: 'calculateStartTick',
-        args: [selectedQuoteToken?.address ?? WNATIVE[chainId].address],
+        functionName: 'canonicalSushi',
       },
     ],
     query: {
@@ -347,8 +370,13 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       refetchInterval: ms('15s'),
     },
   })
-  const [launchFee, protocolReserveBps, defaultSushiFeeBps, startTick] =
-    factoryTerms ?? []
+  const [launchFee, defaultSushiFeeBps, canonicalSushi] = factoryTerms ?? []
+  const initialSushiFeeBps =
+    canonicalSushi &&
+    selectedQuoteToken &&
+    isAddressEqual(canonicalSushi, selectedQuoteToken.address)
+      ? 2_000
+      : defaultSushiFeeBps
   const launchFeeAmount = useMemo(
     () =>
       launchFee === undefined
@@ -432,23 +460,29 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
       }
 
       const currentLaunchFee = await publicClient.readContract({
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        abi: SUSHI_V2_LAUNCHPAD_ABI,
         functionName: 'launchFee',
       })
-      const deadline = BigInt(getUnixTime(new Date()) + 15 * 60)
       const tokenConfig = {
         name: formValues.name,
         symbol: formValues.symbol,
       } as const
+      const liquidityMode = SUSHI_V2_LIQUIDITY_MODE[formValues.liquidityMode]
+      const feeDisposition = SUSHI_V2_FEE_DISPOSITION[formValues.feeDisposition]
       let hash: `0x${string}`
 
       if (amountIn === 0n) {
         const launchParameters = {
-          address: LAUNCHPAD_ADDRESS,
-          abi: LAUNCHPAD_ABI,
+          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launch',
-          args: [tokenConfig, selectedQuoteToken.address, deadline],
+          args: [
+            tokenConfig,
+            selectedQuoteToken.address,
+            liquidityMode,
+            feeDisposition,
+          ],
           value: currentLaunchFee,
         } as const
 
@@ -459,12 +493,13 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
         hash = await writeContractAsync(launchParameters)
       } else if (isNativeInitialBuy) {
         const quoteParameters = {
-          address: LAUNCHPAD_ADDRESS,
-          abi: LAUNCHPAD_ABI,
+          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launchAndBuyNative',
           args: [
             tokenConfig,
-            deadline,
+            liquidityMode,
+            feeDisposition,
             {
               amountIn,
               amountOutMinimum: 0n,
@@ -484,7 +519,8 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
           ...quoteParameters,
           args: [
             tokenConfig,
-            deadline,
+            liquidityMode,
+            feeDisposition,
             {
               amountIn,
               amountOutMinimum,
@@ -500,13 +536,14 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
         hash = await writeContractAsync(launchParameters)
       } else {
         const quoteParameters = {
-          address: LAUNCHPAD_ADDRESS,
-          abi: LAUNCHPAD_ABI,
+          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launchAndBuy',
           args: [
             tokenConfig,
             selectedQuoteToken.address,
-            deadline,
+            liquidityMode,
+            feeDisposition,
             {
               amountIn,
               amountOutMinimum: 0n,
@@ -527,7 +564,8 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
           args: [
             tokenConfig,
             selectedQuoteToken.address,
-            deadline,
+            liquidityMode,
+            feeDisposition,
             {
               amountIn,
               amountOutMinimum,
@@ -564,16 +602,16 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
 
       const receipt = await receiptPromise
       const launchEvents = parseEventLogs({
-        abi: LAUNCHPAD_ABI,
+        abi: SUSHI_V2_LAUNCHPAD_ABI,
         eventName: 'TokenLaunched',
         logs: receipt.logs.filter((log) =>
-          isAddressEqual(log.address, LAUNCHPAD_ADDRESS),
+          isAddressEqual(log.address, SUSHI_V2_LAUNCHPAD_ADDRESS),
         ),
         strict: true,
       })
       const launchEvent = launchEvents.find(
         (event) =>
-          isAddressEqual(event.args.creator, account) &&
+          isAddressEqual(event.args.launchCreator, account) &&
           event.args.name === formValues.name &&
           event.args.symbol === formValues.symbol,
       )
@@ -653,7 +691,14 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
           ? 'Unavailable'
           : `${formatUSD(quotePriceUsd)} / ${selectedQuoteToken.symbol}`,
     },
-    { label: 'Starting FDV', value: formatUSD(INITIAL_FDV_USD) },
+    {
+      label: 'Starting FDV',
+      value: formatUSD(
+        values.liquidityMode === 'MOON'
+          ? MOON_INITIAL_FDV_USD
+          : STANDARD_INITIAL_FDV_USD,
+      ),
+    },
     {
       label: 'Initial buy',
       value:
@@ -667,27 +712,29 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
             )} ${initialBuyCurrency?.symbol ?? selectedQuoteToken.symbol} · ${formatUSD(values.initialBuyUsd)}`
           : 'None',
     },
-    {
-      label: 'Contract start tick',
-      value: startTick?.toString() ?? 'Loading…',
-    },
     { label: 'Pool fee tier', value: '1%' },
-    { label: 'Liquidity position', value: 'Single maximum-bound range' },
     {
-      label: 'Protocol reserve',
+      label: 'Liquidity mode',
       value:
-        protocolReserveBps === undefined
-          ? 'Loading…'
-          : `${formatBps(protocolReserveBps)} · locked 365 days`,
+        values.liquidityMode === 'MOON'
+          ? 'Moon · seven contiguous ranges'
+          : 'Standard · single maximum-bound range',
+    },
+    {
+      label: 'Creator fee mode',
+      value: values.feeDisposition
+        .replaceAll('_', ' ')
+        .toLowerCase()
+        .replace(/\b\w/g, (character) => character.toUpperCase()),
     },
     {
       label: 'LP fee split',
       value:
-        defaultSushiFeeBps === undefined
+        initialSushiFeeBps === undefined
           ? 'Loading…'
-          : `${formatBps(defaultSushiFeeBps)} Sushi · ${formatBps(
-              10_000 - defaultSushiFeeBps,
-            )} creator`,
+          : `${formatBps(initialSushiFeeBps)} Sushi · ${formatBps(
+              10_000 - initialSushiFeeBps,
+            )} non-Sushi`,
     },
     {
       label: 'Launch fee',
@@ -734,6 +781,7 @@ export function CreateLaunchPage({ chainId }: { chainId: LaunchpadChainId }) {
               isQuoteTokenListPending={isQuoteTokenListPending}
               isQuoteTokenListError={isQuoteTokenListError}
               onQuoteTokenSelect={setSelectedQuoteTokenAddress}
+              isSushiQuoteToken={isSushiQuoteToken}
               isWethQuoteToken={isWethQuoteToken}
               wethPaymentMode={wethPaymentMode}
               onWethPaymentModeChange={setWethPaymentMode}

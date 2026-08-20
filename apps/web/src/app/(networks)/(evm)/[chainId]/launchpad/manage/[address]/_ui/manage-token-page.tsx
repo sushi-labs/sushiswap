@@ -4,7 +4,6 @@ import {
   ArrowLeftIcon,
   ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
-  BanknotesIcon,
   CheckCircleIcon,
   LockClosedIcon,
   UserCircleIcon,
@@ -14,7 +13,6 @@ import { createToast } from '@sushiswap/notifications'
 import {
   Button,
   Container,
-  Dots,
   Form,
   FormControl,
   FormField,
@@ -32,10 +30,12 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { getEvmChainById } from 'sushi/evm'
+import { isAddress, isAddressEqual } from 'viem'
 import {
   useBytecode,
   useConnection,
   usePublicClient,
+  useReadContract,
   useSignTypedData,
   useSimulateContract,
   useWriteContract,
@@ -43,10 +43,6 @@ import {
 import * as z from 'zod'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount, shortenAddress } from '../../../_lib/format'
-import {
-  LAUNCHPAD_ABI,
-  LAUNCHPAD_ADDRESS,
-} from '../../../_lib/launchpad-contract'
 import type { PreparedLaunchpadLogoFile } from '../../../_lib/launchpad-logo'
 import {
   canSubmitLaunchpadMetadataSignature,
@@ -58,11 +54,25 @@ import {
   launchpadProviderHasCapability,
 } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
+import { ProviderManagementActions } from '../../../_providers/provider-management-actions'
+import {
+  SUSHI_V1_LAUNCHPAD_ABI,
+  SUSHI_V1_LAUNCHPAD_ADDRESS,
+} from '../../../_providers/sushi-v1/contract'
+import {
+  type DistributionPreview,
+  SUSHI_V2_FEE_DISPOSITION,
+  SUSHI_V2_LAUNCHPAD_ABI,
+  SUSHI_V2_LAUNCHPAD_ADDRESS,
+  type SushiV2FeeDisposition,
+  normalizeSushiV2Distribution,
+} from '../../../_providers/sushi-v2/contract'
 import { DetailList } from '../../../_ui/detail-list'
 import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
 import { PageState } from '../../../_ui/state-card'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
+import { FeeDistributionCard } from './fee-distribution-card'
 
 const optionalHttpsUrl = z.union([
   z.literal(''),
@@ -123,6 +133,27 @@ export function ManageTokenPage({
   const canManageMetadata = token
     ? launchpadProviderHasCapability(token.provider, 'metadata')
     : false
+  const isSushiV2 = token?.__typename === 'SushiV2LaunchpadToken'
+  const managementAddress = isSushiV2
+    ? SUSHI_V2_LAUNCHPAD_ADDRESS
+    : SUSHI_V1_LAUNCHPAD_ADDRESS
+  const managementAbi = isSushiV2
+    ? SUSHI_V2_LAUNCHPAD_ABI
+    : SUSHI_V1_LAUNCHPAD_ABI
+  const { data: launchpadOwner } = useReadContract({
+    address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+    abi: SUSHI_V2_LAUNCHPAD_ABI,
+    chainId,
+    functionName: 'owner',
+    query: {
+      enabled: isSushiV2,
+    },
+  })
+  const isLaunchpadOwner = Boolean(
+    connectedAddress &&
+      launchpadOwner &&
+      isAddressEqual(connectedAddress, launchpadOwner),
+  )
   const {
     data: creatorBytecode,
     isLoading: isCreatorBytecodeLoading,
@@ -153,10 +184,11 @@ export function ManageTokenPage({
   const {
     data: distributionSimulation,
     isError: isDistributionSimulationError,
+    isPending: isDistributionSimulationPending,
     refetch: refetchDistributionSimulation,
   } = useSimulateContract({
-    address: LAUNCHPAD_ADDRESS,
-    abi: LAUNCHPAD_ABI,
+    address: managementAddress,
+    abi: managementAbi,
     chainId,
     functionName: 'distributeFees',
     args: [address],
@@ -167,13 +199,15 @@ export function ManageTokenPage({
       refetchOnWindowFocus: true,
     },
   })
-  const distributionPreview =
-    !isDistributionSimulationError && distributionSimulation?.result
-      ? {
-          quoteCollected: distributionSimulation.result[0],
-          tokenCollected: distributionSimulation.result[1],
-        }
-      : null
+  const distributionPreview: DistributionPreview | null = (() => {
+    if (isDistributionSimulationError || !distributionSimulation?.result) {
+      return null
+    }
+    const result = distributionSimulation.result
+    return 'quoteToSushi' in result
+      ? normalizeSushiV2Distribution(result)
+      : { quoteCollected: result[0], tokenCollected: result[1] }
+  })()
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [distributed, setDistributed] = useState(false)
@@ -181,6 +215,10 @@ export function ManageTokenPage({
   const [distributionError, setDistributionError] = useState<string | null>(
     null,
   )
+  const [newCreator, setNewCreator] = useState('')
+  const [newFeeReceiver, setNewFeeReceiver] = useState('')
+  const [managementError, setManagementError] = useState<string | null>(null)
+  const [isUpdatingManagement, setIsUpdatingManagement] = useState(false)
   const [logo, setLogo] = useState<PreparedLaunchpadLogoFile | null>(null)
   const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const metadataDefaults = useMemo<MetadataForm>(
@@ -209,6 +247,15 @@ export function ManageTokenPage({
     const timeout = setTimeout(() => setSaved(false), SAVED_STATUS_DURATION_MS)
     return () => clearTimeout(timeout)
   }, [saved])
+  useEffect(() => {
+    if (!distributed) return
+
+    const timeout = setTimeout(
+      () => setDistributed(false),
+      SAVED_STATUS_DURATION_MS,
+    )
+    return () => clearTimeout(timeout)
+  }, [distributed])
 
   async function onSubmit(values: MetadataForm): Promise<void> {
     setSaved(false)
@@ -269,8 +316,8 @@ export function ManageTokenPage({
       }
 
       const distributionParameters = {
-        address: LAUNCHPAD_ADDRESS,
-        abi: LAUNCHPAD_ABI,
+        address: managementAddress,
+        abi: managementAbi,
         chainId,
         functionName: 'distributeFees',
         args: [address],
@@ -314,6 +361,104 @@ export function ManageTokenPage({
       }
     } finally {
       setIsDistributing(false)
+    }
+  }
+
+  async function writeSushiV2Management(
+    functionName: 'setFeeDisposition' | 'setFeeReceiver' | 'transferCreator',
+    args: readonly [EvmAddress, number | EvmAddress],
+  ): Promise<void> {
+    if (!connectedAddress || !publicClient || !token || !isSushiV2) return
+    if (connectedChainId !== chainId) {
+      throw new Error(`Switch your wallet to ${getEvmChainById(chainId).name}`)
+    }
+
+    const parameters = {
+      address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+      abi: SUSHI_V2_LAUNCHPAD_ABI,
+      chainId,
+      functionName,
+      args,
+    } as const
+    await publicClient.simulateContract({
+      ...parameters,
+      account: connectedAddress,
+    })
+    const hash = await writeContractAsync(parameters)
+    await publicClient.waitForTransactionReceipt({ hash })
+    await refetch()
+  }
+
+  async function transferCreator(): Promise<void> {
+    setManagementError(null)
+    if (
+      !isAddress(newCreator) ||
+      newCreator === '0x0000000000000000000000000000000000000000'
+    ) {
+      setManagementError('Enter a non-zero EVM address')
+      return
+    }
+    setIsUpdatingManagement(true)
+    try {
+      await writeSushiV2Management('transferCreator', [address, newCreator])
+      setNewCreator('')
+    } catch (error) {
+      if (!isUserRejectedError(error)) {
+        setManagementError(
+          error instanceof Error ? error.message : 'Creator transfer failed',
+        )
+      }
+    } finally {
+      setIsUpdatingManagement(false)
+    }
+  }
+
+  async function setFeeDisposition(next: SushiV2FeeDisposition): Promise<void> {
+    setManagementError(null)
+    setIsUpdatingManagement(true)
+    try {
+      await writeSushiV2Management('setFeeDisposition', [
+        address,
+        SUSHI_V2_FEE_DISPOSITION[next],
+      ])
+    } catch (error) {
+      if (!isUserRejectedError(error)) {
+        setManagementError(
+          error instanceof Error ? error.message : 'Fee mode update failed',
+        )
+      }
+    } finally {
+      setIsUpdatingManagement(false)
+    }
+  }
+
+  async function setFeeReceiver(): Promise<void> {
+    setManagementError(null)
+    if (
+      !isAddress(newFeeReceiver) ||
+      newFeeReceiver === '0x0000000000000000000000000000000000000000'
+    ) {
+      setManagementError('Enter a non-zero EVM address')
+      return
+    }
+    if (!isLaunchpadOwner) {
+      setManagementError('Connect the launchpad owner wallet first')
+      return
+    }
+    setIsUpdatingManagement(true)
+    try {
+      await writeSushiV2Management('setFeeReceiver', [address, newFeeReceiver])
+      setNewFeeReceiver('')
+    } catch (error) {
+      if (!isUserRejectedError(error)) {
+        setManagementError(
+          error instanceof Error
+            ? error.message
+            : 'Fee recipient transfer failed',
+        )
+      }
+    } finally {
+      setIsUpdatingManagement(false)
     }
   }
 
@@ -377,10 +522,6 @@ export function ManageTokenPage({
       />
     )
   }
-  if (token.__typename !== 'SushiV1LaunchpadToken') {
-    throw new Error('Manageable launchpad token is not a Sushi V1 launch')
-  }
-
   return (
     <Container maxWidth="6xl" className="w-full px-4 py-10 sm:py-14">
       <div className="flex items-center gap-2 text-sm text-perps-muted-50">
@@ -420,7 +561,7 @@ export function ManageTokenPage({
         </LinkInternal>
       </div>
 
-      <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+      <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
         <Form {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <PerpsCard className="p-5 sm:p-7" fullWidth>
@@ -601,7 +742,6 @@ export function ManageTokenPage({
                 ],
                 ['Decimals', `${token.decimals}`],
                 ['Pool tier', `${token.pool.feeTier / 10_000}%`],
-                ['Positions', `${token.positions.length}`],
               ].map(([label, value]) => ({ label, value }))}
             />
           </PerpsCard>
@@ -617,8 +757,8 @@ export function ManageTokenPage({
               {token.creator}
             </p>
             <p className="mt-3 text-xs leading-5 text-perps-muted-50">
-              The backend verifies this immutable address independently for
-              every metadata and logo signature
+              The backend verifies this {isSushiV2 ? 'current' : 'immutable'}{' '}
+              address independently for every metadata and logo signature
               {isContractCreator
                 ? ', including EIP-1271 signatures if this contract supports them.'
                 : '.'}
@@ -628,95 +768,33 @@ export function ManageTokenPage({
       </div>
 
       <div className="mt-5">
-        <PerpsCard className="overflow-hidden" fullWidth>
-          <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600">
-                  <BanknotesIcon className="h-5 w-5" />
-                </span>
-                <div>
-                  <h2 className="font-semibold text-perps-muted">
-                    Distribute trading fees
-                  </h2>
-                  <p className="mt-0.5 text-xs text-perps-muted-50">
-                    Collects every registered V3 position in one transaction
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <div className="rounded-xl bg-white/[0.04] p-4">
-                  <div className="text-xs text-perps-muted-50">
-                    Launch token
-                  </div>
-                  <div className="mt-1 font-semibold">
-                    {distributionPreview
-                      ? `${formatRawAmount(
-                          distributionPreview.tokenCollected,
-                          token.decimals,
-                          6,
-                        )} ${token.symbol}`
-                      : 'Resolved on simulation'}
-                  </div>
-                </div>
-                <div className="rounded-xl bg-white/[0.04] p-4">
-                  <div className="text-xs text-perps-muted-50">Quote token</div>
-                  <div className="mt-1 font-semibold">
-                    {distributionPreview
-                      ? `${formatRawAmount(
-                          distributionPreview.quoteCollected,
-                          token.pool.quoteToken.decimals,
-                          6,
-                        )} ${token.pool.quoteToken.symbol}`
-                      : 'Resolved on simulation'}
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-xs leading-5 text-perps-muted-50">
-                Distribution is permissionless. Anyone can do it.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5">
-              <p className="text-sm text-perps-muted-50">
-                Distribution follows the fee configuration recorded by the
-                launch contract.
-              </p>
-              <Checker.Connect
-                namespace="evm"
-                fullWidth
-                size="lg"
-                variant="perps-default"
-                className="mt-5"
-                type="button"
-              >
-                <Button
-                  fullWidth
-                  size="lg"
-                  variant="perps-default"
-                  className="mt-5"
-                  disabled={isDistributing || distributed}
-                  onClick={() => void distributeFees()}
-                >
-                  {isDistributing ? (
-                    <>
-                      {'Distributing fees'}
-                      <Dots />
-                    </>
-                  ) : distributed ? (
-                    'Fees distributed'
-                  ) : (
-                    'Distribute fees'
-                  )}
-                </Button>
-              </Checker.Connect>
-              {distributionError ? (
-                <Message variant="destructive" className="mt-5">
-                  {distributionError}
-                </Message>
-              ) : null}
-            </div>
-          </div>
-        </PerpsCard>
+        <FeeDistributionCard
+          token={token}
+          chainId={chainId}
+          preview={distributionPreview}
+          isSimulating={isDistributionSimulationPending}
+          isDistributing={isDistributing}
+          distributed={distributed}
+          error={distributionError}
+          onDistribute={() => void distributeFees()}
+        />
+      </div>
+
+      <div className="mt-5">
+        <ProviderManagementActions
+          token={token}
+          connectedAddress={connectedAddress}
+          isLaunchpadOwner={isLaunchpadOwner}
+          newCreator={newCreator}
+          newFeeReceiver={newFeeReceiver}
+          isUpdating={isUpdatingManagement}
+          error={managementError}
+          onNewCreatorChange={setNewCreator}
+          onNewFeeReceiverChange={setNewFeeReceiver}
+          onTransferCreator={() => void transferCreator()}
+          onSetFeeReceiver={() => void setFeeReceiver()}
+          onSetFeeDisposition={(next) => void setFeeDisposition(next)}
+        />
       </div>
     </Container>
   )
