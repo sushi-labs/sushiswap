@@ -22,17 +22,8 @@ export class BaseActions {
 
     if (await connectedWalletSelector.isVisible()) return
 
-    if (await connectSelector.isDisabled()) {
-      // E2E uses wagmi's mock connector, which can be ready before Privy's
-      // wallet state. Dispatch the test button's keyboard handler when the
-      // production loading guard is still active.
-      await connectSelector.dispatchEvent('keydown', {
-        key: 'Enter',
-        code: 'Enter',
-      })
-    } else {
-      await connectSelector.click({ delay: 500 })
-    }
+    await expect(connectSelector).toBeEnabled()
+    await connectSelector.click({ delay: 500 })
 
     await expect(connectedWalletSelector).toBeVisible()
   }

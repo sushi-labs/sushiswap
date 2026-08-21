@@ -9,5 +9,9 @@ export function useIsSvmWalletLoading(): boolean {
   const { ready } = useStandardWallets()
   const { wallet } = useConnector()
 
+  if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
+    return false
+  }
+
   return !account && (!ready || wallet.status === 'connecting')
 }

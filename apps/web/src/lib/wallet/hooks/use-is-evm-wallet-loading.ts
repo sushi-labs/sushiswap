@@ -9,5 +9,9 @@ export function useIsEvmWalletLoading(): boolean {
   const { ready } = usePrivyWallets()
   const { isConnecting, isReconnecting } = useConnection()
 
+  if (process.env.NEXT_PUBLIC_APP_ENV === 'test') {
+    return false
+  }
+
   return !account && (!ready || isConnecting || isReconnecting)
 }
