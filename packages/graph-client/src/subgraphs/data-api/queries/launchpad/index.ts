@@ -1,5 +1,6 @@
 export * from './candles.js'
 export * from './creator.js'
+export * from './market-stats.js'
 export * from './quote-tokens.js'
 export * from './stats.js'
 export * from './token-fragment.js'
