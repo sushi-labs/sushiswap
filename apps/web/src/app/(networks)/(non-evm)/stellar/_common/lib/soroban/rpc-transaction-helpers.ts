@@ -1,6 +1,6 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
 import ms from 'ms'
-import { NETWORK_PASSPHRASE, RPC_URL } from '../constants'
+import { NETWORK_PASSPHRASE, RPC_HEADERS, RPC_URL } from '../constants'
 import { SorobanClient } from './client'
 import { VALID_UNTIL_LEDGER_BUMP } from './constants'
 
@@ -36,6 +36,7 @@ export async function submitViaRawRPC(signedTx: any): Promise<string> {
   const response = await fetch(RPC_URL, {
     method: 'POST',
     headers: {
+      ...RPC_HEADERS,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(rpcRequest),
@@ -150,7 +151,10 @@ export async function waitForTransaction(
 
     const response = await fetch(RPC_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        ...RPC_HEADERS,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(statusRequest),
     })
 

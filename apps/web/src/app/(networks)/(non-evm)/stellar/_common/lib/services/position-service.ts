@@ -234,29 +234,22 @@ export class PositionService {
       contractId: positionManagerContractId,
     })
 
-    try {
-      const batchPromises = Array.from(
-        { length: numberOfBatches },
-        async (_, i) => {
-          const { result } =
-            await positionManagerClient.get_user_positions_with_fees({
-              owner: userAddress,
-              skip: skip + i * BATCH_SIZE,
-              take: BATCH_SIZE,
-            })
-          return handleResult<UserPositionInfo[]>(result).map(
-            formatPositionInfo,
-          )
-        },
-      )
+    const batchPromises = Array.from(
+      { length: numberOfBatches },
+      async (_, i) => {
+        const { result } =
+          await positionManagerClient.get_user_positions_with_fees({
+            owner: userAddress,
+            skip: skip + i * BATCH_SIZE,
+            take: BATCH_SIZE,
+          })
+        return handleResult<UserPositionInfo[]>(result).map(formatPositionInfo)
+      },
+    )
 
-      const batchResults = await Promise.all(batchPromises)
+    const batchResults = await Promise.all(batchPromises)
 
-      return batchResults.flat()
-    } catch (error) {
-      console.error('Failed to get user positions:', error)
-      return []
-    }
+    return batchResults.flat()
   }
 
   /**
