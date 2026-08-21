@@ -59,9 +59,11 @@ import { PageState } from '../../../_ui/state-card'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
+import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import { TokenDetailSkeleton } from './token-detail-skeleton'
+import { TradeActivity } from './trade-activity'
 import { TradeHistory } from './trade-history'
 
 interface MetadataLink {
@@ -257,6 +259,7 @@ export function TokenDetailPage({
     isPending: isTokenPending,
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
+  const { data: marketStats } = useLaunchpadMarketStats(chainId, address)
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
@@ -316,7 +319,7 @@ export function TokenDetailPage({
     tvlChangePercent24h: tvlChangePercent ?? null,
     launchedAt: new Date(token.createdAt),
   })
-  const marketStats = [
+  const headerMetrics = [
     {
       label: 'Price',
       value: formatLaunchpadPriceUsd(metrics?.priceUsd),
@@ -336,8 +339,13 @@ export function TokenDetailPage({
       changeLabel: '24H',
     },
     {
+      // Sourced from marketStats so this agrees with the trade activity card:
+      // token.metrics sums whole candle buckets, marketStats measures the exact
+      // trailing 24 hours, and the two do not reconcile.
       label: '24h volume',
-      value: formatUsd(metrics?.volumeUsd.h24),
+      value: formatUsd(
+        marketStats?.h24.totalVolumeUsd ?? metrics?.volumeUsd.h24,
+      ),
       detail: 'Launch pool volume',
     },
   ]
@@ -401,7 +409,7 @@ export function TokenDetailPage({
 
       <div className="mt-6">
         <MetricStrip>
-          {marketStats.map((stat, index) => (
+          {headerMetrics.map((stat, index) => (
             <MetricStripItem
               key={stat.label}
               index={index}
@@ -482,8 +490,10 @@ export function TokenDetailPage({
             </Sheet>
           )}
 
-          <PerpsCard className="p-5" fullWidth>
-            <h2 className="text-lg font-semibold text-perps-muted">
+          <TradeActivity chainId={chainId} tokenAddress={address} />
+
+          <PerpsCard className="p-4" fullWidth>
+            <h2 className="font-semibold text-perps-muted">
               About {token.name}
             </h2>
             <p className="mt-3 text-sm leading-6 text-perps-muted-50">

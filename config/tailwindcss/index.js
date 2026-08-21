@@ -119,6 +119,7 @@ module.exports = {
         walk: 'walk 0.5s linear infinite',
         shadow: 'shadow 0.5s linear infinite',
         float: 'float 8s ease-in-out infinite',
+        'launchpad-trade-flash': 'launchpad-trade-flash 700ms ease-out',
       },
       keyframes: {
         'accordion-down': {
@@ -133,6 +134,16 @@ module.exports = {
           '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
           '33%': { transform: 'translate(6px, -4px) scale(1.28)' },
           '66%': { transform: 'translate(-4px, 3px) scale(0.85)' },
+        },
+        'launchpad-trade-flash': {
+          '0%': {
+            backgroundColor: 'rgb(52 155 254 / 0.26)',
+            boxShadow: '0 0 0 2px rgb(52 155 254 / 0.13)',
+          },
+          '100%': {
+            backgroundColor: 'transparent',
+            boxShadow: '0 0 0 2px transparent',
+          },
         },
         shimmer: {
           '100%': {

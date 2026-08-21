@@ -29,6 +29,8 @@ import {
   minimumLaunchpadStreamCursor,
   publishLaunchpadCandleRemove,
   publishLaunchpadCandleUpdate,
+  publishLaunchpadTradeStreamEvent,
+  publishLaunchpadTradeStreamReset,
   reconcileLaunchpadTradeResetSnapshot,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleSnapshot,
@@ -56,6 +58,7 @@ const streamIdentitySchema = z.object({
   eventId: unsignedIntegerSchema,
 })
 const streamTradeSchema = streamIdentitySchema.extend({
+  isNew: z.boolean(),
   id: z.string().min(1),
   poolAddress: evmAddressSchema,
   feeTier: z.number().int().nonnegative(),
@@ -74,6 +77,7 @@ const streamTradeSchema = streamIdentitySchema.extend({
     decimals: z.number().int().nonnegative(),
   }),
   quoteAmount: unsignedIntegerSchema,
+  marginalPriceUsd: z.number().nonnegative().nullable(),
   priceUsd: z.number().nonnegative().nullable(),
   amountUsd: z.number().nonnegative().nullable(),
 })
@@ -141,6 +145,12 @@ export function parseLaunchpadMetricsStreamEvent(
   event: MessageEvent<string>,
 ): z.infer<typeof streamMetricsSchema> | null {
   return parseStreamEvent(event, streamMetricsSchema)
+}
+
+export function parseLaunchpadTradeStreamEvent(
+  event: MessageEvent<string>,
+): z.infer<typeof streamTradeSchema> | null {
+  return parseStreamEvent(event, streamTradeSchema)
 }
 
 export function parseLaunchpadTradeResetStreamEvent(
@@ -231,14 +241,13 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
           return
         }
 
-        hasSnapshot.current = true
-        setData(
-          applyLaunchpadTradeMutations(
-            flattenLaunchpadTradePages(pages),
-            mutations.current.values(),
-            includeSmallTrades,
-          ),
+        const next = applyLaunchpadTradeMutations(
+          flattenLaunchpadTradePages(pages),
+          mutations.current.values(),
+          includeSmallTrades,
         )
+        hasSnapshot.current = true
+        setData(next)
       })
       .catch(() => undefined)
 
@@ -250,13 +259,12 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
   useEffect(() => {
     if (!hasSnapshot.current || !snapshot.isSuccess) return
 
-    setData(
-      applyLaunchpadTradeMutations(
-        snapshot.data,
-        mutations.current.values(),
-        includeSmallTrades,
-      ),
+    const next = applyLaunchpadTradeMutations(
+      snapshot.data,
+      mutations.current.values(),
+      includeSmallTrades,
     )
+    setData(next)
   }, [includeSmallTrades, snapshot.data, snapshot.isSuccess])
 
   useEffect(() => {
@@ -355,19 +363,28 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
     }
 
     function handleTradeUpsert(event: Event) {
-      const payload = parseStreamEvent(
+      const payload = parseLaunchpadTradeStreamEvent(
         event as MessageEvent<string>,
-        streamTradeSchema,
       )
       if (!payload || !isExpected(payload)) return
 
-      const { eventId, ...trade } = payload
+      const { eventId, isNew, ...trade } = payload
       const mutation: LaunchpadTradeMutation = {
         eventId,
         type: 'upsert',
         trade,
       }
-      mutations.current.set(getLaunchpadTradeKey(trade), mutation)
+      const tradeKey = getLaunchpadTradeKey(trade)
+      mutations.current.set(tradeKey, mutation)
+      publishLaunchpadTradeStreamEvent(streamIdentity, {
+        amountUsd: trade.amountUsd,
+        direction: trade.direction,
+        eventId,
+        isNew,
+        marginalPriceUsd: trade.marginalPriceUsd,
+        timestamp: trade.timestamp,
+        tradeKey,
+      })
       setLastEventAt(trade.timestamp)
       setData((current) =>
         applyLaunchpadTradeMutation(
@@ -391,7 +408,8 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         transactionHash: payload.transactionHash,
         logIndex: payload.logIndex,
       }
-      mutations.current.set(getLaunchpadTradeKey(mutation), mutation)
+      const tradeKey = getLaunchpadTradeKey(mutation)
+      mutations.current.set(tradeKey, mutation)
       setData((current) =>
         applyLaunchpadTradeMutation(
           current,
@@ -409,6 +427,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
 
       const currentTradeSnapshotGeneration = ++tradeSnapshotGeneration.current
       const currentSynchronization = synchronization.current
+      publishLaunchpadTradeStreamReset(streamIdentity)
       clearTradeSnapshotRetry()
       tradeSnapshotRetryAttempt = 0
       tradeSnapshotCursor = undefined
@@ -803,6 +822,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       if (!payload || !isExpected(payload)) return
 
       source?.close()
+      publishLaunchpadTradeStreamReset(streamIdentity)
       void refetchMetrics()
       void refetchSnapshotAndReconnect(false, true)
     }
