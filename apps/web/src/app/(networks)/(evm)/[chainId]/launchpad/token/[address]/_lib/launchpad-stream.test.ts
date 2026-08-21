@@ -13,14 +13,18 @@ import {
   minimumLaunchpadStreamCursor,
   publishLaunchpadCandleRemove,
   publishLaunchpadCandleUpdate,
+  publishLaunchpadTradeStreamEvent,
+  publishLaunchpadTradeStreamReset,
   reconcileLaunchpadTradeResetSnapshot,
   refetchLaunchpadCandleSnapshots,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleStream,
+  subscribeToLaunchpadTradeStream,
 } from './launchpad-stream'
 import {
   parseLaunchpadMetricsStreamEvent,
   parseLaunchpadTradeResetStreamEvent,
+  parseLaunchpadTradeStreamEvent,
 } from './use-launchpad-live-trades'
 
 const CHAIN_ID = 4663
@@ -109,6 +113,22 @@ describe('launchpad stream', () => {
       }),
     )
     expect(payload?.metrics.marketCapitalizationUsd).toBe(1_000_000)
+  })
+
+  it('preserves the marginal price from trade updates', () => {
+    const payload = parseLaunchpadTradeStreamEvent(
+      new MessageEvent('trade.upsert', {
+        data: JSON.stringify({
+          ...createTrade(),
+          eventId: '41',
+          isNew: true,
+          marginalPriceUsd: 1.75,
+        }),
+      }),
+    )
+
+    expect(payload?.marginalPriceUsd).toBe(1.75)
+    expect(payload?.priceUsd).toBe(2)
   })
 
   it('keeps the full decimal stream cursor in the EventSource URL', () => {
@@ -335,5 +355,50 @@ describe('launchpad stream', () => {
       streamCursor: '44',
       subscriberCount: 1,
     })
+  })
+  it('delivers trade events to the subscribers of one token only', () => {
+    const onReset = vi.fn()
+    const onTrade = vi.fn()
+    const otherOnTrade = vi.fn()
+    const tradeEvent = {
+      amountUsd: 25,
+      direction: 'BUY' as const,
+      eventId: '101',
+      isNew: true,
+      marginalPriceUsd: 1.5,
+      timestamp: '2026-08-20T21:15:49.754Z',
+      tradeKey: `${TRANSACTION_HASH}:1`,
+    }
+    const unsubscribe = subscribeToLaunchpadTradeStream(
+      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
+      { onReset, onTrade },
+    )
+    const unsubscribeOther = subscribeToLaunchpadTradeStream(
+      {
+        chainId: CHAIN_ID,
+        tokenAddress: '0x6666666666666666666666666666666666666666',
+      },
+      { onReset: vi.fn(), onTrade: otherOnTrade },
+    )
+
+    publishLaunchpadTradeStreamEvent(
+      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS.toUpperCase() as never },
+      tradeEvent,
+    )
+    publishLaunchpadTradeStreamReset({
+      chainId: CHAIN_ID,
+      tokenAddress: TOKEN_ADDRESS,
+    })
+    unsubscribe()
+    publishLaunchpadTradeStreamEvent(
+      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
+      tradeEvent,
+    )
+    unsubscribeOther()
+
+    expect(onTrade).toHaveBeenCalledTimes(1)
+    expect(onTrade).toHaveBeenCalledWith(tradeEvent)
+    expect(onReset).toHaveBeenCalledOnce()
+    expect(otherOnTrade).not.toHaveBeenCalled()
   })
 })
