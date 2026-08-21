@@ -235,8 +235,20 @@ export function TradeActivity({
           <div className="truncate text-xl font-semibold tabular-nums text-perps-muted">
             {formatUsd(activity.totalVolumeUsd)}
           </div>
-          <div className="mt-0.5 text-[11px] text-perps-muted-50">
-            {selected.label} volume
+          <div className="mt-0.5 flex items-center gap-1.5 text-[11px]">
+            <span className="text-perps-muted-50">{selected.label} volume</span>
+            <span aria-hidden="true" className="text-perps-muted-50">
+              ·
+            </span>
+            <span
+              className={classNames(
+                'truncate font-medium tabular-nums',
+                changeClassName(activity.netFlowUsd),
+              )}
+            >
+              Net {activity.netFlowUsd > 0 ? '+' : ''}
+              {formatUsd(activity.netFlowUsd)}
+            </span>
           </div>
         </div>
         <div className="min-w-0 text-right">
@@ -300,19 +312,6 @@ export function TradeActivity({
           label="Sells"
           volumeUsd={activity.sellVolumeUsd}
         />
-      </div>
-
-      <div className="mt-3 flex items-center justify-between gap-4 border-t border-white/[0.06] pt-3 text-xs">
-        <span className="text-perps-muted-50">Net flow</span>
-        <span
-          className={classNames(
-            'font-medium tabular-nums',
-            changeClassName(activity.netFlowUsd),
-          )}
-        >
-          {activity.netFlowUsd > 0 ? '+' : ''}
-          {formatUsd(activity.netFlowUsd)}
-        </span>
       </div>
     </PerpsCard>
   )
