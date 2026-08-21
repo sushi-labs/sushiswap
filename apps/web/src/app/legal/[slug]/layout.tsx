@@ -2,8 +2,6 @@
 
 import { Header } from '../header'
 
-export const fetchCache = 'default-no-store'
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>

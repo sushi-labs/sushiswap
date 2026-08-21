@@ -1,5 +1,6 @@
 import { getAcademyArticles } from '@sushiswap/graph-client/strapi'
 import { Container, classNames } from '@sushiswap/ui'
+import { connection } from 'next/server'
 import { DEFAULT_SIDE_PADDING } from '../../constants'
 import { AcademySearchProvider } from '../components/academy-search-provider'
 import { ArticleListFiltered } from '../components/article-list/article-list-filtered'
@@ -10,6 +11,8 @@ import { SortByDropdown } from './components/sort-by-dropdown'
 import { TopicProductSidebar } from './components/topic-product-sidebar/topic-product-sidebar'
 
 export default async function Page() {
+  await connection()
+
   const { articles, meta } = await getAcademyArticles({
     pagination: {
       limit: 10,
