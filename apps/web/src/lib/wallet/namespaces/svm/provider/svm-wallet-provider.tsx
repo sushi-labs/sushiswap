@@ -1,6 +1,7 @@
 'use client'
 
 import { useLogin, usePrivy } from '@privy-io/react-auth'
+import { useStandardWallets } from '@privy-io/react-auth/solana'
 import {
   AppProvider as SvmConnectorProvider,
   useConnector,
@@ -18,8 +19,14 @@ import {
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
+  getIsPrivyWalletProviderReady,
+  getWalletRestorationState,
+} from 'src/lib/wallet/provider/get-wallet-restoration-state'
+import {
   addWalletConnection,
   clearWalletConnections,
+  getConnections as getWalletConnections,
+  setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
@@ -62,6 +69,7 @@ export default function SvmWalletProvider({
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const client = useConnectorClient()
   useRegisterPrivySvmWallet(client)
+  const { ready: arePrivyStandardWalletsReady } = useStandardWallets()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('svm')
   const walletInfo = useWalletInfo()
   const {
@@ -69,7 +77,11 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     connectWallet,
     wallet: _connector,
   } = useConnector()
-  const { logout } = usePrivy()
+  const {
+    authenticated: isPrivyAuthenticated,
+    ready: isPrivyAuthReady,
+    logout,
+  } = usePrivy()
 
   const { login } = useLogin({
     onComplete: async () => {
@@ -187,6 +199,32 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       icon: walletInfo.icon ?? undefined,
     })
   }, [isConnected, connector, walletInfo.name, walletInfo.icon])
+
+  useEffect(() => {
+    const hasRegisteredConnection = getWalletConnections().some(
+      (connection) => connection.namespace === 'svm',
+    )
+
+    setWalletNamespaceRestoring(
+      'svm',
+      getWalletRestorationState({
+        hasRegisteredConnection,
+        isProviderReady: getIsPrivyWalletProviderReady({
+          isAuthReady: isPrivyAuthReady,
+          isAuthenticated: isPrivyAuthenticated,
+          areWalletsReady: arePrivyStandardWalletsReady,
+        }),
+        isConnecting: _connector.status === 'connecting',
+        isConnected,
+      }),
+    )
+  }, [
+    _connector.status,
+    arePrivyStandardWalletsReady,
+    isConnected,
+    isPrivyAuthenticated,
+    isPrivyAuthReady,
+  ])
 
   return (
     <SvmWalletContext.Provider value={value}>

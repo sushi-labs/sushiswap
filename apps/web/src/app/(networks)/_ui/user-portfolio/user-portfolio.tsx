@@ -6,11 +6,16 @@ import Image from 'next/image'
 import { useMemo } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { type WalletNamespace, useWallets } from 'src/lib/wallet'
-import { ChainId, shortenAddress } from 'sushi'
+import {
+  type WalletNamespace,
+  useWalletConnection,
+  useWallets,
+} from 'src/lib/wallet'
+import { type ChainId, shortenAddress } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { useConnection, useEnsAvatar, useEnsName } from 'wagmi'
 import { SidebarTrigger } from '../sidebar/sidebar-trigger'
+import { getUserPortfolioWallet } from './get-user-portfolio-wallet'
 
 interface UserPortfolioProps {
   selectedNetwork: ChainId | undefined
@@ -24,13 +29,9 @@ export function UserPortfolio({
   isPerps,
 }: UserPortfolioProps) {
   const wallets = useWallets()
+  const { isRestoring } = useWalletConnection()
 
-  const wallet =
-    selectedNetwork === ChainId.SOLANA
-      ? (wallets.svm ?? wallets.evm)
-      : selectedNetwork === ChainId.STELLAR
-        ? wallets.stellar
-        : (wallets.evm ?? wallets.svm)
+  const wallet = getUserPortfolioWallet(wallets, selectedNetwork)
 
   const { address: wagmiAddress } = useConnection()
 
@@ -59,6 +60,7 @@ export function UserPortfolio({
       <ConnectButton
         variant={isPerps ? 'perps-default' : 'secondary'}
         namespace={namespace}
+        loading={isRestoring}
       />
     )
 

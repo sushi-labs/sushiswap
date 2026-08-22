@@ -1,4 +1,8 @@
-import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
+import {
+  useConnectOrCreateWallet,
+  usePrivy,
+  useWallets as usePrivyWallets,
+} from '@privy-io/react-auth'
 import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
 import {
   getConnections,
@@ -16,8 +20,14 @@ import {
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
 import {
+  getIsPrivyWalletProviderReady,
+  getWalletRestorationState,
+} from 'src/lib/wallet/provider/get-wallet-restoration-state'
+import {
   addWalletConnection,
   clearWalletConnections,
+  getConnections as getWalletConnections,
+  setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
 import type { Wallet } from 'src/lib/wallet/types'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
@@ -69,8 +79,13 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   } = useConnection()
   const { isPending } = useDisconnect()
   const { setActiveWallet } = useSetActiveWallet()
+  const { ready: arePrivyWalletsReady } = usePrivyWallets()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-  const { logout } = usePrivy()
+  const {
+    authenticated: isPrivyAuthenticated,
+    ready: isPrivyAuthReady,
+    logout,
+  } = usePrivy()
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {
@@ -180,6 +195,33 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnecting,
     isReconnecting,
     isPending,
+  ])
+
+  useEffect(() => {
+    const hasRegisteredConnection = getWalletConnections().some(
+      (connection) => connection.namespace === 'evm',
+    )
+
+    setWalletNamespaceRestoring(
+      'evm',
+      getWalletRestorationState({
+        hasRegisteredConnection,
+        isProviderReady: getIsPrivyWalletProviderReady({
+          isAuthReady: isPrivyAuthReady,
+          isAuthenticated: isPrivyAuthenticated,
+          areWalletsReady: arePrivyWalletsReady,
+        }),
+        isConnecting: isConnecting || isReconnecting,
+        isConnected,
+      }),
+    )
+  }, [
+    arePrivyWalletsReady,
+    isConnected,
+    isConnecting,
+    isPrivyAuthenticated,
+    isPrivyAuthReady,
+    isReconnecting,
   ])
 
   return (
