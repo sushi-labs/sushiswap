@@ -2,9 +2,16 @@ import { useSyncExternalStore } from 'react'
 import type { WalletConnection, WalletNamespace } from '../types'
 
 let connections: WalletConnection[] = []
-const listeners = new Set<() => void>()
+const shouldTrackWalletRestoration = process.env.NEXT_PUBLIC_APP_ENV !== 'test'
+let isRestoringByNamespace: Record<WalletNamespace, boolean> = {
+  evm: shouldTrackWalletRestoration,
+  svm: shouldTrackWalletRestoration,
+  stellar: false,
+}
+const connectionListeners = new Set<() => void>()
+const restorationListeners = new Set<() => void>()
 
-function emit() {
+function emit(listeners: Set<() => void>) {
   for (const listener of listeners) listener()
 }
 
@@ -26,7 +33,7 @@ export function addWalletConnection(connection: WalletConnection) {
   // add new connection
   if (i === -1) {
     connections = [...connections, connection]
-    emit()
+    emit(connectionListeners)
     return
   }
 
@@ -37,7 +44,7 @@ export function addWalletConnection(connection: WalletConnection) {
   const next = connections.slice()
   next[i] = connection
   connections = next
-  emit()
+  emit(connectionListeners)
 }
 
 export function removeWalletConnection(id: string) {
@@ -47,35 +54,61 @@ export function removeWalletConnection(id: string) {
   const next = connections.slice()
   next.splice(i, 1)
   connections = next
-  emit()
+  emit(connectionListeners)
 }
 
 export function clearWalletConnections(namespace: WalletNamespace) {
   const next = connections.filter((c) => c.namespace !== namespace)
   if (next.length === connections.length) return
   connections = next
-  emit()
+  emit(connectionListeners)
 }
 
 export function getConnections(): WalletConnection[] {
   return connections
 }
 
+export function setWalletNamespaceRestoring(
+  namespace: WalletNamespace,
+  isRestoring: boolean,
+) {
+  const nextIsRestoring = shouldTrackWalletRestoration && isRestoring
+
+  if (isRestoringByNamespace[namespace] === nextIsRestoring) return
+
+  isRestoringByNamespace = {
+    ...isRestoringByNamespace,
+    [namespace]: nextIsRestoring,
+  }
+  emit(restorationListeners)
+}
+
 export function watchConnections(listener: () => void) {
-  listeners.add(listener)
+  connectionListeners.add(listener)
 
   return () => {
-    listeners.delete(listener)
+    connectionListeners.delete(listener)
   }
 }
 
 export function useConnections(): WalletConnection[] {
   return useSyncExternalStore(
     (cb) => {
-      listeners.add(cb)
-      return () => listeners.delete(cb)
+      connectionListeners.add(cb)
+      return () => connectionListeners.delete(cb)
     },
     () => connections,
     () => connections,
+  )
+}
+
+export function useWalletRestorationState(): Record<WalletNamespace, boolean> {
+  return useSyncExternalStore(
+    (cb) => {
+      restorationListeners.add(cb)
+      return () => restorationListeners.delete(cb)
+    },
+    () => isRestoringByNamespace,
+    () => isRestoringByNamespace,
   )
 }

@@ -8,8 +8,7 @@ import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import {
   type WalletNamespace,
-  useIsEvmWalletLoading,
-  useIsSvmWalletLoading,
+  useWalletConnection,
   useWallets,
 } from 'src/lib/wallet'
 import { type ChainId, shortenAddress } from 'sushi'
@@ -30,8 +29,7 @@ export function UserPortfolio({
   isPerps,
 }: UserPortfolioProps) {
   const wallets = useWallets()
-  const isEvmWalletLoading = useIsEvmWalletLoading()
-  const isSvmWalletLoading = useIsSvmWalletLoading()
+  const { isRestoring } = useWalletConnection()
 
   const wallet = getUserPortfolioWallet(wallets, selectedNetwork)
 
@@ -62,7 +60,7 @@ export function UserPortfolio({
       <ConnectButton
         variant={isPerps ? 'perps-default' : 'secondary'}
         namespace={namespace}
-        loading={isEvmWalletLoading || isSvmWalletLoading}
+        loading={isRestoring}
       />
     )
 
