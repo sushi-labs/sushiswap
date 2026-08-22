@@ -19,7 +19,10 @@ import {
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
-import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
+import {
+  getIsPrivyWalletProviderReady,
+  getWalletRestorationState,
+} from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -76,9 +79,13 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   } = useConnection()
   const { isPending } = useDisconnect()
   const { setActiveWallet } = useSetActiveWallet()
-  const { ready: isPrivyReady } = usePrivyWallets()
+  const { ready: arePrivyWalletsReady } = usePrivyWallets()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-  const { logout } = usePrivy()
+  const {
+    authenticated: isPrivyAuthenticated,
+    ready: isPrivyAuthReady,
+    logout,
+  } = usePrivy()
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {
@@ -199,12 +206,23 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       'evm',
       getWalletRestorationState({
         hasRegisteredConnection,
-        isProviderReady: isPrivyReady,
+        isProviderReady: getIsPrivyWalletProviderReady({
+          isAuthReady: isPrivyAuthReady,
+          isAuthenticated: isPrivyAuthenticated,
+          areWalletsReady: arePrivyWalletsReady,
+        }),
         isConnecting: isConnecting || isReconnecting,
         isConnected,
       }),
     )
-  }, [isConnected, isConnecting, isPrivyReady, isReconnecting])
+  }, [
+    arePrivyWalletsReady,
+    isConnected,
+    isConnecting,
+    isPrivyAuthenticated,
+    isPrivyAuthReady,
+    isReconnecting,
+  ])
 
   return (
     <EvmWalletContext.Provider value={value}>

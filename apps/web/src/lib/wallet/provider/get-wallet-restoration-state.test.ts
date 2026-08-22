@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { getWalletRestorationState } from './get-wallet-restoration-state'
+import {
+  getIsPrivyWalletProviderReady,
+  getWalletRestorationState,
+} from './get-wallet-restoration-state'
 
 const restoredDisconnectedState = {
   hasRegisteredConnection: false,
@@ -49,5 +52,45 @@ describe('getWalletRestorationState', () => {
 
   it('finishes restoring once the provider confirms it is disconnected', () => {
     expect(getWalletRestorationState(restoredDisconnectedState)).toBe(false)
+  })
+})
+
+describe('getIsPrivyWalletProviderReady', () => {
+  it('waits for Privy authentication to initialize', () => {
+    expect(
+      getIsPrivyWalletProviderReady({
+        isAuthReady: false,
+        isAuthenticated: false,
+        areWalletsReady: false,
+      }),
+    ).toBe(false)
+  })
+
+  it('does not wait for wallets in a logged-out session', () => {
+    expect(
+      getIsPrivyWalletProviderReady({
+        isAuthReady: true,
+        isAuthenticated: false,
+        areWalletsReady: false,
+      }),
+    ).toBe(true)
+  })
+
+  it('waits for wallets in an authenticated session', () => {
+    expect(
+      getIsPrivyWalletProviderReady({
+        isAuthReady: true,
+        isAuthenticated: true,
+        areWalletsReady: false,
+      }),
+    ).toBe(false)
+
+    expect(
+      getIsPrivyWalletProviderReady({
+        isAuthReady: true,
+        isAuthenticated: true,
+        areWalletsReady: true,
+      }),
+    ).toBe(true)
   })
 })
