@@ -10,10 +10,9 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo, useRef } from 'react'
+import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { useReplayChartAnimation } from './use-replay-chart-animation'
 
 interface TVLChart {
   data: AnalyticsDayBuckets
@@ -25,7 +24,6 @@ echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
 export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
   const isMounted = useIsMounted()
-  const chartRef = useRef<ReactEchartsCore>(null)
 
   const { resolvedTheme } = useTheme()
 
@@ -246,8 +244,6 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     [onMouseOver, v2, v3, blade, zIndex, resolvedTheme, showBlade],
   )
 
-  useReplayChartAnimation(chartRef, DEFAULT_OPTION)
-
   return (
     <div>
       <div className="flex flex-col gap-3">
@@ -298,7 +294,6 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
         </div>
       </div>
       <ReactEchartsCore
-        ref={chartRef}
         option={DEFAULT_OPTION}
         echarts={echarts}
         style={{ height: 400 }}
