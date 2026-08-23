@@ -13,7 +13,7 @@ import {
   useDerivedStateSimpleSwap,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-review-dialog'
-import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/get-swap-edge-config'
+import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-config'
 import {
   LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
   LAUNCHPAD_SWAP_FEE,
