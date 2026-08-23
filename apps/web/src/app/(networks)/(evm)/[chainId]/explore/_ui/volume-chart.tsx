@@ -9,9 +9,10 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo, useRef } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { useReplayChartAnimation } from './use-replay-chart-animation'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
@@ -23,6 +24,7 @@ echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
 export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
   const { resolvedTheme } = useTheme()
+  const chartRef = useRef<ReactEchartsCore>(null)
 
   const [v2, v3, blade, totalVolume] = useMemo(() => {
     const xData = (
@@ -193,6 +195,8 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     [onMouseOver, resolvedTheme, v2, v3, blade, showBlade],
   )
 
+  useReplayChartAnimation(chartRef, DEFAULT_OPTION)
+
   return (
     <div>
       <div className="flex flex-col gap-3">
@@ -241,6 +245,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
         </div>
       </div>
       <ReactEchartsCore
+        ref={chartRef}
         option={DEFAULT_OPTION}
         echarts={echarts}
         style={{ height: 400 }}
