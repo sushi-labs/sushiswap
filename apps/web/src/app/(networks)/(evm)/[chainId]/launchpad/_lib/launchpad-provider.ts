@@ -60,6 +60,15 @@ const PROVIDERS_BY_FILTER = {
   readonly LaunchpadProvider[]
 >
 
+const ICON_PROVIDERS_BY_FILTER = {
+  all: ['SUSHI_V1', 'POOLS_FUN_V1'],
+  sushi: ['SUSHI_V1'],
+  'pools-fun': ['POOLS_FUN_V1'],
+} as const satisfies Record<
+  LaunchpadProviderFilter,
+  readonly LaunchpadProvider[]
+>
+
 export function getLaunchpadProviderConfig(
   provider: LaunchpadProvider,
 ): LaunchpadProviderConfig {
@@ -70,6 +79,12 @@ export function getLaunchpadProvidersForFilter(
   filter: LaunchpadProviderFilter,
 ): LaunchpadProvider[] {
   return [...PROVIDERS_BY_FILTER[filter]]
+}
+
+export function getLaunchpadProviderIconsForFilter(
+  filter: LaunchpadProviderFilter,
+): LaunchpadProvider[] {
+  return [...ICON_PROVIDERS_BY_FILTER[filter]]
 }
 
 function isLaunchpadProviderFilter(
