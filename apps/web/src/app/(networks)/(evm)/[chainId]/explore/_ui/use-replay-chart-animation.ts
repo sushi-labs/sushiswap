@@ -1,6 +1,6 @@
 import type { EChartOption } from 'echarts'
 import type ReactEchartsCore from 'echarts-for-react/lib/core'
-import { type RefObject, useEffect, useRef } from 'react'
+import { type RefObject, useLayoutEffect, useRef } from 'react'
 
 function useReplayChartAnimation(
   chartRef: RefObject<ReactEchartsCore | null>,
@@ -8,7 +8,7 @@ function useReplayChartAnimation(
 ): void {
   const hasConnected = useRef(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!hasConnected.current) {
       hasConnected.current = true
       return
