@@ -42,7 +42,7 @@ export default async function LaunchpadLayout({
           <div className="absolute left-[5%] top-0 h-72 w-72 rounded-full bg-perps-blue/[0.08] blur-3xl" />
           <div className="absolute right-[8%] top-16 h-80 w-80 rounded-full bg-pink-500/[0.06] blur-3xl" />
         </div>
-        <main className="relative flex flex-1 flex-col animate-slide">
+        <main className="relative flex flex-1 flex-col animate-launchpad-slide">
           {children}
         </main>
       </div>
