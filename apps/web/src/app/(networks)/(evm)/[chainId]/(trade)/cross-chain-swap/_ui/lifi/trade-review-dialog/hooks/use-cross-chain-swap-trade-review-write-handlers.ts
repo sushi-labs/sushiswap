@@ -17,7 +17,7 @@ import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,
 } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, getChainById } from 'sushi'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'

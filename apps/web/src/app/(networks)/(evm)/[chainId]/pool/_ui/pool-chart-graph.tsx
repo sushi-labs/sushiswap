@@ -28,7 +28,7 @@ import {
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { type FC, useCallback, useMemo } from 'react'
-import { usePoolGraphData } from 'src/lib/hooks'
+import { usePoolGraphData } from 'src/lib/hooks/api/use-pool-graph-data'
 import { formatUSD } from 'sushi'
 import type { PoolBase, PoolId, SushiSwapProtocol } from 'sushi/evm'
 import tailwindConfig from 'tailwind.config.js'

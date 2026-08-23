@@ -24,7 +24,7 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmNative, isEvmAddress } from 'sushi/evm'
 import {

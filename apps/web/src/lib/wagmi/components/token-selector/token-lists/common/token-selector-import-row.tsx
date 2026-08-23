@@ -28,7 +28,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
 import { useCallback, useState } from 'react'
-import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { useTokenSecurity } from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { getChainById, shortenAddress } from 'sushi'
 import type { EvmToken } from 'sushi/evm'
 import { isStellarChainId } from 'sushi/stellar'

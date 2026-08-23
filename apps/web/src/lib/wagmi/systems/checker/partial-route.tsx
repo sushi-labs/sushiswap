@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 
 type PartialRouteProps = ButtonProps & {
   trade:

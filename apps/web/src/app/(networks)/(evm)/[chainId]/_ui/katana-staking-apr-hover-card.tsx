@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { useKatanaRewardCampaigns } from 'src/lib/hooks/react-query'
+import { useKatanaRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-katana-reward-campaigns'
 import { formatPercent } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 

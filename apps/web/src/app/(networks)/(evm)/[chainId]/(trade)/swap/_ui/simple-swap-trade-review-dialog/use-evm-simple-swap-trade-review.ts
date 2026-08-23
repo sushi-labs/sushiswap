@@ -9,15 +9,16 @@ import {
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
-import { APPROVE_TAG_SWAP, NativeAddress } from 'src/lib/constants'
-import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import {
-  EVM_TRADE_GAS_MARGIN_PERCENT,
-  type UseEvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+  APPROVE_TAG_SWAP,
+  NativeAddress,
+  TOAST_AUTOCLOSE_TIME,
+} from 'src/lib/constants'
+import { sendDrilldownLog } from 'src/lib/drilldown-log'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
+import { EVM_TRADE_GAS_MARGIN_PERCENT } from 'src/lib/hooks/react-query/trade/evm-trade-gas-margin'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
-import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import {

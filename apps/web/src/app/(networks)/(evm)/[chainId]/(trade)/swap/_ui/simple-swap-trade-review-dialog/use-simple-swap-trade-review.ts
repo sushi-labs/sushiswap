@@ -4,9 +4,9 @@ import type { RefObject } from 'react'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
 import type { Percent } from 'sushi'
 
 export type UseSimpleSwapTradeReviewBaseReturn = {

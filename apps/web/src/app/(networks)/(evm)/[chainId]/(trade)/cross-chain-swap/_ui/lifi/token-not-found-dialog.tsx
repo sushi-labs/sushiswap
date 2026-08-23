@@ -24,7 +24,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
 import React, { useCallback, useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
-import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { useTokenSecurity } from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { TokenSecurityImportActions } from 'src/lib/wagmi/components/token-security-import-actions'
 import {
   combineTokenSecurityImportStates,

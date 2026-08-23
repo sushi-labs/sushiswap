@@ -27,8 +27,8 @@ import {
   NativeAddress,
 } from 'src/lib/constants'
 import { isSushiSwapV2Pool } from 'src/lib/functions'
-import { useV2Zap } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useV2Zap } from 'src/lib/hooks/use-v2-zap'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'

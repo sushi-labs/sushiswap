@@ -18,7 +18,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
-import { usePersistedSlippageError } from 'src/lib/hooks'
+import { usePersistedSlippageError } from 'src/lib/hooks/use-persisted-slippage-error'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 export const SimpleSwapErrorMessage: FC<{

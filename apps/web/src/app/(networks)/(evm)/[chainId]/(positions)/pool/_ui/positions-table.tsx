@@ -6,7 +6,7 @@ import type {
   Row,
 } from '@tanstack/react-table'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
-import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { useSushiV2UserPositions } from 'src/lib/hooks/api/use-sushi-v2-user-positions'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'

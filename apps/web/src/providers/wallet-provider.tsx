@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { WalletProvider as WalletStateProvider } from 'src/lib/wallet'
+import { WalletProvider as WalletStateProvider } from 'src/lib/wallet/provider/wallet-provider'
 import { PrivyProvider } from './privy-provider'
 import { WagmiProvider } from './wagmi-provider'
 

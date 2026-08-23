@@ -2,8 +2,10 @@
 
 import { Button, DialogTrigger, Dots } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { useAccount } from 'src/lib/wallet'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { type StellarToken, isStellarChainId } from 'sushi/stellar'
 import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
@@ -79,13 +81,10 @@ export function NearIntentsCrossChainSwapTradeButton() {
   return (
     <NearIntentsTradeReviewDialog>
       <div>
-        <Checker.Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
-          <Checker.Connect
-            fullWidth
-            namespace={getNamespaceForChainId(chainId1)}
-          >
-            <Checker.Network fullWidth chainId={chainId0}>
-              <Checker.Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+        <Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
+          <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
+            <Network fullWidth chainId={chainId0}>
+              <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
                 <StellarChecker.Trustline token={token1Stellar}>
                   <DialogTrigger asChild>
                     <Button
@@ -98,10 +97,10 @@ export function NearIntentsCrossChainSwapTradeButton() {
                     </Button>
                   </DialogTrigger>
                 </StellarChecker.Trustline>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
-        </Checker.Connect>
+              </Amounts>
+            </Network>
+          </Connect>
+        </Connect>
       </div>
     </NearIntentsTradeReviewDialog>
   )

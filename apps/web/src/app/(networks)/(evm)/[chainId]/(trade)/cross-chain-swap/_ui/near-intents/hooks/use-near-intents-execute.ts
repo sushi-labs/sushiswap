@@ -8,8 +8,8 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps/config'
 import {
   type NearIntentsActiveExecution,
   type NearIntentsCurrencyEntry,
@@ -21,7 +21,7 @@ import {
   signNearIntentsStellarPayment,
   submitSignedNearIntentsStellarPayment,
 } from 'src/lib/swap/near-intents'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { Amount, getChainById } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'

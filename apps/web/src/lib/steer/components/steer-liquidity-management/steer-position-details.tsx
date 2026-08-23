@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Amount, formatUSD } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { useConnection } from 'wagmi'
@@ -62,7 +62,7 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
         <CardDescription>{formatUSD(fiatValuesAmountsTotal)}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Checker.Connect namespace="evm">
+        <Connect namespace="evm">
           <CardGroup>
             <CardLabel>Tokens</CardLabel>
             <CardCurrencyAmountItem
@@ -76,7 +76,7 @@ export const SteerPositionDetails: FC<SteerPositionDetails> = ({ vault }) => {
               fiatValue={formatUSD(fiatValuesAmounts[1])}
             />
           </CardGroup>
-        </Checker.Connect>
+        </Connect>
       </CardContent>
     </>
   )

@@ -2,7 +2,7 @@
 
 import { useDstTokenPanel } from '@orbs-network/spot-react'
 import type { SupportedChainId } from 'src/config'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { formatDecimals } from './helper'
@@ -17,7 +17,7 @@ export const TwapToken1Input = () => {
   } = useDerivedStateSimpleSwap<SupportedChainId & EvmChainId>()
 
   return (
-    <Web3Input.Currency
+    <CurrencyInput
       id="swap-to"
       type="OUTPUT"
       disabled

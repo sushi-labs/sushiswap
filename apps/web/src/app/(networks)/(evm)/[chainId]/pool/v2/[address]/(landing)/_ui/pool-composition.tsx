@@ -13,7 +13,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { Amount, formatUSD } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 

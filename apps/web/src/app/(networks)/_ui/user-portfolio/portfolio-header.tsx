@@ -35,15 +35,14 @@ import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { SwitchIcon } from '@sushiswap/ui/icons/switch-icon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import type { WalletConnection, WalletNamespace } from 'src/lib/wallet'
+import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
 import {
   ENABLED_WALLET_NAMESPACES,
-  type WalletConnection,
-  type WalletNamespace,
   getNameFromNamespace,
-  usePrivyEmbeddedWallet,
-  useWallets,
-} from 'src/lib/wallet'
-import { DisconnectWalletButton } from 'src/lib/wallet/components/disconnect-wallet-button'
+} from 'src/lib/wallet/config'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
 import { getChainById, shortenAddress } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'

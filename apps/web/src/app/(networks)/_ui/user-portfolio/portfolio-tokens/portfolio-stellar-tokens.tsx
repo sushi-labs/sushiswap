@@ -6,7 +6,7 @@ import {
 } from '@sushiswap/ui'
 import { Fragment, useMemo } from 'react'
 import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { type Amount, formatPercent, formatUSD } from 'sushi'
 import { StellarChainId, type StellarToken } from 'sushi/stellar'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'

@@ -4,7 +4,7 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { type FC, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { useSwitchChain } from 'src/lib/wallet'
+import { useSwitchChain } from 'src/lib/wallet/namespaces/evm/hooks/use-switch-chain'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 

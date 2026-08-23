@@ -15,7 +15,7 @@ import * as z from 'zod'
 
 import type { SushiSwapCmsProtocol } from 'src/lib/constants'
 import { parseArgs } from 'src/lib/functions'
-import { useTypedSearchParams } from 'src/lib/hooks'
+import { useTypedSearchParams } from 'src/lib/hooks/use-typed-search-params'
 import { POOL_TYPES } from '~evm/[chainId]/_ui/table-filters-pool-type'
 
 export const poolFiltersSchema = z.object({

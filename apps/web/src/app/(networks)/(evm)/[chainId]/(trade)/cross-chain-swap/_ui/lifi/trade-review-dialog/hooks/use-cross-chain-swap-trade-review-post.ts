@@ -10,7 +10,7 @@ import {
 } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, getChainById } from 'sushi'
 import { type EvmChainId, isEvmChainId } from 'sushi/evm'
 import { isSvmChainId } from 'sushi/svm'

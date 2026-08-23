@@ -6,7 +6,7 @@ import {
   getTransactionDecoder,
 } from '@solana/kit'
 import { useCallback } from 'react'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 
 export const useSvmSignTransaction = () => {
   const { signer } = useTransactionSigner()

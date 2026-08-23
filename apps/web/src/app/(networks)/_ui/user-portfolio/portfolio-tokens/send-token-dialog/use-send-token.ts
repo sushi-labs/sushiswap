@@ -8,7 +8,7 @@ import { useCallback } from 'react'
 import { useTransferSol } from 'src/lib/svm/hooks/use-transfer-sol'
 import { useTransferSplToken } from 'src/lib/svm/hooks/use-transfer-spl-token'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, type Currency } from 'sushi'
 import {
   type EvmChainId,

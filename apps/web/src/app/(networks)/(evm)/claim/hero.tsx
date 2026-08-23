@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, SkeletonText } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useClaimableRewards } from 'src/lib/hooks/react-query'
+import { useClaimableRewards } from 'src/lib/hooks/react-query/rewards/use-claimable-rewards'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
 import { formatUSD } from 'sushi'
 import { SushiSwapV3ChainIds } from 'sushi/evm'

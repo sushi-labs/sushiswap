@@ -3,7 +3,7 @@ import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import { useTransactionSigner } from '@solana/connector'
 import { type ReadonlyUint8Array, getBase58Decoder } from '@solana/kit'
 import { useCallback } from 'react'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 
 export const useSvmSignAndSendTransaction = () => {
   const { signer } = useTransactionSigner()

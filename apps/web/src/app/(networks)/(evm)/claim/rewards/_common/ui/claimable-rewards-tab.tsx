@@ -9,10 +9,8 @@ import {
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
-import {
-  type ClaimableRewards,
-  useClaimableRewards,
-} from 'src/lib/hooks/react-query'
+import type { ClaimableRewards } from 'src/lib/hooks/react-query'
+import { useClaimableRewards } from 'src/lib/hooks/react-query/rewards/use-claimable-rewards'
 import { useConnection } from 'wagmi'
 import {
   REWARDS_ACTION_COLUMN,

@@ -6,7 +6,7 @@ import type { SupportedChainId } from 'src/config'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 import {
   type warningSeverity,
   warningSeverityClassName,

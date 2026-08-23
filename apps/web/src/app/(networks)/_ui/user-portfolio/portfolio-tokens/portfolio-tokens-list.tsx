@@ -7,7 +7,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import React, { useCallback, useMemo, useState } from 'react'
-import { useWallets } from 'src/lib/wallet'
+import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
 import { formatPercent, formatUSD, getNativeAddress } from 'sushi'
 import { EvmNative, EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {

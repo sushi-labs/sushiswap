@@ -15,14 +15,14 @@ import {
   isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
-import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query'
+import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, Percent, getNativeAddress } from 'sushi'
 import { type EvmAddress, EvmChainId } from 'sushi/evm'
 import type { SvmAddress } from 'sushi/svm'

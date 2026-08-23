@@ -1,6 +1,6 @@
 import { rpc } from '@stellar/stellar-sdk'
 import { useMutation } from '@tanstack/react-query'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import type { StellarAddress, StellarCurrency } from 'sushi/stellar'
 import { NETWORK_PASSPHRASE } from '~stellar/_common/lib/constants'

@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { useStellarWallets } from 'src/lib/wallet/namespaces/stellar/provider/use-stellar-wallets'
 import type { StellarAccountAddress } from 'sushi/stellar'

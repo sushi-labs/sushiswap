@@ -1,6 +1,6 @@
 import type { V2Position } from '@sushiswap/graph-client/data-api'
 import React, { type FC, type ReactNode } from 'react'
-import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { useSushiV2UserPositions } from 'src/lib/hooks/api/use-sushi-v2-user-positions'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 

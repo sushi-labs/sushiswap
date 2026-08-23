@@ -19,7 +19,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount } from 'sushi'
 import { type SvmAddress, SvmChainId, SvmNative, svmAddress } from 'sushi/svm'
 import { SVM_RPC_URL } from '../config'

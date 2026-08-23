@@ -19,7 +19,7 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import type { Dispatch, SetStateAction } from 'react'
-import { useV3Pool } from 'src/lib/hooks'
+import { useV3Pool } from 'src/lib/hooks/api/use-v3-pool'
 import { formatPercent, formatUSD } from 'sushi'
 import { type EvmAddress, EvmToken, getEvmChainById } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'

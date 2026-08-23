@@ -12,7 +12,7 @@ import { NativeAddress } from 'src/lib/constants'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 import { type Amount, ZERO } from 'sushi'
 import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 

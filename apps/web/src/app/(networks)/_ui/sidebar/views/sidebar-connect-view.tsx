@@ -11,13 +11,13 @@ import {
 } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import { Suspense, useState } from 'react'
-import {
-  DEFAULT_CHAIN_ID_BY_NAMESPACE,
-  type WalletWithState,
-  getNameFromNamespace,
-} from 'src/lib/wallet'
+import type { WalletWithState } from 'src/lib/wallet'
 import { Disclaimer } from 'src/lib/wallet/components/disclaimer'
 import { WalletConnectorsListSkeleton } from 'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list-skeleton'
+import {
+  DEFAULT_CHAIN_ID_BY_NAMESPACE,
+  getNameFromNamespace,
+} from 'src/lib/wallet/config'
 import { getChainById } from 'sushi'
 import { useSidebar } from '../sidebar-provider'
 import { DefaultSidebarView } from '../types'

@@ -10,7 +10,7 @@ import {
   formatTickPrice,
   getPriceOrderingFromPositionForUI,
 } from 'src/lib/functions'
-import { usePriceInverter } from 'src/lib/hooks'
+import { usePriceInverter } from 'src/lib/hooks/use-price-inverter'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Position } from 'sushi/evm'

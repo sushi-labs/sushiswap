@@ -13,7 +13,7 @@ import {
 import * as z from 'zod'
 
 import { parseArgs } from 'src/lib/functions'
-import { useTypedSearchParams } from 'src/lib/hooks'
+import { useTypedSearchParams } from 'src/lib/hooks/use-typed-search-params'
 
 type FilterContext = z.TypeOf<typeof academySearchSchema>
 

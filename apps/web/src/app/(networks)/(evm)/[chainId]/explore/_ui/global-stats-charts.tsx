@@ -1,7 +1,7 @@
 'use client'
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { type FC, Suspense } from 'react'
-import { useAnalyticsDayBuckets } from 'src/lib/hooks/react-query'
+import { useAnalyticsDayBuckets } from 'src/lib/hooks/react-query/explore/use-analytics-day-buckets'
 import { type EvmChainId, isBladeChainId } from 'sushi/evm'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
