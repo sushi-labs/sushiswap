@@ -31,10 +31,10 @@ export function PricePanel<TChainId extends BalanceChainId>({
     () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
-  const isPriceUnavailable =
-    !isEmptyValue && (price === undefined || price === 0)
+  const hasPrice = price !== undefined && price !== 0
+  const isPriceUnavailable = !isEmptyValue && !hasPrice
   const [big, portion] = (
-    !isEmptyValue && parsedValue && !isPriceUnavailable
+    !isEmptyValue && parsedValue && hasPrice
       ? `${(
           (price * Number(parsedValue.amount)) /
             10 ** parsedValue.currency.decimals
