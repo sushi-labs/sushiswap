@@ -1,20 +1,30 @@
+import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 import { SkeletonBox } from '@sushiswap/ui'
+import { CurrencyInputSkeleton } from 'src/lib/wagmi/components/web3-input/currency/currency-input-skeleton'
 
 function SimpleSwapWidgetSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-      <div className="flex gap-2">
-        <SkeletonBox className="h-[36px] w-[61px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[56px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[54px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[136px] rounded-xl" />
+    <>
+      <CurrencyInputSkeleton
+        label="Sell"
+        className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      />
+      <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
+        <button
+          type="button"
+          disabled
+          aria-label="Switch tokens"
+          className="z-10 bg-background p-2 border border-accent rounded-full"
+        >
+          <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
+        </button>
       </div>
-      <div className="flex flex-col gap-[10px]">
-        <SkeletonBox className="w-full h-[142px] rounded-xl" />
-        <SkeletonBox className="w-full h-[142px] rounded-xl" />
-      </div>
+      <CurrencyInputSkeleton
+        label="Buy"
+        className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      />
       <SkeletonBox className="w-full h-[52px] rounded-xl mb-2" />
-    </div>
+    </>
   )
 }
 

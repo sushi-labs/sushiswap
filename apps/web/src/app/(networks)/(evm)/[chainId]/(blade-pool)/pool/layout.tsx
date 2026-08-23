@@ -1,12 +1,23 @@
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
-export default async function BladePoolLayout(props: {
+interface BladePoolLayoutProps {
   children: React.ReactNode
   params: Promise<{ chainId: string }>
-}) {
+}
+
+export default function BladePoolLayout(props: BladePoolLayoutProps) {
+  return (
+    <Suspense fallback={null}>
+      <BladePoolLayoutContent {...props} />
+    </Suspense>
+  )
+}
+
+async function BladePoolLayoutContent(props: BladePoolLayoutProps) {
   const params = await props.params
 
   const { children } = props

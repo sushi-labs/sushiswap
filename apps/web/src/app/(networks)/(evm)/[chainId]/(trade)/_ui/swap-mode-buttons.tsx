@@ -46,12 +46,14 @@ function getAdvancedTriggerLabel(pathname: string): string {
 const SwapModeButton = ({
   isSupported,
   path,
+  active,
   children,
   className,
   fullWidth = false,
 }: {
   isSupported: boolean
   path: string
+  active?: boolean
   children: ReactNode
   className?: string
   fullWidth?: boolean
@@ -63,6 +65,7 @@ const SwapModeButton = ({
       <Link href={path} className={classNames('block', widthClassName)}>
         <PathnameButton
           pathname={path}
+          active={active}
           size="sm"
           className={classNames(widthClassName, 'justify-start', className)}
         >
@@ -77,6 +80,7 @@ const SwapModeButton = ({
       <HoverCardTrigger asChild>
         <PathnameButton
           pathname={path}
+          active={active}
           size="sm"
           disabled
           className={classNames(
@@ -106,10 +110,12 @@ function isSwapModeChainId(chainId: number): chainId is ChainId {
 
 export const SwapModeButtons = ({
   chainId: chainIdProp,
-}: { chainId?: number }) => {
+  activePathname,
+}: { chainId?: number; activePathname?: string }) => {
   const { chainId: paramsChainId } = useParams<{ chainId?: string }>()
   const chainId = chainIdProp ?? Number(paramsChainId)
-  const pathname = usePathname()
+  const detectedPathname = usePathname()
+  const pathname = activePathname ?? detectedPathname
 
   if (!isSwapModeChainId(chainId)) {
     return null
@@ -121,11 +127,18 @@ export const SwapModeButtons = ({
   const chain = getChainById(chainId)
   const basePath = `/${chain.key}`
 
+  function getActiveState(path: string): boolean | undefined {
+    return activePathname === undefined
+      ? undefined
+      : activePathname === path || activePathname === path.replace('%3A', ':')
+  }
+
   return (
     <div className="flex gap-1 md:gap-2 flex-wrap">
       <SwapModeButton
         isSupported={isSupportedChainId(chainId) || isStellarChainId(chainId)}
         path={`${basePath}/swap`}
+        active={getActiveState(`${basePath}/swap`)}
       >
         Swap
       </SwapModeButton>
@@ -165,6 +178,7 @@ export const SwapModeButtons = ({
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/limit`}
+                active={getActiveState(`${basePath}/limit`)}
                 className="justify-start"
                 fullWidth
               >
@@ -173,6 +187,7 @@ export const SwapModeButtons = ({
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/dca`}
+                active={getActiveState(`${basePath}/dca`)}
                 fullWidth
               >
                 DCA
@@ -180,6 +195,7 @@ export const SwapModeButtons = ({
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/stop-loss`}
+                active={getActiveState(`${basePath}/stop-loss`)}
                 fullWidth
               >
                 Stop Loss
@@ -187,6 +203,7 @@ export const SwapModeButtons = ({
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/take-profit`}
+                active={getActiveState(`${basePath}/take-profit`)}
                 fullWidth
               >
                 Take Profit
@@ -204,6 +221,7 @@ export const SwapModeButtons = ({
         <SwapModeButton
           isSupported={supportsCrossChain}
           path={`${basePath}/cross-chain-swap`}
+          active={getActiveState(`${basePath}/cross-chain-swap`)}
         >
           <HoverCardTrigger asChild>
             <span className="saturate-200 flex items-center gap-2 bg-gradient-to-r from-blue to-pink bg-clip-text text-transparent">

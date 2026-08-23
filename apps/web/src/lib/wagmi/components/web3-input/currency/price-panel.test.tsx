@@ -38,11 +38,15 @@ describe('PricePanel', () => {
     container.remove()
   })
 
-  function renderPrice(price: number | undefined, value = '3') {
+  function renderPrice(
+    price: number | undefined,
+    value = '3',
+    loading = false,
+  ) {
     act(() => {
       root.render(
         <PricePanel
-          loading={false}
+          loading={loading}
           currency={currency}
           value={value}
           price={price}
@@ -74,6 +78,12 @@ describe('PricePanel', () => {
 
   it('keeps zero as the amount estimate when a price is available', () => {
     renderPrice(2, '')
+
+    expect(container.textContent).toContain('$ 0.00')
+  })
+
+  it('renders zero immediately for an empty amount while pricing loads', () => {
+    renderPrice(undefined, '', true)
 
     expect(container.textContent).toContain('$ 0.00')
   })

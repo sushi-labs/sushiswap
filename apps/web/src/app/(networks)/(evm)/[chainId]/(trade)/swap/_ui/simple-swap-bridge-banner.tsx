@@ -8,7 +8,6 @@ import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { FC } from 'react'
 import { getChainById } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
-import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 const BridgeInfo = {
   [EvmChainId.SKALE_EUROPA]: {
@@ -29,13 +28,10 @@ const BridgeInfo = {
   },
 } as const
 
-export const SimpleSwapBridgeBanner: FC<{ className?: string }> = ({
-  className,
-}) => {
-  const {
-    state: { chainId },
-  } = useDerivedStateSimpleSwap()
-
+export const SimpleSwapBridgeBanner: FC<{
+  chainId: EvmChainId
+  className?: string
+}> = ({ chainId, className }) => {
   const [hideBanner, setHideBanner] = useLocalStorage(
     `hide-bridge-banner-${chainId}`,
     false,

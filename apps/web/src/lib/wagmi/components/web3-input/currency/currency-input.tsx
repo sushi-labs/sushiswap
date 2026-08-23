@@ -135,7 +135,7 @@ function CurrencyInput<
     }
   }, [onChange, currency, value])
 
-  const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
+  const isLoading = !isMounted || loading || currencyLoading
   const _error = currencyError
     ? currencyError
     : error
@@ -348,7 +348,7 @@ function CurrencyInput<
               currency={currency}
               priceImpact={priceImpact}
               error={_error}
-              loading={isPriceLoading}
+              loading={currencyLoading || isPriceLoading}
               price={price}
             />
             {currencyError && onCurrencyRetry ? (

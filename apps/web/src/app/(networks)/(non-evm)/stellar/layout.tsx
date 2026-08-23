@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type React from 'react'
+import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
 import { PriceProvider } from '~evm/_common/ui/price-provider/price-provider/price-provider'
@@ -21,20 +22,22 @@ export default function RootLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Providers>
-      <PriceProvider>
-        <SidebarProvider>
-          <BalanceProvider>
-            <div className="flex flex-col h-full w-full">
-              <div className="flex flex-col sticky top-0 h-full w-full z-50">
-                <MigrateBanner />
-                <Header networks={POOL_SUPPORTED_NETWORKS} />
+    <Suspense fallback={null}>
+      <Providers>
+        <PriceProvider>
+          <SidebarProvider>
+            <BalanceProvider>
+              <div className="flex flex-col h-full w-full">
+                <div className="flex flex-col sticky top-0 h-full w-full z-50">
+                  <MigrateBanner />
+                  <Header networks={POOL_SUPPORTED_NETWORKS} />
+                </div>
+                {children}
               </div>
-              {children}
-            </div>
-          </BalanceProvider>
-        </SidebarProvider>
-      </PriceProvider>
-    </Providers>
+            </BalanceProvider>
+          </SidebarProvider>
+        </PriceProvider>
+      </Providers>
+    </Suspense>
   )
 }

@@ -26,13 +26,15 @@ export function PricePanel<TChainId extends BalanceChainId>({
   error,
   className,
 }: PricePanel<TChainId>) {
+  const isEmptyValue = value === ''
   const parsedValue = useMemo(
     () => (currency ? Amount.tryFromHuman(currency, value) : undefined),
     [currency, value],
   )
-  const isPriceUnavailable = price === undefined || price === 0
+  const hasPrice = price !== undefined && price !== 0
+  const isPriceUnavailable = !isEmptyValue && !hasPrice
   const [big, portion] = (
-    parsedValue && !isPriceUnavailable
+    !isEmptyValue && parsedValue && hasPrice
       ? `${(
           (price * Number(parsedValue.amount)) /
             10 ** parsedValue.currency.decimals
@@ -40,7 +42,7 @@ export function PricePanel<TChainId extends BalanceChainId>({
       : '0.00'
   ).split('.')
 
-  if (loading)
+  if (loading && !isEmptyValue)
     return (
       <div className="w-1/5 flex items-center">
         <SkeletonText fontSize="lg" className="w-full" />
@@ -72,7 +74,7 @@ export function PricePanel<TChainId extends BalanceChainId>({
           $ {big}.<span className="text-sm font-semibold">{portion}</span>
         </>
       )}
-      {!isPriceUnavailable && priceImpact && (
+      {!isEmptyValue && !isPriceUnavailable && priceImpact && (
         <span
           className={classNames(
             'text-sm pl-1',

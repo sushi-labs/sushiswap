@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../header'
 
 export const metadata: Metadata = {
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return SUPPORTED_CHAIN_IDS.map((chainId) => ({
-    chainId: chainId.toString(),
-  }))
+  return getStaticChainParams(SUPPORTED_CHAIN_IDS)
 }
 
 export default async function SwapLayout(props: {
