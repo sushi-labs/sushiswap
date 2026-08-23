@@ -1,4 +1,5 @@
 import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
+import { PricePanel } from './price-panel'
 
 interface CurrencyInputSkeletonProps {
   label?: string
@@ -26,9 +27,12 @@ function CurrencyInputSkeleton({
         </div>
       </div>
       <div className="flex flex-row items-center justify-between h-[36px]">
-        <div className="w-1/5 flex items-center">
-          <SkeletonText fontSize="lg" className="w-full" />
-        </div>
+        <PricePanel
+          loading={false}
+          price={undefined}
+          currency={undefined}
+          value=""
+        />
         <div className="w-[60px] flex items-center">
           <SkeletonText fontSize="lg" className="w-full" />
         </div>
