@@ -4,10 +4,20 @@ import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { isBladeChainId } from 'sushi/evm'
 import { Header } from '../../header'
 
-export default async function BladePoolLayout(props: {
+interface BladePoolLayoutProps {
   children: React.ReactNode
   params: Promise<{ chainId: string }>
-}) {
+}
+
+export default function BladePoolLayout(props: BladePoolLayoutProps) {
+  return (
+    <Suspense fallback={null}>
+      <BladePoolLayoutContent {...props} />
+    </Suspense>
+  )
+}
+
+async function BladePoolLayoutContent(props: BladePoolLayoutProps) {
   const params = await props.params
 
   const { children } = props
@@ -20,11 +30,9 @@ export default async function BladePoolLayout(props: {
   return (
     <>
       <Header chainId={chainId} networks={BLADE_SUPPORTED_NETWORKS} />
-      <Suspense fallback={null}>
-        <main className="flex flex-col h-full flex-1 animate-slide">
-          {children}
-        </main>
-      </Suspense>
+      <main className="flex flex-col h-full flex-1 animate-slide">
+        {children}
+      </main>
     </>
   )
 }

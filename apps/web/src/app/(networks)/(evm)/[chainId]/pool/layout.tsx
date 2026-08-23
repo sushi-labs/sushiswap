@@ -4,10 +4,20 @@ import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { Header } from '../header'
 
-export default async function PoolLayout(props: {
+interface PoolLayoutProps {
   children: React.ReactNode
   params: Promise<{ chainId: string }>
-}) {
+}
+
+export default function PoolLayout(props: PoolLayoutProps) {
+  return (
+    <Suspense fallback={null}>
+      <PoolLayoutContent {...props} />
+    </Suspense>
+  )
+}
+
+async function PoolLayoutContent(props: PoolLayoutProps) {
   const params = await props.params
 
   const { children } = props
@@ -21,11 +31,9 @@ export default async function PoolLayout(props: {
   return (
     <>
       <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
-      <Suspense fallback={null}>
-        <main className="flex flex-col h-full flex-1 animate-slide">
-          {children}
-        </main>
-      </Suspense>
+      <main className="flex flex-col h-full flex-1 animate-slide">
+        {children}
+      </main>
     </>
   )
 }
