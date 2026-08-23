@@ -6,13 +6,7 @@ import {
   WalletIcon,
 } from '@heroicons/react/24/outline'
 import type { LaunchpadUserHoldingsType } from '@sushiswap/graph-client/data-api'
-import {
-  Button,
-  Container,
-  LinkInternal,
-  SkeletonBox,
-  classNames,
-} from '@sushiswap/ui'
+import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { type KeyboardEvent, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -36,16 +30,12 @@ import {
   useLaunchpadUserHoldings,
   useLaunchpadUserStats,
 } from '../_lib/use-launchpad-portfolio'
+import {
+  HoldingsTableSkeleton,
+  PortfolioStatsSkeleton,
+} from './portfolio-skeleton'
 
 type LaunchpadUserHolding = LaunchpadUserHoldingsType['edges'][number]['node']
-
-const HOLDING_SKELETONS = [
-  'first',
-  'second',
-  'third',
-  'fourth',
-  'fifth',
-] as const
 
 function PnlValue({
   pnlUsd,
@@ -88,75 +78,6 @@ function PnlValue({
       </span>
       <span className={'text-xs font-medium'}>{formatPercent(pnlPercent)}</span>
     </div>
-  )
-}
-
-function PortfolioStatsSkeleton() {
-  return (
-    <MetricStrip columns={3}>
-      {['Holdings USD', 'Tokens held', 'PnL'].map((label, index) => (
-        <MetricStripItem
-          key={label}
-          columns={3}
-          index={index}
-          label={label}
-          value={<SkeletonBox className="h-6 w-24 rounded-md" />}
-        />
-      ))}
-    </MetricStrip>
-  )
-}
-
-function HoldingsTableSkeleton() {
-  return (
-    <PerpsCard className="overflow-hidden" fullWidth>
-      <div className="overflow-x-auto">
-        <table
-          className="w-full min-w-[680px] table-fixed"
-          aria-label="Loading portfolio holdings"
-          aria-busy="true"
-        >
-          <thead>
-            <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-              <th className="w-1/2 px-5 py-3 text-left text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                Token
-              </th>
-              <th className="w-1/4 px-5 py-3 text-right text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                Holdings
-              </th>
-              <th className="w-1/4 px-5 py-3 text-right text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                PnL
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {HOLDING_SKELETONS.map((skeleton) => (
-              <tr
-                key={skeleton}
-                className="border-b border-white/[0.06] last:border-b-0"
-              >
-                <td className="h-[84px] px-5">
-                  <div className="flex items-center gap-3">
-                    <SkeletonBox className="h-11 w-11 shrink-0 rounded-full" />
-                    <div className="min-w-0 flex-1">
-                      <SkeletonBox className="h-4 w-32 rounded-md" />
-                      <SkeletonBox className="mt-2 h-3 w-44 rounded-sm" />
-                    </div>
-                  </div>
-                </td>
-                <td className="h-[84px] px-5">
-                  <SkeletonBox className="ml-auto h-4 w-24 rounded-md" />
-                  <SkeletonBox className="ml-auto mt-2 h-3 w-16 rounded-sm" />
-                </td>
-                <td className="h-[84px] px-5">
-                  <SkeletonBox className="ml-auto h-4 w-28 rounded-md" />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </PerpsCard>
   )
 }
 

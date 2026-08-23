@@ -1,6 +1,7 @@
 import { getPortfolioPositions } from '@sushiswap/graph-client/data-api'
 import { Accordion, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import React from 'react'
 import { formatUSD } from 'sushi'
 import type { Address } from 'viem'
@@ -10,7 +11,7 @@ import { PortfolioV3Positions } from './portfolio-v3-positions'
 
 function usePortfolioPositions(
   address: Address | undefined,
-  refetchInterval?: 600_000,
+  refetchInterval = ms('10m'),
 ) {
   return useQuery({
     queryKey: ['portfolio-positions', address],

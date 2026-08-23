@@ -1,6 +1,7 @@
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { useCallback, useMemo } from 'react'
 import { useAccounts } from 'src/lib/wallet/hooks/use-accounts'
 import { formatPercent, formatUSD } from 'sushi'
@@ -10,27 +11,40 @@ function usePortfolioWallet(
   addresses: {
     evmAddress: ReturnType<typeof useAccounts>['evm']['address']
     svmAddress: ReturnType<typeof useAccounts>['svm']['address']
+    stellarAddress: ReturnType<typeof useAccounts>['stellar']['address']
   },
-  refetchInterval?: 600_000,
+  refetchInterval = ms('10m'),
 ) {
   return useQuery({
     queryKey: ['portfolio-wallet', addresses],
     queryFn: async () => {
-      if (!addresses.evmAddress && !addresses.svmAddress) return null
+      if (
+        !addresses.evmAddress &&
+        !addresses.svmAddress &&
+        !addresses.stellarAddress
+      )
+        return null
       const data = await getPortfolioWallet(addresses)
       return data
     },
-    enabled: !!addresses.evmAddress || !!addresses.svmAddress,
+    enabled:
+      !!addresses.evmAddress ||
+      !!addresses.svmAddress ||
+      !!addresses.stellarAddress,
     refetchInterval,
   })
 }
 
-export const PortfolioEvmSvmTokens = () => {
-  const { evm, svm } = useAccounts()
+export function PortfolioWalletTokens() {
+  const { evm, svm, stellar } = useAccounts()
 
   const addresses = useMemo(
-    () => ({ evmAddress: evm.address, svmAddress: svm.address }),
-    [evm.address, svm.address],
+    () => ({
+      evmAddress: evm.address,
+      svmAddress: svm.address,
+      stellarAddress: stellar.address,
+    }),
+    [evm.address, svm.address, stellar.address],
   )
 
   const { data, isLoading, isError, refetch } = usePortfolioWallet(addresses)
