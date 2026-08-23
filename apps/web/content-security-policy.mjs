@@ -41,8 +41,6 @@ const WALLET_CONNECTOR_SOURCES = [
   'https://metamask-sdk.api.cx.metamask.io',
   'wss://metamask-sdk.api.cx.metamask.io',
   'https://mm-sdk-analytics.api.cx.metamask.io',
-  'https://rpc.porto.sh',
-  'https://stg-rpc.porto.sh',
 ]
 
 const SUSHI_CONNECT_SOURCES = [
@@ -137,8 +135,6 @@ const FRAME_SOURCES = [
   'https://buy.onramper.dev',
   'https://widget.swapped.com',
   'https://www.googletagmanager.com',
-  'https://id.porto.sh',
-  'https://stg.id.porto.sh',
   'https://vercel.live',
   'https://privy.sushi.com',
 ]
