@@ -1,7 +1,12 @@
 import { notFound } from 'next/navigation'
 import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { isBladeChainId } from 'sushi/evm'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../../header'
+
+export function generateStaticParams() {
+  return getStaticChainParams(BLADE_SUPPORTED_NETWORKS)
+}
 
 export default async function BladePoolLayout(props: {
   children: React.ReactNode

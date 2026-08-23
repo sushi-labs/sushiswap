@@ -1,6 +1,7 @@
 'use client'
 
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import {
   TWAP_SUPPORTED_CHAIN_IDS,
   isTwapSupportedChainId,
@@ -20,9 +21,13 @@ export const TwapLayout = ({
   }
 
   return (
-    <DerivedstateSimpleSwapProvider>
+    <>
       <Header chainId={chainId} networks={TWAP_SUPPORTED_CHAIN_IDS} />
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-    </DerivedstateSimpleSwapProvider>
+      <Suspense fallback={null}>
+        <DerivedstateSimpleSwapProvider>
+          <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+        </DerivedstateSimpleSwapProvider>
+      </Suspense>
+    </>
   )
 }

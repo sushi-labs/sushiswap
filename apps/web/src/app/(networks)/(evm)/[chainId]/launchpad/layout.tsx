@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AutoDarkMode } from 'src/lib/perps'
 import { getEvmChainById } from 'sushi/evm'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { LaunchpadHeader } from './_ui/launchpad-header'
 import { LAUNCHPAD_SUPPORTED_CHAIN_IDS, isLaunchpadChainId } from './constants'
 
@@ -12,9 +13,7 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return LAUNCHPAD_SUPPORTED_CHAIN_IDS.map((chainId) => ({
-    chainId: chainId.toString(),
-  }))
+  return getStaticChainParams(LAUNCHPAD_SUPPORTED_CHAIN_IDS)
 }
 
 export default async function LaunchpadLayout({
