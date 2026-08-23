@@ -1,20 +1,39 @@
-import { SkeletonBox } from '@sushiswap/ui'
+import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
+import { SkeletonBox, SkeletonText } from '@sushiswap/ui'
+
+function SimpleSwapInputSkeleton({ label }: { label: string }) {
+  return (
+    <div className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl relative space-y-2 overflow-hidden pb-2">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <div className="flex gap-4 items-center justify-between h-[44px]">
+        <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
+        <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+      </div>
+      <div className="flex items-center justify-between h-[36px]">
+        <SkeletonText fontSize="lg" className="!w-1/5" />
+        <SkeletonText fontSize="lg" className="!w-[60px]" />
+      </div>
+    </div>
+  )
+}
 
 function SimpleSwapWidgetSkeleton() {
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-      <div className="flex gap-2">
-        <SkeletonBox className="h-[36px] w-[61px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[56px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[54px] rounded-xl" />
-        <SkeletonBox className="h-[36px] w-[136px] rounded-xl" />
+    <>
+      <SimpleSwapInputSkeleton label="Sell" />
+      <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
+        <button
+          type="button"
+          disabled
+          aria-label="Switch tokens"
+          className="z-10 bg-background p-2 border border-accent rounded-full"
+        >
+          <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
+        </button>
       </div>
-      <div className="flex flex-col gap-[10px]">
-        <SkeletonBox className="w-full h-[142px] rounded-xl" />
-        <SkeletonBox className="w-full h-[142px] rounded-xl" />
-      </div>
+      <SimpleSwapInputSkeleton label="Buy" />
       <SkeletonBox className="w-full h-[52px] rounded-xl mb-2" />
-    </div>
+    </>
   )
 }
 
