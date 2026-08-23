@@ -348,7 +348,7 @@ function CurrencyInput<
               currency={currency}
               priceImpact={priceImpact}
               error={_error}
-              loading={isPriceLoading}
+              loading={currencyLoading || isPriceLoading}
               price={price}
             />
             {currencyError && onCurrencyRetry ? (
