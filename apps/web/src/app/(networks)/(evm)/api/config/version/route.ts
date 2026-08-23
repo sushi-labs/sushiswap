@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import * as z from 'zod'
 
-export const dynamic = 'force-dynamic'
-
 const schema = z.object({
   commit: z.string(),
 })

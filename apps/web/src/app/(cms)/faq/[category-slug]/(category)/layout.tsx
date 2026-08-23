@@ -1,10 +1,16 @@
 import { getFaqCategory } from '@sushiswap/graph-client/strapi'
 import { Breadcrumb, Container, typographyVariants } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 import { CategoryLayout } from './components/category-layout'
 
-export const revalidate = 900
+async function getCachedFaqCategory(slug: string) {
+  'use cache'
+  cacheLife({ revalidate: 900 })
+
+  return getFaqCategory({ slug })
+}
 
 export default async function Layout(props: {
   children: React.ReactNode
@@ -17,7 +23,7 @@ export default async function Layout(props: {
   let category
 
   try {
-    category = await getFaqCategory({ slug: params['category-slug'] })
+    category = await getCachedFaqCategory(params['category-slug'])
   } catch {
     return notFound()
   }
