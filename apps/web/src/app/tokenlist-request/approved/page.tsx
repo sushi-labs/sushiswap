@@ -16,7 +16,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import React, { useMemo, useState } from 'react'
-import { useApprovedCommunityTokens } from 'src/lib/hooks'
+import { useApprovedCommunityTokens } from 'src/lib/hooks/api/use-approved-community-tokens'
 import { getChainById, shortenAddress } from 'sushi'
 import { NavigationItems } from '../navigation-items'
 

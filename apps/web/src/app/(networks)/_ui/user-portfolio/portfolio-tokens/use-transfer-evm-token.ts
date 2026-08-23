@@ -3,7 +3,8 @@
 import { useSendTransaction as usePrivySendTransaction } from '@privy-io/react-auth'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useAccount, usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import type { Amount } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
 import {

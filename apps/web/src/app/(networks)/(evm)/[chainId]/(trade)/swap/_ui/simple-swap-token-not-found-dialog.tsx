@@ -23,7 +23,7 @@ import {
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import React, { useCallback } from 'react'
-import { useTokenSecurity } from 'src/lib/hooks/react-query'
+import { useTokenSecurity } from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { TokenSecurityImportActions } from 'src/lib/wagmi/components/token-security-import-actions'
 import {
   combineTokenSecurityImportStates,

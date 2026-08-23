@@ -1,7 +1,7 @@
 import type {
   UseEvmTradeParams,
   UseEvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 import type { Amount, Fraction } from 'sushi'
 import type { EvmAddress, EvmChainId, EvmCurrency } from 'sushi/evm'
 

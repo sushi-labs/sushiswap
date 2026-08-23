@@ -38,7 +38,7 @@ import React, {
   useState,
 } from 'react'
 import { Bound, Field } from 'src/lib/constants'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import {
   type EvmAddress,
   type EvmCurrency,
@@ -53,7 +53,7 @@ import {
 import { Radio, RadioGroup } from '@headlessui/react'
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
 import { Amount, Fraction, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'

@@ -23,9 +23,12 @@ import { getNetworkName } from 'src/lib/network'
 import { NetworkSelector } from 'src/lib/wagmi/components/network-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
-import { useSwitchChain } from 'src/lib/wallet'
+import { useSwitchChain } from 'src/lib/wallet/namespaces/evm/hooks/use-switch-chain'
 import { WagmiProvider } from 'src/providers/wagmi-provider'
 import { Amount, shortenAddress } from 'sushi'
 import { type EvmChainId, EvmToken, erc20Abi_transfer } from 'sushi/evm'
@@ -273,17 +276,14 @@ function DepositTab({
         </div>
       </div>
       <CheckerProvider>
-        <Checker.Guard
+        <Guard
           guardText="Select a supported network"
           guardWhen={!isChainIdSupported || !activeConfig}
         >
           {activeConfig && (
-            <Checker.Connect>
-              <Checker.Network chainId={activeConfig?.chainId}>
-                <Checker.Amounts
-                  chainId={amount?.currency.chainId}
-                  amount={amount}
-                >
+            <Connect>
+              <Network chainId={activeConfig?.chainId}>
+                <Amounts chainId={amount?.currency.chainId} amount={amount}>
                   {amount && (
                     <Deposit
                       teamId={teamId}
@@ -292,11 +292,11 @@ function DepositTab({
                       onTxConfirmed={onTxConfirmed}
                     />
                   )}
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
+                </Amounts>
+              </Network>
+            </Connect>
           )}
-        </Checker.Guard>
+        </Guard>
       </CheckerProvider>
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isWNativeSupported } from 'sushi'
 import { useDerivedStateSwapWidget } from './derivedstate-swap-widget-provider'
 
@@ -11,7 +11,7 @@ export const SwapWidgetToken0Input = () => {
   } = useDerivedStateSwapWidget()
 
   return (
-    <Web3Input.Currency
+    <CurrencyInput
       id="swap-from"
       type="INPUT"
       className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"

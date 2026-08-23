@@ -10,7 +10,7 @@ import React from 'react'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/trade/types'
 import { useDerivedStateSimpleSwap } from '../derivedstate-simple-swap-provider'
 import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
 

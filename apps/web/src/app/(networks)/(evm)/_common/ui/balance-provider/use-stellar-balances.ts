@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import type { StellarChainId, StellarContractAddress } from 'sushi/stellar'
 import { STALE_TIME } from './config'
 import type { UseBalancesReturn } from './types'

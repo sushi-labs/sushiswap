@@ -11,13 +11,11 @@ import {
 } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  type UseEvmTradeReturn,
-  useCrossChainTradeRoutes,
-  useCrossChainTradeStep,
-  useEvmTrade,
-  useEvmTradeQuote,
-} from 'src/lib/hooks/react-query'
+import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
+import { useCrossChainTradeRoutes } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes'
+import { useCrossChainTradeStep } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-step'
+import { useEvmTrade } from 'src/lib/hooks/react-query/trade/use-evm-trade'
+import { useEvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-evm-trade-quote'
 import { useLiFiStatus } from 'src/lib/swap/cross-chain'
 import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
 import { Checker } from 'src/lib/wagmi/systems/checker'

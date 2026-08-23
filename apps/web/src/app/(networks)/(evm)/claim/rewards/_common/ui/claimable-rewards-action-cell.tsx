@@ -2,7 +2,8 @@ import { Button } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { getEvmChainById } from 'sushi/evm'
 import { ClaimRewardsButton } from './claim-rewards-button'
 
@@ -11,16 +12,16 @@ export const ClaimableRewardsActionCell: FC<Row<ClaimableRewards>> = ({
 }) => {
   return (
     <div className="grid grid-cols-2 gap-3 w-[280px]">
-      <Checker.Connect size="default" fullWidth>
-        <Checker.Network
+      <Connect size="default" fullWidth>
+        <Network
           size="default"
           fullWidth
           chainId={original.chainId}
           hideChainName
         >
           <ClaimRewardsButton rewards={original} />
-        </Checker.Network>
-      </Checker.Connect>
+        </Network>
+      </Connect>
 
       <Button size="default" fullWidth variant="secondary" asChild>
         <a

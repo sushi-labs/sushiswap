@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { AutoDarkMode } from 'src/lib/perps'
+import { AutoDarkMode } from 'src/lib/perps/auto-dark-mode'
 import { getEvmChainById } from 'sushi/evm'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { LaunchpadHeader } from './_ui/launchpad-header'

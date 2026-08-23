@@ -13,7 +13,9 @@ import {
 } from '@sushiswap/ui'
 import type { UseFormReturn } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { type Amount, formatUSD } from 'sushi'
 import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
@@ -240,21 +242,21 @@ export function CreateLaunchBuyStep({
           Back
         </Button>
         <div className="sm:min-w-52">
-          <Checker.Connect
+          <Connect
             namespace="evm"
             fullWidth
             size="lg"
             variant="perps-default"
             type="button"
           >
-            <Checker.Network
+            <Network
               chainId={chainId}
               fullWidth
               size="lg"
               variant="perps-default"
               type="button"
             >
-              <Checker.Amounts
+              <Amounts
                 chainId={chainId}
                 amounts={checkerAmounts}
                 fullWidth
@@ -274,9 +276,9 @@ export function CreateLaunchBuyStep({
                 >
                   Review launch
                 </Button>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
+              </Amounts>
+            </Network>
+          </Connect>
         </div>
       </div>
     </PerpsCard>

@@ -1,7 +1,7 @@
 'use client'
 
 import { isTokenSelectorPair } from 'src/lib/wagmi/components/token-selector/selection'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
+import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isWNativeSupported } from 'sushi'
 import {
   useDerivedStateSimpleSwap,
@@ -22,7 +22,7 @@ export const SimpleSwapToken1Input = () => {
   } = useSimpleSwapTradeQuote()
 
   return (
-    <Web3Input.Currency
+    <CurrencyInput
       id="swap-to"
       type="OUTPUT"
       disabled

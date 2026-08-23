@@ -2,7 +2,7 @@ import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import { useAccounts } from 'src/lib/wallet'
+import { useAccounts } from 'src/lib/wallet/hooks/use-accounts'
 import { formatPercent, formatUSD } from 'sushi'
 import { PortfolioTokensList } from './portfolio-tokens-list'
 

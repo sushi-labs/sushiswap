@@ -1,7 +1,7 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/20/solid'
 import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { Amount, Price, formatUSD } from 'sushi'
 import { EvmChainId, type EvmCurrency, SUSHI, SUSHI_ADDRESS } from 'sushi/evm'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'

@@ -12,7 +12,7 @@ import {
   TokenSecurityMessage,
   type TokenSecurityResponse,
   isTokenSecurityIssue,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/tokens/use-token-security'
 import type { EvmToken } from 'sushi/evm'
 import type { SvmToken } from 'sushi/svm'
 import { getTokenSecurityRows } from './token-security-rows'

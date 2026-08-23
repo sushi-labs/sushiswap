@@ -9,7 +9,7 @@ import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
-import { TOAST_AUTOCLOSE_TIME } from 'src/lib/perps'
+import { TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount, Percent, formatUSD, withoutScientificNotation } from 'sushi'
 import {

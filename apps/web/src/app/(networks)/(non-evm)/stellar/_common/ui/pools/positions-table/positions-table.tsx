@@ -13,7 +13,7 @@ import type { PaginationState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
   type PositionSummary,
   useMyPosition,

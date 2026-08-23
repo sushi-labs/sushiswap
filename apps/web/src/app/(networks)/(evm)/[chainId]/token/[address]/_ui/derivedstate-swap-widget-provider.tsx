@@ -9,7 +9,8 @@ import {
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
-import { useEvmTradeQuote, useSvmTradeQuote } from 'src/lib/hooks/react-query'
+import { useEvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-evm-trade-quote'
+import { useSvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-svm-trade-quote'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useCarbonOffset } from 'src/lib/swap/use-carbon-offset'
 import { Amount, ZERO } from 'sushi'

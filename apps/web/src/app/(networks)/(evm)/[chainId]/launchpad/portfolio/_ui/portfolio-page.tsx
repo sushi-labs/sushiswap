@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation'
 import { type KeyboardEvent, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { type EvmAddress, getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {

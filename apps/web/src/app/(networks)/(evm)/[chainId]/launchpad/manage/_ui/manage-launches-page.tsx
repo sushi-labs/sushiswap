@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Button, Container, LinkInternal, Message } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../_lib/format'

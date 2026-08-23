@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { PartialRoute } from 'src/lib/wagmi/systems/checker/partial-route'
 import { ZERO, getChainById } from 'sushi'
 import { EvmNative, getEvmChainById } from 'sushi/evm'
 import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
@@ -50,8 +51,8 @@ export const SwapWidgetTradeButton = () => {
   }, [chainId, token0, token1, swapAmountString])
 
   return (
-    <Checker.Guard guardWhen={maintenance} guardText="Maintenance in progress">
-      <Checker.PartialRoute
+    <Guard guardWhen={maintenance} guardText="Maintenance in progress">
+      <PartialRoute
         trade={quote}
         setSwapAmount={setSwapAmount}
         onAccepted={() => router.push(url)}
@@ -81,7 +82,7 @@ export const SwapWidgetTradeButton = () => {
                     : 'Swap'}
           </Button>
         </Link>
-      </Checker.PartialRoute>
-    </Checker.Guard>
+      </PartialRoute>
+    </Guard>
   )
 }

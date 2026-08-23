@@ -5,7 +5,7 @@ import {
   getNativeBalanceReserve,
   getSpendableNativeBalance,
 } from 'src/lib/wagmi/components/web3-input/currency/native-balance-reserve'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, isAddressEqual } from 'sushi'
 import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import { type StellarChainId, isStellarAddress } from 'sushi/stellar'

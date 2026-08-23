@@ -3,8 +3,8 @@
 import { DialogType, useDialog } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { Checker } from 'src/lib/wagmi/systems/checker'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
+import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { EvmNative, EvmToken } from 'sushi/evm'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
@@ -64,7 +64,7 @@ export function QuickBuyTradeReview({
           }}
         >
           <DetailsInteractionTrackerProvider>
-            <Checker.Success tag={APPROVE_TAG_SWAP}>
+            <Success tag={APPROVE_TAG_SWAP}>
               <SimpleSwapTradeReviewDialog autoConfirm variant="perps">
                 {() => (
                   <QuickBuyTradeReviewTrigger
@@ -73,7 +73,7 @@ export function QuickBuyTradeReview({
                   />
                 )}
               </SimpleSwapTradeReviewDialog>
-            </Checker.Success>
+            </Success>
           </DetailsInteractionTrackerProvider>
         </DerivedstateSimpleSwapProvider>
       </CheckerProvider>

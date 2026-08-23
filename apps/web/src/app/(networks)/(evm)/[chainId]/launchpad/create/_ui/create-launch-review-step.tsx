@@ -7,7 +7,9 @@ import {
 import { Button, Dots, Message } from '@sushiswap/ui'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { LAUNCHPAD_ADDRESS } from '../../_lib/launchpad-contract'
@@ -44,7 +46,7 @@ export function CreateLaunchReviewStep({
   tokenHref: string | undefined
   isNativeInitialBuy: boolean
   initialBuyAmountRaw: bigint | undefined
-  initialBuyAmount: ComponentProps<typeof Checker.ApproveERC20>['amount']
+  initialBuyAmount: ComponentProps<typeof ApproveERC20>['amount']
   isLaunching: boolean
   isLogoProcessing: boolean
   isFactoryTermsPending: boolean
@@ -129,7 +131,7 @@ export function CreateLaunchReviewStep({
               <Link href={tokenHref}>View launch</Link>
             </Button>
           ) : (
-            <Checker.Connect
+            <Connect
               namespace="evm"
               fullWidth
               size="xl"
@@ -137,14 +139,14 @@ export function CreateLaunchReviewStep({
               className="mt-5"
               type="button"
             >
-              <Checker.Network
+              <Network
                 chainId={chainId}
                 fullWidth
                 size="xl"
                 variant="perps-default"
                 type="button"
               >
-                <Checker.ApproveERC20
+                <ApproveERC20
                   id="approve-launchpad-initial-buy"
                   amount={
                     !isNativeInitialBuy && initialBuyAmountRaw !== 0n
@@ -176,9 +178,9 @@ export function CreateLaunchReviewStep({
                   >
                     {isLaunching ? 'Creating token…' : 'Create token'}
                   </Button>
-                </Checker.ApproveERC20>
-              </Checker.Network>
-            </Checker.Connect>
+                </ApproveERC20>
+              </Network>
+            </Connect>
           )}
           <div className="mt-3 text-center text-xs text-perps-muted-50">
             Estimated network cost appears after simulation

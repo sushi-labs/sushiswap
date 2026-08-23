@@ -47,6 +47,8 @@ export const APPROVE_TAG_XSWAP = 'APPROVE_TAG_XSWAP'
 export const APPROVE_TAG_SWAP = 'APPROVE_TAG_SWAP'
 export const APPROVE_TAG_ZAP_LEGACY = 'APPROVE_TAG_ZAP_LEGACY'
 
+export const TOAST_AUTOCLOSE_TIME = 1000
+
 export const NativeAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const BLADE_API_HOST =

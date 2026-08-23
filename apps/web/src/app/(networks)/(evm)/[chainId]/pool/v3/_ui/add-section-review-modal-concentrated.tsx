@@ -28,8 +28,8 @@ import {
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {

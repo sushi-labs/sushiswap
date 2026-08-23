@@ -1,6 +1,7 @@
 'use client'
 import { useSetActiveWallet } from '@privy-io/wagmi'
-import { useAccount, usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 // biome-ignore lint/nursery/noRestrictedImports: this wrapper is the sanctioned direct Wagmi switch-chain integration
 import { useSwitchChain as useWagmiSwitchChain } from 'wagmi'
 

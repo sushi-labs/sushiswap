@@ -29,7 +29,7 @@ import {
 } from 'src/lib/swap/near-intents'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
   Amount,
   Price,

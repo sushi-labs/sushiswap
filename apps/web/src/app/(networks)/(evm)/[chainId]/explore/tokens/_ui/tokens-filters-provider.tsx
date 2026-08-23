@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react'
 import { parseArgs } from 'src/lib/functions'
-import { useTypedSearchParams } from 'src/lib/hooks'
+import { useTypedSearchParams } from 'src/lib/hooks/use-typed-search-params'
 import * as z from 'zod'
 
 export const tokenFiltersSchema = z.object({

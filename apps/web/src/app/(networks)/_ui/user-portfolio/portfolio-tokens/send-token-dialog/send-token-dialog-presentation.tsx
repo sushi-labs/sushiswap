@@ -12,7 +12,10 @@ import {
 } from '@sushiswap/ui'
 import { useCallback } from 'react'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import type { WalletNamespace } from 'src/lib/wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { type Amount, getChainById } from 'sushi'
@@ -154,14 +157,14 @@ export function SendTokenDialogPresentation<
         </div>
 
         <DialogFooter>
-          <Checker.Connect namespace={walletNamespace}>
-            <Checker.Network chainId={currency.chainId}>
-              <Checker.Guard
+          <Connect namespace={walletNamespace}>
+            <Network chainId={currency.chainId}>
+              <Guard
                 guardWhen={Boolean(recipientError)}
                 guardText={recipientError ?? ''}
               >
-                <Checker.Amounts chainId={currency.chainId} amount={sendAmount}>
-                  <Checker.Guard
+                <Amounts chainId={currency.chainId} amount={sendAmount}>
+                  <Guard
                     guardWhen={Boolean(amountError)}
                     guardText={amountError ?? ''}
                   >
@@ -173,11 +176,11 @@ export function SendTokenDialogPresentation<
                     >
                       Send
                     </Button>
-                  </Checker.Guard>
-                </Checker.Amounts>
-              </Checker.Guard>
-            </Checker.Network>
-          </Checker.Connect>
+                  </Guard>
+                </Amounts>
+              </Guard>
+            </Network>
+          </Connect>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -15,11 +15,9 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import {
-  getLiquidityTokenFromPool,
-  useTokenAmountDollarValues,
-  useUnderlyingTokenBalanceFromPool,
-} from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
+import { getLiquidityTokenFromPool } from 'src/lib/hooks/use-tokens-from-pool'
+import { useUnderlyingTokenBalanceFromPool } from 'src/lib/hooks/use-underlying-token-balance-from-pool'
 import { Amount } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'

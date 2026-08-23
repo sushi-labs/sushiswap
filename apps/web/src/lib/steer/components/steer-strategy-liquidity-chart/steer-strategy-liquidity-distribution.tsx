@@ -2,7 +2,7 @@
 
 import { SkeletonBox } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import {
   type PoolId,
   type SushiSwapV3ChainId,

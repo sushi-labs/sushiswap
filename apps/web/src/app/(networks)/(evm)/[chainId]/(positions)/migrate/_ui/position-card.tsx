@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from '@sushiswap/ui'
 import React, { type FC } from 'react'
-import { useTokensFromPool } from 'src/lib/hooks'
+import { useTokensFromPool } from 'src/lib/hooks/use-tokens-from-pool'
 import { formatPercent, formatUSD } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 

@@ -9,8 +9,13 @@ import { useIsMounted } from '@sushiswap/hooks'
 import { APPROVE_TAG_ADD_STEER, Field } from 'src/lib/constants'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
+import { Success } from 'src/lib/wagmi/systems/checker/success'
 import {
   useSteerPositionAddActions,
   useSteerPositionAddDerivedInfo,
@@ -90,35 +95,32 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
         </div>
 
         {isMounted ? (
-          <Checker.Guard
-            guardWhen={vault.isDeprecated}
-            guardText="Vault is deprecated"
-          >
-            <Checker.Connect testId="connect" fullWidth>
-              <Checker.Network
+          <Guard guardWhen={vault.isDeprecated} guardText="Vault is deprecated">
+            <Connect testId="connect" fullWidth>
+              <Network
                 testId="switch-network"
                 fullWidth
                 chainId={vault.chainId}
               >
-                <Checker.Amounts
+                <Amounts
                   testId="check-amounts"
                   fullWidth
                   chainId={vault.chainId}
                   amounts={amounts}
                 >
-                  <Checker.ApproveERC20
+                  <ApproveERC20
                     fullWidth
                     id="approve-erc20-0"
                     amount={parsedAmounts?.[Field.CURRENCY_A]}
                     contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                   >
-                    <Checker.ApproveERC20
+                    <ApproveERC20
                       fullWidth
                       id="approve-erc20-1"
                       amount={parsedAmounts?.[Field.CURRENCY_B]}
                       contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                     >
-                      <Checker.Success tag={APPROVE_TAG_ADD_STEER}>
+                      <Success tag={APPROVE_TAG_ADD_STEER}>
                         <SteerPositionAddReviewModal
                           vault={vault}
                           onSuccess={() => {
@@ -137,13 +139,13 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                             </Button>
                           </DialogTrigger>
                         </SteerPositionAddReviewModal>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.ApproveERC20>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.Guard>
+                      </Success>
+                    </ApproveERC20>
+                  </ApproveERC20>
+                </Amounts>
+              </Network>
+            </Connect>
+          </Guard>
         ) : (
           <Button fullWidth size="xl">
             Connect

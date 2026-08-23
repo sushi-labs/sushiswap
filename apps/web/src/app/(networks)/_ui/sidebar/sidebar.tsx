@@ -12,7 +12,7 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useSidebar } from './sidebar-provider'
 import { SidebarView } from './types'
 import { SidebarConnectView } from './views/sidebar-connect-view'

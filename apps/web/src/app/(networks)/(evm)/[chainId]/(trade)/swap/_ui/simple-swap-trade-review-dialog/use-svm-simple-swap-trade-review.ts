@@ -10,9 +10,9 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
-import { useSvmTradeExecute } from 'src/lib/hooks/react-query'
+import { useSvmTradeExecute } from 'src/lib/hooks/react-query/trade/use-svm-trade-execute'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, Percent } from 'sushi'
 import {
   type SvmAddress,

@@ -39,8 +39,9 @@ import {
 import { Button } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
-import { useTokenAmountDollarValues, useV2Pool } from 'src/lib/hooks'
+import { useV2Pool } from 'src/lib/hooks/api/use-v2-pool'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import {
   V3MigrateContractConfig,
   useV3Migrate,
