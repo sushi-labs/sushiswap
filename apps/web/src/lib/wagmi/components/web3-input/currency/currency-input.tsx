@@ -135,7 +135,7 @@ function CurrencyInput<
     }
   }, [onChange, currency, value])
 
-  const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
+  const isLoading = !isMounted || loading || currencyLoading
   const _error = currencyError
     ? currencyError
     : error
