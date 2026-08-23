@@ -1,12 +1,8 @@
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import { BLADE_SUPPORTED_NETWORKS } from 'src/config'
 import { isBladeChainId } from 'sushi/evm'
-import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../../header'
-
-export function generateStaticParams() {
-  return getStaticChainParams(BLADE_SUPPORTED_NETWORKS)
-}
 
 export default async function BladePoolLayout(props: {
   children: React.ReactNode
@@ -24,9 +20,11 @@ export default async function BladePoolLayout(props: {
   return (
     <>
       <Header chainId={chainId} networks={BLADE_SUPPORTED_NETWORKS} />
-      <main className="flex flex-col h-full flex-1 animate-slide">
-        {children}
-      </main>
+      <Suspense fallback={null}>
+        <main className="flex flex-col h-full flex-1 animate-slide">
+          {children}
+        </main>
+      </Suspense>
     </>
   )
 }

@@ -2,13 +2,7 @@ import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isEvmChainId } from 'sushi/evm'
-import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../header'
-
-export function generateStaticParams() {
-  return getStaticChainParams(POOL_SUPPORTED_NETWORKS.filter(isEvmChainId))
-}
 
 export default async function PoolLayout(props: {
   children: React.ReactNode
