@@ -11,6 +11,12 @@ export const metadata: Metadata = {
     'Create and discover tokens with permanently locked Sushi liquidity.',
 }
 
+export function generateStaticParams() {
+  return LAUNCHPAD_SUPPORTED_CHAIN_IDS.map((chainId) => ({
+    chainId: chainId.toString(),
+  }))
+}
+
 export default async function LaunchpadLayout({
   children,
   params,
