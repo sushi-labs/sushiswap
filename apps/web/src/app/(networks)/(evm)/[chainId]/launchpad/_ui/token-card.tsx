@@ -1,4 +1,4 @@
-import { SkeletonBox } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -24,8 +24,11 @@ export function TokenCardSkeleton() {
         <div className="flex flex-col items-center gap-1">
           <div className="grid w-full grid-cols-[1fr_auto_1fr] items-start">
             <div className="relative col-start-2 row-start-1">
-              <SkeletonBox className="h-24 w-24 shrink-0 rounded-full" />
-              <SkeletonBox className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full" />
+              <SkeletonCircle radius={96} />
+              <SkeletonCircle
+                radius={20}
+                className="absolute -bottom-0.5 -right-0.5"
+              />
             </div>
           </div>
           <div className="flex w-full min-w-0 flex-col items-center">
