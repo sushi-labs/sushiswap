@@ -6,6 +6,8 @@ export const cookieTypes = [
   'hotjar',
 ] as const
 
+export type CookieDialogVariant = 'default' | 'perps'
+
 export type CookieType = (typeof cookieTypes)[number]
 
 export const alwaysEnabledCookieTypes = ['essential'] as const
