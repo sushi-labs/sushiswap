@@ -6,7 +6,6 @@ import {
   type LaunchpadTokenConnection,
   getLaunchpadCandles,
   getLaunchpadCreator,
-  getLaunchpadToken,
   getLaunchpadTokens,
 } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
@@ -27,6 +26,7 @@ import { shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
+import { getCachedLaunchpadToken } from './get-cached-launchpad-token'
 import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 
 const SUSHI_URL = 'https://www.sushi.com'
@@ -35,13 +35,6 @@ const SUSHI_WEBSITE_ID = `${SUSHI_URL}/#website`
 const POOLS_FUN_URL = 'https://pools.fun'
 const POOLS_FUN_ORGANIZATION_ID = `${POOLS_FUN_URL}/#organization`
 const LAUNCHPAD_REVALIDATE_SECONDS = 60
-
-const getCachedLaunchpadToken = unstable_cache(
-  async (chainId: LaunchpadChainId, address: EvmAddress) =>
-    getLaunchpadToken({ chainId, address }),
-  ['launchpad-token-seo'],
-  { revalidate: LAUNCHPAD_REVALIDATE_SECONDS },
-)
 
 const getCachedLaunchpadTokens = unstable_cache(
   async (chainId: LaunchpadChainId) =>
@@ -99,7 +92,7 @@ export async function getLaunchpadTokenForSeo(
   address: EvmAddress,
 ): Promise<LaunchpadToken | null> {
   try {
-    return await getCachedLaunchpadToken(chainId, address)
+    return await getCachedLaunchpadToken({ chainId, address })
   } catch {
     return null
   }

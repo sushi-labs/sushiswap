@@ -21,14 +21,14 @@ import { SUPPORT_NAVIGATION_LINKS } from './_common/header-elements'
 
 export const UtilityButtons = () => {
   return (
-    <div className="hidden md:flex gap-1 fixed bottom-0 right-2 z-50">
+    <div className="flex gap-1 fixed bottom-0 right-2 z-50">
       <CookieDialogContainer>
         <IconButton
           size="xs"
           variant="ghost"
           icon={BrowserCookieIcon}
           name={'cookies'}
-          className="text-muted-foreground"
+          className="hidden text-muted-foreground md:inline-flex"
         />
       </CookieDialogContainer>
       <Popover>
@@ -38,7 +38,7 @@ export const UtilityButtons = () => {
             variant="ghost"
             icon={QuestionMarkCircleIcon}
             name={'help'}
-            className="text-muted-foreground"
+            className="hidden text-muted-foreground md:inline-flex"
           />
         </PopoverTrigger>
         <PopoverContent className="!p-0">
