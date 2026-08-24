@@ -17,7 +17,7 @@ import {
   useMemo,
 } from 'react'
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import {
   getIsPrivyWalletProviderReady,
   getWalletRestorationState,

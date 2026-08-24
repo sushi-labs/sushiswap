@@ -6,8 +6,8 @@ import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
-import { useTokensFromPool } from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useTokensFromPool } from 'src/lib/hooks/use-tokens-from-pool'
 import {
   SushiSwapV2PoolState,
   useSushiSwapV2Pool,

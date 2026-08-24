@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useAmountBalance } from 'src/app/(networks)/(evm)/_common/ui/balance-provider/use-balance'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { useAccount } from 'src/lib/wallet'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
   type StellarAccountAddress,
   StellarChainId,
@@ -691,7 +691,7 @@ export default function AddPoolPage() {
       </FormSection>
       <FormSection title="" description="">
         <div className="flex w-full flex-col gap-4">
-          <Checker.Connect namespace="stellar" fullWidth size="xl">
+          <Connect namespace="stellar" fullWidth size="xl">
             {tokensNeedingTrustline.length > 0 ? (
               <CreateTrustlineButton
                 size="xl"
@@ -712,7 +712,7 @@ export default function AddPoolPage() {
                 {isLoadingTrustlines ? 'Checking trustlines...' : ctaButtonText}
               </Button>
             )}
-          </Checker.Connect>
+          </Connect>
         </div>
       </FormSection>
     </>

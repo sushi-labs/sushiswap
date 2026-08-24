@@ -38,10 +38,12 @@ function hydrateLaunchpadToken(
 export function useLaunchpadToken(
   chainId: LaunchpadChainId,
   address: EvmAddress,
+  initialData?: LaunchpadToken | null,
 ) {
   return useQuery({
     queryKey: ['launchpad', 'token', { chainId, address }],
     queryFn: () => getLaunchpadToken({ chainId, address }),
+    initialData,
     select: hydrateLaunchpadToken,
     retry: 3,
     retryDelay: (attempt) => Math.min(ms('1s') * 2 ** attempt, ms('5s')),

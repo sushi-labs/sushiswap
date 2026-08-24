@@ -8,18 +8,11 @@ const WALLET_NAMESPACE_PROVIDERS: Record<
   WalletNamespace,
   React.ComponentType<{ children: React.ReactNode }>
 > = {
-  evm: dynamic(() => import('../namespaces/evm/provider/evm-wallet-provider'), {
-    ssr: false,
-  }),
+  evm: dynamic(() => import('../namespaces/evm/provider/evm-wallet-provider')),
 
-  svm: dynamic(() => import('../namespaces/svm/provider/svm-wallet-provider'), {
-    ssr: false,
-  }),
+  svm: dynamic(() => import('../namespaces/svm/provider/svm-wallet-provider')),
   stellar: dynamic(
     () => import('../namespaces/stellar/provider/stellar-wallet-provider'),
-    {
-      ssr: false,
-    },
   ),
 }
 

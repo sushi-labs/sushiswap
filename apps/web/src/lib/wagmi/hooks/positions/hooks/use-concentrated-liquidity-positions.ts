@@ -1,7 +1,7 @@
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useAllPrices } from 'src/lib/hooks/react-query'
+import { useAllPrices } from 'src/lib/hooks/react-query/prices/use-all-prices'
 import { Amount } from 'sushi'
 import {
   type EvmToken,

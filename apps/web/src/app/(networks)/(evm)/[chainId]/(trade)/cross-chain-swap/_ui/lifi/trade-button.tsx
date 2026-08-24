@@ -10,9 +10,17 @@ import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { isChainIdSupportedByWallet } from 'src/lib/wagmi/config/wallet'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
-import { useWallet } from 'src/lib/wallet'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
+import {
+  SLIPPAGE_WARNING_THRESHOLD,
+  Slippage,
+} from 'src/lib/wagmi/systems/checker/slippage'
+import { Success } from 'src/lib/wagmi/systems/checker/success'
+import { useWallet } from 'src/lib/wallet/hooks/use-wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { ZERO } from 'sushi'
 import { CrossChainSwapChainUnsupportedMessage } from './chain-unsupported-message'
@@ -64,36 +72,27 @@ export function CrossChainSwapTradeButton<
   return (
     <CrossChainSwapTradeReviewDialog>
       <div>
-        <Checker.Guard
-          guardWhen={maintenance}
-          guardText="Maintenance in progress"
-        >
-          <Checker.Connect
-            fullWidth
-            namespace={getNamespaceForChainId(chainId0)}
-          >
-            <Checker.Connect
-              fullWidth
-              namespace={getNamespaceForChainId(chainId1)}
-            >
-              <Checker.Network fullWidth chainId={chainId0}>
-                <Checker.Amounts
-                  fullWidth
-                  chainId={chainId0}
-                  amount={swapAmount}
-                >
-                  <Checker.Slippage
+        <Guard guardWhen={maintenance} guardText="Maintenance in progress">
+          <Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
+            <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
+              <Network fullWidth chainId={chainId0}>
+                <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                  <Slippage
                     fullWidth
                     text="Swap With High Slippage"
                     slippageTolerance={slippagePercent}
                   >
-                    <Checker.ApproveERC20
+                    <ApproveERC20
                       id="approve-erc20"
                       fullWidth
                       amount={swapAmount}
-                      contract={route?.step?.estimate?.approvalAddress}
+                      contract={
+                        route?.step?.estimate?.approvalAddress as
+                          | AddressFor<TChainId0>
+                          | undefined
+                      }
                     >
-                      <Checker.Success tag={APPROVE_TAG_XSWAP}>
+                      <Success tag={APPROVE_TAG_XSWAP}>
                         <DialogTrigger asChild>
                           <Button
                             disabled={Boolean(
@@ -115,14 +114,14 @@ export function CrossChainSwapTradeButton<
                                 : 'Swap'}
                           </Button>
                         </DialogTrigger>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Slippage>
-                </Checker.Amounts>
-              </Checker.Network>
-            </Checker.Connect>
-          </Checker.Connect>
-        </Checker.Guard>
+                      </Success>
+                    </ApproveERC20>
+                  </Slippage>
+                </Amounts>
+              </Network>
+            </Connect>
+          </Connect>
+        </Guard>
       </div>
       {showChainUnsupportedWarning && (
         <CrossChainSwapChainUnsupportedMessage

@@ -22,7 +22,8 @@ import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { steerMultiPositionManagerAbi } from 'src/lib/steer/abi/steer-multi-position-manager'
 import { useSteerAccountPosition } from 'src/lib/steer/hooks'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
@@ -285,8 +286,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           />
         </CardGroup>
       </Card>
-      <Checker.Connect testId="connect" fullWidth variant="outline" size="xl">
-        <Checker.Network
+      <Connect testId="connect" fullWidth variant="outline" size="xl">
+        <Network
           testId="switch-network"
           fullWidth
           variant="outline"
@@ -303,8 +304,8 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           >
             {+value === 0 ? 'Enter Amount' : 'Remove'}
           </Button>
-        </Checker.Network>
-      </Checker.Connect>
+        </Network>
+      </Connect>
     </div>
   )
 }

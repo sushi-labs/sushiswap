@@ -18,7 +18,7 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import {
   getIsPrivyWalletProviderReady,
   getWalletRestorationState,

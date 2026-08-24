@@ -9,7 +9,7 @@ import {
   Separator,
 } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { getChainById } from 'sushi'
 import {
   type EvmAddress,

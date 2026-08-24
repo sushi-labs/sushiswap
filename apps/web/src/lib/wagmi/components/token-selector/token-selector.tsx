@@ -26,7 +26,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import type { TokenSelectorChainId } from './config'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'

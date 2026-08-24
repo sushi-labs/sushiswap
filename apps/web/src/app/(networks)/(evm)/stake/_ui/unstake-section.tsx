@@ -3,7 +3,9 @@
 import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useBarWithdraw } from 'src/lib/wagmi/hooks/bar/use-bar-withdraw'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { withCheckerRoot } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount } from 'sushi'
 import { EvmChainId, XSUSHI } from 'sushi/evm'
@@ -29,8 +31,8 @@ export const UnstakeSection = withCheckerRoot(() => {
       parsedInput={parsedInput}
       onInput={setInput}
     >
-      <Checker.Connect size="xl" fullWidth>
-        <Checker.Network
+      <Connect size="xl" fullWidth>
+        <Network
           size="xl"
           fullWidth
           chainId={EvmChainId.ETHEREUM}
@@ -41,7 +43,7 @@ export const UnstakeSection = withCheckerRoot(() => {
             </span>
           }
         >
-          <Checker.Amounts
+          <Amounts
             size="xl"
             fullWidth
             chainId={EvmChainId.ETHEREUM}
@@ -56,9 +58,9 @@ export const UnstakeSection = withCheckerRoot(() => {
             >
               {isWritePending ? <Dots>Confirm transaction</Dots> : 'Unstake'}
             </Button>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
+          </Amounts>
+        </Network>
+      </Connect>
     </UnstakeSectionWidget>
   )
 })

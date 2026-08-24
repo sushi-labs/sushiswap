@@ -1,7 +1,7 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List, classNames } from '@sushiswap/ui'
 import { useEffect } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import { useTokenSelectorTheme } from '../token-selector-theme'

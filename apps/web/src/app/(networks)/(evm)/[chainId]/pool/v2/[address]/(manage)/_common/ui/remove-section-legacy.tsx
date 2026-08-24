@@ -16,11 +16,9 @@ import {
 import { Button, Dots } from '@sushiswap/ui'
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { APPROVE_TAG_REMOVE_LEGACY } from 'src/lib/constants'
-import {
-  useTokensFromPool,
-  useUnderlyingTokenBalanceFromPool,
-} from 'src/lib/hooks'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useTokensFromPool } from 'src/lib/hooks/use-tokens-from-pool'
+import { useUnderlyingTokenBalanceFromPool } from 'src/lib/hooks/use-underlying-token-balance-from-pool'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import {
   EvmNative,

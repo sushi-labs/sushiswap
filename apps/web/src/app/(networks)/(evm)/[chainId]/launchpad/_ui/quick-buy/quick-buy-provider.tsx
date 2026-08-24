@@ -10,7 +10,8 @@ import {
   useState,
 } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
-import { useAccount, useSwitchChain } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { useSwitchChain } from 'src/lib/wallet/namespaces/evm/hooks/use-switch-chain'
 import { Amount } from 'sushi'
 import { EvmNative } from 'sushi/evm'
 import { useChainId, useGasPrice } from 'wagmi'

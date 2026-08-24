@@ -1,6 +1,7 @@
 'use client'
 
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useMemo } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useSidebar } from './sidebar-provider'
 import { SidebarView } from './types'
 import { SidebarConnectView } from './views/sidebar-connect-view'
@@ -21,9 +22,12 @@ import { SidebarSettingsView } from './views/sidebar-settings-view'
 const ResponsiveSidebarWrapper: FC<{
   children: ReactNode
 }> = ({ children }) => {
+  const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
   const { isOpen, open, close } = useSidebar()
   const onOpenChange = (shouldOpen: boolean) => (shouldOpen ? open() : close())
+
+  if (!isMounted) return null
 
   return isSm ? (
     <Popover open={isOpen} onOpenChange={onOpenChange}>

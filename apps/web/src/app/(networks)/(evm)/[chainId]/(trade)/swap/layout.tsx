@@ -1,13 +1,17 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isSupportedChainId } from 'src/config'
+import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../header'
-import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Swap',
   description:
     'Trade crypto effortlessly with SushiSwap, supporting over 30 chains and featuring a powerful aggregator for the best rates across DeFi.',
+}
+
+export function generateStaticParams() {
+  return getStaticChainParams(SUPPORTED_CHAIN_IDS)
 }
 
 export default async function SwapLayout(props: {
@@ -23,9 +27,9 @@ export default async function SwapLayout(props: {
   }
 
   return (
-    <Providers>
+    <>
       <Header chainId={chainId} />
       <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-    </Providers>
+    </>
   )
 }

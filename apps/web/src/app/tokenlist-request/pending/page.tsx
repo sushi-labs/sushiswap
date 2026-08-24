@@ -27,7 +27,7 @@ import { usePendingTokens } from 'src/lib/hooks/api/use-pending-token-listings'
 import {
   type TokenSecurity,
   isTokenSecurityIssue,
-} from 'src/lib/hooks/react-query'
+} from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
 import {

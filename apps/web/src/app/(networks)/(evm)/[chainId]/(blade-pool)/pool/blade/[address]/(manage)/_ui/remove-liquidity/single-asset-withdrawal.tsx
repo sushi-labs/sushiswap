@@ -11,7 +11,7 @@ import { logger } from 'src/lib/logger'
 import type { useBladeWithdrawTransaction } from 'src/lib/pool/blade/use-blade-withdraw'
 import { useBladeWithdrawRequest } from 'src/lib/pool/blade/use-blade-withdraw-request'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker'
+import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
 
 import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
 import { Amount, Percent, formatUSD } from 'sushi'

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { formatUSD } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import { useBarBalance } from './bar-balance-provider'

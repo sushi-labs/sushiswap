@@ -7,8 +7,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { useAccount } from 'src/lib/wallet'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount } from 'sushi'
 import { StellarChainId } from 'sushi/stellar'
 import {
@@ -248,7 +249,7 @@ export const SimpleSwapExecuteButton = () => {
   return (
     <>
       <div className="pt-4">
-        <Checker.Connect namespace="stellar" fullWidth size="xl">
+        <Connect namespace="stellar" fullWidth size="xl">
           {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
             <CreateTrustlineButton
               tokens={[{ code: token1.symbol, issuer: token1ResolvedIssuer }]}
@@ -256,7 +257,7 @@ export const SimpleSwapExecuteButton = () => {
               fullWidth
             />
           ) : (
-            <Checker.Amounts
+            <Amounts
               chainId={StellarChainId.STELLAR}
               amounts={checkerAmount}
               disabled={isDisabled}
@@ -275,9 +276,9 @@ export const SimpleSwapExecuteButton = () => {
               >
                 {buttonText}
               </Button>
-            </Checker.Amounts>
+            </Amounts>
           )}
-        </Checker.Connect>
+        </Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (

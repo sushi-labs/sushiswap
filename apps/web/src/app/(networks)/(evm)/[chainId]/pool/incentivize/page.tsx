@@ -31,7 +31,7 @@ import getUnixTime from 'date-fns/getUnixTime'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
-import { useRewardTokens } from 'src/lib/hooks/react-query'
+import { useRewardTokens } from 'src/lib/hooks/react-query/rewards/use-reward-tokens'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {

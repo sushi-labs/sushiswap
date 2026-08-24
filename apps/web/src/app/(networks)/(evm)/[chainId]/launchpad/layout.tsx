@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { AutoDarkMode } from 'src/lib/perps'
+import { AutoDarkMode } from 'src/lib/perps/auto-dark-mode'
 import { getEvmChainById } from 'sushi/evm'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { LaunchpadHeader } from './_ui/launchpad-header'
 import { LAUNCHPAD_SUPPORTED_CHAIN_IDS, isLaunchpadChainId } from './constants'
 
@@ -9,6 +10,10 @@ export const metadata: Metadata = {
   title: 'Launchpad',
   description:
     'Create and discover tokens with permanently locked Sushi liquidity.',
+}
+
+export function generateStaticParams() {
+  return getStaticChainParams(LAUNCHPAD_SUPPORTED_CHAIN_IDS)
 }
 
 export default async function LaunchpadLayout({
@@ -37,7 +42,7 @@ export default async function LaunchpadLayout({
           <div className="absolute left-[5%] top-0 h-72 w-72 rounded-full bg-perps-blue/[0.08] blur-3xl" />
           <div className="absolute right-[8%] top-16 h-80 w-80 rounded-full bg-pink-500/[0.06] blur-3xl" />
         </div>
-        <main className="relative flex flex-1 flex-col animate-slide">
+        <main className="relative flex flex-1 flex-col animate-launchpad-slide">
           {children}
         </main>
       </div>

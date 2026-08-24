@@ -14,7 +14,7 @@ import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, type Percent, getChainById } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
@@ -135,7 +135,7 @@ function CurrencyInput<
     }
   }, [onChange, currency, value])
 
-  const isLoading = !isMounted || loading || currencyLoading || isBalanceLoading
+  const isLoading = !isMounted || loading || currencyLoading
   const _error = currencyError
     ? currencyError
     : error
@@ -348,7 +348,7 @@ function CurrencyInput<
               currency={currency}
               priceImpact={priceImpact}
               error={_error}
-              loading={isPriceLoading}
+              loading={currencyLoading || isPriceLoading}
               price={price}
             />
             {currencyError && onCurrencyRetry ? (

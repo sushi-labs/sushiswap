@@ -96,8 +96,6 @@ export type CrossChainRoutesResponse<
   TChainId1 extends LifiChainId,
 > = z.output<ReturnType<typeof routesOutputSchema<TChainId0, TChainId1>>>
 
-export const revalidate = 20
-
 export async function GET(request: NextRequest) {
   const params = Object.fromEntries(request.nextUrl.searchParams.entries())
 

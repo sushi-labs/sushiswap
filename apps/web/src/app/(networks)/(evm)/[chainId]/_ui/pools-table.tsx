@@ -45,7 +45,7 @@ import Link from 'next/link'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
-import { usePoolsInfinite } from 'src/lib/hooks'
+import { usePoolsInfinite } from 'src/lib/hooks/api/use-pools-infinite'
 import {
   type EvmAddress,
   EvmNative,

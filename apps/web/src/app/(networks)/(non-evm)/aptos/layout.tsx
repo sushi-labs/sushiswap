@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type React from 'react'
+import { Suspense } from 'react'
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
@@ -15,8 +16,10 @@ export default function AptosLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Providers>
-      <div className="flex flex-col h-full w-full">{children}</div>
-    </Providers>
+    <Suspense fallback={null}>
+      <Providers>
+        <div className="flex flex-col h-full w-full">{children}</div>
+      </Providers>
+    </Suspense>
   )
 }

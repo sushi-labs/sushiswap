@@ -10,11 +10,11 @@ import {
   classNames,
   typographyVariants,
 } from '@sushiswap/ui'
+import { cacheLife } from 'next/cache'
 import Link from 'next/link'
+import { connection } from 'next/server'
 import { getUnauthenticatedStyroClient } from '../_common/lib/styro/styro-client'
 import { PlanCard } from '../_common/ui/plans/plan-card'
-
-export const revalidate = 3600
 
 const enterpriseFeatures = [
   'Custom requests',
@@ -22,6 +22,13 @@ const enterpriseFeatures = [
   'Custom features',
   'Personalized pricing built for your needs',
 ]
+
+async function getCachedPlans() {
+  'use cache'
+  cacheLife({ revalidate: 3600 })
+
+  return getUnauthenticatedStyroClient().getPlans()
+}
 
 function EnterpriseCard() {
   return (
@@ -58,8 +65,8 @@ function EnterpriseCard() {
 }
 
 export default async function Page() {
-  const client = getUnauthenticatedStyroClient()
-  const response = await client.getPlans()
+  await connection()
+  const response = await getCachedPlans()
 
   return (
     <div className="flex flex-col items-center w-full space-y-16 lg:space-y-20">

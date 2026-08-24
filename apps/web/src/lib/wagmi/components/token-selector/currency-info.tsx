@@ -20,10 +20,8 @@ import {
   TooltipTrigger,
   classNames,
 } from '@sushiswap/ui'
-import {
-  useCoinGeckoTokenInfo,
-  useTokenSecurity,
-} from 'src/lib/hooks/react-query'
+import { useCoinGeckoTokenInfo } from 'src/lib/hooks/react-query/tokens/use-coin-gecko-token-info'
+import { useTokenSecurity } from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { formatNumber, formatUSD, getChainById, shortenAddress } from 'sushi'
 import type { EvmToken } from 'sushi/evm'
 import { type StellarToken, isStellarChainId } from 'sushi/stellar'

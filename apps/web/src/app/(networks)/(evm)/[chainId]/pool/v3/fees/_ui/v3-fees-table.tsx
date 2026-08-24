@@ -23,7 +23,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { useSwitchChain } from 'src/lib/wallet'
+import { useSwitchChain } from 'src/lib/wallet/namespaces/evm/hooks/use-switch-chain'
 import { formatNumber, formatUSD } from 'sushi'
 import {
   type EvmAddress,

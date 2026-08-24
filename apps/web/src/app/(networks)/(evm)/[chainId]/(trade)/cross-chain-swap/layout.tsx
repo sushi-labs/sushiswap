@@ -10,6 +10,7 @@ import {
   isNearIntentsChainId,
 } from 'src/lib/swap/near-intents'
 import { StellarChainId } from 'sushi/stellar'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header as StellarHeader } from '~stellar/header'
 import { Header } from '../header'
 import { Providers } from './providers'
@@ -23,6 +24,10 @@ export const metadata: Metadata = {
   title: 'Cross-Chain Swap',
   description:
     'Swap assets across multiple blockchains with ease using Cross-Chain Swap. Enjoy secure, seamless cross-chain swaps for a streamlined DeFi experience on Sushi.com.',
+}
+
+export function generateStaticParams() {
+  return getStaticChainParams(CROSS_CHAIN_SWAP_NETWORKS)
 }
 
 export default async function CrossChainSwapLayout(props: {

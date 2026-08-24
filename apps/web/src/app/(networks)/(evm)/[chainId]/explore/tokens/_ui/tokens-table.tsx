@@ -22,7 +22,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useTokens } from 'src/lib/hooks'
+import { useTokens } from 'src/lib/hooks/api/use-tokens'
 import { getEvmChainById } from 'sushi/evm'
 import {
   FDV_COLUMN,

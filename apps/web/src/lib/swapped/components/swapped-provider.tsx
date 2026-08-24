@@ -3,7 +3,8 @@
 import { SwappedProvider as SwappedProviderInternal } from '@sushiswap/ui'
 import type { FC, ReactNode } from 'react'
 
-import { type WalletNamespace, useAccount } from 'src/lib/wallet'
+import type { WalletNamespace } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { signSwappedData } from '../actions/sign-swapped-data'
 
 export const SwappedProvider: FC<{

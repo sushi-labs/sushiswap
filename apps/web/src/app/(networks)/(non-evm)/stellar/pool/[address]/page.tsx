@@ -11,7 +11,7 @@ import {
 } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
 import React, { use } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import {
   type StellarContractAddress,
   isStellarContractAddress,
@@ -177,13 +177,13 @@ export default function PoolPage({ params }: PoolPageProps) {
                 Enter the desired token amounts to set the initial price for
                 this pool.
               </p>
-              <Checker.Connect namespace="stellar" fullWidth size="lg">
+              <Connect namespace="stellar" fullWidth size="lg">
                 <LinkInternal href="/stellar/pool/add">
                   <Button className="w-full" size="lg">
                     Initialize Pool &amp; Add Liquidity
                   </Button>
                 </LinkInternal>
-              </Checker.Connect>
+              </Connect>
             </div>
           </CardContent>
         </Card>

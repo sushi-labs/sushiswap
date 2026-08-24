@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@sushiswap/ui'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, getChainById, shortenAddress } from 'sushi'
 import {
   Divider,

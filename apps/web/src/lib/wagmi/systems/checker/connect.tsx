@@ -3,11 +3,8 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import {
-  type WalletNamespace,
-  getNameFromNamespace,
-  useWalletConnection,
-} from 'src/lib/wallet'
+import { type WalletNamespace, useWalletConnection } from 'src/lib/wallet'
+import { getNameFromNamespace } from 'src/lib/wallet/config'
 import { ConnectButton } from '../../components/connect-button'
 
 export interface ConnectProps extends ButtonProps {

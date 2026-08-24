@@ -16,7 +16,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 import { useInitiateClaim, useSnapshotCheck } from 'src/lib/migration-claim'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { useConnection, useSignTypedData } from 'wagmi'
 
 export const V2MigrationNotice = ({ className }: { className?: string }) => {
@@ -139,11 +139,11 @@ const ClaimFormDialog = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Checker.Connect fullWidth size="default" namespace="evm">
+      <Connect fullWidth size="default" namespace="evm">
         <DialogTrigger asChild>
           <Button fullWidth>Initiate Claim</Button>
         </DialogTrigger>
-      </Checker.Connect>
+      </Connect>
 
       <DialogContent>
         <DialogHeader className="!text-left">

@@ -28,7 +28,7 @@ import {
   warningSeverityClassName,
 } from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
-import { useAccount } from 'src/lib/wallet'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './fees-hover-card'
 import { CrossChainSwapTokenRate } from './token-rate'

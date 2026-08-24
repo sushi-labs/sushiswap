@@ -13,7 +13,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
-import { useChainIds } from 'src/lib/wallet'
+import { useChainIds } from 'src/lib/wallet/hooks/use-chain-ids'
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'

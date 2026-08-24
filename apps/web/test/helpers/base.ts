@@ -38,9 +38,9 @@ export class BaseActions {
   }
 
   async switchNetwork(chainId: number) {
-    const switchNetworkBtn = this.page.locator(
-      `[testdata-id=switch-network-${chainId}-button]`,
-    )
+    const switchNetworkBtn = this.page
+      .locator(`[testdata-id=switch-network-${chainId}-button]`)
+      .first()
     await expect(switchNetworkBtn).toBeVisible()
     await expect(switchNetworkBtn).toBeEnabled()
     await switchNetworkBtn.click()

@@ -3,8 +3,11 @@ import { Container } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import type React from 'react'
+import { Suspense } from 'react'
 import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
+import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../../header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
 import { NavigationItems } from '../navigation-items'
@@ -12,6 +15,10 @@ import { NavigationItems } from '../navigation-items'
 export const metadata: Metadata = {
   title: 'Pools',
   description: 'Explore SushiSwap pools.',
+}
+
+export function generateStaticParams() {
+  return getStaticChainParams(POOL_SUPPORTED_NETWORKS.filter(isEvmChainId))
 }
 
 export default async function ExploreLayout(props: {
@@ -31,19 +38,21 @@ export default async function ExploreLayout(props: {
   return (
     <>
       <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
-      <main className="flex flex-col h-full flex-1 animate-slide">
-        <Container maxWidth="7xl" className="px-4 py-4">
-          <GlobalStatsCharts chainId={chainId} />
-        </Container>
-        <Container maxWidth="7xl" className="px-4 flex gap-2 pb-4">
-          <NavigationItems chainId={chainId} />
-        </Container>
-        <section className="flex flex-col flex-1">
-          <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
-          </div>
-        </section>
-      </main>
+      <Suspense fallback={null}>
+        <main className="flex flex-col h-full flex-1 animate-slide">
+          <Container maxWidth="7xl" className="px-4 py-4">
+            <GlobalStatsCharts chainId={chainId} />
+          </Container>
+          <Container maxWidth="7xl" className="px-4 flex gap-2 pb-4">
+            <NavigationItems chainId={chainId} />
+          </Container>
+          <section className="flex flex-col flex-1">
+            <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
+              <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
+            </div>
+          </section>
+        </main>
+      </Suspense>
     </>
   )
 }

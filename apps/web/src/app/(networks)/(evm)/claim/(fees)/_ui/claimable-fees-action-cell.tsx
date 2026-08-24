@@ -1,7 +1,8 @@
 import { Button, DialogTrigger } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { getEvmChainById } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { ConcentratedLiquidityCollectAllDialog } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'
@@ -19,8 +20,8 @@ export const ClaimableFeesActionCell: FC<Row<ClaimableFees>> = ({
         chainId={original.chainId}
         account={address}
       >
-        <Checker.Connect size="default" fullWidth>
-          <Checker.Network
+        <Connect size="default" fullWidth>
+          <Network
             size="default"
             fullWidth
             chainId={original.chainId}
@@ -31,8 +32,8 @@ export const ClaimableFeesActionCell: FC<Row<ClaimableFees>> = ({
                 Claim Fees
               </Button>
             </DialogTrigger>
-          </Checker.Network>
-        </Checker.Connect>
+          </Network>
+        </Connect>
       </ConcentratedLiquidityCollectAllDialog>
       <Button size="default" fullWidth variant="secondary" asChild>
         <a

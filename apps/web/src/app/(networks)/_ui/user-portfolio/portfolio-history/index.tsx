@@ -1,6 +1,7 @@
 import { getPortfolioHistory } from '@sushiswap/graph-client/data-api'
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { Address } from 'viem'
 import { useConnection } from 'wagmi'
 import { PortfolioApproveTransaction } from './portfolio-approve-transaction'
@@ -10,7 +11,7 @@ import { PortfolioSendTransaction } from './portfolio-send-transaction'
 
 function usePortfolioHistory(
   address: Address | undefined,
-  refetchInterval?: 600_000,
+  refetchInterval = ms('10m'),
 ) {
   return useQuery({
     queryKey: ['portfolio-history', address],

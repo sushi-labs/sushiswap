@@ -1,7 +1,7 @@
 import { Button, List } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { type Amount, Price, formatUSD } from 'sushi'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { Rate } from './rate'

@@ -1,14 +1,25 @@
 import { get } from '@vercel/edge-config'
-import { NextResponse } from 'next/server'
+import { NextResponse, connection } from 'next/server'
 import * as z from 'zod'
 
 const schema = z.object({
   maintenance: z.boolean(),
 })
 
-export const revalidate = 60
-
+// Incident kill switch polled by the client every minute — never cached.
 export async function GET() {
-  const data = await get('near-intents-xswap')
-  return NextResponse.json(schema.safeParse(data))
+  await connection()
+
+  try {
+    return NextResponse.json(
+      schema.safeParse(await get('near-intents-xswap')),
+      {
+        headers: { 'Cache-Control': 'no-store' },
+      },
+    )
+  } catch {
+    return NextResponse.json(schema.safeParse(undefined), {
+      headers: { 'Cache-Control': 'no-store' },
+    })
+  }
 }

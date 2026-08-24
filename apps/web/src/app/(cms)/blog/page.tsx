@@ -1,4 +1,5 @@
 import { Container } from '@sushiswap/ui'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { ArticleList } from './components/article-list/article-list'
 import { BlogSearchProvider } from './components/blog-search-provider'
@@ -6,7 +7,9 @@ import { CategoryFilter } from './components/category-filter/category-filter'
 import { Hero } from './components/hero'
 import { SearchFilter } from './components/search-filter'
 
-export default function Page() {
+export default async function Page() {
+  await connection()
+
   return (
     <Suspense>
       <BlogSearchProvider>

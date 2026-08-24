@@ -23,11 +23,9 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
-import { useTokenAmountDollarValues } from 'src/lib/hooks'
-import {
-  useConcentratedLiquidityPoolStats,
-  useRewardCampaigns,
-} from 'src/lib/hooks/react-query'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
+import { useRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-reward-campaigns'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool-reserves'
 import { formatUSD } from 'sushi'
 import { getEvmChainById, isMerklChainId } from 'sushi/evm'

@@ -8,18 +8,28 @@ import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import type { SupportedChainId } from 'src/config'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
-import { usePersistedSlippageError } from 'src/lib/hooks'
+import { usePersistedSlippageError } from 'src/lib/hooks/use-persisted-slippage-error'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Guard } from 'src/lib/wagmi/systems/checker/guard'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
+import { PartialRoute } from 'src/lib/wagmi/systems/checker/partial-route'
+import {
+  SLIPPAGE_WARNING_THRESHOLD,
+  Slippage,
+} from 'src/lib/wagmi/systems/checker/slippage'
+import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { ZERO } from 'sushi'
 import {
+  type EvmChainId,
   EvmNative,
   RED_SNWAPPER_ADDRESS,
   isRedSnwapperChainId,
 } from 'sushi/evm'
-import { SvmNative, isSvmChainId } from 'sushi/svm'
+import { type SvmChainId, SvmNative, isSvmChainId } from 'sushi/svm'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -116,23 +126,23 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   return (
     <>
       <div>
-        <Checker.Guard
+        <Guard
           guardWhen={maintenance}
           guardText="Maintenance in progress"
           variant={buttonVariant}
         >
-          <Checker.Connect namespace={walletNamespace} variant={buttonVariant}>
-            <Checker.Network chainId={chainId} variant={buttonVariant}>
-              <Checker.Amounts
+          <Connect namespace={walletNamespace} variant={buttonVariant}>
+            <Network chainId={chainId} variant={buttonVariant}>
+              <Amounts
                 chainId={chainId}
                 amount={swapAmount}
                 variant={buttonVariant}
               >
-                <Checker.Slippage
+                <Slippage
                   text="Swap With High Slippage"
                   slippageTolerance={slippagePercent}
                 >
-                  <Checker.ApproveERC20
+                  <ApproveERC20<EvmChainId | SvmChainId>
                     id="approve-erc20"
                     amount={swapAmount}
                     variant={buttonVariant}
@@ -142,8 +152,8 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                         : undefined
                     }
                   >
-                    <Checker.Success tag={APPROVE_TAG_SWAP}>
-                      <Checker.PartialRoute
+                    <Success tag={APPROVE_TAG_SWAP}>
+                      <PartialRoute
                         trade={quote}
                         setSwapAmount={setSwapAmount}
                         onAccepted={() => setReviewOpen(true)}
@@ -180,14 +190,14 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                                     : 'Swap'}
                           </Button>
                         </DialogTrigger>
-                      </Checker.PartialRoute>
-                    </Checker.Success>
-                  </Checker.ApproveERC20>
-                </Checker.Slippage>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
-        </Checker.Guard>
+                      </PartialRoute>
+                    </Success>
+                  </ApproveERC20>
+                </Slippage>
+              </Amounts>
+            </Network>
+          </Connect>
+        </Guard>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}
       {showPriceImpactWarning && (

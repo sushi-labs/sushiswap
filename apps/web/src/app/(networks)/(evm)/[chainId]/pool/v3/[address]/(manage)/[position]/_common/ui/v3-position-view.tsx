@@ -38,16 +38,12 @@ import {
   formatTickPrice,
   getPriceOrderingFromPositionForUI,
 } from 'src/lib/functions'
-import {
-  useIsTickAtLimit,
-  usePriceInverter,
-  useTokenAmountDollarValues,
-} from 'src/lib/hooks'
-import {
-  useClaimableRewards,
-  useKatanaRewardCampaigns,
-  useRewardCampaigns,
-} from 'src/lib/hooks/react-query'
+import { useClaimableRewards } from 'src/lib/hooks/react-query/rewards/use-claimable-rewards'
+import { useKatanaRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-katana-reward-campaigns'
+import { useRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-reward-campaigns'
+import { usePriceInverter } from 'src/lib/hooks/use-price-inverter'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
+import { useIsTickAtLimit } from 'src/lib/pool/v3/use-is-tick-at-limit'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-owner'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'

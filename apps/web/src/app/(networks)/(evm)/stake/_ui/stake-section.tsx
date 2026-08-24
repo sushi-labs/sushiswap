@@ -4,11 +4,15 @@ import { Button, Dots } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { APPROVE_TAG_STAKE } from 'src/lib/constants'
 import { useBarDeposit } from 'src/lib/wagmi/hooks/bar/use-bar-deposit'
-import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
+import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { Network } from 'src/lib/wagmi/systems/checker/network'
 import {
   useApproved,
   withCheckerRoot,
 } from 'src/lib/wagmi/systems/checker/provider'
+import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { Amount } from 'sushi'
 import { EvmChainId, SUSHI, XSUSHI_ADDRESS } from 'sushi/evm'
 import { StakeSectionWidget } from './stake-section-widget'
@@ -35,8 +39,8 @@ export const StakeSection = withCheckerRoot(() => {
       parsedInput={parsedInput}
       onInput={setInput}
     >
-      <Checker.Connect size="xl" fullWidth>
-        <Checker.Network
+      <Connect size="xl" fullWidth>
+        <Network
           size="xl"
           fullWidth
           chainId={EvmChainId.ETHEREUM}
@@ -47,13 +51,13 @@ export const StakeSection = withCheckerRoot(() => {
             </span>
           }
         >
-          <Checker.Amounts
+          <Amounts
             size="xl"
             fullWidth
             chainId={EvmChainId.ETHEREUM}
             amount={parsedInput}
           >
-            <Checker.ApproveERC20
+            <ApproveERC20
               size="xl"
               id="approve-sushi"
               className="whitespace-nowrap"
@@ -61,7 +65,7 @@ export const StakeSection = withCheckerRoot(() => {
               amount={parsedInput}
               contract={XSUSHI_ADDRESS[EvmChainId.ETHEREUM]}
             >
-              <Checker.Success tag={APPROVE_TAG_STAKE}>
+              <Success tag={APPROVE_TAG_STAKE}>
                 <Button
                   size="xl"
                   onClick={() => write?.().then(() => setInput(''))}
@@ -71,11 +75,11 @@ export const StakeSection = withCheckerRoot(() => {
                 >
                   {isWritePending ? <Dots>Confirm transaction</Dots> : 'Stake'}
                 </Button>
-              </Checker.Success>
-            </Checker.ApproveERC20>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
+              </Success>
+            </ApproveERC20>
+          </Amounts>
+        </Network>
+      </Connect>
     </StakeSectionWidget>
   )
 })

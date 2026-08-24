@@ -17,8 +17,8 @@ import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { useAccount } from 'src/lib/wallet'
+import { Connect } from 'src/lib/wagmi/systems/checker/connect'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
   type StellarAccountAddress,
   StellarChainId,
@@ -438,7 +438,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <Checker.Connect namespace="stellar" fullWidth size="lg">
+              <Connect namespace="stellar" fullWidth size="lg">
                 <>
                   {/* Zap Mode Toggle */}
                   <ToggleZapCard
@@ -711,7 +711,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     </>
                   )}
                 </>
-              </Checker.Connect>
+              </Connect>
             </div>
           </CardContent>
         </TabsContent>
@@ -719,7 +719,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
         <TabsContent value="remove">
           <CardContent>
             <div className="space-y-4">
-              <Checker.Connect namespace="stellar" fullWidth size="lg">
+              <Connect namespace="stellar" fullWidth size="lg">
                 {myPositions.length === 0 ? (
                   <div className="text-center py-8 space-y-2">
                     <p className="text-muted-foreground">
@@ -911,7 +911,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                     ) : null}
                   </>
                 )}
-              </Checker.Connect>
+              </Connect>
             </div>
           </CardContent>
         </TabsContent>
