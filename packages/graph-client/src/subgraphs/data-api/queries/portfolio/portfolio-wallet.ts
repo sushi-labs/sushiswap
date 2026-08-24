@@ -6,8 +6,16 @@ import { graphql } from '../../graphql.js'
 
 export const PortfolioWalletQuery = graphql(
   `
-  query PortfolioWallet($evmAddress: EvmAddress, $svmAddress: SvmAddress) {
-    portfolioWallet(evmAddress: $evmAddress, svmAddress: $svmAddress) {
+  query PortfolioWallet(
+    $evmAddress: EvmAddress
+    $svmAddress: SvmAddress
+    $stellarAddress: StellarAccountAddress
+  ) {
+    portfolioWallet(
+      evmAddress: $evmAddress
+      svmAddress: $svmAddress
+      stellarAddress: $stellarAddress
+    ) {
       totalUSD
       amountUSD24Change
       percentageChange24h
