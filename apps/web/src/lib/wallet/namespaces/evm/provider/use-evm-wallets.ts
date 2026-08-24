@@ -63,7 +63,6 @@ export function useEvmWallets() {
       // always available
       if (
         wallet.adapterId === EvmAdapterId.WalletConnect ||
-        wallet.adapterId === EvmAdapterId.Porto ||
         wallet.adapterId === EvmAdapterId.CoinbaseWallet ||
         wallet.adapterId === EvmAdapterId.MetaMask ||
         wallet.id === EvmAdapterId.Injected ||

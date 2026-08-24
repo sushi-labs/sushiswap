@@ -568,9 +568,6 @@ importers:
       petra-plugin-wallet-adapter:
         specifier: 0.4.5
         version: 0.4.5(@aptos-labs/ts-sdk@1.27.0)(aptos@1.21.0)
-      porto:
-        specifier: 0.2.37
-        version: 0.2.37(@tanstack/react-query@5.90.21(react@19.2.7))(@types/react@19.2.17)(@wagmi/core@3.2.2(@tanstack/query-core@5.90.20)(@types/react@19.2.17)(immer@9.0.21)(ox@0.14.30(typescript@5.9.3)(zod@4.1.11))(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(viem@2.55.0(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)))(immer@9.0.21)(react-native@0.73.7(@babel/core@7.26.0)(@babel/preset-env@7.24.4(@babel/core@7.26.0))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.7)(utf-8-validate@6.0.3))(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(viem@2.55.0(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(wagmi@3.3.2)
       react:
         specifier: catalog:react
         version: 19.2.7
