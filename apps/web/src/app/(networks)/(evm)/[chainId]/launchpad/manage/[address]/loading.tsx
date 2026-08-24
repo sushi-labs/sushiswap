@@ -1,5 +1,1 @@
-import { Splash } from '@sushiswap/ui'
-
-export default function Loading() {
-  return <Splash />
-}
+export { ManageTokenPageSkeleton as default } from './_ui/manage-token-page-skeleton'

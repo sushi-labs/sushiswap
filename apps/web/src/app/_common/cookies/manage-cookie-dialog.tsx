@@ -13,17 +13,27 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { useState } from 'react'
-import type { CookieType, ManageAction } from './cookie-types'
+import type {
+  CookieDialogVariant,
+  CookieType,
+  ManageAction,
+} from './cookie-types'
 
 export function ManageCookieDialog({
   cookieSet,
+  variant,
   onAction,
-}: { cookieSet: Set<CookieType>; onAction: (action: ManageAction) => void }) {
+}: {
+  cookieSet: Set<CookieType>
+  variant: CookieDialogVariant
+  onAction: (action: ManageAction) => void
+}) {
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false)
 
   return (
     <DialogContent
       hideClose
+      variant={variant}
       className="!left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px] space-y-4"
     >
       <DialogHeader>
@@ -120,9 +130,14 @@ export function ManageCookieDialog({
         </div>
       </div>
       <DialogFooter className="!justify-start flex flex-wrap gap-3">
-        <Button onClick={() => onAction({ type: 'confirm' })}>Confirm</Button>
         <Button
-          variant="secondary"
+          variant={variant === 'perps' ? 'perps-default' : undefined}
+          onClick={() => onAction({ type: 'confirm' })}
+        >
+          Confirm
+        </Button>
+        <Button
+          variant={variant === 'perps' ? 'perps-secondary' : 'secondary'}
           onClick={() => onAction({ type: 'reject' })}
         >
           Reject all non-essential cookies

@@ -9,9 +9,11 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
+import { useSelectedLayoutSegments } from 'next/navigation'
 import { type ReactElement, useCallback, useEffect, useState } from 'react'
 import { announceCookieChange } from './announce-cookie-change'
 import {
+  type CookieDialogVariant,
   type CookieType,
   type ManageAction,
   alwaysEnabledCookieTypes,
@@ -25,14 +27,23 @@ const ManageCookieDialog = dynamic(() =>
 type BaseAction = 'accept' | 'reject' | 'manage'
 
 function BaseCookieBanner({
+  variant,
   onAction,
-}: { onAction: (action: BaseAction) => void }) {
+}: {
+  variant: CookieDialogVariant
+  onAction: (action: BaseAction) => void
+}) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
     <section
       aria-labelledby="cookie-policy-title"
-      className="fixed bottom-0 right-0 z-50 grid w-full gap-4 rounded-t-2xl bg-gray-100 p-6 shadow-lg dark:bg-slate-800 black:bg-secondary md:right-[50px] md:bottom-[50px] md:w-[720px] md:rounded-2xl"
+      className={classNames(
+        'fixed bottom-0 right-0 z-50 grid w-full gap-4 rounded-t-2xl p-6 shadow-lg md:right-[50px] md:bottom-[50px] md:w-[720px] md:rounded-2xl',
+        variant === 'perps'
+          ? 'border border-white/[0.07] bg-perps-background/95 text-perps-muted backdrop-blur-2xl'
+          : 'bg-gray-100 dark:bg-slate-800 black:bg-secondary',
+      )}
     >
       <h2 id="cookie-policy-title" className="sr-only">
         Cookie Policy
@@ -48,7 +59,10 @@ function BaseCookieBanner({
             variant="link"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className={'ml-1 float-right clear-both'}
+            className={classNames(
+              'ml-1 float-right clear-both',
+              variant === 'perps' && '!text-perps-blue',
+            )}
           >
             <span className="pl-0.5">More</span>
           </Button>
@@ -73,11 +87,22 @@ function BaseCookieBanner({
       </p>
       <Separator />
       <div className="flex md:flex-row flex-col w-full gap-3">
-        <Button onClick={() => onAction('accept')}>Accept all cookies</Button>
-        <Button variant="secondary" onClick={() => onAction('manage')}>
+        <Button
+          variant={variant === 'perps' ? 'perps-default' : undefined}
+          onClick={() => onAction('accept')}
+        >
+          Accept all cookies
+        </Button>
+        <Button
+          variant={variant === 'perps' ? 'perps-secondary' : 'secondary'}
+          onClick={() => onAction('manage')}
+        >
           Manage cookie preferences
         </Button>
-        <Button variant="secondary" onClick={() => onAction('reject')}>
+        <Button
+          variant={variant === 'perps' ? 'perps-secondary' : 'secondary'}
+          onClick={() => onAction('reject')}
+        >
           Reject all non-essential cookies
         </Button>
       </div>
@@ -91,6 +116,12 @@ export function CookieDialog({
   defaultOpen,
   children,
 }: { defaultOpen: boolean; children: ReactElement }) {
+  const segments = useSelectedLayoutSegments()
+  const variant: CookieDialogVariant = segments.some(
+    (segment) => segment === 'perps' || segment === 'launchpad',
+  )
+    ? 'perps'
+    : 'default'
   const [open, setOpen] = useState(defaultOpen)
   const [page, setPage] = useState<'base' | 'manage'>('base')
 
@@ -161,7 +192,7 @@ export function CookieDialog({
   return (
     <>
       {open && page === 'base' ? (
-        <BaseCookieBanner onAction={onBaseAction} />
+        <BaseCookieBanner variant={variant} onAction={onBaseAction} />
       ) : null}
 
       <Dialog open={open && page === 'manage'} onOpenChange={setOpen}>
@@ -172,6 +203,7 @@ export function CookieDialog({
         {page === 'manage' ? (
           <ManageCookieDialog
             cookieSet={enabledCookieSet}
+            variant={variant}
             onAction={onManageAction}
           />
         ) : null}
