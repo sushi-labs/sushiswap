@@ -2,7 +2,6 @@
 
 import {
   ArrowLeftIcon,
-  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   BanknotesIcon,
   CheckCircleIcon,
@@ -10,6 +9,7 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { LaunchpadToken } from '@sushiswap/graph-client/data-api'
 import { createToast } from '@sushiswap/notifications'
 import {
   Button,
@@ -101,9 +101,11 @@ const METADATA_SIGNER_ERROR = {
 export function ManageTokenPage({
   chainId,
   address,
+  initialToken,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
+  initialToken: LaunchpadToken | null
 }) {
   const chainKey = getEvmChainById(chainId).key
   const { address: connectedAddress, chainId: connectedChainId } =
@@ -114,9 +116,8 @@ export function ManageTokenPage({
   const {
     data: token,
     isError,
-    isPending,
     refetch,
-  } = useLaunchpadToken(chainId, address)
+  } = useLaunchpadToken(chainId, address, initialToken)
   const canManage = token
     ? launchpadProviderHasCapability(token.provider, 'manage')
     : false
@@ -315,18 +316,6 @@ export function ManageTokenPage({
     } finally {
       setIsDistributing(false)
     }
-  }
-
-  if (isPending) {
-    return (
-      <PageState
-        icon={
-          <ArrowPathIcon className="mx-auto h-8 w-8 animate-spin text-perps-muted-50" />
-        }
-        title="Loading launch"
-        titleClassName="text-xl"
-      />
-    )
   }
 
   if (isError) {
