@@ -7,6 +7,7 @@ import {
 const restoredDisconnectedState = {
   hasRegisteredConnection: false,
   isProviderReady: true,
+  isAutoConnectPending: false,
   isConnecting: false,
   isConnected: false,
 }
@@ -30,6 +31,15 @@ describe('getWalletRestorationState', () => {
     ).toBe(true)
   })
 
+  it('restores while a saved wallet is queued for auto-connect', () => {
+    expect(
+      getWalletRestorationState({
+        ...restoredDisconnectedState,
+        isAutoConnectPending: true,
+      }),
+    ).toBe(true)
+  })
+
   it('restores while a provider connection is being registered', () => {
     expect(
       getWalletRestorationState({
@@ -44,6 +54,7 @@ describe('getWalletRestorationState', () => {
       getWalletRestorationState({
         hasRegisteredConnection: true,
         isProviderReady: false,
+        isAutoConnectPending: true,
         isConnecting: true,
         isConnected: true,
       }),

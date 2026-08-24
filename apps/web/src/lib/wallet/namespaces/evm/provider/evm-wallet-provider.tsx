@@ -16,6 +16,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
@@ -42,6 +43,7 @@ function useInEvmContext(): boolean {
 }
 
 const EvmWalletContext = createContext<WalletNamespaceContext | null>(null)
+const INITIAL_RECONNECT_TIMEOUT_MS = 5_000
 
 export function useEvmWalletContext() {
   const ctx = useContext(EvmWalletContext)
@@ -77,6 +79,11 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnecting,
     isReconnecting,
   } = useConnection()
+  const isAutoConnectPending = useIsInitialWagmiAutoConnectPending({
+    isConnecting,
+    isReconnecting,
+    isConnected,
+  })
   const { isPending } = useDisconnect()
   const { setActiveWallet } = useSetActiveWallet()
   const { ready: arePrivyWalletsReady } = usePrivyWallets()
@@ -211,6 +218,7 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
           isAuthenticated: isPrivyAuthenticated,
           areWalletsReady: arePrivyWalletsReady,
         }),
+        isAutoConnectPending,
         isConnecting: isConnecting || isReconnecting,
         isConnected,
       }),
@@ -222,11 +230,96 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isPrivyAuthenticated,
     isPrivyAuthReady,
     isReconnecting,
+    isAutoConnectPending,
   ])
 
   return (
     <EvmWalletContext.Provider value={value}>
       {children}
     </EvmWalletContext.Provider>
+  )
+}
+
+function useIsInitialWagmiAutoConnectPending({
+  isConnecting,
+  isReconnecting,
+  isConnected,
+}: {
+  isConnecting: boolean
+  isReconnecting: boolean
+  isConnected: boolean
+}): boolean {
+  // Privy registers persisted injected connectors before it asks Wagmi to
+  // reconnect them. Bridge that gap so connect controls cannot open early.
+  const [isPending, setIsPending] = useState(true)
+  const isConnectionAttemptActive =
+    isConnecting || isReconnecting || isConnected
+
+  useEffect(() => {
+    if (!isPending) return
+
+    if (isConnectionAttemptActive) {
+      setIsPending(false)
+      return
+    }
+
+    let cancelled = false
+    let timeout: ReturnType<typeof setTimeout> | undefined
+
+    async function checkPersistedConnection(): Promise<void> {
+      let hasReconnectCandidate = false
+
+      try {
+        const config = getWagmiConfig()
+        const persistedStore = await config.storage?.getItem('store')
+        const recentConnectorId =
+          await config.storage?.getItem('recentConnectorId')
+        const wasExplicitlyDisconnected =
+          typeof recentConnectorId === 'string' && recentConnectorId.length > 0
+            ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
+            : false
+
+        hasReconnectCandidate =
+          hasCurrentConnection(persistedStore) ||
+          (typeof recentConnectorId === 'string' &&
+            recentConnectorId.length > 0 &&
+            wasExplicitlyDisconnected !== true)
+      } catch {}
+
+      if (cancelled) return
+
+      if (!hasReconnectCandidate) {
+        setIsPending(false)
+        return
+      }
+
+      timeout = setTimeout(() => {
+        setIsPending(false)
+      }, INITIAL_RECONNECT_TIMEOUT_MS)
+    }
+
+    void checkPersistedConnection()
+
+    return () => {
+      cancelled = true
+      if (timeout) clearTimeout(timeout)
+    }
+  }, [isConnectionAttemptActive, isPending])
+
+  return isPending
+}
+
+function hasCurrentConnection(persistedStore: unknown): boolean {
+  if (
+    !persistedStore ||
+    typeof persistedStore !== 'object' ||
+    !('state' in persistedStore)
+  ) {
+    return false
+  }
+
+  const { state } = persistedStore
+  return Boolean(
+    state && typeof state === 'object' && 'current' in state && state.current,
   )
 }
