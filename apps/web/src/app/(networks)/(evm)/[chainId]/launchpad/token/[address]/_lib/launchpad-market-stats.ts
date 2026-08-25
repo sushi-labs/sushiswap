@@ -3,6 +3,7 @@ import type {
   LaunchpadMarketStatsWindow,
 } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
+import type { LaunchpadTradeStreamEvent } from './launchpad-stream'
 
 export type LaunchpadMarketStatsWindowKey = 'm5' | 'h1' | 'h6' | 'h24'
 
@@ -36,7 +37,7 @@ export interface LaunchpadMarketStatsTradeEvent {
   amountUsd: number | null
   direction: 'BUY' | 'SELL'
   eventId: string
-  isNew: boolean
+  insertionEventId: string | null
   marginalPriceUsd: number | null
   timestamp: string
   tradeKey: string
@@ -46,7 +47,7 @@ const FOLDED_TRADE_EVENT_LIMIT = 200
 
 export function appendLaunchpadMarketStatsTradeEvent(
   events: readonly LaunchpadMarketStatsTradeEvent[],
-  event: LaunchpadMarketStatsTradeEvent,
+  event: LaunchpadTradeStreamEvent,
 ): readonly LaunchpadMarketStatsTradeEvent[] {
   const previous = events.find(
     (candidate) => candidate.tradeKey === event.tradeKey,
@@ -54,9 +55,12 @@ export function appendLaunchpadMarketStatsTradeEvent(
   const next = events.filter(
     (candidate) => candidate.tradeKey !== event.tradeKey,
   )
+  const { isNew, ...tradeEvent } = event
   next.push({
-    ...event,
-    isNew: event.isNew || previous?.isNew === true,
+    ...tradeEvent,
+    insertionEventId: isNew
+      ? event.eventId
+      : (previous?.insertionEventId ?? null),
   })
   next.sort((left, right) =>
     BigInt(left.eventId) < BigInt(right.eventId) ? -1 : 1,
@@ -152,7 +156,9 @@ export function foldLaunchpadMarketStats(
 ): LaunchpadMarketStats {
   const streamCursor = BigInt(stats.streamCursor)
   const pending = events.filter(
-    (event) => event.isNew && BigInt(event.eventId) > streamCursor,
+    (event) =>
+      event.insertionEventId !== null &&
+      BigInt(event.insertionEventId) > streamCursor,
   )
   if (pending.length === 0) return stats
 

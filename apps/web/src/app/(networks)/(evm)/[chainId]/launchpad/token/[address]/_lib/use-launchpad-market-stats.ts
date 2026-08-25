@@ -69,10 +69,13 @@ export function useLaunchpadMarketStats(
     [events, query.data],
   )
   const latestNewTradeEvent =
-    events.reduce<LaunchpadMarketStatsTradeEvent | null>(
-      (latest, event) => (event.isNew ? event : latest),
-      null,
-    )
+    events.reduce<LaunchpadMarketStatsTradeEvent | null>((latest, event) => {
+      if (event.insertionEventId === null) return latest
+      if (latest === null || latest.insertionEventId === null) return event
+      return BigInt(event.insertionEventId) > BigInt(latest.insertionEventId)
+        ? event
+        : latest
+    }, null)
 
   return { ...query, data, latestNewTradeEvent }
 }
