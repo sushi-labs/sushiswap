@@ -15,7 +15,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from 'react'
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
@@ -29,6 +28,7 @@ import {
   getConnections as getWalletConnections,
   setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
+import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-initial-wallet-auto-connect-pending'
 import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
@@ -41,7 +41,6 @@ function useInSvmContext(): boolean {
 }
 
 const SvmWalletContext = createContext<WalletNamespaceContext | null>(null)
-const INITIAL_AUTO_CONNECT_TIMEOUT_MS = 5_000
 
 export function useSvmWalletContext() {
   const ctx = useContext(SvmWalletContext)
@@ -79,9 +78,10 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     connectWallet,
     wallet: _connector,
   } = useConnector()
-  const isAutoConnectPending = useIsInitialSvmAutoConnectPending(
-    _connector.status !== 'disconnected',
-  )
+  const isAutoConnectPending = useInitialWalletAutoConnectPending({
+    getHasReconnectCandidate: getHasInitialSvmReconnectCandidate,
+    isConnectionAttemptActive: _connector.status !== 'disconnected',
+  })
   const {
     authenticated: isPrivyAuthenticated,
     ready: isPrivyAuthReady,
@@ -240,40 +240,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-function useIsInitialSvmAutoConnectPending(
-  isConnectionAttemptActive: boolean,
-): boolean {
-  // Solana Connector schedules persisted-wallet auto-connect after provider
-  // initialization. Bridge that gap so connect controls cannot open early.
-  const [isPending, setIsPending] = useState(true)
-
-  useEffect(() => {
-    if (!isPending) return
-
-    if (isConnectionAttemptActive) {
-      setIsPending(false)
-      return
-    }
-
-    let hasPersistedWallet = false
-
-    try {
-      const persistedWallet = getConnectorConfig().storage?.wallet.get()
-      hasPersistedWallet =
-        typeof persistedWallet === 'string' && persistedWallet.length > 0
-    } catch {}
-
-    if (!hasPersistedWallet) {
-      setIsPending(false)
-      return
-    }
-
-    const timeout = setTimeout(() => {
-      setIsPending(false)
-    }, INITIAL_AUTO_CONNECT_TIMEOUT_MS)
-
-    return () => clearTimeout(timeout)
-  }, [isConnectionAttemptActive, isPending])
-
-  return isPending
+function getHasInitialSvmReconnectCandidate(): boolean {
+  const persistedWallet = getConnectorConfig().storage?.wallet.get()
+  return typeof persistedWallet === 'string' && persistedWallet.length > 0
 }

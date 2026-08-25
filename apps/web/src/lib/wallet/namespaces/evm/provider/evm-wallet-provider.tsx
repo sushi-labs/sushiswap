@@ -16,7 +16,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
@@ -30,6 +29,7 @@ import {
   getConnections as getWalletConnections,
   setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
+import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-initial-wallet-auto-connect-pending'
 import type { Wallet } from 'src/lib/wallet/types'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import { WagmiContext, useConnection, useDisconnect } from 'wagmi'
@@ -43,7 +43,6 @@ function useInEvmContext(): boolean {
 }
 
 const EvmWalletContext = createContext<WalletNamespaceContext | null>(null)
-const INITIAL_RECONNECT_TIMEOUT_MS = 5_000
 
 export function useEvmWalletContext() {
   const ctx = useContext(EvmWalletContext)
@@ -79,10 +78,9 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnecting,
     isReconnecting,
   } = useConnection()
-  const isAutoConnectPending = useIsInitialWagmiAutoConnectPending({
-    isConnecting,
-    isReconnecting,
-    isConnected,
+  const isAutoConnectPending = useInitialWalletAutoConnectPending({
+    getHasReconnectCandidate: getHasInitialWagmiReconnectCandidate,
+    isConnectionAttemptActive: isConnecting || isReconnecting || isConnected,
   })
   const { isPending } = useDisconnect()
   const { setActiveWallet } = useSetActiveWallet()
@@ -240,73 +238,21 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-function useIsInitialWagmiAutoConnectPending({
-  isConnecting,
-  isReconnecting,
-  isConnected,
-}: {
-  isConnecting: boolean
-  isReconnecting: boolean
-  isConnected: boolean
-}): boolean {
-  // Privy registers persisted injected connectors before it asks Wagmi to
-  // reconnect them. Bridge that gap so connect controls cannot open early.
-  const [isPending, setIsPending] = useState(true)
-  const isConnectionAttemptActive =
-    isConnecting || isReconnecting || isConnected
+async function getHasInitialWagmiReconnectCandidate(): Promise<boolean> {
+  const config = getWagmiConfig()
+  const persistedStore = await config.storage?.getItem('store')
+  const recentConnectorId = await config.storage?.getItem('recentConnectorId')
+  const wasExplicitlyDisconnected =
+    typeof recentConnectorId === 'string' && recentConnectorId.length > 0
+      ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
+      : false
 
-  useEffect(() => {
-    if (!isPending) return
-
-    if (isConnectionAttemptActive) {
-      setIsPending(false)
-      return
-    }
-
-    let cancelled = false
-    let timeout: ReturnType<typeof setTimeout> | undefined
-
-    async function checkPersistedConnection(): Promise<void> {
-      let hasReconnectCandidate = false
-
-      try {
-        const config = getWagmiConfig()
-        const persistedStore = await config.storage?.getItem('store')
-        const recentConnectorId =
-          await config.storage?.getItem('recentConnectorId')
-        const wasExplicitlyDisconnected =
-          typeof recentConnectorId === 'string' && recentConnectorId.length > 0
-            ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
-            : false
-
-        hasReconnectCandidate =
-          hasCurrentConnection(persistedStore) ||
-          (typeof recentConnectorId === 'string' &&
-            recentConnectorId.length > 0 &&
-            wasExplicitlyDisconnected !== true)
-      } catch {}
-
-      if (cancelled) return
-
-      if (!hasReconnectCandidate) {
-        setIsPending(false)
-        return
-      }
-
-      timeout = setTimeout(() => {
-        setIsPending(false)
-      }, INITIAL_RECONNECT_TIMEOUT_MS)
-    }
-
-    void checkPersistedConnection()
-
-    return () => {
-      cancelled = true
-      if (timeout) clearTimeout(timeout)
-    }
-  }, [isConnectionAttemptActive, isPending])
-
-  return isPending
+  return (
+    hasCurrentConnection(persistedStore) ||
+    (typeof recentConnectorId === 'string' &&
+      recentConnectorId.length > 0 &&
+      wasExplicitlyDisconnected !== true)
+  )
 }
 
 function hasCurrentConnection(persistedStore: unknown): boolean {
