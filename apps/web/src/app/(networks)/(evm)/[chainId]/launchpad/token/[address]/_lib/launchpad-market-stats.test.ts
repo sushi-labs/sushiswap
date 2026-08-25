@@ -10,6 +10,7 @@ import {
   getLaunchpadMarketActivity,
   isLiveLaunchpadMarketStatsWindow,
 } from './launchpad-market-stats'
+import type { LaunchpadTradeStreamEvent } from './launchpad-stream'
 
 const LIVE_AS_OF = '2026-08-20T21:15:49.754Z'
 const HELD_AS_OF = '2026-08-20T21:10:49.748Z'
@@ -49,6 +50,22 @@ function stats(
 function tradeEvent(
   overrides: Partial<LaunchpadMarketStatsTradeEvent> = {},
 ): LaunchpadMarketStatsTradeEvent {
+  const eventId = overrides.eventId ?? '101'
+  return {
+    amountUsd: 50,
+    direction: 'BUY',
+    eventId,
+    insertionEventId: eventId,
+    marginalPriceUsd: null,
+    timestamp: LIVE_AS_OF,
+    tradeKey: 'trade-1',
+    ...overrides,
+  }
+}
+
+function tradeUpdate(
+  overrides: Partial<LaunchpadTradeStreamEvent> = {},
+): LaunchpadTradeStreamEvent {
   return {
     amountUsd: 50,
     direction: 'BUY',
@@ -75,23 +92,27 @@ describe('isLiveLaunchpadMarketStatsWindow', () => {
 describe('appendLaunchpadMarketStatsTradeEvent', () => {
   it('orders distinct trades numerically', () => {
     const events = [
-      tradeEvent({ eventId: '9' }),
-      tradeEvent({ eventId: '10', tradeKey: 'trade-2' }),
+      tradeUpdate({ eventId: '9' }),
+      tradeUpdate({ eventId: '10', tradeKey: 'trade-2' }),
     ].reduce<readonly LaunchpadMarketStatsTradeEvent[]>(
       appendLaunchpadMarketStatsTradeEvent,
       [],
     )
 
     expect(events).toEqual([
-      tradeEvent({ eventId: '9' }),
-      tradeEvent({ eventId: '10', tradeKey: 'trade-2' }),
+      tradeEvent({ eventId: '9', insertionEventId: '9' }),
+      tradeEvent({
+        eventId: '10',
+        insertionEventId: '10',
+        tradeKey: 'trade-2',
+      }),
     ])
   })
 
-  it('replaces an updated trade without turning it into another trade', () => {
+  it('replaces an updated trade while preserving its insertion event', () => {
     const events = appendLaunchpadMarketStatsTradeEvent(
       [tradeEvent()],
-      tradeEvent({
+      tradeUpdate({
         amountUsd: 75,
         eventId: '102',
         isNew: false,
@@ -99,7 +120,11 @@ describe('appendLaunchpadMarketStatsTradeEvent', () => {
     )
 
     expect(events).toEqual([
-      tradeEvent({ amountUsd: 75, eventId: '102', isNew: true }),
+      tradeEvent({
+        amountUsd: 75,
+        eventId: '102',
+        insertionEventId: '101',
+      }),
     ])
   })
 })
@@ -161,11 +186,28 @@ describe('foldLaunchpadMarketStats', () => {
 
   it('ignores an update to a trade the snapshot already counted', () => {
     const folded = foldLaunchpadMarketStats(stats(), [
-      tradeEvent({ isNew: false }),
+      tradeEvent({ insertionEventId: null }),
     ])
 
     expect(folded.m5.totalTradeCount).toBe(3)
     expect(folded.m5.totalVolumeUsd).toBe(300)
+  })
+
+  it('does not recount a corrected trade after its insertion reaches the snapshot', () => {
+    const events = appendLaunchpadMarketStatsTradeEvent(
+      [tradeEvent()],
+      tradeUpdate({ amountUsd: 75, eventId: '102', isNew: false }),
+    )
+    const pendingSnapshot = foldLaunchpadMarketStats(stats(), events)
+    const snapshot = stats({ streamCursor: '101' })
+
+    expect(pendingSnapshot.m5).toMatchObject({
+      buyCount: 3,
+      buyVolumeUsd: 275,
+      totalTradeCount: 4,
+      totalVolumeUsd: 375,
+    })
+    expect(foldLaunchpadMarketStats(snapshot, events)).toBe(snapshot)
   })
 
   it('folds a newly indexed trade whose block timestamp predates the snapshot', () => {

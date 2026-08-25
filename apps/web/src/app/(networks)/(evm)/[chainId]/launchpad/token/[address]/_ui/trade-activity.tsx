@@ -283,7 +283,7 @@ export function TradeActivity({
           count={activity.buyCount}
           flashEventId={
             latestNewTradeEvent?.direction === 'BUY'
-              ? latestNewTradeEvent.eventId
+              ? latestNewTradeEvent.insertionEventId
               : null
           }
           label="Buys"
@@ -305,7 +305,7 @@ export function TradeActivity({
           count={activity.sellCount}
           flashEventId={
             latestNewTradeEvent?.direction === 'SELL'
-              ? latestNewTradeEvent.eventId
+              ? latestNewTradeEvent.insertionEventId
               : null
           }
           label="Sells"
