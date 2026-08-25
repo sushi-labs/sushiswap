@@ -12,9 +12,20 @@ export class BaseActions {
     const connectSelector = this.page
       .locator('[testdata-id=connect-button]')
       .first()
-    await expect(connectSelector).toBeVisible()
+    const connectedWalletSelector = this.page
+      .locator('[data-sidebar-trigger]:not([testdata-id=connect-button])')
+      .first()
+
+    await expect(
+      connectSelector.or(connectedWalletSelector).first(),
+    ).toBeVisible()
+
+    if (await connectedWalletSelector.isVisible()) return
+
     await expect(connectSelector).toBeEnabled()
     await connectSelector.click({ delay: 500 })
+
+    await expect(connectedWalletSelector).toBeVisible()
   }
 
   async selectNetwork(chainId: number) {

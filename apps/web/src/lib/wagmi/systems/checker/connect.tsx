@@ -3,10 +3,8 @@
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import type { WalletNamespace } from 'src/lib/wallet'
+import { type WalletNamespace, useWalletConnection } from 'src/lib/wallet'
 import { getNameFromNamespace } from 'src/lib/wallet/config'
-import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { useWalletContext } from 'src/lib/wallet/provider/wallet-provider'
 import { ConnectButton } from '../../components/connect-button'
 
 export interface ConnectProps extends ButtonProps {
@@ -22,11 +20,7 @@ function Connect({
 }: ConnectProps) {
   const isMounted = useIsMounted()
 
-  const { isPending, isConnected } = useWalletContext()
-  const isNamespaceConnected = Boolean(useAccount(namespace))
-  const requiresNamespaceConnection = Boolean(
-    namespace && !isNamespaceConnected,
-  )
+  const { isConnected, isPending, isRestoring } = useWalletConnection(namespace)
 
   if (!isMounted)
     return (
@@ -43,7 +37,15 @@ function Connect({
     )
   }
 
-  if (!isConnected || requiresNamespaceConnection) {
+  if (!isConnected && isRestoring) {
+    return (
+      <Button loading fullWidth={fullWidth} size={size} {...props}>
+        Checking Wallet
+      </Button>
+    )
+  }
+
+  if (!isConnected) {
     const shouldRestrictNamespace = Boolean(namespace)
     const midtext = namespace ? getNameFromNamespace(namespace) : ''
 

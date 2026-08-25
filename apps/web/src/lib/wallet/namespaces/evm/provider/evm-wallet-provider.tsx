@@ -1,4 +1,8 @@
-import { useConnectOrCreateWallet, usePrivy } from '@privy-io/react-auth'
+import {
+  useConnectOrCreateWallet,
+  usePrivy,
+  useWallets as usePrivyWallets,
+} from '@privy-io/react-auth'
 import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
 import {
   getConnections,
@@ -16,9 +20,16 @@ import {
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import {
+  getIsPrivyWalletProviderReady,
+  getWalletRestorationState,
+} from 'src/lib/wallet/provider/get-wallet-restoration-state'
+import {
   addWalletConnection,
   clearWalletConnections,
+  getConnections as getWalletConnections,
+  setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
+import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-initial-wallet-auto-connect-pending'
 import type { Wallet } from 'src/lib/wallet/types'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import { WagmiContext, useConnection, useDisconnect } from 'wagmi'
@@ -67,10 +78,19 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnecting,
     isReconnecting,
   } = useConnection()
+  const isAutoConnectPending = useInitialWalletAutoConnectPending({
+    getHasReconnectCandidate: getHasInitialWagmiReconnectCandidate,
+    isConnectionAttemptActive: isConnecting || isReconnecting || isConnected,
+  })
   const { isPending } = useDisconnect()
   const { setActiveWallet } = useSetActiveWallet()
+  const { ready: arePrivyWalletsReady } = usePrivyWallets()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-  const { logout } = usePrivy()
+  const {
+    authenticated: isPrivyAuthenticated,
+    ready: isPrivyAuthReady,
+    logout,
+  } = usePrivy()
 
   const { connectOrCreateWallet } = useConnectOrCreateWallet({
     onSuccess: async (data) => {
@@ -182,9 +202,70 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isPending,
   ])
 
+  useEffect(() => {
+    const hasRegisteredConnection = getWalletConnections().some(
+      (connection) => connection.namespace === 'evm',
+    )
+
+    setWalletNamespaceRestoring(
+      'evm',
+      getWalletRestorationState({
+        hasRegisteredConnection,
+        isProviderReady: getIsPrivyWalletProviderReady({
+          isAuthReady: isPrivyAuthReady,
+          isAuthenticated: isPrivyAuthenticated,
+          areWalletsReady: arePrivyWalletsReady,
+        }),
+        isAutoConnectPending,
+        isConnecting: isConnecting || isReconnecting,
+        isConnected,
+      }),
+    )
+  }, [
+    arePrivyWalletsReady,
+    isConnected,
+    isConnecting,
+    isPrivyAuthenticated,
+    isPrivyAuthReady,
+    isReconnecting,
+    isAutoConnectPending,
+  ])
+
   return (
     <EvmWalletContext.Provider value={value}>
       {children}
     </EvmWalletContext.Provider>
+  )
+}
+
+async function getHasInitialWagmiReconnectCandidate(): Promise<boolean> {
+  const config = getWagmiConfig()
+  const persistedStore = await config.storage?.getItem('store')
+  const recentConnectorId = await config.storage?.getItem('recentConnectorId')
+  const wasExplicitlyDisconnected =
+    typeof recentConnectorId === 'string' && recentConnectorId.length > 0
+      ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
+      : false
+
+  return (
+    hasCurrentConnection(persistedStore) ||
+    (typeof recentConnectorId === 'string' &&
+      recentConnectorId.length > 0 &&
+      wasExplicitlyDisconnected !== true)
+  )
+}
+
+function hasCurrentConnection(persistedStore: unknown): boolean {
+  if (
+    !persistedStore ||
+    typeof persistedStore !== 'object' ||
+    !('state' in persistedStore)
+  ) {
+    return false
+  }
+
+  const { state } = persistedStore
+  return Boolean(
+    state && typeof state === 'object' && 'current' in state && state.current,
   )
 }
