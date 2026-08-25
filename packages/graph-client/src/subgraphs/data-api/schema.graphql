@@ -442,6 +442,64 @@ type PoolsFunV1LaunchpadToken implements LaunchpadToken {
   createdAt: String!
 }
 
+type SushiV2LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  provider: LaunchpadProvider!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  positions: [LaunchpadPosition!]! @deprecated(reason: "Sushi V2 positions are not exposed; this field will be removed with the V1 cleanup")
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+  launchCreator: EvmAddress!
+  currentSupply: BigInt!
+  feeReceiver: EvmAddress!
+  liquidityMode: SushiV2LiquidityMode!
+  feeDisposition: SushiV2FeeDisposition!
+  feeSplit: SushiV2FeeSplit!
+  devBuy: SushiV2DevBuy
+  burns: SushiV2Burns!
+  poolInitializedAt: String!
+}
+
+enum SushiV2LiquidityMode {
+  STANDARD
+  MOON
+}
+
+enum SushiV2FeeDisposition {
+  DIRECT_PAYOUT
+  BURN_LAUNCH_TOKEN_FEES
+  BUYBACK_AND_BURN
+}
+
+type SushiV2FeeSplit {
+  sushiFeeBps: Int!
+  nonSushiFeeBps: Int!
+}
+
+type SushiV2DevBuy {
+  quoteSpent: BigInt!
+  launchTokenReceived: BigInt!
+}
+
+type SushiV2Burns {
+  directFeeBurned: BigInt!
+  buybackBurned: BigInt!
+  protocolBurned: BigInt!
+  totalBurned: BigInt!
+}
+
 type LaunchpadPool {
   address: EvmAddress!
   feeTier: Int!
