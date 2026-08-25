@@ -30,6 +30,7 @@ export const LaunchpadUserHoldingsQuery = graphql(`
               decimals
               creator
               initialSupply
+              provider
               quoteToken {
                 symbol
                 name

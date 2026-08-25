@@ -21,6 +21,7 @@ import {
   formatUsdChange,
   shortenAddress,
 } from '../../_lib/format'
+import { LaunchpadProviderBadge } from '../../_ui/launchpad-provider-badge'
 import { MetricStrip, MetricStripItem } from '../../_ui/metric-strip'
 import { PageHeading } from '../../_ui/page-heading'
 import { CollectionStateCard } from '../../_ui/state-card'
@@ -106,7 +107,17 @@ function HoldingRow({
     >
       <td className="h-[84px] px-5">
         <div className="flex min-w-0 items-center gap-3">
-          <TokenAvatar token={holding.token} size="md" />
+          <TokenAvatar
+            token={holding.token}
+            size="md"
+            badge={
+              <LaunchpadProviderBadge
+                provider={holding.token.provider}
+                variant="mark"
+                className="!h-5 !w-5"
+              />
+            }
+          />
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="truncate font-semibold text-perps-muted transition group-hover:text-perps-blue">
