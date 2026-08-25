@@ -9,16 +9,22 @@ import { useConnect } from '../hooks/wallet/use-connect'
 
 interface ConnectButtonProps extends ButtonProps {
   namespace?: WalletNamespace
+  pendingText?: string
 }
 
 export const ConnectButton: FC<ConnectButtonProps> = ({
   namespace,
+  pendingText,
   ...props
 }) => {
   return process.env.NEXT_PUBLIC_APP_ENV === 'test' ? (
     <TestConnectButton {...props} />
   ) : (
-    <SelectWalletButton namespace={namespace} {...props} />
+    <SelectWalletButton
+      namespace={namespace}
+      pendingText={pendingText}
+      {...props}
+    />
   )
 }
 

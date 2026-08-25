@@ -38,7 +38,7 @@ function PoolsFunProviderMark({ className, pixels }: ProviderMarkProps) {
       height={pixels}
       loading="lazy"
       decoding="async"
-      className={classNames('shrink-0 object-contain', className)}
+      className={classNames('shrink-0 object-contain bg-black', className)}
     />
   )
 }

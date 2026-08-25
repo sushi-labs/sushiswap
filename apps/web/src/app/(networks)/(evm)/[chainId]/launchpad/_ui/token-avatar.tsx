@@ -1,4 +1,4 @@
-import { Currency } from '@sushiswap/ui'
+import { Currency, classNames } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { EvmToken } from 'sushi/evm'
 import type { LaunchpadToken } from '../types'
@@ -8,6 +8,7 @@ const SIZE_IN_PIXELS = {
   md: 44,
   lg: 56,
   xl: 80,
+  '2xl': 96,
 } as const
 
 export function TokenAvatar({
@@ -19,7 +20,7 @@ export function TokenAvatar({
     LaunchpadToken,
     'address' | 'chainId' | 'decimals' | 'name' | 'symbol'
   >
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: keyof typeof SIZE_IN_PIXELS
   badge?: ReactNode
 }) {
   const currency = new EvmToken({
@@ -40,7 +41,9 @@ export function TokenAvatar({
         height={pixels}
       />
       {badge ? (
-        <span className="absolute -bottom-0.5 -right-0.5">{badge}</span>
+        <span className={classNames('absolute -bottom-0.5 -right-0.5')}>
+          {badge}
+        </span>
       ) : null}
     </span>
   )

@@ -63,6 +63,31 @@ export function formatPercent(value: number | null | undefined): string {
   return `${value > 0 ? '+' : ''}${formatPercentValue(value / 100)}`
 }
 
+/**
+ * Compact age for a launch, e.g. `now`, `11m`, `4h`, `3d`. Recomputed on each
+ * render rather than ticking on a timer: the discovery grid already refetches
+ * every 10s, and a per-card interval would not scale across the grid.
+ */
+export function formatLaunchpadAge(
+  createdAt: string | number | Date,
+  now: number = Date.now(),
+): string {
+  const timestamp = new Date(createdAt).getTime()
+  if (!Number.isFinite(timestamp)) return '—'
+
+  const elapsed = now - timestamp
+  if (elapsed < ms('1m')) return 'now'
+  if (elapsed < ms('1h')) return `${Math.floor(elapsed / ms('1m'))}m`
+  if (elapsed < ms('1d')) return `${Math.floor(elapsed / ms('1h'))}h`
+  if (elapsed < ms('365d')) return `${Math.floor(elapsed / ms('1d'))}d`
+  return `${Math.floor(elapsed / ms('365d'))}y`
+}
+
+/** Accessible expansion of {@link formatLaunchpadAge}'s compact output. */
+export function formatLaunchpadAgeLabel(age: string): string {
+  return age === 'now' ? 'Launched just now' : `Launched ${age} ago`
+}
+
 export function formatRawAmount(
   value: string | bigint,
   decimals: number,
@@ -95,13 +120,13 @@ export function getSelectedMetric(
         value: formatUsd(metrics?.marketCapitalizationUsd),
       }
     case 'VOLUME_1H':
-      return { label: '1h volume', value: formatUsd(metrics?.volumeUsd.h1) }
+      return { label: '1h Vol', value: formatUsd(metrics?.volumeUsd.h1) }
     case 'VOLUME_6H':
-      return { label: '6h volume', value: formatUsd(metrics?.volumeUsd.h6) }
+      return { label: '6h Vol', value: formatUsd(metrics?.volumeUsd.h6) }
     case 'VOLUME_12H':
-      return { label: '12h volume', value: formatUsd(metrics?.volumeUsd.h12) }
+      return { label: '12h Vol', value: formatUsd(metrics?.volumeUsd.h12) }
     case 'VOLUME_24H':
-      return { label: '24h volume', value: formatUsd(metrics?.volumeUsd.h24) }
+      return { label: '24h Vol', value: formatUsd(metrics?.volumeUsd.h24) }
     case 'CURRENT_TVL':
       return { label: 'TVL', value: formatUsd(metrics?.currentTvlUsd) }
     case 'TVL_CHANGE_1H':

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   getLaunchpadProviderConfig,
+  getLaunchpadProviderIconsForFilter,
   getLaunchpadProvidersForFilter,
   launchpadProviderHasCapability,
   parseLaunchpadProviderFilter,
@@ -25,6 +26,14 @@ describe('launchpad provider policy', () => {
     expect(getLaunchpadProvidersForFilter('pools-fun')).toEqual([
       'POOLS_FUN_V1',
     ])
+  })
+
+  it('shows one icon for each provider family', () => {
+    expect(getLaunchpadProviderIconsForFilter('all')).toEqual([
+      'SUSHI_V1',
+      'POOLS_FUN_V1',
+    ])
+    expect(getLaunchpadProviderIconsForFilter('sushi')).toEqual(['SUSHI_V1'])
   })
 
   it('keeps Pools.fun creator tools disabled and links to its site', () => {

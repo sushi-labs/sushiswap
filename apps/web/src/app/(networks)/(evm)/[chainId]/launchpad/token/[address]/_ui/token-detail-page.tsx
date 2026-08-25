@@ -455,7 +455,6 @@ export function TokenDetailPage({
           )}
 
           <TradeActivity chainId={chainId} tokenAddress={address} />
-
           <PerpsCard className="p-4" fullWidth>
             <h2 className="font-semibold text-perps-muted">
               About {token.name}

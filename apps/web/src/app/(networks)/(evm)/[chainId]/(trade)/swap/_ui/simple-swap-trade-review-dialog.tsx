@@ -7,8 +7,10 @@ import {
   DialogFooter,
   DialogProvider,
   DialogReview,
+  DialogType,
+  useDialog,
 } from '@sushiswap/ui'
-import React, { type FC, type ReactNode } from 'react'
+import { type FC, type ReactNode, useEffect, useRef } from 'react'
 import { isSvmChainId } from 'sushi/svm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 import { ConfirmSwapButton } from './simple-swap-trade-review-dialog/confirm-swap-button'
@@ -27,6 +29,7 @@ type SimpleSwapTradeReviewDialogProps = {
     error,
     isSuccess,
   }: { error: Error | null; isSuccess: boolean }): ReactNode
+  autoConfirm?: boolean
   variant?: SimpleSwapTradeReviewDialogVariant
 }
 
@@ -36,10 +39,13 @@ type SimpleSwapTradeReview = ReturnType<typeof getSimpleSwapTradeReview>
 
 export const SimpleSwapTradeReviewDialog: FC<
   SimpleSwapTradeReviewDialogProps
-> = ({ children, variant = 'default' }) => {
+> = ({ autoConfirm = false, children, variant = 'default' }) => {
   return (
     <DialogProvider>
-      <SimpleSwapTradeReviewDialogRouter variant={variant}>
+      <SimpleSwapTradeReviewDialogRouter
+        autoConfirm={autoConfirm}
+        variant={variant}
+      >
         {children}
       </SimpleSwapTradeReviewDialogRouter>
     </DialogProvider>
@@ -48,27 +54,31 @@ export const SimpleSwapTradeReviewDialog: FC<
 
 const SimpleSwapTradeReviewDialogRouter: FC<
   SimpleSwapTradeReviewDialogProps
-> = ({ children, variant }) => {
+> = ({ autoConfirm, children, variant }) => {
   const {
     state: { chainId },
   } = useDerivedStateSimpleSwap()
 
   if (isSvmChainId(chainId)) {
     return (
-      <SvmSimpleSwapTradeReviewDialog variant={variant}>
+      <SvmSimpleSwapTradeReviewDialog
+        autoConfirm={autoConfirm}
+        variant={variant}
+      >
         {children}
       </SvmSimpleSwapTradeReviewDialog>
     )
   }
 
   return (
-    <EvmSimpleSwapTradeReviewDialog variant={variant}>
+    <EvmSimpleSwapTradeReviewDialog autoConfirm={autoConfirm} variant={variant}>
       {children}
     </EvmSimpleSwapTradeReviewDialog>
   )
 }
 
 const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
+  autoConfirm,
   children,
   variant,
 }) => {
@@ -77,6 +87,7 @@ const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
 
   return (
     <SimpleSwapTradeReviewDialogContent
+      autoConfirm={autoConfirm}
       tradeReview={tradeReview}
       variant={variant}
     >
@@ -86,6 +97,7 @@ const EvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
 }
 
 const SvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
+  autoConfirm,
   children,
   variant,
 }) => {
@@ -94,6 +106,7 @@ const SvmSimpleSwapTradeReviewDialog: FC<SimpleSwapTradeReviewDialogProps> = ({
 
   return (
     <SimpleSwapTradeReviewDialogContent
+      autoConfirm={autoConfirm}
       tradeReview={tradeReview}
       variant={variant}
     >
@@ -106,7 +119,7 @@ const SimpleSwapTradeReviewDialogContent: FC<
   SimpleSwapTradeReviewDialogProps & {
     tradeReview: SimpleSwapTradeReview
   }
-> = ({ children, tradeReview, variant = 'default' }) => {
+> = ({ autoConfirm, children, tradeReview, variant = 'default' }) => {
   const {
     state: { token0, token1, chainId, swapAmount, recipient },
   } = useDerivedStateSimpleSwap()
@@ -144,53 +157,57 @@ const SimpleSwapTradeReviewDialogContent: FC<
               isSwapQuerySuccess={isSwapQuerySuccess}
               isSwapQueryFetching={isSwapQueryFetching}
             />
-            <DialogContent variant={variant} className="max-h-[80vh]">
-              <TradeHeader
-                trade={trade}
-                isWrap={isWrap}
-                isUnwrap={isUnwrap}
-                variant={variant}
-              />
-              <DialogBody>
-                <TradeWarnings
-                  showSlippageWarning={showSlippageWarning}
-                  showPriceImpactWarning={showPriceImpactWarning}
-                />
-                <TradeDetails
-                  chainId={chainId}
+            {autoConfirm && !isSwapQueryError ? (
+              <AutoConfirmSwap confirm={confirm} write={write} />
+            ) : (
+              <DialogContent variant={variant} className="max-h-[80vh]">
+                <TradeHeader
                   trade={trade}
-                  token1Symbol={token1?.symbol}
-                  slippagePercent={slippagePercent}
-                  isSwap={isSwap}
-                  priceImpactSeverity={priceImpactSeverity}
-                  isSwapQueryFetching={isSwapQueryFetching}
-                  variant={variant}
-                />
-                <RecipientSection
-                  chainId={chainId}
-                  recipient={recipient}
-                  variant={variant}
-                />
-              </DialogBody>
-              <DialogFooter>
-                <ConfirmSwapButton
-                  confirm={confirm}
-                  trade={trade}
-                  token0Symbol={token0?.symbol}
-                  token1Symbol={token1?.symbol}
                   isWrap={isWrap}
                   isUnwrap={isUnwrap}
-                  isSwapQueryError={isSwapQueryError}
-                  isWritePending={isWritePending}
-                  swapAmount={swapAmount}
-                  showPriceImpactWarning={showPriceImpactWarning}
-                  showSlippageWarning={showSlippageWarning}
-                  write={write}
-                  trace={trace}
                   variant={variant}
                 />
-              </DialogFooter>
-            </DialogContent>
+                <DialogBody>
+                  <TradeWarnings
+                    showSlippageWarning={showSlippageWarning}
+                    showPriceImpactWarning={showPriceImpactWarning}
+                  />
+                  <TradeDetails
+                    chainId={chainId}
+                    trade={trade}
+                    token1Symbol={token1?.symbol}
+                    slippagePercent={slippagePercent}
+                    isSwap={isSwap}
+                    priceImpactSeverity={priceImpactSeverity}
+                    isSwapQueryFetching={isSwapQueryFetching}
+                    variant={variant}
+                  />
+                  <RecipientSection
+                    chainId={chainId}
+                    recipient={recipient}
+                    variant={variant}
+                  />
+                </DialogBody>
+                <DialogFooter>
+                  <ConfirmSwapButton
+                    confirm={confirm}
+                    trade={trade}
+                    token0Symbol={token0?.symbol}
+                    token1Symbol={token1?.symbol}
+                    isWrap={isWrap}
+                    isUnwrap={isUnwrap}
+                    isSwapQueryError={isSwapQueryError}
+                    isWritePending={isWritePending}
+                    swapAmount={swapAmount}
+                    showPriceImpactWarning={showPriceImpactWarning}
+                    showSlippageWarning={showSlippageWarning}
+                    write={write}
+                    trace={trace}
+                    variant={variant}
+                  />
+                </DialogFooter>
+              </DialogContent>
+            )}
           </>
         )}
       </DialogReview>
@@ -209,4 +226,25 @@ const SimpleSwapTradeReviewDialogContent: FC<
       />
     </Trace>
   )
+}
+
+const AutoConfirmSwap: FC<{
+  confirm(): void
+  write: SimpleSwapTradeReview['write']
+}> = ({ confirm, write }) => {
+  const { setOpen: setReviewOpen } = useDialog(DialogType.Review)
+  const { setOpen: setConfirmOpen } = useDialog(DialogType.Confirm)
+  const submittedRef = useRef(false)
+
+  useEffect(() => {
+    if (!write || submittedRef.current) return
+
+    submittedRef.current = true
+    void write(confirm).finally(() => {
+      setReviewOpen(false)
+      setConfirmOpen(false)
+    })
+  }, [confirm, setReviewOpen, setConfirmOpen, write])
+
+  return null
 }

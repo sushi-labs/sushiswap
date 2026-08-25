@@ -19,6 +19,7 @@ import { Amount, type Percent, getChainById } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
+import type { TokenSelectorSelection } from '../../token-selector/selection'
 import { TokenSelector } from '../../token-selector/token-selector'
 import { truncateAmountToDecimals } from './amount-decimals'
 import { BalancePanel } from './balance-panel'
@@ -27,13 +28,17 @@ import { PricePanel } from './price-panel'
 interface CurrencyInputProps<
   TChainId extends BalanceChainId,
   TNetwork extends BalanceChainId = TChainId,
+  TAllowPairSelection extends boolean = false,
 > {
   id?: string
   disabled?: boolean
   value: string
   onChange?(value: string): void
   currency: CurrencyFor<TChainId> | undefined
-  onSelect?(currency: CurrencyFor<TChainId>): void
+  onSelect?(
+    selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
+  ): void
+  allowPairSelection?: TAllowPairSelection
   chainId: TChainId
   currencyClassName?: string
   className?: string
@@ -62,37 +67,38 @@ interface CurrencyInputProps<
 function CurrencyInput<
   TChainId extends BalanceChainId,
   TNetwork extends BalanceChainId = TChainId,
->({
-  id,
-  disabled,
-  value,
-  onChange,
-  currency,
-  onSelect,
-  chainId,
-  currencyClassName,
-  className,
-  loading,
-  priceImpact,
-  disableMaxButton = false,
-  type,
-  fetching,
-  currencyLoading,
-  currencyError,
-  currencyRetrying,
-  onCurrencyRetry,
-  currencies,
-  allowNative = true,
-  error,
-  disableInsufficientBalanceError = false,
-  hideSearch = false,
-  hidePricing = false,
-  hideIcon = false,
-  label,
-  networks,
-  selectedNetwork,
-  onNetworkChange,
-}: CurrencyInputProps<TChainId, TNetwork>) {
+  TAllowPairSelection extends boolean = false,
+>(props: CurrencyInputProps<TChainId, TNetwork, TAllowPairSelection>) {
+  const {
+    id,
+    disabled,
+    value,
+    onChange,
+    currency,
+    chainId,
+    currencyClassName,
+    className,
+    loading,
+    priceImpact,
+    disableMaxButton = false,
+    type,
+    fetching,
+    currencyLoading,
+    currencyError,
+    currencyRetrying,
+    onCurrencyRetry,
+    currencies,
+    allowNative = true,
+    error,
+    disableInsufficientBalanceError = false,
+    hideSearch = false,
+    hidePricing = false,
+    hideIcon = false,
+    label,
+    networks,
+    selectedNetwork,
+    onNetworkChange,
+  } = props
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')
@@ -157,14 +163,15 @@ function CurrencyInput<
   }, [currency, chainId])
 
   const selector = useMemo(() => {
-    if (!onSelect) return null
+    if (!props.onSelect) return null
 
     return (
       <TokenSelector
         id={id}
         chainId={chainId}
         selected={currency}
-        onSelect={onSelect}
+        onSelect={props.onSelect}
+        allowPairSelection={props.allowPairSelection}
         currencies={currencies}
         includeNative={allowNative}
         hideSearch={hideSearch}
@@ -242,7 +249,8 @@ function CurrencyInput<
     currencyClassName,
     currencyLoading,
     id,
-    onSelect,
+    props.onSelect,
+    props.allowPairSelection,
     currencies,
     currency,
     chainId,

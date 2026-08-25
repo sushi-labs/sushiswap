@@ -47,7 +47,7 @@ export function useUserPositions({
     },
     enabled: Boolean(userAddress),
     staleTime: ms('1m'),
-    retry: false, // Don't retry on error to see the error immediately
+    retry: 3,
   })
 }
 
