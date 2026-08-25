@@ -15,6 +15,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 import { getConnectorConfig } from 'src/app/(networks)/(non-evm)/solana/_common/config/connector'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
@@ -40,6 +41,7 @@ function useInSvmContext(): boolean {
 }
 
 const SvmWalletContext = createContext<WalletNamespaceContext | null>(null)
+const INITIAL_AUTO_CONNECT_TIMEOUT_MS = 5_000
 
 export function useSvmWalletContext() {
   const ctx = useContext(SvmWalletContext)
@@ -77,6 +79,9 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     connectWallet,
     wallet: _connector,
   } = useConnector()
+  const isAutoConnectPending = useIsInitialSvmAutoConnectPending(
+    _connector.status !== 'disconnected',
+  )
   const {
     authenticated: isPrivyAuthenticated,
     ready: isPrivyAuthReady,
@@ -214,6 +219,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
           isAuthenticated: isPrivyAuthenticated,
           areWalletsReady: arePrivyStandardWalletsReady,
         }),
+        isAutoConnectPending,
         isConnecting: _connector.status === 'connecting',
         isConnected,
       }),
@@ -224,6 +230,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnected,
     isPrivyAuthenticated,
     isPrivyAuthReady,
+    isAutoConnectPending,
   ])
 
   return (
@@ -231,4 +238,42 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       {children}
     </SvmWalletContext.Provider>
   )
+}
+
+function useIsInitialSvmAutoConnectPending(
+  isConnectionAttemptActive: boolean,
+): boolean {
+  // Solana Connector schedules persisted-wallet auto-connect after provider
+  // initialization. Bridge that gap so connect controls cannot open early.
+  const [isPending, setIsPending] = useState(true)
+
+  useEffect(() => {
+    if (!isPending) return
+
+    if (isConnectionAttemptActive) {
+      setIsPending(false)
+      return
+    }
+
+    let hasPersistedWallet = false
+
+    try {
+      const persistedWallet = getConnectorConfig().storage?.wallet.get()
+      hasPersistedWallet =
+        typeof persistedWallet === 'string' && persistedWallet.length > 0
+    } catch {}
+
+    if (!hasPersistedWallet) {
+      setIsPending(false)
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setIsPending(false)
+    }, INITIAL_AUTO_CONNECT_TIMEOUT_MS)
+
+    return () => clearTimeout(timeout)
+  }, [isConnectionAttemptActive, isPending])
+
+  return isPending
 }
