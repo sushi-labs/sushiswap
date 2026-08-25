@@ -58,9 +58,6 @@ patchedDependencies:
   '@msafe/aptos-wallet-adapter@1.1.3':
     hash: 3441fe0a565aaa3e4bce5e858abc4325c7ba3e72bc9ca247a335e16d7485b145
     path: patches/@msafe__aptos-wallet-adapter@1.1.3.patch
-  '@privy-io/wagmi@4.0.12':
-    hash: 68018e812fa0f2c86139b340d5e0b76a67ba03051d97d04d726b9c51725abcbf
-    path: patches/@privy-io__wagmi@4.0.12.patch
   '@solana/connector':
     hash: 118f624c70e77d67b2862483e0704e847b06ac14230405684b2e7012add87638
     path: patches/@solana__connector.patch
@@ -331,9 +328,6 @@ importers:
       '@privy-io/react-auth':
         specifier: 3.30.0
         version: 3.30.0(ad1e0dc733f6387a56740732cde55859)
-      '@privy-io/wagmi':
-        specifier: 4.0.12
-        version: 4.0.12(patch_hash=68018e812fa0f2c86139b340d5e0b76a67ba03051d97d04d726b9c51725abcbf)(@privy-io/react-auth@3.30.0(ad1e0dc733f6387a56740732cde55859))(react@19.2.7)(viem@2.55.0(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(wagmi@3.3.2)
       '@radix-ui/react-slot':
         specifier: 1.1.1
         version: 1.1.1(@types/react@19.2.17)(react@19.2.7)
@@ -4942,14 +4936,6 @@ packages:
 
   '@privy-io/urls@0.0.4':
     resolution: {integrity: sha512-YYLt3zD4GlMgVm+VkdMF8BnRYlUrfkcchF7fVTPwdP8ljPytCP295yxi26iOsbJfT/xy3+sLsvvrDthjpk6ERA==}
-
-  '@privy-io/wagmi@4.0.12':
-    resolution: {integrity: sha512-k9qg0CZEydAU06uoYrCYHMciIvNmdOqMOrQqHTq/9UpzC3Zp4VI6eJm6MoS+0Kx4/3H9w7UcPqsgLlpKo29oCw==}
-    peerDependencies:
-      '@privy-io/react-auth': ^3
-      react: '>=18'
-      viem: 2.55.0
-      wagmi: '>=2'
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -21138,13 +21124,6 @@ snapshots:
       '@privy-io/api-types': 0.15.0
 
   '@privy-io/urls@0.0.4': {}
-
-  '@privy-io/wagmi@4.0.12(patch_hash=68018e812fa0f2c86139b340d5e0b76a67ba03051d97d04d726b9c51725abcbf)(@privy-io/react-auth@3.30.0(ad1e0dc733f6387a56740732cde55859))(react@19.2.7)(viem@2.55.0(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(wagmi@3.3.2)':
-    dependencies:
-      '@privy-io/react-auth': 3.30.0(ad1e0dc733f6387a56740732cde55859)
-      react: 19.2.7
-      viem: 2.55.0(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
-      wagmi: 3.3.2(862e17be3cc9e7de262de684674623c0)
 
   '@protobufjs/aspromise@1.1.2': {}
 

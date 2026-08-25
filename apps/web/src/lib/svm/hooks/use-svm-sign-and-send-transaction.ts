@@ -1,15 +1,14 @@
 import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
-import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import { useTransactionSigner } from '@solana/connector'
-import { type ReadonlyUint8Array, getBase58Decoder } from '@solana/kit'
+import type { ReadonlyUint8Array } from '@solana/kit'
 import { useCallback } from 'react'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
 export const useSvmSignAndSendTransaction = () => {
   const { signer } = useTransactionSigner()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
-  const { signAndSendTransaction: signAndSendTransactionWithPrivy } =
-    useSignAndSendTransaction()
+  const { operations: privyOperations } = usePrivyRuntime()
 
   const signAndSendTransaction = useCallback(
     async (
@@ -22,24 +21,20 @@ export const useSvmSignAndSendTransaction = () => {
         privyEmbedded &&
         privyEmbedded?.address.toLowerCase() === signer?.address.toLowerCase()
       ) {
-        const tx = await signAndSendTransactionWithPrivy({
+        const tx = await privyOperations?.signAndSendSvmTransaction({
           transaction: new Uint8Array(transaction),
-          wallet: privyEmbedded,
-          options,
+          address: privyEmbedded.address,
+          uiOptions: options?.uiOptions,
         })
-
-        const base58TxSig = getBase58Decoder().decode(
-          new Uint8Array(Object.values(tx.signature)),
-        )
-
-        return { base58TxSig }
+        if (!tx) throw new Error('Privy runtime is unavailable')
+        return { base58TxSig: tx.signature }
       } else {
         const txSig = await signer?.signAndSendTransaction(transaction)
 
         return { base58TxSig: txSig }
       }
     },
-    [privyEmbedded, signer, signAndSendTransactionWithPrivy],
+    [privyEmbedded, signer, privyOperations],
   )
   return { signAndSendTransaction }
 }

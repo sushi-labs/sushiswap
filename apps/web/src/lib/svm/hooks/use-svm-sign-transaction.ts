@@ -1,4 +1,3 @@
-import { useSignTransaction } from '@privy-io/react-auth/solana'
 import { useTransactionSigner } from '@solana/connector'
 import {
   type ReadonlyUint8Array,
@@ -7,11 +6,12 @@ import {
 } from '@solana/kit'
 import { useCallback } from 'react'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
 export const useSvmSignTransaction = () => {
   const { signer } = useTransactionSigner()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
-  const { signTransaction: signTransactionWithPrivy } = useSignTransaction()
+  const { operations: privyOperations } = usePrivyRuntime()
 
   const signTransaction = useCallback(
     async (transaction: ReadonlyUint8Array<ArrayBuffer>) => {
@@ -19,10 +19,11 @@ export const useSvmSignTransaction = () => {
         privyEmbedded &&
         privyEmbedded?.address.toLowerCase() === signer?.address.toLowerCase()
       ) {
-        const tx = await signTransactionWithPrivy({
+        const tx = await privyOperations?.signSvmTransaction({
           transaction: new Uint8Array(transaction),
-          wallet: privyEmbedded,
+          address: privyEmbedded.address,
         })
+        if (!tx) throw new Error('Privy runtime is unavailable')
         const base58TxSig = getSignatureFromTransaction(
           getTransactionDecoder().decode(tx.signedTransaction),
         )
@@ -39,7 +40,7 @@ export const useSvmSignTransaction = () => {
         return { base58TxSig, base64SignedTx }
       }
     },
-    [privyEmbedded, signer, signTransactionWithPrivy],
+    [privyEmbedded, signer, privyOperations],
   )
   return { signTransaction }
 }

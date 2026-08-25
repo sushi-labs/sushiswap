@@ -1,49 +1,22 @@
 'use client'
 
-import { useStandardWallets } from '@privy-io/react-auth/solana'
-import type { ConnectorClient } from '@solana/connector'
 import type {
   Wallet,
   WalletEventsWindow,
   WindowRegisterWalletEvent,
   WindowRegisterWalletEventCallback,
 } from '@wallet-standard/base'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
+import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 
-type ConnectorClientInternals = {
-  walletDetector?: { refreshWallets?: () => void }
-  autoConnector?: { attemptAutoConnect?: () => Promise<boolean> }
-  getSnapshot: ConnectorClient['getSnapshot']
-}
-
-export function useRegisterPrivySvmWallet(
-  client: ConnectorClient | null,
-): void {
-  const { ready, wallets } = useStandardWallets()
-  const registeredWalletRef = useRef<boolean>(false)
+export function useRegisterPrivySvmWallet(): void {
+  const privyWallet = usePrivyEmbeddedWallet('svm')
+  const standardWallet = privyWallet?.standardWallet
 
   useEffect(() => {
-    if (!ready) return
-
-    const privyWallet = wallets.find(isPrivySvmWallet)
-    if (!privyWallet || registeredWalletRef.current) return
-
-    registeredWalletRef.current = true
-    registerWallet(privyWallet)
-
-    const connectorClient = client as unknown as ConnectorClientInternals | null
-    connectorClient?.walletDetector?.refreshWallets?.()
-
-    if (connectorClient?.getSnapshot().wallet.status === 'connected') return
-
-    connectorClient?.autoConnector?.attemptAutoConnect?.().catch((error) => {
-      console.warn('Privy SVM auto-connect failed', error)
-    })
-  }, [ready, wallets, client])
-}
-
-function isPrivySvmWallet(wallet: Wallet): boolean {
-  return wallet.name === 'Privy' && 'privy:' in wallet.features
+    if (!standardWallet) return
+    return registerWallet(standardWallet)
+  }, [standardWallet])
 }
 
 //https://docs.privy.io/recipes/solana/standard-wallets#registering-the-privy-embedded-wallet
@@ -83,9 +56,11 @@ class RegisterWalletEvent
   }
 }
 
-function registerWallet(wallet: Wallet): void {
-  const callback: WindowRegisterWalletEventCallback = ({ register }) =>
-    register(wallet)
+export function registerWallet(wallet: Wallet): () => void {
+  const unregisters = new Set<() => void>()
+  const callback: WindowRegisterWalletEventCallback = ({ register }) => {
+    unregisters.add(register(wallet))
+  }
   try {
     ;(window as WalletEventsWindow).dispatchEvent(
       new RegisterWalletEvent(callback),
@@ -96,15 +71,25 @@ function registerWallet(wallet: Wallet): void {
       error,
     )
   }
+  const onAppReady = ({ detail: api }: CustomEvent) => callback(api)
   try {
     ;(window as WalletEventsWindow).addEventListener(
       'wallet-standard:app-ready',
-      ({ detail: api }) => callback(api),
+      onAppReady as EventListener,
     )
   } catch (error) {
     console.error(
       'wallet-standard:app-ready event listener could not be added\n',
       error,
     )
+  }
+
+  return () => {
+    ;(window as WalletEventsWindow).removeEventListener(
+      'wallet-standard:app-ready',
+      onAppReady as EventListener,
+    )
+    for (const unregister of unregisters) unregister()
+    unregisters.clear()
   }
 }
