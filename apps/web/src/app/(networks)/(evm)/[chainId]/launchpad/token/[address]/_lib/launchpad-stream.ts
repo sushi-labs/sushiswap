@@ -24,6 +24,25 @@ export type LaunchpadTradeMutation =
       logIndex: number
     }
 
+/**
+ * The shape `marketStats` folding needs out of a `trade.upsert`: enough to
+ * decide whether the event is new to a snapshot, and what it adds if it is.
+ */
+export interface LaunchpadTradeStreamEvent {
+  amountUsd: number | null
+  direction: 'BUY' | 'SELL'
+  eventId: string
+  isNew: boolean
+  marginalPriceUsd: number | null
+  timestamp: string
+  tradeKey: string
+}
+
+export interface LaunchpadTradeStreamSubscriber {
+  onReset: () => void
+  onTrade: (event: LaunchpadTradeStreamEvent) => void
+}
+
 export type LaunchpadCandleStreamInterval =
   | '1m'
   | '5m'
@@ -60,6 +79,10 @@ export interface LaunchpadCandleSnapshotRefreshResult {
   subscriberCount: number
 }
 
+const tradeStreamSubscribers = new Map<
+  string,
+  Set<LaunchpadTradeStreamSubscriber>
+>()
 const candleSubscribers = new Map<
   string,
   Set<LaunchpadCandleStreamSubscriber>
@@ -330,6 +353,54 @@ export function clearLaunchpadCandleSnapshot(input: {
 }): void {
   const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
   candleSnapshotCursors.delete(key)
+}
+
+/**
+ * Trade events are published straight off the stream, before the trade list
+ * applies its own small-trade filter, because `marketStats` counts every swap.
+ */
+export function subscribeToLaunchpadTradeStream(
+  input: {
+    chainId: LaunchpadChainId
+    tokenAddress: EvmAddress
+  },
+  subscriber: LaunchpadTradeStreamSubscriber,
+): () => void {
+  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
+  const subscribers =
+    tradeStreamSubscribers.get(key) ?? new Set<LaunchpadTradeStreamSubscriber>()
+  subscribers.add(subscriber)
+  tradeStreamSubscribers.set(key, subscribers)
+
+  return () => {
+    subscribers.delete(subscriber)
+    if (subscribers.size === 0) {
+      tradeStreamSubscribers.delete(key)
+    }
+  }
+}
+
+export function publishLaunchpadTradeStreamEvent(
+  input: {
+    chainId: LaunchpadChainId
+    tokenAddress: EvmAddress
+  },
+  event: LaunchpadTradeStreamEvent,
+): void {
+  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
+  for (const subscriber of tradeStreamSubscribers.get(key) ?? []) {
+    subscriber.onTrade(event)
+  }
+}
+
+export function publishLaunchpadTradeStreamReset(input: {
+  chainId: LaunchpadChainId
+  tokenAddress: EvmAddress
+}): void {
+  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
+  for (const subscriber of tradeStreamSubscribers.get(key) ?? []) {
+    subscriber.onReset()
+  }
 }
 
 export function subscribeToLaunchpadCandleStream(
