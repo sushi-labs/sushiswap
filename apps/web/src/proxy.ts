@@ -2,13 +2,14 @@ import { trace } from '@opentelemetry/api'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
 import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
-import { SUPPORTED_NETWORKS } from './config'
+import { SUPPORTED_NETWORKS, isCrossmintSupportedChainId } from './config'
 
 export const config = {
   matcher: [
     '/swap/:path*',
     '/limit/:path*',
     '/dca/:path*',
+    '/fiat/:path*',
     '/cross-chain-swap/:path*',
     '/pool',
     '/pools',
@@ -16,6 +17,7 @@ export const config = {
     '/:chainId/swap/:path*',
     '/:chainId/limit/:path*',
     '/:chainId/dca/:path*',
+    '/:chainId/fiat/:path*',
     '/:chainId/cross-chain-swap/:path*',
     '/:chainId/stop-loss/:path*',
     '/:chainId/take-profit/:path*',
@@ -59,6 +61,7 @@ async function _proxy(req: NextRequest) {
     pathname === '/take-profit' ||
     pathname === '/limit' ||
     pathname === '/dca' ||
+    pathname === '/fiat' ||
     pathname === '/cross-chain-swap'
   ) {
     const path = ['/explore', '/pools'].includes(pathname)
@@ -69,6 +72,15 @@ async function _proxy(req: NextRequest) {
     if (cookie) {
       const wagmiState = JSON.parse(cookie.value)
       const chainId = wagmiState?.state?.chainId
+      if (path === 'fiat') {
+        if (isCrossmintSupportedChainId(chainId)) {
+          return NextResponse.redirect(
+            new URL(`/${getChainById(chainId).key}/${path}`, req.url),
+          )
+        }
+
+        return NextResponse.redirect(new URL(`/ethereum/${path}`, req.url))
+      }
       if (SUPPORTED_NETWORKS.includes(chainId)) {
         return NextResponse.redirect(
           new URL(`/${getEvmChainById(chainId).key}/${path}`, req.url),
@@ -79,7 +91,7 @@ async function _proxy(req: NextRequest) {
   }
 
   const networkNameMatch = pathname.match(
-    /([\w-]+)(?=\/swap|\/limit|\/dca|\/stop-loss|\/take-profit|\/cross-chain-swap|\/explore|\/pool|\/token|\/launchpad|\/positions|\/rewards|\/migrate)/,
+    /([\w-]+)(?=\/swap|\/limit|\/dca|\/fiat|\/stop-loss|\/take-profit|\/cross-chain-swap|\/explore|\/pool|\/token|\/launchpad|\/positions|\/rewards|\/migrate)/,
   )
   if (networkNameMatch?.length) {
     let chain
@@ -153,6 +165,7 @@ async function _proxy(req: NextRequest) {
     if (
       chain.type === 'evm' ||
       chain.type === 'svm' ||
+      (page === 'fiat' && isCrossmintSupportedChainId(chain.chainId)) ||
       (chain.type === 'stellar' && page === 'cross-chain-swap')
     ) {
       url.pathname = pathname.replace(chain.key, chain.chainId.toString())

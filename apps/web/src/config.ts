@@ -205,6 +205,90 @@ export const SUPPORTED_NETWORKS = Array.from(
   ]),
 )
 
+export const CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS = [
+  ChainId.ROBINHOOD,
+  ChainId.ETHEREUM,
+  ChainId.POLYGON,
+  ChainId.BSC,
+  ChainId.BASE,
+  ChainId.ARBITRUM,
+  ChainId.OPTIMISM,
+  ChainId.SOLANA,
+  ChainId.AVALANCHE,
+  ChainId.SCROLL,
+  ChainId.MANTLE,
+  ChainId.MODE,
+  ChainId.APE,
+  ChainId.MONAD,
+  //non-evm
+  ChainId.STELLAR,
+  ChainId.APTOS,
+] as const
+
+export const CROSSMINT_ONRAMP_SUPPORTED_CHAIN_IDS = [
+  ChainId.BASE,
+  ChainId.POLYGON,
+  //non-evm
+  ChainId.SOLANA,
+  ChainId.STELLAR,
+] as const
+
+export const CROSSMINT_SUPPORTED_CHAIN_IDS = Array.from(
+  new Set([
+    ...CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS,
+    ...CROSSMINT_ONRAMP_SUPPORTED_CHAIN_IDS,
+  ]),
+)
+
+export const CROSSMINT_SUPPORTED_FIAT_CURRENCIES = [
+  'usd',
+  'aud',
+  'eur',
+  'gbp',
+  'hkd',
+  'inr',
+  'jpy',
+  'krw',
+  'sgd',
+  'vnd',
+] as const
+
+export type CrossmintSupportedFiatCurrency =
+  (typeof CROSSMINT_SUPPORTED_FIAT_CURRENCIES)[number]
+
+export function isCrossmintSupportedFiatCurrency(
+  currency: string,
+): currency is CrossmintSupportedFiatCurrency {
+  return CROSSMINT_SUPPORTED_FIAT_CURRENCIES.some(
+    (supportedCurrency) => supportedCurrency === currency,
+  )
+}
+
+export type CrossmintCheckoutSupportedChainId =
+  (typeof CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS)[number]
+export const isCrossmintCheckoutSupportedChainId = (
+  chainId: number,
+): chainId is CrossmintCheckoutSupportedChainId =>
+  CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS.includes(
+    chainId as CrossmintCheckoutSupportedChainId,
+  )
+
+export type CrossmintOnrampSupportedChainId =
+  (typeof CROSSMINT_ONRAMP_SUPPORTED_CHAIN_IDS)[number]
+export const isCrossmintOnrampSupportedChainId = (
+  chainId: number,
+): chainId is CrossmintOnrampSupportedChainId =>
+  CROSSMINT_ONRAMP_SUPPORTED_CHAIN_IDS.includes(
+    chainId as CrossmintOnrampSupportedChainId,
+  )
+
+export type CrossmintSupportedChainId =
+  (typeof CROSSMINT_SUPPORTED_CHAIN_IDS)[number]
+export const isCrossmintSupportedChainId = (
+  chainId: number,
+): chainId is CrossmintSupportedChainId =>
+  CROSSMINT_SUPPORTED_CHAIN_IDS.includes(chainId as CrossmintSupportedChainId)
+
 const UNSORTED_POOL_SUPPORTED_NETWORKS = [
   ...PoolChainIds,
   MvmChainId.APTOS,

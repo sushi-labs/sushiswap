@@ -121,6 +121,11 @@ const ANALYTICS_CONNECT_SOURCES = [
   'https://secure.adnxs.com',
 ]
 
+const CROSSMINT_SOURCES = [
+  'https://staging.crossmint.com',
+  'https://www.crossmint.com',
+]
+
 const FRAME_SOURCES = [
   "'self'",
   'https://auth.privy.io',
@@ -137,6 +142,7 @@ const FRAME_SOURCES = [
   'https://www.googletagmanager.com',
   'https://vercel.live',
   'https://privy.sushi.com',
+  ...CROSSMINT_SOURCES,
 ]
 
 const FRAME_ANCESTORS = [
@@ -220,6 +226,7 @@ export function createContentSecurityPolicy({
       ...PRODUCT_CONNECT_SOURCES,
       ...NON_EVM_CONNECT_SOURCES,
       ...ANALYTICS_CONNECT_SOURCES,
+      ...CROSSMINT_SOURCES,
       ...additionalConnectSources,
       ...(isLocalEnvironment
         ? [

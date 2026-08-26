@@ -17,7 +17,11 @@ import Link from 'next/link'
 import { useParams, usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import { isLifiXSwapSupportedChainId, isSupportedChainId } from 'src/config'
+import {
+  isCrossmintCheckoutSupportedChainId,
+  isLifiXSwapSupportedChainId,
+  isSupportedChainId,
+} from 'src/config'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { isTwapSupportedChainId } from 'src/lib/swap/twap/supported-chain-ids'
 import { type ChainId, getChainById } from 'sushi'
@@ -124,6 +128,7 @@ export const SwapModeButtons = ({
   const supportsCrossChain =
     isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
   const twapSupported = isTwapSupportedChainId(chainId)
+  const crossmintSupported = isCrossmintCheckoutSupportedChainId(chainId)
   const chain = getChainById(chainId)
   const basePath = `/${chain.key}`
 
@@ -217,6 +222,28 @@ export const SwapModeButtons = ({
         )}
       </HoverCard>
 
+      <HoverCard>
+        <SwapModeButton
+          isSupported={crossmintSupported}
+          path={`${basePath}/fiat`}
+          active={getActiveState(`${basePath}/fiat`)}
+        >
+          <HoverCardTrigger asChild>
+            <span>Fiat</span>
+          </HoverCardTrigger>
+        </SwapModeButton>
+        {crossmintSupported ? (
+          <HoverCardContent className="!p-0 max-w-[320px]">
+            <CardHeader>
+              <CardTitle>Fiat Buys</CardTitle>
+              <CardDescription>
+                Buy memecoins and USDC directly with Apple Pay, Google Pay,
+                Card, and more.
+              </CardDescription>
+            </CardHeader>
+          </HoverCardContent>
+        ) : null}
+      </HoverCard>
       <HoverCard>
         <SwapModeButton
           isSupported={supportsCrossChain}
