@@ -1,6 +1,7 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
+import { TradeActivitySkeleton } from './trade-activity'
 
 const MARKET_STAT_SKELETONS = ['price', 'fdv', 'liquidity', 'volume'] as const
 
@@ -70,7 +71,7 @@ export function TokenDetailSkeleton() {
         </MetricStrip>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
         <div className="min-w-0 space-y-4">
           <PerpsCard className="h-[540px] overflow-hidden p-2" fullWidth>
             <SkeletonBox className="h-full w-full rounded-xl" />
@@ -131,6 +132,8 @@ export function TokenDetailSkeleton() {
               <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
             </PerpsCard>
           </div>
+
+          <TradeActivitySkeleton />
 
           <div className="h-[188px]">
             <PerpsCard className="p-5" fullHeight fullWidth>
