@@ -6,9 +6,18 @@ import {
   privyRuntimeStore,
 } from './privy-runtime-store'
 import type { PrivyEvmWallet, PrivyRuntimeSnapshot } from './types'
+import { waitForValue } from './wait-for-value'
 
 export const PRIVY_EVM_CONNECTOR_ID = 'io.privy'
 export const PRIVY_EVM_CONNECTOR_NAME = 'Email'
+
+/**
+ * How long the provider bridge blocks while the lazy runtime loads. This is
+ * what lets Wagmi's own `reconnect()` restore a persisted Privy connection:
+ * `isAuthorized()` issues `eth_accounts` long before the Privy chunk has been
+ * imported, and rejecting immediately would drop the connection for good.
+ */
+const RUNTIME_WAIT_MS = 10_000
 
 type ProviderListeners = {
   [Event in keyof EIP1193EventMap]: Set<EIP1193EventMap[Event]>
@@ -31,7 +40,23 @@ function getWallet(store: PrivyRuntimeStore): PrivyEvmWallet | undefined {
   return getSnapshotWallet(store.getSnapshot())
 }
 
+/**
+ * Whether the runtime has settled into a state that will not produce a wallet,
+ * so the bridge can fail fast instead of waiting out `RUNTIME_WAIT_MS`.
+ */
+function isSettledWithoutWallet(snapshot: PrivyRuntimeSnapshot): boolean {
+  if (!snapshot.requested) return true
+  if (snapshot.status === 'error') return true
+  if (snapshot.status !== 'ready') return false
+  // An authenticated user with a linked account still has a wallet inbound.
+  return !snapshot.authenticated || !snapshot.hasEvmAccount
+}
+
 function createPrivyEvmProvider(store: PrivyRuntimeStore): EIP1193Provider {
+  // Wagmi wraps `eth_accounts` in `withRetry`, and its reconnect loop is
+  // sequential, so paying `RUNTIME_WAIT_MS` per attempt would stall every
+  // other connector for a multiple of it. Wait at most once.
+  let runtimeWaitTimedOut = false
   let boundProvider: EIP1193Provider | undefined
   let boundProviderResolutionId = 0
   let boundWallet: PrivyEvmWallet | undefined
@@ -124,10 +149,32 @@ function createPrivyEvmProvider(store: PrivyRuntimeStore): EIP1193Provider {
     return resolution
   }
 
-  function resolveProvider(forceRefresh = false): Promise<EIP1193Provider> {
+  async function waitForPublishedWallet(): Promise<PrivyEvmWallet | undefined> {
     const wallet = getWallet(store)
-    if (!wallet) return Promise.reject(new ProviderNotFoundError())
+    if (wallet) return wallet
+    if (runtimeWaitTimedOut) return undefined
 
+    try {
+      const snapshot = await waitForValue({
+        getValue: store.getSnapshot,
+        predicate: (candidate) =>
+          Boolean(getSnapshotWallet(candidate)) ||
+          isSettledWithoutWallet(candidate),
+        subscribe: (listener) => store.subscribe(listener),
+        timeoutMessage: 'Privy EVM wallet timed out',
+        timeoutMs: RUNTIME_WAIT_MS,
+      })
+      return getSnapshotWallet(snapshot)
+    } catch {
+      runtimeWaitTimedOut = true
+      return undefined
+    }
+  }
+
+  function resolveForWallet(
+    wallet: PrivyEvmWallet,
+    forceRefresh: boolean,
+  ): Promise<EIP1193Provider> {
     if (!forceRefresh) {
       if (activeProviderResolution?.wallet === wallet) {
         return activeProviderResolution.promise
@@ -141,6 +188,18 @@ function createPrivyEvmProvider(store: PrivyRuntimeStore): EIP1193Provider {
       }
     }
     return startProviderResolution(wallet).promise
+  }
+
+  function resolveProvider(forceRefresh = false): Promise<EIP1193Provider> {
+    // Keep the published-wallet path synchronous; only defer while the lazy
+    // runtime is still loading, so Wagmi's reconnect can wait it out.
+    const wallet = getWallet(store)
+    if (wallet) return resolveForWallet(wallet, forceRefresh)
+
+    return waitForPublishedWallet().then((resolved) => {
+      if (!resolved) throw new ProviderNotFoundError()
+      return resolveForWallet(resolved, forceRefresh)
+    })
   }
 
   async function syncWallet(wallet: PrivyEvmWallet): Promise<void> {
@@ -163,6 +222,7 @@ function createPrivyEvmProvider(store: PrivyRuntimeStore): EIP1193Provider {
   store.subscribe((snapshot, previousSnapshot) => {
     const wallet = getSnapshotWallet(snapshot)
     const previousWallet = getSnapshotWallet(previousSnapshot)
+    if (wallet) runtimeWaitTimedOut = false
     if (wallet === previousWallet) return
 
     if (!wallet) {

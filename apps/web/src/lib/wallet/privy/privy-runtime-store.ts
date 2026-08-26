@@ -5,6 +5,7 @@ import type {
 } from './types'
 
 export interface PrivyRuntimeStore {
+  clearEvmReconnect(): void
   getSnapshot(): PrivyRuntimeSnapshot
   publishRuntime(publication: PrivyRuntimePublication): void
   requestRuntime(options?: { evmReconnect?: boolean }): void
@@ -35,6 +36,10 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
   }
 
   return {
+    clearEvmReconnect() {
+      if (!snapshot.evmReconnect) return
+      publish({ ...snapshot, evmReconnect: false })
+    },
     getSnapshot() {
       return snapshot
     },
@@ -44,9 +49,12 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           authenticated: true,
           evmReconnect: snapshot.evmReconnect,
           evmWallet: publication.evmWallet ?? null,
+          hasEvmAccount: publication.hasEvmAccount,
+          hasSvmAccount: publication.hasSvmAccount,
           operations: publication.operations,
           requested: true,
           status: 'ready',
+          svmStandardWallet: publication.svmStandardWallet ?? null,
           svmWallet: publication.svmWallet ?? null,
         })
       } else {
@@ -57,6 +65,7 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           operations: publication.operations,
           requested: true,
           status: 'ready',
+          svmStandardWallet: publication.svmStandardWallet ?? null,
           svmWallet: null,
         })
       }
@@ -64,9 +73,10 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
     requestRuntime(options = {}) {
       const evmReconnect =
         snapshot.evmReconnect || Boolean(options.evmReconnect)
-      if (snapshot.requested && evmReconnect === snapshot.evmReconnect) return
 
-      if (!snapshot.requested) {
+      // A previous load failure must not be permanent: re-requesting the
+      // runtime drops back to `loading` so the gate can retry the import.
+      if (!snapshot.requested || snapshot.status === 'error') {
         publish({
           evmReconnect,
           requested: true,
@@ -75,6 +85,7 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
         return
       }
 
+      if (evmReconnect === snapshot.evmReconnect) return
       publish({ ...snapshot, evmReconnect, requested: true })
     },
     setError(error) {

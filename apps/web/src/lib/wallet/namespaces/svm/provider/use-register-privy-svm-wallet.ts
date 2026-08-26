@@ -7,16 +7,18 @@ import type {
   WindowRegisterWalletEventCallback,
 } from '@wallet-standard/base'
 import { useEffect } from 'react'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
 export function useRegisterPrivySvmWallet(): void {
-  const privyWallet = usePrivyEmbeddedWallet('svm')
-  const standardWallet = privyWallet?.standardWallet
+  // Deliberately not `usePrivyEmbeddedWallet('svm')`: that wallet only exists
+  // once Privy has propagated a connected account, but the wallet has to be
+  // registered before the connector can connect to it.
+  const { svmStandardWallet } = usePrivyRuntime()
 
   useEffect(() => {
-    if (!standardWallet) return
-    return registerWallet(standardWallet)
-  }, [standardWallet])
+    if (!svmStandardWallet) return
+    return registerWallet(svmStandardWallet)
+  }, [svmStandardWallet])
 }
 
 //https://docs.privy.io/recipes/solana/standard-wallets#registering-the-privy-embedded-wallet

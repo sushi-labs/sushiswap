@@ -138,8 +138,10 @@ function publishWallet(store: PrivyRuntimeStore, wallet: PrivyEvmWallet): void {
   store.requestRuntime()
   store.publishRuntime({
     authenticated: true,
+    hasEvmAccount: true,
     evmWallet: wallet,
     operations: createOperations(),
+    hasSvmAccount: true,
   })
 }
 
@@ -183,6 +185,83 @@ describe('Privy EVM connector', () => {
     await expect(connector.isAuthorized()).resolves.toBe(false)
   })
 
+  it('holds requests open while the lazy runtime loads', async () => {
+    const store = createPrivyRuntimeStore()
+    const { connector } = getConnector(store)
+    const controller = createProviderController(firstAddress, mainnet.id)
+    store.requestRuntime({ evmReconnect: true })
+
+    // Wagmi issues `eth_accounts` long before the Privy chunk is imported.
+    // Rejecting here would drop the persisted connection permanently.
+    const provider = await connector.getProvider()
+    if (!provider) throw new Error('Privy provider bridge is unavailable')
+    const pending = provider.request({ method: 'eth_chainId' })
+    const settled = vi.fn()
+    void pending.then(settled, settled)
+    await new Promise((resolve) => setTimeout(resolve, 20))
+    expect(settled).not.toHaveBeenCalled()
+
+    store.publishRuntime({
+      authenticated: true,
+      evmWallet: {
+        address: firstAddress,
+        getProvider: vi.fn(async () => controller.provider),
+      },
+      hasEvmAccount: true,
+      hasSvmAccount: false,
+      operations: createOperations(),
+    })
+
+    await expect(pending).resolves.toBe('0x1')
+  })
+
+  it('fails fast once the runtime settles without an embedded wallet', async () => {
+    const store = createPrivyRuntimeStore()
+    const { connector } = getConnector(store)
+    store.requestRuntime({ evmReconnect: true })
+    store.publishRuntime({
+      authenticated: true,
+      hasEvmAccount: false,
+      hasSvmAccount: false,
+      operations: createOperations(),
+    })
+
+    const provider = await connector.getProvider()
+    if (!provider) throw new Error('Privy provider bridge is unavailable')
+
+    await expect(
+      provider.request({ method: 'eth_chainId' }),
+    ).rejects.toBeInstanceOf(ProviderNotFoundError)
+  })
+
+  it('waits at most once when the runtime never settles', async () => {
+    vi.useFakeTimers()
+    try {
+      const store = createPrivyRuntimeStore()
+      const { connector } = getConnector(store)
+      // Requested but never published: a stalled chunk import.
+      store.requestRuntime({ evmReconnect: true })
+      const provider = await connector.getProvider()
+      if (!provider) throw new Error('Privy provider bridge is unavailable')
+
+      // Attach the rejection handler before advancing, or the timeout
+      // settles while nothing is listening and surfaces as unhandled.
+      const first = expect(
+        provider.request({ method: 'eth_chainId' }),
+      ).rejects.toBeInstanceOf(ProviderNotFoundError)
+      await vi.advanceTimersByTimeAsync(30_000)
+      await first
+
+      // Wagmi retries `eth_accounts`; further attempts must not each pay the
+      // full timeout, or its sequential reconnect stalls every other wallet.
+      await expect(
+        provider.request({ method: 'eth_chainId' }),
+      ).rejects.toBeInstanceOf(ProviderNotFoundError)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('connects through Wagmi injected-connector semantics', async () => {
     const store = createPrivyRuntimeStore()
     const { config, connector } = getConnector(store)
@@ -218,11 +297,13 @@ describe('Privy EVM connector', () => {
 
     store.publishRuntime({
       authenticated: true,
+      hasEvmAccount: true,
       evmWallet: {
         address: firstAddress,
         getProvider: vi.fn(async () => replacement.provider),
       },
       operations: createOperations(),
+      hasSvmAccount: true,
     })
 
     await vi.waitFor(() => {
@@ -256,11 +337,13 @@ describe('Privy EVM connector', () => {
       const getCurrentProvider = vi.fn(async () => current.provider)
       store.publishRuntime({
         authenticated: true,
+        hasEvmAccount: true,
         evmWallet: {
           address: currentAddress,
           getProvider: getCurrentProvider,
         },
         operations: createOperations(),
+        hasSvmAccount: true,
       })
       await vi.waitFor(() => expect(getCurrentProvider).toHaveBeenCalledOnce())
 

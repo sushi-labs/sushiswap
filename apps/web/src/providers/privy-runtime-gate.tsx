@@ -18,7 +18,7 @@ function requestSessionRuntime(): void {
 }
 
 export function PrivyRuntimeGate() {
-  const { requested } = useSyncExternalStore(
+  const { requested, status } = useSyncExternalStore(
     privyRuntimeStore.subscribe,
     privyRuntimeStore.getSnapshot,
     privyRuntimeStore.getSnapshot,
@@ -45,7 +45,9 @@ export function PrivyRuntimeGate() {
 
   useEffect(() => {
     let cancelled = false
-    if (!requested || Runtime) return
+    // `status === 'error'` means the previous import failed; wait for a fresh
+    // `requestRuntime()` to reset the store to `loading` before retrying.
+    if (!requested || Runtime || status === 'error') return
 
     privyRuntimeStore.setLoading()
     import('./privy-runtime')
@@ -60,7 +62,7 @@ export function PrivyRuntimeGate() {
     return () => {
       cancelled = true
     }
-  }, [requested, Runtime])
+  }, [requested, status, Runtime])
 
   if (!requested || !Runtime) return null
   return <Runtime />

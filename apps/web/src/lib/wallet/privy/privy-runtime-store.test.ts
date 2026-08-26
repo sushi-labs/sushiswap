@@ -68,8 +68,10 @@ describe('Privy runtime store', () => {
 
     store.publishRuntime({
       authenticated: true,
+      hasEvmAccount: true,
       evmWallet,
       operations: createOperations(),
+      hasSvmAccount: true,
       svmWallet: {
         address: '11111111111111111111111111111111' as SvmAddress,
         standardWallet: {} as StandardWallet,
@@ -113,13 +115,17 @@ describe('Privy runtime store', () => {
     store.requestRuntime()
     store.publishRuntime({
       authenticated: true,
+      hasEvmAccount: true,
       evmWallet: firstWallet,
       operations: createOperations(),
+      hasSvmAccount: true,
     })
     store.publishRuntime({
       authenticated: true,
+      hasEvmAccount: true,
       evmWallet: secondWallet,
       operations: createOperations(),
+      hasSvmAccount: true,
     })
 
     const snapshot = store.getSnapshot()
@@ -133,8 +139,10 @@ describe('Privy runtime store', () => {
     store.requestRuntime()
     store.publishRuntime({
       authenticated: true,
+      hasEvmAccount: true,
       evmWallet: createWallet(),
       operations: createOperations(),
+      hasSvmAccount: true,
     })
 
     store.setError(new Error('runtime failed'))
@@ -148,6 +156,81 @@ describe('Privy runtime store', () => {
     expect('authenticated' in snapshot).toBe(false)
     expect('evmWallet' in snapshot).toBe(false)
     expect('operations' in snapshot).toBe(false)
+  })
+
+  it('publishes linked-account presence so consumers can tell "no wallet" from "not surfaced yet"', () => {
+    const store = createPrivyRuntimeStore()
+    store.requestRuntime()
+
+    store.publishRuntime({
+      authenticated: true,
+      evmWallet: null,
+      hasEvmAccount: true,
+      hasSvmAccount: true,
+      operations: createOperations(),
+      svmWallet: null,
+    })
+
+    expect(store.getSnapshot()).toMatchObject({
+      authenticated: true,
+      evmWallet: null,
+      hasEvmAccount: true,
+      hasSvmAccount: true,
+      svmWallet: null,
+    })
+  })
+
+  it('publishes the standard wallet before an account connects', () => {
+    const store = createPrivyRuntimeStore()
+    const standardWallet = { name: 'Privy' } as StandardWallet
+    store.requestRuntime()
+
+    store.publishRuntime({
+      authenticated: false,
+      operations: createOperations(),
+      svmStandardWallet: standardWallet,
+    })
+
+    const snapshot = store.getSnapshot()
+    expect(snapshot.svmStandardWallet).toBe(standardWallet)
+    expect(snapshot.svmWallet).toBeNull()
+  })
+
+  it('retries after a load error when the runtime is requested again', () => {
+    const store = createPrivyRuntimeStore()
+    store.requestRuntime({ evmReconnect: true })
+    store.setError(new Error('chunk load failed'))
+
+    store.requestRuntime()
+
+    expect(store.getSnapshot()).toEqual({
+      evmReconnect: true,
+      requested: true,
+      status: 'loading',
+    })
+  })
+
+  it('clears a consumed reconnect request', () => {
+    const store = createPrivyRuntimeStore()
+    const listener = vi.fn()
+    store.requestRuntime({ evmReconnect: true })
+    store.subscribe(listener)
+
+    store.clearEvmReconnect()
+    store.clearEvmReconnect()
+
+    expect(store.getSnapshot().evmReconnect).toBe(false)
+    expect(listener).toHaveBeenCalledTimes(1)
+
+    store.publishRuntime({
+      authenticated: true,
+      hasEvmAccount: true,
+      evmWallet: createWallet(),
+      operations: createOperations(),
+      hasSvmAccount: true,
+    })
+
+    expect(store.getSnapshot().evmReconnect).toBe(false)
   })
 
   it('keeps a runtime request latched when the provider unmounts', () => {

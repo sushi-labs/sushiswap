@@ -1,5 +1,6 @@
 'use client'
 
+import type { User as PrivyUser } from '@privy-io/react-auth'
 import {
   useConnectOrCreateWallet,
   useCreateWallet as useCreateEvmWallet,
@@ -14,16 +15,19 @@ import {
   useExportWallet as useExportSvmWallet,
   useSignAndSendTransaction,
   useSignTransaction,
+  useStandardWallets as useSolanaStandardWallets,
   useWallets as useSolanaWallets,
 } from '@privy-io/react-auth/solana'
 import { getBase58Decoder } from '@solana/kit'
 import { getConnections } from '@wagmi/core'
+import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import { useEffect, useMemo, useRef } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import {
   clearPrivySessionMarker,
   ensurePrivySessionMarker,
 } from 'src/lib/wallet/privy-session-marker'
+import { PRIVY_EVM_CONNECTOR_ID } from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
 import type {
@@ -36,6 +40,31 @@ import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
 import type { EIP1193Provider } from 'viem'
 import { PrivyProvider } from './privy-provider'
+
+type PrivyChainType = 'ethereum' | 'solana'
+
+/**
+ * Mirrors Privy's own embedded-wallet lookup, which reads `linkedAccounts`
+ * rather than the wallet hooks. `createWallet()` throws for a user who already
+ * has a wallet for the chain type, so this is what must gate provisioning.
+ */
+function hasPrivyEmbeddedAccount(
+  user: PrivyUser | null,
+  chainType: PrivyChainType,
+): boolean {
+  return Boolean(
+    user?.linkedAccounts.some(
+      (account) =>
+        account.type === 'wallet' &&
+        account.walletClientType === 'privy' &&
+        account.chainType === chainType,
+    ),
+  )
+}
+
+function isPrivySvmStandardWallet(wallet: StandardWallet): boolean {
+  return wallet.name === 'Privy' && 'privy:' in wallet.features
+}
 
 type PendingOperation = {
   reject(error: Error): void
@@ -65,9 +94,10 @@ export function PrivyRuntime() {
 }
 
 function PrivyRuntimeEffects() {
-  const { ready, authenticated, logout } = usePrivy()
+  const { ready, authenticated, logout, user } = usePrivy()
   const { wallets: evmWallets } = useWallets()
   const { ready: svmReady, wallets: svmWallets } = useSolanaWallets()
+  const { wallets: svmStandardWallets } = useSolanaStandardWallets()
   const { sendTransaction } = useSendTransaction()
   const { createWallet: createEvmWallet } = useCreateEvmWallet()
   const { createWallet: createSvmWallet } = useCreateSvmWallet()
@@ -117,6 +147,14 @@ function PrivyRuntimeEffects() {
     () => svmWallets.find((wallet) => wallet.standardWallet?.name === 'Privy'),
     [svmWallets],
   )
+  // `useSolanaWallets` only yields a wallet once Privy has propagated a
+  // connected account, which is far later than registration needs to happen.
+  const svmStandardWallet = useMemo(
+    () => svmStandardWallets.find(isPrivySvmStandardWallet) ?? null,
+    [svmStandardWallets],
+  )
+  const hasEvmAccount = hasPrivyEmbeddedAccount(user, 'ethereum')
+  const hasSvmAccount = hasPrivyEmbeddedAccount(user, 'solana')
 
   // Privy hook handles are not referentially stable across renders. Keep the
   // latest handles behind a ref so the published runtime snapshot keeps a
@@ -271,38 +309,61 @@ function PrivyRuntimeEffects() {
       privyRuntimeStore.publishRuntime({
         authenticated: true,
         evmWallet: runtimeEvmWallet,
+        hasEvmAccount,
+        hasSvmAccount,
         operations,
+        svmStandardWallet,
         svmWallet: runtimeSvmWallet,
       })
     } else {
       privyRuntimeStore.publishRuntime({
         authenticated: false,
         operations,
+        svmStandardWallet,
       })
     }
 
     if (!authenticated) {
       clearPrivySessionMarker()
+      privyRuntimeStore.clearEvmReconnect()
       return
     }
 
     ensurePrivySessionMarker()
 
+    // Safety net for a runtime that is requested after Wagmi's one-shot
+    // `reconnect()` has already run - a login in another tab, say. While that
+    // reconnect is still in flight the bridge is already feeding it, so firing
+    // here too would race it into `ConnectorAlreadyConnectedError`.
+    const config = getWagmiConfig()
+    const wagmiReconnecting =
+      config.state.status === 'reconnecting' ||
+      config.state.status === 'connecting'
+    const hasPrivyConnection = getConnections(config).some(
+      (connection) => connection.connector.id === PRIVY_EVM_CONNECTOR_ID,
+    )
     if (
       privyRuntimeStore.getSnapshot().evmReconnect &&
       runtimeEvmWallet &&
-      getConnections(getWagmiConfig()).length === 0
+      !wagmiReconnecting &&
+      !hasPrivyConnection
     ) {
-      reconnectPrivyEvmWallet(getWagmiConfig()).catch((error) => {
+      // One-shot: consume the request before reconnecting so a later publish
+      // cannot resurrect a connection the user has since dropped.
+      privyRuntimeStore.clearEvmReconnect()
+      reconnectPrivyEvmWallet(config).catch((error) => {
         console.warn('Privy EVM auto-connect failed', error)
       })
     }
   }, [
     authenticated,
+    hasEvmAccount,
+    hasSvmAccount,
     operations,
     ready,
     runtimeEvmWallet,
     svmReady,
+    svmStandardWallet,
     svmWalletAddress,
   ])
 

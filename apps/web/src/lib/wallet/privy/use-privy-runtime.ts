@@ -60,7 +60,12 @@ export async function connectPrivyEvmWallet(
 ): Promise<EvmAddress> {
   let snapshot = await loadPrivyRuntime()
   if (!snapshot.evmWallet) {
-    await snapshot.operations.connectOrCreateEvmWallet()
+    // The wallet list surfaces later than the linked account does. Calling
+    // `createWallet()` in that window throws "User already has an embedded
+    // wallet.", so an existing account means wait rather than provision.
+    if (!snapshot.authenticated || !snapshot.hasEvmAccount) {
+      await snapshot.operations.connectOrCreateEvmWallet()
+    }
     snapshot = await waitForReadyPrivyRuntime((candidate) =>
       Boolean(candidate.evmWallet),
     )
@@ -94,7 +99,9 @@ async function connectPublishedPrivyEvmWallet(
 export async function connectPrivySvmWallet(): Promise<SvmAddress> {
   let snapshot = await loadPrivyRuntime()
   if (!snapshot.svmWallet) {
-    await snapshot.operations.loginSvm()
+    if (!snapshot.authenticated || !snapshot.hasSvmAccount) {
+      await snapshot.operations.loginSvm()
+    }
     snapshot = await waitForReadyPrivyRuntime((candidate) =>
       Boolean(candidate.svmWallet),
     )
@@ -107,5 +114,8 @@ export async function connectPrivySvmWallet(): Promise<SvmAddress> {
 export async function logoutPrivyRuntime(): Promise<void> {
   const snapshot = privyRuntimeStore.getSnapshot()
   clearPrivySessionMarker()
+  // Drop the pending auto-reconnect synchronously so a later login in another
+  // namespace cannot silently reconnect the wallet the user just disconnected.
+  privyRuntimeStore.clearEvmReconnect()
   if (snapshot.status === 'ready') await snapshot.operations.logout()
 }

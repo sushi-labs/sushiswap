@@ -32,7 +32,26 @@ export function hasPersistedConnector(connectorId: string): boolean {
   return getPersistedConnectorIds().has(connectorId.toLowerCase())
 }
 
+/**
+ * Snapshotted at module evaluation. `createConfig()` overwrites `wagmi.store`
+ * with an empty state as soon as it runs (Zustand's persist middleware writes
+ * on the initial `setState`, and `skipHydration` is on for SSR), so any read
+ * that happens later - e.g. from a React effect - sees no connections at all.
+ * This module is a leaf of the Wagmi config graph, so it is evaluated before
+ * that happens.
+ */
+let persistedConnectorIds: ReadonlySet<string> = readPersistedConnectorIds()
+
+/** Test-only: re-reads the snapshot after stubbing `window.localStorage`. */
+export function refreshPersistedConnectorSnapshot(): void {
+  persistedConnectorIds = readPersistedConnectorIds()
+}
+
 function getPersistedConnectorIds(): ReadonlySet<string> {
+  return persistedConnectorIds
+}
+
+function readPersistedConnectorIds(): ReadonlySet<string> {
   if (typeof window === 'undefined') return new Set()
 
   try {

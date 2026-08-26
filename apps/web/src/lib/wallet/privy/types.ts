@@ -63,6 +63,7 @@ interface PrivyRuntimeEmptySnapshot {
   error?: never
   evmWallet?: never
   operations?: never
+  svmStandardWallet?: never
   svmWallet?: never
 }
 
@@ -89,6 +90,7 @@ interface PrivyRuntimeErrorSnapshot extends PrivyRuntimeRequestedSnapshotBase {
   evmWallet?: never
   operations?: never
   status: 'error'
+  svmStandardWallet?: never
   svmWallet?: never
 }
 
@@ -103,6 +105,21 @@ interface PrivyRuntimeAuthenticatedSnapshot
   extends PrivyRuntimeReadySnapshotBase {
   authenticated: true
   evmWallet: PrivyEvmWallet | null
+  /**
+   * Whether the user's Privy account already holds an embedded wallet for the
+   * namespace, read from `user.linkedAccounts`. Privy rejects `createWallet()`
+   * for a user who has one, and the wallet lists surface later than the
+   * account does, so provisioning must key off this rather than off a null
+   * wallet.
+   */
+  hasEvmAccount: boolean
+  hasSvmAccount: boolean
+  /**
+   * Privy's Wallet Standard wallet, published as soon as Privy exposes it.
+   * Unlike `svmWallet` this does not wait for a connected account, so the
+   * wallet can be registered before the user connects.
+   */
+  svmStandardWallet: StandardWallet | null
   svmWallet: PrivySvmWallet | null
 }
 
@@ -110,6 +127,9 @@ interface PrivyRuntimeUnauthenticatedSnapshot
   extends PrivyRuntimeReadySnapshotBase {
   authenticated: false
   evmWallet: null
+  hasEvmAccount?: never
+  hasSvmAccount?: never
+  svmStandardWallet: StandardWallet | null
   svmWallet: null
 }
 
@@ -127,13 +147,19 @@ export type PrivyRuntimePublication =
   | {
       authenticated: false
       evmWallet?: never
+      hasEvmAccount?: never
+      hasSvmAccount?: never
       operations: PrivyRuntimeOperationHandlers
+      svmStandardWallet?: StandardWallet | null
       svmWallet?: never
     }
   | {
       authenticated: true
       evmWallet?: PrivyEvmWallet | null
+      hasEvmAccount: boolean
+      hasSvmAccount: boolean
       operations: PrivyRuntimeOperationHandlers
+      svmStandardWallet?: StandardWallet | null
       svmWallet?: PrivySvmWallet | null
     }
 
