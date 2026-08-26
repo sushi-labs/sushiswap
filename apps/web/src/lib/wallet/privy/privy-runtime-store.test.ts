@@ -1,7 +1,6 @@
-import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import type { EvmAddress } from 'sushi/evm'
 import type { SvmAddress } from 'sushi/svm'
-import type { EIP1193Provider, Hex } from 'viem'
+import type { Hex } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 import { createPrivyRuntimeStore } from './privy-runtime-store'
 import type { PrivyEvmWallet, PrivyRuntimeOperationHandlers } from './types'
@@ -19,17 +18,11 @@ function createOperations(): PrivyRuntimeOperationHandlers {
     signAndSendSvmTransaction: vi.fn(async () => ({
       signature: 'signature',
     })),
-    signSvmTransaction: vi.fn(async ({ transaction }) => ({
-      signedTransaction: transaction,
-    })),
   }
 }
 
 function createWallet(): PrivyEvmWallet {
-  return {
-    address,
-    getProvider: vi.fn(async () => ({}) as EIP1193Provider),
-  }
+  return { address }
 }
 
 describe('Privy runtime store', () => {
@@ -74,7 +67,6 @@ describe('Privy runtime store', () => {
       hasSvmAccount: true,
       svmWallet: {
         address: '11111111111111111111111111111111' as SvmAddress,
-        standardWallet: {} as StandardWallet,
       },
     })
 
@@ -84,7 +76,6 @@ describe('Privy runtime store', () => {
       status: 'ready',
       svmWallet: { address: '11111111111111111111111111111111' },
     })
-    expect(evmWallet.getProvider).not.toHaveBeenCalled()
     expect(listener).toHaveBeenCalledTimes(2)
   })
 
@@ -178,22 +169,6 @@ describe('Privy runtime store', () => {
       hasSvmAccount: true,
       svmWallet: null,
     })
-  })
-
-  it('publishes the standard wallet before an account connects', () => {
-    const store = createPrivyRuntimeStore()
-    const standardWallet = { name: 'Privy' } as StandardWallet
-    store.requestRuntime()
-
-    store.publishRuntime({
-      authenticated: false,
-      operations: createOperations(),
-      svmStandardWallet: standardWallet,
-    })
-
-    const snapshot = store.getSnapshot()
-    expect(snapshot.svmStandardWallet).toBe(standardWallet)
-    expect(snapshot.svmWallet).toBeNull()
   })
 
   it('retries after a load error when the runtime is requested again', () => {

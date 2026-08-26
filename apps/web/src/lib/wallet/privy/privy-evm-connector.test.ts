@@ -1,62 +1,33 @@
+import { mock } from '@wagmi/connectors'
 import {
   http,
-  ProviderNotFoundError,
   connect,
   createConfig,
-  disconnect,
+  getConnections,
   getConnectors,
+  reconnect,
 } from '@wagmi/core'
 import type { EvmAddress } from 'sushi/evm'
-import type { EIP1193Provider, Hex } from 'viem'
+import type { EIP1193Provider } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isInjectedConnector } from '../namespaces/evm/adapters/injected'
 import {
   PRIVY_EVM_CONNECTOR_ID,
-  createPrivyEvmConnector,
+  getPrivyEvmConnector,
+  registerPrivyEvmConnector,
+  unregisterPrivyEvmConnector,
 } from './privy-evm-connector'
-import {
-  type PrivyRuntimeStore,
-  createPrivyRuntimeStore,
-} from './privy-runtime-store'
-import type { PrivyEvmWallet, PrivyRuntimeOperationHandlers } from './types'
 
 const firstAddress = '0x0000000000000000000000000000000000000001' as EvmAddress
 const secondAddress = '0x0000000000000000000000000000000000000002' as EvmAddress
 
-function createDeferred<Value>(): {
-  promise: Promise<Value>
-  resolve(value: Value): void
-} {
-  let resolve!: (value: Value) => void
-  const promise = new Promise<Value>((promiseResolve) => {
-    resolve = promiseResolve
-  })
-  return { promise, resolve }
-}
-
-function createOperations(): PrivyRuntimeOperationHandlers {
-  return {
-    connectOrCreateEvmWallet: vi.fn(async () => undefined),
-    exportEvmWallet: vi.fn(async () => undefined),
-    exportSvmWallet: vi.fn(async () => undefined),
-    loginSvm: vi.fn(async () => undefined),
-    logout: vi.fn(async () => undefined),
-    sendEvmTransaction: vi.fn(async () => ({ hash: '0x01' as Hex })),
-    signAndSendSvmTransaction: vi.fn(async () => ({ signature: 'signature' })),
-    signSvmTransaction: vi.fn(async ({ transaction }) => ({
-      signedTransaction: transaction,
-    })),
-  }
-}
-
 function createProviderController(
   initialAddress: EvmAddress,
-  initialChainId: number,
-  options: { onSwitch?(): void } = {},
+  initialChainId = mainnet.id,
 ) {
-  let account = initialAddress
-  let chainId = initialChainId
+  let address = initialAddress
+  let chainId: number = initialChainId
   const listeners = new Map<string, Set<(...parameters: unknown[]) => void>>()
   const request = vi.fn(
     async ({
@@ -67,15 +38,11 @@ function createProviderController(
       params?: readonly unknown[]
     }) => {
       if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
-        return [account]
+        return [address]
       }
       if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
-      if (method === 'wallet_requestPermissions') {
-        return [{ caveats: [{ value: [account] }] }]
-      }
       if (method === 'wallet_revokePermissions') return null
       if (method === 'wallet_switchEthereumChain') {
-        options.onSwitch?.()
         const parameter = params?.[0]
         if (
           parameter &&
@@ -111,43 +78,30 @@ function createProviderController(
     emit(event: string, value: unknown) {
       for (const listener of listeners.get(event) ?? []) listener(value)
     },
-    getListenerCount() {
-      return [...listeners.values()].reduce((count, set) => count + set.size, 0)
-    },
     provider,
     request,
-    setAccount(nextAccount: EvmAddress) {
-      account = nextAccount
+    setAddress(nextAddress: EvmAddress) {
+      address = nextAddress
     },
   }
 }
 
-function getConnector(store: PrivyRuntimeStore) {
-  const config = createConfig({
+function createWagmiConfig(
+  connectors: Parameters<typeof createConfig>[0]['connectors'] = [],
+) {
+  return createConfig({
     chains: [mainnet, sepolia],
-    connectors: [createPrivyEvmConnector(store)],
+    connectors,
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
     },
   })
-  return { config, connector: getConnectors(config)[0]! }
 }
 
-function publishWallet(store: PrivyRuntimeStore, wallet: PrivyEvmWallet): void {
-  store.requestRuntime()
-  store.publishRuntime({
-    authenticated: true,
-    hasEvmAccount: true,
-    evmWallet: wallet,
-    operations: createOperations(),
-    hasSvmAccount: true,
-  })
-}
-
-beforeEach(() => {
+function createLocalStorage(): Storage {
   const values = new Map<string, string>()
-  const localStorage: Storage = {
+  return {
     get length() {
       return values.size
     },
@@ -167,299 +121,151 @@ beforeEach(() => {
       values.set(key, value)
     },
   }
-  vi.stubGlobal('window', Object.assign(new EventTarget(), { localStorage }))
+}
+
+beforeEach(() => {
+  vi.stubGlobal(
+    'window',
+    Object.assign(new EventTarget(), { localStorage: createLocalStorage() }),
+  )
 })
 
 afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Privy EVM connector', () => {
-  it('uses a fixed standard connector that is inert before Privy loads', async () => {
-    const { connector } = getConnector(createPrivyRuntimeStore())
+describe('Privy EVM connector registration', () => {
+  it('registers a standard injected connector around the actual provider', async () => {
+    const config = createWagmiConfig()
+    const controller = createProviderController(firstAddress)
 
+    expect(getPrivyEvmConnector(config)).toBeUndefined()
+    const connector = registerPrivyEvmConnector({
+      address: firstAddress,
+      config,
+      provider: controller.provider,
+    })
+
+    expect(getPrivyEvmConnector(config)).toBe(connector)
     expect(connector.id).toBe(PRIVY_EVM_CONNECTOR_ID)
     expect(connector.type).toBe('injected')
     expect(isInjectedConnector(connector)).toBe(false)
-    await expect(connector.getProvider()).resolves.toBeDefined()
-    await expect(connector.isAuthorized()).resolves.toBe(false)
-  })
-
-  it('holds requests open while the lazy runtime loads', async () => {
-    const store = createPrivyRuntimeStore()
-    const { connector } = getConnector(store)
-    const controller = createProviderController(firstAddress, mainnet.id)
-    store.requestRuntime({ evmReconnect: true })
-
-    // Wagmi issues `eth_accounts` long before the Privy chunk is imported.
-    // Rejecting here would drop the persisted connection permanently.
-    const provider = await connector.getProvider()
-    if (!provider) throw new Error('Privy provider bridge is unavailable')
-    const pending = provider.request({ method: 'eth_chainId' })
-    const settled = vi.fn()
-    void pending.then(settled, settled)
-    await new Promise((resolve) => setTimeout(resolve, 20))
-    expect(settled).not.toHaveBeenCalled()
-
-    store.publishRuntime({
-      authenticated: true,
-      evmWallet: {
-        address: firstAddress,
-        getProvider: vi.fn(async () => controller.provider),
-      },
-      hasEvmAccount: true,
-      hasSvmAccount: false,
-      operations: createOperations(),
-    })
-
-    await expect(pending).resolves.toBe('0x1')
-  })
-
-  it('fails fast once the runtime settles without an embedded wallet', async () => {
-    const store = createPrivyRuntimeStore()
-    const { connector } = getConnector(store)
-    store.requestRuntime({ evmReconnect: true })
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: false,
-      hasSvmAccount: false,
-      operations: createOperations(),
-    })
-
-    const provider = await connector.getProvider()
-    if (!provider) throw new Error('Privy provider bridge is unavailable')
-
-    await expect(
-      provider.request({ method: 'eth_chainId' }),
-    ).rejects.toBeInstanceOf(ProviderNotFoundError)
-  })
-
-  it('waits at most once when the runtime never settles', async () => {
-    vi.useFakeTimers()
-    try {
-      const store = createPrivyRuntimeStore()
-      const { connector } = getConnector(store)
-      // Requested but never published: a stalled chunk import.
-      store.requestRuntime({ evmReconnect: true })
-      const provider = await connector.getProvider()
-      if (!provider) throw new Error('Privy provider bridge is unavailable')
-
-      // Attach the rejection handler before advancing, or the timeout
-      // settles while nothing is listening and surfaces as unhandled.
-      const first = expect(
-        provider.request({ method: 'eth_chainId' }),
-      ).rejects.toBeInstanceOf(ProviderNotFoundError)
-      await vi.advanceTimersByTimeAsync(30_000)
-      await first
-
-      // Wagmi retries `eth_accounts`; further attempts must not each pay the
-      // full timeout, or its sequential reconnect stalls every other wallet.
-      await expect(
-        provider.request({ method: 'eth_chainId' }),
-      ).rejects.toBeInstanceOf(ProviderNotFoundError)
-    } finally {
-      vi.useRealTimers()
-    }
-  })
-
-  it('connects through Wagmi injected-connector semantics', async () => {
-    const store = createPrivyRuntimeStore()
-    const { config, connector } = getConnector(store)
-    const controller = createProviderController(firstAddress, mainnet.id)
-    const getProvider = vi.fn(async () => controller.provider)
-    publishWallet(store, {
-      address: firstAddress,
-      getProvider,
-    })
-
+    await expect(connector.getProvider()).resolves.toBe(controller.provider)
     await expect(connector.isAuthorized()).resolves.toBe(true)
-    await expect(connect(config, { connector })).resolves.toEqual({
-      accounts: [firstAddress],
-      chainId: mainnet.id,
-    })
-    await expect(connector.getChainId()).resolves.toBe(mainnet.id)
-    expect(getProvider).toHaveBeenCalledOnce()
-
-    await disconnect(config, { connector })
-    await expect(connector.isAuthorized()).resolves.toBe(false)
   })
 
-  it('rebinds when the runtime publishes a replacement provider', async () => {
-    const store = createPrivyRuntimeStore()
-    const initial = createProviderController(firstAddress, mainnet.id)
-    publishWallet(store, {
+  it('reuses the connector for the same embedded account', () => {
+    const config = createWagmiConfig()
+    const first = createProviderController(firstAddress)
+    const second = createProviderController(firstAddress)
+
+    const connector = registerPrivyEvmConnector({
       address: firstAddress,
-      getProvider: vi.fn(async () => initial.provider),
+      config,
+      provider: first.provider,
     })
-    const { config, connector } = getConnector(store)
+    const sameConnector = registerPrivyEvmConnector({
+      address: firstAddress,
+      config,
+      provider: second.provider,
+    })
+
+    expect(sameConnector).toBe(connector)
+    expect(
+      getConnectors(config).filter(
+        (candidate) => candidate.id === PRIVY_EVM_CONNECTOR_ID,
+      ),
+    ).toHaveLength(1)
+  })
+
+  it('replaces the connector when Privy changes embedded accounts', async () => {
+    const config = createWagmiConfig()
+    const first = createProviderController(firstAddress)
+    const second = createProviderController(secondAddress)
+    const firstConnector = registerPrivyEvmConnector({
+      address: firstAddress,
+      config,
+      provider: first.provider,
+    })
+    expect(getPrivyEvmConnector(config, secondAddress)).toBeUndefined()
+
+    const secondConnector = registerPrivyEvmConnector({
+      address: secondAddress,
+      config,
+      provider: second.provider,
+    })
+
+    expect(secondConnector).not.toBe(firstConnector)
+    expect(getPrivyEvmConnector(config)).toBe(secondConnector)
+    await expect(secondConnector.getProvider()).resolves.toBe(second.provider)
+  })
+
+  it('uses Wagmi event handling from the injected connector', async () => {
+    const config = createWagmiConfig()
+    const controller = createProviderController(firstAddress)
+    const connector = registerPrivyEvmConnector({
+      address: firstAddress,
+      config,
+      provider: controller.provider,
+    })
     await connect(config, { connector })
-    const replacement = createProviderController(firstAddress, mainnet.id)
-
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: true,
-      evmWallet: {
-        address: firstAddress,
-        getProvider: vi.fn(async () => replacement.provider),
-      },
-      operations: createOperations(),
-      hasSvmAccount: true,
-    })
-
-    await vi.waitFor(() => {
-      expect(initial.getListenerCount()).toBe(0)
-      expect(replacement.getListenerCount()).toBeGreaterThan(0)
-    })
-  })
-
-  it.each([
-    ['same-address', firstAddress],
-    ['different-address', secondAddress],
-  ] as const)(
-    'rejects a stale %s provider resolution',
-    async (_case, currentAddress) => {
-      const store = createPrivyRuntimeStore()
-      const stale = createProviderController(firstAddress, mainnet.id)
-      const current = createProviderController(currentAddress, sepolia.id)
-      const staleProvider = createDeferred<EIP1193Provider>()
-      const getStaleProvider = vi.fn(() => staleProvider.promise)
-      publishWallet(store, {
-        address: firstAddress,
-        getProvider: getStaleProvider,
-      })
-      const { connector } = getConnector(store)
-      const provider = await connector.getProvider()
-      if (!provider) throw new Error('Privy provider bridge is unavailable')
-
-      const pendingChainId = provider.request({ method: 'eth_chainId' })
-      expect(getStaleProvider).toHaveBeenCalledOnce()
-
-      const getCurrentProvider = vi.fn(async () => current.provider)
-      store.publishRuntime({
-        authenticated: true,
-        hasEvmAccount: true,
-        evmWallet: {
-          address: currentAddress,
-          getProvider: getCurrentProvider,
-        },
-        operations: createOperations(),
-        hasSvmAccount: true,
-      })
-      await vi.waitFor(() => expect(getCurrentProvider).toHaveBeenCalledOnce())
-
-      staleProvider.resolve(stale.provider)
-
-      await expect(pendingChainId).rejects.toBeInstanceOf(ProviderNotFoundError)
-      expect(stale.request).not.toHaveBeenCalled()
-      expect(current.request).not.toHaveBeenCalled()
-    },
-  )
-
-  it('rebinds when Privy replaces its provider after a chain switch', async () => {
-    const store = createPrivyRuntimeStore()
-    const switched = createProviderController(firstAddress, sepolia.id)
-    let provider: EIP1193Provider
-    const initial = createProviderController(firstAddress, mainnet.id, {
-      onSwitch() {
-        provider = switched.provider
-      },
-    })
-    provider = initial.provider
-    const getProvider = vi.fn(async () => provider)
-    publishWallet(store, {
-      address: firstAddress,
-      getProvider,
-    })
-    const { config, connector } = getConnector(store)
-    await connect(config, { connector })
-
-    await connector.switchChain?.({ chainId: sepolia.id })
-
-    await expect(connector.getChainId()).resolves.toBe(sepolia.id)
-    expect(initial.getListenerCount()).toBe(0)
-    expect(switched.getListenerCount()).toBeGreaterThan(0)
-  })
-
-  it('recovers from a transient provider refresh failure after switching chains', async () => {
-    const store = createPrivyRuntimeStore()
-    const initial = createProviderController(firstAddress, mainnet.id)
-    const switched = createProviderController(firstAddress, sepolia.id)
-    const getProvider = vi
-      .fn<PrivyEvmWallet['getProvider']>()
-      .mockResolvedValueOnce(initial.provider)
-      .mockRejectedValueOnce(new Error('temporary'))
-      .mockResolvedValue(switched.provider)
-    publishWallet(store, {
-      address: firstAddress,
-      getProvider,
-    })
-    const { config, connector } = getConnector(store)
-    await connect(config, { connector })
-
-    await expect(
-      connector.switchChain?.({ chainId: sepolia.id }),
-    ).resolves.toMatchObject({ id: sepolia.id })
-
-    expect(getProvider).toHaveBeenCalledTimes(3)
-    expect(initial.getListenerCount()).toBe(0)
-    expect(switched.getListenerCount()).toBeGreaterThan(0)
-  })
-
-  it('uses Wagmi retries for transient Privy provider lookup failures', async () => {
-    const store = createPrivyRuntimeStore()
-    const controller = createProviderController(firstAddress, mainnet.id)
-    const getProvider = vi
-      .fn<PrivyEvmWallet['getProvider']>()
-      .mockRejectedValueOnce(new Error('temporary'))
-      .mockResolvedValue(controller.provider)
-    publishWallet(store, {
-      address: firstAddress,
-      getProvider,
-    })
-    const { connector } = getConnector(store)
-
-    await expect(connector.isAuthorized()).resolves.toBe(true)
-    expect(getProvider).toHaveBeenCalledTimes(2)
-  })
-
-  it('forwards account changes through the standard connector', async () => {
-    const store = createPrivyRuntimeStore()
-    const controller = createProviderController(firstAddress, mainnet.id)
-    publishWallet(store, {
-      address: firstAddress,
-      getProvider: vi.fn(async () => controller.provider),
-    })
-    const { config, connector } = getConnector(store)
-    await connect(config, { connector })
-    const change = vi.fn()
-    connector.emitter.on('change', change)
-    controller.setAccount(secondAddress)
+    const onChange = vi.fn()
+    connector.emitter.on('change', onChange)
+    controller.setAddress(secondAddress)
 
     controller.emit('accountsChanged', [secondAddress])
 
-    expect(change).toHaveBeenCalledWith(
+    expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({ accounts: [secondAddress] }),
     )
   })
 
-  it('disconnects the standard connector when Privy removes its wallet', async () => {
-    const store = createPrivyRuntimeStore()
-    const controller = createProviderController(firstAddress, mainnet.id)
-    publishWallet(store, {
+  it('reconnects through the standard connector without a permission prompt', async () => {
+    const config = createWagmiConfig()
+    const controller = createProviderController(firstAddress)
+    const connector = registerPrivyEvmConnector({
       address: firstAddress,
-      getProvider: vi.fn(async () => controller.provider),
-    })
-    const { config, connector } = getConnector(store)
-    await connect(config, { connector })
-    const disconnect = vi.fn()
-    connector.emitter.on('disconnect', disconnect)
-
-    store.publishRuntime({
-      authenticated: false,
-      operations: createOperations(),
+      config,
+      provider: controller.provider,
     })
 
-    await vi.waitFor(() => expect(disconnect).toHaveBeenCalledOnce())
-    expect(controller.getListenerCount()).toBe(0)
+    const connections = await reconnect(config, { connectors: [connector] })
+
+    expect(connections).toEqual([
+      expect.objectContaining({ accounts: [firstAddress], connector }),
+    ])
+    expect(getConnections(config)).toEqual([
+      expect.objectContaining({ accounts: [firstAddress], connector }),
+    ])
+    expect(
+      controller.request.mock.calls.map(([parameters]) => parameters.method),
+    ).not.toContain('wallet_requestPermissions')
+  })
+
+  it('unregisters only Privy and preserves another active connector', async () => {
+    const mockConnector = mock({ accounts: [secondAddress] })
+    const config = createWagmiConfig([mockConnector])
+    const standardConnector = getConnectors(config)[0]!
+    const controller = createProviderController(firstAddress)
+    const privyConnector = registerPrivyEvmConnector({
+      address: firstAddress,
+      config,
+      provider: controller.provider,
+    })
+    await connect(config, { connector: standardConnector })
+    await connect(config, { connector: privyConnector })
+    expect(getConnections(config)).toHaveLength(2)
+
+    unregisterPrivyEvmConnector(config)
+
+    expect(getPrivyEvmConnector(config)).toBeUndefined()
+    expect(getConnections(config)).toEqual([
+      expect.objectContaining({ connector: standardConnector }),
+    ])
+    expect(config.state.current).toBe(standardConnector.uid)
+    expect(config.state.status).toBe('connected')
+    expect(
+      controller.request.mock.calls.map(([parameters]) => parameters.method),
+    ).not.toContain('wallet_revokePermissions')
   })
 })

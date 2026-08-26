@@ -1,18 +1,15 @@
-import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
-import type { EIP1193Provider, Hex } from 'viem'
+import type { Hex } from 'viem'
 
-/** A lazily resolved Privy EVM wallet capability. */
+/** A framework-independent view of a Privy embedded EVM wallet. */
 export interface PrivyEvmWallet {
   address: EvmAddress
-  getProvider(): Promise<EIP1193Provider>
 }
 
-/** A framework-independent view of Privy's Wallet Standard wallet. */
+/** A framework-independent view of a Privy embedded Solana wallet. */
 export interface PrivySvmWallet {
   address: SvmAddress
-  standardWallet: StandardWallet
 }
 
 export interface PrivyTransactionUiOptions {
@@ -52,10 +49,6 @@ export interface PrivyRuntimeOperationHandlers {
     transaction: Uint8Array
     uiOptions?: PrivyTransactionUiOptions
   }): Promise<{ signature: SvmTxHash }>
-  signSvmTransaction(input: {
-    address: SvmAddress
-    transaction: Uint8Array
-  }): Promise<{ signedTransaction: Uint8Array }>
 }
 
 interface PrivyRuntimeEmptySnapshot {
@@ -63,7 +56,6 @@ interface PrivyRuntimeEmptySnapshot {
   error?: never
   evmWallet?: never
   operations?: never
-  svmStandardWallet?: never
   svmWallet?: never
 }
 
@@ -90,7 +82,6 @@ interface PrivyRuntimeErrorSnapshot extends PrivyRuntimeRequestedSnapshotBase {
   evmWallet?: never
   operations?: never
   status: 'error'
-  svmStandardWallet?: never
   svmWallet?: never
 }
 
@@ -114,12 +105,6 @@ interface PrivyRuntimeAuthenticatedSnapshot
    */
   hasEvmAccount: boolean
   hasSvmAccount: boolean
-  /**
-   * Privy's Wallet Standard wallet, published as soon as Privy exposes it.
-   * Unlike `svmWallet` this does not wait for a connected account, so the
-   * wallet can be registered before the user connects.
-   */
-  svmStandardWallet: StandardWallet | null
   svmWallet: PrivySvmWallet | null
 }
 
@@ -129,7 +114,6 @@ interface PrivyRuntimeUnauthenticatedSnapshot
   evmWallet: null
   hasEvmAccount?: never
   hasSvmAccount?: never
-  svmStandardWallet: StandardWallet | null
   svmWallet: null
 }
 
@@ -150,7 +134,6 @@ export type PrivyRuntimePublication =
       hasEvmAccount?: never
       hasSvmAccount?: never
       operations: PrivyRuntimeOperationHandlers
-      svmStandardWallet?: StandardWallet | null
       svmWallet?: never
     }
   | {
@@ -159,7 +142,6 @@ export type PrivyRuntimePublication =
       hasEvmAccount: boolean
       hasSvmAccount: boolean
       operations: PrivyRuntimeOperationHandlers
-      svmStandardWallet?: StandardWallet | null
       svmWallet?: PrivySvmWallet | null
     }
 

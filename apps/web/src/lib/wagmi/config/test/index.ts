@@ -1,5 +1,4 @@
 import { mock } from '@wagmi/connectors'
-import { createPrivyEvmConnector } from 'src/lib/wallet/privy/privy-evm-connector'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
@@ -42,6 +41,6 @@ export const createTestConfig = () => {
       {} as Record<EvmChainId, HttpTransport>,
     ),
     pollingInterval: 1_000,
-    connectors: [mockConnector, createPrivyEvmConnector()],
+    connectors: [mockConnector],
   })
 }

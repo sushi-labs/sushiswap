@@ -39,7 +39,6 @@ import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
 import { SvmAdapterId } from '../config'
-import { useRegisterPrivySvmWallet } from './use-register-privy-svm-wallet'
 
 function useInSvmContext(): boolean {
   const client = useConnectorClient()
@@ -75,7 +74,6 @@ export default function SvmWalletProvider({
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const client = useConnectorClient()
-  useRegisterPrivySvmWallet()
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('svm')
   const privyRuntime = usePrivyRuntime()
   const walletInfo = useWalletInfo()

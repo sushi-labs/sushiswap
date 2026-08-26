@@ -1,5 +1,4 @@
 import { gtagEvent } from '@sushiswap/ui'
-import { createPrivyEvmConnector } from 'src/lib/wallet/privy/privy-evm-connector'
 import { EvmChainId } from 'sushi/evm'
 import { http, createConfig } from 'wagmi'
 import type { util } from 'zod'
@@ -78,10 +77,7 @@ export const createProductionConfig = () => {
   // it in a cookie only added weight to every request.
   return createConfig({
     ...publicWagmiConfig,
-    connectors: [
-      createPrivyEvmConnector(),
-      ...getPersistedConnectorFactories(),
-    ],
+    connectors: getPersistedConnectorFactories(),
     transports,
     pollingInterval,
     ssr: true,

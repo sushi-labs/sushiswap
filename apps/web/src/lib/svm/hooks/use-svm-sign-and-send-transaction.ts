@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
-export const useSvmSignAndSendTransaction = () => {
+export function useSvmSignAndSendTransaction() {
   const { signer } = useTransactionSigner()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
   const { operations: privyOperations } = usePrivyRuntime()
@@ -18,8 +18,9 @@ export const useSvmSignAndSendTransaction = () => {
       },
     ) => {
       if (
+        options?.uiOptions &&
         privyEmbedded &&
-        privyEmbedded?.address.toLowerCase() === signer?.address.toLowerCase()
+        privyEmbedded.address.toLowerCase() === signer?.address.toLowerCase()
       ) {
         const tx = await privyOperations?.signAndSendSvmTransaction({
           transaction: new Uint8Array(transaction),
@@ -29,7 +30,8 @@ export const useSvmSignAndSendTransaction = () => {
         if (!tx) throw new Error('Privy runtime is unavailable')
         return { base58TxSig: tx.signature }
       } else {
-        const txSig = await signer?.signAndSendTransaction(transaction)
+        if (!signer) throw new Error('SVM wallet signer is unavailable')
+        const txSig = await signer.signAndSendTransaction(transaction)
 
         return { base58TxSig: txSig }
       }

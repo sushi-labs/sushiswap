@@ -6,22 +6,9 @@ import type {
   WindowRegisterWalletEvent,
   WindowRegisterWalletEventCallback,
 } from '@wallet-standard/base'
-import { useEffect } from 'react'
-import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
-export function useRegisterPrivySvmWallet(): void {
-  // Deliberately not `usePrivyEmbeddedWallet('svm')`: that wallet only exists
-  // once Privy has propagated a connected account, but the wallet has to be
-  // registered before the connector can connect to it.
-  const { svmStandardWallet } = usePrivyRuntime()
-
-  useEffect(() => {
-    if (!svmStandardWallet) return
-    return registerWallet(svmStandardWallet)
-  }, [svmStandardWallet])
-}
-
-//https://docs.privy.io/recipes/solana/standard-wallets#registering-the-privy-embedded-wallet
+// Adapted from @wallet-standard/wallet as documented by Privy:
+// https://docs.privy.io/recipes/solana/standard-wallets#registering-the-privy-embedded-wallet
 class RegisterWalletEvent
   extends CustomEvent<WindowRegisterWalletEventCallback>
   implements WindowRegisterWalletEvent
@@ -58,11 +45,12 @@ class RegisterWalletEvent
   }
 }
 
-export function registerWallet(wallet: Wallet): () => void {
+export function registerPrivySvmWallet(wallet: Wallet): () => void {
   const unregisters = new Set<() => void>()
   const callback: WindowRegisterWalletEventCallback = ({ register }) => {
     unregisters.add(register(wallet))
   }
+
   try {
     ;(window as WalletEventsWindow).dispatchEvent(
       new RegisterWalletEvent(callback),
@@ -73,6 +61,7 @@ export function registerWallet(wallet: Wallet): () => void {
       error,
     )
   }
+
   const onAppReady = ({ detail: api }: CustomEvent) => callback(api)
   try {
     ;(window as WalletEventsWindow).addEventListener(

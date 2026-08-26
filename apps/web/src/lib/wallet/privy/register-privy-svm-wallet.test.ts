@@ -1,12 +1,12 @@
 import type { Wallet, WindowRegisterWalletEvent } from '@wallet-standard/base'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { registerWallet } from './use-register-privy-svm-wallet'
+import { registerPrivySvmWallet } from './register-privy-svm-wallet'
 
 afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('registerWallet', () => {
+describe('registerPrivySvmWallet', () => {
   it('unregisters the wallet when the lazy runtime is released', () => {
     const unregister = vi.fn()
     const register = vi.fn(() => unregister)
@@ -21,7 +21,7 @@ describe('registerWallet', () => {
       removeEventListener,
     })
 
-    const cleanup = registerWallet({ name: 'Privy' } as Wallet)
+    const cleanup = registerPrivySvmWallet({ name: 'Privy' } as Wallet)
     expect(register).toHaveBeenCalledOnce()
 
     cleanup()

@@ -54,7 +54,6 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           operations: publication.operations,
           requested: true,
           status: 'ready',
-          svmStandardWallet: publication.svmStandardWallet ?? null,
           svmWallet: publication.svmWallet ?? null,
         })
       } else {
@@ -65,7 +64,6 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           operations: publication.operations,
           requested: true,
           status: 'ready',
-          svmStandardWallet: publication.svmStandardWallet ?? null,
           svmWallet: null,
         })
       }

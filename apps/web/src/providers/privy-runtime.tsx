@@ -14,12 +14,10 @@ import {
   useCreateWallet as useCreateSvmWallet,
   useExportWallet as useExportSvmWallet,
   useSignAndSendTransaction,
-  useSignTransaction,
   useStandardWallets as useSolanaStandardWallets,
   useWallets as useSolanaWallets,
 } from '@privy-io/react-auth/solana'
 import { getBase58Decoder } from '@solana/kit'
-import { getConnections } from '@wagmi/core'
 import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import { useEffect, useMemo, useRef } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
@@ -27,9 +25,13 @@ import {
   clearPrivySessionMarker,
   ensurePrivySessionMarker,
 } from 'src/lib/wallet/privy-session-marker'
-import { PRIVY_EVM_CONNECTOR_ID } from 'src/lib/wallet/privy/privy-evm-connector'
+import {
+  registerPrivyEvmConnector,
+  unregisterPrivyEvmConnector,
+} from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
+import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
 import type {
   PrivyEvmWallet,
   PrivyRuntimeOperationHandlers,
@@ -103,7 +105,6 @@ function PrivyRuntimeEffects() {
   const { createWallet: createSvmWallet } = useCreateSvmWallet()
   const { exportWallet: exportEvmWallet } = useExportEvmWallet()
   const { exportWallet: exportSvmWallet } = useExportSvmWallet()
-  const { signTransaction } = useSignTransaction()
   const { signAndSendTransaction } = useSignAndSendTransaction()
   const connectPendingRef = useRef<PendingOperation | undefined>(undefined)
   const loginPendingRef = useRef<PendingOperation | undefined>(undefined)
@@ -153,8 +154,15 @@ function PrivyRuntimeEffects() {
     () => svmStandardWallets.find(isPrivySvmStandardWallet) ?? null,
     [svmStandardWallets],
   )
+  const evmWalletAddress = embeddedEvmWallet?.address
+  const svmWalletAddress = embeddedSvmWallet?.address
   const hasEvmAccount = hasPrivyEmbeddedAccount(user, 'ethereum')
   const hasSvmAccount = hasPrivyEmbeddedAccount(user, 'solana')
+
+  useEffect(() => {
+    if (!svmStandardWallet) return
+    return registerPrivySvmWallet(svmStandardWallet)
+  }, [svmStandardWallet])
 
   // Privy hook handles are not referentially stable across renders. Keep the
   // latest handles behind a ref so the published runtime snapshot keeps a
@@ -172,7 +180,6 @@ function PrivyRuntimeEffects() {
     logout,
     sendTransaction,
     signAndSendTransaction,
-    signTransaction,
   })
   useEffect(() => {
     latestHandlesRef.current = {
@@ -188,7 +195,6 @@ function PrivyRuntimeEffects() {
       logout,
       sendTransaction,
       signAndSendTransaction,
-      signTransaction,
     }
   })
 
@@ -252,16 +258,6 @@ function PrivyRuntimeEffects() {
           ) as SvmTxHash,
         }
       },
-      async signSvmTransaction({ address, transaction }) {
-        const wallet = latestHandlesRef.current.embeddedSvmWallet
-        if (wallet?.address !== address) {
-          throw new Error('Privy SVM wallet is not active')
-        }
-        return latestHandlesRef.current.signTransaction({
-          transaction,
-          wallet,
-        })
-      },
     }),
     [],
   )
@@ -270,28 +266,56 @@ function PrivyRuntimeEffects() {
     return () => {
       connectPendingRef.current?.reject(new Error('Privy runtime unloaded'))
       loginPendingRef.current?.reject(new Error('Privy runtime unloaded'))
+      unregisterPrivyEvmConnector(getWagmiConfig())
       privyRuntimeStore.setUnavailable()
     }
   }, [])
 
-  const evmWalletAddress = embeddedEvmWallet?.address
-  const svmWalletAddress = embeddedSvmWallet?.address
   const runtimeEvmWallet = useMemo<PrivyEvmWallet | undefined>(() => {
     if (!evmWalletAddress) return undefined
-    return {
-      address: evmWalletAddress as EvmAddress,
-      async getProvider() {
-        const wallet = latestHandlesRef.current.embeddedEvmWallet
-        if (
-          !wallet ||
-          wallet.address.toLowerCase() !== evmWalletAddress.toLowerCase()
-        ) {
-          throw new Error('Privy EVM wallet is not active')
-        }
-        return (await wallet.getEthereumProvider()) as unknown as EIP1193Provider
-      },
-    }
+    return { address: evmWalletAddress as EvmAddress }
   }, [evmWalletAddress])
+
+  useEffect(() => {
+    const config = getWagmiConfig()
+    if (!authenticated || !evmWalletAddress) {
+      unregisterPrivyEvmConnector(config)
+      return
+    }
+
+    const wallet = latestHandlesRef.current.embeddedEvmWallet
+    if (!wallet) return
+    let cancelled = false
+
+    wallet
+      .getEthereumProvider()
+      .then((provider) => {
+        if (cancelled) return
+        registerPrivyEvmConnector({
+          address: evmWalletAddress as EvmAddress,
+          config,
+          // Privy and viem expose the same EIP-1193 surface with incompatible
+          // event-listener overloads.
+          provider: provider as unknown as EIP1193Provider,
+        })
+
+        if (privyRuntimeStore.getSnapshot().evmReconnect) {
+          privyRuntimeStore.clearEvmReconnect()
+          reconnectPrivyEvmWallet(config).catch((error) => {
+            console.warn('Privy EVM auto-connect failed', error)
+          })
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          console.warn('Privy EVM provider setup failed', error)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authenticated, evmWalletAddress])
 
   useEffect(() => {
     if (!ready) return
@@ -300,10 +324,7 @@ function PrivyRuntimeEffects() {
       : undefined
     const runtimeSvmWallet: PrivySvmWallet | undefined =
       svmWalletAddress && svmWallet
-        ? {
-            address: svmWalletAddress as SvmAddress,
-            standardWallet: svmWallet.standardWallet,
-          }
+        ? { address: svmWalletAddress as SvmAddress }
         : undefined
     if (authenticated) {
       privyRuntimeStore.publishRuntime({
@@ -312,14 +333,12 @@ function PrivyRuntimeEffects() {
         hasEvmAccount,
         hasSvmAccount,
         operations,
-        svmStandardWallet,
         svmWallet: runtimeSvmWallet,
       })
     } else {
       privyRuntimeStore.publishRuntime({
         authenticated: false,
         operations,
-        svmStandardWallet,
       })
     }
 
@@ -330,31 +349,6 @@ function PrivyRuntimeEffects() {
     }
 
     ensurePrivySessionMarker()
-
-    // Safety net for a runtime that is requested after Wagmi's one-shot
-    // `reconnect()` has already run - a login in another tab, say. While that
-    // reconnect is still in flight the bridge is already feeding it, so firing
-    // here too would race it into `ConnectorAlreadyConnectedError`.
-    const config = getWagmiConfig()
-    const wagmiReconnecting =
-      config.state.status === 'reconnecting' ||
-      config.state.status === 'connecting'
-    const hasPrivyConnection = getConnections(config).some(
-      (connection) => connection.connector.id === PRIVY_EVM_CONNECTOR_ID,
-    )
-    if (
-      privyRuntimeStore.getSnapshot().evmReconnect &&
-      runtimeEvmWallet &&
-      !wagmiReconnecting &&
-      !hasPrivyConnection
-    ) {
-      // One-shot: consume the request before reconnecting so a later publish
-      // cannot resurrect a connection the user has since dropped.
-      privyRuntimeStore.clearEvmReconnect()
-      reconnectPrivyEvmWallet(config).catch((error) => {
-        console.warn('Privy EVM auto-connect failed', error)
-      })
-    }
   }, [
     authenticated,
     hasEvmAccount,
@@ -363,7 +357,6 @@ function PrivyRuntimeEffects() {
     ready,
     runtimeEvmWallet,
     svmReady,
-    svmStandardWallet,
     svmWalletAddress,
   ])
 
