@@ -1,6 +1,6 @@
 import { cacheLife } from 'next/cache'
 import { ImageResponse } from 'next/og'
-import { getEvmChainById, isEvmAddress } from 'sushi/evm'
+import { getEvmChainById, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
 import { getLaunchpadCardValues } from '../../../_lib/launchpad-card'
 import { getLaunchpadEmbedFonts } from '../../../_lib/launchpad-embed-fonts'
 import { buildLaunchpadEmbedSparkline } from '../../../_lib/launchpad-embed-sparkline'
@@ -80,8 +80,16 @@ export async function GET(
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
   const embedChainId = isLaunchpadChainId(chainId) ? chainId : undefined
+  if (!isEvmAddress(address)) {
+    return new Response('Invalid token address', { status: 400 })
+  }
+
+  const normalizedAddress = normalizeEvmAddress(address)
   const [{ chainName, logoDataUrl, sparkline, values }, fonts] =
-    await Promise.all([getCardData(chainId, address), getLaunchpadEmbedFonts()])
+    await Promise.all([
+      getCardData(chainId, normalizedAddress),
+      getLaunchpadEmbedFonts(),
+    ])
 
   return new ImageResponse(
     <LaunchpadTokenEmbed

@@ -9,6 +9,7 @@ import {
   HomeIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
+import type { LaunchpadToken } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   ClipboardController,
@@ -247,9 +248,11 @@ function MetadataLinks({
 export function TokenDetailPage({
   chainId,
   address,
+  initialToken,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
+  initialToken: LaunchpadToken
 }) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
@@ -258,7 +261,7 @@ export function TokenDetailPage({
     isError: isTokenError,
     isPending: isTokenPending,
     refetch: refetchToken,
-  } = useLaunchpadToken(chainId, address)
+  } = useLaunchpadToken(chainId, address, initialToken)
   const { data: marketStats } = useLaunchpadMarketStats(chainId, address)
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import type { EvmAddress } from 'sushi/evm'
-import { isAddress } from 'viem'
+import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
 import {
   getLaunchpadCardValues,
   getLaunchpadCardVersion,
@@ -22,16 +22,16 @@ type LaunchpadTokenPageParams = Promise<{
   address: string
 }>
 
-async function getTokenFromParams(params: LaunchpadTokenPageParams) {
+async function getTokenParams(params: LaunchpadTokenPageParams) {
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
 
-  if (!isLaunchpadChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isLaunchpadChainId(chainId) || !isEvmAddress(address)) {
     return null
   }
+  const normalizedAddress = normalizeEvmAddress(address)
 
-  const token = await getLaunchpadTokenForSeo(chainId, address as EvmAddress)
-  return { address: address as EvmAddress, chainId, token }
+  return { address: normalizedAddress, chainId }
 }
 
 export async function generateMetadata({
@@ -39,10 +39,11 @@ export async function generateMetadata({
 }: {
   params: LaunchpadTokenPageParams
 }): Promise<Metadata> {
-  const result = await getTokenFromParams(params)
-  if (!result?.token) return {}
+  const result = await getTokenParams(params)
+  if (!result) return {}
 
-  const { token } = result
+  const token = await getLaunchpadTokenForSeo(result.chainId, result.address)
+  if (!token) return {}
   const url = getLaunchpadTokenUrl(token)
   const title = `${token.name} (${token.symbol})`
   const description = getLaunchpadTokenDescription(token)
@@ -82,21 +83,25 @@ export default async function LaunchpadTokenPage({
 }: {
   params: LaunchpadTokenPageParams
 }) {
-  const result = await getTokenFromParams(params)
+  const result = await getTokenParams(params)
   if (!result) return notFound()
-  const { address, chainId, token } = result
+  const { address, chainId } = result
+  const token = await getCachedLaunchpadToken({ chainId, address })
+  if (!token) return notFound()
 
   return (
     <>
-      {token ? (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
-          }}
-        />
-      ) : null}
-      <TokenDetailPage chainId={chainId} address={address} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
+        }}
+      />
+      <TokenDetailPage
+        chainId={chainId}
+        address={address}
+        initialToken={token}
+      />
     </>
   )
 }
