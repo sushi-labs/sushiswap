@@ -26,6 +26,24 @@ export {
   type CrossmintTokenCheckoutDialogProps,
 } from './components/crossmint-token-checkout-dialog'
 export {
+  CrossmintTokenSelector,
+  type CrossmintTokenSelectorProps,
+} from './components/crossmint-token-selector'
+export {
+  type CrossmintFiatPaymentMethods,
+  CrossmintOrderCheckout,
+  CrossmintOrderCheckoutPreloader,
+  type CrossmintOrderCheckoutProps,
+  CrossmintOrderCheckoutSkeleton,
+  type CrossmintOrderCheckoutSkeletonProps,
+} from './components/crossmint-order-checkout'
+export {
+  CROSSMINT_STAGING_TOKEN_SELECTOR_CHAIN_IDS,
+  CROSSMINT_TOKEN_SELECTOR_CHAIN_IDS,
+  type CrossmintTokenSelectorChainId,
+  isCrossmintTokenSelectorChainId,
+} from './components/crossmint-token-selector-config'
+export {
   CROSSMINT_STAGING_XMEME,
   type CrossmintCheckoutCatalogToken,
   type CrossmintCheckoutToken,
@@ -50,9 +68,13 @@ export type {
   FiatExchangeRatesResponse,
 } from './fiat-exchange-rates'
 export type {
+  CrossmintCreatedOrder,
+  CrossmintCreatedOrderQuote,
   CrossmintCheckoutTokenAvailability,
   CrossmintCheckoutTokenClass,
   CrossmintCheckoutTokenEntry,
   CrossmintCheckoutTokenFeatures,
   CrossmintCheckoutTokensResponse,
+  CrossmintMoney,
+  CrossmintReceiveAmountRange,
 } from './types'

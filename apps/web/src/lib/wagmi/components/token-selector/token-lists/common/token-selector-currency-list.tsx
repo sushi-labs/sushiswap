@@ -10,13 +10,7 @@ interface TokenSelectorCurrencyListGenericProps<
   TChainId extends TokenSelectorChainId,
 > {
   id: string
-  currencies: Readonly<
-    | CurrencyFor<
-        TChainId,
-        { approved?: boolean; approvalStatus?: TokenApprovalStatus }
-      >[]
-    | undefined
-  >
+  currencies: Readonly<CurrencyFor<TChainId>[] | undefined>
 
   chainId: TChainId
   onSelect(currency: CurrencyFor<TChainId>): void

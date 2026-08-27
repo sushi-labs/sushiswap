@@ -50,6 +50,12 @@ const CROSSMINT_CHAIN_NAMES: Partial<Record<ChainId, string>> = {
   [ChainId.ROBINHOOD]: 'robinhood-chain',
 }
 
+const CROSSMINT_STAGING_CHAIN_NAMES: Partial<Record<ChainId, string>> = {
+  [ChainId.BASE]: 'base-sepolia',
+  [ChainId.SOLANA]: 'solana',
+  [ChainId.STELLAR]: 'stellar',
+}
+
 type CrossmintTokenListChainId = CrossmintCheckoutSupportedChainId &
   TokenListChainId &
   (EvmChainId | SvmChainId | StellarChainId)
@@ -63,9 +69,13 @@ interface ParsedCrossmintTokenLocator {
 
 export function chainIdsToCrossmintName(
   chainIds: readonly CrossmintCheckoutSupportedChainId[],
+  environment: CrossmintEnvironment = 'production',
 ): string[] {
   return chainIds.map(
     (chainId) =>
+      (environment === 'staging'
+        ? CROSSMINT_STAGING_CHAIN_NAMES[chainId]
+        : undefined) ??
       CROSSMINT_CHAIN_NAMES[chainId] ??
       getChainById(chainId).name.toLowerCase(),
   )

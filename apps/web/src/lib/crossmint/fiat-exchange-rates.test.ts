@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  convertFiatToUsdAmount,
   convertUsdToWholeFiatAmount,
   createFiatExchangeRatesResponse,
   parseFiatExchangeRatesResponse,
@@ -60,8 +61,16 @@ describe('fiat exchange rates', () => {
     expect(convertUsdToWholeFiatAmount(25, 159.21)).toBe('3980')
   })
 
+  it('converts a selected payment amount back to a USD order amount', () => {
+    expect(convertFiatToUsdAmount(10, 1)).toBe('10.00')
+    expect(convertFiatToUsdAmount(9, 0.85656)).toBe('10.51')
+    expect(convertFiatToUsdAmount(3980, 159.21)).toBe('25.00')
+  })
+
   it('rejects unusable amounts and rates', () => {
     expect(() => convertUsdToWholeFiatAmount(Number.NaN, 1)).toThrow()
     expect(() => convertUsdToWholeFiatAmount(10, 0)).toThrow()
+    expect(() => convertFiatToUsdAmount(0, 1)).toThrow()
+    expect(() => convertFiatToUsdAmount(10, 0)).toThrow()
   })
 })

@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
 } from 'react'
 import {
   type CrossmintSupportedChainId,
@@ -14,6 +15,7 @@ import {
   isCrossmintSupportedChainId,
   isCrossmintSupportedFiatCurrency,
 } from 'src/config'
+import type { CrossmintCheckoutTokenEntry } from 'src/lib/crossmint'
 import { ChainId } from 'sushi'
 
 const FIAT_AMOUNT_QUERY_PARAM = 'fiatAmount'
@@ -23,11 +25,13 @@ interface State {
   mutate: {
     setFiatAmount(fiatAmount: string): void
     setPaymentCurrency(currency: CrossmintSupportedFiatCurrency): void
+    setToken(token: CrossmintCheckoutTokenEntry): void
   }
   state: {
     chainId: CrossmintSupportedChainId
     fiatAmountString: string
     paymentCurrency: CrossmintSupportedFiatCurrency
+    token: CrossmintCheckoutTokenEntry | undefined
   }
 }
 
@@ -49,6 +53,7 @@ function DerivedstateFiatBuyProvider({
   const { chainId: routeChainId } = useParams<{ chainId: string }>()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [token, setToken] = useState<CrossmintCheckoutTokenEntry>()
   const parsedRouteChainId = Number(routeChainId)
   const chainId =
     providedChainId ??
@@ -109,11 +114,13 @@ function DerivedstateFiatBuyProvider({
       mutate: {
         setFiatAmount,
         setPaymentCurrency,
+        setToken,
       },
       state: {
         chainId,
         fiatAmountString,
         paymentCurrency,
+        token,
       },
     }),
     [
@@ -122,6 +129,7 @@ function DerivedstateFiatBuyProvider({
       paymentCurrency,
       setFiatAmount,
       setPaymentCurrency,
+      token,
     ],
   )
 

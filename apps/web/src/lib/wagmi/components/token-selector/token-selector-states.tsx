@@ -17,6 +17,7 @@ import { useTrendingTokens } from './hooks/use-trending-tokens'
 import type { TokenSelectorSelection } from './selection'
 import { TokenSelectorChipBar } from './token-lists/token-selector-chip-bar'
 import { TokenSelectorCustomList } from './token-lists/token-selector-custom-list'
+import type { TokenSelectorCustomListOptions } from './token-lists/token-selector-custom-list'
 import { TokenSelectorMyTokens } from './token-lists/token-selector-my-tokens'
 import { TokenSelectorSearch } from './token-lists/token-selector-search'
 import { TokenSelectorTrendingTokens } from './token-lists/token-selector-trending-tokens'
@@ -33,9 +34,10 @@ interface TokenSelectorStates<
   ): void
   allowPairSelection?: TAllowPairSelection
   onShowInfo(currency: CurrencyFor<TChainId> | false): void
-  currencies?: CurrencyFor<TChainId, { approved?: boolean }>[]
+  currencies?: CurrencyFor<TChainId>[]
   includeNative?: boolean
   search?: string
+  customListOptions?: TokenSelectorCustomListOptions
 }
 
 export function TokenSelectorStates<
@@ -53,6 +55,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>(
     allowPairSelection,
     onShowInfo,
     currencies,
+    customListOptions,
     includeNative,
     search,
   } = props
@@ -63,20 +66,23 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>(
 
   // Ensure that the user's tokens are loaded
   useMyTokens({
-    chainId: isTokenListChainId(chainId) ? chainId : undefined,
+    chainId: !currencies && isTokenListChainId(chainId) ? chainId : undefined,
     account,
     includeNative,
   })
 
   // Ensure that the trending tokens are loaded
   useTrendingTokens({
-    chainId: isTrendingTokensChainId(chainId) ? chainId : undefined,
+    chainId:
+      !currencies && isTrendingTokensChainId(chainId) ? chainId : undefined,
   })
 
   // Ensure that the search list is loaded if it's the first thing the user sees
   useSearchTokens({
     chainId:
-      isTokenListChainId(chainId) && !isTrendingTokensChainId(chainId)
+      !currencies &&
+      isTokenListChainId(chainId) &&
+      !isTrendingTokensChainId(chainId)
         ? chainId
         : undefined,
     search: '',
@@ -107,6 +113,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>(
         search={search}
         includeNative={includeNative}
         onShowInfo={onShowInfo}
+        options={customListOptions}
       />
     )
   }
@@ -204,6 +211,7 @@ export function TokenSelectorStates<TChainId extends TokenSelectorChainId>(
       search={search}
       includeNative={includeNative}
       onShowInfo={onShowInfo}
+      options={customListOptions}
     />
   )
 }

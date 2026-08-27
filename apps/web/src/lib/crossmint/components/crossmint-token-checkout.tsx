@@ -6,7 +6,6 @@ import {
   CrossmintProvider,
   useCrossmintCheckout,
 } from '@crossmint/client-sdk-react-ui'
-import { useTransactionSigner } from '@solana/connector/react'
 import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { Button, Card, Currency, TextField, classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
@@ -15,9 +14,7 @@ import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { shortenAddress } from 'sushi'
-import { useSignMessage } from 'wagmi'
 import { createCrossmintOrder } from '../actions/create-crossmint-order'
-import { linkCrossmintWallet } from '../actions/link-crossmint-wallet'
 import {
   CROSSMINT_CLIENT_SIDE_API_KEY,
   type CrossmintCheckoutToken,
@@ -64,16 +61,6 @@ export interface CrossmintTokenCheckoutProps {
   presentation?: CrossmintCheckoutPresentation
   showCancelButton?: boolean
   token: CrossmintCheckoutToken
-}
-
-function bytesToBase64(bytes: Uint8Array): string {
-  let binary = ''
-
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte)
-  }
-
-  return window.btoa(binary)
 }
 
 function normalizeError(error: unknown): Error {
@@ -194,9 +181,6 @@ function CrossmintTokenCheckoutForm({
   const [error, setError] = useState<string>()
   const [isCreatingOrder, setIsCreatingOrder] = useState(false)
   const [isEditingEmail, setIsEditingEmail] = useState(false)
-  const [isVerifyingWallet, setIsVerifyingWallet] = useState(false)
-  const [pendingVerification, setPendingVerification] =
-    useState<CheckoutSession>()
   const [receiptEmail, setReceiptEmail, clearReceiptEmail] =
     useLocalStorage<string>(CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY, '')
   const [walletPayMethod, setWalletPayMethod] =
@@ -205,12 +189,15 @@ function CrossmintTokenCheckoutForm({
   const emailId = useId()
   const isMounted = useIsMounted()
   const evmAddress = useAccount('evm')
+  const stellarAddress = useAccount('stellar')
   const svmAddress = useAccount('svm')
-  const { signer: svmSigner } = useTransactionSigner()
-  const { signMessageAsync } = useSignMessage()
   const { open } = useSidebar()
   const walletAddress =
-    target.walletNamespace === 'evm' ? evmAddress : svmAddress
+    target.walletNamespace === 'evm'
+      ? evmAddress
+      : target.walletNamespace === 'stellar'
+        ? stellarAddress
+        : svmAddress
   const visibleReceiptEmail = isMounted ? receiptEmail : ''
   const hasSavedEmail = isEmail(visibleReceiptEmail)
   const showEmailEditor = isEditingEmail || !hasSavedEmail
@@ -238,7 +225,6 @@ function CrossmintTokenCheckoutForm({
 
   function resetCheckout(): void {
     setCheckoutSession(undefined)
-    setPendingVerification(undefined)
     setError(undefined)
   }
 
@@ -279,14 +265,6 @@ function CrossmintTokenCheckoutForm({
     setIsCreatingOrder(true)
 
     try {
-      if (target.requiresWalletLink) {
-        await linkCrossmintWallet({
-          receiptEmail: normalizedEmail,
-          token,
-          walletAddress,
-        })
-      }
-
       const order = await createCrossmintOrder({
         amountUsd,
         receiptEmail: normalizedEmail,
@@ -304,69 +282,11 @@ function CrossmintTokenCheckoutForm({
       }
 
       onOrderCreated?.(order.orderId)
-
-      if (order.verificationMessage) {
-        setPendingVerification(session)
-      } else {
-        setCheckoutSession(session)
-      }
+      setCheckoutSession(session)
     } catch (caughtError) {
       reportError(caughtError)
     } finally {
       setIsCreatingOrder(false)
-    }
-  }
-
-  async function verifyWallet(): Promise<void> {
-    if (!pendingVerification?.verificationMessage) return
-
-    const verificationTarget = getCrossmintTarget(
-      pendingVerification.token,
-      pendingVerification.environment,
-    )
-    const currentWalletAddress =
-      verificationTarget.walletNamespace === 'evm' ? evmAddress : svmAddress
-
-    if (currentWalletAddress !== pendingVerification.walletAddress) {
-      reportError(
-        new Error('Reconnect the wallet used to create this Crossmint order'),
-      )
-      return
-    }
-
-    setError(undefined)
-    setIsVerifyingWallet(true)
-
-    try {
-      let proof: string
-
-      if (verificationTarget.walletNamespace === 'evm') {
-        proof = await signMessageAsync({
-          message: pendingVerification.verificationMessage,
-        })
-      } else {
-        if (!svmSigner?.signMessage) {
-          throw new Error('The connected Solana wallet cannot sign messages')
-        }
-
-        const signature = await svmSigner.signMessage(
-          new TextEncoder().encode(pendingVerification.verificationMessage),
-        )
-        proof = bytesToBase64(signature)
-      }
-
-      await linkCrossmintWallet({
-        proof,
-        receiptEmail: pendingVerification.receiptEmail,
-        token: pendingVerification.token,
-        walletAddress: pendingVerification.walletAddress,
-      })
-      setCheckoutSession(pendingVerification)
-      setPendingVerification(undefined)
-    } catch (caughtError) {
-      reportError(caughtError)
-    } finally {
-      setIsVerifyingWallet(false)
     }
   }
 
@@ -519,30 +439,18 @@ function CrossmintTokenCheckoutForm({
         <Checker.Root>
           <Checker.Connect namespace={target.walletNamespace}>
             <Checker.Network chainId={token.chainId}>
-              {pendingVerification ? (
-                <Button
-                  type="button"
-                  className="w-full"
-                  size="xl"
-                  loading={isVerifyingWallet}
-                  onClick={() => void verifyWallet()}
-                >
-                  Verify recipient wallet
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  className="w-full"
-                  size="xl"
-                  loading={isCreatingOrder}
-                  disabled={!hasSavedEmail || !amountUsd}
-                  onClick={() => void createOrder()}
-                >
-                  {checkoutExperience === 'one-tap'
-                    ? `Buy with ${walletPayLabel}`
-                    : 'Continue to secure checkout'}
-                </Button>
-              )}
+              <Button
+                type="button"
+                className="w-full"
+                size="xl"
+                loading={isCreatingOrder}
+                disabled={!hasSavedEmail || !amountUsd}
+                onClick={() => void createOrder()}
+              >
+                {checkoutExperience === 'one-tap'
+                  ? `Buy with ${walletPayLabel}`
+                  : 'Continue to secure checkout'}
+              </Button>
             </Checker.Network>
           </Checker.Connect>
         </Checker.Root>

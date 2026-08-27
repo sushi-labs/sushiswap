@@ -15,16 +15,19 @@ export const CROSSMINT_CLIENT_SIDE_API_KEY =
 export const CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS = [
   EvmChainId.BASE,
   SvmChainId.SOLANA,
+  StellarChainId.STELLAR,
 ] as const
 
 export type CrossmintConfiguredTokenChainId =
   (typeof CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS)[number]
-export type CrossmintCheckoutToken = TokenFor<EvmChainId | SvmChainId>
+export type CrossmintCheckoutToken = TokenFor<
+  EvmChainId | SvmChainId | StellarChainId
+>
 export type CrossmintCheckoutCatalogToken = TokenFor<
   EvmChainId | SvmChainId | StellarChainId
 >
 export type CrossmintEnvironment = 'production' | 'staging'
-export type CrossmintWalletNamespace = 'evm' | 'svm'
+export type CrossmintWalletNamespace = 'evm' | 'stellar' | 'svm'
 
 const CROSSMINT_API_URLS = {
   production: 'https://www.crossmint.com/api',
@@ -44,10 +47,8 @@ export interface CrossmintTarget {
   asset: string
   environment: CrossmintEnvironment
   kind: 'memecoin' | 'stablecoin'
-  linkChain: 'base' | 'base-sepolia' | 'solana'
   network: string
   requestedAsset: string
-  requiresWalletLink: boolean
   stagingNotice?: string
   tokenLocator: string
   walletNamespace: CrossmintWalletNamespace
@@ -56,25 +57,21 @@ export interface CrossmintTarget {
 const STAGING_TARGETS = {
   baseUsdc: {
     asset: 'USDC',
-    linkChain: 'base-sepolia',
     network: 'Base Sepolia',
     tokenLocator: 'base-sepolia:0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   },
   solanaUsdc: {
     asset: 'USDC',
-    linkChain: 'solana',
     network: 'Solana Devnet',
     tokenLocator: 'solana:4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
   },
   solanaXmeme: {
     asset: 'XMEME',
-    linkChain: 'solana',
     network: 'Solana Devnet',
     tokenLocator: `solana:${CROSSMINT_STAGING_XMEME_ADDRESS}`,
   },
   stellarUsdc: {
     asset: 'USDC',
-    linkChain: 'stellar',
     network: 'Stellar Testnet',
     tokenLocator:
       'stellar:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA',
@@ -89,11 +86,22 @@ export const CROSSMINT_STAGING_XMEME = new SvmToken({
   symbol: 'XMEME',
 })
 
+function normalizeCrossmintStagingTokenLocator(tokenLocator: string): string {
+  return tokenLocator.startsWith('base-sepolia:')
+    ? tokenLocator.toLowerCase()
+    : tokenLocator
+}
+
 const CROSSMINT_STAGING_CHECKOUT_TOKENS = new Map<
   string,
   CrossmintCheckoutCatalogToken
 >([
-  [STAGING_TARGETS.baseUsdc.tokenLocator, USDC[EvmChainId.BASE]],
+  [
+    normalizeCrossmintStagingTokenLocator(
+      STAGING_TARGETS.baseUsdc.tokenLocator,
+    ),
+    USDC[EvmChainId.BASE],
+  ],
   [STAGING_TARGETS.solanaUsdc.tokenLocator, SVM_USDC[SvmChainId.SOLANA]],
   [STAGING_TARGETS.solanaXmeme.tokenLocator, CROSSMINT_STAGING_XMEME],
   [
@@ -111,6 +119,10 @@ function isStablecoin(token: SerializedCrossmintToken): boolean {
     return STABLES[EvmChainId.BASE].some((stablecoin) =>
       isSameAddress(stablecoin.address, token.address),
     )
+  }
+
+  if (token.chainId === StellarChainId.STELLAR) {
+    return token.symbol.toUpperCase() === 'USDC'
   }
 
   return SVM_STABLES[SvmChainId.SOLANA].some((stablecoin) =>
@@ -137,20 +149,27 @@ function getStagingTarget(
     const stagingTarget =
       token.chainId === EvmChainId.BASE
         ? STAGING_TARGETS.baseUsdc
-        : STAGING_TARGETS.solanaUsdc
+        : token.chainId === StellarChainId.STELLAR
+          ? STAGING_TARGETS.stellarUsdc
+          : STAGING_TARGETS.solanaUsdc
+    const walletNamespace =
+      token.chainId === EvmChainId.BASE
+        ? 'evm'
+        : token.chainId === StellarChainId.STELLAR
+          ? 'stellar'
+          : 'svm'
 
     return {
       ...stagingTarget,
       environment: 'staging',
       kind: 'stablecoin',
       requestedAsset: token.symbol,
-      requiresWalletLink: true,
       stagingNotice: `Staging uses Crossmint's ${stagingTarget.asset} test token on ${stagingTarget.network} in place of ${token.symbol} on mainnet.`,
-      walletNamespace: token.chainId === EvmChainId.BASE ? 'evm' : 'svm',
+      walletNamespace,
     }
   }
 
-  if (token.chainId === EvmChainId.BASE) {
+  if (token.chainId !== SvmChainId.SOLANA) {
     throw new Error(
       'Crossmint staging memecoin checkout is currently available only on Solana Devnet',
     )
@@ -161,7 +180,6 @@ function getStagingTarget(
     environment: 'staging',
     kind: 'memecoin',
     requestedAsset: token.symbol,
-    requiresWalletLink: false,
     stagingNotice: `Staging delivers Crossmint's XMEME test token in place of ${token.symbol}. Production uses the selected token's Solana address.`,
     walletNamespace: 'svm',
   }
@@ -171,8 +189,18 @@ function getProductionTarget(
   token: SerializedCrossmintToken,
   stablecoin: boolean,
 ): CrossmintTarget {
-  const walletNamespace = token.chainId === EvmChainId.BASE ? 'evm' : 'svm'
-  const locatorPrefix = token.chainId === EvmChainId.BASE ? 'base' : 'solana'
+  const walletNamespace =
+    token.chainId === EvmChainId.BASE
+      ? 'evm'
+      : token.chainId === StellarChainId.STELLAR
+        ? 'stellar'
+        : 'svm'
+  const locatorPrefix =
+    token.chainId === EvmChainId.BASE
+      ? 'base'
+      : token.chainId === StellarChainId.STELLAR
+        ? 'stellar'
+        : 'solana'
 
   if (stablecoin) {
     assertSupportedOnrampToken(token)
@@ -182,10 +210,8 @@ function getProductionTarget(
     asset: token.symbol,
     environment: 'production',
     kind: stablecoin ? 'stablecoin' : 'memecoin',
-    linkChain: locatorPrefix,
     network: getChainById(token.chainId).name,
     requestedAsset: token.symbol,
-    requiresWalletLink: stablecoin,
     tokenLocator: `${locatorPrefix}:${token.address}`,
     walletNamespace,
   }
@@ -213,7 +239,9 @@ export function getCrossmintApiUrl(environment: CrossmintEnvironment): string {
 export function getCrossmintStagingCheckoutToken(
   tokenLocator: string,
 ): CrossmintCheckoutCatalogToken | undefined {
-  return CROSSMINT_STAGING_CHECKOUT_TOKENS.get(tokenLocator)
+  return CROSSMINT_STAGING_CHECKOUT_TOKENS.get(
+    normalizeCrossmintStagingTokenLocator(tokenLocator),
+  )
 }
 
 export function isCrossmintConfiguredTokenChainId(

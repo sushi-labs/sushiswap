@@ -25,4 +25,13 @@ describe('chainIdsToCrossmintName', () => {
       ]),
     ).toEqual(['base', 'polygon', 'solana', 'stellar'])
   })
+
+  it('uses testnet labels for staging checkout tokens', () => {
+    expect(
+      chainIdsToCrossmintName(
+        [ChainId.BASE, ChainId.SOLANA, ChainId.STELLAR],
+        'staging',
+      ),
+    ).toEqual(['base-sepolia', 'solana', 'stellar'])
+  })
 })

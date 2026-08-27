@@ -32,6 +32,7 @@ import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
 import type { TokenSelectorSelection } from './selection'
+import type { TokenSelectorCustomListOptions } from './token-lists/token-selector-custom-list'
 import { TokenSelectorStates } from './token-selector-states'
 import {
   type TokenSelectorTheme,
@@ -51,13 +52,14 @@ interface TokenSelectorProps<
   ): void
   allowPairSelection?: TAllowPairSelection
   children: ReactNode
-  currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
+  currencies?: Record<string, CurrencyFor<TChainId>>
   includeNative?: boolean
   hideSearch?: boolean
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
   onNetworkSelect?: (network: TNetwork) => void
   theme?: TokenSelectorTheme
+  customListOptions?: TokenSelectorCustomListOptions
 }
 
 export function TokenSelector<
@@ -71,6 +73,7 @@ export function TokenSelector<
     allowPairSelection,
     chainId,
     children,
+    customListOptions,
     currencies: _currencies,
     hideSearch,
     networks,
@@ -212,6 +215,7 @@ export function TokenSelector<
             onSelect={_onSelect}
             allowPairSelection={allowPairSelection}
             currencies={currencies}
+            customListOptions={customListOptions}
             includeNative={includeNative}
             search={query}
             onShowInfo={showCurrencyInfo}

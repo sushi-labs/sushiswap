@@ -1,3 +1,4 @@
+import type { CrossmintSupportedFiatCurrency } from 'src/config'
 import type {
   CrossmintCheckoutCatalogToken,
   SerializedCrossmintToken,
@@ -30,25 +31,30 @@ export interface CrossmintCheckoutTokensResponse {
 
 export interface CreateCrossmintOrderInput {
   amountUsd: string
+  paymentCurrency?: CrossmintSupportedFiatCurrency
   receiptEmail: string
   token: SerializedCrossmintToken
   walletAddress: string
+}
+
+export interface CrossmintMoney {
+  amount: string
+  currency: string
+}
+
+export interface CrossmintReceiveAmountRange {
+  lowerBound: string
+  upperBound: string
+}
+
+export interface CrossmintCreatedOrderQuote {
+  expiresAt?: string
+  receiveAmount?: CrossmintReceiveAmountRange
+  totalPrice?: CrossmintMoney
 }
 
 export interface CrossmintCreatedOrder {
   clientSecret: string
   orderId: string
-  verificationMessage?: string
-}
-
-export interface LinkCrossmintWalletInput {
-  proof?: string
-  receiptEmail: string
-  token: SerializedCrossmintToken
-  walletAddress: string
-}
-
-export interface CrossmintLinkedWallet {
-  verificationChallenge?: string
-  verified: boolean
+  quote?: CrossmintCreatedOrderQuote
 }

@@ -12,18 +12,35 @@ import {
   isValidCrossmintWalletAddress,
 } from '../validation'
 
+const crossmintMoneySchema = z.object({
+  amount: z.string().min(1),
+  currency: z.string().min(1),
+})
+
 const createOrderResponseSchema = z.object({
   clientSecret: z.string().min(1),
   order: z.object({
+    lineItems: z
+      .array(
+        z.object({
+          quote: z
+            .object({
+              quantityRange: z
+                .object({
+                  lowerBound: z.string().min(1),
+                  upperBound: z.string().min(1),
+                })
+                .optional(),
+            })
+            .optional(),
+        }),
+      )
+      .optional(),
     orderId: z.string().min(1),
-    payment: z
+    quote: z
       .object({
-        preparation: z
-          .object({
-            message: z.string().min(1).optional(),
-          })
-          .optional(),
-        status: z.string().optional(),
+        expiresAt: z.string().min(1).optional(),
+        totalPrice: crossmintMoneySchema.optional(),
       })
       .optional(),
   }),
@@ -33,7 +50,8 @@ export async function createCrossmintOrder(
   input: CreateCrossmintOrderInput,
 ): Promise<CrossmintCreatedOrder> {
   const parsedInput = createCrossmintOrderInputSchema.parse(input)
-  const { amountUsd, receiptEmail, token, walletAddress } = parsedInput
+  const { amountUsd, paymentCurrency, receiptEmail, token, walletAddress } =
+    parsedInput
   const target = getCrossmintTarget(token, getCrossmintServerEnvironment())
 
   if (!isValidCrossmintWalletAddress(token, walletAddress)) {
@@ -57,6 +75,7 @@ export async function createCrossmintOrder(
       },
     ],
     payment: {
+      currency: paymentCurrency,
       method: 'card',
       receiptEmail,
     },
@@ -65,20 +84,16 @@ export async function createCrossmintOrder(
     },
   })
   const parsedResponse = createOrderResponseSchema.parse(response)
-  const { payment } = parsedResponse.order
-  const requiresVerification =
-    payment?.status === 'requires-recipient-verification'
-  const verificationMessage = requiresVerification
-    ? payment.preparation?.message
-    : undefined
-
-  if (requiresVerification && !verificationMessage) {
-    throw new Error('Crossmint did not return a wallet verification challenge')
-  }
+  const receiveAmount =
+    parsedResponse.order.lineItems?.[0]?.quote?.quantityRange
+  const totalPrice = parsedResponse.order.quote?.totalPrice
+  const expiresAt = parsedResponse.order.quote?.expiresAt
 
   return {
     clientSecret: parsedResponse.clientSecret,
     orderId: parsedResponse.order.orderId,
-    verificationMessage,
+    ...(receiveAmount || totalPrice || expiresAt
+      ? { quote: { expiresAt, receiveAmount, totalPrice } }
+      : {}),
   }
 }

@@ -49,8 +49,10 @@ export function useCrossmintCheckoutTokens({
         throw new Error('NEXT_PUBLIC_CROSSMINT_CLIENT_SIDE_API_KEY is not set')
       }
 
+      const environment = getCrossmintEnvironment(CROSSMINT_CLIENT_SIDE_API_KEY)
+
       const response = await fetchCrossmintCheckoutTokensPage({
-        chains: chainIdsToCrossmintName(chainIds),
+        chains: chainIdsToCrossmintName(chainIds, environment),
         cursor: pageParam ?? undefined,
         limit,
         signal,
@@ -62,7 +64,7 @@ export function useCrossmintCheckoutTokens({
         data: await getCrossmintCheckoutTokenEntries({
           availabilities: response.data,
           chainIds,
-          environment: getCrossmintEnvironment(CROSSMINT_CLIENT_SIDE_API_KEY),
+          environment,
         }),
       }
     },

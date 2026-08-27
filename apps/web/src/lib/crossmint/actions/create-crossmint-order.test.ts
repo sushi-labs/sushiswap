@@ -46,7 +46,6 @@ describe('createCrossmintOrder', () => {
     ).resolves.toEqual({
       clientSecret: 'client-secret',
       orderId: 'order-id',
-      verificationMessage: undefined,
     })
 
     const [url, init] = fetchMock.mock.calls[0]
@@ -67,11 +66,64 @@ describe('createCrossmintOrder', () => {
           tokenLocator: 'solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu',
         },
       ],
+      payment: {
+        currency: 'usd',
+        method: 'card',
+        receiptEmail: 'buyer@example.com',
+      },
       recipient: { walletAddress: SOLANA_WALLET },
     })
   })
 
-  it('returns an external-wallet verification challenge when required', async () => {
+  it('returns the receive range and total price used by the review dialog', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              clientSecret: 'client-secret',
+              order: {
+                lineItems: [
+                  {
+                    quote: {
+                      quantityRange: {
+                        lowerBound: '49.5',
+                        upperBound: '50',
+                      },
+                    },
+                  },
+                ],
+                orderId: 'order-id',
+                quote: {
+                  expiresAt: '2026-08-27T20:14:09.957Z',
+                  totalPrice: { amount: '50', currency: 'usd' },
+                },
+              },
+            }),
+            { status: 201 },
+          ),
+      ),
+    )
+
+    await expect(
+      createCrossmintOrder({
+        amountUsd: '50',
+        paymentCurrency: 'eur',
+        receiptEmail: 'buyer@example.com',
+        token: SOLANA_XMEME,
+        walletAddress: SOLANA_WALLET,
+      }),
+    ).resolves.toMatchObject({
+      quote: {
+        expiresAt: '2026-08-27T20:14:09.957Z',
+        receiveAmount: { lowerBound: '49.5', upperBound: '50' },
+        totalPrice: { amount: '50', currency: 'usd' },
+      },
+    })
+  })
+
+  it('returns an order session when Crossmint requires recipient verification', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(
@@ -99,8 +151,9 @@ describe('createCrossmintOrder', () => {
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
-    ).resolves.toMatchObject({
-      verificationMessage: 'Sign this challenge',
+    ).resolves.toEqual({
+      clientSecret: 'client-secret',
+      orderId: 'order-id',
     })
   })
 
@@ -135,7 +188,6 @@ describe('createCrossmintOrder', () => {
     ).resolves.toEqual({
       clientSecret: 'client-secret',
       orderId: 'order-id',
-      verificationMessage: undefined,
     })
   })
 

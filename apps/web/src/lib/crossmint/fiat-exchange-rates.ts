@@ -120,3 +120,18 @@ export function convertUsdToWholeFiatAmount(
 
   return Math.round(amountUsd * rate).toString()
 }
+
+export function convertFiatToUsdAmount(
+  amountFiat: number,
+  rate: number,
+): string {
+  if (!Number.isFinite(amountFiat) || amountFiat <= 0) {
+    throw new Error('Fiat amount must be a positive finite number')
+  }
+
+  if (!Number.isFinite(rate) || rate <= 0) {
+    throw new Error('Fiat exchange rate must be a positive finite number')
+  }
+
+  return (amountFiat / rate).toFixed(2)
+}

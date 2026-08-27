@@ -1,5 +1,5 @@
 import { getIdFromChainIdAddress } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
+import { EvmChainId, USDC } from 'sushi/evm'
 import { STELLAR_USDC, StellarChainId } from 'sushi/stellar'
 import { SvmChainId, svmAddress } from 'sushi/svm'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -200,25 +200,32 @@ describe('Crossmint checkout token catalog', () => {
   })
 
   it('uses static metadata for Crossmint staging fixtures', async () => {
-    const [xmemeEntry, stellarEntry] = await getCrossmintCheckoutTokenEntries({
-      availabilities: [
-        {
-          available: true,
-          features: FEATURES,
-          token: 'solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu',
-        },
-        {
-          available: true,
-          features: FEATURES,
-          token:
-            'stellar:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA',
-        },
-      ],
-      chainIds: [SvmChainId.SOLANA, StellarChainId.STELLAR],
-      environment: 'staging',
-    })
+    const [baseEntry, xmemeEntry, stellarEntry] =
+      await getCrossmintCheckoutTokenEntries({
+        availabilities: [
+          {
+            available: true,
+            features: FEATURES,
+            token: 'base-sepolia:0x036cbd53842c5426634e7929541ec2318f3dcf7e',
+          },
+          {
+            available: true,
+            features: FEATURES,
+            token: 'solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu',
+          },
+          {
+            available: true,
+            features: FEATURES,
+            token:
+              'stellar:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA',
+          },
+        ],
+        chainIds: [EvmChainId.BASE, SvmChainId.SOLANA, StellarChainId.STELLAR],
+        environment: 'staging',
+      })
 
     expect(getTokenListMock).not.toHaveBeenCalled()
+    expect(baseEntry?.token).toEqual(USDC[EvmChainId.BASE])
     expect(xmemeEntry?.token).toMatchObject({
       chainId: SvmChainId.SOLANA,
       decimals: 9,

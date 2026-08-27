@@ -1,3 +1,4 @@
+import { STELLAR_USDC, StellarChainId } from 'sushi/stellar'
 import { describe, expect, it } from 'vitest'
 import { getCrossmintEnvironment, getCrossmintTarget } from './crossmint-config'
 
@@ -35,9 +36,7 @@ describe('Crossmint token targeting', () => {
     expect(getCrossmintTarget(BASE_USDC, 'staging')).toMatchObject({
       asset: 'USDC',
       kind: 'stablecoin',
-      linkChain: 'base-sepolia',
       network: 'Base Sepolia',
-      requiresWalletLink: true,
       tokenLocator: 'base-sepolia:0x036CbD53842c5426634e7929541eC2318f3dCF7e',
       walletNamespace: 'evm',
     })
@@ -50,6 +49,17 @@ describe('Crossmint token targeting', () => {
       network: 'Solana Devnet',
       tokenLocator: 'solana:4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
       walletNamespace: 'svm',
+    })
+  })
+
+  it('maps Stellar USDC to Crossmint staging onramp configuration', () => {
+    expect(
+      getCrossmintTarget(STELLAR_USDC[StellarChainId.STELLAR], 'staging'),
+    ).toMatchObject({
+      asset: 'USDC',
+      kind: 'stablecoin',
+      network: 'Stellar Testnet',
+      walletNamespace: 'stellar',
     })
   })
 
@@ -67,7 +77,6 @@ describe('Crossmint token targeting', () => {
     expect(getCrossmintTarget(BASE_USDC, 'production')).toMatchObject({
       asset: 'USDC',
       kind: 'stablecoin',
-      linkChain: 'base',
       network: 'Base',
       tokenLocator: 'base:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
       walletNamespace: 'evm',

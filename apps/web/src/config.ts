@@ -222,7 +222,7 @@ export const CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS = [
   // ChainId.MONAD,
   //non-evm
   ChainId.STELLAR,
-  ChainId.APTOS,
+  // ChainId.APTOS,
 ] as const
 
 export const CROSSMINT_ONRAMP_SUPPORTED_CHAIN_IDS = [
