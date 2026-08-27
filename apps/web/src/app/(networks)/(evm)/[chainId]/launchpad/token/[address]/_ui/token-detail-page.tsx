@@ -46,7 +46,6 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_lib/format'
-import type { LaunchpadTokenIdentity } from '../../../_lib/get-cached-launchpad-token'
 import { launchpadProviderHasCapability } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { DetailList } from '../../../_ui/detail-list'
@@ -254,7 +253,7 @@ function TokenHeader({
   indexingStatus,
   links = [],
 }: {
-  token: LaunchpadTokenIdentity
+  token: LaunchpadToken
   chainKey: string
   creatorUrl: string
   tokenUrl: string
@@ -315,11 +314,11 @@ function TokenHeader({
 export function TokenDetailPage({
   chainId,
   address,
-  tokenIdentity,
+  initialToken,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
-  tokenIdentity: LaunchpadTokenIdentity
+  initialToken: LaunchpadToken
 }) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
@@ -333,10 +332,10 @@ export function TokenDetailPage({
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
-    decimals: token?.decimals ?? tokenIdentity.decimals,
+    decimals: token?.decimals ?? initialToken.decimals,
     initialSupply: token?.initialSupply ?? '0',
     tokenAddress: address,
-    symbol: tokenIdentity.symbol,
+    symbol: initialToken.symbol,
     price: token?.metrics?.priceUsd,
   })
 
@@ -345,10 +344,10 @@ export function TokenDetailPage({
       <TokenDetailSkeleton
         header={
           <TokenHeader
-            token={tokenIdentity}
+            token={initialToken}
             chainKey={chainKey}
-            creatorUrl={chain.getAccountUrl(tokenIdentity.creator)}
-            tokenUrl={chain.getTokenUrl(tokenIdentity.address)}
+            creatorUrl={chain.getAccountUrl(initialToken.creator)}
+            tokenUrl={chain.getTokenUrl(initialToken.address)}
           />
         }
       />
@@ -443,10 +442,10 @@ export function TokenDetailPage({
       className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
     >
       <TokenHeader
-        token={tokenIdentity}
+        token={token}
         chainKey={chainKey}
-        creatorUrl={chain.getAccountUrl(tokenIdentity.creator)}
-        tokenUrl={chain.getTokenUrl(tokenIdentity.address)}
+        creatorUrl={chain.getAccountUrl(token.creator)}
+        tokenUrl={chain.getTokenUrl(token.address)}
         indexingStatus={token.indexingStatus}
         links={token.metadata.links}
       />

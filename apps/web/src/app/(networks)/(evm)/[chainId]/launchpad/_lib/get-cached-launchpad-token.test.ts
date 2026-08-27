@@ -21,10 +21,7 @@ vi.mock('next/cache', () => ({
     },
 }))
 
-import {
-  getCachedLaunchpadToken,
-  getCachedLaunchpadTokenIdentity,
-} from './get-cached-launchpad-token'
+import { getCachedLaunchpadToken } from './get-cached-launchpad-token'
 
 const input = {
   chainId: 4663,
@@ -53,60 +50,5 @@ describe('getCachedLaunchpadToken', () => {
     getLaunchpadTokenMock.mockRejectedValueOnce(error)
 
     await expect(getCachedLaunchpadToken(input)).rejects.toBe(error)
-  })
-
-  it('caches only immutable token identity fields', async () => {
-    const token = {
-      address: input.address,
-      chainId: input.chainId,
-      creator: '0x0000000000000000000000000000000000000002',
-      decimals: 18,
-      metrics: { priceUsd: 1 },
-      name: 'Token',
-      provider: 'SUSHI_V1',
-      symbol: 'TKN',
-    }
-    getLaunchpadTokenMock.mockResolvedValueOnce(token)
-
-    await expect(getCachedLaunchpadTokenIdentity(input)).resolves.toEqual({
-      address: token.address,
-      chainId: token.chainId,
-      creator: token.creator,
-      decimals: token.decimals,
-      name: token.name,
-      provider: token.provider,
-      symbol: token.symbol,
-    })
-    await expect(getCachedLaunchpadTokenIdentity(input)).resolves.toEqual({
-      address: token.address,
-      chainId: token.chainId,
-      creator: token.creator,
-      decimals: token.decimals,
-      name: token.name,
-      provider: token.provider,
-      symbol: token.symbol,
-    })
-    expect(getLaunchpadTokenMock).toHaveBeenCalledTimes(1)
-  })
-
-  it('does not negatively cache a missing token identity', async () => {
-    const token = {
-      address: input.address,
-      chainId: input.chainId,
-      creator: '0x0000000000000000000000000000000000000002',
-      decimals: 18,
-      name: 'Token',
-      provider: 'SUSHI_V1',
-      symbol: 'TKN',
-    }
-    getLaunchpadTokenMock
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(token)
-
-    await expect(getCachedLaunchpadTokenIdentity(input)).resolves.toBeNull()
-    await expect(getCachedLaunchpadTokenIdentity(input)).resolves.toMatchObject(
-      token,
-    )
-    expect(getLaunchpadTokenMock).toHaveBeenCalledTimes(2)
   })
 })
