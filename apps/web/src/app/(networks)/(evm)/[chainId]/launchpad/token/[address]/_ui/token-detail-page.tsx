@@ -341,16 +341,18 @@ export function TokenDetailPage({
 
   if (isTokenPending) {
     return (
-      <TokenDetailSkeleton
-        header={
-          <TokenHeader
-            token={initialToken}
-            chainKey={chainKey}
-            creatorUrl={chain.getAccountUrl(initialToken.creator)}
-            tokenUrl={chain.getTokenUrl(initialToken.address)}
-          />
-        }
-      />
+      <Container
+        maxWidth="8xl"
+        className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
+      >
+        <TokenHeader
+          token={initialToken}
+          chainKey={chainKey}
+          creatorUrl={chain.getAccountUrl(initialToken.creator)}
+          tokenUrl={chain.getTokenUrl(initialToken.address)}
+        />
+        <TokenDetailSkeleton bodyOnly />
+      </Container>
     )
   }
 
