@@ -4,7 +4,32 @@ import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 import { TradeActivitySkeleton } from './trade-activity'
 
-const MARKET_STAT_SKELETONS = ['price', 'fdv', 'liquidity', 'volume'] as const
+const MARKET_STAT_SKELETONS = [
+  {
+    key: 'price',
+    labelWidth: 'w-[34px]',
+    valueWidth: 'w-32',
+    detailWidth: 'w-[76px]',
+  },
+  {
+    key: 'fdv',
+    labelWidth: 'w-6',
+    valueWidth: 'w-20',
+    detailWidth: 'w-20',
+  },
+  {
+    key: 'liquidity',
+    labelWidth: 'w-[57px]',
+    valueWidth: 'w-[151px]',
+    detailWidth: 'w-[107px]',
+  },
+  {
+    key: 'volume',
+    labelWidth: 'w-[75px]',
+    valueWidth: 'w-[66px]',
+    detailWidth: 'w-[104px]',
+  },
+] as const
 
 const TRADE_ROW_SKELETONS = ['first', 'second', 'third', 'fourth'] as const
 const LOCKED_POSITION_SKELETONS = [
@@ -74,12 +99,22 @@ export function TokenDetailSkeleton({
         <MetricStrip>
           {MARKET_STAT_SKELETONS.map((stat, index) => (
             <MetricStripItem
-              key={stat}
+              key={stat.key}
               index={index}
               className="min-h-[104px] sm:min-h-[103px]"
-              label={<SkeletonBox className="h-3 w-16 rounded-sm" />}
-              value={<SkeletonBox className="h-6 w-24 rounded-md" />}
-              detail={<SkeletonBox className="h-3 w-20 rounded-sm" />}
+              label={
+                <SkeletonBox
+                  className={`h-[16.5px] rounded-sm ${stat.labelWidth}`}
+                />
+              }
+              value={
+                <SkeletonBox className={`h-7 rounded-md ${stat.valueWidth}`} />
+              }
+              detail={
+                <SkeletonBox
+                  className={`h-[16.5px] rounded-sm ${stat.detailWidth}`}
+                />
+              }
             />
           ))}
         </MetricStrip>
