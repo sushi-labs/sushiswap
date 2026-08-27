@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
-import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
+import { Suspense } from 'react'
+import { type EvmAddress, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import {
+  getCachedLaunchpadToken,
+  getCachedLaunchpadTokenIdentity,
+} from '../../_lib/get-cached-launchpad-token'
 import {
   getLaunchpadCardValues,
   getLaunchpadCardVersion,
@@ -14,7 +18,7 @@ import {
   getLaunchpadTokenUrl,
   serializeLaunchpadJsonLd,
 } from '../../_lib/launchpad-seo'
-import { isLaunchpadChainId } from '../../constants'
+import { type LaunchpadChainId, isLaunchpadChainId } from '../../constants'
 import { TokenDetailPage } from './_ui/token-detail-page'
 
 type LaunchpadTokenPageParams = Promise<{
@@ -78,6 +82,26 @@ export async function generateMetadata({
   }
 }
 
+async function LaunchpadTokenJsonLd({
+  chainId,
+  address,
+}: {
+  chainId: LaunchpadChainId
+  address: EvmAddress
+}) {
+  const token = await getCachedLaunchpadToken({ chainId, address })
+  if (!token) return null
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
+      }}
+    />
+  )
+}
+
 export default async function LaunchpadTokenPage({
   params,
 }: {
@@ -86,21 +110,21 @@ export default async function LaunchpadTokenPage({
   const result = await getTokenParams(params)
   if (!result) return notFound()
   const { address, chainId } = result
-  const token = await getCachedLaunchpadToken({ chainId, address })
-  if (!token) return notFound()
+  const tokenIdentity = await getCachedLaunchpadTokenIdentity({
+    chainId,
+    address,
+  })
+  if (!tokenIdentity) return notFound()
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
-        }}
-      />
+      <Suspense fallback={null}>
+        <LaunchpadTokenJsonLd chainId={chainId} address={address} />
+      </Suspense>
       <TokenDetailPage
         chainId={chainId}
         address={address}
-        initialToken={token}
+        tokenIdentity={tokenIdentity}
       />
     </>
   )

@@ -46,6 +46,7 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_lib/format'
+import type { LaunchpadTokenIdentity } from '../../../_lib/get-cached-launchpad-token'
 import { launchpadProviderHasCapability } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { DetailList } from '../../../_ui/detail-list'
@@ -245,14 +246,80 @@ function MetadataLinks({
   )
 }
 
+function TokenHeader({
+  token,
+  chainKey,
+  creatorUrl,
+  tokenUrl,
+  indexingStatus,
+  links = [],
+}: {
+  token: LaunchpadTokenIdentity
+  chainKey: string
+  creatorUrl: string
+  tokenUrl: string
+  indexingStatus?: LaunchpadToken['indexingStatus']
+  links?: MetadataLink[]
+}) {
+  return (
+    <>
+      <div className="mb-5 flex items-center gap-2 text-xs text-perps-muted-50">
+        <Link
+          href={`/${chainKey}/launchpad`}
+          className="transition hover:text-perps-blue"
+        >
+          Launches
+        </Link>
+        <span>/</span>
+        <span className="font-medium text-perps-muted">{token.symbol}</span>
+      </div>
+
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
+          <TokenAvatar token={token} size="lg" />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="truncate text-2xl font-semibold tracking-tight text-perps-muted sm:text-3xl">
+                {token.name}
+              </h1>
+              <span className="text-lg font-medium text-perps-muted-50 mt-0.5">
+                ${token.symbol}
+              </span>
+              {indexingStatus ? <StatusPill status={indexingStatus} /> : null}
+              <LaunchpadProviderBadge provider={token.provider} />
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
+              <CopyableExplorerAddress
+                label="Launched by"
+                address={token.creator}
+                href={creatorUrl}
+                visibleCharacters={5}
+                linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
+              />
+              <span>·</span>
+              <CopyableExplorerAddress
+                label="Token"
+                address={token.address}
+                href={tokenUrl}
+                visibleCharacters={6}
+              />
+            </div>
+          </div>
+        </div>
+        <MetadataLinks links={links} placement="header" />
+      </div>
+    </>
+  )
+}
+
 export function TokenDetailPage({
   chainId,
   address,
-  initialToken,
+  tokenIdentity,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
-  initialToken: LaunchpadToken
+  tokenIdentity: LaunchpadTokenIdentity
 }) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
@@ -261,20 +328,31 @@ export function TokenDetailPage({
     isError: isTokenError,
     isPending: isTokenPending,
     refetch: refetchToken,
-  } = useLaunchpadToken(chainId, address, initialToken)
+  } = useLaunchpadToken(chainId, address)
   const { data: marketStats } = useLaunchpadMarketStats(chainId, address)
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
-    decimals: token?.decimals ?? 0,
+    decimals: token?.decimals ?? tokenIdentity.decimals,
     initialSupply: token?.initialSupply ?? '0',
     tokenAddress: address,
-    symbol: token?.symbol ?? '',
+    symbol: tokenIdentity.symbol,
     price: token?.metrics?.priceUsd,
   })
 
   if (isTokenPending) {
-    return <TokenDetailSkeleton />
+    return (
+      <TokenDetailSkeleton
+        header={
+          <TokenHeader
+            token={tokenIdentity}
+            chainKey={chainKey}
+            creatorUrl={chain.getAccountUrl(tokenIdentity.creator)}
+            tokenUrl={chain.getTokenUrl(tokenIdentity.address)}
+          />
+        }
+      />
+    )
   }
 
   if (isTokenError) {
@@ -364,51 +442,14 @@ export function TokenDetailPage({
       maxWidth="8xl"
       className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
     >
-      <div className="mb-5 flex items-center gap-2 text-xs text-perps-muted-50">
-        <Link
-          href={`/${chainKey}/launchpad`}
-          className="transition hover:text-perps-blue"
-        >
-          Launches
-        </Link>
-        <span>/</span>
-        <span className="font-medium text-perps-muted">{token.symbol}</span>
-      </div>
-
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-center gap-4">
-          <TokenAvatar token={token} size="lg" />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="truncate text-2xl font-semibold tracking-tight text-perps-muted sm:text-3xl">
-                {token.name}
-              </h1>
-              <span className="text-lg font-medium text-perps-muted-50 mt-0.5">
-                ${token.symbol}
-              </span>
-              <StatusPill status={token.indexingStatus} />
-              <LaunchpadProviderBadge provider={token.provider} />
-            </div>
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
-              <CopyableExplorerAddress
-                label="Launched by"
-                address={token.creator}
-                href={chain.getAccountUrl(token.creator)}
-                visibleCharacters={5}
-                linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
-              />
-              <span>·</span>
-              <CopyableExplorerAddress
-                label="Token"
-                address={token.address}
-                href={chain.getTokenUrl(token.address)}
-                visibleCharacters={6}
-              />
-            </div>
-          </div>
-        </div>
-        <MetadataLinks links={token.metadata.links} placement="header" />
-      </div>
+      <TokenHeader
+        token={tokenIdentity}
+        chainKey={chainKey}
+        creatorUrl={chain.getAccountUrl(tokenIdentity.creator)}
+        tokenUrl={chain.getTokenUrl(tokenIdentity.address)}
+        indexingStatus={token.indexingStatus}
+        links={token.metadata.links}
+      />
 
       <div className="mt-6">
         <MetricStrip>
