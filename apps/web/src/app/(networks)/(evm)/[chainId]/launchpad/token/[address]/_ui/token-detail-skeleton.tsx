@@ -70,7 +70,7 @@ export function TokenDetailSkeleton({
         </>
       )}
 
-      <div className="mt-6">
+      <div className="mt-7">
         <MetricStrip>
           {MARKET_STAT_SKELETONS.map((stat, index) => (
             <MetricStripItem
