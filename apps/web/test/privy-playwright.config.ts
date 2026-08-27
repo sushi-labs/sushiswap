@@ -25,6 +25,7 @@ export default defineConfig({
       env: {
         NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '137',
+        NEXT_PUBLIC_PRIVY_TEST_RUNTIME: 'true',
         NEXT_TELEMETRY_DISABLED: '1',
       },
     },

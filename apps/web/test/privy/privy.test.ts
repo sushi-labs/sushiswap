@@ -7,6 +7,7 @@ import {
 } from 'src/lib/wallet/privy/privy-test-constants'
 
 const ETHEREUM_CHAIN_ID = 1
+const ETHEREUM_SWAP_PATH = '/ethereum/swap'
 const ROBINHOOD_CHAIN_ID = 4663
 
 async function installRestorablePrivySession(
@@ -67,9 +68,11 @@ async function waitForPrivyConnection(page: Page): Promise<void> {
 test('shows restoration state until the Privy wallet reconnects', async ({
   page,
 }) => {
-  await installRestorablePrivySession(page, 1_500)
+  await installRestorablePrivySession(page, 10_000)
 
-  await page.goto(`/${ETHEREUM_CHAIN_ID}/swap`)
+  await page.goto(ETHEREUM_SWAP_PATH, {
+    waitUntil: 'domcontentloaded',
+  })
 
   await expect(page.getByText('Checking Wallet')).toBeVisible()
   await waitForPrivyConnection(page)
@@ -80,7 +83,7 @@ test('switches Privy’s backing provider from Ethereum to Robinhood', async ({
   page,
 }) => {
   await installRestorablePrivySession(page, 0)
-  await page.goto(`/${ETHEREUM_CHAIN_ID}/swap`)
+  await page.goto(ETHEREUM_SWAP_PATH)
   await waitForPrivyConnection(page)
 
   await page.locator('[testdata-id=network-selector-button]').click()

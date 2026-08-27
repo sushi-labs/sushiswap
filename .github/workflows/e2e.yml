@@ -60,14 +60,18 @@ jobs:
           BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
           # Data API
           NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
-          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
+
+      - name: Test Privy runtime integration
+        run: pnpm --filter web test:privy
+        env:
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
 
       - name: Test live Privy login and reconnect
         run: pnpm --filter web test:privy-live
         timeout-minutes: 12
         env:
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
-          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
+          NEXT_PUBLIC_PRIVY_APP_ID: cmqto01a1007v0blaefwe3a0p
           PRIVY_TEST_EMAIL: ${{ secrets.PRIVY_TEST_EMAIL }}
           PRIVY_TEST_OTP: ${{ secrets.PRIVY_TEST_OTP }}
 

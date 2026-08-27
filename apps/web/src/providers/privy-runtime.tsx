@@ -17,15 +17,14 @@ import {
   type PrivyStandardWallet,
   useCreateWallet as useCreateSvmWallet,
   useExportWallet as useExportSvmWallet,
-  useSignAndSendTransaction,
   useStandardWallets as useSolanaStandardWallets,
-  useWallets as useSolanaWallets,
 } from '@privy-io/react-auth/solana'
 import { getBase58Decoder } from '@solana/kit'
 import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import { useEffect, useMemo, useRef } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
+import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import {
   registerPrivyEvmConnector,
   unregisterPrivyEvmConnector,
@@ -45,6 +44,10 @@ import type { EIP1193Provider } from 'viem'
 import { PrivyProvider } from './privy-provider'
 
 type PrivyChainType = 'ethereum' | 'solana'
+type PrivyWalletAccount = Extract<
+  PrivyUser['linkedAccounts'][number],
+  { type: 'wallet' }
+>
 
 function toViemProvider(provider: PrivyEIP1193Provider): EIP1193Provider {
   // Privy and viem expose the same EIP-1193 surface with incompatible
@@ -57,17 +60,15 @@ function toViemProvider(provider: PrivyEIP1193Provider): EIP1193Provider {
  * rather than the wallet hooks. `createWallet()` throws for a user who already
  * has a wallet for the chain type, so this is what must gate provisioning.
  */
-function hasPrivyEmbeddedAccount(
+function getPrivyEmbeddedAccount(
   user: PrivyUser | null,
   chainType: PrivyChainType,
-): boolean {
-  return Boolean(
-    user?.linkedAccounts.some(
-      (account) =>
-        account.type === 'wallet' &&
-        account.walletClientType === 'privy' &&
-        account.chainType === chainType,
-    ),
+): PrivyWalletAccount | undefined {
+  return user?.linkedAccounts.find(
+    (account): account is PrivyWalletAccount =>
+      account.type === 'wallet' &&
+      account.walletClientType === 'privy' &&
+      account.chainType === chainType,
   )
 }
 
@@ -111,14 +112,12 @@ export function PrivyRuntime() {
 function PrivyRuntimeEffects() {
   const { ready, authenticated, logout, user } = usePrivy()
   const { wallets: evmWallets } = useWallets()
-  const { ready: svmReady, wallets: svmWallets } = useSolanaWallets()
   const { wallets: svmStandardWallets } = useSolanaStandardWallets()
   const { sendTransaction } = useSendTransaction()
   const { createWallet: createEvmWallet } = useCreateEvmWallet()
   const { createWallet: createSvmWallet } = useCreateSvmWallet()
   const { exportWallet: exportEvmWallet } = useExportEvmWallet()
   const { exportWallet: exportSvmWallet } = useExportSvmWallet()
-  const { signAndSendTransaction } = useSignAndSendTransaction()
   const connectPendingRef = useRef<PendingOperation | undefined>(undefined)
   const loginPendingRef = useRef<PendingOperation | undefined>(undefined)
 
@@ -157,28 +156,28 @@ function PrivyRuntimeEffects() {
       ),
     [evmWallets],
   )
-  const embeddedSvmWallet = useMemo(
-    () =>
-      svmWallets.find((wallet) =>
-        isPrivySvmStandardWallet(wallet.standardWallet),
-      ),
-    [svmWallets],
-  )
-  // `useSolanaWallets` only yields a wallet once Privy has propagated a
-  // connected account, which is far later than registration needs to happen.
   const svmStandardWallet = useMemo(
     () => svmStandardWallets.find(isPrivySvmStandardWallet) ?? null,
     [svmStandardWallets],
   )
   const evmWalletAddress = embeddedEvmWallet?.address
-  const svmWalletAddress = embeddedSvmWallet?.address
-  const hasEvmAccount = hasPrivyEmbeddedAccount(user, 'ethereum')
-  const hasSvmAccount = hasPrivyEmbeddedAccount(user, 'solana')
+  const embeddedEvmAccount = getPrivyEmbeddedAccount(user, 'ethereum')
+  const embeddedSvmAccount = getPrivyEmbeddedAccount(user, 'solana')
+  const svmWalletAddress = embeddedSvmAccount?.address
+  const hasEvmAccount = Boolean(embeddedEvmAccount)
+  const hasSvmAccount = Boolean(embeddedSvmAccount)
+  const registeredSvmWallet = useMemo(() => {
+    if (!svmStandardWallet || !svmWalletAddress) return null
+    return createPrivySvmWallet({
+      address: svmWalletAddress as SvmAddress,
+      wallet: svmStandardWallet,
+    })
+  }, [svmStandardWallet, svmWalletAddress])
 
   useEffect(() => {
-    if (!svmStandardWallet) return
-    return registerPrivySvmWallet(svmStandardWallet)
-  }, [svmStandardWallet])
+    if (!registeredSvmWallet) return
+    return registerPrivySvmWallet(registeredSvmWallet)
+  }, [registeredSvmWallet])
 
   // Privy hook handles are not referentially stable across renders. Keep the
   // latest handles behind a ref so the published runtime snapshot keeps a
@@ -189,13 +188,13 @@ function PrivyRuntimeEffects() {
     createEvmWallet,
     createSvmWallet,
     embeddedEvmWallet,
-    embeddedSvmWallet,
     exportEvmWallet,
     exportSvmWallet,
     login,
     logout,
     sendTransaction,
-    signAndSendTransaction,
+    svmStandardWallet,
+    svmWalletAddress,
   })
   useEffect(() => {
     latestHandlesRef.current = {
@@ -204,13 +203,13 @@ function PrivyRuntimeEffects() {
       createEvmWallet,
       createSvmWallet,
       embeddedEvmWallet,
-      embeddedSvmWallet,
       exportEvmWallet,
       exportSvmWallet,
       login,
       logout,
       sendTransaction,
-      signAndSendTransaction,
+      svmStandardWallet,
+      svmWalletAddress,
     }
   })
 
@@ -259,19 +258,27 @@ function PrivyRuntimeEffects() {
         return { hash: result.hash as EvmTxHash }
       },
       async signAndSendSvmTransaction({ address, transaction, uiOptions }) {
-        const wallet = latestHandlesRef.current.embeddedSvmWallet
-        if (wallet?.address !== address) {
+        const wallet = latestHandlesRef.current.svmStandardWallet
+        if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
           throw new Error('Privy SVM wallet is not active')
         }
-        const result = await latestHandlesRef.current.signAndSendTransaction({
+        // Privy's injected implementation accepts the same UI options as its
+        // public hook, but the lower-level feature type omits them.
+        const signAndSendTransaction = wallet.features['privy:'].privy
+          .signAndSendTransaction as (input: {
+          address: string
+          chain: 'solana:mainnet'
+          options?: { uiOptions?: typeof uiOptions }
+          transaction: Uint8Array
+        }) => Promise<{ signature: Uint8Array }>
+        const result = await signAndSendTransaction({
           transaction,
-          wallet,
+          address,
+          chain: 'solana:mainnet',
           options: { uiOptions },
         })
         return {
-          signature: getBase58Decoder().decode(
-            new Uint8Array(Object.values(result.signature)),
-          ) as SvmTxHash,
+          signature: getBase58Decoder().decode(result.signature) as SvmTxHash,
         }
       },
     }),
@@ -347,13 +354,9 @@ function PrivyRuntimeEffects() {
 
   useEffect(() => {
     if (!ready) return
-    const svmWallet = svmReady
-      ? latestHandlesRef.current.embeddedSvmWallet
+    const runtimeSvmWallet: PrivySvmWallet | undefined = svmWalletAddress
+      ? { address: svmWalletAddress as SvmAddress }
       : undefined
-    const runtimeSvmWallet: PrivySvmWallet | undefined =
-      svmWalletAddress && svmWallet
-        ? { address: svmWalletAddress as SvmAddress }
-        : undefined
     if (authenticated) {
       privyRuntimeStore.publishRuntime({
         authenticated: true,
@@ -381,7 +384,6 @@ function PrivyRuntimeEffects() {
     operations,
     ready,
     runtimeEvmWallet,
-    svmReady,
     svmWalletAddress,
   ])
 

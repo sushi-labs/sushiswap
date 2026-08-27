@@ -26,10 +26,10 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: 'pnpm dev',
-      port,
+      command: 'pnpm build && pnpm start',
+      url: `http://localhost:${port}/solana/swap`,
       reuseExistingServer: false,
-      timeout: 180_000,
+      timeout: 600_000,
       gracefulShutdown: {
         signal: 'SIGTERM',
         timeout: 5_000,
