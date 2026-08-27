@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import { shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
@@ -63,7 +64,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function LaunchpadCreatorPage({
+async function LaunchpadCreatorContent({
   params,
 }: {
   params: LaunchpadCreatorPageParams
@@ -85,5 +86,17 @@ export default async function LaunchpadCreatorPage({
       />
       <CreatorPage chainId={chainId} address={address} />
     </>
+  )
+}
+
+export default function LaunchpadCreatorPage({
+  params,
+}: {
+  params: LaunchpadCreatorPageParams
+}) {
+  return (
+    <Suspense fallback={null}>
+      <LaunchpadCreatorContent params={params} />
+    </Suspense>
   )
 }
