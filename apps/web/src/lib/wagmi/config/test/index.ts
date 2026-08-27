@@ -1,8 +1,10 @@
 import { mock } from '@wagmi/connectors'
+import { isLivePrivyE2eEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { createConfig } from 'wagmi'
+import { hasPersistedConnector } from '../persisted-connectors'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(
@@ -41,6 +43,12 @@ export const createTestConfig = () => {
       {} as Record<EvmChainId, HttpTransport>,
     ),
     pollingInterval: 1_000,
-    connectors: [mockConnector],
+    // The Privy test runtime registers its real injected connector lazily.
+    // Keeping the default mock here would violate the app's one-wallet
+    // invariant and make targeted Privy restoration intentionally fail.
+    connectors:
+      hasPersistedConnector('io.privy') || isLivePrivyE2eEnabled()
+        ? []
+        : [mockConnector],
   })
 }

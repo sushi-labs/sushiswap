@@ -66,6 +66,7 @@ interface PrivyRuntimeUnrequestedSnapshot extends PrivyRuntimeEmptySnapshot {
 }
 
 interface PrivyRuntimeRequestedSnapshotBase {
+  /** Remains true while a persisted Privy EVM connection is being restored. */
   evmReconnect: boolean
   requested: true
 }

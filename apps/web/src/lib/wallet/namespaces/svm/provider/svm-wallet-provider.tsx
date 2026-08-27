@@ -20,7 +20,7 @@ import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import {
   setPrivySvmReconnect,
   shouldReconnectPrivySvm,
-} from 'src/lib/wallet/privy-session-marker'
+} from 'src/lib/wallet/privy-storage'
 import {
   connectPrivySvmWallet,
   logoutPrivyRuntime,
@@ -38,7 +38,7 @@ import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-
 import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
-import { SvmAdapterId } from '../config'
+import { PRIVY_SVM_CONNECTOR_ID, SvmAdapterId } from '../config'
 
 function useInSvmContext(): boolean {
   const client = useConnectorClient()
@@ -137,12 +137,12 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
 
   const disconnect = useCallback(async () => {
     const disconnectsPrivy = Boolean(
-      client && connector && isPrivyConnector(client, connector.connectorId),
+      connector && isPrivyConnector(connector.connectorId),
     )
     if (disconnectsPrivy) setPrivySvmReconnect(false)
     await svmDisconnect()
     if (disconnectsPrivy) await logoutPrivyRuntime()
-  }, [client, connector, svmDisconnect])
+  }, [connector, svmDisconnect])
 
   useEffect(() => {
     if (
@@ -185,7 +185,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    if (client && !isPrivyConnector(client, connector.connectorId)) {
+    if (!isPrivyConnector(connector.connectorId)) {
       setPrivySvmReconnect(false)
     }
 
@@ -197,7 +197,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       account: connector.selectedAccount.address,
       icon: walletInfo.icon ?? undefined,
     })
-  }, [client, isConnected, connector, walletInfo.name, walletInfo.icon])
+  }, [isConnected, connector, walletInfo.name, walletInfo.icon])
 
   useEffect(() => {
     const hasRegisteredConnection = getWalletConnections().some(
@@ -233,15 +233,8 @@ function getHasInitialSvmReconnectCandidate(): boolean {
   return typeof persistedWallet === 'string' && persistedWallet.length > 0
 }
 
-function isPrivyConnector(
-  client: ConnectorClient,
-  connectorId: WalletConnectorId,
-): boolean {
-  return client
-    .getSnapshot()
-    .connectors.some(
-      (connector) => connector.id === connectorId && connector.name === 'Privy',
-    )
+function isPrivyConnector(connectorId: WalletConnectorId): boolean {
+  return connectorId === PRIVY_SVM_CONNECTOR_ID
 }
 
 async function waitForPrivyConnector(
@@ -250,7 +243,8 @@ async function waitForPrivyConnector(
   const getConnectorId = () =>
     client
       .getSnapshot()
-      .connectors.find((connector) => connector.name === 'Privy')?.id
+      .connectors.find((connector) => connector.id === PRIVY_SVM_CONNECTOR_ID)
+      ?.id
   const nextConnectorId = await waitForValue<WalletConnectorId | undefined>({
     getValue: getConnectorId,
     predicate: Boolean,

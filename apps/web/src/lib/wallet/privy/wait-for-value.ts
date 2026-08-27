@@ -7,6 +7,10 @@ type WaitForValueOptions<T> = {
   timeoutMs: number
 }
 
+export class WaitForValueTimeoutError extends Error {
+  override readonly name = 'WaitForValueTimeoutError'
+}
+
 export function waitForValue<T>({
   getError,
   getValue,
@@ -64,7 +68,7 @@ export function waitForValue<T>({
     cleanup.timeout = setTimeout(() => {
       if (settled) return
       finish()
-      reject(new Error(timeoutMessage))
+      reject(new WaitForValueTimeoutError(timeoutMessage))
     }, timeoutMs)
   })
 }

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { waitForValue } from './wait-for-value'
+import { WaitForValueTimeoutError, waitForValue } from './wait-for-value'
 
 afterEach(() => {
   vi.useRealTimers()
@@ -37,7 +37,12 @@ describe('waitForValue', () => {
       timeoutMs: 1_000,
     })
 
-    const assertion = expect(result).rejects.toThrow('timed out')
+    const assertion = expect(result).rejects.toEqual(
+      expect.objectContaining({
+        message: 'timed out',
+        name: WaitForValueTimeoutError.name,
+      }),
+    )
     await vi.advanceTimersByTimeAsync(1_000)
     await assertion
     expect(unsubscribe).toHaveBeenCalledOnce()

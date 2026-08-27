@@ -2,6 +2,7 @@ import { injected } from '@wagmi/connectors'
 import type { Config, Connector } from '@wagmi/core'
 import type { EvmAddress } from 'sushi/evm'
 import type { EIP1193Provider } from 'viem'
+import { createPrivyEvmProvider } from './privy-evm-provider'
 
 export const PRIVY_EVM_CONNECTOR_ID = 'io.privy'
 export const PRIVY_EVM_CONNECTOR_NAME = 'Email'
@@ -40,10 +41,12 @@ export function registerPrivyEvmConnector({
   address,
   config,
   provider,
+  switchChain,
 }: {
   address: EvmAddress
   config: Config
   provider: EIP1193Provider
+  switchChain(chainId: number): Promise<EIP1193Provider>
 }): Connector {
   const registration = registrations.get(config)
   if (
@@ -57,6 +60,8 @@ export function registerPrivyEvmConnector({
 
   unregisterPrivyEvmConnector(config)
 
+  const wagmiProvider = createPrivyEvmProvider({ provider, switchChain })
+
   const connector = config._internal.connectors.setup(
     injected({
       // Privy authentication is the source of truth for disconnects, so Wagmi
@@ -65,7 +70,7 @@ export function registerPrivyEvmConnector({
       target: {
         id: PRIVY_EVM_CONNECTOR_ID,
         name: PRIVY_EVM_CONNECTOR_NAME,
-        provider,
+        provider: wagmiProvider,
       },
     }),
   )

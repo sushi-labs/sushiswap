@@ -1,6 +1,9 @@
 'use client'
 
-import type { User as PrivyUser } from '@privy-io/react-auth'
+import type {
+  EIP1193Provider as PrivyEIP1193Provider,
+  User as PrivyUser,
+} from '@privy-io/react-auth'
 import {
   useConnectOrCreateWallet,
   useCreateWallet as useCreateEvmWallet,
@@ -11,6 +14,7 @@ import {
   useWallets,
 } from '@privy-io/react-auth'
 import {
+  type PrivyStandardWallet,
   useCreateWallet as useCreateSvmWallet,
   useExportWallet as useExportSvmWallet,
   useSignAndSendTransaction,
@@ -21,10 +25,7 @@ import { getBase58Decoder } from '@solana/kit'
 import type { Wallet as StandardWallet } from '@wallet-standard/base'
 import { useEffect, useMemo, useRef } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import {
-  clearPrivySessionMarker,
-  ensurePrivySessionMarker,
-} from 'src/lib/wallet/privy-session-marker'
+import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
 import {
   registerPrivyEvmConnector,
   unregisterPrivyEvmConnector,
@@ -45,6 +46,12 @@ import { PrivyProvider } from './privy-provider'
 
 type PrivyChainType = 'ethereum' | 'solana'
 
+function toViemProvider(provider: PrivyEIP1193Provider): EIP1193Provider {
+  // Privy and viem expose the same EIP-1193 surface with incompatible
+  // event-listener overloads.
+  return provider as unknown as EIP1193Provider
+}
+
 /**
  * Mirrors Privy's own embedded-wallet lookup, which reads `linkedAccounts`
  * rather than the wallet hooks. `createWallet()` throws for a user who already
@@ -64,8 +71,14 @@ function hasPrivyEmbeddedAccount(
   )
 }
 
-function isPrivySvmStandardWallet(wallet: StandardWallet): boolean {
-  return wallet.name === 'Privy' && 'privy:' in wallet.features
+function isPrivySvmStandardWallet(
+  wallet: StandardWallet,
+): wallet is PrivyStandardWallet {
+  return (
+    'privy:' in wallet.features &&
+    'isPrivyWallet' in wallet &&
+    wallet.isPrivyWallet === true
+  )
 }
 
 type PendingOperation = {
@@ -145,7 +158,10 @@ function PrivyRuntimeEffects() {
     [evmWallets],
   )
   const embeddedSvmWallet = useMemo(
-    () => svmWallets.find((wallet) => wallet.standardWallet?.name === 'Privy'),
+    () =>
+      svmWallets.find((wallet) =>
+        isPrivySvmStandardWallet(wallet.standardWallet),
+      ),
     [svmWallets],
   )
   // `useSolanaWallets` only yields a wallet once Privy has propagated a
@@ -294,21 +310,33 @@ function PrivyRuntimeEffects() {
         registerPrivyEvmConnector({
           address: evmWalletAddress as EvmAddress,
           config,
-          // Privy and viem expose the same EIP-1193 surface with incompatible
-          // event-listener overloads.
-          provider: provider as unknown as EIP1193Provider,
+          provider: toViemProvider(provider),
+          async switchChain(chainId) {
+            const activeWallet = latestHandlesRef.current.embeddedEvmWallet
+            if (
+              !activeWallet ||
+              activeWallet.address.toLowerCase() !==
+                evmWalletAddress.toLowerCase()
+            ) {
+              throw new Error('Privy EVM wallet is not active')
+            }
+            await activeWallet.switchChain(chainId)
+            return toViemProvider(await activeWallet.getEthereumProvider())
+          },
         })
 
         if (privyRuntimeStore.getSnapshot().evmReconnect) {
-          privyRuntimeStore.clearEvmReconnect()
-          reconnectPrivyEvmWallet(config).catch((error) => {
-            console.warn('Privy EVM auto-connect failed', error)
-          })
+          reconnectPrivyEvmWallet(config)
+            .catch((error) => {
+              console.warn('Privy EVM auto-connect failed', error)
+            })
+            .finally(() => privyRuntimeStore.clearEvmReconnect())
         }
       })
       .catch((error: unknown) => {
         if (!cancelled) {
           console.warn('Privy EVM provider setup failed', error)
+          privyRuntimeStore.clearEvmReconnect()
         }
       })
 
@@ -343,12 +371,9 @@ function PrivyRuntimeEffects() {
     }
 
     if (!authenticated) {
-      clearPrivySessionMarker()
+      setPrivySvmReconnect(false)
       privyRuntimeStore.clearEvmReconnect()
-      return
     }
-
-    ensurePrivySessionMarker()
   }, [
     authenticated,
     hasEvmAccount,

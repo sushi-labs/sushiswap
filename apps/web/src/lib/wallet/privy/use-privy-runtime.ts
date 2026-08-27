@@ -9,14 +9,14 @@ import {
 import { useSyncExternalStore } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import type { SvmAddress } from 'sushi/svm'
-import { clearPrivySessionMarker } from '../privy-session-marker'
+import { setPrivySvmReconnect } from '../privy-storage'
 import {
   PRIVY_EVM_CONNECTOR_ID,
   getPrivyEvmConnector,
 } from './privy-evm-connector'
 import { privyRuntimeStore } from './privy-runtime-store'
 import type { PrivyRuntimeReadySnapshot, PrivyRuntimeSnapshot } from './types'
-import { waitForValue } from './wait-for-value'
+import { WaitForValueTimeoutError, waitForValue } from './wait-for-value'
 
 const RUNTIME_TIMEOUT_MS = 30_000
 const CONNECTOR_TIMEOUT_MS = 10_000
@@ -36,6 +36,16 @@ export function usePrivyRuntime(): PrivyRuntimeSnapshot {
     privyRuntimeStore.getSnapshot,
     privyRuntimeStore.getSnapshot,
   )
+}
+
+export function isPrivyEvmReconnectPending(
+  snapshot: PrivyRuntimeSnapshot,
+): boolean {
+  return snapshot.evmReconnect && snapshot.status !== 'error'
+}
+
+export function usePrivyEvmReconnectPending(): boolean {
+  return isPrivyEvmReconnectPending(usePrivyRuntime())
 }
 
 function waitForPrivyRuntime(
@@ -132,15 +142,41 @@ async function waitForPrivyEvmConnector(
   return connector
 }
 
-async function waitForWagmiIdle(config: Config): Promise<void> {
-  await waitForValue({
-    getValue: () => config.state.status,
-    predicate: (status) => status !== 'connecting' && status !== 'reconnecting',
-    subscribe: (listener) =>
-      config.subscribe((state) => state.status, listener),
-    timeoutMessage: 'Wagmi reconnection timed out',
-    timeoutMs: CONNECTOR_TIMEOUT_MS,
-  })
+export async function waitForWagmiIdle(
+  config: Config,
+  timeoutMs = CONNECTOR_TIMEOUT_MS,
+): Promise<boolean> {
+  try {
+    await waitForValue({
+      getValue: () => config.state.status,
+      predicate: (status) =>
+        status !== 'connecting' && status !== 'reconnecting',
+      subscribe: (listener) =>
+        config.subscribe((state) => state.status, listener),
+      timeoutMessage: 'Wagmi reconnection timed out',
+      timeoutMs,
+    })
+    return true
+  } catch (error) {
+    if (error instanceof WaitForValueTimeoutError) return false
+    throw error
+  }
+}
+
+/**
+ * Wagmi's targeted reconnect replaces its connection map on the first
+ * success. Sushi currently enforces one EVM connection at a time, so reject a
+ * future multi-connection caller instead of silently dropping another wallet.
+ */
+export function assertPrivyReconnectIsExclusive(config: Config): void {
+  const otherConnection = getConnections(config).find(
+    (connection) => connection.connector.id !== PRIVY_EVM_CONNECTOR_ID,
+  )
+  if (!otherConnection) return
+
+  throw new Error(
+    `Privy EVM reconnect cannot replace active connector ${otherConnection.connector.id}`,
+  )
 }
 
 async function activatePrivyEvmWallet(
@@ -164,24 +200,29 @@ async function activatePrivyEvmWallet(
 
   const promise = (async () => {
     const connector = await waitForPrivyEvmConnector(config, expectedAddress)
-    await Promise.all([
-      config.storage?.removeItem(`${PRIVY_EVM_CONNECTOR_ID}.disconnected`),
-      config.storage?.setItem('recentConnectorId', PRIVY_EVM_CONNECTOR_ID),
-    ])
 
     // Wagmi's reconnect action has a process-wide lock. The initial provider
     // reconnect can still be finishing when Privy's lazy connector appears,
     // so wait for it and retry once if another reconnect wins the race.
     for (let attempt = 0; attempt < 2; attempt++) {
       await waitForWagmiIdle(config)
+      // Wagmi publishes its idle state synchronously before releasing the
+      // module-level reconnect lock. waitForValue resumes in a microtask, after
+      // that lock has been released. A timeout still proceeds safely: a busy
+      // reconnect returns no connections and the next iteration retries.
       const currentAddress = getConnectedPrivyAddress(config, expectedAddress)
       if (currentAddress) return currentAddress
 
+      assertPrivyReconnectIsExclusive(config)
       const connections = await reconnect(config, { connectors: [connector] })
       const address = connections.find(
         (connection) => connection.connector.id === PRIVY_EVM_CONNECTOR_ID,
       )?.accounts[0] as EvmAddress | undefined
       if (address?.toLowerCase() === expectedAddress.toLowerCase()) {
+        await config.storage?.setItem(
+          'recentConnectorId',
+          PRIVY_EVM_CONNECTOR_ID,
+        )
         return address
       }
     }
@@ -216,7 +257,7 @@ export async function connectPrivySvmWallet(): Promise<SvmAddress> {
 
 export async function logoutPrivyRuntime(): Promise<void> {
   const snapshot = privyRuntimeStore.getSnapshot()
-  clearPrivySessionMarker()
+  setPrivySvmReconnect(false)
   // Drop the pending auto-reconnect synchronously so a later login in another
   // namespace cannot silently reconnect the wallet the user just disconnected.
   privyRuntimeStore.clearEvmReconnect()

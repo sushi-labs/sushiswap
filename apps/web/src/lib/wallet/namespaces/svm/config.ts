@@ -5,6 +5,8 @@ export enum SvmAdapterId {
   Privy = 'svm-privy',
 }
 
+export const PRIVY_SVM_CONNECTOR_ID = 'wallet-standard:privy'
+
 export const PRIVY_SVM_WALLET: Wallet = {
   id: 'svm:privy',
   namespace: 'svm',

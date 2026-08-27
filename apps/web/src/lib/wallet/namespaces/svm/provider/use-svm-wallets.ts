@@ -4,12 +4,15 @@ import { useWalletInfo } from '@solana/connector'
 import { useMemo } from 'react'
 import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import type { WalletWithState } from '../../../types'
-import { PRIVY_SVM_WALLET, SVM_WALLETS, SvmAdapterId } from '../config'
-
-const PrivyId = 'wallet-standard:privy'
+import {
+  PRIVY_SVM_CONNECTOR_ID,
+  PRIVY_SVM_WALLET,
+  SVM_WALLETS,
+  SvmAdapterId,
+} from '../config'
 
 function isPrivy(connectorId: string): boolean {
-  return connectorId === PrivyId
+  return connectorId === PRIVY_SVM_CONNECTOR_ID
 }
 
 type SvmConnectorWallet = ReturnType<typeof useWalletInfo>['wallets'][number]

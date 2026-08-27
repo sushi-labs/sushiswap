@@ -3,13 +3,21 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { hasPersistedConnector } from 'src/lib/wagmi/config/persisted-connectors'
 import {
-  PRIVY_SESSION_MARKER_KEY,
-  hasPrivySessionMarker,
-} from 'src/lib/wallet/privy-session-marker'
+  hasStoredPrivySession,
+  isPrivySessionStorageKey,
+} from 'src/lib/wallet/privy-storage'
+import { isLivePrivyE2eEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
 import { PRIVY_EVM_CONNECTOR_ID } from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 
 type PrivyRuntimeComponent = React.ComponentType
+
+function loadPrivyRuntime(): Promise<{ PrivyRuntime: PrivyRuntimeComponent }> {
+  if (process.env.NEXT_PUBLIC_APP_ENV === 'test' && !isLivePrivyE2eEnabled()) {
+    return import('./privy-test-runtime')
+  }
+  return import('./privy-runtime')
+}
 
 function requestSessionRuntime(): void {
   privyRuntimeStore.requestRuntime({
@@ -26,15 +34,15 @@ export function PrivyRuntimeGate() {
   const [Runtime, setRuntime] = useState<PrivyRuntimeComponent>()
 
   useEffect(() => {
-    if (hasPrivySessionMarker()) {
+    if (hasStoredPrivySession()) {
       requestSessionRuntime()
     }
   }, [])
 
   useEffect(() => {
     function onStorage(event: StorageEvent) {
-      if (event.key !== PRIVY_SESSION_MARKER_KEY) return
-      if (event.newValue) {
+      if (!isPrivySessionStorageKey(event.key)) return
+      if (hasStoredPrivySession()) {
         requestSessionRuntime()
       }
     }
@@ -50,7 +58,7 @@ export function PrivyRuntimeGate() {
     if (!requested || Runtime || status === 'error') return
 
     privyRuntimeStore.setLoading()
-    import('./privy-runtime')
+    loadPrivyRuntime()
       .then(({ PrivyRuntime }) => {
         if (!cancelled) setRuntime(() => PrivyRuntime)
       })

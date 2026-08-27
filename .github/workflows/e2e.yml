@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths:
-      - ".github/workflows/apps-web-e2e.yml"
+      - ".github/workflows/e2e.yml"
       - "apps/web/**"
       - "config/nextjs/**"
       - "config/tailwindcss/**"
@@ -24,7 +24,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     # runs-on: buildjet-4vcpu-ubuntu-2204
-    timeout-minutes: 15
+    timeout-minutes: 25
     strategy:
       matrix:
         block-number: [71015789]
@@ -61,6 +61,15 @@ jobs:
           # Data API
           NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
           NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
+
+      - name: Test live Privy login and reconnect
+        run: pnpm --filter web test:privy-live
+        timeout-minutes: 12
+        env:
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
+          PRIVY_TEST_EMAIL: ${{ secrets.PRIVY_TEST_EMAIL }}
+          PRIVY_TEST_OTP: ${{ secrets.PRIVY_TEST_OTP }}
 
       - name: Upload test results
         if: always()
