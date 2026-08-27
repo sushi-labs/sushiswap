@@ -23,17 +23,25 @@ function CardHeadingSkeleton() {
   )
 }
 
-export function TokenDetailSkeleton({ header }: { header?: ReactNode } = {}) {
+export function TokenDetailSkeleton({
+  header,
+  bodyOnly = false,
+}: {
+  header?: ReactNode
+  bodyOnly?: boolean
+} = {}) {
+  const renderedHeader = bodyOnly ? false : header
+
   return (
     <Container
       maxWidth="8xl"
-      className="w-full px-4 pb-14 pt-6 sm:pt-8"
+      className={bodyOnly ? 'contents' : 'w-full px-4 pb-14 pt-6 sm:pt-8'}
       aria-busy="true"
       aria-label="Loading token details"
     >
       <span className="sr-only">Loading token details</span>
 
-      {header ?? (
+      {renderedHeader ?? (
         <>
           <div className="mb-5 flex items-center gap-2">
             <SkeletonBox className="h-4 w-16 rounded-sm" />
