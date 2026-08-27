@@ -1,7 +1,7 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { MetricStrip, MetricStripItem } from './_ui/metric-strip'
-import { TokenGridSkeleton } from './_ui/token-grid'
+import { MetricStrip, MetricStripItem } from '../_ui/metric-strip'
+import { TokenGridSkeleton } from '../_ui/token-grid'
 
 const METRIC_SKELETONS = [
   { key: 'tokens', labelWidth: 'w-24', valueWidth: 'w-20' },
