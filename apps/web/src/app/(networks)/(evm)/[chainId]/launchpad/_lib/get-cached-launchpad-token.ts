@@ -3,6 +3,8 @@ import { unstable_cache } from 'next/cache'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
 
+const LAUNCHPAD_TOKEN_REVALIDATE_SECONDS = 60 * 60
+
 class LaunchpadTokenNotFoundError extends Error {}
 
 export async function getCachedLaunchpadToken({
@@ -23,7 +25,7 @@ export async function getCachedLaunchpadToken({
       return token
     },
     ['launchpad', 'token', `${chainId}:${address}`],
-    { revalidate: 60 },
+    { revalidate: LAUNCHPAD_TOKEN_REVALIDATE_SECONDS },
   )
 
   try {

@@ -21,6 +21,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SkeletonBox,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -284,7 +285,11 @@ function TokenHeader({
               <span className="text-lg font-medium text-perps-muted-50 mt-0.5">
                 ${token.symbol}
               </span>
-              {indexingStatus ? <StatusPill status={indexingStatus} /> : null}
+              {indexingStatus ? (
+                <StatusPill status={indexingStatus} />
+              ) : (
+                <SkeletonBox className="h-6 w-12 rounded-full" />
+              )}
               <LaunchpadProviderBadge provider={token.provider} />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">

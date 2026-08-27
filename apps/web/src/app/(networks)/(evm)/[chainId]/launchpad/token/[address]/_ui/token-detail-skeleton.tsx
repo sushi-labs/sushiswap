@@ -57,6 +57,7 @@ export function TokenDetailSkeleton({
                   <SkeletonBox className="h-8 w-36 rounded-lg sm:h-9 sm:w-52" />
                   <SkeletonBox className="h-7 w-12 rounded-md" />
                   <SkeletonBox className="h-6 w-12 rounded-full" />
+                  <SkeletonBox className="h-7 w-20 rounded-full" />
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-3">
                   <SkeletonBox className="h-4 w-32 rounded-sm" />
