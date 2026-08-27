@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import { Suspense } from 'react'
+import { type EvmAddress, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
 import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
 import {
   getLaunchpadCardValues,
@@ -14,8 +15,9 @@ import {
   getLaunchpadTokenUrl,
   serializeLaunchpadJsonLd,
 } from '../../_lib/launchpad-seo'
-import { isLaunchpadChainId } from '../../constants'
+import { type LaunchpadChainId, isLaunchpadChainId } from '../../constants'
 import { TokenDetailPage } from './_ui/token-detail-page'
+import { TokenDetailSkeleton } from './_ui/token-detail-skeleton'
 
 type LaunchpadTokenPageParams = Promise<{
   chainId: string
@@ -78,14 +80,13 @@ export async function generateMetadata({
   }
 }
 
-export default async function LaunchpadTokenPage({
-  params,
+async function LaunchpadTokenContent({
+  chainId,
+  address,
 }: {
-  params: LaunchpadTokenPageParams
+  chainId: LaunchpadChainId
+  address: EvmAddress
 }) {
-  const result = await getTokenParams(params)
-  if (!result) return notFound()
-  const { address, chainId } = result
   const token = await getCachedLaunchpadToken({ chainId, address })
   if (!token) return notFound()
 
@@ -103,5 +104,20 @@ export default async function LaunchpadTokenPage({
         initialToken={token}
       />
     </>
+  )
+}
+
+export default async function LaunchpadTokenPage({
+  params,
+}: {
+  params: LaunchpadTokenPageParams
+}) {
+  const result = await getTokenParams(params)
+  if (!result) return notFound()
+
+  return (
+    <Suspense fallback={<TokenDetailSkeleton />}>
+      <LaunchpadTokenContent {...result} />
+    </Suspense>
   )
 }
