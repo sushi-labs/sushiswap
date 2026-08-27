@@ -33,7 +33,7 @@ export function TokenAvatar({
   const pixels = SIZE_IN_PIXELS[size]
 
   return (
-    <span className="relative inline-flex shrink-0">
+    <span className="relative inline-flex shrink-0 align-top">
       <Currency.Icon
         disableLink
         currency={currency}
