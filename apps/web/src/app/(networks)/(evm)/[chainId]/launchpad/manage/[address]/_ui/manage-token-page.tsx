@@ -105,7 +105,7 @@ export function ManageTokenPage({
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
-  initialToken: LaunchpadToken | null
+  initialToken: LaunchpadToken
 }) {
   const chainKey = getEvmChainById(chainId).key
   const { address: connectedAddress, chainId: connectedChainId } =
