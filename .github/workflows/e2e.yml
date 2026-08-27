@@ -35,6 +35,11 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
       - name: Install dependencies
         uses: ./.github/actions/install
         env: 

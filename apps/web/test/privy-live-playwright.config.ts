@@ -30,6 +30,8 @@ export default defineConfig({
       url: `http://localhost:${port}/solana/swap`,
       reuseExistingServer: false,
       timeout: 600_000,
+      stdout: 'pipe',
+      stderr: 'pipe',
       gracefulShutdown: {
         signal: 'SIGTERM',
         timeout: 5_000,
