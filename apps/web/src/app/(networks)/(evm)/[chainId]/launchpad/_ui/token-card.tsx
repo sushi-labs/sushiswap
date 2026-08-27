@@ -122,6 +122,7 @@ export function TokenCard({
             <div className="flex w-full min-w-0 justify-center text-center">
               <Link
                 href={href}
+                prefetch={manage ? 'auto' : true}
                 aria-label={`${manage ? 'Manage' : 'View'} ${token.name}`}
                 title={token.name}
                 className="mx-auto flex max-w-full min-w-0 items-center justify-center text-base font-semibold text-perps-muted transition after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-perps-blue/50 group-hover:text-perps-blue"
