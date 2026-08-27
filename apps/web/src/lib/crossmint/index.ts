@@ -26,6 +26,8 @@ export {
   type CrossmintTokenCheckoutDialogProps,
 } from './components/crossmint-token-checkout-dialog'
 export {
+  CROSSMINT_STAGING_XMEME,
+  type CrossmintCheckoutCatalogToken,
   type CrossmintCheckoutToken,
   type CrossmintConfiguredTokenChainId,
   CROSSMINT_CLIENT_SIDE_API_KEY,
@@ -50,6 +52,7 @@ export type {
 export type {
   CrossmintCheckoutTokenAvailability,
   CrossmintCheckoutTokenClass,
+  CrossmintCheckoutTokenEntry,
   CrossmintCheckoutTokenFeatures,
   CrossmintCheckoutTokensResponse,
 } from './types'

@@ -3,22 +3,15 @@
 import { Button, Card, Tabs, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { useState } from 'react'
 import {
+  CROSSMINT_STAGING_XMEME,
   CrossmintBuyButton,
   type CrossmintCheckoutToken,
 } from 'src/lib/crossmint'
 import { EvmChainId, USDC } from 'sushi/evm'
-import { SVM_USDC, SvmChainId, SvmToken, svmAddress } from 'sushi/svm'
+import { SVM_USDC, SvmChainId } from 'sushi/svm'
 
 type BuyKind = 'memecoin' | 'stablecoin'
 type StablecoinNetwork = 'base' | 'solana'
-
-const XMEME = new SvmToken({
-  address: svmAddress('7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu'),
-  chainId: SvmChainId.SOLANA,
-  decimals: 9,
-  name: 'Crossmint Meme',
-  symbol: 'XMEME',
-})
 
 export function CrossmintBuyFlow() {
   const [buyKind, setBuyKind] = useState<BuyKind>('memecoin')
@@ -26,7 +19,7 @@ export function CrossmintBuyFlow() {
     useState<StablecoinNetwork>('base')
   const token: CrossmintCheckoutToken =
     buyKind === 'memecoin'
-      ? XMEME
+      ? CROSSMINT_STAGING_XMEME
       : stablecoinNetwork === 'base'
         ? USDC[EvmChainId.BASE]
         : SVM_USDC[SvmChainId.SOLANA]

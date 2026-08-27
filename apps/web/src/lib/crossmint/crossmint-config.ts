@@ -1,6 +1,13 @@
 import { getChainById } from 'sushi'
-import { EvmChainId, STABLES } from 'sushi/evm'
-import { SVM_STABLES, SvmChainId } from 'sushi/svm'
+import { EvmChainId, STABLES, USDC } from 'sushi/evm'
+import { STELLAR_USDC, StellarChainId } from 'sushi/stellar'
+import {
+  SVM_STABLES,
+  SVM_USDC,
+  SvmChainId,
+  SvmToken,
+  svmAddress,
+} from 'sushi/svm'
 
 export const CROSSMINT_CLIENT_SIDE_API_KEY =
   process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_SIDE_API_KEY?.trim()
@@ -13,6 +20,9 @@ export const CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS = [
 export type CrossmintConfiguredTokenChainId =
   (typeof CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS)[number]
 export type CrossmintCheckoutToken = TokenFor<EvmChainId | SvmChainId>
+export type CrossmintCheckoutCatalogToken = TokenFor<
+  EvmChainId | SvmChainId | StellarChainId
+>
 export type CrossmintEnvironment = 'production' | 'staging'
 export type CrossmintWalletNamespace = 'evm' | 'svm'
 
@@ -20,6 +30,9 @@ const CROSSMINT_API_URLS = {
   production: 'https://www.crossmint.com/api',
   staging: 'https://staging.crossmint.com/api',
 } as const satisfies Record<CrossmintEnvironment, string>
+
+const CROSSMINT_STAGING_XMEME_ADDRESS =
+  '7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu'
 
 export interface SerializedCrossmintToken {
   address: string
@@ -57,9 +70,37 @@ const STAGING_TARGETS = {
     asset: 'XMEME',
     linkChain: 'solana',
     network: 'Solana Devnet',
-    tokenLocator: 'solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu',
+    tokenLocator: `solana:${CROSSMINT_STAGING_XMEME_ADDRESS}`,
+  },
+  stellarUsdc: {
+    asset: 'USDC',
+    linkChain: 'stellar',
+    network: 'Stellar Testnet',
+    tokenLocator:
+      'stellar:CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA',
   },
 } as const
+
+export const CROSSMINT_STAGING_XMEME = new SvmToken({
+  address: svmAddress(CROSSMINT_STAGING_XMEME_ADDRESS),
+  chainId: SvmChainId.SOLANA,
+  decimals: 9,
+  name: 'Crossmint Meme',
+  symbol: 'XMEME',
+})
+
+const CROSSMINT_STAGING_CHECKOUT_TOKENS = new Map<
+  string,
+  CrossmintCheckoutCatalogToken
+>([
+  [STAGING_TARGETS.baseUsdc.tokenLocator, USDC[EvmChainId.BASE]],
+  [STAGING_TARGETS.solanaUsdc.tokenLocator, SVM_USDC[SvmChainId.SOLANA]],
+  [STAGING_TARGETS.solanaXmeme.tokenLocator, CROSSMINT_STAGING_XMEME],
+  [
+    STAGING_TARGETS.stellarUsdc.tokenLocator,
+    STELLAR_USDC[StellarChainId.STELLAR],
+  ],
+])
 
 function isSameAddress(first: string, second: string): boolean {
   return first.toLowerCase() === second.toLowerCase()
@@ -167,6 +208,12 @@ export function getCrossmintEnvironment(apiKey: string): CrossmintEnvironment {
 
 export function getCrossmintApiUrl(environment: CrossmintEnvironment): string {
   return CROSSMINT_API_URLS[environment]
+}
+
+export function getCrossmintStagingCheckoutToken(
+  tokenLocator: string,
+): CrossmintCheckoutCatalogToken | undefined {
+  return CROSSMINT_STAGING_CHECKOUT_TOKENS.get(tokenLocator)
 }
 
 export function isCrossmintConfiguredTokenChainId(

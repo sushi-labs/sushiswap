@@ -6,12 +6,18 @@ import {
   CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS,
   type CrossmintCheckoutSupportedChainId,
 } from 'src/config'
-import { ChainId, getChainById } from 'sushi'
 import {
-  fetchCrossmintCheckoutTokensPage,
-  getAvailableCrossmintCheckoutTokens,
-} from '../crossmint-checkout-tokens'
+  chainIdsToCrossmintName,
+  getCrossmintCheckoutTokenEntries,
+} from '../crossmint-checkout-token-catalog'
+import { fetchCrossmintCheckoutTokensPage } from '../crossmint-checkout-tokens'
+import {
+  CROSSMINT_CLIENT_SIDE_API_KEY,
+  getCrossmintEnvironment,
+} from '../crossmint-config'
 import type { CrossmintCheckoutTokenClass } from '../types'
+
+export { chainIdsToCrossmintName } from '../crossmint-checkout-token-catalog'
 
 export const DEFAULT_CROSSMINT_CHECKOUT_TOKEN_CLASSES = [
   'memecoin',
@@ -26,24 +32,6 @@ export interface UseCrossmintCheckoutTokensInput {
   tokenClasses?: readonly CrossmintCheckoutTokenClass[]
 }
 
-const CROSSMINT_CHAIN_NAMES: Partial<Record<ChainId, string>> = {
-  [ChainId.ARBITRUM]: 'arbitrum',
-  [ChainId.BSC]: 'bsc',
-  [ChainId.MODE]: 'mode',
-  [ChainId.OPTIMISM]: 'optimism',
-  [ChainId.ROBINHOOD]: 'robinhood-chain',
-}
-
-export function chainIdsToCrossmintName(
-  chainIds: readonly CrossmintCheckoutSupportedChainId[],
-): string[] {
-  return chainIds.map(
-    (chainId) =>
-      CROSSMINT_CHAIN_NAMES[chainId] ??
-      getChainById(chainId).name.toLowerCase(),
-  )
-}
-
 export function useCrossmintCheckoutTokens({
   chainIds = CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS,
   enabled = true,
@@ -53,17 +41,30 @@ export function useCrossmintCheckoutTokens({
   const query = useInfiniteQuery({
     queryKey: [
       'crossmint',
-      'checkout-tokens',
+      'checkout-token-catalog',
       { chainIds, limit, tokenClasses },
     ],
-    queryFn: ({ pageParam, signal }) => {
-      return fetchCrossmintCheckoutTokensPage({
+    queryFn: async ({ pageParam, signal }) => {
+      if (!CROSSMINT_CLIENT_SIDE_API_KEY) {
+        throw new Error('NEXT_PUBLIC_CROSSMINT_CLIENT_SIDE_API_KEY is not set')
+      }
+
+      const response = await fetchCrossmintCheckoutTokensPage({
         chains: chainIdsToCrossmintName(chainIds),
         cursor: pageParam ?? undefined,
         limit,
         signal,
         tokenClasses,
       })
+
+      return {
+        ...response,
+        data: await getCrossmintCheckoutTokenEntries({
+          availabilities: response.data,
+          chainIds,
+          environment: getCrossmintEnvironment(CROSSMINT_CLIENT_SIDE_API_KEY),
+        }),
+      }
     },
     enabled,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -72,10 +73,7 @@ export function useCrossmintCheckoutTokens({
   })
 
   const data = useMemo(
-    () =>
-      query.data
-        ? getAvailableCrossmintCheckoutTokens(query.data.pages)
-        : undefined,
+    () => query.data?.pages.flatMap((page) => page.data),
     [query.data],
   )
 

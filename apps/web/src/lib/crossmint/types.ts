@@ -1,4 +1,7 @@
-import type { SerializedCrossmintToken } from './crossmint-config'
+import type {
+  CrossmintCheckoutCatalogToken,
+  SerializedCrossmintToken,
+} from './crossmint-config'
 
 export type CrossmintCheckoutTokenClass = 'memecoin' | 'onramp'
 
@@ -10,6 +13,13 @@ export interface CrossmintCheckoutTokenAvailability {
   available: boolean
   features: CrossmintCheckoutTokenFeatures
   token: string
+}
+
+export interface CrossmintCheckoutTokenEntry {
+  available: true
+  features: CrossmintCheckoutTokenFeatures
+  locator: string
+  token: CrossmintCheckoutCatalogToken
 }
 
 export interface CrossmintCheckoutTokensResponse {

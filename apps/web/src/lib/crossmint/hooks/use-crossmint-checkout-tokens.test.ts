@@ -17,7 +17,12 @@ describe('chainIdsToCrossmintName', () => {
 
   it('uses lowercase Sushi display names when they match Crossmint', () => {
     expect(
-      chainIdsToCrossmintName([ChainId.BASE, ChainId.POLYGON, ChainId.SOLANA]),
-    ).toEqual(['base', 'polygon', 'solana'])
+      chainIdsToCrossmintName([
+        ChainId.BASE,
+        ChainId.POLYGON,
+        ChainId.SOLANA,
+        ChainId.STELLAR,
+      ]),
+    ).toEqual(['base', 'polygon', 'solana', 'stellar'])
   })
 })

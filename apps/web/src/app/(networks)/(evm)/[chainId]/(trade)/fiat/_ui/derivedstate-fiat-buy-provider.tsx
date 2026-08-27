@@ -36,8 +36,6 @@ const DerivedStateFiatBuyContext = createContext<State | undefined>(undefined)
 interface DerivedStateFiatBuyProviderProps {
   children: ReactNode
   chainId?: CrossmintSupportedChainId
-  initialFiatAmount?: string
-  initialPaymentCurrency?: CrossmintSupportedFiatCurrency
 }
 
 function isValidFiatAmount(value: string): boolean {
@@ -47,8 +45,6 @@ function isValidFiatAmount(value: string): boolean {
 function DerivedstateFiatBuyProvider({
   children,
   chainId: providedChainId,
-  initialFiatAmount = '50',
-  initialPaymentCurrency = 'usd',
 }: DerivedStateFiatBuyProviderProps) {
   const { chainId: routeChainId } = useParams<{ chainId: string }>()
   const pathname = usePathname()
@@ -65,12 +61,12 @@ function DerivedstateFiatBuyProvider({
   const fiatAmountString =
     fiatAmountParam !== null && isValidFiatAmount(fiatAmountParam)
       ? fiatAmountParam
-      : initialFiatAmount
+      : '50'
   const paymentCurrency =
     paymentCurrencyParam !== null &&
     isCrossmintSupportedFiatCurrency(paymentCurrencyParam)
       ? paymentCurrencyParam
-      : initialPaymentCurrency
+      : 'usd'
 
   const updateSearchParam = useCallback(
     (name: string, value: string | null) => {

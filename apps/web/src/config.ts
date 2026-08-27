@@ -219,7 +219,7 @@ export const CROSSMINT_CHECKOUT_SUPPORTED_CHAIN_IDS = [
   ChainId.MANTLE,
   ChainId.MODE,
   ChainId.APE,
-  ChainId.MONAD,
+  // ChainId.MONAD,
   //non-evm
   ChainId.STELLAR,
   ChainId.APTOS,
