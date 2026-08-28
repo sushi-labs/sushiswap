@@ -123,3 +123,5 @@ jobs:
           TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Test packages
         run: pnpm exec turbo run test --filter=./packages/*
+      - name: Test apps
+        run: pnpm exec turbo run test:unit
