@@ -103,6 +103,52 @@ describe('launchpad TradingView datafeed', () => {
     })
   })
 
+  it('expands the history window once for sparse tokens', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const from = to - 300 * 5 * 60
+    const olderCandle = createSnapshot('40', to - 1_500 * 5 * 60).nodes[0]!
+    const recentCandle = {
+      ...olderCandle,
+      timestamp: to - 60,
+    }
+    mocks.getLaunchpadCandles
+      .mockReset()
+      .mockResolvedValueOnce({ streamCursor: '40', nodes: [recentCandle] })
+      .mockResolvedValueOnce({
+        streamCursor: '40',
+        nodes: [olderCandle, recentCandle],
+      })
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+
+    const bars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        { from, to, countBack: 300, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(bars).toHaveLength(2)
+    expect(bars[0]?.time).toBe(olderCandle.timestamp * 1_000)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(1, {
+      input: expect.objectContaining({
+        interval: 'FIVE_MINUTES',
+        from: Math.floor(from / (5 * 60)) * (5 * 60),
+        to,
+      }),
+    })
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
+      input: expect.objectContaining({
+        interval: 'FIVE_MINUTES',
+        from: Math.ceil((to - 2_000 * 5 * 60) / (5 * 60)) * (5 * 60),
+        to,
+      }),
+    })
+  })
+
   it('does not synthesize candles for no-trade intervals', async () => {
     const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
     const symbolInfo = await new Promise<LibrarySymbolInfo>((resolve) => {
@@ -202,6 +248,7 @@ describe('launchpad TradingView datafeed', () => {
 
     expect(bars).toHaveLength(1)
     expect(bars[0]?.time).toBe(olderSnapshot.nodes[0]?.timestamp * 1_000)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(3)
     expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
       input: expect.objectContaining({
         interval: 'ONE_MINUTE',
@@ -234,8 +281,9 @@ describe('launchpad TradingView datafeed', () => {
       })
       .mockResolvedValueOnce({
         streamCursor: '42',
-        nodes: [previousCandle],
+        nodes: [previousCandle, currentCandle],
       })
+      .mockResolvedValueOnce({ streamCursor: '42', nodes: [] })
     const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
@@ -248,18 +296,18 @@ describe('launchpad TradingView datafeed', () => {
       )
     })
 
-    expect(bars).toHaveLength(1)
-    expect(bars[0]).toMatchObject({
+    expect(bars).toHaveLength(2)
+    expect(bars[1]).toMatchObject({
       open: previousCandle.close,
       high: currentCandle.high,
       low: previousCandle.close,
       close: currentCandle.close,
     })
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(3, {
       input: expect.objectContaining({
         interval: 'ONE_MINUTE',
-        from: Math.ceil((currentCandle.timestamp - 2_000 * 60) / 60) * 60,
-        to: currentCandle.timestamp,
+        from: Math.ceil((previousCandle.timestamp - 2_000 * 60) / 60) * 60,
+        to: previousCandle.timestamp,
       }),
     })
   })
@@ -340,7 +388,7 @@ describe('launchpad TradingView datafeed', () => {
         datafeed.getBars(
           SYMBOL_INFO,
           RESOLUTION,
-          { ...range, countBack: 10, firstDataRequest: true },
+          { ...range, countBack: 1, firstDataRequest: true },
           (bars) => resolve(bars),
           reject,
         )

@@ -389,7 +389,11 @@ export function createLaunchpadDatafeed({
         const { seconds } = getResolutionConfig(resolution)
         const currentTime = getUnixTime(new Date())
         const requestedTo = Math.min(to, currentTime)
-        const requestedFrom = Math.min(from, requestedTo - seconds * countBack)
+        const requestedFrom = getCandleRequestFrom(
+          Math.min(from, requestedTo - seconds * countBack),
+          requestedTo,
+          seconds,
+        )
 
         if (requestedFrom >= requestedTo) {
           onResult([], { noData: true })
@@ -412,30 +416,46 @@ export function createLaunchpadDatafeed({
         if (!canUseCachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
-        let bars = await getSnapshotBars({
-          snapshot,
-          resolution,
+        // TradingView asks for progressively older ranges when a response does
+        // not contain `countBack` bars. Launchpad candles omit empty buckets,
+        // so sparse tokens can otherwise trigger a long serial request
+        // waterfall. Expand once to the largest backend-supported window and
+        // return the extra history in the same response.
+        const expandedFrom = getCandleRequestFrom(
+          requestedTo - seconds * MAX_CANDLES_PER_REQUEST,
+          requestedTo,
+          seconds,
+        )
+        const snapshotBars = getBarsInRange(
+          snapshot.nodes,
           priceMultiplier,
-          from: requestedFrom,
-          to: requestedTo,
-        })
-
-        const backfillFrom = requestedTo - seconds * MAX_CANDLES_PER_REQUEST
+          requestedFrom,
+          requestedTo,
+        )
+        let bars: Bar[]
         if (
           !canUseCachedSnapshot &&
-          bars.length === 0 &&
-          requestedFrom > backfillFrom
+          snapshotBars.length < countBack &&
+          requestedFrom > expandedFrom
         ) {
-          const backfillSnapshot = await fetchCandleSnapshot({
+          const expandedSnapshot = await fetchCandleSnapshot({
             resolution,
-            from: backfillFrom,
+            from: expandedFrom,
             to: requestedTo,
           })
           bars = await getSnapshotBars({
-            snapshot: backfillSnapshot,
+            snapshot: expandedSnapshot,
             resolution,
             priceMultiplier,
-            from: backfillFrom,
+            from: expandedFrom,
+            to: requestedTo,
+          })
+        } else {
+          bars = await getSnapshotBars({
+            snapshot,
+            resolution,
+            priceMultiplier,
+            from: requestedFrom,
             to: requestedTo,
           })
         }
