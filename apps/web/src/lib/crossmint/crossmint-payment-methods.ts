@@ -23,12 +23,12 @@ export function getCrossmintAvailableFiatPaymentMethods(
 ): CrossmintFiatPaymentMethod[] {
   const methods: CrossmintFiatPaymentMethod[] = []
 
-  if (allowedMethods.applePay && availability.applePay) {
-    methods.push('applePay')
-  }
-
   if (allowedMethods.googlePay && availability.googlePay) {
     methods.push('googlePay')
+  }
+
+  if (allowedMethods.applePay && availability.applePay) {
+    methods.push('applePay')
   }
 
   if (allowedMethods.card) {

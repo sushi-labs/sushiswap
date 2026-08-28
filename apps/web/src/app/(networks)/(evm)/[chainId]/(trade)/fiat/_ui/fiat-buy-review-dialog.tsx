@@ -308,7 +308,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                   </span>
                   <span className="flex items-center gap-1 font-medium text-gray-700 dark:text-slate-400">
                     {isCreatingOrder ? (
-                      <SkeletonText className="w-14" fontSize="sm" />
+                      <SkeletonText className="min-w-14" fontSize="sm" />
                     ) : (
                       feeSummary
                     )}
@@ -468,9 +468,20 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                     receiptEmail={visibleReceiptEmail}
                   />
                 ) : isCreatingOrder ? (
-                  <Button type="button" className="w-full" size="xl" loading>
-                    Loading payment options
-                  </Button>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <span className="font-medium text-gray-700 dark:text-slate-300">
+                        Pay with
+                      </span>
+                      <div className="flex items-center gap-1 font-semibold text-gray-900 dark:text-slate-100">
+                        <SkeletonText className="min-w-14" fontSize="sm" />
+                        <ChevronDownIcon className={classNames('h-4 w-4 ')} />
+                      </div>
+                    </div>
+                    <Button type="button" className="w-full" size="xl" loading>
+                      Loading payment options
+                    </Button>
+                  </div>
                 ) : null}
               </div>
             </DialogContent>

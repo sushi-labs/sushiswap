@@ -16,9 +16,7 @@ import {
   CROSSMINT_FIAT_PAYMENT_METHOD_LABELS,
   type CrossmintFiatPaymentMethod,
   type CrossmintFiatPaymentMethods,
-  type CrossmintPaymentMethodAvailability,
   getCrossmintAvailableFiatPaymentMethods,
-  isCrossmintGooglePayUserAgent,
 } from '../crossmint-payment-methods'
 
 export type { CrossmintFiatPaymentMethods } from '../crossmint-payment-methods'
@@ -79,21 +77,21 @@ function CrossmintOrderCheckoutContent({
   const { resolvedTheme } = useTheme()
   const { order } = useCrossmintCheckout()
   const completionReported = useRef(false)
-  const [paymentMethodAvailability, setPaymentMethodAvailability] =
-    useState<CrossmintPaymentMethodAvailability>()
   const [selectedMethod, setSelectedMethod] =
     useState<CrossmintFiatPaymentMethod>()
   const [showPaymentMethods, setShowPaymentMethods] = useState(false)
   const isComplete = order?.phase === 'delivery' || order?.phase === 'completed'
   const availableMethods = useMemo(
     () =>
-      paymentMethodAvailability
-        ? getCrossmintAvailableFiatPaymentMethods(
-            { applePay, card, googlePay },
-            paymentMethodAvailability,
-          )
-        : [],
-    [applePay, card, googlePay, paymentMethodAvailability],
+      getCrossmintAvailableFiatPaymentMethods(
+        { applePay, card, googlePay },
+        {
+          applePay: true,
+          googlePay: true,
+        },
+      ),
+
+    [applePay, card, googlePay],
   )
 
   useEffect(() => {
@@ -104,13 +102,6 @@ function CrossmintOrderCheckoutContent({
   }, [isComplete, onComplete, orderId])
 
   useEffect(() => {
-    setPaymentMethodAvailability({
-      applePay: canUseApplePay(),
-      googlePay: isCrossmintGooglePayUserAgent(navigator.userAgent),
-    })
-  }, [])
-
-  useEffect(() => {
     if (availableMethods.length === 0) return
 
     setSelectedMethod((currentMethod) =>
@@ -119,10 +110,6 @@ function CrossmintOrderCheckoutContent({
         : availableMethods[0],
     )
   }, [availableMethods])
-
-  if (paymentMethodAvailability && availableMethods.length === 0) {
-    return <p role="alert">No payment methods are available.</p>
-  }
 
   if (!selectedMethod) {
     return (
@@ -141,7 +128,7 @@ function CrossmintOrderCheckoutContent({
 
   return (
     <div className={classNames(className)}>
-      <div className="flex items-center justify-between gap-2 text-sm">
+      <div className="flex items-center justify-between gap-2 text-sm pb-1">
         <span className="font-medium text-gray-700 dark:text-slate-300">
           Pay with
         </span>
@@ -168,7 +155,12 @@ function CrossmintOrderCheckoutContent({
       </div>
 
       <Collapsible open={showPaymentMethods && canChangePaymentMethod}>
-        <div className="grid grid-cols-2 gap-2 pb-1">
+        <div
+          className="grid gap-2 pb-1"
+          style={{
+            gridTemplateColumns: `repeat(${availableMethods.length}, minmax(0, 1fr))`,
+          }}
+        >
           {availableMethods.map((method) => (
             <Button
               key={method}
@@ -187,7 +179,7 @@ function CrossmintOrderCheckoutContent({
       </Collapsible>
 
       <CrossmintEmbeddedCheckout
-        key={`${orderId}:${selectedMethod}`}
+        key={`${orderId}`}
         orderId={orderId}
         clientSecret={clientSecret}
         payment={{
@@ -237,18 +229,18 @@ function CrossmintOrderCheckoutContent({
   )
 }
 
-interface ApplePayWindow extends Window {
-  ApplePaySession?: {
-    canMakePayments(): boolean
-  }
-}
+// interface ApplePayWindow extends Window {
+//   ApplePaySession?: {
+//     canMakePayments(): boolean
+//   }
+// }
 
-function canUseApplePay(): boolean {
-  try {
-    return Boolean(
-      (window as ApplePayWindow).ApplePaySession?.canMakePayments(),
-    )
-  } catch {
-    return false
-  }
-}
+// function canUseApplePay(): boolean {
+//   try {
+//     return Boolean(
+//       (window as ApplePayWindow).ApplePaySession?.canMakePayments(),
+//     )
+//   } catch {
+//     return false
+//   }
+// }
