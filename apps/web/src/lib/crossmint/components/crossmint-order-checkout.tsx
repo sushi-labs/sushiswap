@@ -49,7 +49,7 @@ export function CrossmintOrderCheckoutSkeleton({
         </div>
       </div>
       <Button type="button" className="w-full mt-4" size="xl" loading>
-        Loading payment options
+        Loading
       </Button>
       <div>
         <SkeletonText className="min-w-full" fontSize="sm" />
@@ -122,7 +122,7 @@ function CrossmintOrderCheckoutContent({
 
     [applePay, card, googlePay],
   )
-  const checkoutKey = `${orderId}:${selectedMethod ?? ''}:${paymentCurrency}:${resolvedTheme ?? ''}`
+  const checkoutKey = `${orderId}:${selectedMethod ?? ''}`
 
   useEffect(() => {
     if (isComplete && !completionReported.current) {
@@ -160,7 +160,9 @@ function CrossmintOrderCheckoutContent({
       <div
         onLoadCapture={(event) => {
           if (event.target instanceof HTMLIFrameElement) {
-            setLoadedCheckoutKey(checkoutKey)
+            setTimeout(() => {
+              setLoadedCheckoutKey(checkoutKey)
+            }, 1500)
           }
         }}
         className={classNames(
