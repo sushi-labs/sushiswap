@@ -9,6 +9,16 @@ import type { CSSProperties } from 'react'
  * art on every device with no network calls and no stored data. It is four
  * stacked CSS gradients on the node that already exists: no filters, no blur,
  * no animation.
+ *
+ * Two deliberate departures from the design canvas, both because CSS
+ * `transparent` means `rgba(0, 0, 0, 0)` rather than "this colour at zero
+ * alpha", so fading to it desaturates towards black:
+ *
+ * 1. Every layer fades to a zero-alpha copy of its own colour. Fading to
+ *    `transparent` muddied the midpoints.
+ * 2. The conic veil starts and ends at zero alpha so it closes on itself.
+ *    Starting opaque and ending at `transparent` left a hard step at the start
+ *    angle — a crisp line running from the centre outwards on every icon.
  */
 
 const FNV_OFFSET_BASIS = 0x811c9dc5
@@ -71,9 +81,9 @@ function auroraBackground({ address, chainId }: TokenFallbackIconSeed): string {
   // Every `randomInt` call advances one shared sequence, so the art only stays
   // reproducible while these layers are built in this order.
   return [
-    `radial-gradient(120% 90% at ${randomInt(0, 100)}% ${randomInt(-20, 40)}%, hsl(${lead} 96% 78% / 0.85), transparent 65%)`,
-    `radial-gradient(110% 80% at ${randomInt(0, 100)}% ${randomInt(60, 120)}%, hsl(${trail} 92% 62% / 0.9), transparent 68%)`,
-    `conic-gradient(from ${randomInt(0, 359)}deg at 50% 50%, hsl(${lead} 80% 46% / 0.55), transparent 40%, hsl(${trail} 80% 52% / 0.5) 75%, transparent)`,
+    `radial-gradient(120% 90% at ${randomInt(0, 100)}% ${randomInt(-20, 40)}%, hsl(${lead} 96% 78% / 0.85), hsl(${lead} 96% 78% / 0) 65%)`,
+    `radial-gradient(110% 80% at ${randomInt(0, 100)}% ${randomInt(60, 120)}%, hsl(${trail} 92% 62% / 0.9), hsl(${trail} 92% 62% / 0) 68%)`,
+    `conic-gradient(from ${randomInt(0, 359)}deg at 50% 50%, hsl(${lead} 80% 46% / 0), hsl(${lead} 80% 46% / 0.55) 14%, hsl(${lead} 80% 46% / 0) 40%, hsl(${trail} 80% 52% / 0.5) 75%, hsl(${trail} 80% 52% / 0) 100%)`,
     `linear-gradient(${randomInt(0, 359)}deg, hsl(${trail} 74% 30%), hsl(${lead} 78% 46%))`,
   ].join(',')
 }
