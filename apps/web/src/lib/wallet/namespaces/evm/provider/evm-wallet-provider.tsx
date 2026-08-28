@@ -12,7 +12,8 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { PRIVY_EVM_CONNECTOR_ID } from 'src/lib/wallet/privy/privy-evm-connector'
+import { hasPersistedConnectorMatching } from 'src/lib/wagmi/config/persisted-connectors'
+import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
 import {
   connectPrivyEvmWallet,
   logoutPrivyRuntime,
@@ -63,7 +64,10 @@ export default function EvmWalletProvider({
     return <_EvmWalletProvider>{children}</_EvmWalletProvider>
   } else {
     return (
-      <WagmiProvider config={getWagmiConfig()}>
+      <WagmiProvider
+        config={getWagmiConfig()}
+        reconnectOnMount={!hasPersistedConnectorMatching(isPrivyEvmConnectorId)}
+      >
         <_EvmWalletProvider>{children}</_EvmWalletProvider>
       </WagmiProvider>
     )
@@ -128,8 +132,8 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   const disconnect = useCallback(async () => {
     const config = getWagmiConfig()
     const connections = getConnections(config)
-    const disconnectsPrivy = connections.some(
-      (connection) => connection.connector.id === PRIVY_EVM_CONNECTOR_ID,
+    const disconnectsPrivy = connections.some((connection) =>
+      isPrivyEvmConnectorId(connection.connector.id),
     )
     for (const connection of connections) {
       await wagmiDisconnect(config, {
@@ -156,7 +160,9 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    const walletId = `evm:${connector.id.toLowerCase()}`
+    const walletId = isPrivyEvmConnectorId(connector.id)
+      ? 'evm:io.privy'
+      : `evm:${connector.id.toLowerCase()}`
     addWalletConnection({
       chainId: isEvmChainId(chainId) ? chainId : EvmChainId.ETHEREUM,
       id: walletId,

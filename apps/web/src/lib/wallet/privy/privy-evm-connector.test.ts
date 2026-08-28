@@ -6,85 +6,52 @@ import {
   getConnections,
   getConnectors,
   reconnect,
+  // biome-ignore lint/nursery/noRestrictedImports: this test verifies the connector-level EIP-1193 delegation
+  switchChain,
 } from '@wagmi/core'
-// biome-ignore lint/nursery/noRestrictedImports: this test exercises the connector-level core action
-import { switchChain } from '@wagmi/core'
 import type { EvmAddress } from 'sushi/evm'
 import type { EIP1193Provider } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { isInjectedConnector } from '../namespaces/evm/adapters/injected'
 import {
-  PRIVY_EVM_CONNECTOR_ID,
   getPrivyEvmConnector,
-  registerPrivyEvmConnector,
+  isPrivyEvmConnectorId,
+  shouldReconnectPrivyEvmConnector,
+  syncPrivyEvmConnector,
+  toPrivyEvmConnectorId,
   unregisterPrivyEvmConnector,
 } from './privy-evm-connector'
 
 const firstAddress = '0x0000000000000000000000000000000000000001' as EvmAddress
 const secondAddress = '0x0000000000000000000000000000000000000002' as EvmAddress
 
-function createProviderController(
-  initialAddress: EvmAddress,
-  initialChainId: number = mainnet.id,
-) {
-  let address = initialAddress
-  let chainId: number = initialChainId
-  const listeners = new Map<string, Set<(...parameters: unknown[]) => void>>()
-  const request = vi.fn(
-    async ({
-      method,
-      params,
-    }: {
-      method: string
-      params?: readonly unknown[]
-    }) => {
+function createProvider(address: EvmAddress): EIP1193Provider {
+  return {
+    on() {},
+    removeListener() {},
+    request: vi.fn(async ({ method }) => {
       if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
         return [address]
       }
-      if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
+      if (method === 'eth_chainId') return '0x1'
       if (method === 'wallet_revokePermissions') return null
-      if (method === 'wallet_switchEthereumChain') {
-        const parameter = params?.[0]
-        if (
-          parameter &&
-          typeof parameter === 'object' &&
-          'chainId' in parameter &&
-          typeof parameter.chainId === 'string'
-        ) {
-          chainId = Number(parameter.chainId)
-        }
-        return null
-      }
       throw new Error(`Unexpected method: ${method}`)
-    },
-  )
-
-  const provider: EIP1193Provider = {
-    request: request as EIP1193Provider['request'],
-    on(event, listener) {
-      const eventListeners = listeners.get(event) ?? new Set()
-      eventListeners.add(
-        listener as unknown as (...parameters: unknown[]) => void,
-      )
-      listeners.set(event, eventListeners)
-    },
-    removeListener(event, listener) {
-      listeners
-        .get(event)
-        ?.delete(listener as unknown as (...parameters: unknown[]) => void)
-    },
+    }) as EIP1193Provider['request'],
   }
+}
 
+function createWallet(address: EvmAddress, provider = createProvider(address)) {
   return {
-    emit(event: string, value: unknown) {
-      for (const listener of listeners.get(event) ?? []) listener(value)
+    address,
+    chainId: 'eip155:1',
+    async getEthereumProvider() {
+      return provider
     },
-    provider,
-    request,
-    setAddress(nextAddress: EvmAddress) {
-      address = nextAddress
+    meta: {
+      id: 'io.privy.wallet',
+      name: 'Privy Wallet',
     },
+    walletClientType: 'privy',
   }
 }
 
@@ -94,35 +61,7 @@ function createWagmiConfig(
   return createConfig({
     chains: [mainnet, sepolia],
     connectors,
-    transports: {
-      [mainnet.id]: http(),
-      [sepolia.id]: http(),
-    },
-  })
-}
-
-function registerController({
-  address,
-  config,
-  controller,
-  switchChain: switchPrivyChain = async (chainId) => {
-    await controller.provider.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${chainId.toString(16)}` }],
-    })
-    return controller.provider
-  },
-}: {
-  address: EvmAddress
-  config: ReturnType<typeof createWagmiConfig>
-  controller: ReturnType<typeof createProviderController>
-  switchChain?(chainId: number): Promise<EIP1193Provider>
-}) {
-  return registerPrivyEvmConnector({
-    address,
-    config,
-    provider: controller.provider,
-    switchChain: switchPrivyChain,
+    transports: { [mainnet.id]: http(), [sepolia.id]: http() },
   })
 }
 
@@ -161,105 +100,65 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('Privy EVM connector registration', () => {
-  it('registers a standard injected connector around the actual provider', async () => {
+describe('Privy EVM connector synchronization', () => {
+  it('uses Privy’s address-scoped connector identity', async () => {
     const config = createWagmiConfig()
-    const controller = createProviderController(firstAddress)
+    const provider = createProvider(firstAddress)
 
-    expect(getPrivyEvmConnector(config)).toBeUndefined()
-    const connector = registerController({
-      address: firstAddress,
+    const connector = await syncPrivyEvmConnector({
       config,
-      controller,
+      wallet: createWallet(firstAddress, provider),
     })
 
-    expect(getPrivyEvmConnector(config)).toBe(connector)
-    expect(connector.id).toBe(PRIVY_EVM_CONNECTOR_ID)
-    expect(connector.type).toBe('injected')
-    expect(isInjectedConnector(connector)).toBe(false)
-    const provider = await connector.getProvider()
-    expect(provider).not.toBe(controller.provider)
-    await expect(
-      (provider as EIP1193Provider).request({ method: 'eth_accounts' }),
-    ).resolves.toEqual([firstAddress])
-    await expect(connector.isAuthorized()).resolves.toBe(true)
+    expect(connector.id).toBe(toPrivyEvmConnectorId(firstAddress))
+    expect(isPrivyEvmConnectorId(connector.id)).toBe(true)
+    expect(getPrivyEvmConnector(config, firstAddress)).toBe(connector)
+    expect(await connector.getProvider()).toBe(provider)
   })
 
-  it('reuses the connector for the same embedded account', () => {
+  it('reuses an existing connector for the same embedded account', async () => {
     const config = createWagmiConfig()
-    const first = createProviderController(firstAddress)
-    const second = createProviderController(firstAddress)
-
-    const connector = registerController({
-      address: firstAddress,
+    const connector = await syncPrivyEvmConnector({
       config,
-      controller: first,
+      wallet: createWallet(firstAddress),
     })
-    const sameConnector = registerController({
-      address: firstAddress,
+
+    const sameConnector = await syncPrivyEvmConnector({
       config,
-      controller: second,
+      wallet: createWallet(firstAddress),
     })
 
     expect(sameConnector).toBe(connector)
     expect(
-      getConnectors(config).filter(
-        (candidate) => candidate.id === PRIVY_EVM_CONNECTOR_ID,
-      ),
+      getConnectors(config).filter(({ id }) => isPrivyEvmConnectorId(id)),
     ).toHaveLength(1)
   })
 
-  it('replaces the connector when Privy changes embedded accounts', async () => {
-    const config = createWagmiConfig()
-    const first = createProviderController(firstAddress)
-    const second = createProviderController(secondAddress)
-    const firstConnector = registerController({
-      address: firstAddress,
+  it('replaces stale Privy accounts while preserving other connectors', async () => {
+    const otherFactory = mock({ accounts: [firstAddress] })
+    const config = createWagmiConfig([otherFactory])
+    const otherConnector = getConnectors(config)[0]!
+    const firstConnector = await syncPrivyEvmConnector({
       config,
-      controller: first,
+      wallet: createWallet(firstAddress),
     })
-    expect(getPrivyEvmConnector(config, secondAddress)).toBeUndefined()
 
-    const secondConnector = registerController({
-      address: secondAddress,
+    const secondConnector = await syncPrivyEvmConnector({
       config,
-      controller: second,
+      wallet: createWallet(secondAddress),
     })
 
     expect(secondConnector).not.toBe(firstConnector)
-    expect(getPrivyEvmConnector(config)).toBe(secondConnector)
-    await expect(secondConnector.getAccounts()).resolves.toEqual([
-      secondAddress,
-    ])
+    expect(getPrivyEvmConnector(config, firstAddress)).toBeUndefined()
+    expect(getPrivyEvmConnector(config, secondAddress)).toBe(secondConnector)
+    expect(getConnectors(config)).toContain(otherConnector)
   })
 
-  it('uses Wagmi event handling from the injected connector', async () => {
+  it('reconnects through the standard injected connector', async () => {
     const config = createWagmiConfig()
-    const controller = createProviderController(firstAddress)
-    const connector = registerController({
-      address: firstAddress,
+    const connector = await syncPrivyEvmConnector({
       config,
-      controller,
-    })
-    await connect(config, { connector })
-    const onChange = vi.fn()
-    connector.emitter.on('change', onChange)
-    controller.setAddress(secondAddress)
-
-    controller.emit('accountsChanged', [secondAddress])
-
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ accounts: [secondAddress] }),
-    )
-  })
-
-  it('reconnects through the standard connector without a permission prompt', async () => {
-    const config = createWagmiConfig()
-    const controller = createProviderController(firstAddress)
-    const connector = registerController({
-      address: firstAddress,
-      config,
-      controller,
+      wallet: createWallet(firstAddress),
     })
 
     const connections = await reconnect(config, { connectors: [connector] })
@@ -267,63 +166,79 @@ describe('Privy EVM connector registration', () => {
     expect(connections).toEqual([
       expect.objectContaining({ accounts: [firstAddress], connector }),
     ])
-    expect(getConnections(config)).toEqual([
-      expect.objectContaining({ accounts: [firstAddress], connector }),
-    ])
-    expect(
-      controller.request.mock.calls.map(([parameters]) => parameters.method),
-    ).not.toContain('wallet_requestPermissions')
   })
 
-  it('refreshes Privy’s provider when Wagmi switches chains', async () => {
+  it('delegates chain switching directly to Privy’s provider', async () => {
+    let chainId: number = mainnet.id
+    const request = vi.fn(
+      async ({ method, params }: { method: string; params?: unknown[] }) => {
+        if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
+          return [firstAddress]
+        }
+        if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
+        if (method === 'wallet_switchEthereumChain') {
+          chainId = Number((params?.[0] as { chainId: string }).chainId)
+          return null
+        }
+        throw new Error(`Unexpected method: ${method}`)
+      },
+    )
+    const provider = {
+      on() {},
+      removeListener() {},
+      request: request as EIP1193Provider['request'],
+    }
     const config = createWagmiConfig()
-    const ethereum = createProviderController(firstAddress, mainnet.id)
-    const nextChain = createProviderController(firstAddress, sepolia.id)
-    const switchPrivyChain = vi.fn(async () => nextChain.provider)
-    const connector = registerController({
-      address: firstAddress,
+    const connector = await syncPrivyEvmConnector({
       config,
-      controller: ethereum,
-      switchChain: switchPrivyChain,
+      wallet: createWallet(firstAddress, provider),
     })
     await connect(config, { connector })
-    const onChange = vi.fn()
-    connector.emitter.on('change', onChange)
 
     await switchChain(config, { chainId: sepolia.id })
 
-    expect(switchPrivyChain).toHaveBeenCalledWith(sepolia.id)
-    await expect(connector.getChainId()).resolves.toBe(sepolia.id)
-    await expect(connector.getAccounts()).resolves.toEqual([firstAddress])
-    expect(getConnections(config)).toEqual([
-      expect.objectContaining({ chainId: sepolia.id, connector }),
-    ])
-    expect(
-      ethereum.request.mock.calls.map(([parameters]) => parameters.method),
-    ).not.toContain('wallet_switchEthereumChain')
-    expect(
-      nextChain.request.mock.calls.map(([parameters]) => parameters.method),
-    ).toContain('eth_chainId')
-
-    nextChain.setAddress(secondAddress)
-    nextChain.emit('accountsChanged', [secondAddress])
-
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ accounts: [secondAddress] }),
-    )
+    expect(request).toHaveBeenCalledWith({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${sepolia.id.toString(16)}` }],
+    })
   })
 
-  it('unregisters only Privy and preserves another active connector', async () => {
-    const mockConnector = mock({ accounts: [secondAddress] })
-    const config = createWagmiConfig([mockConnector])
-    const standardConnector = getConnectors(config)[0]!
-    const controller = createProviderController(firstAddress)
-    const privyConnector = registerController({
-      address: firstAddress,
+  it('does not register a provider that resolved after cancellation', async () => {
+    const config = createWagmiConfig()
+    const shouldRegister = vi.fn(() => false)
+
+    await expect(
+      syncPrivyEvmConnector({
+        config,
+        shouldRegister,
+        wallet: createWallet(firstAddress),
+      }),
+    ).rejects.toThrow('registration was cancelled')
+    expect(getPrivyEvmConnector(config)).toBeUndefined()
+  })
+
+  it('respects upstream reconnect and explicit-disconnect guards', async () => {
+    const config = createWagmiConfig()
+    await expect(shouldReconnectPrivyEvmConnector(config)).resolves.toBe(true)
+
+    await config.storage?.setItem('recentConnectorId', 'io.privy.wallet.test')
+    await config.storage?.setItem('io.privy.wallet.test.disconnected', true)
+    await expect(shouldReconnectPrivyEvmConnector(config)).resolves.toBe(false)
+
+    config.setState((state) => ({ ...state, status: 'connected' }))
+    await config.storage?.removeItem('io.privy.wallet.test.disconnected')
+    await expect(shouldReconnectPrivyEvmConnector(config)).resolves.toBe(false)
+  })
+
+  it('unregisters only Privy and preserves another active connection', async () => {
+    const otherFactory = mock({ accounts: [secondAddress] })
+    const config = createWagmiConfig([otherFactory])
+    const otherConnector = getConnectors(config)[0]!
+    const privyConnector = await syncPrivyEvmConnector({
       config,
-      controller,
+      wallet: createWallet(firstAddress),
     })
-    await connect(config, { connector: standardConnector })
+    await connect(config, { connector: otherConnector })
     await connect(config, { connector: privyConnector })
     expect(getConnections(config)).toHaveLength(2)
 
@@ -331,12 +246,8 @@ describe('Privy EVM connector registration', () => {
 
     expect(getPrivyEvmConnector(config)).toBeUndefined()
     expect(getConnections(config)).toEqual([
-      expect.objectContaining({ connector: standardConnector }),
+      expect.objectContaining({ connector: otherConnector }),
     ])
-    expect(config.state.current).toBe(standardConnector.uid)
-    expect(config.state.status).toBe('connected')
-    expect(
-      controller.request.mock.calls.map(([parameters]) => parameters.method),
-    ).not.toContain('wallet_revokePermissions')
+    expect(config.state.current).toBe(otherConnector.uid)
   })
 })

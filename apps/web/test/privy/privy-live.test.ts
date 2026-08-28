@@ -9,7 +9,7 @@ type PrivyNamespace = 'evm' | 'svm'
 
 const EVM_ROUTE = '/ethereum/swap'
 const SVM_ROUTE = '/solana/swap'
-const PRIVY_EVM_CONNECTOR_ID = 'io.privy'
+const PRIVY_EVM_CONNECTOR_ID = 'io.privy.wallet.'
 const PRIVY_SVM_RECONNECT_STORAGE_KEY = 'sushi:privy-svm-reconnect'
 
 const EVM_ADDRESS_PATTERN = /^0x[a-fA-F0-9]{4}\.\.\.[a-fA-F0-9]{4}$/

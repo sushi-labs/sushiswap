@@ -156,17 +156,37 @@ export const publicTransports = {
   [EvmChainId.BOKUTO]: http('https://rpc-bokuto.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
-function pluck<
-  Arr extends readonly Record<string, any>[],
-  K extends keyof Arr[number],
->(arr: Arr, key: K): { [I in keyof Arr]: Arr[I][K] } {
-  // @ts-ignore
-  return arr.map((item) => item[key]) as any
+function mapTuple<const Items extends readonly unknown[], Result>(
+  items: Items,
+  mapper: (item: Items[number]) => Result,
+): { [Index in keyof Items]: Result } {
+  return items.map(mapper) as unknown as { [Index in keyof Items]: Result }
 }
 
-export const publicChains = pluck(evmChains, 'viemChain') satisfies Readonly<
-  Chain[]
->
+export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
+  const rpcUrl = publicTransports[viemChain.id]({ chain: undefined }).value?.url
+
+  if (!rpcUrl) {
+    throw new Error(`Missing public RPC URL for chain ${viemChain.id}`)
+  }
+
+  return {
+    ...viemChain,
+    rpcUrls: {
+      ...viemChain.rpcUrls,
+      default: {
+        ...viemChain.rpcUrls.default,
+        http: [rpcUrl],
+      },
+      // Privy prefers `public` over `default` when selecting an RPC. Its
+      // explicit wallet override must be set so chains with existing public
+      // metadata still use Sushi's dRPC transport.
+      privyWalletOverride: {
+        http: [rpcUrl],
+      },
+    },
+  }
+}) satisfies Readonly<Chain[]>
 
 export function fromEntriesConst<
   const Pairs extends readonly (readonly [PropertyKey, any])[],

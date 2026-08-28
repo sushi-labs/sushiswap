@@ -40,7 +40,7 @@ async function installRestorablePrivySession(
                   'privy',
                   {
                     accounts: [address],
-                    connector: { id: 'io.privy' },
+                    connector: { id: `io.privy.wallet.${address}` },
                   },
                 ],
               ],

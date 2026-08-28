@@ -26,7 +26,7 @@ import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
 import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import {
-  registerPrivyEvmConnector,
+  syncPrivyEvmConnector,
   unregisterPrivyEvmConnector,
 } from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
@@ -310,28 +310,20 @@ function PrivyRuntimeEffects() {
     if (!wallet) return
     let cancelled = false
 
-    wallet
-      .getEthereumProvider()
-      .then((provider) => {
+    syncPrivyEvmConnector({
+      config,
+      shouldRegister: () => !cancelled,
+      wallet: {
+        address: evmWalletAddress as EvmAddress,
+        chainId: wallet.chainId,
+        getEthereumProvider: async () =>
+          toViemProvider(await wallet.getEthereumProvider()),
+        meta: wallet.meta,
+        walletClientType: wallet.walletClientType,
+      },
+    })
+      .then(() => {
         if (cancelled) return
-        registerPrivyEvmConnector({
-          address: evmWalletAddress as EvmAddress,
-          config,
-          provider: toViemProvider(provider),
-          async switchChain(chainId) {
-            const activeWallet = latestHandlesRef.current.embeddedEvmWallet
-            if (
-              !activeWallet ||
-              activeWallet.address.toLowerCase() !==
-                evmWalletAddress.toLowerCase()
-            ) {
-              throw new Error('Privy EVM wallet is not active')
-            }
-            await activeWallet.switchChain(chainId)
-            return toViemProvider(await activeWallet.getEthereumProvider())
-          },
-        })
-
         if (privyRuntimeStore.getSnapshot().evmReconnect) {
           reconnectPrivyEvmWallet(config)
             .catch((error) => {

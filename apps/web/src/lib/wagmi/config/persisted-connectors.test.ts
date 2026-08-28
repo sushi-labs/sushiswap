@@ -1,9 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { isPrivyEvmConnectorId } from '../../wallet/privy/privy-evm-connector'
 import {
   getPersistedConnectorFactories,
   hasPersistedConnector,
+  hasPersistedConnectorMatching,
   refreshPersistedConnectorSnapshot,
 } from './persisted-connectors'
+
+const privyConnectorId =
+  'io.privy.wallet.0x0000000000000000000000000000000000000001'
 
 function installStorage(value: string | null): void {
   const values = new Map<string, string>()
@@ -41,7 +46,7 @@ describe('persisted connector factories', () => {
 
     expect(getPersistedConnectorFactories()).toHaveLength(2)
     expect(hasPersistedConnector('walletConnect')).toBe(true)
-    expect(hasPersistedConnector('io.privy')).toBe(false)
+    expect(hasPersistedConnectorMatching(isPrivyEvmConnectorId)).toBe(false)
   })
 
   it('survives createConfig wiping wagmi.store on the initial setState', async () => {
@@ -53,12 +58,13 @@ describe('persisted connector factories', () => {
         state: {
           connections: {
             __type: 'Map',
-            value: [['a', { connector: { id: 'io.privy' } }]],
+            value: [['a', { connector: { id: privyConnectorId } }]],
           },
         },
       }),
     )
-    expect(hasPersistedConnector('io.privy')).toBe(true)
+    expect(hasPersistedConnector(privyConnectorId)).toBe(true)
+    expect(hasPersistedConnectorMatching(isPrivyEvmConnectorId)).toBe(true)
 
     // Wagmi persists its empty initial state immediately, so a later read of
     // `wagmi.store` sees no connections at all. The snapshot must outlive it.
@@ -70,7 +76,7 @@ describe('persisted connector factories', () => {
     })
 
     expect(window.localStorage.getItem('wagmi.store')).toContain('"value":[]')
-    expect(hasPersistedConnector('io.privy')).toBe(true)
+    expect(hasPersistedConnector(privyConnectorId)).toBe(true)
   })
 
   it('does not initialize connectors without persisted intent', () => {

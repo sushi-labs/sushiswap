@@ -32,6 +32,12 @@ export function hasPersistedConnector(connectorId: string): boolean {
   return getPersistedConnectorIds().has(connectorId.toLowerCase())
 }
 
+export function hasPersistedConnectorMatching(
+  predicate: (connectorId: string) => boolean,
+): boolean {
+  return [...getPersistedConnectorIds()].some(predicate)
+}
+
 /**
  * Snapshotted at module evaluation. `createConfig()` overwrites `wagmi.store`
  * with an empty state as soon as it runs (Zustand's persist middleware writes

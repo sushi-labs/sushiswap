@@ -2,112 +2,120 @@ import { injected } from '@wagmi/connectors'
 import type { Config, Connector } from '@wagmi/core'
 import type { EvmAddress } from 'sushi/evm'
 import type { EIP1193Provider } from 'viem'
-import { createPrivyEvmProvider } from './privy-evm-provider'
 
-export const PRIVY_EVM_CONNECTOR_ID = 'io.privy'
+/**
+ * Adapted from `@privy-io/wagmi@4.0.16`'s `useSyncPrivyWallets`.
+ *
+ * Copyright 2022-2023 Horkos, Inc. Licensed under Apache-2.0. See
+ * `privy-wagmi-license.txt` in this directory. Sushi's adaptation keeps
+ * non-Privy connectors registered and leaves Privy's React runtime lazy.
+ */
+
+export const PRIVY_EVM_CONNECTOR_ID = 'io.privy.wallet'
 export const PRIVY_EVM_CONNECTOR_NAME = 'Email'
 
-type PrivyEvmConnectorRegistration = {
+export interface PrivyEvmConnectorWallet {
   address: EvmAddress
-  connector: Connector
+  chainId: string
+  getEthereumProvider(): Promise<EIP1193Provider>
+  meta: {
+    icon?: string
+    id: string
+    name: string
+  }
+  walletClientType: string
 }
 
-const registrations = new WeakMap<Config, PrivyEvmConnectorRegistration>()
+export function toPrivyEvmConnectorId(address: EvmAddress): string {
+  return `${PRIVY_EVM_CONNECTOR_ID}.${address}`
+}
+
+export function isPrivyEvmConnectorId(connectorId: string): boolean {
+  return connectorId.toLowerCase().startsWith(`${PRIVY_EVM_CONNECTOR_ID}.`)
+}
 
 export function getPrivyEvmConnector(
   config: Config,
   address?: EvmAddress,
 ): Connector | undefined {
   if (address) {
-    const registration = registrations.get(config)
-    if (registration?.address.toLowerCase() !== address.toLowerCase()) {
-      return undefined
-    }
+    const connectorId = toPrivyEvmConnectorId(address)
     return config.connectors.find(
-      (connector) => connector.uid === registration.connector.uid,
+      (connector) => connector.id.toLowerCase() === connectorId.toLowerCase(),
     )
   }
-  return config.connectors.find(
-    (connector) => connector.id === PRIVY_EVM_CONNECTOR_ID,
+  return config.connectors.find((connector) =>
+    isPrivyEvmConnectorId(connector.id),
   )
 }
 
-/**
- * Adapted from `@privy-io/wagmi`'s `useSyncPrivyWallets`: wrap the real
- * app-scoped Privy provider in Wagmi's standard injected connector, then add
- * the configured connector to Wagmi's live connector registry.
- */
-export function registerPrivyEvmConnector({
-  address,
+/** Mirrors Privy 4.0.16's guards around automatic Wagmi reconnection. */
+export async function shouldReconnectPrivyEvmConnector(
+  config: Config,
+): Promise<boolean> {
+  if (config.state.status === 'connected') return false
+
+  const recentConnectorId = await config.storage?.getItem('recentConnectorId')
+  if (!recentConnectorId) return true
+  return !(await config.storage?.getItem(`${recentConnectorId}.disconnected`))
+}
+
+/** Register the current Privy wallet using Wagmi's standard injected adapter. */
+export async function syncPrivyEvmConnector({
   config,
-  provider,
-  switchChain,
+  shouldRegister = () => true,
+  wallet,
 }: {
-  address: EvmAddress
   config: Config
-  provider: EIP1193Provider
-  switchChain(chainId: number): Promise<EIP1193Provider>
-}): Connector {
-  const registration = registrations.get(config)
-  if (
-    registration?.address.toLowerCase() === address.toLowerCase() &&
-    config.connectors.some(
-      (connector) => connector.uid === registration.connector.uid,
-    )
-  ) {
-    return registration.connector
+  shouldRegister?: () => boolean
+  wallet: PrivyEvmConnectorWallet
+}): Promise<Connector> {
+  const connectorId = toPrivyEvmConnectorId(wallet.address)
+  const existingConnector = config.connectors.find(
+    (connector) => connector.id.toLowerCase() === connectorId.toLowerCase(),
+  )
+  if (existingConnector) return existingConnector
+
+  const provider = await wallet.getEthereumProvider()
+  if (!shouldRegister()) {
+    throw new Error('Privy EVM connector registration was cancelled')
   }
-
-  unregisterPrivyEvmConnector(config)
-
-  const wagmiProvider = createPrivyEvmProvider({ provider, switchChain })
-
   const connector = config._internal.connectors.setup(
     injected({
-      // Privy authentication is the source of truth for disconnects, so Wagmi
-      // does not need an additional local `*.disconnected` shim.
-      shimDisconnect: false,
       target: {
-        id: PRIVY_EVM_CONNECTOR_ID,
-        name: PRIVY_EVM_CONNECTOR_NAME,
-        provider: wagmiProvider,
+        id: connectorId,
+        name: wallet.meta.name || PRIVY_EVM_CONNECTOR_NAME,
+        icon: wallet.meta.icon,
+        provider,
       },
     }),
   )
 
+  // Privy's package owns every connector in its Wagmi config and replaces the
+  // entire registry. Sushi also supports independently managed connectors, so
+  // retain those while replacing stale Privy wallet instances.
   config._internal.connectors.setState((connectors) => [
-    ...connectors.filter(
-      (candidate) => candidate.id !== PRIVY_EVM_CONNECTOR_ID,
-    ),
+    ...connectors.filter((candidate) => !isPrivyEvmConnectorId(candidate.id)),
     connector,
   ])
-  registrations.set(config, { address, connector })
   return connector
 }
 
-/** Remove only Privy's connector and connection, preserving every other wallet. */
+/** Remove Privy's connector and connection without disturbing another wallet. */
 export function unregisterPrivyEvmConnector(config: Config): void {
-  const connectors = config.connectors.filter(
-    (connector) => connector.id === PRIVY_EVM_CONNECTOR_ID,
-  )
-  if (connectors.length === 0) {
-    registrations.delete(config)
+  if (
+    !config.connectors.some((connector) => isPrivyEvmConnectorId(connector.id))
+  ) {
     return
   }
 
-  for (const connector of connectors) {
-    connector.emitter.off('connect', config._internal.events.connect)
-    connector.emitter.off('change', config._internal.events.change)
-    connector.emitter.off('disconnect', config._internal.events.disconnect)
-  }
-
-  config._internal.connectors.setState((current) =>
-    current.filter((connector) => connector.id !== PRIVY_EVM_CONNECTOR_ID),
+  config._internal.connectors.setState((connectors) =>
+    connectors.filter((connector) => !isPrivyEvmConnectorId(connector.id)),
   )
   config.setState((state) => {
     const connections = new Map(
       [...state.connections].filter(
-        ([, connection]) => connection.connector.id !== PRIVY_EVM_CONNECTOR_ID,
+        ([, connection]) => !isPrivyEvmConnectorId(connection.connector.id),
       ),
     )
     const current =
@@ -122,5 +130,4 @@ export function unregisterPrivyEvmConnector(config: Config): void {
       status: connections.size > 0 ? 'connected' : 'disconnected',
     }
   })
-  registrations.delete(config)
 }

@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import {
-  registerPrivyEvmConnector,
+  syncPrivyEvmConnector,
   unregisterPrivyEvmConnector,
 } from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
@@ -48,8 +48,15 @@ function getInitialChainId(): number {
   return Number.isSafeInteger(chainId) && chainId > 0 ? chainId : 1
 }
 
-function createProvider(chainId: number): EIP1193Provider {
-  const request = async ({ method }: { method: string }) => {
+function createWallet(initialChainId: number) {
+  let chainId = initialChainId
+  const request = async ({
+    method,
+    params,
+  }: {
+    method: string
+    params?: readonly unknown[]
+  }) => {
     window.localStorage.setItem(
       TEST_PRIVY_LAST_REQUEST_CHAIN_ID_STORAGE_KEY,
       String(chainId),
@@ -59,13 +66,42 @@ function createProvider(chainId: number): EIP1193Provider {
     }
     if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
     if (method === 'wallet_revokePermissions') return null
+    if (method === 'wallet_switchEthereumChain') {
+      const parameter = params?.[0]
+      if (
+        parameter &&
+        typeof parameter === 'object' &&
+        'chainId' in parameter &&
+        typeof parameter.chainId === 'string'
+      ) {
+        chainId = Number(parameter.chainId)
+        window.localStorage.setItem(
+          TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
+          String(chainId),
+        )
+      }
+      return null
+    }
     throw new Error(`Unexpected Privy test provider method: ${method}`)
   }
 
-  return {
+  const provider: EIP1193Provider = {
     on() {},
     removeListener() {},
     request: request as EIP1193Provider['request'],
+  }
+
+  return {
+    address,
+    chainId: `eip155:${initialChainId}`,
+    async getEthereumProvider() {
+      return provider
+    },
+    meta: {
+      id: 'io.privy.wallet',
+      name: 'Email',
+    },
+    walletClientType: 'privy',
   }
 }
 
@@ -74,7 +110,7 @@ export function PrivyRuntime() {
     const config = getWagmiConfig()
     let cancelled = false
 
-    const timeout = window.setTimeout(() => {
+    const timeout = window.setTimeout(async () => {
       if (cancelled) return
 
       try {
@@ -83,18 +119,11 @@ export function PrivyRuntime() {
           TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
           String(initialChainId),
         )
-        registerPrivyEvmConnector({
-          address,
+        await syncPrivyEvmConnector({
           config,
-          provider: createProvider(initialChainId),
-          async switchChain(chainId) {
-            window.localStorage.setItem(
-              TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
-              String(chainId),
-            )
-            return createProvider(chainId)
-          },
+          wallet: createWallet(initialChainId),
         })
+        if (cancelled) return
         privyRuntimeStore.publishRuntime({
           authenticated: true,
           evmWallet: { address },

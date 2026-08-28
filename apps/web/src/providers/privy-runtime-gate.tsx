@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { hasPersistedConnector } from 'src/lib/wagmi/config/persisted-connectors'
+import { hasPersistedConnectorMatching } from 'src/lib/wagmi/config/persisted-connectors'
 import {
   hasStoredPrivySession,
   isPrivySessionStorageKey,
 } from 'src/lib/wallet/privy-storage'
 import { isPrivyTestRuntimeEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
-import { PRIVY_EVM_CONNECTOR_ID } from 'src/lib/wallet/privy/privy-evm-connector'
+import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 
 type PrivyRuntimeComponent = React.ComponentType
@@ -21,7 +21,7 @@ function loadPrivyRuntime(): Promise<{ PrivyRuntime: PrivyRuntimeComponent }> {
 
 function requestSessionRuntime(): void {
   privyRuntimeStore.requestRuntime({
-    evmReconnect: hasPersistedConnector(PRIVY_EVM_CONNECTOR_ID),
+    evmReconnect: hasPersistedConnectorMatching(isPrivyEvmConnectorId),
   })
 }
 
