@@ -1,3 +1,4 @@
+import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
 import {
   getSlippageToleranceBasisPoints,
@@ -13,9 +14,14 @@ describe('slippage tolerance', () => {
     ['1.00', 100],
     ['50', 5_000],
     [50, 5_000],
-    ['AUTO', 50],
   ])('converts %s to basis points', (value, expected) => {
     expect(getSlippageToleranceBasisPoints(value)).toBe(expected)
+  })
+
+  it('resolves AUTO to the default slippage', () => {
+    expect(getSlippageToleranceBasisPoints('AUTO')).toBe(
+      getSlippageToleranceBasisPoints(DEFAULT_SLIPPAGE),
+    )
   })
 
   it.each([

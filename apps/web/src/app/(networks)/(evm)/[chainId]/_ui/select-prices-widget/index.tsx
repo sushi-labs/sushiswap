@@ -5,11 +5,9 @@ import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
   Explainer,
   FormSection,
   Label,
