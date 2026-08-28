@@ -163,12 +163,15 @@ function mapTuple<const Items extends readonly unknown[], Result>(
   return items.map(mapper) as unknown as { [Index in keyof Items]: Result }
 }
 
-export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
-  const rpcUrl = publicTransports[viemChain.id]({ chain: undefined }).value?.url
+export function getPublicRpcUrl(chainId: EvmChainId): string {
+  const rpcUrl = publicTransports[chainId]({ chain: undefined }).value?.url
 
-  if (!rpcUrl) {
-    throw new Error(`Missing public RPC URL for chain ${viemChain.id}`)
-  }
+  if (!rpcUrl) throw new Error(`Missing public RPC URL for chain ${chainId}`)
+  return rpcUrl
+}
+
+export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
+  const rpcUrl = getPublicRpcUrl(viemChain.id)
 
   return {
     ...viemChain,
@@ -178,9 +181,8 @@ export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
         ...viemChain.rpcUrls.default,
         http: [rpcUrl],
       },
-      // Privy prefers `public` over `default` when selecting an RPC. Its
-      // explicit wallet override must be set so chains with existing public
-      // metadata still use Sushi's dRPC transport.
+      // Privy's patched `getPublicClient` reads this explicit override and
+      // restores Sushi's dRPC JWT on the resulting HTTP transport.
       privyWalletOverride: {
         http: [rpcUrl],
       },

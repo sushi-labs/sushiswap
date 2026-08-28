@@ -101,6 +101,13 @@ function createWallet(initialChainId: number) {
       id: 'io.privy.wallet',
       name: 'Email',
     },
+    async switchChain(targetChainId: number) {
+      chainId = targetChainId
+      window.localStorage.setItem(
+        TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
+        String(chainId),
+      )
+    },
     walletClientType: 'privy',
   }
 }

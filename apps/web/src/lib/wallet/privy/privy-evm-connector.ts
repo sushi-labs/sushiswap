@@ -2,6 +2,7 @@ import { injected } from '@wagmi/connectors'
 import type { Config, Connector } from '@wagmi/core'
 import type { EvmAddress } from 'sushi/evm'
 import type { EIP1193Provider } from 'viem'
+import { createPrivyEvmProvider } from './privy-evm-provider'
 
 /**
  * Adapted from `@privy-io/wagmi@4.0.16`'s `useSyncPrivyWallets`.
@@ -23,6 +24,7 @@ export interface PrivyEvmConnectorWallet {
     id: string
     name: string
   }
+  switchChain(chainId: number): Promise<void>
   walletClientType: string
 }
 
@@ -80,13 +82,20 @@ export async function syncPrivyEvmConnector({
   if (!shouldRegister()) {
     throw new Error('Privy EVM connector registration was cancelled')
   }
+  const wagmiProvider = createPrivyEvmProvider({
+    provider,
+    async switchChain(chainId) {
+      await wallet.switchChain(chainId)
+      return wallet.getEthereumProvider()
+    },
+  })
   const connector = config._internal.connectors.setup(
     injected({
       target: {
         id: connectorId,
         name: wallet.meta.name || PRIVY_EVM_CONNECTOR_NAME,
         icon: wallet.meta.icon,
-        provider,
+        provider: wagmiProvider,
       },
     }),
   )

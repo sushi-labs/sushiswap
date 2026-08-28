@@ -251,6 +251,10 @@ function PrivyRuntimeEffects() {
       },
       logout: () => latestHandlesRef.current.logout(),
       async sendEvmTransaction({ address, transaction, uiOptions }) {
+        const wallet = latestHandlesRef.current.embeddedEvmWallet
+        if (!wallet || wallet.address.toLowerCase() !== address.toLowerCase()) {
+          throw new Error('Privy EVM wallet is not active')
+        }
         const result = await latestHandlesRef.current.sendTransaction(
           transaction,
           { address, uiOptions },
@@ -316,9 +320,29 @@ function PrivyRuntimeEffects() {
       wallet: {
         address: evmWalletAddress as EvmAddress,
         chainId: wallet.chainId,
-        getEthereumProvider: async () =>
-          toViemProvider(await wallet.getEthereumProvider()),
+        async getEthereumProvider() {
+          const activeWallet = latestHandlesRef.current.embeddedEvmWallet
+          if (
+            !activeWallet ||
+            activeWallet.address.toLowerCase() !==
+              evmWalletAddress.toLowerCase()
+          ) {
+            throw new Error('Privy EVM wallet is not active')
+          }
+          return toViemProvider(await activeWallet.getEthereumProvider())
+        },
         meta: wallet.meta,
+        async switchChain(chainId) {
+          const activeWallet = latestHandlesRef.current.embeddedEvmWallet
+          if (
+            !activeWallet ||
+            activeWallet.address.toLowerCase() !==
+              evmWalletAddress.toLowerCase()
+          ) {
+            throw new Error('Privy EVM wallet is not active')
+          }
+          await activeWallet.switchChain(chainId)
+        },
         walletClientType: wallet.walletClientType,
       },
     })

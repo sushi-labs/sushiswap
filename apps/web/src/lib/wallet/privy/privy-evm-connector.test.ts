@@ -51,6 +51,7 @@ function createWallet(address: EvmAddress, provider = createProvider(address)) {
       id: 'io.privy.wallet',
       name: 'Privy Wallet',
     },
+    async switchChain() {},
     walletClientType: 'privy',
   }
 }
@@ -113,7 +114,13 @@ describe('Privy EVM connector synchronization', () => {
     expect(connector.id).toBe(toPrivyEvmConnectorId(firstAddress))
     expect(isPrivyEvmConnectorId(connector.id)).toBe(true)
     expect(getPrivyEvmConnector(config, firstAddress)).toBe(connector)
-    expect(await connector.getProvider()).toBe(provider)
+    const connectorProvider = await connector.getProvider()
+    expect(connectorProvider).not.toBe(provider)
+    expect(
+      await (connectorProvider as EIP1193Provider).request({
+        method: 'eth_chainId',
+      }),
+    ).toBe('0x1')
   })
 
   it('reuses an existing connector for the same embedded account', async () => {
@@ -168,39 +175,62 @@ describe('Privy EVM connector synchronization', () => {
     ])
   })
 
-  it('delegates chain switching directly to Privy’s provider', async () => {
-    let chainId: number = mainnet.id
-    const request = vi.fn(
-      async ({ method, params }: { method: string; params?: unknown[] }) => {
-        if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
-          return [firstAddress]
-        }
-        if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
-        if (method === 'wallet_switchEthereumChain') {
-          chainId = Number((params?.[0] as { chainId: string }).chainId)
-          return null
-        }
-        throw new Error(`Unexpected method: ${method}`)
-      },
-    )
-    const provider = {
-      on() {},
-      removeListener() {},
-      request: request as EIP1193Provider['request'],
+  it('switches through Privy’s wallet and replaces its invalidated provider', async () => {
+    function createChainProvider(chainId: number): EIP1193Provider {
+      return {
+        on() {},
+        removeListener() {},
+        request: vi.fn(async ({ method }: { method: string }) => {
+          if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
+            return [firstAddress]
+          }
+          if (method === 'eth_chainId') return `0x${chainId.toString(16)}`
+          throw new Error(`Unexpected method: ${method}`)
+        }) as EIP1193Provider['request'],
+      }
+    }
+
+    let provider = createChainProvider(mainnet.id)
+    const getEthereumProvider = vi.fn(async () => provider)
+    const walletSwitchChain = vi.fn(async (chainId: number) => {
+      provider = createChainProvider(chainId)
+    })
+    const wallet = {
+      ...createWallet(firstAddress),
+      getEthereumProvider,
+      switchChain: walletSwitchChain,
     }
     const config = createWagmiConfig()
-    const connector = await syncPrivyEvmConnector({
-      config,
-      wallet: createWallet(firstAddress, provider),
-    })
+    const connector = await syncPrivyEvmConnector({ config, wallet })
     await connect(config, { connector })
 
     await switchChain(config, { chainId: sepolia.id })
 
-    expect(request).toHaveBeenCalledWith({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${sepolia.id.toString(16)}` }],
-    })
+    expect(walletSwitchChain).toHaveBeenCalledWith(sepolia.id)
+    expect(getEthereumProvider).toHaveBeenCalledTimes(2)
+    const refreshedProvider = (await connector.getProvider()) as EIP1193Provider
+    expect(await refreshedProvider.request({ method: 'eth_chainId' })).toBe(
+      `0x${sepolia.id.toString(16)}`,
+    )
+  })
+
+  it('rejects malformed chain switch requests before calling Privy', async () => {
+    const switchChain = vi.fn(async () => undefined)
+    const wallet = {
+      ...createWallet(firstAddress),
+      switchChain,
+    }
+    const config = createWagmiConfig()
+    const connector = await syncPrivyEvmConnector({ config, wallet })
+    const provider = (await connector.getProvider()) as EIP1193Provider
+
+    await expect(
+      provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: 'not-a-chain' }],
+      }),
+    ).rejects.toThrow('invalid chain ID')
+    expect(switchChain).not.toHaveBeenCalled()
   })
 
   it('does not register a provider that resolved after cancellation', async () => {
