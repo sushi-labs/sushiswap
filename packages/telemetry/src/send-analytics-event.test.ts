@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { sendAnalyticsEvent } from './sendAnalyticsEvent'
+import { sendAnalyticsEvent } from './send-analytics-event'
 
 describe('sendAnalyticsEvent', () => {
   afterEach(() => vi.unstubAllGlobals())
