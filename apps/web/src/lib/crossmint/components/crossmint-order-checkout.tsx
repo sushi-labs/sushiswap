@@ -140,7 +140,7 @@ function CrossmintOrderCheckoutContent({
   const canChangePaymentMethod = availableMethods.length > 1
 
   return (
-    <div className={classNames('space-y-3', className)}>
+    <div className={classNames(className)}>
       <div className="flex items-center justify-between gap-2 text-sm">
         <span className="font-medium text-gray-700 dark:text-slate-300">
           Pay with

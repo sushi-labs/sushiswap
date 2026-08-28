@@ -55,6 +55,7 @@ describe('createCrossmintOrder', () => {
     expect(init?.headers).toMatchObject({
       'X-API-KEY': 'sk_staging_example',
     })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(body).toMatchObject({
       lineItems: [
         {
@@ -73,6 +74,84 @@ describe('createCrossmintOrder', () => {
       },
       recipient: { walletAddress: SOLANA_WALLET },
     })
+  })
+
+  it('links an external wallet before creating an onramp order', async () => {
+    const fetchMock = vi.fn(
+      async (input: RequestInfo | URL, _init?: RequestInit) => {
+        if (String(input).includes('/linked-wallets/')) {
+          return new Response(
+            JSON.stringify({
+              address: '0x0000000000000000000000000000000000000001',
+              chain: 'base-sepolia',
+              ownership: { verified: false },
+              type: 'external-wallet',
+            }),
+            { status: 200 },
+          )
+        }
+
+        return new Response(
+          JSON.stringify({
+            clientSecret: 'client-secret',
+            order: { orderId: 'order-id' },
+          }),
+          { status: 201 },
+        )
+      },
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(
+      createCrossmintOrder({
+        amountUsd: '5',
+        receiptEmail: 'buyer+onramp@example.com',
+        token: BASE_USDC,
+        walletAddress: '0x0000000000000000000000000000000000000001',
+      }),
+    ).resolves.toEqual({
+      clientSecret: 'client-secret',
+      orderId: 'order-id',
+    })
+
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    const [linkUrl, linkInit] = fetchMock.mock.calls[0]
+    const [orderUrl] = fetchMock.mock.calls[1]
+
+    expect(linkUrl).toBe(
+      'https://staging.crossmint.com/api/2025-06-09/users/email%3Abuyer%2Bonramp%40example.com/linked-wallets/0x0000000000000000000000000000000000000001',
+    )
+    expect(linkInit).toMatchObject({
+      method: 'PUT',
+      headers: { 'X-API-KEY': 'sk_staging_example' },
+    })
+    expect(JSON.parse(String(linkInit?.body))).toEqual({
+      chain: 'base-sepolia',
+    })
+    expect(orderUrl).toBe('https://staging.crossmint.com/api/2022-06-09/orders')
+  })
+
+  it('does not create an onramp order when wallet linking fails', async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({ message: 'Wallet could not be linked' }),
+          {
+            status: 400,
+          },
+        ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(
+      createCrossmintOrder({
+        amountUsd: '5',
+        receiptEmail: 'buyer@example.com',
+        token: BASE_USDC,
+        walletAddress: '0x0000000000000000000000000000000000000001',
+      }),
+    ).rejects.toThrow('Crossmint request failed: Wallet could not be linked')
+    expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
   it('returns the receive range and total price used by the review dialog', async () => {

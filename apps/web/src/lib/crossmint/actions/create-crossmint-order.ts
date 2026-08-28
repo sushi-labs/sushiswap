@@ -46,6 +46,35 @@ const createOrderResponseSchema = z.object({
   }),
 })
 
+function getCrossmintChain(tokenLocator: string): string {
+  const separatorIndex = tokenLocator.indexOf(':')
+
+  if (separatorIndex <= 0) {
+    throw new Error('Invalid Crossmint token locator')
+  }
+
+  return tokenLocator.slice(0, separatorIndex)
+}
+
+async function linkCrossmintOnrampWallet({
+  receiptEmail,
+  tokenLocator,
+  walletAddress,
+}: {
+  receiptEmail: string
+  tokenLocator: string
+  walletAddress: string
+}): Promise<void> {
+  const userLocator = encodeURIComponent(`email:${receiptEmail}`)
+  const address = encodeURIComponent(walletAddress)
+
+  await requestCrossmint(
+    `/2025-06-09/users/${userLocator}/linked-wallets/${address}`,
+    'PUT',
+    { chain: getCrossmintChain(tokenLocator) },
+  )
+}
+
 export async function createCrossmintOrder(
   input: CreateCrossmintOrderInput,
 ): Promise<CrossmintCreatedOrder> {
@@ -56,6 +85,14 @@ export async function createCrossmintOrder(
 
   if (!isValidCrossmintWalletAddress(token, walletAddress)) {
     throw new Error(`Invalid ${target.network} recipient wallet address`)
+  }
+
+  if (target.kind === 'stablecoin') {
+    await linkCrossmintOnrampWallet({
+      receiptEmail,
+      tokenLocator: target.tokenLocator,
+      walletAddress,
+    })
   }
 
   const executionParameters: Record<string, string> = {

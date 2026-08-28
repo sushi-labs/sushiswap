@@ -296,7 +296,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                 <DialogDescription>Pay {paymentLabel}</DialogDescription>
               </DialogHeader>
 
-              <div className="space-y-3">
+              <div className="space-y-1">
                 <button
                   type="button"
                   className="flex w-full items-center justify-between gap-2 text-sm"
@@ -369,7 +369,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                 </Collapsible>
 
                 {hasSavedEmail && !isEditingEmail ? (
-                  <div className="flex min-w-0 items-center justify-between gap-3 px-1 text-xs text-muted-foreground">
+                  <div className="flex min-w-0 items-center justify-between gap-3 pb-1 text-xs text-muted-foreground">
                     <span
                       className="min-w-0 truncate"
                       title={visibleReceiptEmail}
@@ -387,7 +387,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                 ) : null}
 
                 {!hasSavedEmail || isEditingEmail ? (
-                  <div className="space-y-2 rounded-xl bg-gray-100 p-3 dark:bg-slate-800">
+                  <div className="space-y-2 rounded-xl bg-gray-100 py-3 dark:bg-slate-800">
                     <label className="text-sm font-medium" htmlFor="fiat-email">
                       Receipt email
                     </label>
@@ -424,8 +424,8 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Required by Crossmint for payment receipts and saved only
-                      in this browser.
+                      Required by Crossmint for payment receipts and saved in
+                      this browser.
                     </p>
                   </div>
                 ) : null}
