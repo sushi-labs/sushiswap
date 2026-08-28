@@ -10,7 +10,7 @@ export interface CreateLaunchForm {
   homepage: string
   x: string
   telegram: string
-  initialBuyUsd: number
+  initialBuyAmount: string
   liquidityMode: SushiV2LiquidityMode
   feeDisposition: SushiV2FeeDisposition
 }

@@ -1,25 +1,27 @@
 'use client'
 
+import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { toNestErrors } from '@hookform/resolvers'
 import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
-import { Container, Form } from '@sushiswap/ui'
+import { Button, Container, Form } from '@sushiswap/ui'
+import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { Amount, Percent, formatUSD, withoutScientificNotation } from 'sushi'
+import { Amount, Percent, formatUSD } from 'sushi'
 import {
   type EvmAddress,
   EvmNative,
-  EvmToken,
+  type EvmToken,
   SUSHI,
   WNATIVE,
   getEvmChainById,
 } from 'sushi/evm'
-import { formatEther, isAddressEqual, parseEventLogs, parseUnits } from 'viem'
+import { formatEther, isAddressEqual, parseEventLogs } from 'viem'
 import {
   useConnection,
   usePublicClient,
@@ -43,9 +45,17 @@ import {
 } from '../../_providers/sushi-v2/contract'
 import { PageHeading } from '../../_ui/page-heading'
 import type { LaunchpadChainId } from '../../constants'
+import {
+  LAUNCH_FDV_LEVELS_USD,
+  quoteInitialBuy,
+} from '../_lib/initial-buy-quote'
 import { useLaunchpadQuoteTokens } from '../_lib/use-launchpad-quote-tokens'
-import { CreateLaunchBuyStep } from './create-launch-buy-step'
+import {
+  CreateLaunchBuyButton,
+  CreateLaunchBuyStep,
+} from './create-launch-buy-step'
 import { CreateLaunchDetailsStep } from './create-launch-details-step'
+import { CreateLaunchPreview } from './create-launch-preview'
 import { CreateLaunchReviewStep } from './create-launch-review-step'
 import type {
   CreateLaunchForm,
@@ -57,11 +67,8 @@ import { LegalAcknowledgementDialog } from './legal-acknowledgement-dialog'
 
 const STANDARD_INITIAL_FDV_USD = 5_000
 const MOON_INITIAL_FDV_USD = 10_000
-const MAX_INITIAL_BUY_USD = 1_000
-const INITIAL_BUY_STEP_USD = 10
 const INITIAL_BUY_SLIPPAGE = new Percent({ numerator: 1, denominator: 100 })
 const INITIAL_BUY_OUTPUT_PERCENT = new Percent(1).sub(INITIAL_BUY_SLIPPAGE)
-const USD_PRICE_DECIMALS = 18
 
 const optionalHttpsUrl = z.union([
   z.literal(''),
@@ -94,14 +101,11 @@ const createLaunchSchema = z.object({
     z.literal(''),
     z.string().url().startsWith('https://t.me/'),
   ]),
-  initialBuyUsd: z
-    .number()
-    .int()
-    .min(0)
-    .max(
-      MAX_INITIAL_BUY_USD,
-      `Initial buy must be at most $${MAX_INITIAL_BUY_USD.toLocaleString()}`,
-    ),
+  initialBuyAmount: z
+    .string()
+    .trim()
+    .regex(/^\d+(?:\.\d*)?$/, 'Enter a valid initial buy amount')
+    .max(80, 'Initial buy amount is too large'),
   liquidityMode: z.enum(['STANDARD', 'MOON']),
   feeDisposition: z.enum([
     'DIRECT_PAYOUT',
@@ -165,42 +169,6 @@ const DETAIL_FIELDS: Array<keyof z.infer<typeof createLaunchDetailsSchema>> = [
 const INDEXING_ATTEMPTS = 10
 const INDEXING_RETRY_DELAY = ms('1.5s')
 
-function deriveInitialBuyAmount({
-  initialBuyUsd,
-  quoteDecimals,
-  quotePriceUsd,
-}: {
-  initialBuyUsd: number
-  quoteDecimals: number
-  quotePriceUsd: number | undefined
-}): bigint | undefined {
-  if (initialBuyUsd === 0) return 0n
-
-  if (
-    !Number.isInteger(initialBuyUsd) ||
-    quotePriceUsd === undefined ||
-    !Number.isFinite(quotePriceUsd) ||
-    quotePriceUsd <= 0
-  ) {
-    return undefined
-  }
-
-  const decimalQuotePrice = withoutScientificNotation(String(quotePriceUsd))
-  if (!decimalQuotePrice) return undefined
-
-  try {
-    const quotePriceUsdRaw = parseUnits(decimalQuotePrice, USD_PRICE_DECIMALS)
-    const initialBuyUsdRaw = parseUnits(
-      String(initialBuyUsd),
-      USD_PRICE_DECIMALS,
-    )
-
-    return (initialBuyUsdRaw * 10n ** BigInt(quoteDecimals)) / quotePriceUsdRaw
-  } catch {
-    return undefined
-  }
-}
-
 function formatBps(bps: number): string {
   const percent = new Percent({ numerator: bps, denominator: 10_000 })
   return `${Number(percent.toString({ fixed: 2 }))}%`
@@ -240,7 +208,6 @@ export function SushiV2CreateLaunchPage({
   const { mutateAsync: signTypedDataAsync } = useSignTypedData()
   const { mutateAsync: writeContractAsync } = useWriteContract()
   const [step, setStep] = useState<CreateStep>('details')
-  const previousStepRef = useRef(step)
   const [logo, setLogo] = useState<PreparedLaunchpadLogoFile | null>(null)
   const [isLogoProcessing, setIsLogoProcessing] = useState(false)
   const [isLaunching, setIsLaunching] = useState(false)
@@ -257,13 +224,6 @@ export function SushiV2CreateLaunchPage({
     isError: isQuoteTokenListError,
     isPending: isQuoteTokenListPending,
   } = useLaunchpadQuoteTokens(chainId)
-
-  useEffect(() => {
-    if (previousStepRef.current === step) return
-
-    previousStepRef.current = step
-    window.scrollTo({ top: 185, behavior: 'smooth' })
-  }, [step])
 
   const quoteTokenMap = useMemo(
     () =>
@@ -299,23 +259,12 @@ export function SushiV2CreateLaunchPage({
       homepage: '',
       x: '',
       telegram: '',
-      initialBuyUsd: 0,
+      initialBuyAmount: '0',
       liquidityMode: 'MOON',
       feeDisposition: 'BUYBACK_AND_BURN',
     },
   })
   const values = methods.watch()
-  const initialBuyAmountRaw = useMemo(
-    () =>
-      selectedQuoteToken
-        ? deriveInitialBuyAmount({
-            initialBuyUsd: values.initialBuyUsd,
-            quoteDecimals: selectedQuoteToken.decimals,
-            quotePriceUsd,
-          })
-        : undefined,
-    [quotePriceUsd, selectedQuoteToken, values.initialBuyUsd],
-  )
   const isWethQuoteToken = Boolean(
     selectedQuoteToken &&
       isAddressEqual(selectedQuoteToken.address, WNATIVE[chainId].address),
@@ -332,7 +281,15 @@ export function SushiV2CreateLaunchPage({
   const initialBuyCurrency = isNativeInitialBuy
     ? nativeCurrency
     : selectedQuoteToken
-  const initialBuyAmount = useMemo(
+  const initialBuyAmountRaw = useMemo(
+    () =>
+      initialBuyCurrency
+        ? Amount.tryFromHuman(initialBuyCurrency, values.initialBuyAmount)
+            ?.amount
+        : undefined,
+    [initialBuyCurrency, values.initialBuyAmount],
+  )
+  const initialBuyCurrencyAmount = useMemo(
     () =>
       initialBuyCurrency && initialBuyAmountRaw !== undefined
         ? new Amount(initialBuyCurrency, initialBuyAmountRaw)
@@ -371,6 +328,81 @@ export function SushiV2CreateLaunchPage({
     },
   })
   const [launchFee, defaultSushiFeeBps, canonicalSushi] = factoryTerms ?? []
+  const {
+    data: fdvTickResults,
+    isPending: areFdvTicksPending,
+    isError: areFdvTicksError,
+  } = useReadContracts({
+    allowFailure: false,
+    contracts: LAUNCH_FDV_LEVELS_USD.map(
+      (fdvUsd) =>
+        ({
+          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          abi: SUSHI_V2_LAUNCHPAD_ABI,
+          chainId,
+          functionName: 'calculateFdvTick',
+          args: [
+            selectedQuoteToken?.address ?? SUSHI_V2_LAUNCHPAD_ADDRESS,
+            BigInt(fdvUsd),
+          ],
+        }) as const,
+    ),
+    query: {
+      enabled: step === 'buy' && Boolean(selectedQuoteToken),
+      staleTime: ms('30s'),
+    },
+  })
+  const fdvTicks = useMemo(
+    () => fdvTickResults?.map((tick) => Number(tick)),
+    [fdvTickResults],
+  )
+  const initialBuyUsd = useMemo(() => {
+    if (quotePriceUsd === undefined) return undefined
+
+    const quoteAmount = Number(values.initialBuyAmount)
+    if (!Number.isFinite(quoteAmount)) return undefined
+    return quoteAmount * quotePriceUsd
+  }, [quotePriceUsd, values.initialBuyAmount])
+  const {
+    data: quotedInitialBuyOutput,
+    isFetching: isInitialBuyQuoteFetching,
+    isError: isInitialBuyQuoteError,
+  } = useQuery({
+    queryKey: [
+      'launchpad',
+      'initial-buy-output',
+      chainId,
+      selectedQuoteToken?.address,
+      values.liquidityMode,
+      initialBuyAmountRaw?.toString(),
+      fdvTicks,
+    ],
+    queryFn: () => {
+      if (
+        !selectedQuoteToken ||
+        initialBuyAmountRaw === undefined ||
+        !fdvTicks
+      ) {
+        return undefined
+      }
+
+      return quoteInitialBuy({
+        chainId,
+        quoteToken: selectedQuoteToken,
+        amountIn: initialBuyAmountRaw,
+        liquidityMode: values.liquidityMode,
+        fdvTicks,
+      })
+    },
+    enabled: Boolean(
+      selectedQuoteToken &&
+        initialBuyAmountRaw &&
+        initialBuyAmountRaw > 0n &&
+        fdvTicks?.length === LAUNCH_FDV_LEVELS_USD.length,
+    ),
+  })
+  const estimatedInitialBuyOutputRaw =
+    initialBuyAmountRaw === 0n ? 0n : quotedInitialBuyOutput
   const initialSushiFeeBps =
     canonicalSushi &&
     selectedQuoteToken &&
@@ -387,7 +419,7 @@ export function SushiV2CreateLaunchPage({
   const buyStepCheckerAmounts = useMemo(() => {
     if (
       !launchFeeAmount ||
-      !initialBuyAmount ||
+      !initialBuyCurrencyAmount ||
       initialBuyAmountRaw === undefined
     ) {
       return [undefined]
@@ -397,16 +429,16 @@ export function SushiV2CreateLaunchPage({
       return [
         new Amount(
           nativeCurrency,
-          launchFeeAmount.amount + initialBuyAmount.amount,
+          launchFeeAmount.amount + initialBuyCurrencyAmount.amount,
         ),
       ]
     }
 
     return initialBuyAmountRaw > 0n
-      ? [launchFeeAmount, initialBuyAmount]
+      ? [launchFeeAmount, initialBuyCurrencyAmount]
       : [launchFeeAmount]
   }, [
-    initialBuyAmount,
+    initialBuyCurrencyAmount,
     initialBuyAmountRaw,
     isNativeInitialBuy,
     launchFeeAmount,
@@ -448,14 +480,13 @@ export function SushiV2CreateLaunchPage({
     setLaunchedTokenAddress(undefined)
 
     try {
-      const amountIn = deriveInitialBuyAmount({
-        initialBuyUsd: formValues.initialBuyUsd,
-        quoteDecimals: selectedQuoteToken.decimals,
-        quotePriceUsd,
-      })
+      const amountIn = initialBuyCurrency
+        ? Amount.tryFromHuman(initialBuyCurrency, formValues.initialBuyAmount)
+            ?.amount
+        : undefined
       if (amountIn === undefined) {
         throw new Error(
-          `A trusted USD price for ${selectedQuoteToken.symbol} is required to calculate the initial buy.`,
+          `Enter a valid ${initialBuyCurrency?.symbol ?? selectedQuoteToken.symbol} initial buy amount.`,
         )
       }
 
@@ -709,7 +740,11 @@ export function SushiV2CreateLaunchPage({
               initialBuyAmountRaw,
               selectedQuoteToken.decimals,
               6,
-            )} ${initialBuyCurrency?.symbol ?? selectedQuoteToken.symbol} · ${formatUSD(values.initialBuyUsd)}`
+            )} ${initialBuyCurrency?.symbol ?? selectedQuoteToken.symbol}${
+              initialBuyUsd === undefined
+                ? ''
+                : ` · ${formatUSD(initialBuyUsd)}`
+            }`
           : 'None',
     },
     { label: 'Pool fee tier', value: '1%' },
@@ -748,6 +783,7 @@ export function SushiV2CreateLaunchPage({
   return (
     <Container maxWidth="5xl" className="w-full px-4 py-10 sm:py-14">
       <PageHeading
+        eyebrow="Create a token"
         title="Bring a token to life"
         description="Deploy a fixed one-billion-token supply and open a Sushi V3 market in one transaction. Editable metadata is saved after deployment."
       />
@@ -767,36 +803,67 @@ export function SushiV2CreateLaunchPage({
               logo={logo}
               onLogoChange={setLogo}
               onLogoProcessingChange={setIsLogoProcessing}
+              previewImageUrl={previewImageUrl}
+              values={values}
               onContinue={() => void continueFromDetails()}
             />
           ) : null}
 
           {step === 'buy' ? (
-            <CreateLaunchBuyStep
-              chainId={chainId}
-              methods={methods}
-              selectedQuoteToken={selectedQuoteToken}
-              quoteTokenMap={quoteTokenMap}
-              quoteTokenCount={quoteTokens.length}
-              isQuoteTokenListPending={isQuoteTokenListPending}
-              isQuoteTokenListError={isQuoteTokenListError}
-              onQuoteTokenSelect={setSelectedQuoteTokenAddress}
-              isSushiQuoteToken={isSushiQuoteToken}
-              isWethQuoteToken={isWethQuoteToken}
-              wethPaymentMode={wethPaymentMode}
-              onWethPaymentModeChange={setWethPaymentMode}
-              nativeCurrencySymbol={nativeCurrency.symbol}
-              initialBuyAmountRaw={initialBuyAmountRaw}
-              initialBuyCurrencySymbol={initialBuyCurrency?.symbol}
-              quotePriceUsd={quotePriceUsd}
-              isQuotePriceLoading={isQuotePriceLoading}
-              maximumInitialBuyUsd={MAX_INITIAL_BUY_USD}
-              initialBuyStepUsd={INITIAL_BUY_STEP_USD}
-              checkerAmounts={buyStepCheckerAmounts}
-              canNavigateToReview={canNavigateToReview}
-              onBack={() => setStep('details')}
-              onReview={() => setStep('review')}
-            />
+            <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
+              <CreateLaunchBuyStep
+                chainId={chainId}
+                methods={methods}
+                selectedQuoteToken={selectedQuoteToken}
+                quoteTokenMap={quoteTokenMap}
+                quoteTokenCount={quoteTokens.length}
+                isQuoteTokenListPending={isQuoteTokenListPending}
+                isQuoteTokenListError={isQuoteTokenListError}
+                onQuoteTokenSelect={setSelectedQuoteTokenAddress}
+                isSushiQuoteToken={isSushiQuoteToken}
+                isWethQuoteToken={isWethQuoteToken}
+                wethPaymentMode={wethPaymentMode}
+                onWethPaymentModeChange={setWethPaymentMode}
+                nativeCurrencySymbol={nativeCurrency.symbol}
+                initialBuyCurrency={initialBuyCurrency}
+                launchFeeRaw={launchFee}
+                initialBuyUsd={initialBuyUsd}
+                isQuotePriceLoading={isQuotePriceLoading}
+                estimatedInitialBuyOutputRaw={estimatedInitialBuyOutputRaw}
+                isInitialBuyQuoteLoading={
+                  areFdvTicksPending || isInitialBuyQuoteFetching
+                }
+                isInitialBuyQuoteError={
+                  areFdvTicksError || isInitialBuyQuoteError
+                }
+              />
+              <div className="space-y-4">
+                <CreateLaunchPreview
+                  name={values.name}
+                  symbol={values.symbol}
+                  liquidityMode={values.liquidityMode}
+                  feeDisposition={values.feeDisposition}
+                  previewImageUrl={previewImageUrl}
+                  footer={
+                    <CreateLaunchBuyButton
+                      chainId={chainId}
+                      checkerAmounts={buyStepCheckerAmounts}
+                      canNavigateToReview={canNavigateToReview}
+                      onReview={() => setStep('review')}
+                    />
+                  }
+                />
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="perps-secondary"
+                  icon={ArrowLeftIcon}
+                  onClick={() => setStep('details')}
+                >
+                  Back to token details
+                </Button>
+              </div>
+            </div>
           ) : null}
 
           {step === 'review' ? (
@@ -815,7 +882,7 @@ export function SushiV2CreateLaunchPage({
               }
               isNativeInitialBuy={isNativeInitialBuy}
               initialBuyAmountRaw={initialBuyAmountRaw}
-              initialBuyAmount={initialBuyAmount}
+              initialBuyAmount={initialBuyCurrencyAmount}
               isLaunching={isLaunching}
               isLogoProcessing={isLogoProcessing}
               isFactoryTermsPending={isFactoryTermsPending}

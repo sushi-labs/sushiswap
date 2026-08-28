@@ -281,7 +281,7 @@ function TokenHeader({
             </div>
           </div>
         </div>
-        <MetadataLinks links={links} placement="header" />
+        <MetadataLinks links={links} />
       </div>
     </>
   )

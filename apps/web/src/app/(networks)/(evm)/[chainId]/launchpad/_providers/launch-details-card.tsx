@@ -11,9 +11,11 @@ export interface LaunchDetailSection {
 export function LaunchDetailsCard({
   title = 'Launch details',
   sections,
+  showItemDividers = true,
 }: {
   title?: string
   sections: readonly LaunchDetailSection[]
+  showItemDividers?: boolean
 }) {
   return (
     <PerpsCard className="p-4" fullWidth>
@@ -22,7 +24,7 @@ export function LaunchDetailsCard({
         {sections.map((section, index) => (
           <section
             key={section.title ?? index}
-            className="py-3 first:pt-0 last:pb-0"
+            className="pb-2 pt-4 first:pt-0 last:pb-0"
           >
             {section.title ? (
               <h3 className="mb-1 text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
@@ -31,6 +33,7 @@ export function LaunchDetailsCard({
             ) : null}
             <DetailList
               variant="compact"
+              className={showItemDividers ? undefined : 'divide-y-0'}
               valueClassName="max-w-[68%]"
               items={section.items}
             />
