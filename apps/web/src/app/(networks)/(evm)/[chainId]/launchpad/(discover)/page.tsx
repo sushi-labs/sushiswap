@@ -6,9 +6,9 @@ import {
   getLaunchpadTokensForSeo,
   getLaunchpadUrl,
   serializeLaunchpadJsonLd,
-} from './_lib/launchpad-seo'
-import { LaunchpadHomePage } from './_ui/launchpad-home-page'
-import { isLaunchpadChainId } from './constants'
+} from '../_lib/launchpad-seo'
+import { LaunchpadHomePage } from '../_ui/launchpad-home-page'
+import { isLaunchpadChainId } from '../constants'
 
 const DESCRIPTION =
   'Create and discover tokens with live markets and permanently locked Sushi V3 liquidity.'

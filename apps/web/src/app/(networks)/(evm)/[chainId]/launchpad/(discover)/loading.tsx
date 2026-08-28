@@ -1,12 +1,12 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { MetricStrip, MetricStripItem } from './_ui/metric-strip'
-import { TokenGridSkeleton } from './_ui/token-grid'
+import { MetricStrip, MetricStripItem } from '../_ui/metric-strip'
+import { TokenGridSkeleton } from '../_ui/token-grid'
 
 const METRIC_SKELETONS = [
-  { key: 'tokens', labelWidth: 'w-24', valueWidth: 'w-20' },
-  { key: 'volume', labelWidth: 'w-20', valueWidth: 'w-24' },
-  { key: 'liquidity', labelWidth: 'w-16', valueWidth: 'w-24' },
+  { key: 'tokens', labelWidth: 'w-[113px]', valueWidth: 'w-12' },
+  { key: 'volume', labelWidth: 'w-[75px]', valueWidth: 'w-16' },
+  { key: 'liquidity', labelWidth: 'w-[57px]', valueWidth: 'w-[82px]' },
 ] as const
 
 export default function LaunchpadLoading() {
@@ -47,7 +47,7 @@ export default function LaunchpadLoading() {
                 key={metric.key}
                 index={index}
                 label={
-                  <div className="flex h-4 items-center">
+                  <div className="flex h-[16.5px] items-center">
                     <SkeletonBox
                       className={`h-3 rounded-sm ${metric.labelWidth}`}
                     />
@@ -63,8 +63,8 @@ export default function LaunchpadLoading() {
             <div className="flex items-center gap-3 border-l border-t border-white/[0.06] px-5 py-4 lg:border-t-0">
               <SkeletonBox className="hidden h-9 w-9 shrink-0 rounded-full sm:block" />
               <div>
-                <SkeletonBox className="h-3 w-20 rounded-sm" />
-                <SkeletonBox className="mt-2 h-5 w-12 rounded-sm" />
+                <SkeletonBox className="h-[16.5px] w-[86px] rounded-sm" />
+                <SkeletonBox className="mt-1 h-5 w-[42px] rounded-sm" />
               </div>
             </div>
           </MetricStrip>

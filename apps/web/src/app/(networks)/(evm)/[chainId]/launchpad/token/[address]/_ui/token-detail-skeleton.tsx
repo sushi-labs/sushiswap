@@ -4,7 +4,32 @@ import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 import { TradeActivitySkeleton } from './trade-activity'
 
-const MARKET_STAT_SKELETONS = ['price', 'fdv', 'liquidity', 'volume'] as const
+const MARKET_STAT_SKELETONS = [
+  {
+    key: 'price',
+    labelWidth: 'w-[34px]',
+    valueWidth: 'w-32',
+    detailWidth: 'w-[76px]',
+  },
+  {
+    key: 'fdv',
+    labelWidth: 'w-6',
+    valueWidth: 'w-20',
+    detailWidth: 'w-20',
+  },
+  {
+    key: 'liquidity',
+    labelWidth: 'w-[57px]',
+    valueWidth: 'w-[151px]',
+    detailWidth: 'w-[107px]',
+  },
+  {
+    key: 'volume',
+    labelWidth: 'w-[75px]',
+    valueWidth: 'w-[66px]',
+    detailWidth: 'w-[104px]',
+  },
+] as const
 
 const TRADE_ROW_SKELETONS = ['first', 'second', 'third', 'fourth'] as const
 const LOCKED_POSITION_SKELETONS = [
@@ -23,17 +48,25 @@ function CardHeadingSkeleton() {
   )
 }
 
-export function TokenDetailSkeleton({ header }: { header?: ReactNode } = {}) {
+export function TokenDetailSkeleton({
+  header,
+  bodyOnly = false,
+}: {
+  header?: ReactNode
+  bodyOnly?: boolean
+} = {}) {
+  const renderedHeader = bodyOnly ? false : header
+
   return (
     <Container
       maxWidth="8xl"
-      className="w-full px-4 pb-14 pt-6 sm:pt-8"
+      className={bodyOnly ? 'contents' : 'w-full px-4 pb-14 pt-6 sm:pt-8'}
       aria-busy="true"
       aria-label="Loading token details"
     >
       <span className="sr-only">Loading token details</span>
 
-      {header ?? (
+      {renderedHeader ?? (
         <>
           <div className="mb-5 flex items-center gap-2">
             <SkeletonBox className="h-4 w-16 rounded-sm" />
@@ -49,6 +82,7 @@ export function TokenDetailSkeleton({ header }: { header?: ReactNode } = {}) {
                   <SkeletonBox className="h-8 w-36 rounded-lg sm:h-9 sm:w-52" />
                   <SkeletonBox className="h-7 w-12 rounded-md" />
                   <SkeletonBox className="h-6 w-12 rounded-full" />
+                  <SkeletonBox className="h-7 w-20 rounded-full" />
                 </div>
                 <div className="mt-2 flex flex-wrap items-center gap-3">
                   <SkeletonBox className="h-4 w-32 rounded-sm" />
@@ -65,12 +99,22 @@ export function TokenDetailSkeleton({ header }: { header?: ReactNode } = {}) {
         <MetricStrip>
           {MARKET_STAT_SKELETONS.map((stat, index) => (
             <MetricStripItem
-              key={stat}
+              key={stat.key}
               index={index}
               className="min-h-[104px] sm:min-h-[103px]"
-              label={<SkeletonBox className="h-3 w-16 rounded-sm" />}
-              value={<SkeletonBox className="h-6 w-24 rounded-md" />}
-              detail={<SkeletonBox className="h-3 w-20 rounded-sm" />}
+              label={
+                <SkeletonBox
+                  className={`h-[16.5px] rounded-sm ${stat.labelWidth}`}
+                />
+              }
+              value={
+                <SkeletonBox className={`h-7 rounded-md ${stat.valueWidth}`} />
+              }
+              detail={
+                <SkeletonBox
+                  className={`h-[16.5px] rounded-sm ${stat.detailWidth}`}
+                />
+              }
             />
           ))}
         </MetricStrip>

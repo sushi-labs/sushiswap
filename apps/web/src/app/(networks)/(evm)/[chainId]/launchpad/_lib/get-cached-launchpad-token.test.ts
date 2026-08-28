@@ -1,24 +1,34 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { cache, getLaunchpadTokenMock } = vi.hoisted(() => ({
-  cache: new Map<string, unknown>(),
-  getLaunchpadTokenMock: vi.fn<() => Promise<unknown>>(),
-}))
+const { cache, cacheConfigurations, getLaunchpadTokenMock } = vi.hoisted(
+  () => ({
+    cache: new Map<string, unknown>(),
+    cacheConfigurations: [] as unknown[],
+    getLaunchpadTokenMock: vi.fn<() => Promise<unknown>>(),
+  }),
+)
 
 vi.mock('@sushiswap/graph-client/data-api', () => ({
   getLaunchpadToken: getLaunchpadTokenMock,
 }))
 
 vi.mock('next/cache', () => ({
-  unstable_cache:
-    (callback: () => Promise<unknown>, keyParts: string[]) => async () => {
+  unstable_cache: (
+    callback: () => Promise<unknown>,
+    keyParts: string[],
+    configuration: unknown,
+  ) => {
+    cacheConfigurations.push(configuration)
+
+    return async () => {
       const key = JSON.stringify(keyParts)
       if (cache.has(key)) return cache.get(key)
 
       const value = await callback()
       cache.set(key, value)
       return value
-    },
+    }
+  },
 }))
 
 import { getCachedLaunchpadToken } from './get-cached-launchpad-token'
@@ -31,7 +41,16 @@ const input = {
 describe('getCachedLaunchpadToken', () => {
   beforeEach(() => {
     cache.clear()
+    cacheConfigurations.length = 0
     getLaunchpadTokenMock.mockReset()
+  })
+
+  it('revalidates cached tokens hourly', async () => {
+    getLaunchpadTokenMock.mockResolvedValueOnce({ id: 'launchpad-token' })
+
+    await getCachedLaunchpadToken(input)
+
+    expect(cacheConfigurations).toContainEqual({ revalidate: 60 * 60 })
   })
 
   it('does not cache a missing token', async () => {

@@ -3,13 +3,18 @@
 import type { ImageProps } from 'next/image'
 import { useState } from 'react'
 
+import { getTokenFallbackIconStyle } from '../../lib/token-fallback-icon'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
 
 type ImageLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
 
+/** `Avatar` falls back to its own `h-10 w-10` when given no explicit width. */
+const DEFAULT_SIZE_IN_PIXELS = 40
+
 interface CurrencyAvatarProps {
+  address: string
+  chainId: number | string
   fallback: string
-  fallbackColor: string
   height: ImageProps['height']
   src: string
   width: ImageProps['width']
@@ -21,8 +26,9 @@ interface ImageState {
 }
 
 export function CurrencyAvatar({
+  address,
+  chainId,
   fallback,
-  fallbackColor,
   height,
   src,
   width,
@@ -32,6 +38,7 @@ export function CurrencyAvatar({
     status: 'loading',
   })
   const status = imageState.src === src ? imageState.status : 'loading'
+  const fallbackSizeInPixels = Number(width) || DEFAULT_SIZE_IN_PIXELS
 
   return (
     <Avatar key={src} style={{ width, height }}>
@@ -42,8 +49,10 @@ export function CurrencyAvatar({
       />
       {status === 'error' ? (
         <AvatarFallback
-          style={{ backgroundColor: fallbackColor }}
-          className="font-bold text-white"
+          style={getTokenFallbackIconStyle(
+            { address, chainId },
+            fallbackSizeInPixels,
+          )}
         >
           {fallback}
         </AvatarFallback>

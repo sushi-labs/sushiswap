@@ -26,27 +26,27 @@ export function TokenCardSkeleton() {
             <div className="relative col-start-2 row-start-1">
               <SkeletonCircle radius={96} />
               <SkeletonCircle
-                radius={20}
+                radius={24}
                 className="absolute -bottom-0.5 -right-0.5"
               />
             </div>
           </div>
           <div className="flex w-full min-w-0 flex-col items-center">
-            <SkeletonBox className="h-5 w-3/5 rounded-md" />
-            <SkeletonBox className="mt-1 h-4 w-1/3 rounded-sm" />
-            <SkeletonBox className="mt-1.5 h-3 w-2/5 rounded-sm" />
+            <SkeletonBox className="h-6 w-40 rounded-md" />
+            <SkeletonBox className="h-4 w-[88px] rounded-sm" />
+            <SkeletonBox className="mt-1 h-[15px] w-[127px] rounded-sm" />
           </div>
         </div>
 
         <div className="mt-2 flex flex-col gap-0.5 border-t border-white/[0.06] pt-3">
           {[
             ['market-cap', 'w-16', 'w-14'],
-            ['volume', 'w-12', 'w-12'],
-            ['liquidity', 'w-14', 'w-16'],
+            ['volume', 'w-[42px]', 'w-14'],
+            ['liquidity', 'w-12', 'w-12'],
           ].map(([stat, labelWidth, valueWidth]) => (
             <div
               key={stat}
-              className="flex items-center justify-between py-0.5"
+              className="flex h-[16.5px] items-center justify-between"
             >
               <SkeletonBox className={`h-3 ${labelWidth} rounded-sm`} />
               <SkeletonBox className={`h-3 ${valueWidth} rounded-sm`} />
@@ -56,7 +56,7 @@ export function TokenCardSkeleton() {
 
         <div className="mt-4 grid grid-cols-4 gap-2">
           {['10', '25', '50', '100'].map((amount) => (
-            <SkeletonBox key={amount} className="h-8 rounded-lg" />
+            <SkeletonBox key={amount} className="h-[26px] rounded-lg" />
           ))}
         </div>
       </div>
@@ -122,6 +122,7 @@ export function TokenCard({
             <div className="flex w-full min-w-0 justify-center text-center">
               <Link
                 href={href}
+                prefetch={manage ? 'auto' : true}
                 aria-label={`${manage ? 'Manage' : 'View'} ${token.name}`}
                 title={token.name}
                 className="mx-auto flex max-w-full min-w-0 items-center justify-center text-base font-semibold text-perps-muted transition after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-perps-blue/50 group-hover:text-perps-blue"
