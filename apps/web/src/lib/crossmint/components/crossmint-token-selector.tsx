@@ -396,7 +396,7 @@ export function CrossmintTokenSelector({
                   'text-muted-foreground',
               )}
             >
-              {amount || '0.0'}
+              ~{amount || '0.0'}
             </span>
           )}
         </div>

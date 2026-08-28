@@ -1,6 +1,6 @@
 import type { CrossmintEnvironment } from 'src/lib/crossmint/crossmint-config'
 
-export const CROSSMINT_STAGING_FALLBACK_TOKEN_PRICE_USD = 0.0005
+export const CROSSMINT_STAGING_FALLBACK_TOKEN_PRICE_USD = 1
 
 export interface FiatBuyTokenEstimate {
   amount?: number
