@@ -1,13 +1,27 @@
-import { Container, SkeletonBox } from '@sushiswap/ui'
+'use client'
+
+import {
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+  SignalIcon,
+} from '@heroicons/react/24/outline'
+import { Button, Container, SkeletonBox, TextField } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { MetricStrip, MetricStripItem } from '../_ui/metric-strip'
+import { ProviderFilterControls } from '../_ui/provider-filter-controls'
 import { TokenGridSkeleton } from '../_ui/token-grid'
+import {
+  DEFAULT_LAUNCHPAD_TOKEN_SORT,
+  TokenSortControls,
+} from '../_ui/token-sort-controls'
 
 const METRIC_SKELETONS = [
-  { key: 'tokens', labelWidth: 'w-[113px]', valueWidth: 'w-12' },
-  { key: 'volume', labelWidth: 'w-[75px]', valueWidth: 'w-16' },
-  { key: 'liquidity', labelWidth: 'w-[57px]', valueWidth: 'w-[82px]' },
+  { label: 'Tokens launched', valueWidth: 'w-12' },
+  { label: '24h volume', valueWidth: 'w-16' },
+  { label: 'Liquidity', valueWidth: 'w-[82px]' },
 ] as const
+
+function noop() {}
 
 export default function LaunchpadLoading() {
   return (
@@ -15,44 +29,32 @@ export default function LaunchpadLoading() {
       <Container maxWidth="7xl" className="w-full px-4 pb-8 pt-8 sm:pt-10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="w-full max-w-3xl">
-            <div className="sm:hidden">
-              <SkeletonBox className="h-9 w-full max-w-[520px] rounded-lg" />
-              <SkeletonBox className="h-9 w-24 rounded-lg min-[480px]:hidden" />
-            </div>
-            <div className="hidden sm:block min-[722px]:hidden">
-              <SkeletonBox className="h-12 w-full max-w-[520px] rounded-xl" />
-              <SkeletonBox className="h-12 w-40 rounded-xl" />
-            </div>
-            <SkeletonBox className="hidden h-12 w-full max-w-[650px] rounded-xl min-[722px]:block" />
-
-            <div className="mt-3">
-              <div className="flex h-6 items-center">
-                <SkeletonBox className="h-4 w-full max-w-2xl rounded-sm" />
-              </div>
-              <div className="flex h-6 items-center">
-                <SkeletonBox className="h-4 w-11/12 max-w-xl rounded-sm" />
-              </div>
-              <div className="flex h-6 items-center min-[480px]:hidden">
-                <SkeletonBox className="h-4 w-3/5 rounded-sm" />
-              </div>
-            </div>
+            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-perps-muted sm:text-5xl">
+              Discover tokens as they launch.
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-perps-muted-50 sm:text-base">
+              Follow live markets, trade directly from each token page, and
+              launch with permanently locked Sushi V3 liquidity.
+            </p>
           </div>
-          <SkeletonBox className="h-11 w-36 shrink-0 rounded-xl" />
+          <Button
+            disabled
+            size="lg"
+            variant="perps-default"
+            icon={ArrowRightIcon}
+            iconPosition="end"
+          >
+            Create token
+          </Button>
         </div>
 
         <div className="mt-7">
           <MetricStrip>
             {METRIC_SKELETONS.map((metric, index) => (
               <MetricStripItem
-                key={metric.key}
+                key={metric.label}
                 index={index}
-                label={
-                  <div className="flex h-[16.5px] items-center">
-                    <SkeletonBox
-                      className={`h-3 rounded-sm ${metric.labelWidth}`}
-                    />
-                  </div>
-                }
+                label={metric.label}
                 value={
                   <SkeletonBox
                     className={`h-7 rounded-md ${metric.valueWidth}`}
@@ -61,10 +63,17 @@ export default function LaunchpadLoading() {
               />
             ))}
             <div className="flex items-center gap-3 border-l border-t border-white/[0.06] px-5 py-4 lg:border-t-0">
-              <SkeletonBox className="hidden h-9 w-9 shrink-0 rounded-full sm:block" />
+              <span className="hidden h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400 sm:grid">
+                <SignalIcon className="h-5 w-5" />
+              </span>
               <div>
-                <SkeletonBox className="h-[16.5px] w-[86px] rounded-sm" />
-                <SkeletonBox className="mt-1 h-5 w-[42px] rounded-sm" />
+                <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
+                  Market feeds
+                </div>
+                <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none" />
+                  Live
+                </div>
               </div>
             </div>
           </MetricStrip>
@@ -74,12 +83,28 @@ export default function LaunchpadLoading() {
       <section className="border-t border-white/[0.04] py-8">
         <Container maxWidth="7xl" className="w-full px-4">
           <PerpsCard className="p-3 sm:p-4" fullWidth>
-            <div className="grid gap-3 md:grid-cols-[minmax(240px,1fr)_auto]">
-              <SkeletonBox className="h-10 w-full rounded-lg xl:max-w-[480px]" />
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <SkeletonBox className="h-10 w-full rounded-lg md:w-[150px]" />
-                <SkeletonBox className="h-10 w-full shrink-0 rounded-lg sm:w-[184px]" />
+            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <TextField
+                  disabled
+                  type="text"
+                  icon={MagnifyingGlassIcon}
+                  placeholder="Search name, symbol, or address"
+                  aria-label="Search launches"
+                  className="!bg-white/[0.04] !text-perps-muted"
+                  wrapperClassName="min-w-0 sm:w-[300px] xl:w-[400px]"
+                />
+                <ProviderFilterControls
+                  disabled
+                  filter="all"
+                  onFilterChange={noop}
+                />
               </div>
+              <TokenSortControls
+                disabled
+                sortBy={DEFAULT_LAUNCHPAD_TOKEN_SORT}
+                onSortByChange={noop}
+              />
             </div>
           </PerpsCard>
 

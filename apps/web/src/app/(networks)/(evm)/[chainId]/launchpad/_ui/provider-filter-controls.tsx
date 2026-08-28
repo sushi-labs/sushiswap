@@ -17,9 +17,11 @@ import {
 export function ProviderFilterControls({
   filter,
   onFilterChange,
+  disabled = false,
 }: {
   filter: LaunchpadProviderFilter
   onFilterChange: (filter: LaunchpadProviderFilter) => void
+  disabled?: boolean
 }) {
   return (
     <div
@@ -38,6 +40,7 @@ export function ProviderFilterControls({
             type="button"
             role="radio"
             aria-checked={selected}
+            disabled={disabled}
             onClick={() => onFilterChange(option.value)}
             className={classNames(
               SEGMENTED_ITEM,
