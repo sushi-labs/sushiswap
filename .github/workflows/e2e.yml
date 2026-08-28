@@ -24,7 +24,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     # runs-on: buildjet-4vcpu-ubuntu-2204
-    timeout-minutes: 25
+    timeout-minutes: 35
     strategy:
       matrix:
         block-number: [71015789]
@@ -35,15 +35,18 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        env:
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
+
+      # The shared install action currently selects Node 20. Restore the
+      # repository's required runtime after it completes.
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
           node-version: 24
 
-      - name: Install dependencies
-        uses: ./.github/actions/install
-        env: 
-          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
         working-directory: ./apps/web

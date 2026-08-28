@@ -10,6 +10,7 @@ if (!privyAppId) {
 
 export default defineConfig({
   ...config,
+  quiet: false,
   globalSetup: undefined,
   globalTeardown: undefined,
   testMatch: ['privy-live.test.ts'],
