@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import { ChainId, type Currency, getChainById } from 'sushi'
 
 import type { EvmAddress } from 'sushi/evm'
+import { getTokenFallbackMonogram } from '../../lib/token-fallback-icon'
 import { LinkExternal } from '../link'
 import { CurrencyAvatar } from './currency-avatar'
 
@@ -99,16 +100,6 @@ const LOGO: Record<number, string> = {
   [ChainId.SOLANA]: SolanaLogo,
   [ChainId.ROBINHOOD]: EthereumLogo,
 }
-function hashAddressToColor(address: string): string {
-  let hash = 5381
-
-  for (let index = 0; index < address.length; index++) {
-    hash = (hash << 5) + hash + address.charCodeAt(index)
-  }
-
-  const hue = (hash >>> 0) % 360
-  return `hsl(${hue}, 65%, 45%)`
-}
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   currency: Currency
@@ -133,8 +124,9 @@ export const Icon: FC<IconProps> = ({
       src={src}
       width={rest.width}
       height={rest.height}
-      fallback={currency.symbol.charAt(0).toUpperCase() || '?'}
-      fallbackColor={hashAddressToColor(address.toLowerCase())}
+      chainId={currency.chainId}
+      address={address}
+      fallback={getTokenFallbackMonogram(currency.symbol)}
     />
   )
 
