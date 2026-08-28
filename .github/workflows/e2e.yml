@@ -78,6 +78,7 @@ jobs:
         run: pnpm --filter web test:privy-live
         timeout-minutes: 12
         env:
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           NEXT_PUBLIC_PRIVY_APP_ID: cmqto01a1007v0blaefwe3a0p
           PRIVY_TEST_EMAIL: ${{ secrets.PRIVY_TEST_EMAIL }}
