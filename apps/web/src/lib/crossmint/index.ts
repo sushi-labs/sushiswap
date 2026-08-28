@@ -32,7 +32,6 @@ export {
 export {
   type CrossmintFiatPaymentMethods,
   CrossmintOrderCheckout,
-  CrossmintOrderCheckoutPreloader,
   type CrossmintOrderCheckoutProps,
   CrossmintOrderCheckoutSkeleton,
   type CrossmintOrderCheckoutSkeletonProps,

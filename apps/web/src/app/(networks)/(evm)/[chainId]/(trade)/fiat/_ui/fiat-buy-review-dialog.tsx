@@ -22,6 +22,7 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY,
   CrossmintOrderCheckout,
+  CrossmintOrderCheckoutSkeleton,
   useFiatExchangeRates,
   useFiatLocale,
 } from 'src/lib/crossmint'
@@ -468,20 +469,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                     receiptEmail={visibleReceiptEmail}
                   />
                 ) : isCreatingOrder ? (
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between gap-2 text-sm">
-                      <span className="font-medium text-gray-700 dark:text-slate-300">
-                        Pay with
-                      </span>
-                      <div className="flex items-center gap-1 font-semibold text-gray-900 dark:text-slate-100">
-                        <SkeletonText className="min-w-14" fontSize="sm" />
-                        <ChevronDownIcon className={classNames('h-4 w-4 ')} />
-                      </div>
-                    </div>
-                    <Button type="button" className="w-full" size="xl" loading>
-                      Loading payment options
-                    </Button>
-                  </div>
+                  <CrossmintOrderCheckoutSkeleton />
                 ) : null}
               </div>
             </DialogContent>
