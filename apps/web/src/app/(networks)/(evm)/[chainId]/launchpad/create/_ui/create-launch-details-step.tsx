@@ -1,4 +1,4 @@
-import { InformationCircleIcon, MoonIcon } from '@heroicons/react/24/outline'
+import { InformationCircleIcon } from '@heroicons/react/24/outline'
 import {
   FormControl,
   FormField,
@@ -16,6 +16,7 @@ import {
   TextField,
   classNames,
 } from '@sushiswap/ui'
+import { Rocket } from 'lucide-react'
 import type { UseFormReturn } from 'react-hook-form'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
@@ -206,7 +207,7 @@ export function CreateLaunchDetailsStep({
                               : 'border-white/[0.12] bg-white/[0.03] text-perps-muted-50',
                           )}
                         >
-                          <MoonIcon className="h-5 w-5" aria-hidden="true" />
+                          <Rocket className="h-5 w-5" aria-hidden="true" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
