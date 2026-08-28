@@ -78,10 +78,6 @@
     "test:unit": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**/*"]
-    },
-    "web#test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**/*"]
     }
   }
 }
