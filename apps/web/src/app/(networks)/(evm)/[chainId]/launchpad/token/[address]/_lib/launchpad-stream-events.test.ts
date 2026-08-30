@@ -1,6 +1,10 @@
 import { ChainId } from 'sushi'
 import { describe, expect, it } from 'vitest'
-import { isExpectedStream, parseStreamEvent, streamTradeSchema } from './events'
+import {
+  isExpectedStream,
+  parseStreamEvent,
+  streamTradeSchema,
+} from './launchpad-stream-events'
 
 const tokenAddress = '0x0000000000000000000000000000000000000001'
 

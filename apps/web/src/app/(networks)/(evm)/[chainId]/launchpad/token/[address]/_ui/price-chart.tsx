@@ -22,7 +22,7 @@ import {
 import type { EvmAddress } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { useLaunchpadCandleController } from '../_lib/use-launchpad-live-trades'
+import { useLaunchpadCandleController } from '../_lib/launchpad-live-data-provider'
 import {
   DEFAULT_LAUNCHPAD_CHART_MODE,
   type LaunchpadChartMode,

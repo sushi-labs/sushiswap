@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { act, createElement } from 'react'
+import { type ReactNode, act, createElement } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import type { EvmAddress } from 'sushi/evm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -26,7 +26,7 @@ import {
   useLaunchpadCandleController,
   useLaunchpadLiveMarketStats,
   useLaunchpadLiveTrades,
-} from '.'
+} from './launchpad-live-data-provider'
 
 const CHAIN_ID = 4663
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111' as EvmAddress
@@ -102,11 +102,14 @@ const EMPTY_WINDOW = {
 describe('LaunchpadLiveDataProvider', () => {
   let container: HTMLDivElement
   let queryClient: QueryClient
-  let root: Root
+  let root: Root | null
 
-  function render(address: EvmAddress, child: React.ReactNode = null): void {
+  function render(address: EvmAddress, child: ReactNode = null): void {
+    const currentRoot = root
+    if (!currentRoot) throw new Error('Test root is not mounted')
+
     act(() => {
-      root.render(
+      currentRoot.render(
         createElement(
           QueryClientProvider,
           { client: queryClient },
@@ -122,6 +125,14 @@ describe('LaunchpadLiveDataProvider', () => {
         ),
       )
     })
+  }
+
+  function unmount(): void {
+    const currentRoot = root
+    if (!currentRoot) return
+
+    act(() => currentRoot.unmount())
+    root = null
   }
 
   async function waitForSources(count: number): Promise<void> {
@@ -162,7 +173,7 @@ describe('LaunchpadLiveDataProvider', () => {
   })
 
   afterEach(() => {
-    act(() => root.unmount())
+    unmount()
     queryClient.clear()
     container.remove()
   })
@@ -259,10 +270,9 @@ describe('LaunchpadLiveDataProvider', () => {
       ),
     ).toBe(OTHER_TOKEN_ADDRESS)
 
-    act(() => root.unmount())
+    unmount()
     expect(FakeEventSource.instances[1]!.readyState).toBe(
       FakeEventSource.CLOSED,
     )
-    root = createRoot(container)
   })
 })

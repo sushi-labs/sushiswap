@@ -15,26 +15,25 @@ import {
 } from '@tanstack/react-query'
 import ms from 'ms'
 import {
+  type ReactElement,
   type ReactNode,
   createContext,
-  createElement,
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
-import { SUSHI_DATA_API_HOST } from '../../../../../../../../../lib/constants'
-import type { LaunchpadChainId } from '../../../../constants'
-import type { LaunchpadTradesInput } from '../../../../types'
+import { SUSHI_DATA_API_HOST } from '../../../../../../../../lib/constants'
+import type { LaunchpadChainId } from '../../../constants'
+import type { LaunchpadTradesInput } from '../../../types'
 import {
   type LaunchpadMarketStatsTradeEvent,
   appendLaunchpadMarketStatsTradeEvent,
   foldLaunchpadMarketStats,
-} from '../launchpad-market-stats'
+} from './launchpad-market-stats'
 import {
   EMPTY_TRADE_CONNECTION,
   LaunchpadCandleController,
@@ -47,7 +46,7 @@ import {
   launchpadEventsUrl,
   minimumLaunchpadStreamCursor,
   reconcileLaunchpadTradeResetSnapshot,
-} from '../launchpad-stream'
+} from './launchpad-stream'
 import {
   closedStreamRetryDelay,
   isExpectedStream,
@@ -63,18 +62,12 @@ import {
   tradeSnapshotRetryBaseDelay,
   tradeSnapshotRetryMaxDelay,
   unsignedIntegerSchema,
-} from './events'
-
-export {
-  parseLaunchpadMetricsStreamEvent,
-  parseLaunchpadTradeResetStreamEvent,
-  parseLaunchpadTradeStreamEvent,
-} from './events'
+} from './launchpad-stream-events'
 
 const MARKET_STATS_POLL_INTERVAL = ms('10s')
 
 function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
-  const query = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['launchpad', 'trades', input],
     queryFn: ({ pageParam }) => {
       const { after: _after, ...baseInput } = input
@@ -90,13 +83,6 @@ function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
     enabled,
     staleTime: ms('5s'),
   })
-
-  const data = useMemo(
-    () => flattenLaunchpadTradePages(query.data?.pages),
-    [query.data?.pages],
-  )
-
-  return { ...query, data }
 }
 
 function useLaunchpadMarketStatsController(
@@ -140,11 +126,9 @@ function useLaunchpadMarketStatsController(
     setEventState({ events: [], streamKey })
     void refetch.current()
   }, [streamKey])
-  const data = useMemo(
-    () =>
-      query.data ? foldLaunchpadMarketStats(query.data, events) : query.data,
-    [events, query.data],
-  )
+  const data = query.data
+    ? foldLaunchpadMarketStats(query.data, events)
+    : query.data
   const latestNewTradeEvent =
     events.reduce<LaunchpadMarketStatsTradeEvent | null>((latest, event) => {
       if (event.insertionEventId === null) return latest
@@ -237,12 +221,12 @@ function useLaunchpadLiveTradesController(input: {
     if (!hasSnapshot.current || !snapshot.isSuccess) return
 
     const next = applyLaunchpadTradeMutations(
-      snapshot.data,
+      flattenLaunchpadTradePages(snapshot.data?.pages),
       mutations.current.values(),
       includeSmallTrades,
     )
     setData(next)
-  }, [includeSmallTrades, snapshot.data, snapshot.isSuccess])
+  }, [includeSmallTrades, snapshot.data?.pages, snapshot.isSuccess])
 
   useEffect(() => {
     const tokenQueryKey = ['launchpad', 'token'] as const
@@ -840,14 +824,18 @@ function useLaunchpadLiveTradesController(input: {
   }
 }
 
-interface LaunchpadLiveDataContextValue {
-  candleController: LaunchpadCandleController
-  marketStats: ReturnType<typeof useLaunchpadMarketStatsController>['result']
-  trades: ReturnType<typeof useLaunchpadLiveTradesController>
-}
+type LaunchpadLiveMarketStats = ReturnType<
+  typeof useLaunchpadMarketStatsController
+>['result']
+type LaunchpadLiveTrades = ReturnType<typeof useLaunchpadLiveTradesController>
 
-const LaunchpadLiveDataContext =
-  createContext<LaunchpadLiveDataContextValue | null>(null)
+const LaunchpadCandleControllerContext =
+  createContext<LaunchpadCandleController | null>(null)
+const LaunchpadLiveMarketStatsContext =
+  createContext<LaunchpadLiveMarketStats | null>(null)
+const LaunchpadLiveTradesContext = createContext<LaunchpadLiveTrades | null>(
+  null,
+)
 
 interface LaunchpadLiveDataProviderProps {
   chainId: LaunchpadChainId
@@ -859,11 +847,13 @@ interface LaunchpadLiveDataProviderProps {
 /** Owns the token page stream even when none of its consumers are mounted. */
 export function LaunchpadLiveDataProvider(
   props: LaunchpadLiveDataProviderProps,
-) {
-  return createElement(LaunchpadLiveDataScope, {
-    ...props,
-    key: `${props.chainId}:${props.tokenAddress}`,
-  })
+): ReactElement {
+  return (
+    <LaunchpadLiveDataScope
+      {...props}
+      key={`${props.chainId}:${props.tokenAddress}`}
+    />
+  )
 }
 
 function LaunchpadLiveDataScope({
@@ -891,33 +881,45 @@ function LaunchpadLiveDataScope({
     onTradeReset: marketStatsController.onReset,
     tokenAddress,
   })
-  const value: LaunchpadLiveDataContextValue = {
-    candleController,
-    marketStats: marketStatsController.result,
-    trades,
-  }
-
-  return createElement(LaunchpadLiveDataContext.Provider, { value }, children)
+  return (
+    <LaunchpadCandleControllerContext.Provider value={candleController}>
+      <LaunchpadLiveMarketStatsContext.Provider
+        value={marketStatsController.result}
+      >
+        <LaunchpadLiveTradesContext.Provider value={trades}>
+          {children}
+        </LaunchpadLiveTradesContext.Provider>
+      </LaunchpadLiveMarketStatsContext.Provider>
+    </LaunchpadCandleControllerContext.Provider>
+  )
 }
 
-function useLaunchpadLiveData(): LaunchpadLiveDataContextValue {
-  const value = useContext(LaunchpadLiveDataContext)
-  if (!value) {
+export function useLaunchpadLiveTrades(): LaunchpadLiveTrades {
+  const trades = useContext(LaunchpadLiveTradesContext)
+  if (!trades) {
     throw new Error(
-      'Launchpad live data hooks must be used inside LaunchpadLiveDataProvider',
+      'useLaunchpadLiveTrades must be used inside LaunchpadLiveDataProvider',
     )
   }
-  return value
+  return trades
 }
 
-export function useLaunchpadLiveTrades() {
-  return useLaunchpadLiveData().trades
-}
-
-export function useLaunchpadLiveMarketStats() {
-  return useLaunchpadLiveData().marketStats
+export function useLaunchpadLiveMarketStats(): LaunchpadLiveMarketStats {
+  const marketStats = useContext(LaunchpadLiveMarketStatsContext)
+  if (!marketStats) {
+    throw new Error(
+      'useLaunchpadLiveMarketStats must be used inside LaunchpadLiveDataProvider',
+    )
+  }
+  return marketStats
 }
 
 export function useLaunchpadCandleController(): LaunchpadCandleController {
-  return useLaunchpadLiveData().candleController
+  const candleController = useContext(LaunchpadCandleControllerContext)
+  if (!candleController) {
+    throw new Error(
+      'useLaunchpadCandleController must be used inside LaunchpadLiveDataProvider',
+    )
+  }
+  return candleController
 }

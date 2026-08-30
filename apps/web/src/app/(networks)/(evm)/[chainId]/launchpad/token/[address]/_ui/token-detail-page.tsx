@@ -64,8 +64,10 @@ import { PageState } from '../../../_ui/state-card'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
-import { LaunchpadLiveDataProvider } from '../_lib/use-launchpad-live-trades'
-import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
+import {
+  LaunchpadLiveDataProvider,
+  useLaunchpadLiveMarketStats,
+} from '../_lib/launchpad-live-data-provider'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import {
@@ -364,7 +366,7 @@ function TokenDetailPageContent({
     isPending: isTokenPending,
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
-  const { data: marketStats } = useLaunchpadMarketStats()
+  const { data: marketStats } = useLaunchpadLiveMarketStats()
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     decimals: token?.decimals ?? definition.decimals,

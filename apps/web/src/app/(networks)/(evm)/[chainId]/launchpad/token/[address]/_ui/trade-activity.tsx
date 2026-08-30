@@ -10,13 +10,13 @@ import {
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
 } from '../../../_ui/segmented-control'
+import { useLaunchpadLiveMarketStats } from '../_lib/launchpad-live-data-provider'
 import {
   DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   LAUNCHPAD_MARKET_STATS_WINDOWS,
   type LaunchpadMarketStatsWindowKey,
   getLaunchpadMarketActivity,
 } from '../_lib/launchpad-market-stats'
-import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 
 const SEGMENTED_ITEM_COMPACT = 'flex-1 !h-7 !px-2 !text-[11px]'
 
@@ -165,7 +165,7 @@ export function TradeActivity() {
   const [windowKey, setWindowKey] = useState<LaunchpadMarketStatsWindowKey>(
     DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   )
-  const { data, isPending, latestNewTradeEvent } = useLaunchpadMarketStats()
+  const { data, isPending, latestNewTradeEvent } = useLaunchpadLiveMarketStats()
 
   if (isPending) return <TradeActivitySkeleton />
 

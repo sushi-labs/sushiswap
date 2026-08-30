@@ -17,7 +17,7 @@ import {
   parseLaunchpadMetricsStreamEvent,
   parseLaunchpadTradeResetStreamEvent,
   parseLaunchpadTradeStreamEvent,
-} from './use-launchpad-live-trades'
+} from './launchpad-stream-events'
 
 const CHAIN_ID = 4663
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111'

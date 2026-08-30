@@ -14,7 +14,7 @@ import {
   shortenAddress,
 } from '../../../_lib/format'
 import type { LaunchpadToken, LaunchpadTrade } from '../../../types'
-import { useLaunchpadLiveTrades } from '../_lib/use-launchpad-live-trades'
+import { useLaunchpadLiveTrades } from '../_lib/launchpad-live-data-provider'
 
 const TRADE_GRID_CLASS_NAME =
   'grid min-w-[680px] grid-cols-[52px_minmax(180px,1fr)_minmax(110px,auto)_minmax(140px,auto)_minmax(90px,auto)] gap-4'
