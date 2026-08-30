@@ -1,4 +1,3 @@
-import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -32,7 +31,7 @@ async function LaunchpadTokenStructuredData({
   chainId: LaunchpadChainId
   address: EvmAddress
 }) {
-  const token = await getLaunchpadToken({ chainId, address }, { retries: 3 })
+  const token = await getLaunchpadTokenForSeo(chainId, address)
   if (!token) return null
 
   return (
