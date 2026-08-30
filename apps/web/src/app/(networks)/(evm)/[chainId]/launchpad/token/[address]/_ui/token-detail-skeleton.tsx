@@ -1,5 +1,4 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
-import type { ReactNode } from 'react'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
 import { TradeActivitySkeleton } from './trade-activity'
@@ -163,52 +162,40 @@ export function TokenSidebarSkeleton() {
   )
 }
 
-export function TokenDetailSkeleton({
-  header,
-  bodyOnly = false,
-}: {
-  header?: ReactNode
-  bodyOnly?: boolean
-} = {}) {
-  const renderedHeader = bodyOnly ? false : header
-
+export function TokenDetailSkeleton() {
   return (
     <Container
       maxWidth="8xl"
-      className={bodyOnly ? 'contents' : 'w-full px-4 pb-14 pt-6 sm:pt-8'}
+      className="w-full px-4 pb-14 pt-6 sm:pt-8"
       aria-busy="true"
       aria-label="Loading token details"
     >
       <span className="sr-only">Loading token details</span>
 
-      {renderedHeader ?? (
-        <>
-          <div className="mb-5 flex items-center gap-2">
-            <SkeletonBox className="h-4 w-16 rounded-sm" />
-            <SkeletonBox className="h-4 w-2 rounded-sm" />
-            <SkeletonBox className="h-4 w-10 rounded-sm" />
-          </div>
+      <div className="mb-5 flex items-center gap-2">
+        <SkeletonBox className="h-4 w-16 rounded-sm" />
+        <SkeletonBox className="h-4 w-2 rounded-sm" />
+        <SkeletonBox className="h-4 w-10 rounded-sm" />
+      </div>
 
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex min-w-0 items-center gap-4">
-              <SkeletonBox className="h-14 w-14 shrink-0 rounded-full" />
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <SkeletonBox className="h-8 w-36 rounded-lg sm:h-9 sm:w-52" />
-                  <SkeletonBox className="h-7 w-12 rounded-md" />
-                  <SkeletonBox className="h-6 w-12 rounded-full" />
-                  <SkeletonBox className="h-7 w-20 rounded-full" />
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-3">
-                  <SkeletonBox className="h-4 w-32 rounded-sm" />
-                  <SkeletonBox className="h-4 w-28 rounded-sm" />
-                </div>
-              </div>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
+          <SkeletonBox className="h-14 w-14 shrink-0 rounded-full" />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <SkeletonBox className="h-8 w-36 rounded-lg sm:h-9 sm:w-52" />
+              <SkeletonBox className="h-7 w-12 rounded-md" />
+              <SkeletonBox className="h-6 w-12 rounded-full" />
+              <SkeletonBox className="h-7 w-20 rounded-full" />
             </div>
-            <div />
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <SkeletonBox className="h-4 w-32 rounded-sm" />
+              <SkeletonBox className="h-4 w-28 rounded-sm" />
+            </div>
           </div>
-        </>
-      )}
+        </div>
+        <div />
+      </div>
 
       <div className="mt-6">
         <TokenMetricsSkeleton />

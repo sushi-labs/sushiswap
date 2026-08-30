@@ -2,7 +2,6 @@
 
 import {
   type LaunchpadCandle,
-  type LaunchpadCandleSnapshot,
   type LaunchpadMetrics,
   type LaunchpadToken,
   type LaunchpadTradeConnection,
@@ -182,22 +181,21 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         .then(() => undefined)
     }
 
-    async function fetchBootstrapCandleSnapshot(
-      fresh: boolean,
-    ): Promise<LaunchpadCandleSnapshot> {
+    async function fetchFallbackCandleSnapshot(): Promise<string> {
       const to = Math.floor(Date.now() / 1_000)
       const from = to - 24 * 60 * 60
 
-      return getLaunchpadCandles({
+      const snapshot = await getLaunchpadCandles({
         input: {
           chainId: input.chainId,
           tokenAddress: input.tokenAddress,
-          interval: 'ONE_HOUR',
+          interval: 'FIVE_MINUTES',
           from,
           to,
-          ...(fresh ? { fresh: true } : {}),
+          fresh: true,
         },
       })
+      return snapshot.streamCursor
     }
 
     function clearClosedStreamRetry(): void {
@@ -596,6 +594,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
 
     async function refreshActiveCandleSnapshots(): Promise<{
       streamCursor: string | null
+      subscriberCount: number
       synchronized: boolean
     }> {
       const result = await refetchLaunchpadCandleSnapshotsWithRetry(
@@ -604,9 +603,30 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       )
       return {
         streamCursor: result.streamCursor,
+        subscriberCount: result.subscriberCount,
         synchronized:
           result.subscriberCount === 0 ||
           (result.failedSubscriberCount === 0 && result.streamCursor !== null),
+      }
+    }
+
+    async function refreshCandleSnapshot(refetchCandles: boolean): Promise<{
+      streamCursor: string | null
+      synchronized: boolean
+    }> {
+      if (!refetchCandles) {
+        return {
+          streamCursor: candleSnapshotCursor ?? null,
+          synchronized: true,
+        }
+      }
+
+      const refresh = await refreshActiveCandleSnapshots()
+      if (refresh.subscriberCount > 0) return refresh
+
+      return {
+        streamCursor: await fetchFallbackCandleSnapshot(),
+        synchronized: true,
       }
     }
 
@@ -640,20 +660,10 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       }
 
       try {
-        const knownCandleCursor = candleSnapshotCursor
-        const [result, bootstrapCandleSnapshot, candleRefresh] =
-          await Promise.all([
-            refetch.current(),
-            refetchCandles || !knownCandleCursor
-              ? fetchBootstrapCandleSnapshot(refetchCandles)
-              : Promise.resolve(null),
-            refetchCandles
-              ? refreshActiveCandleSnapshots()
-              : Promise.resolve({
-                  streamCursor: knownCandleCursor ?? null,
-                  synchronized: true,
-                }),
-          ])
+        const [result, candleRefresh] = await Promise.all([
+          refetch.current(),
+          refreshCandleSnapshot(refetchCandles),
+        ])
         if (disposed || currentSynchronization !== synchronization.current) {
           return
         }
@@ -673,24 +683,21 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         tradeSnapshotCursor = next.streamCursor
         const candleCursors = [
           candleSnapshotCursor,
-          bootstrapCandleSnapshot?.streamCursor,
           candleRefresh.streamCursor,
         ].filter(
           (streamCursor): streamCursor is string =>
             unsignedIntegerSchema.safeParse(streamCursor).success,
         )
         const [firstCandleCursor, ...remainingCandleCursors] = candleCursors
+        hasSnapshot.current = true
+        setData(next)
         if (!firstCandleCursor) {
-          setStreamStatus('reconnecting')
-          scheduleSnapshotRetry()
           return
         }
         candleSnapshotCursor = minimumLaunchpadStreamCursor(
           firstCandleCursor,
           ...remainingCandleCursors,
         )
-        hasSnapshot.current = true
-        setData(next)
         openStreamFromSnapshots(currentSynchronization)
       } catch {
         if (!disposed && currentSynchronization === synchronization.current) {
