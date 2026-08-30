@@ -5,21 +5,13 @@ import type {
 import type { EvmTxHash } from 'sushi/evm'
 import { describe, expect, it, vi } from 'vitest'
 import {
+  LaunchpadCandleController,
   type LaunchpadTradeMutation,
-  applyLaunchpadCandleStreamMutations,
   applyLaunchpadTradeMutation,
   flattenLaunchpadTradePages,
   launchpadEventsUrl,
   minimumLaunchpadStreamCursor,
-  publishLaunchpadCandleRemove,
-  publishLaunchpadCandleUpdate,
-  publishLaunchpadTradeStreamEvent,
-  publishLaunchpadTradeStreamReset,
   reconcileLaunchpadTradeResetSnapshot,
-  refetchLaunchpadCandleSnapshots,
-  refetchLaunchpadCandleSnapshotsWithRetry,
-  subscribeToLaunchpadCandleStream,
-  subscribeToLaunchpadTradeStream,
 } from './launchpad-stream'
 import {
   parseLaunchpadMetricsStreamEvent,
@@ -275,13 +267,15 @@ describe('launchpad stream', () => {
   })
 
   it('merges candle updates and removals after the snapshot cursor', async () => {
+    const controller = new LaunchpadCandleController({
+      chainId: CHAIN_ID,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      tokenAddress: TOKEN_ADDRESS,
+    })
     const onRemove = vi.fn()
     const onReset = vi.fn().mockResolvedValue('43')
     const onUpdate = vi.fn()
-    const unsubscribe = subscribeToLaunchpadCandleStream(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      { onRemove, onReset, onUpdate },
-    )
+    const unsubscribe = controller.subscribe({ onRemove, onReset, onUpdate })
     const candle = {
       timestamp: 1_753_401_600,
       open: 1,
@@ -292,30 +286,17 @@ describe('launchpad stream', () => {
       tradeCount: 2,
     }
 
-    publishLaunchpadCandleUpdate(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      { eventId: '41', interval: '1m', candle },
-    )
-    publishLaunchpadCandleRemove(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      { eventId: '42', interval: '1m', timestamp: candle.timestamp },
-    )
-    publishLaunchpadCandleUpdate(
-      {
-        chainId: CHAIN_ID,
-        tokenAddress: '0x4444444444444444444444444444444444444444',
-      },
-      { eventId: '43', interval: '1m', candle },
-    )
-    const merged = applyLaunchpadCandleStreamMutations(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      '1m',
-      { streamCursor: '40', nodes: [] },
-    )
-    const resetCursor = await refetchLaunchpadCandleSnapshots(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      true,
-    )
+    controller.publishUpdate({ eventId: '41', interval: '1m', candle })
+    controller.publishRemove({
+      eventId: '42',
+      interval: '1m',
+      timestamp: candle.timestamp,
+    })
+    const merged = controller.applyStreamMutations('1m', {
+      streamCursor: '40',
+      nodes: [],
+    })
+    const resetCursor = await controller.refetchSnapshots(true)
     unsubscribe()
 
     expect(onUpdate).toHaveBeenCalledOnce()
@@ -335,18 +316,21 @@ describe('launchpad stream', () => {
       .fn()
       .mockRejectedValueOnce(new Error('snapshot unavailable'))
       .mockResolvedValueOnce('44')
-    const retryTokenAddress =
-      '0x5555555555555555555555555555555555555555' as const
-    const unsubscribe = subscribeToLaunchpadCandleStream(
-      { chainId: CHAIN_ID, tokenAddress: retryTokenAddress },
-      { onRemove: vi.fn(), onReset, onUpdate: vi.fn() },
-    )
+    const controller = new LaunchpadCandleController({
+      chainId: CHAIN_ID,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      tokenAddress: '0x5555555555555555555555555555555555555555',
+    })
+    const unsubscribe = controller.subscribe({
+      onRemove: vi.fn(),
+      onReset,
+      onUpdate: vi.fn(),
+    })
 
-    const result = await refetchLaunchpadCandleSnapshotsWithRetry(
-      { chainId: CHAIN_ID, tokenAddress: retryTokenAddress },
-      true,
-      { attempts: 2, retryDelayMs: 0 },
-    )
+    const result = await controller.refetchSnapshotsWithRetry(true, {
+      attempts: 2,
+      retryDelayMs: 0,
+    })
     unsubscribe()
 
     expect(onReset).toHaveBeenCalledTimes(2)
@@ -356,49 +340,83 @@ describe('launchpad stream', () => {
       subscriberCount: 1,
     })
   })
-  it('delivers trade events to the subscribers of one token only', () => {
-    const onReset = vi.fn()
-    const onTrade = vi.fn()
-    const otherOnTrade = vi.fn()
-    const tradeEvent = {
-      amountUsd: 25,
-      direction: 'BUY' as const,
-      eventId: '101',
-      isNew: true,
-      marginalPriceUsd: 1.5,
-      timestamp: '2026-08-20T21:15:49.754Z',
-      tradeKey: `${TRANSACTION_HASH}:1`,
-    }
-    const unsubscribe = subscribeToLaunchpadTradeStream(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      { onReset, onTrade },
-    )
-    const unsubscribeOther = subscribeToLaunchpadTradeStream(
-      {
-        chainId: CHAIN_ID,
-        tokenAddress: '0x6666666666666666666666666666666666666666',
-      },
-      { onReset: vi.fn(), onTrade: otherOnTrade },
-    )
 
-    publishLaunchpadTradeStreamEvent(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS.toUpperCase() as never },
-      tradeEvent,
-    )
-    publishLaunchpadTradeStreamReset({
+  it('refreshes every active candle resolution and selects the oldest cursor', async () => {
+    const controller = new LaunchpadCandleController({
       chainId: CHAIN_ID,
+      createdAt: '2026-01-01T00:00:00.000Z',
       tokenAddress: TOKEN_ADDRESS,
     })
-    unsubscribe()
-    publishLaunchpadTradeStreamEvent(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      tradeEvent,
-    )
-    unsubscribeOther()
+    const refreshFiveMinutes = vi.fn().mockResolvedValue('80')
+    const refreshOneHour = vi.fn().mockResolvedValue('90')
+    controller.subscribe({
+      onRemove: vi.fn(),
+      onReset: refreshFiveMinutes,
+      onUpdate: vi.fn(),
+    })
+    controller.subscribe({
+      onRemove: vi.fn(),
+      onReset: refreshOneHour,
+      onUpdate: vi.fn(),
+    })
 
-    expect(onTrade).toHaveBeenCalledTimes(1)
-    expect(onTrade).toHaveBeenCalledWith(tradeEvent)
-    expect(onReset).toHaveBeenCalledOnce()
-    expect(otherOnTrade).not.toHaveBeenCalled()
+    const result = await controller.refetchSnapshotsWithRetry(true, {
+      attempts: 1,
+    })
+
+    expect(refreshFiveMinutes).toHaveBeenCalledWith(true)
+    expect(refreshOneHour).toHaveBeenCalledWith(true)
+    expect(result).toEqual({
+      failedSubscriberCount: 0,
+      streamCursor: '80',
+      subscriberCount: 2,
+    })
+  })
+
+  it('keeps token-scoped controllers isolated and disposes listeners', () => {
+    const first = new LaunchpadCandleController({
+      chainId: CHAIN_ID,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      tokenAddress: TOKEN_ADDRESS,
+    })
+    const second = new LaunchpadCandleController({
+      chainId: CHAIN_ID,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      tokenAddress: '0x6666666666666666666666666666666666666666',
+    })
+    const firstUpdate = vi.fn()
+    const secondUpdate = vi.fn()
+    const unsubscribe = first.subscribe({
+      onRemove: vi.fn(),
+      onReset: vi.fn().mockResolvedValue('1'),
+      onUpdate: firstUpdate,
+    })
+    second.subscribe({
+      onRemove: vi.fn(),
+      onReset: vi.fn().mockResolvedValue('1'),
+      onUpdate: secondUpdate,
+    })
+    const update = {
+      eventId: '101',
+      interval: '1m' as const,
+      candle: {
+        timestamp: 1_753_401_600,
+        open: 1,
+        high: 2,
+        low: 0.5,
+        close: 1.5,
+        volumeUsd: 100,
+        tradeCount: 2,
+      },
+    }
+
+    first.publishUpdate(update)
+    unsubscribe()
+    first.publishUpdate({ ...update, eventId: '102' })
+    first.dispose()
+    first.publishUpdate({ ...update, eventId: '103' })
+
+    expect(firstUpdate).toHaveBeenCalledOnce()
+    expect(secondUpdate).not.toHaveBeenCalled()
   })
 })

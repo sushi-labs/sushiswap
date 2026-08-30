@@ -17,11 +17,7 @@ vi.mock('@sushiswap/graph-client/data-api', async (importOriginal) => ({
   getLaunchpadCandles: mocks.getLaunchpadCandles,
 }))
 
-import {
-  publishLaunchpadCandleRemove,
-  publishLaunchpadCandleUpdate,
-  refetchLaunchpadCandleSnapshotsWithRetry,
-} from '../_lib/launchpad-stream'
+import { LaunchpadCandleController } from '../_lib/launchpad-stream'
 import { createLaunchpadDatafeed, getLaunchpadChartSymbol } from './datafeed'
 
 const CHAIN_ID = 4663
@@ -30,19 +26,41 @@ const RESOLUTION = '60' as ResolutionString
 const FIVE_MINUTE_RESOLUTION = '5' as ResolutionString
 const ONE_MINUTE_RESOLUTION = '1' as ResolutionString
 const MARKET_CAP_MULTIPLIER = 1_000
+const CREATED_AT = '2020-01-01T00:00:00.000Z'
 const PRICESCALES = {
   'market-cap': 100,
   price: 10_000,
 }
 const DATAFEED_OPTIONS = {
-  chainId: CHAIN_ID,
-  createdAt: '2020-01-01T00:00:00.000Z',
   getPriceMultiplier: (chartMode: 'market-cap' | 'price') =>
     chartMode === 'market-cap' ? MARKET_CAP_MULTIPLIER : 1,
   getPricescale: (chartMode: 'market-cap' | 'price') => PRICESCALES[chartMode],
-  tokenAddress: TOKEN_ADDRESS,
   symbol: 'TEST',
 } as const
+
+function createCandleController(
+  createdAt: string = CREATED_AT,
+): LaunchpadCandleController {
+  return new LaunchpadCandleController({
+    chainId: CHAIN_ID,
+    createdAt,
+    tokenAddress: TOKEN_ADDRESS,
+  })
+}
+
+function createDatafeed(
+  overrides: {
+    createdAt?: string
+    onResetData?: () => void
+  } = {},
+) {
+  const createdAt = overrides.createdAt ?? CREATED_AT
+  return createLaunchpadDatafeed({
+    ...DATAFEED_OPTIONS,
+    candleController: createCandleController(createdAt),
+    ...(overrides.onResetData ? { onResetData: overrides.onResetData } : {}),
+  })
+}
 const PRICE_SYMBOL = getLaunchpadChartSymbol(TOKEN_ADDRESS, 'TEST', 'price')
 const MARKET_CAP_SYMBOL = getLaunchpadChartSymbol(
   TOKEN_ADDRESS,
@@ -84,7 +102,7 @@ describe('launchpad TradingView datafeed', () => {
       resolveSnapshot = resolve
     })
     mocks.getLaunchpadCandles.mockReset().mockReturnValue(snapshotPromise)
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
 
     const prefetch = datafeed.prefetchInitialSnapshot()
     const barsPromise = new Promise<Bar[]>((resolve, reject) => {
@@ -118,7 +136,7 @@ describe('launchpad TradingView datafeed', () => {
       streamCursor: '40',
       nodes: [],
     })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
 
     await new Promise<Bar[]>((resolve, reject) => {
       datafeed.getBars(
@@ -153,7 +171,7 @@ describe('launchpad TradingView datafeed', () => {
       streamCursor: '40',
       nodes: [olderCandle, recentCandle],
     })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
       datafeed.getBars(
@@ -187,8 +205,7 @@ describe('launchpad TradingView datafeed', () => {
       streamCursor: '40',
       nodes: [firstCandle],
     })
-    const datafeed = createLaunchpadDatafeed({
-      ...DATAFEED_OPTIONS,
+    const datafeed = createDatafeed({
       createdAt: new Date(launchTimestamp * 1_000).toISOString(),
     })
 
@@ -239,7 +256,7 @@ describe('launchpad TradingView datafeed', () => {
   })
 
   it('does not synthesize candles for no-trade intervals', async () => {
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
     const symbolInfo = await new Promise<LibrarySymbolInfo>((resolve) => {
       datafeed.resolveSymbol(MARKET_CAP_SYMBOL, resolve, vi.fn())
     })
@@ -279,7 +296,7 @@ describe('launchpad TradingView datafeed', () => {
       streamCursor: '40',
       nodes: [firstCandle, zeroVolumeCandle, secondCandle],
     })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
 
     async function getBars(symbolInfo: LibrarySymbolInfo): Promise<Bar[]> {
       return new Promise((resolve, reject) => {
@@ -339,7 +356,7 @@ describe('launchpad TradingView datafeed', () => {
         streamCursor: '42',
         nodes: [],
       })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+    const datafeed = createDatafeed()
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
       datafeed.getBars(
@@ -389,8 +406,10 @@ describe('launchpad TradingView datafeed', () => {
       .mockRejectedValueOnce(new Error('fresh snapshot unavailable'))
       .mockResolvedValueOnce(resetSnapshot)
     const onResetData = vi.fn()
+    const candleController = createCandleController()
     const datafeed = createLaunchpadDatafeed({
       ...DATAFEED_OPTIONS,
+      candleController,
       onResetData,
     })
 
@@ -425,50 +444,37 @@ describe('launchpad TradingView datafeed', () => {
       onReset,
     )
 
-    publishLaunchpadCandleUpdate(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      {
-        eventId: '41',
-        interval: '1m',
-        candle: { ...initialSnapshot.nodes[0]!, close: 2 },
-      },
-    )
-    publishLaunchpadCandleUpdate(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      {
-        eventId: '42',
-        interval: '1h',
-        candle: { ...initialSnapshot.nodes[0]!, close: 3 },
-      },
-    )
+    candleController.publishUpdate({
+      eventId: '41',
+      interval: '1m',
+      candle: { ...initialSnapshot.nodes[0]!, close: 2 },
+    })
+    candleController.publishUpdate({
+      eventId: '42',
+      interval: '1h',
+      candle: { ...initialSnapshot.nodes[0]!, close: 3 },
+    })
     expect(onTick).toHaveBeenCalledOnce()
 
-    publishLaunchpadCandleRemove(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      {
-        eventId: '43',
-        interval: '1m',
-        timestamp: initialSnapshot.nodes[0]!.timestamp,
-      },
-    )
+    candleController.publishRemove({
+      eventId: '43',
+      interval: '1m',
+      timestamp: initialSnapshot.nodes[0]!.timestamp,
+    })
     expect(onReset).not.toHaveBeenCalled()
-    publishLaunchpadCandleRemove(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      {
-        eventId: '44',
-        interval: '1h',
-        timestamp: initialSnapshot.nodes[0]!.timestamp,
-      },
-    )
+    candleController.publishRemove({
+      eventId: '44',
+      interval: '1h',
+      timestamp: initialSnapshot.nodes[0]!.timestamp,
+    })
     expect(onReset).toHaveBeenCalledOnce()
     expect(await getBars()).toEqual([])
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
 
-    const resetResult = await refetchLaunchpadCandleSnapshotsWithRetry(
-      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
-      true,
-      { attempts: 2, retryDelayMs: 0 },
-    )
+    const resetResult = await candleController.refetchSnapshotsWithRetry(true, {
+      attempts: 2,
+      retryDelayMs: 0,
+    })
     expect(resetResult.streamCursor).toBe('50')
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(4)
     expect(mocks.getLaunchpadCandles).toHaveBeenLastCalledWith({

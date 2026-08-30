@@ -13,14 +13,10 @@ import type {
   ResolutionString,
 } from 'public/trading-view/charting_library/charting_library'
 import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../../constants'
 import {
+  type LaunchpadCandleController,
   type LaunchpadCandleStreamInterval,
-  applyLaunchpadCandleStreamMutations,
-  clearLaunchpadCandleSnapshot,
-  publishLaunchpadCandleSnapshot,
   removeLaunchpadCandle,
-  subscribeToLaunchpadCandleStream,
   upsertLaunchpadCandle,
 } from '../_lib/launchpad-stream'
 
@@ -34,8 +30,6 @@ const SUPPORTED_RESOLUTIONS = [
 ] as ResolutionString[]
 
 const MAX_CANDLES_PER_REQUEST = 2_000
-const INITIAL_CANDLE_PREFETCH_BUCKETS = 400
-const INITIAL_CANDLE_RESOLUTION = '5' as ResolutionString
 
 function getCandleRequestFrom(
   from: number,
@@ -103,12 +97,10 @@ export type LaunchpadChartMode = 'market-cap' | 'price'
 export const DEFAULT_LAUNCHPAD_CHART_MODE: LaunchpadChartMode = 'market-cap'
 
 interface LaunchpadDatafeedOptions {
-  chainId: LaunchpadChainId
-  createdAt: string
+  candleController: LaunchpadCandleController
   getPriceMultiplier: (chartMode: LaunchpadChartMode) => number
   getPricescale: (chartMode: LaunchpadChartMode) => number
   onResetData?: () => void
-  tokenAddress: EvmAddress
   symbol: string
 }
 
@@ -120,12 +112,6 @@ interface CandleSnapshotState {
   countBack?: number
   from: number
   snapshot: LaunchpadCandleSnapshot
-  to: number
-}
-
-interface PrefetchedCandleSnapshot {
-  from: number
-  promise: Promise<LaunchpadCandleSnapshot | null>
   to: number
 }
 
@@ -230,22 +216,16 @@ function getPreviousClose(
 }
 
 export function createLaunchpadDatafeed({
-  chainId,
-  createdAt,
+  candleController,
   getPriceMultiplier,
   getPricescale,
   onResetData,
-  tokenAddress,
   symbol,
 }: LaunchpadDatafeedOptions): LaunchpadDatafeed {
+  const { chainId, createdAt, tokenAddress } = candleController
   const subscriptions = new Map<string, Subscription>()
   const snapshots = new Map<ResolutionString, CandleSnapshotState>()
   const cachedSnapshotReads = new Set<ResolutionString>()
-  const prefetchedSnapshots = new Map<
-    ResolutionString,
-    PrefetchedCandleSnapshot
-  >()
-  const streamIdentity = { chainId, tokenAddress }
   const launchTimestamp = Math.floor(Date.parse(createdAt) / 1_000)
 
   async function fetchCandleSnapshot({
@@ -275,8 +255,7 @@ export function createLaunchpadDatafeed({
         ...(fresh ? { fresh: true } : {}),
       },
     })
-    const snapshot = applyLaunchpadCandleStreamMutations(
-      streamIdentity,
+    const snapshot = candleController.applyStreamMutations(
       streamInterval,
       response,
     )
@@ -290,7 +269,7 @@ export function createLaunchpadDatafeed({
         to,
       })
     }
-    publishLaunchpadCandleSnapshot(streamIdentity, snapshot.streamCursor)
+    candleController.publishSnapshot(snapshot.streamCursor)
     return snapshot
   }
 
@@ -349,31 +328,7 @@ export function createLaunchpadDatafeed({
   }
 
   async function prefetchInitialSnapshot(): Promise<void> {
-    if (prefetchedSnapshots.has(INITIAL_CANDLE_RESOLUTION)) return
-
-    const { seconds } = getResolutionConfig(INITIAL_CANDLE_RESOLUTION)
-    const to = getUnixTime(new Date())
-    const launchBucket = Number.isFinite(launchTimestamp)
-      ? Math.floor(launchTimestamp / seconds) * seconds
-      : 0
-    const from = Math.max(
-      getCandleRequestFrom(
-        to - seconds * INITIAL_CANDLE_PREFETCH_BUCKETS,
-        to,
-        seconds,
-      ),
-      launchBucket,
-    )
-    if (from >= to) return
-
-    const promise = fetchCandleSnapshot({
-      countBack: INITIAL_CANDLE_PREFETCH_BUCKETS,
-      resolution: INITIAL_CANDLE_RESOLUTION,
-      from,
-      to,
-    }).catch(() => null)
-    prefetchedSnapshots.set(INITIAL_CANDLE_RESOLUTION, { from, promise, to })
-    await promise
+    await candleController.prefetchInitialSnapshot()
   }
 
   return {
@@ -460,21 +415,26 @@ export function createLaunchpadDatafeed({
           cachedSnapshot !== undefined &&
           requestedFrom >= cachedSnapshot.from &&
           requestedTo <= cachedSnapshot.to + seconds
-        const prefetchedSnapshot = prefetchedSnapshots.get(resolution)
-        const canUsePrefetchedSnapshot =
-          prefetchedSnapshot !== undefined &&
-          requestedCountBack <= INITIAL_CANDLE_PREFETCH_BUCKETS &&
-          requestedFrom >= prefetchedSnapshot.from &&
-          Math.ceil(requestedTo / seconds) ===
-            Math.ceil(prefetchedSnapshot.to / seconds)
-        if (prefetchedSnapshot) {
-          prefetchedSnapshots.delete(resolution)
+        const prefetched = await candleController.getInitialSnapshot({
+          countBack: requestedCountBack,
+          from: requestedFrom,
+          resolution,
+          seconds,
+          to: requestedTo,
+        })
+        if (prefetched) {
+          const currentSnapshot = snapshots.get(resolution)
+          if (!currentSnapshot || prefetched.to >= currentSnapshot.to) {
+            snapshots.set(resolution, {
+              countBack: prefetched.countBack,
+              from: prefetched.from,
+              snapshot: prefetched.snapshot,
+              to: prefetched.to,
+            })
+          }
         }
-        const prefetched = canUsePrefetchedSnapshot
-          ? await prefetchedSnapshot.promise
-          : null
         const snapshot =
-          prefetched ??
+          prefetched?.snapshot ??
           (canUseCachedSnapshot
             ? cachedSnapshot.snapshot
             : await fetchCandleSnapshot({
@@ -483,7 +443,7 @@ export function createLaunchpadDatafeed({
                 from: requestedFrom,
                 to: requestedTo,
               }))
-        if (!canUseCachedSnapshot) {
+        if (!canUseCachedSnapshot && prefetched === null) {
           cachedSnapshotReads.delete(resolution)
         }
         const bars = await getSnapshotBars({
@@ -511,7 +471,7 @@ export function createLaunchpadDatafeed({
       const { seconds, streamInterval } = getResolutionConfig(resolution)
       subscriptions.get(listenerGuid)?.unsubscribe()
       subscriptions.set(listenerGuid, {
-        unsubscribe: subscribeToLaunchpadCandleStream(streamIdentity, {
+        unsubscribe: candleController.subscribe({
           onUpdate(update) {
             if (update.interval !== streamInterval) return
             if (update.candle.tradeCount <= 0 || update.candle.volumeUsd <= 0) {
@@ -589,9 +549,6 @@ export function createLaunchpadDatafeed({
 
       subscription.unsubscribe()
       subscriptions.delete(listenerGuid)
-      if (subscriptions.size === 0) {
-        clearLaunchpadCandleSnapshot(streamIdentity)
-      }
     },
 
     getServerTime(callback) {

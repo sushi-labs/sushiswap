@@ -5,32 +5,48 @@ import {
   type LaunchpadMetrics,
   type LaunchpadToken,
   type LaunchpadTradeConnection,
-  getLaunchpadCandles,
+  getLaunchpadMarketStats,
   getLaunchpadTrades,
 } from '@sushiswap/graph-client/data-api'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import ms from 'ms'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import type { EvmAddress } from 'sushi/evm'
+import {
+  type ReactNode,
+  createContext,
+  createElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { type EvmAddress, normalizeEvmAddress } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
+import { SUSHI_DATA_API_HOST } from '../../../../../../../../../lib/constants'
+import type { LaunchpadChainId } from '../../../../constants'
 import type { LaunchpadTradesInput } from '../../../../types'
 import {
+  type LaunchpadMarketStatsTradeEvent,
+  appendLaunchpadMarketStatsTradeEvent,
+  foldLaunchpadMarketStats,
+} from '../launchpad-market-stats'
+import {
   EMPTY_TRADE_CONNECTION,
+  LaunchpadCandleController,
   type LaunchpadTradeMutation,
+  type LaunchpadTradeStreamEvent,
   applyLaunchpadTradeMutation,
   applyLaunchpadTradeMutations,
   flattenLaunchpadTradePages,
   getLaunchpadTradeKey,
   launchpadEventsUrl,
   minimumLaunchpadStreamCursor,
-  publishLaunchpadCandleRemove,
-  publishLaunchpadCandleUpdate,
-  publishLaunchpadTradeStreamEvent,
-  publishLaunchpadTradeStreamReset,
   reconcileLaunchpadTradeResetSnapshot,
-  refetchLaunchpadCandleSnapshotsWithRetry,
-  subscribeToLaunchpadCandleSnapshot,
 } from '../launchpad-stream'
 import {
   closedStreamRetryDelay,
@@ -54,6 +70,8 @@ export {
   parseLaunchpadTradeResetStreamEvent,
   parseLaunchpadTradeStreamEvent,
 } from './events'
+
+const MARKET_STATS_POLL_INTERVAL = ms('10s')
 
 function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
   const query = useInfiniteQuery({
@@ -81,9 +99,87 @@ function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
   return { ...query, data }
 }
 
-export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
+function useLaunchpadMarketStatsController(
+  chainId: LaunchpadTradesInput['chainId'],
+  tokenAddress: EvmAddress,
+) {
+  const streamKey = `${chainId}:${tokenAddress}`
+  const query = useQuery({
+    queryKey: ['launchpad', 'market-stats', { chainId, tokenAddress }],
+    queryFn: () =>
+      getLaunchpadMarketStats({ input: { chainId, tokenAddress } }),
+    refetchInterval: MARKET_STATS_POLL_INTERVAL,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(ms('1s') * 2 ** attempt, ms('5s')),
+    staleTime: MARKET_STATS_POLL_INTERVAL,
+  })
+  const [eventState, setEventState] = useState<{
+    events: readonly LaunchpadMarketStatsTradeEvent[]
+    streamKey: string
+  }>({ events: [], streamKey })
+  const events = eventState.streamKey === streamKey ? eventState.events : []
+  const refetch = useRef(query.refetch)
+
+  useEffect(() => {
+    refetch.current = query.refetch
+  }, [query.refetch])
+
+  const onTrade = useCallback(
+    (event: LaunchpadTradeStreamEvent): void => {
+      setEventState((current) => ({
+        events: appendLaunchpadMarketStatsTradeEvent(
+          current.streamKey === streamKey ? current.events : [],
+          event,
+        ),
+        streamKey,
+      }))
+    },
+    [streamKey],
+  )
+  const onReset = useCallback((): void => {
+    setEventState({ events: [], streamKey })
+    void refetch.current()
+  }, [streamKey])
+  const data = useMemo(
+    () =>
+      query.data ? foldLaunchpadMarketStats(query.data, events) : query.data,
+    [events, query.data],
+  )
+  const latestNewTradeEvent =
+    events.reduce<LaunchpadMarketStatsTradeEvent | null>((latest, event) => {
+      if (event.insertionEventId === null) return latest
+      if (latest === null || latest.insertionEventId === null) return event
+      return BigInt(event.insertionEventId) > BigInt(latest.insertionEventId)
+        ? event
+        : latest
+    }, null)
+
+  return {
+    onReset,
+    onTrade,
+    result: { ...query, data, latestNewTradeEvent },
+  }
+}
+
+function useLaunchpadLiveTradesController(input: {
+  candleController: LaunchpadCandleController
+  chainId: LaunchpadTradesInput['chainId']
+  onTrade: (event: LaunchpadTradeStreamEvent) => void
+  onTradeReset: () => void
+  tokenAddress: EvmAddress
+}) {
   const queryClient = useQueryClient()
-  const snapshot = useLaunchpadTrades(input, false)
+  const [includeSmallTrades, setIncludeSmallTrades] = useState(false)
+  const tradesInput = useMemo<LaunchpadTradesInput>(
+    () => ({
+      chainId: input.chainId,
+      tokenAddress: input.tokenAddress,
+      includeSmallTrades,
+      first: 20,
+    }),
+    [includeSmallTrades, input.chainId, input.tokenAddress],
+  )
+  const snapshot = useLaunchpadTrades(tradesInput, false)
   const [data, setData] = useState<LaunchpadTradeConnection>(
     EMPTY_TRADE_CONNECTION,
   )
@@ -96,7 +192,6 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
   const synchronization = useRef(0)
   const tradeSnapshotGeneration = useRef(0)
   const refetch = useRef(snapshot.refetch)
-  const includeSmallTrades = input.includeSmallTrades ?? false
   const includeSmallTradesRef = useRef(includeSmallTrades)
   const previousIncludeSmallTrades = useRef(includeSmallTrades)
   includeSmallTradesRef.current = includeSmallTrades
@@ -153,10 +248,6 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
   }, [includeSmallTrades, snapshot.data, snapshot.isSuccess])
 
   useEffect(() => {
-    const streamIdentity = {
-      chainId: input.chainId,
-      tokenAddress: input.tokenAddress,
-    }
     const tokenQueryKey = ['launchpad', 'token'] as const
     let disposed = false
     let source: EventSource | undefined
@@ -179,23 +270,6 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       return queryClient
         .refetchQueries({ queryKey: tokenQueryKey, type: 'active' })
         .then(() => undefined)
-    }
-
-    async function fetchFallbackCandleSnapshot(): Promise<string> {
-      const to = Math.floor(Date.now() / 1_000)
-      const from = to - 24 * 60 * 60
-
-      const snapshot = await getLaunchpadCandles({
-        input: {
-          chainId: input.chainId,
-          tokenAddress: input.tokenAddress,
-          interval: 'FIVE_MINUTES',
-          from,
-          to,
-          fresh: true,
-        },
-      })
-      return snapshot.streamCursor
     }
 
     function clearClosedStreamRetry(): void {
@@ -260,7 +334,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       }
       const tradeKey = getLaunchpadTradeKey(trade)
       mutations.current.set(tradeKey, mutation)
-      publishLaunchpadTradeStreamEvent(streamIdentity, {
+      input.onTrade({
         amountUsd: trade.amountUsd,
         direction: trade.direction,
         eventId,
@@ -311,7 +385,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
 
       const currentTradeSnapshotGeneration = ++tradeSnapshotGeneration.current
       const currentSynchronization = synchronization.current
-      publishLaunchpadTradeStreamReset(streamIdentity)
+      input.onTradeReset()
       clearTradeSnapshotRetry()
       tradeSnapshotRetryAttempt = 0
       tradeSnapshotCursor = undefined
@@ -334,7 +408,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       if (!payload || !isExpected(payload)) return
 
       const candle: LaunchpadCandle = payload.candle
-      publishLaunchpadCandleUpdate(streamIdentity, {
+      input.candleController.publishUpdate({
         eventId: payload.eventId,
         interval: payload.interval,
         candle,
@@ -347,7 +421,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         streamCandleRemoveSchema,
       )
       if (!payload || !isExpected(payload)) return
-      publishLaunchpadCandleRemove(streamIdentity, {
+      input.candleController.publishRemove({
         eventId: payload.eventId,
         interval: payload.interval,
         timestamp: payload.timestamp,
@@ -597,10 +671,8 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       subscriberCount: number
       synchronized: boolean
     }> {
-      const result = await refetchLaunchpadCandleSnapshotsWithRetry(
-        streamIdentity,
-        true,
-      )
+      const result =
+        await input.candleController.refetchSnapshotsWithRetry(true)
       return {
         streamCursor: result.streamCursor,
         subscriberCount: result.subscriberCount,
@@ -615,18 +687,24 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       synchronized: boolean
     }> {
       if (!refetchCandles) {
+        const initialSnapshot =
+          await input.candleController.prefetchInitialSnapshot()
         return {
-          streamCursor: candleSnapshotCursor ?? null,
-          synchronized: true,
+          streamCursor:
+            candleSnapshotCursor ?? initialSnapshot?.streamCursor ?? null,
+          synchronized:
+            candleSnapshotCursor !== undefined || initialSnapshot !== null,
         }
       }
 
       const refresh = await refreshActiveCandleSnapshots()
       if (refresh.subscriberCount > 0) return refresh
 
+      const initialSnapshot =
+        await input.candleController.prefetchInitialSnapshot(true)
       return {
-        streamCursor: await fetchFallbackCandleSnapshot(),
-        synchronized: true,
+        streamCursor: initialSnapshot?.streamCursor ?? null,
+        synchronized: initialSnapshot !== null,
       }
     }
 
@@ -715,19 +793,17 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       if (!payload || !isExpected(payload)) return
 
       source?.close()
-      publishLaunchpadTradeStreamReset(streamIdentity)
+      input.onTradeReset()
       void refetchMetrics()
       void refetchSnapshotAndReconnect(false, true)
     }
 
-    const unsubscribeCandleSnapshot = subscribeToLaunchpadCandleSnapshot(
-      streamIdentity,
-      (streamCursor) => {
+    const unsubscribeCandleSnapshot =
+      input.candleController.subscribeToSnapshot((streamCursor) => {
         if (!unsignedIntegerSchema.safeParse(streamCursor).success) return
         candleSnapshotCursor = streamCursor
         openStreamFromSnapshots(synchronization.current)
-      },
-    )
+      })
 
     setData(EMPTY_TRADE_CONNECTION)
     setStreamStatus('connecting')
@@ -748,12 +824,105 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       unsubscribeCandleSnapshot()
       source?.close()
     }
-  }, [input.chainId, input.tokenAddress, queryClient])
+  }, [
+    input.candleController,
+    input.chainId,
+    input.onTrade,
+    input.onTradeReset,
+    input.tokenAddress,
+    queryClient,
+  ])
 
   return {
     ...snapshot,
     data,
-    streamStatus,
+    includeSmallTrades,
     lastEventAt,
+    setIncludeSmallTrades,
+    streamStatus,
   }
+}
+
+interface LaunchpadLiveDataContextValue {
+  candleController: LaunchpadCandleController
+  marketStats: ReturnType<typeof useLaunchpadMarketStatsController>['result']
+  trades: ReturnType<typeof useLaunchpadLiveTradesController>
+}
+
+const LaunchpadLiveDataContext =
+  createContext<LaunchpadLiveDataContextValue | null>(null)
+
+/** Owns the token page stream even when none of its consumers are mounted. */
+export function LaunchpadLiveDataProvider({
+  chainId,
+  children,
+  createdAt,
+  tokenAddress,
+}: {
+  chainId: LaunchpadChainId
+  children?: ReactNode
+  createdAt: string
+  tokenAddress: EvmAddress
+}) {
+  const normalizedTokenAddress = useMemo(
+    () => normalizeEvmAddress(tokenAddress),
+    [tokenAddress],
+  )
+  const candleController = useMemo(
+    () =>
+      new LaunchpadCandleController({
+        chainId,
+        createdAt,
+        tokenAddress: normalizedTokenAddress,
+      }),
+    [chainId, createdAt, normalizedTokenAddress],
+  )
+
+  useEffect(() => {
+    return () => candleController.dispose()
+  }, [candleController])
+
+  const marketStatsController = useLaunchpadMarketStatsController(
+    chainId,
+    normalizedTokenAddress,
+  )
+  const trades = useLaunchpadLiveTradesController({
+    candleController,
+    chainId,
+    onTrade: marketStatsController.onTrade,
+    onTradeReset: marketStatsController.onReset,
+    tokenAddress: normalizedTokenAddress,
+  })
+  const value = useMemo<LaunchpadLiveDataContextValue>(
+    () => ({
+      candleController,
+      marketStats: marketStatsController.result,
+      trades,
+    }),
+    [candleController, marketStatsController.result, trades],
+  )
+
+  return createElement(LaunchpadLiveDataContext.Provider, { value }, children)
+}
+
+function useLaunchpadLiveData(): LaunchpadLiveDataContextValue {
+  const value = useContext(LaunchpadLiveDataContext)
+  if (!value) {
+    throw new Error(
+      'Launchpad live data hooks must be used inside LaunchpadLiveDataProvider',
+    )
+  }
+  return value
+}
+
+export function useLaunchpadLiveTrades() {
+  return useLaunchpadLiveData().trades
+}
+
+export function useLaunchpadLiveMarketStats() {
+  return useLaunchpadLiveData().marketStats
+}
+
+export function useLaunchpadCandleController(): LaunchpadCandleController {
+  return useLaunchpadLiveData().candleController
 }
