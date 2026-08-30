@@ -25,7 +25,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { type EvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import type { EvmAddress } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
 import { SUSHI_DATA_API_HOST } from '../../../../../../../../../lib/constants'
 import type { LaunchpadChainId } from '../../../../constants'
@@ -170,15 +170,12 @@ function useLaunchpadLiveTradesController(input: {
 }) {
   const queryClient = useQueryClient()
   const [includeSmallTrades, setIncludeSmallTrades] = useState(false)
-  const tradesInput = useMemo<LaunchpadTradesInput>(
-    () => ({
-      chainId: input.chainId,
-      tokenAddress: input.tokenAddress,
-      includeSmallTrades,
-      first: 20,
-    }),
-    [includeSmallTrades, input.chainId, input.tokenAddress],
-  )
+  const tradesInput: LaunchpadTradesInput = {
+    chainId: input.chainId,
+    tokenAddress: input.tokenAddress,
+    includeSmallTrades,
+    first: 20,
+  }
   const snapshot = useLaunchpadTrades(tradesInput, false)
   const [data, setData] = useState<LaunchpadTradeConnection>(
     EMPTY_TRADE_CONNECTION,
@@ -852,30 +849,31 @@ interface LaunchpadLiveDataContextValue {
 const LaunchpadLiveDataContext =
   createContext<LaunchpadLiveDataContextValue | null>(null)
 
-/** Owns the token page stream even when none of its consumers are mounted. */
-export function LaunchpadLiveDataProvider({
-  chainId,
-  children,
-  createdAt,
-  tokenAddress,
-}: {
+interface LaunchpadLiveDataProviderProps {
   chainId: LaunchpadChainId
   children?: ReactNode
   createdAt: string
   tokenAddress: EvmAddress
-}) {
-  const normalizedTokenAddress = useMemo(
-    () => normalizeEvmAddress(tokenAddress),
-    [tokenAddress],
-  )
-  const candleController = useMemo(
-    () =>
-      new LaunchpadCandleController({
-        chainId,
-        createdAt,
-        tokenAddress: normalizedTokenAddress,
-      }),
-    [chainId, createdAt, normalizedTokenAddress],
+}
+
+/** Owns the token page stream even when none of its consumers are mounted. */
+export function LaunchpadLiveDataProvider(
+  props: LaunchpadLiveDataProviderProps,
+) {
+  return createElement(LaunchpadLiveDataScope, {
+    ...props,
+    key: `${props.chainId}:${props.tokenAddress}`,
+  })
+}
+
+function LaunchpadLiveDataScope({
+  chainId,
+  children,
+  createdAt,
+  tokenAddress,
+}: LaunchpadLiveDataProviderProps) {
+  const [candleController] = useState(
+    () => new LaunchpadCandleController({ chainId, createdAt, tokenAddress }),
   )
 
   useEffect(() => {
@@ -884,23 +882,20 @@ export function LaunchpadLiveDataProvider({
 
   const marketStatsController = useLaunchpadMarketStatsController(
     chainId,
-    normalizedTokenAddress,
+    tokenAddress,
   )
   const trades = useLaunchpadLiveTradesController({
     candleController,
     chainId,
     onTrade: marketStatsController.onTrade,
     onTradeReset: marketStatsController.onReset,
-    tokenAddress: normalizedTokenAddress,
+    tokenAddress,
   })
-  const value = useMemo<LaunchpadLiveDataContextValue>(
-    () => ({
-      candleController,
-      marketStats: marketStatsController.result,
-      trades,
-    }),
-    [candleController, marketStatsController.result, trades],
-  )
+  const value: LaunchpadLiveDataContextValue = {
+    candleController,
+    marketStats: marketStatsController.result,
+    trades,
+  }
 
   return createElement(LaunchpadLiveDataContext.Provider, { value }, children)
 }
