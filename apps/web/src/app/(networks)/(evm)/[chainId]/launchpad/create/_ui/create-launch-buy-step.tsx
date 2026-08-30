@@ -198,8 +198,8 @@ export function CreateLaunchBuyStep({
       ) : null}
       {isSushiQuoteToken ? (
         <Message variant="info" size="sm" className="mb-6">
-          Using SUSHI as the quote asset reduces Sushi&apos;s fee share from 30%
-          to 20%.
+          Sushi&apos;s fee share increases from 20% to 30% when SUSHI is not
+          used as the quote asset.
         </Message>
       ) : null}
 
