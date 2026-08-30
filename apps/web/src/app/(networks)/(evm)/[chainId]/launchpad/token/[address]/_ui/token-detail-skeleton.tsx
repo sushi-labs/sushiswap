@@ -48,6 +48,121 @@ function CardHeadingSkeleton() {
   )
 }
 
+export function TokenMetricsSkeleton() {
+  return (
+    <MetricStrip>
+      {MARKET_STAT_SKELETONS.map((stat, index) => (
+        <MetricStripItem
+          key={stat.key}
+          index={index}
+          className="min-h-[104px] sm:min-h-[103px]"
+          label={
+            <SkeletonBox
+              className={`h-[16.5px] rounded-sm ${stat.labelWidth}`}
+            />
+          }
+          value={
+            <SkeletonBox className={`h-7 rounded-md ${stat.valueWidth}`} />
+          }
+          detail={
+            <SkeletonBox
+              className={`h-[16.5px] rounded-sm ${stat.detailWidth}`}
+            />
+          }
+        />
+      ))}
+    </MetricStrip>
+  )
+}
+
+export function TokenSidebarSkeleton() {
+  return (
+    <>
+      <div className="h-[552px] sm:h-[560px]">
+        <PerpsCard className="p-4 sm:p-5" fullHeight fullWidth>
+          <div className="flex items-center justify-between">
+            <div>
+              <SkeletonBox className="h-5 w-24 rounded-md" />
+              <SkeletonBox className="mt-2 h-3 w-56 rounded-sm" />
+            </div>
+            <SkeletonBox className="h-9 w-9 rounded-lg" />
+          </div>
+          <SkeletonBox className="mt-5 h-12 w-full rounded-xl" />
+          <SkeletonBox className="mt-5 h-[136px] w-full rounded-2xl" />
+          <div className="my-3 grid grid-cols-4 gap-2">
+            {['first', 'second', 'third', 'fourth'].map((preset) => (
+              <SkeletonBox key={preset} className="h-7 w-full rounded-lg" />
+            ))}
+          </div>
+          <SkeletonBox className="h-[108px] w-full rounded-2xl" />
+          <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
+        </PerpsCard>
+      </div>
+
+      <TradeActivitySkeleton />
+
+      <div className="h-[188px]">
+        <PerpsCard className="p-5" fullHeight fullWidth>
+          <SkeletonBox className="h-7 w-36 rounded-md" />
+          <div className="mt-3 space-y-2">
+            <SkeletonBox className="h-3.5 w-full rounded-sm" />
+            <SkeletonBox className="h-3.5 w-3/4 rounded-sm" />
+          </div>
+          <SkeletonBox className="mt-5 h-14 w-full rounded-xl" />
+        </PerpsCard>
+      </div>
+
+      <div className="h-[218px]">
+        <PerpsCard className="p-5" fullHeight fullWidth>
+          <SkeletonBox className="h-7 w-32 rounded-md" />
+          <div className="mt-5 space-y-4">
+            {['supply', 'pool-fee', 'starting-fdv', 'liquidity'].map(
+              (detail) => (
+                <div
+                  key={detail}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <SkeletonBox className="h-3.5 w-20 rounded-sm" />
+                  <SkeletonBox className="h-3.5 w-32 rounded-sm" />
+                </div>
+              ),
+            )}
+          </div>
+        </PerpsCard>
+      </div>
+
+      <div className="h-[470px]">
+        <PerpsCard
+          className="flex min-h-0 flex-col overflow-hidden"
+          fullHeight
+          fullWidth
+        >
+          <div className="border-b border-white/[0.06] p-5">
+            <SkeletonBox className="h-5 w-32 rounded-md" />
+          </div>
+          <div className="grid min-h-0 flex-1 grid-rows-4 divide-y divide-white/[0.06]">
+            {LOCKED_POSITION_SKELETONS.map((position) => (
+              <div key={position} className="p-4">
+                <SkeletonBox className="h-5 w-28 rounded-md" />
+                <div className="mt-3 grid grid-cols-2 gap-4">
+                  <div>
+                    <SkeletonBox className="h-3 w-16 rounded-sm" />
+                    <SkeletonBox className="mt-1 h-4 w-24 rounded-sm" />
+                  </div>
+                  <div>
+                    <SkeletonBox className="h-3 w-16 rounded-sm" />
+                    <SkeletonBox className="mt-1 h-4 w-24 rounded-sm" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </PerpsCard>
+      </div>
+    </>
+  )
+}
+
 export function TokenDetailSkeleton({
   header,
   bodyOnly = false,
@@ -96,28 +211,7 @@ export function TokenDetailSkeleton({
       )}
 
       <div className="mt-6">
-        <MetricStrip>
-          {MARKET_STAT_SKELETONS.map((stat, index) => (
-            <MetricStripItem
-              key={stat.key}
-              index={index}
-              className="min-h-[104px] sm:min-h-[103px]"
-              label={
-                <SkeletonBox
-                  className={`h-[16.5px] rounded-sm ${stat.labelWidth}`}
-                />
-              }
-              value={
-                <SkeletonBox className={`h-7 rounded-md ${stat.valueWidth}`} />
-              }
-              detail={
-                <SkeletonBox
-                  className={`h-[16.5px] rounded-sm ${stat.detailWidth}`}
-                />
-              }
-            />
-          ))}
-        </MetricStrip>
+        <TokenMetricsSkeleton />
       </div>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
@@ -161,87 +255,7 @@ export function TokenDetailSkeleton({
         </div>
 
         <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
-          <div className="h-[552px] sm:h-[560px]">
-            <PerpsCard className="p-4 sm:p-5" fullHeight fullWidth>
-              <div className="flex items-center justify-between">
-                <div>
-                  <SkeletonBox className="h-5 w-24 rounded-md" />
-                  <SkeletonBox className="mt-2 h-3 w-56 rounded-sm" />
-                </div>
-                <SkeletonBox className="h-9 w-9 rounded-lg" />
-              </div>
-              <SkeletonBox className="mt-5 h-12 w-full rounded-xl" />
-              <SkeletonBox className="mt-5 h-[136px] w-full rounded-2xl" />
-              <div className="my-3 grid grid-cols-4 gap-2">
-                {['first', 'second', 'third', 'fourth'].map((preset) => (
-                  <SkeletonBox key={preset} className="h-7 w-full rounded-lg" />
-                ))}
-              </div>
-              <SkeletonBox className="h-[108px] w-full rounded-2xl" />
-              <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
-            </PerpsCard>
-          </div>
-
-          <TradeActivitySkeleton />
-
-          <div className="h-[188px]">
-            <PerpsCard className="p-5" fullHeight fullWidth>
-              <SkeletonBox className="h-7 w-36 rounded-md" />
-              <div className="mt-3 space-y-2">
-                <SkeletonBox className="h-3.5 w-full rounded-sm" />
-                <SkeletonBox className="h-3.5 w-3/4 rounded-sm" />
-              </div>
-              <SkeletonBox className="mt-5 h-14 w-full rounded-xl" />
-            </PerpsCard>
-          </div>
-
-          <div className="h-[218px]">
-            <PerpsCard className="p-5" fullHeight fullWidth>
-              <SkeletonBox className="h-7 w-32 rounded-md" />
-              <div className="mt-5 space-y-4">
-                {['supply', 'pool-fee', 'starting-fdv', 'liquidity'].map(
-                  (detail) => (
-                    <div
-                      key={detail}
-                      className="flex items-center justify-between gap-4"
-                    >
-                      <SkeletonBox className="h-3.5 w-20 rounded-sm" />
-                      <SkeletonBox className="h-3.5 w-32 rounded-sm" />
-                    </div>
-                  ),
-                )}
-              </div>
-            </PerpsCard>
-          </div>
-
-          <div className="h-[470px]">
-            <PerpsCard
-              className="flex min-h-0 flex-col overflow-hidden"
-              fullHeight
-              fullWidth
-            >
-              <div className="border-b border-white/[0.06] p-5">
-                <SkeletonBox className="h-5 w-32 rounded-md" />
-              </div>
-              <div className="grid min-h-0 flex-1 grid-rows-4 divide-y divide-white/[0.06]">
-                {LOCKED_POSITION_SKELETONS.map((position) => (
-                  <div key={position} className="p-4">
-                    <SkeletonBox className="h-5 w-28 rounded-md" />
-                    <div className="mt-3 grid grid-cols-2 gap-4">
-                      <div>
-                        <SkeletonBox className="h-3 w-16 rounded-sm" />
-                        <SkeletonBox className="mt-1 h-4 w-24 rounded-sm" />
-                      </div>
-                      <div>
-                        <SkeletonBox className="h-3 w-16 rounded-sm" />
-                        <SkeletonBox className="mt-1 h-4 w-24 rounded-sm" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </PerpsCard>
-          </div>
+          <TokenSidebarSkeleton />
         </aside>
       </div>
     </Container>

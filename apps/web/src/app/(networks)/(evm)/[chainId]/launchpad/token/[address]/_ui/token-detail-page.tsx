@@ -67,6 +67,10 @@ import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
+import {
+  TokenMetricsSkeleton,
+  TokenSidebarSkeleton,
+} from './token-detail-skeleton'
 import { TradeActivity } from './trade-activity'
 import { TradeHistory } from './trade-history'
 
@@ -314,42 +318,6 @@ function TokenHeader({
         </div>
         <MetadataLinks links={links} placement="header" />
       </div>
-    </>
-  )
-}
-
-function TokenMetricsSkeleton() {
-  return (
-    <MetricStrip>
-      {['price', 'fdv', 'liquidity', 'volume'].map((metric, index) => (
-        <MetricStripItem
-          key={metric}
-          index={index}
-          label={<SkeletonBox className="h-4 w-16 rounded-sm" />}
-          value={<SkeletonBox className="h-7 w-28 rounded-md" />}
-          detail={<SkeletonBox className="h-4 w-24 rounded-sm" />}
-        />
-      ))}
-    </MetricStrip>
-  )
-}
-
-function TokenSidebarSkeleton() {
-  return (
-    <>
-      <PerpsCard className="h-[560px] p-5" fullWidth>
-        <SkeletonBox className="h-6 w-28 rounded-md" />
-        <SkeletonBox className="mt-5 h-12 w-full rounded-xl" />
-        <SkeletonBox className="mt-5 h-[136px] w-full rounded-2xl" />
-        <SkeletonBox className="mt-4 h-[108px] w-full rounded-2xl" />
-        <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
-      </PerpsCard>
-      <PerpsCard className="h-[188px] p-5" fullWidth>
-        <SkeletonBox className="h-6 w-36 rounded-md" />
-        <SkeletonBox className="mt-4 h-4 w-full rounded-sm" />
-        <SkeletonBox className="mt-2 h-4 w-3/4 rounded-sm" />
-        <SkeletonBox className="mt-5 h-14 w-full rounded-xl" />
-      </PerpsCard>
     </>
   )
 }
