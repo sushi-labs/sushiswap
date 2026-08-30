@@ -21,6 +21,8 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -126,17 +128,22 @@ function useLaunchpadMarketStatsController(
     setEventState({ events: [], streamKey })
     void refetch.current()
   }, [streamKey])
-  const data = query.data
-    ? foldLaunchpadMarketStats(query.data, events)
-    : query.data
-  const latestNewTradeEvent =
-    events.reduce<LaunchpadMarketStatsTradeEvent | null>((latest, event) => {
-      if (event.insertionEventId === null) return latest
-      if (latest === null || latest.insertionEventId === null) return event
-      return BigInt(event.insertionEventId) > BigInt(latest.insertionEventId)
-        ? event
-        : latest
-    }, null)
+  const data = useMemo(
+    () =>
+      query.data ? foldLaunchpadMarketStats(query.data, events) : query.data,
+    [events, query.data],
+  )
+  const latestNewTradeEvent = useMemo(
+    () =>
+      events.reduce<LaunchpadMarketStatsTradeEvent | null>((latest, event) => {
+        if (event.insertionEventId === null) return latest
+        if (latest === null || latest.insertionEventId === null) return event
+        return BigInt(event.insertionEventId) > BigInt(latest.insertionEventId)
+          ? event
+          : latest
+      }, null),
+    [events],
+  )
 
   return {
     onReset,
@@ -174,12 +181,14 @@ function useLaunchpadLiveTradesController(input: {
   const tradeSnapshotGeneration = useRef(0)
   const refetch = useRef(snapshot.refetch)
   const includeSmallTradesRef = useRef(includeSmallTrades)
+  const committedIncludeSmallTradesRef = useRef(includeSmallTrades)
   const previousIncludeSmallTrades = useRef(includeSmallTrades)
   includeSmallTradesRef.current = includeSmallTrades
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     refetch.current = snapshot.refetch
-  }, [snapshot.refetch])
+    committedIncludeSmallTradesRef.current = includeSmallTrades
+  }, [includeSmallTrades, snapshot.refetch])
 
   useEffect(() => {
     if (previousIncludeSmallTrades.current === includeSmallTrades) return
@@ -202,8 +211,12 @@ function useLaunchpadLiveTradesController(input: {
           return
         }
 
+        const snapshot = flattenLaunchpadTradePages(pages)
+        if (!unsignedIntegerSchema.safeParse(snapshot.streamCursor).success) {
+          return
+        }
         const next = applyLaunchpadTradeMutations(
-          flattenLaunchpadTradePages(pages),
+          snapshot,
           mutations.current.values(),
           includeSmallTrades,
         )
@@ -220,8 +233,12 @@ function useLaunchpadLiveTradesController(input: {
   useEffect(() => {
     if (!hasSnapshot.current || !snapshot.isSuccess) return
 
+    const connection = flattenLaunchpadTradePages(snapshot.data?.pages)
+    if (!unsignedIntegerSchema.safeParse(connection.streamCursor).success) {
+      return
+    }
     const next = applyLaunchpadTradeMutations(
-      flattenLaunchpadTradePages(snapshot.data?.pages),
+      connection,
       mutations.current.values(),
       includeSmallTrades,
     )
@@ -237,7 +254,9 @@ function useLaunchpadLiveTradesController(input: {
     let tradeSnapshotRetryTimer: ReturnType<typeof setTimeout> | undefined
     let closedStreamRetryTimer: ReturnType<typeof setTimeout> | undefined
     let candleSnapshotCursor: string | undefined
+    let pendingMinimumCandleCursor: string | undefined
     let tradeSnapshotCursor: string | undefined
+    let snapshotRetryAttempt = 0
     let tradeSnapshotRetryAttempt = 0
 
     function isExpected(event: {
@@ -263,6 +282,21 @@ function useLaunchpadLiveTradesController(input: {
       if (tradeSnapshotRetryTimer === undefined) return
       clearTimeout(tradeSnapshotRetryTimer)
       tradeSnapshotRetryTimer = undefined
+    }
+
+    function clearSnapshotRetryTimer(): void {
+      if (snapshotRetryTimer === undefined) return
+      clearTimeout(snapshotRetryTimer)
+      snapshotRetryTimer = undefined
+    }
+
+    function requireMinimumCandleCursor(streamCursor: string): void {
+      if (
+        pendingMinimumCandleCursor === undefined ||
+        BigInt(streamCursor) > BigInt(pendingMinimumCandleCursor)
+      ) {
+        pendingMinimumCandleCursor = streamCursor
+      }
     }
 
     function handleReady(currentSource: EventSource): void {
@@ -416,31 +450,11 @@ function useLaunchpadLiveTradesController(input: {
       )
       if (!payload || !isExpected(payload)) return
 
-      const currentSource = source
       const currentSynchronization = synchronization.current
-      if (!currentSource) return
+      if (!source) return
 
-      void refreshActiveCandleSnapshots()
-        .then(({ synchronized }) => {
-          if (
-            synchronized ||
-            disposed ||
-            source !== currentSource ||
-            synchronization.current !== currentSynchronization
-          ) {
-            return
-          }
-          void refetchSnapshotAndReconnect(false, true)
-        })
-        .catch(() => {
-          if (
-            !disposed &&
-            source === currentSource &&
-            synchronization.current === currentSynchronization
-          ) {
-            void refetchSnapshotAndReconnect(false, true)
-          }
-        })
+      requireMinimumCandleCursor(payload.eventId)
+      void synchronizeCandleReset(currentSynchronization, payload.eventId)
     }
 
     function handleMetricsUpdate(event: Event) {
@@ -520,6 +534,14 @@ function useLaunchpadLiveTradesController(input: {
 
     function openStreamFromSnapshots(currentSynchronization: number): void {
       if (!tradeSnapshotCursor || !candleSnapshotCursor) return
+      if (
+        !isCursorAtOrAfter(candleSnapshotCursor, pendingMinimumCandleCursor)
+      ) {
+        return
+      }
+      pendingMinimumCandleCursor = undefined
+      clearSnapshotRetryTimer()
+      snapshotRetryAttempt = 0
       const streamCursor = minimumLaunchpadStreamCursor(
         tradeSnapshotCursor,
         candleSnapshotCursor,
@@ -541,13 +563,42 @@ function useLaunchpadLiveTradesController(input: {
       openStream(streamCursor, currentSynchronization)
     }
 
-    function scheduleSnapshotRetry(): void {
+    function scheduleSnapshotRetry(
+      refetchCandles: boolean,
+      minimumCandleCursor?: string,
+    ): void {
       if (disposed || snapshotRetryTimer !== undefined) return
 
+      const retryDelay = Math.min(
+        ms('2s') * 2 ** snapshotRetryAttempt,
+        ms('30s'),
+      )
+      snapshotRetryAttempt += 1
       snapshotRetryTimer = setTimeout(() => {
         snapshotRetryTimer = undefined
-        void refetchSnapshotAndReconnect(false, true)
-      }, ms('2s'))
+        void refetchSnapshotAndReconnect(
+          false,
+          refetchCandles,
+          minimumCandleCursor,
+        )
+      }, retryDelay)
+    }
+
+    function scheduleCandleResetRetry(
+      currentSynchronization: number,
+      minimumCandleCursor: string,
+    ): void {
+      if (disposed || snapshotRetryTimer !== undefined) return
+
+      const retryDelay = Math.min(
+        ms('2s') * 2 ** snapshotRetryAttempt,
+        ms('30s'),
+      )
+      snapshotRetryAttempt += 1
+      snapshotRetryTimer = setTimeout(() => {
+        snapshotRetryTimer = undefined
+        void synchronizeCandleReset(currentSynchronization, minimumCandleCursor)
+      }, retryDelay)
     }
 
     function scheduleTradeSnapshotRetry(
@@ -584,7 +635,7 @@ function useLaunchpadLiveTradesController(input: {
       currentTradeSnapshotGeneration: number,
       currentSynchronization: number,
     ): Promise<void> {
-      const includeSmallTrades = includeSmallTradesRef.current
+      const includeSmallTrades = committedIncludeSmallTradesRef.current
       try {
         const result = await refetch.current()
         if (
@@ -618,7 +669,7 @@ function useLaunchpadLiveTradesController(input: {
           : null
         if (
           !reconciliation ||
-          includeSmallTrades !== includeSmallTradesRef.current
+          includeSmallTrades !== committedIncludeSmallTradesRef.current
         ) {
           scheduleTradeSnapshotRetry(
             resetEventId,
@@ -647,60 +698,121 @@ function useLaunchpadLiveTradesController(input: {
       }
     }
 
-    async function refreshActiveCandleSnapshots(): Promise<{
+    function isCursorAtOrAfter(
+      streamCursor: string | null | undefined,
+      minimumStreamCursor?: string,
+    ): boolean {
+      return (
+        streamCursor !== null &&
+        streamCursor !== undefined &&
+        (minimumStreamCursor === undefined ||
+          BigInt(streamCursor) >= BigInt(minimumStreamCursor))
+      )
+    }
+
+    async function refreshActiveCandleSnapshots(
+      minimumStreamCursor?: string,
+    ): Promise<{
       streamCursor: string | null
       subscriberCount: number
       synchronized: boolean
     }> {
       const result =
         await input.candleController.refetchSnapshotsWithRetry(true)
+      const synchronized =
+        result.subscriberCount === 0 ||
+        (result.failedSubscriberCount === 0 && result.streamCursor !== null)
       return {
         streamCursor: result.streamCursor,
         subscriberCount: result.subscriberCount,
         synchronized:
-          result.subscriberCount === 0 ||
-          (result.failedSubscriberCount === 0 && result.streamCursor !== null),
+          synchronized &&
+          isCursorAtOrAfter(result.streamCursor, minimumStreamCursor),
       }
     }
 
-    async function refreshCandleSnapshot(refetchCandles: boolean): Promise<{
+    async function refreshCandleSnapshot(
+      refetchCandles: boolean,
+      minimumStreamCursor?: string,
+    ): Promise<{
       streamCursor: string | null
       synchronized: boolean
     }> {
       if (!refetchCandles) {
         const initialSnapshot =
           await input.candleController.prefetchInitialSnapshot()
+        const streamCursor =
+          candleSnapshotCursor ?? initialSnapshot?.streamCursor ?? null
         return {
-          streamCursor:
-            candleSnapshotCursor ?? initialSnapshot?.streamCursor ?? null,
-          synchronized:
-            candleSnapshotCursor !== undefined || initialSnapshot !== null,
+          streamCursor,
+          synchronized: isCursorAtOrAfter(streamCursor, minimumStreamCursor),
         }
       }
 
-      const refresh = await refreshActiveCandleSnapshots()
+      const refresh = await refreshActiveCandleSnapshots(minimumStreamCursor)
       if (refresh.subscriberCount > 0) return refresh
 
       const initialSnapshot =
         await input.candleController.prefetchInitialSnapshot(true)
       return {
         streamCursor: initialSnapshot?.streamCursor ?? null,
-        synchronized: initialSnapshot !== null,
+        synchronized: isCursorAtOrAfter(
+          initialSnapshot?.streamCursor,
+          minimumStreamCursor,
+        ),
+      }
+    }
+
+    async function synchronizeCandleReset(
+      currentSynchronization: number,
+      minimumCandleCursor: string,
+    ): Promise<void> {
+      requireMinimumCandleCursor(minimumCandleCursor)
+      const requiredMinimumCandleCursor =
+        pendingMinimumCandleCursor ?? minimumCandleCursor
+      try {
+        const refresh = await refreshCandleSnapshot(
+          true,
+          requiredMinimumCandleCursor,
+        )
+        if (disposed || synchronization.current !== currentSynchronization) {
+          return
+        }
+        if (!refresh.synchronized || refresh.streamCursor === null) {
+          scheduleCandleResetRetry(
+            currentSynchronization,
+            requiredMinimumCandleCursor,
+          )
+          return
+        }
+
+        candleSnapshotCursor = refresh.streamCursor
+        openStreamFromSnapshots(currentSynchronization)
+      } catch {
+        if (!disposed && synchronization.current === currentSynchronization) {
+          scheduleCandleResetRetry(
+            currentSynchronization,
+            requiredMinimumCandleCursor,
+          )
+        }
       }
     }
 
     async function refetchSnapshotAndReconnect(
       clearData: boolean,
       refetchCandles: boolean,
+      minimumCandleCursor?: string,
     ): Promise<void> {
+      if (minimumCandleCursor !== undefined) {
+        requireMinimumCandleCursor(minimumCandleCursor)
+      }
+      const requiredMinimumCandleCursor = pendingMinimumCandleCursor
+      const includeSmallTrades = committedIncludeSmallTradesRef.current
       const currentSynchronization = ++synchronization.current
       tradeSnapshotGeneration.current += 1
       clearTradeSnapshotRetry()
       tradeSnapshotRetryAttempt = 0
-      if (snapshotRetryTimer !== undefined) {
-        clearTimeout(snapshotRetryTimer)
-        snapshotRetryTimer = undefined
-      }
+      clearSnapshotRetryTimer()
       source?.close()
       source = undefined
       sourceAfterCursor = undefined
@@ -721,25 +833,40 @@ function useLaunchpadLiveTradesController(input: {
       try {
         const [result, candleRefresh] = await Promise.all([
           refetch.current(),
-          refreshCandleSnapshot(refetchCandles),
+          refreshCandleSnapshot(refetchCandles, requiredMinimumCandleCursor),
         ])
         if (disposed || currentSynchronization !== synchronization.current) {
           return
         }
-        if (!candleRefresh.synchronized) {
-          setStreamStatus('reconnecting')
-          scheduleSnapshotRetry()
+        if (includeSmallTrades !== committedIncludeSmallTradesRef.current) {
+          void refetchSnapshotAndReconnect(
+            false,
+            refetchCandles,
+            requiredMinimumCandleCursor,
+          )
           return
         }
         const pages = result.data?.pages
         if (result.isError || !pages?.[0]) {
           setStreamStatus('reconnecting')
-          scheduleSnapshotRetry()
+          scheduleSnapshotRetry(refetchCandles, requiredMinimumCandleCursor)
           return
         }
 
         const next = flattenLaunchpadTradePages(pages)
+        if (!unsignedIntegerSchema.safeParse(next.streamCursor).success) {
+          setStreamStatus('reconnecting')
+          scheduleSnapshotRetry(refetchCandles, requiredMinimumCandleCursor)
+          return
+        }
         tradeSnapshotCursor = next.streamCursor
+        hasSnapshot.current = true
+        setData(next)
+        if (!candleRefresh.synchronized) {
+          setStreamStatus('reconnecting')
+          scheduleSnapshotRetry(refetchCandles, requiredMinimumCandleCursor)
+          return
+        }
         const candleCursors = [
           candleSnapshotCursor,
           candleRefresh.streamCursor,
@@ -748,9 +875,9 @@ function useLaunchpadLiveTradesController(input: {
             unsignedIntegerSchema.safeParse(streamCursor).success,
         )
         const [firstCandleCursor, ...remainingCandleCursors] = candleCursors
-        hasSnapshot.current = true
-        setData(next)
         if (!firstCandleCursor) {
+          setStreamStatus('reconnecting')
+          scheduleSnapshotRetry(refetchCandles, requiredMinimumCandleCursor)
           return
         }
         candleSnapshotCursor = minimumLaunchpadStreamCursor(
@@ -761,7 +888,7 @@ function useLaunchpadLiveTradesController(input: {
       } catch {
         if (!disposed && currentSynchronization === synchronization.current) {
           setStreamStatus('reconnecting')
-          scheduleSnapshotRetry()
+          scheduleSnapshotRetry(refetchCandles, requiredMinimumCandleCursor)
         }
       }
     }
@@ -797,9 +924,7 @@ function useLaunchpadLiveTradesController(input: {
       disposed = true
       synchronization.current += 1
       tradeSnapshotGeneration.current += 1
-      if (snapshotRetryTimer !== undefined) {
-        clearTimeout(snapshotRetryTimer)
-      }
+      clearSnapshotRetryTimer()
       clearTradeSnapshotRetry()
       clearClosedStreamRetry()
       unsubscribeCandleSnapshot()
@@ -865,9 +990,22 @@ function LaunchpadLiveDataScope({
   const [candleController] = useState(
     () => new LaunchpadCandleController({ chainId, createdAt, tokenAddress }),
   )
+  const controllerDisposalTimer = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  )
 
   useEffect(() => {
-    return () => candleController.dispose()
+    if (controllerDisposalTimer.current !== null) {
+      clearTimeout(controllerDisposalTimer.current)
+      controllerDisposalTimer.current = null
+    }
+
+    return () => {
+      controllerDisposalTimer.current = setTimeout(() => {
+        candleController.dispose()
+        controllerDisposalTimer.current = null
+      })
+    }
   }, [candleController])
 
   const marketStatsController = useLaunchpadMarketStatsController(

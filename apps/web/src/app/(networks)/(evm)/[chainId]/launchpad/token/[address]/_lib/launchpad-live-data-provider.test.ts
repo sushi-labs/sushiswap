@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { type ReactNode, act, createElement } from 'react'
+import { type ReactNode, StrictMode, act, createElement } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import type { EvmAddress } from 'sushi/evm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -104,24 +104,29 @@ describe('LaunchpadLiveDataProvider', () => {
   let queryClient: QueryClient
   let root: Root | null
 
-  function render(address: EvmAddress, child: ReactNode = null): void {
+  function render(
+    address: EvmAddress,
+    child: ReactNode = null,
+    strict = false,
+  ): void {
     const currentRoot = root
     if (!currentRoot) throw new Error('Test root is not mounted')
 
+    const provider = createElement(
+      LaunchpadLiveDataProvider,
+      {
+        chainId: CHAIN_ID,
+        createdAt: CREATED_AT,
+        tokenAddress: address,
+      },
+      child,
+    )
     act(() => {
       currentRoot.render(
         createElement(
           QueryClientProvider,
           { client: queryClient },
-          createElement(
-            LaunchpadLiveDataProvider,
-            {
-              chainId: CHAIN_ID,
-              createdAt: CREATED_AT,
-              tokenAddress: address,
-            },
-            child,
-          ),
+          strict ? createElement(StrictMode, null, provider) : provider,
         ),
       )
     })
@@ -253,6 +258,218 @@ describe('LaunchpadLiveDataProvider', () => {
     render(TOKEN_ADDRESS)
     expect(FakeEventSource.instances).toHaveLength(1)
     expect(source.readyState).not.toBe(FakeEventSource.CLOSED)
+  })
+
+  it('opens the stream after the Strict Mode effect replay', async () => {
+    const candleController = {
+      current: null as ReturnType<typeof useLaunchpadCandleController> | null,
+    }
+
+    function CandleProbe() {
+      candleController.current = useLaunchpadCandleController()
+      return null
+    }
+
+    render(TOKEN_ADDRESS, createElement(CandleProbe), true)
+
+    await waitForSources(1)
+
+    expect(FakeEventSource.instances[0]?.readyState).not.toBe(
+      FakeEventSource.CLOSED,
+    )
+
+    unmount()
+    await new Promise<void>((resolve) => setTimeout(resolve))
+    const candleRequestCount = mocks.getLaunchpadCandles.mock.calls.length
+
+    expect(await candleController.current?.prefetchInitialSnapshot()).toBeNull()
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(candleRequestCount)
+  })
+
+  it('keeps a successful trade snapshot visible while candles reconnect', async () => {
+    const candleController = {
+      current: null as ReturnType<typeof useLaunchpadCandleController> | null,
+    }
+    let streamStatus: string | null = null
+    let tradeCount = -1
+
+    function TradeProbe() {
+      candleController.current = useLaunchpadCandleController()
+      const trades = useLaunchpadLiveTrades()
+      streamStatus = trades.streamStatus
+      tradeCount = trades.data.totalCount
+      return null
+    }
+
+    mocks.getLaunchpadCandles.mockRejectedValue(
+      new Error('candle snapshot unavailable'),
+    )
+    mocks.getLaunchpadTrades.mockResolvedValue({
+      edges: [],
+      pageInfo: { endCursor: null, hasNextPage: false },
+      streamCursor: '50',
+      totalCount: 7,
+    })
+
+    render(TOKEN_ADDRESS, createElement(TradeProbe))
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(streamStatus).toBe('reconnecting')
+        expect(tradeCount).toBe(7)
+      })
+    })
+
+    expect(FakeEventSource.instances).toHaveLength(0)
+
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
+    mocks.getLaunchpadCandles.mockResolvedValue({
+      nodes: [],
+      streamCursor: '40',
+    })
+    await act(async () => {
+      await candleController.current?.prefetchInitialSnapshot()
+    })
+
+    expect(FakeEventSource.instances).toHaveLength(1)
+    expect(clearTimeoutSpy).toHaveBeenCalled()
+    clearTimeoutSpy.mockRestore()
+  })
+
+  it('retries candle reset snapshots that precede the reset event', async () => {
+    const candleController = {
+      current: null as ReturnType<typeof useLaunchpadCandleController> | null,
+    }
+
+    function CandleProbe() {
+      candleController.current = useLaunchpadCandleController()
+      return null
+    }
+
+    render(TOKEN_ADDRESS, createElement(CandleProbe))
+    await waitForSources(1)
+    const tradeRequestCount = mocks.getLaunchpadTrades.mock.calls.length
+
+    vi.useFakeTimers()
+    const onReset = vi
+      .fn()
+      .mockResolvedValueOnce('44')
+      .mockResolvedValueOnce('46')
+    const unsubscribe = candleController.current?.subscribe({
+      onRemove: vi.fn(),
+      onReset,
+      onUpdate: vi.fn(),
+    })
+    FakeEventSource.instances[0]?.dispatch('candle.reset', {
+      chainId: CHAIN_ID,
+      eventId: '45',
+      tokenAddress: TOKEN_ADDRESS,
+    })
+    await act(async () => undefined)
+
+    candleController.current?.publishSnapshot('44')
+    expect(FakeEventSource.instances).toHaveLength(1)
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2_000)
+    })
+
+    expect(FakeEventSource.instances).toHaveLength(1)
+    expect(onReset).toHaveBeenCalledTimes(2)
+    expect(mocks.getLaunchpadTrades).toHaveBeenCalledTimes(tradeRequestCount)
+    vi.useRealTimers()
+    unsubscribe?.()
+  })
+
+  it('refetches when the small-trade filter changes during initialization', async () => {
+    let resolveInitialTrades: (value: {
+      edges: []
+      pageInfo: { endCursor: null; hasNextPage: false }
+      streamCursor: string
+      totalCount: number
+    }) => void = () => undefined
+    const initialTrades = new Promise<{
+      edges: []
+      pageInfo: { endCursor: null; hasNextPage: false }
+      streamCursor: string
+      totalCount: number
+    }>((resolve) => {
+      resolveInitialTrades = resolve
+    })
+    mocks.getLaunchpadTrades
+      .mockReset()
+      .mockReturnValueOnce(initialTrades)
+      .mockResolvedValueOnce({
+        edges: [],
+        pageInfo: { endCursor: null, hasNextPage: false },
+        streamCursor: '51',
+        totalCount: 2,
+      })
+    let setIncludeSmallTrades: ((include: boolean) => void) | null = null
+    let tradeCount = -1
+
+    function TradeProbe() {
+      const trades = useLaunchpadLiveTrades()
+      setIncludeSmallTrades = trades.setIncludeSmallTrades
+      tradeCount = trades.data.totalCount
+      return null
+    }
+
+    render(TOKEN_ADDRESS, createElement(TradeProbe))
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(mocks.getLaunchpadTrades).toHaveBeenCalledOnce()
+      })
+    })
+
+    act(() => setIncludeSmallTrades?.(true))
+    await act(async () => {
+      resolveInitialTrades({
+        edges: [],
+        pageInfo: { endCursor: null, hasNextPage: false },
+        streamCursor: '50',
+        totalCount: 1,
+      })
+      await vi.waitFor(() => {
+        expect(tradeCount).toBe(2)
+      })
+    })
+
+    expect(mocks.getLaunchpadTrades).toHaveBeenCalledTimes(2)
+    expect(mocks.getLaunchpadTrades).toHaveBeenNthCalledWith(1, {
+      input: expect.objectContaining({ includeSmallTrades: false }),
+    })
+    expect(mocks.getLaunchpadTrades).toHaveBeenNthCalledWith(2, {
+      input: expect.objectContaining({ includeSmallTrades: true }),
+    })
+  })
+
+  it('rejects trade snapshots with invalid stream cursors', async () => {
+    let streamStatus: string | null = null
+    let tradeCount = -1
+
+    function TradeProbe() {
+      const trades = useLaunchpadLiveTrades()
+      streamStatus = trades.streamStatus
+      tradeCount = trades.data.totalCount
+      return null
+    }
+
+    mocks.getLaunchpadTrades.mockResolvedValue({
+      edges: [],
+      pageInfo: { endCursor: null, hasNextPage: false },
+      streamCursor: 'invalid',
+      totalCount: 7,
+    })
+
+    render(TOKEN_ADDRESS, createElement(TradeProbe))
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(streamStatus).toBe('reconnecting')
+      })
+    })
+
+    expect(tradeCount).toBe(0)
+    expect(FakeEventSource.instances).toHaveLength(0)
   })
 
   it('closes the prior stream and controller when the token changes', async () => {

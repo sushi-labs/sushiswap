@@ -93,7 +93,7 @@ function createSnapshot(
 }
 
 describe('launchpad TradingView datafeed', () => {
-  it('reuses the in-flight initial candle prefetch', async () => {
+  it('reuses the initial prefetch without overriding newer candle state', async () => {
     const to = Math.floor(Date.now() / 1_000)
     const from = to - 300 * 5 * 60
     let resolveSnapshot: (snapshot: LaunchpadCandleSnapshot) => void = () =>
@@ -102,9 +102,24 @@ describe('launchpad TradingView datafeed', () => {
       resolveSnapshot = resolve
     })
     mocks.getLaunchpadCandles.mockReset().mockReturnValue(snapshotPromise)
-    const datafeed = createDatafeed()
+    const candleController = createCandleController()
+    const datafeed = createLaunchpadDatafeed({
+      ...DATAFEED_OPTIONS,
+      candleController,
+    })
+    const initialSnapshot = createSnapshot('40', to - 60)
 
     const prefetch = datafeed.prefetchInitialSnapshot()
+    candleController.publishUpdate({
+      eventId: '41',
+      interval: '1m',
+      candle: { ...initialSnapshot.nodes[0]!, close: 2 },
+    })
+    candleController.publishUpdate({
+      eventId: '42',
+      interval: '5m',
+      candle: { ...initialSnapshot.nodes[0]!, close: 2 },
+    })
     const barsPromise = new Promise<Bar[]>((resolve, reject) => {
       datafeed.getBars(
         SYMBOL_INFO,
@@ -123,10 +138,70 @@ describe('launchpad TradingView datafeed', () => {
       }),
     })
 
-    resolveSnapshot(createSnapshot('40', to - 60))
+    resolveSnapshot(initialSnapshot)
     await prefetch
     expect(await barsPromise).toHaveLength(1)
-    expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
+
+    await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        { from, to, countBack: 329, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
+
+    datafeed.subscribeBars(
+      SYMBOL_INFO,
+      FIVE_MINUTE_RESOLUTION,
+      vi.fn(),
+      'launchpad-candles',
+      vi.fn(),
+    )
+    candleController.publishUpdate({
+      eventId: '43',
+      interval: '5m',
+      candle: { ...initialSnapshot.nodes[0]!, close: 3 },
+    })
+
+    const updatedBars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        { from, to, countBack: 329, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(updatedBars[0]?.close).toBe(3)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(3)
+
+    const resetSnapshot = {
+      ...initialSnapshot,
+      streamCursor: '44',
+      nodes: [{ ...initialSnapshot.nodes[0]!, close: 4 }],
+    }
+    mocks.getLaunchpadCandles.mockResolvedValue(resetSnapshot)
+    await candleController.refetchSnapshotsWithRetry(true, {
+      attempts: 1,
+      retryDelayMs: 0,
+    })
+
+    const resetBars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        { from, to, countBack: 329, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(resetBars[0]?.close).toBe(4)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(4)
   })
 
   it('caps and aligns candle requests to 2,000 buckets', async () => {

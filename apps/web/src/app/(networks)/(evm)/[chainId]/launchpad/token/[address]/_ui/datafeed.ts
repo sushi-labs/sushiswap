@@ -228,6 +228,21 @@ export function createLaunchpadDatafeed({
   const cachedSnapshotReads = new Set<ResolutionString>()
   const launchTimestamp = Math.floor(Date.parse(createdAt) / 1_000)
 
+  function getUsableCachedSnapshot(
+    resolution: ResolutionString,
+    from: number,
+    to: number,
+    seconds: number,
+  ): CandleSnapshotState | undefined {
+    const snapshot = snapshots.get(resolution)
+    return cachedSnapshotReads.has(resolution) &&
+      snapshot !== undefined &&
+      from >= snapshot.from &&
+      to <= snapshot.to + seconds
+      ? snapshot
+      : undefined
+  }
+
   async function fetchCandleSnapshot({
     countBack,
     fresh = false,
@@ -409,22 +424,29 @@ export function createLaunchpadDatafeed({
           return
         }
 
-        const cachedSnapshot = snapshots.get(resolution)
-        const canUseCachedSnapshot =
-          cachedSnapshotReads.has(resolution) &&
-          cachedSnapshot !== undefined &&
-          requestedFrom >= cachedSnapshot.from &&
-          requestedTo <= cachedSnapshot.to + seconds
-        const prefetched = await candleController.getInitialSnapshot({
-          countBack: requestedCountBack,
-          from: requestedFrom,
+        const initiallyCachedSnapshot = getUsableCachedSnapshot(
           resolution,
+          requestedFrom,
+          requestedTo,
           seconds,
-          to: requestedTo,
-        })
+        )
+        const prefetched = initiallyCachedSnapshot
+          ? null
+          : await candleController.getInitialSnapshot({
+              countBack: requestedCountBack,
+              from: requestedFrom,
+              resolution,
+              seconds,
+              to: requestedTo,
+            })
+        const cachedSnapshot = getUsableCachedSnapshot(
+          resolution,
+          requestedFrom,
+          requestedTo,
+          seconds,
+        )
         if (prefetched) {
-          const currentSnapshot = snapshots.get(resolution)
-          if (!currentSnapshot || prefetched.to >= currentSnapshot.to) {
+          if (!snapshots.has(resolution)) {
             snapshots.set(resolution, {
               countBack: prefetched.countBack,
               from: prefetched.from,
@@ -433,17 +455,16 @@ export function createLaunchpadDatafeed({
             })
           }
         }
-        const snapshot =
-          prefetched?.snapshot ??
-          (canUseCachedSnapshot
-            ? cachedSnapshot.snapshot
-            : await fetchCandleSnapshot({
-                countBack: requestedCountBack,
-                resolution,
-                from: requestedFrom,
-                to: requestedTo,
-              }))
-        if (!canUseCachedSnapshot && prefetched === null) {
+        const snapshot = cachedSnapshot
+          ? cachedSnapshot.snapshot
+          : (prefetched?.snapshot ??
+            (await fetchCandleSnapshot({
+              countBack: requestedCountBack,
+              resolution,
+              from: requestedFrom,
+              to: requestedTo,
+            })))
+        if (!cachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
         const bars = await getSnapshotBars({

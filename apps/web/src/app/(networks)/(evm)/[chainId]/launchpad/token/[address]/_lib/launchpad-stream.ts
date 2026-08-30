@@ -92,6 +92,19 @@ function shouldIncludeTrade(
   return includeSmallTrades || trade.amountUsd === null || trade.amountUsd >= 1
 }
 
+function snapshotIncludesEvent(
+  snapshotCursor: string,
+  eventId: string,
+): boolean {
+  if (
+    !/^(0|[1-9][0-9]*)$/.test(snapshotCursor) ||
+    !/^(0|[1-9][0-9]*)$/.test(eventId)
+  ) {
+    return false
+  }
+  return BigInt(eventId) <= BigInt(snapshotCursor)
+}
+
 export function getLaunchpadTradeKey(trade: {
   transactionHash: EvmTxHash
   logIndex: number
@@ -147,7 +160,11 @@ export function applyLaunchpadTradeMutation(
     edges: [{ cursor: mutation.eventId, node: mutation.trade }, ...edges].sort(
       (left, right) => compareTrades(left.node, right.node),
     ),
-    totalCount: hadTrade ? connection.totalCount : connection.totalCount + 1,
+    totalCount:
+      hadTrade ||
+      snapshotIncludesEvent(connection.streamCursor, mutation.eventId)
+        ? connection.totalCount
+        : connection.totalCount + 1,
   }
 }
 
@@ -234,8 +251,10 @@ export function launchpadEventsUrl(input: {
 }
 
 interface InitialCandleSnapshotState {
+  consumed: boolean
   from: number
   promise: Promise<LaunchpadCandleSnapshot | null>
+  settled: boolean
   to: number
 }
 
@@ -327,6 +346,9 @@ export class LaunchpadCandleController {
 
   publishUpdate(update: LaunchpadCandleStreamUpdate): void {
     if (this.disposed) return
+    if (update.interval === '5m' && this.initialSnapshot?.settled === true) {
+      this.initialSnapshot.consumed = true
+    }
     this.recordMutation(`${update.interval}:${update.candle.timestamp}`, {
       type: 'upsert',
       update,
@@ -338,6 +360,9 @@ export class LaunchpadCandleController {
 
   publishRemove(removal: LaunchpadCandleStreamRemoval): void {
     if (this.disposed) return
+    if (removal.interval === '5m' && this.initialSnapshot?.settled === true) {
+      this.initialSnapshot.consumed = true
+    }
     this.recordMutation(`${removal.interval}:${removal.timestamp}`, {
       type: 'remove',
       removal,
@@ -370,8 +395,10 @@ export class LaunchpadCandleController {
     if (from >= to) return null
 
     const state: InitialCandleSnapshotState = {
+      consumed: false,
       from,
       promise: Promise.resolve(null),
+      settled: false,
       to,
     }
     state.promise = getLaunchpadCandles({
@@ -387,12 +414,18 @@ export class LaunchpadCandleController {
     })
       .then((response) => this.applyStreamMutations('5m', response))
       .then((snapshot) => {
+        state.settled = true
         if (!this.disposed && this.initialSnapshot === state) {
           this.publishSnapshot(snapshot.streamCursor)
         }
         return snapshot
       })
-      .catch(() => null)
+      .catch(() => {
+        if (this.initialSnapshot === state) {
+          this.initialSnapshot = undefined
+        }
+        return null
+      })
     this.initialSnapshot = state
     return state.promise
   }
@@ -408,6 +441,7 @@ export class LaunchpadCandleController {
     const initialSnapshot = this.initialSnapshot
     if (
       !initialSnapshot ||
+      initialSnapshot.consumed ||
       input.countBack > INITIAL_CANDLE_PREFETCH_BUCKETS ||
       input.from < initialSnapshot.from ||
       Math.ceil(input.to / input.seconds) !==
@@ -416,7 +450,9 @@ export class LaunchpadCandleController {
       return null
     }
 
+    initialSnapshot.consumed = true
     const snapshot = await initialSnapshot.promise
+    if (this.initialSnapshot !== initialSnapshot) return null
     return snapshot
       ? {
           countBack: INITIAL_CANDLE_PREFETCH_BUCKETS,
@@ -488,6 +524,9 @@ export class LaunchpadCandleController {
   private async refetchSnapshotsWithStatus(
     fresh: boolean,
   ): Promise<LaunchpadCandleSnapshotRefreshResult> {
+    if (fresh && this.initialSnapshot) {
+      this.initialSnapshot.consumed = true
+    }
     const subscribers = Array.from(this.subscribers)
     const results = await Promise.all(
       subscribers.map((subscriber) =>

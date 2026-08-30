@@ -182,6 +182,55 @@ describe('launchpad stream', () => {
     expect(next.totalCount).toBe(1)
   })
 
+  it('does not recount replayed trades outside the loaded page', () => {
+    const connection = {
+      ...createConnection(),
+      streamCursor: '50',
+      totalCount: 100,
+    }
+    const replayed = applyLaunchpadTradeMutation(
+      connection,
+      {
+        eventId: '49',
+        type: 'upsert',
+        trade: createTrade({ id: 'trade-2', logIndex: 2 }),
+      },
+      false,
+    )
+    const live = applyLaunchpadTradeMutation(
+      replayed,
+      {
+        eventId: '51',
+        type: 'upsert',
+        trade: createTrade({ id: 'trade-3', logIndex: 3 }),
+      },
+      false,
+    )
+
+    expect(replayed.totalCount).toBe(100)
+    expect(live.totalCount).toBe(101)
+  })
+
+  it('does not throw when replay comparison receives an invalid cursor', () => {
+    const connection = {
+      ...createConnection(),
+      edges: [],
+      streamCursor: 'invalid',
+    }
+
+    expect(() =>
+      applyLaunchpadTradeMutation(
+        connection,
+        {
+          eventId: '51',
+          type: 'upsert',
+          trade: createTrade({ id: 'trade-2', logIndex: 2 }),
+        },
+        false,
+      ),
+    ).not.toThrow()
+  })
+
   it('only decrements the total when a removal deletes a loaded trade', () => {
     const mutation = {
       eventId: '41',
