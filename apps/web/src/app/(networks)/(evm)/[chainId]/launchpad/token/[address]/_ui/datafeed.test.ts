@@ -36,6 +36,7 @@ const PRICESCALES = {
 }
 const DATAFEED_OPTIONS = {
   chainId: CHAIN_ID,
+  createdAt: '2020-01-01T00:00:00.000Z',
   getPriceMultiplier: (chartMode: 'market-cap' | 'price') =>
     chartMode === 'market-cap' ? MARKET_CAP_MULTIPLIER : 1,
   getPricescale: (chartMode: 'market-cap' | 'price') => PRICESCALES[chartMode],
@@ -144,6 +145,83 @@ describe('launchpad TradingView datafeed', () => {
       input: expect.objectContaining({
         interval: 'FIVE_MINUTES',
         from: Math.ceil((to - 2_000 * 5 * 60) / (5 * 60)) * (5 * 60),
+        to,
+      }),
+    })
+
+    const historicalBars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        {
+          from: Math.ceil((to - 2_000 * 5 * 60) / (5 * 60)) * (5 * 60),
+          to: Math.floor(from / (5 * 60)) * (5 * 60),
+          countBack: 300,
+          firstDataRequest: false,
+        },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(historicalBars).toHaveLength(1)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
+  })
+
+  it('stops candle history at the token creation bucket', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const launchTimestamp = to - 4 * 60 * 60
+    const launchBucket = Math.floor(launchTimestamp / (5 * 60)) * (5 * 60)
+    const firstCandle = createSnapshot('40', launchBucket).nodes[0]!
+    mocks.getLaunchpadCandles.mockReset().mockResolvedValue({
+      streamCursor: '40',
+      nodes: [firstCandle],
+    })
+    const datafeed = createLaunchpadDatafeed({
+      ...DATAFEED_OPTIONS,
+      createdAt: new Date(launchTimestamp * 1_000).toISOString(),
+    })
+
+    const bars = await new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        {
+          from: to - 24 * 60 * 60,
+          to,
+          countBack: 300,
+          firstDataRequest: true,
+        },
+        resolve,
+        reject,
+      )
+    })
+    const prelaunchResult = await new Promise<{
+      bars: Bar[]
+      noData: boolean | undefined
+    }>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        {
+          from: launchBucket - 24 * 60 * 60,
+          to: launchBucket,
+          countBack: 300,
+          firstDataRequest: false,
+        },
+        (result, metadata) =>
+          resolve({ bars: result, noData: metadata?.noData }),
+        reject,
+      )
+    })
+
+    expect(bars).toHaveLength(1)
+    expect(prelaunchResult).toEqual({ bars: [], noData: true })
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
+      input: expect.objectContaining({
+        interval: 'FIVE_MINUTES',
+        from: launchBucket,
         to,
       }),
     })

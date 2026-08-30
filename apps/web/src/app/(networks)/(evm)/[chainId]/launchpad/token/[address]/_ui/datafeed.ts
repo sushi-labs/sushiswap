@@ -103,6 +103,7 @@ export const DEFAULT_LAUNCHPAD_CHART_MODE: LaunchpadChartMode = 'market-cap'
 
 interface LaunchpadDatafeedOptions {
   chainId: LaunchpadChainId
+  createdAt: string
   getPriceMultiplier: (chartMode: LaunchpadChartMode) => number
   getPricescale: (chartMode: LaunchpadChartMode) => number
   onResetData?: () => void
@@ -218,6 +219,7 @@ function getPreviousClose(
 
 export function createLaunchpadDatafeed({
   chainId,
+  createdAt,
   getPriceMultiplier,
   getPricescale,
   onResetData,
@@ -228,6 +230,7 @@ export function createLaunchpadDatafeed({
   const snapshots = new Map<ResolutionString, CandleSnapshotState>()
   const cachedSnapshotReads = new Set<ResolutionString>()
   const streamIdentity = { chainId, tokenAddress }
+  const launchTimestamp = Math.floor(Date.parse(createdAt) / 1_000)
 
   async function fetchCandleSnapshot({
     fresh = false,
@@ -389,10 +392,20 @@ export function createLaunchpadDatafeed({
         const { seconds } = getResolutionConfig(resolution)
         const currentTime = getUnixTime(new Date())
         const requestedTo = Math.min(to, currentTime)
-        const requestedFrom = getCandleRequestFrom(
-          Math.min(from, requestedTo - seconds * countBack),
-          requestedTo,
-          seconds,
+        const launchBucket = Number.isFinite(launchTimestamp)
+          ? Math.floor(launchTimestamp / seconds) * seconds
+          : undefined
+        if (launchBucket !== undefined && requestedTo <= launchBucket) {
+          onResult([], { noData: true })
+          return
+        }
+        const requestedFrom = Math.max(
+          getCandleRequestFrom(
+            Math.min(from, requestedTo - seconds * countBack),
+            requestedTo,
+            seconds,
+          ),
+          launchBucket ?? 0,
         )
 
         if (requestedFrom >= requestedTo) {
@@ -419,12 +432,15 @@ export function createLaunchpadDatafeed({
         // TradingView asks for progressively older ranges when a response does
         // not contain `countBack` bars. Launchpad candles omit empty buckets,
         // so sparse tokens can otherwise trigger a long serial request
-        // waterfall. Expand once to the largest backend-supported window and
-        // return the extra history in the same response.
-        const expandedFrom = getCandleRequestFrom(
-          requestedTo - seconds * MAX_CANDLES_PER_REQUEST,
-          requestedTo,
-          seconds,
+        // waterfall. Expand to the largest backend-supported window, return
+        // the extra history, and reuse it for TradingView's follow-up probe.
+        const expandedFrom = Math.max(
+          getCandleRequestFrom(
+            requestedTo - seconds * MAX_CANDLES_PER_REQUEST,
+            requestedTo,
+            seconds,
+          ),
+          launchBucket ?? 0,
         )
         const snapshotBars = getBarsInRange(
           snapshot.nodes,
@@ -443,6 +459,7 @@ export function createLaunchpadDatafeed({
             from: expandedFrom,
             to: requestedTo,
           })
+          cachedSnapshotReads.add(resolution)
           bars = await getSnapshotBars({
             snapshot: expandedSnapshot,
             resolution,

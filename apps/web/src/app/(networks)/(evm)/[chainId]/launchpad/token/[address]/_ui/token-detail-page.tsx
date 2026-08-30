@@ -343,6 +343,7 @@ export function TokenDetailPage({
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
+    createdAt: definition.createdAt,
     decimals: token?.decimals ?? definition.decimals,
     initialSupply: token?.initialSupply ?? definition.initialSupply,
     tokenAddress: address,
@@ -382,6 +383,7 @@ export function TokenDetailPage({
   if (token) {
     priceChartDataRef.current = {
       chainId,
+      createdAt: token.createdAt,
       decimals: token.decimals,
       initialSupply: token.initialSupply,
       tokenAddress: address,

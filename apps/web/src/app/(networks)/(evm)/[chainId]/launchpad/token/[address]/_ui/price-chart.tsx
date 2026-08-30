@@ -37,6 +37,7 @@ const PRICE_CHART_MODE: LaunchpadChartMode[] = ['price']
 
 export interface PriceChartData {
   chainId: LaunchpadChainId
+  createdAt: string
   decimals: number
   initialSupply: string
   tokenAddress: EvmAddress
@@ -72,7 +73,7 @@ export const PriceChart = memo(function PriceChart({
   dataRef: RefObject<PriceChartData>
 }) {
   const initialDataRef = useRef(dataRef.current)
-  const { chainId, decimals, initialSupply, tokenAddress, symbol } =
+  const { chainId, createdAt, decimals, initialSupply, tokenAddress, symbol } =
     initialDataRef.current
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
@@ -121,6 +122,7 @@ export const PriceChart = memo(function PriceChart({
     () =>
       createLaunchpadDatafeed({
         chainId,
+        createdAt,
         getPriceMultiplier,
         getPricescale: getChartPricescale,
         onResetData: resetChartData,
@@ -129,6 +131,7 @@ export const PriceChart = memo(function PriceChart({
       }),
     [
       chainId,
+      createdAt,
       getChartPricescale,
       getPriceMultiplier,
       resetChartData,
