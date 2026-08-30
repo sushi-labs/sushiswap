@@ -18,6 +18,10 @@ import { useLaunchpadLiveTrades } from '../_lib/use-launchpad-live-trades'
 
 const TRADE_GRID_CLASS_NAME =
   'grid min-w-[680px] grid-cols-[52px_minmax(180px,1fr)_minmax(110px,auto)_minmax(140px,auto)_minmax(90px,auto)] gap-4'
+type TradeHistoryToken = Pick<
+  LaunchpadToken,
+  'address' | 'chainId' | 'decimals' | 'symbol'
+>
 
 function formatRelativeTime(timestamp: string, now: number) {
   const timestampDate = new Date(timestamp)
@@ -69,7 +73,7 @@ function TradeRow({
   isLatest,
 }: {
   trade: LaunchpadTrade
-  token: LaunchpadToken
+  token: TradeHistoryToken
   now: number
   isLatest: boolean
 }) {
@@ -137,7 +141,11 @@ function TradeRow({
   )
 }
 
-export function TradeHistory({ token }: { token: LaunchpadToken }) {
+export function TradeHistory({
+  token,
+}: {
+  token: TradeHistoryToken
+}) {
   const [includeSmallTrades, setIncludeSmallTrades] = useState(false)
   const [isTableScrolled, setIsTableScrolled] = useState(false)
   const [now, setNow] = useState(0)

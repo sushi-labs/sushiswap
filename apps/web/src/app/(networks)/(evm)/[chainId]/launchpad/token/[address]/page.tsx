@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import { type EvmAddress, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
 import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
+import { getCachedLaunchpadTokenDefinition } from '../../_lib/get-cached-launchpad-token-definition'
 import {
   getLaunchpadCardValues,
   getLaunchpadCardVersion,
@@ -15,7 +16,7 @@ import {
   getLaunchpadTokenUrl,
   serializeLaunchpadJsonLd,
 } from '../../_lib/launchpad-seo'
-import { isLaunchpadChainId } from '../../constants'
+import { type LaunchpadChainId, isLaunchpadChainId } from '../../constants'
 import { TokenDetailPage } from './_ui/token-detail-page'
 import { TokenDetailSkeleton } from './_ui/token-detail-skeleton'
 
@@ -23,6 +24,26 @@ type LaunchpadTokenPageParams = Promise<{
   chainId: string
   address: string
 }>
+
+async function LaunchpadTokenStructuredData({
+  chainId,
+  address,
+}: {
+  chainId: LaunchpadChainId
+  address: EvmAddress
+}) {
+  const token = await getCachedLaunchpadToken({ chainId, address })
+  if (!token) return null
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
+      }}
+    />
+  )
+}
 
 async function getTokenParams(params: LaunchpadTokenPageParams) {
   const { chainId: chainIdParam, address } = await params
@@ -88,21 +109,21 @@ async function LaunchpadTokenContent({
   const result = await getTokenParams(params)
   if (!result) return notFound()
   const { chainId, address } = result
-  const token = await getCachedLaunchpadToken({ chainId, address })
-  if (!token) return notFound()
+  const definition = await getCachedLaunchpadTokenDefinition({
+    chainId,
+    address,
+  })
+  if (!definition) return notFound()
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: serializeLaunchpadJsonLd(getLaunchpadTokenJsonLd(token)),
-        }}
-      />
+      <Suspense fallback={null}>
+        <LaunchpadTokenStructuredData chainId={chainId} address={address} />
+      </Suspense>
       <TokenDetailPage
         chainId={chainId}
         address={address}
-        initialToken={token}
+        definition={definition}
       />
     </>
   )

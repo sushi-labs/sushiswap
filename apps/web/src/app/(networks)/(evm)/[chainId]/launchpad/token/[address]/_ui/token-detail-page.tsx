@@ -9,7 +9,10 @@ import {
   HomeIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import type { LaunchpadToken } from '@sushiswap/graph-client/data-api'
+import type {
+  LaunchpadToken,
+  LaunchpadTokenDefinition,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   ClipboardController,
@@ -64,7 +67,6 @@ import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
-import { TokenDetailSkeleton } from './token-detail-skeleton'
 import { TradeActivity } from './trade-activity'
 import { TradeHistory } from './trade-history'
 
@@ -248,13 +250,18 @@ function MetadataLinks({
 
 function TokenHeader({
   token,
+  originalCreator,
   chainKey,
   creatorUrl,
   tokenUrl,
   indexingStatus,
   links = [],
 }: {
-  token: LaunchpadToken
+  token: Pick<
+    LaunchpadTokenDefinition,
+    'address' | 'chainId' | 'decimals' | 'name' | 'provider' | 'symbol'
+  >
+  originalCreator: EvmAddress
   chainKey: string
   creatorUrl: string
   tokenUrl: string
@@ -295,7 +302,7 @@ function TokenHeader({
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
               <CopyableExplorerAddress
                 label="Launched by"
-                address={token.creator}
+                address={originalCreator}
                 href={creatorUrl}
                 visibleCharacters={5}
                 linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
@@ -316,14 +323,50 @@ function TokenHeader({
   )
 }
 
+function TokenMetricsSkeleton() {
+  return (
+    <MetricStrip>
+      {['price', 'fdv', 'liquidity', 'volume'].map((metric, index) => (
+        <MetricStripItem
+          key={metric}
+          index={index}
+          label={<SkeletonBox className="h-4 w-16 rounded-sm" />}
+          value={<SkeletonBox className="h-7 w-28 rounded-md" />}
+          detail={<SkeletonBox className="h-4 w-24 rounded-sm" />}
+        />
+      ))}
+    </MetricStrip>
+  )
+}
+
+function TokenSidebarSkeleton() {
+  return (
+    <>
+      <PerpsCard className="h-[560px] p-5" fullWidth>
+        <SkeletonBox className="h-6 w-28 rounded-md" />
+        <SkeletonBox className="mt-5 h-12 w-full rounded-xl" />
+        <SkeletonBox className="mt-5 h-[136px] w-full rounded-2xl" />
+        <SkeletonBox className="mt-4 h-[108px] w-full rounded-2xl" />
+        <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
+      </PerpsCard>
+      <PerpsCard className="h-[188px] p-5" fullWidth>
+        <SkeletonBox className="h-6 w-36 rounded-md" />
+        <SkeletonBox className="mt-4 h-4 w-full rounded-sm" />
+        <SkeletonBox className="mt-2 h-4 w-3/4 rounded-sm" />
+        <SkeletonBox className="mt-5 h-14 w-full rounded-xl" />
+      </PerpsCard>
+    </>
+  )
+}
+
 export function TokenDetailPage({
   chainId,
   address,
-  initialToken,
+  definition,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
-  initialToken: LaunchpadToken
+  definition: LaunchpadTokenDefinition
 }) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
@@ -337,29 +380,12 @@ export function TokenDetailPage({
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
-    decimals: token?.decimals ?? initialToken.decimals,
-    initialSupply: token?.initialSupply ?? '0',
+    decimals: token?.decimals ?? definition.decimals,
+    initialSupply: token?.initialSupply ?? definition.initialSupply,
     tokenAddress: address,
-    symbol: initialToken.symbol,
+    symbol: definition.symbol,
     price: token?.metrics?.priceUsd,
   })
-
-  if (isTokenPending) {
-    return (
-      <Container
-        maxWidth="8xl"
-        className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
-      >
-        <TokenHeader
-          token={initialToken}
-          chainKey={chainKey}
-          creatorUrl={chain.getAccountUrl(initialToken.creator)}
-          tokenUrl={chain.getTokenUrl(initialToken.address)}
-        />
-        <TokenDetailSkeleton bodyOnly />
-      </Container>
-    )
-  }
 
   if (isTokenError) {
     return (
@@ -375,7 +401,7 @@ export function TokenDetailPage({
     )
   }
 
-  if (!token) {
+  if (!isTokenPending && !token) {
     return (
       <PageState
         icon={<BeakerIcon className="mx-auto h-10 w-10 text-perps-muted-50" />}
@@ -390,58 +416,63 @@ export function TokenDetailPage({
     )
   }
 
-  priceChartDataRef.current = {
-    chainId,
-    decimals: token.decimals,
-    initialSupply: token.initialSupply,
-    tokenAddress: address,
-    symbol: token.symbol,
-    price: token.metrics?.priceUsd,
+  if (token) {
+    priceChartDataRef.current = {
+      chainId,
+      decimals: token.decimals,
+      initialSupply: token.initialSupply,
+      tokenAddress: address,
+      symbol: token.symbol,
+      price: token.metrics?.priceUsd,
+    }
   }
 
-  const metrics = token.metrics
+  const metrics = token?.metrics
   const tvlChangePercent = metrics?.tvlChangePercent.h24
-  const tvlChangeUsd = liquidityChange24hUsd({
-    currentTvlUsd: metrics?.currentTvlUsd ?? null,
-    tvlChangePercent24h: tvlChangePercent ?? null,
-    launchedAt: new Date(token.createdAt),
-  })
-  const headerMetrics = [
-    {
-      label: 'Price',
-      value: formatLaunchpadPriceUsd(metrics?.priceUsd),
-      detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
-    },
-    {
-      label: 'FDV',
-      value: formatUsd(metrics?.fullyDilutedValuationUsd),
-      detail: '1B fixed supply',
-    },
-    {
-      label: 'Liquidity',
-      value: formatUsd(metrics?.currentTvlUsd),
-      detail: 'Launch pool liquidity',
-      changeDetail: formatUsdChange(tvlChangeUsd),
-      changeValue: tvlChangeUsd,
-      changeLabel: '24H',
-    },
-    {
-      // Sourced from marketStats so this agrees with the trade activity card:
-      // token.metrics sums whole candle buckets, marketStats measures the exact
-      // trailing 24 hours, and the two do not reconcile.
-      label: '24h volume',
-      value: formatUsd(
-        marketStats?.h24.totalVolumeUsd ?? metrics?.volumeUsd.h24,
-      ),
-      detail: 'Launch pool volume',
-    },
-  ]
-  const supportsLockedPositions = launchpadProviderHasCapability(
-    token.provider,
-    'lockedPositions',
-  )
+  const tvlChangeUsd = token
+    ? liquidityChange24hUsd({
+        currentTvlUsd: metrics?.currentTvlUsd ?? null,
+        tvlChangePercent24h: tvlChangePercent ?? null,
+        launchedAt: new Date(token.createdAt),
+      })
+    : null
+  const headerMetrics = token
+    ? [
+        {
+          label: 'Price',
+          value: formatLaunchpadPriceUsd(metrics?.priceUsd),
+          detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
+        },
+        {
+          label: 'FDV',
+          value: formatUsd(metrics?.fullyDilutedValuationUsd),
+          detail: '1B fixed supply',
+        },
+        {
+          label: 'Liquidity',
+          value: formatUsd(metrics?.currentTvlUsd),
+          detail: 'Launch pool liquidity',
+          changeDetail: formatUsdChange(tvlChangeUsd),
+          changeValue: tvlChangeUsd,
+          changeLabel: '24H',
+        },
+        {
+          // Sourced from marketStats so this agrees with the trade activity card:
+          // token.metrics sums whole candle buckets, marketStats measures the exact
+          // trailing 24 hours, and the two do not reconcile.
+          label: '24h volume',
+          value: formatUsd(
+            marketStats?.h24.totalVolumeUsd ?? metrics?.volumeUsd.h24,
+          ),
+          detail: 'Launch pool volume',
+        },
+      ]
+    : null
+  const supportsLockedPositions = token
+    ? launchpadProviderHasCapability(token.provider, 'lockedPositions')
+    : false
   const showLockedPositions =
-    supportsLockedPositions && token.positions.length > 0
+    supportsLockedPositions && (token?.positions.length ?? 0) > 0
 
   return (
     <Container
@@ -449,57 +480,62 @@ export function TokenDetailPage({
       className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
     >
       <TokenHeader
-        token={token}
+        token={definition}
+        originalCreator={definition.originalCreator}
         chainKey={chainKey}
-        creatorUrl={chain.getAccountUrl(token.creator)}
-        tokenUrl={chain.getTokenUrl(token.address)}
-        indexingStatus={token.indexingStatus}
-        links={token.metadata.links}
+        creatorUrl={chain.getAccountUrl(definition.originalCreator)}
+        tokenUrl={chain.getTokenUrl(definition.address)}
+        indexingStatus={token?.indexingStatus}
+        links={token?.metadata.links}
       />
 
       <div className="mt-6">
-        <MetricStrip>
-          {headerMetrics.map((stat, index) => (
-            <MetricStripItem
-              key={stat.label}
-              index={index}
-              label={stat.label}
-              valueClassName="flex flex-wrap items-end gap-1"
-              value={
-                <>
-                  {stat.label === 'Price' ? (
-                    <PriceSensitiveText price={metrics?.priceUsd}>
-                      {stat.value}
-                    </PriceSensitiveText>
-                  ) : (
-                    stat.value
-                  )}
-                  {stat.changeDetail && stat.changeValue ? (
-                    <span
-                      className={classNames(
-                        'text-xs mb-1',
-                        stat.changeValue !== undefined &&
-                          stat.changeValue !== null &&
-                          stat.changeValue > 0 &&
-                          '!text-emerald-400',
-                        stat.changeValue !== undefined &&
-                          stat.changeValue !== null &&
-                          stat.changeValue < 0 &&
-                          '!text-red',
-                      )}
-                    >
-                      {stat.changeDetail}{' '}
-                      <span className="text-perps-muted-50 font-normal">
-                        ({stat.changeLabel})
+        {headerMetrics ? (
+          <MetricStrip>
+            {headerMetrics.map((stat, index) => (
+              <MetricStripItem
+                key={stat.label}
+                index={index}
+                label={stat.label}
+                valueClassName="flex flex-wrap items-end gap-1"
+                value={
+                  <>
+                    {stat.label === 'Price' ? (
+                      <PriceSensitiveText price={metrics?.priceUsd}>
+                        {stat.value}
+                      </PriceSensitiveText>
+                    ) : (
+                      stat.value
+                    )}
+                    {stat.changeDetail && stat.changeValue ? (
+                      <span
+                        className={classNames(
+                          'text-xs mb-1',
+                          stat.changeValue !== undefined &&
+                            stat.changeValue !== null &&
+                            stat.changeValue > 0 &&
+                            '!text-emerald-400',
+                          stat.changeValue !== undefined &&
+                            stat.changeValue !== null &&
+                            stat.changeValue < 0 &&
+                            '!text-red',
+                        )}
+                      >
+                        {stat.changeDetail}{' '}
+                        <span className="text-perps-muted-50 font-normal">
+                          ({stat.changeLabel})
+                        </span>
                       </span>
-                    </span>
-                  ) : null}
-                </>
-              }
-              detail={stat.detail}
-            />
-          ))}
-        </MetricStrip>
+                    ) : null}
+                  </>
+                }
+                detail={stat.detail}
+              />
+            ))}
+          </MetricStrip>
+        ) : (
+          <TokenMetricsSkeleton />
+        )}
       </div>
 
       <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
@@ -508,127 +544,139 @@ export function TokenDetailPage({
             key={`${chainId}:${address}`}
             dataRef={priceChartDataRef}
           />
-          <TradeHistory token={token} />
+          <TradeHistory token={definition} />
         </div>
 
         <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
-          {isLg ? (
-            <SwapPanel token={token} />
-          ) : (
-            <Sheet>
-              <SheetTrigger asChild className="bg-perps-background">
-                <Button
-                  type="button"
-                  className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
-                  variant="perps-long"
-                >
-                  Trade {token.symbol}
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="bottom"
-                className="max-h-[100svh] overflow-y-auto rounded-t-2xl border-border p-0 pb-6 !bg-perps-background"
-              >
-                <SheetHeader className="pr-8 !text-left !space-y-0">
-                  <SheetTitle>Buy/Sell {token.symbol}</SheetTitle>
-                  <SheetDescription aria-describedby={undefined} />
-                </SheetHeader>
-                <div className="mt-4">
-                  <SwapPanel token={token} />
-                </div>
-              </SheetContent>
-            </Sheet>
-          )}
+          {token ? (
+            <>
+              {isLg ? (
+                <SwapPanel token={token} />
+              ) : (
+                <Sheet>
+                  <SheetTrigger asChild className="bg-perps-background">
+                    <Button
+                      type="button"
+                      className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
+                      variant="perps-long"
+                    >
+                      Trade {token.symbol}
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="bottom"
+                    className="max-h-[100svh] overflow-y-auto rounded-t-2xl border-border p-0 pb-6 !bg-perps-background"
+                  >
+                    <SheetHeader className="pr-8 !text-left !space-y-0">
+                      <SheetTitle>Buy/Sell {token.symbol}</SheetTitle>
+                      <SheetDescription aria-describedby={undefined} />
+                    </SheetHeader>
+                    <div className="mt-4">
+                      <SwapPanel token={token} />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              )}
 
-          <TradeActivity chainId={chainId} tokenAddress={address} />
+              <TradeActivity chainId={chainId} tokenAddress={address} />
 
-          <PerpsCard className="p-4" fullWidth>
-            <h2 className="font-semibold text-perps-muted">
-              About {token.name}
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-perps-muted-50">
-              {token.metadata.description ??
-                'This creator has not added a description yet.'}
-            </p>
-            <MetadataLinks links={token.metadata.links} placement="about" />
-            <div className="mt-5 flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
-              <TokenAvatar token={token} size="sm" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs text-perps-muted-50">Created by</div>
-                <LaunchpadCreatorLink
-                  token={token}
-                  className="mt-0.5 block truncate text-sm font-medium text-perps-blue hover:underline"
-                >
-                  {shortenAddress(token.creator, 6)}
-                </LaunchpadCreatorLink>
-              </div>
-              <LaunchpadCreatorButton token={token} />
-            </div>
-          </PerpsCard>
-
-          <PerpsCard className="p-5" fullWidth>
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-perps-muted">
-                Launch details
-              </h2>
-            </div>
-            <DetailList
-              className="mt-5"
-              valueClassName="max-w-[68%]"
-              items={[
-                [
-                  'Supply',
-                  `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
-                ],
-                ['Pool fee', `${token.pool.feeTier / 10_000}%`],
-                ['Starting FDV', formatUsd(Number(token.initialFdvUsd))],
-                ...(supportsLockedPositions
-                  ? [['Liquidity', 'Single maximum-bound position']]
-                  : []),
-              ].map(([label, value]) => ({ label, value }))}
-            />
-          </PerpsCard>
-
-          {showLockedPositions ? (
-            <PerpsCard className="overflow-hidden" fullWidth>
-              <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
+              <PerpsCard className="p-4" fullWidth>
                 <h2 className="font-semibold text-perps-muted">
-                  Locked positions
+                  About {token.name}
                 </h2>
-              </div>
-              <div className="divide-y divide-white/[0.06]">
-                {token.positions.map((position) => (
-                  <div key={position.positionIndex} className="p-4 text-sm">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-medium text-perps-muted">
-                        Position #{position.positionId}
-                      </span>
+                <p className="mt-3 text-sm leading-6 text-perps-muted-50">
+                  {token.metadata.description ??
+                    'This creator has not added a description yet.'}
+                </p>
+                <MetadataLinks links={token.metadata.links} placement="about" />
+                <div className="mt-5 flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
+                  <TokenAvatar token={token} size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs text-perps-muted-50">
+                      Created by
                     </div>
-                    <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                      <div>
-                        <div className="text-perps-muted-50">Tick range</div>
-                        <div className="mt-1 text-perps-muted">
-                          {position.tickLower.toLocaleString()} →{' '}
-                          {position.tickUpper.toLocaleString()}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-perps-muted-50">Allocation</div>
-                        <div className="mt-1 truncate text-perps-muted">
-                          {formatRawAmount(
-                            position.desiredAmount,
-                            token.decimals,
-                            0,
-                          )}{' '}
-                          {token.symbol}
-                        </div>
-                      </div>
-                    </div>
+                    <LaunchpadCreatorLink
+                      token={token}
+                      className="mt-0.5 block truncate text-sm font-medium text-perps-blue hover:underline"
+                    >
+                      {shortenAddress(token.creator, 6)}
+                    </LaunchpadCreatorLink>
                   </div>
-                ))}
-              </div>
-            </PerpsCard>
-          ) : null}
+                  <LaunchpadCreatorButton token={token} />
+                </div>
+              </PerpsCard>
+
+              <PerpsCard className="p-5" fullWidth>
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-lg font-semibold text-perps-muted">
+                    Launch details
+                  </h2>
+                </div>
+                <DetailList
+                  className="mt-5"
+                  valueClassName="max-w-[68%]"
+                  items={[
+                    [
+                      'Supply',
+                      `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
+                    ],
+                    ['Pool fee', `${token.pool.feeTier / 10_000}%`],
+                    ['Starting FDV', formatUsd(Number(token.initialFdvUsd))],
+                    ...(supportsLockedPositions
+                      ? [['Liquidity', 'Single maximum-bound position']]
+                      : []),
+                  ].map(([label, value]) => ({ label, value }))}
+                />
+              </PerpsCard>
+
+              {showLockedPositions ? (
+                <PerpsCard className="overflow-hidden" fullWidth>
+                  <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
+                    <h2 className="font-semibold text-perps-muted">
+                      Locked positions
+                    </h2>
+                  </div>
+                  <div className="divide-y divide-white/[0.06]">
+                    {token.positions.map((position) => (
+                      <div key={position.positionIndex} className="p-4 text-sm">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-medium text-perps-muted">
+                            Position #{position.positionId}
+                          </span>
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
+                          <div>
+                            <div className="text-perps-muted-50">
+                              Tick range
+                            </div>
+                            <div className="mt-1 text-perps-muted">
+                              {position.tickLower.toLocaleString()} →{' '}
+                              {position.tickUpper.toLocaleString()}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-perps-muted-50">
+                              Allocation
+                            </div>
+                            <div className="mt-1 truncate text-perps-muted">
+                              {formatRawAmount(
+                                position.desiredAmount,
+                                token.decimals,
+                                0,
+                              )}{' '}
+                              {token.symbol}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </PerpsCard>
+              ) : null}
+            </>
+          ) : (
+            <TokenSidebarSkeleton />
+          )}
         </aside>
       </div>
     </Container>
