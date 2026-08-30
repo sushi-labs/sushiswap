@@ -726,11 +726,13 @@ input LaunchpadCandlesInput {
   interval: LaunchpadCandleInterval!
   from: Int!
   to: Int!
+  countBack: Int
   fresh: Boolean = false
 }
 
 type LaunchpadCandleConnection {
   nodes: [LaunchpadCandle!]!
+  hasMoreBefore: Boolean!
   streamCursor: BigInt!
 }
 

@@ -97,6 +97,7 @@ describe('launchpad TradingView datafeed', () => {
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
       input: expect.objectContaining({
+        countBack: 2_000,
         interval: 'FIVE_MINUTES',
         from: 1_785_241_500,
         to,
@@ -104,7 +105,7 @@ describe('launchpad TradingView datafeed', () => {
     })
   })
 
-  it('expands the history window once for sparse tokens', async () => {
+  it('requests sparse history backfill in one query', async () => {
     const to = Math.floor(Date.now() / 1_000)
     const from = to - 300 * 5 * 60
     const olderCandle = createSnapshot('40', to - 1_500 * 5 * 60).nodes[0]!
@@ -112,13 +113,10 @@ describe('launchpad TradingView datafeed', () => {
       ...olderCandle,
       timestamp: to - 60,
     }
-    mocks.getLaunchpadCandles
-      .mockReset()
-      .mockResolvedValueOnce({ streamCursor: '40', nodes: [recentCandle] })
-      .mockResolvedValueOnce({
-        streamCursor: '40',
-        nodes: [olderCandle, recentCandle],
-      })
+    mocks.getLaunchpadCandles.mockReset().mockResolvedValue({
+      streamCursor: '40',
+      nodes: [olderCandle, recentCandle],
+    })
     const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
@@ -133,39 +131,15 @@ describe('launchpad TradingView datafeed', () => {
 
     expect(bars).toHaveLength(2)
     expect(bars[0]?.time).toBe(olderCandle.timestamp * 1_000)
-    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(1, {
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
       input: expect.objectContaining({
+        countBack: 300,
         interval: 'FIVE_MINUTES',
         from: Math.floor(from / (5 * 60)) * (5 * 60),
         to,
       }),
     })
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
-      input: expect.objectContaining({
-        interval: 'FIVE_MINUTES',
-        from: Math.ceil((to - 2_000 * 5 * 60) / (5 * 60)) * (5 * 60),
-        to,
-      }),
-    })
-
-    const historicalBars = await new Promise<Bar[]>((resolve, reject) => {
-      datafeed.getBars(
-        SYMBOL_INFO,
-        FIVE_MINUTE_RESOLUTION,
-        {
-          from: Math.ceil((to - 2_000 * 5 * 60) / (5 * 60)) * (5 * 60),
-          to: Math.floor(from / (5 * 60)) * (5 * 60),
-          countBack: 300,
-          firstDataRequest: false,
-        },
-        resolve,
-        reject,
-      )
-    })
-
-    expect(historicalBars).toHaveLength(1)
-    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
   })
 
   it('stops candle history at the token creation bucket', async () => {
@@ -220,6 +194,7 @@ describe('launchpad TradingView datafeed', () => {
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
       input: expect.objectContaining({
+        countBack: 300,
         interval: 'FIVE_MINUTES',
         from: launchBucket,
         to,
@@ -303,40 +278,7 @@ describe('launchpad TradingView datafeed', () => {
     })
   })
 
-  it('backfills one-minute bars when a sparse token has no recent trades', async () => {
-    const to = Math.floor(Date.now() / 1_000)
-    const from = to - 5 * 60 * 60
-    const olderSnapshot = createSnapshot('41', from - 60 * 60)
-    mocks.getLaunchpadCandles
-      .mockReset()
-      .mockResolvedValueOnce({ streamCursor: '40', nodes: [] })
-      .mockResolvedValueOnce(olderSnapshot)
-      .mockResolvedValueOnce({ streamCursor: '41', nodes: [] })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
-
-    const bars = await new Promise<Bar[]>((resolve, reject) => {
-      datafeed.getBars(
-        SYMBOL_INFO,
-        ONE_MINUTE_RESOLUTION,
-        { from, to, countBack: 300, firstDataRequest: true },
-        resolve,
-        reject,
-      )
-    })
-
-    expect(bars).toHaveLength(1)
-    expect(bars[0]?.time).toBe(olderSnapshot.nodes[0]?.timestamp * 1_000)
-    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(3)
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
-      input: expect.objectContaining({
-        interval: 'ONE_MINUTE',
-        from: Math.ceil((to - 2_000 * 60) / 60) * 60,
-        to,
-      }),
-    })
-  })
-
-  it('connects the first one-minute bar to a prior history page', async () => {
+  it('connects the first one-minute bar to the preceding candle', async () => {
     const to = Math.floor(Date.now() / 1_000)
     const from = to - 5 * 60
     const currentCandle = {
@@ -355,13 +297,12 @@ describe('launchpad TradingView datafeed', () => {
       .mockReset()
       .mockResolvedValueOnce({
         streamCursor: '42',
-        nodes: [currentCandle],
+        nodes: [previousCandle, currentCandle],
       })
       .mockResolvedValueOnce({
         streamCursor: '42',
-        nodes: [previousCandle, currentCandle],
+        nodes: [],
       })
-      .mockResolvedValueOnce({ streamCursor: '42', nodes: [] })
     const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
 
     const bars = await new Promise<Bar[]>((resolve, reject) => {
@@ -381,60 +322,18 @@ describe('launchpad TradingView datafeed', () => {
       low: previousCandle.close,
       close: currentCandle.close,
     })
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(3, {
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(2)
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(1, {
       input: expect.objectContaining({
+        countBack: 5,
         interval: 'ONE_MINUTE',
-        from: Math.ceil((previousCandle.timestamp - 2_000 * 60) / 60) * 60,
+      }),
+    })
+    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(2, {
+      input: expect.objectContaining({
+        countBack: 1,
+        from: Math.floor((previousCandle.timestamp - 60) / 60) * 60,
         to: previousCandle.timestamp,
-      }),
-    })
-  })
-
-  it('finds one-minute bars beyond the maximum minute backfill window', async () => {
-    const to = Math.floor(Date.now() / 1_000)
-    const from = to - 5 * 60 * 60
-    const activeDay =
-      Math.floor((to - 3 * 24 * 60 * 60) / (24 * 60 * 60)) * (24 * 60 * 60)
-    const dailyCandle = createSnapshot('43', activeDay).nodes[0]!
-    const minuteSnapshot = createSnapshot('43', activeDay + 60)
-    mocks.getLaunchpadCandles
-      .mockReset()
-      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
-      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
-      .mockResolvedValueOnce({
-        streamCursor: '43',
-        nodes: [dailyCandle],
-      })
-      .mockResolvedValueOnce(minuteSnapshot)
-      .mockResolvedValueOnce({ streamCursor: '43', nodes: [] })
-    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
-
-    const bars = await new Promise<Bar[]>((resolve, reject) => {
-      datafeed.getBars(
-        SYMBOL_INFO,
-        ONE_MINUTE_RESOLUTION,
-        { from, to, countBack: 300, firstDataRequest: true },
-        resolve,
-        reject,
-      )
-    })
-
-    expect(bars).toHaveLength(1)
-    expect(bars[0]?.time).toBe(minuteSnapshot.nodes[0]?.timestamp * 1_000)
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(3, {
-      input: expect.objectContaining({
-        interval: 'ONE_DAY',
-        from:
-          Math.ceil((to - 2_000 * 24 * 60 * 60) / (24 * 60 * 60)) *
-          (24 * 60 * 60),
-        to,
-      }),
-    })
-    expect(mocks.getLaunchpadCandles).toHaveBeenNthCalledWith(4, {
-      input: expect.objectContaining({
-        interval: 'ONE_MINUTE',
-        from: activeDay,
-        to: activeDay + 24 * 60 * 60,
       }),
     })
   })
@@ -538,6 +437,7 @@ describe('launchpad TradingView datafeed', () => {
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledTimes(4)
     expect(mocks.getLaunchpadCandles).toHaveBeenLastCalledWith({
       input: expect.objectContaining({
+        countBack: 1,
         fresh: true,
         from: Math.floor(from / (60 * 60)) * (60 * 60),
         to,
