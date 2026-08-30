@@ -9,7 +9,10 @@ import {
   HomeIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
-import type { LaunchpadToken } from '@sushiswap/graph-client/data-api'
+import type {
+  LaunchpadToken,
+  LaunchpadTokenDefinition,
+} from '@sushiswap/graph-client/data-api'
 import {
   Button,
   ClipboardController,
@@ -225,7 +228,7 @@ function TokenHeader({
   indexingStatus,
   links = [],
 }: {
-  token: LaunchpadToken
+  token: LaunchpadTokenDefinition
   chainKey: string
   creatorUrl: string
   tokenUrl: string
@@ -266,7 +269,7 @@ function TokenHeader({
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
               <CopyableExplorerAddress
                 label="Launched by"
-                address={token.creator}
+                address={token.originalCreator}
                 href={creatorUrl}
                 visibleCharacters={5}
                 linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
@@ -290,11 +293,11 @@ function TokenHeader({
 export function TokenDetailPage({
   chainId,
   address,
-  initialToken,
+  definition,
 }: {
   chainId: LaunchpadChainId
   address: EvmAddress
-  initialToken: LaunchpadToken
+  definition: LaunchpadTokenDefinition
 }) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
@@ -308,10 +311,11 @@ export function TokenDetailPage({
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
     chainId,
-    decimals: token?.decimals ?? initialToken.decimals,
-    initialSupply: token?.initialSupply ?? '0',
+    createdAt: definition.createdAt,
+    decimals: token?.decimals ?? definition.decimals,
+    initialSupply: token?.initialSupply ?? definition.initialSupply,
     tokenAddress: address,
-    symbol: initialToken.symbol,
+    symbol: definition.symbol,
     price: token?.metrics?.priceUsd,
   })
 
@@ -322,10 +326,10 @@ export function TokenDetailPage({
         className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
       >
         <TokenHeader
-          token={initialToken}
+          token={definition}
           chainKey={chainKey}
-          creatorUrl={chain.getAccountUrl(initialToken.creator)}
-          tokenUrl={chain.getTokenUrl(initialToken.address)}
+          creatorUrl={chain.getAccountUrl(definition.originalCreator)}
+          tokenUrl={chain.getTokenUrl(definition.address)}
         />
         <TokenDetailSkeleton bodyOnly />
       </Container>
@@ -363,6 +367,7 @@ export function TokenDetailPage({
 
   priceChartDataRef.current = {
     chainId,
+    createdAt: token.createdAt,
     decimals: token.decimals,
     initialSupply: token.initialSupply,
     tokenAddress: address,
@@ -413,12 +418,12 @@ export function TokenDetailPage({
       className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
     >
       <TokenHeader
-        token={token}
+        token={definition}
         chainKey={chainKey}
-        creatorUrl={chain.getAccountUrl(token.creator)}
-        tokenUrl={chain.getTokenUrl(token.address)}
-        indexingStatus={token.indexingStatus}
-        links={token.metadata.links}
+        creatorUrl={chain.getAccountUrl(definition.originalCreator)}
+        tokenUrl={chain.getTokenUrl(definition.address)}
+        indexingStatus={token?.indexingStatus}
+        links={token?.metadata.links}
       />
 
       <div className="mt-6">
@@ -472,7 +477,7 @@ export function TokenDetailPage({
             key={`${chainId}:${address}`}
             dataRef={priceChartDataRef}
           />
-          <TradeHistory token={token} />
+          <TradeHistory token={definition} />
         </div>
 
         <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
