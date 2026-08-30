@@ -201,7 +201,7 @@ export function TokenDetailSkeleton() {
         <TokenMetricsSkeleton />
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
         <div className="min-w-0 space-y-4">
           <PerpsCard className="h-[540px] overflow-hidden p-2" fullWidth>
             <SkeletonBox className="h-full w-full rounded-xl" />
