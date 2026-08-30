@@ -75,6 +75,42 @@ function createSnapshot(
 }
 
 describe('launchpad TradingView datafeed', () => {
+  it('reuses the in-flight initial candle prefetch', async () => {
+    const to = Math.floor(Date.now() / 1_000)
+    const from = to - 300 * 5 * 60
+    let resolveSnapshot: (snapshot: LaunchpadCandleSnapshot) => void = () =>
+      undefined
+    const snapshotPromise = new Promise<LaunchpadCandleSnapshot>((resolve) => {
+      resolveSnapshot = resolve
+    })
+    mocks.getLaunchpadCandles.mockReset().mockReturnValue(snapshotPromise)
+    const datafeed = createLaunchpadDatafeed(DATAFEED_OPTIONS)
+
+    const prefetch = datafeed.prefetchInitialSnapshot()
+    const barsPromise = new Promise<Bar[]>((resolve, reject) => {
+      datafeed.getBars(
+        SYMBOL_INFO,
+        FIVE_MINUTE_RESOLUTION,
+        { from, to, countBack: 300, firstDataRequest: true },
+        resolve,
+        reject,
+      )
+    })
+
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
+      input: expect.objectContaining({
+        countBack: 300,
+        interval: 'FIVE_MINUTES',
+      }),
+    })
+
+    resolveSnapshot(createSnapshot('40', to - 60))
+    await prefetch
+    expect(await barsPromise).toHaveLength(1)
+    expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
+  })
+
   it('caps and aligns candle requests to 2,000 buckets', async () => {
     const to = 1_785_841_500
     const from = to - 600_307

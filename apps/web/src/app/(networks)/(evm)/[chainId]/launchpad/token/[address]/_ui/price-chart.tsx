@@ -141,6 +141,10 @@ export const PriceChart = memo(function PriceChart({
   )
 
   useEffect(() => {
+    void datafeed.prefetchInitialSnapshot()
+  }, [datafeed])
+
+  useEffect(() => {
     if (!isMounted || !resolvedTheme || !chartContainerRef.current) return
     if (tvWidgetRef.current) return
 

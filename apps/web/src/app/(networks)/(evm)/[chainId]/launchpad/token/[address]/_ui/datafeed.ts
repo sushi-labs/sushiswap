@@ -34,6 +34,9 @@ const SUPPORTED_RESOLUTIONS = [
 ] as ResolutionString[]
 
 const MAX_CANDLES_PER_REQUEST = 2_000
+const INITIAL_CANDLE_COUNT_BACK = 300
+const INITIAL_CANDLE_PREFETCH_BUCKETS = 400
+const INITIAL_CANDLE_RESOLUTION = '5' as ResolutionString
 
 function getCandleRequestFrom(
   from: number,
@@ -119,6 +122,16 @@ interface CandleSnapshotState {
   from: number
   snapshot: LaunchpadCandleSnapshot
   to: number
+}
+
+interface PrefetchedCandleSnapshot {
+  from: number
+  promise: Promise<LaunchpadCandleSnapshot | null>
+  to: number
+}
+
+export interface LaunchpadDatafeed extends IBasicDataFeed {
+  prefetchInitialSnapshot: () => Promise<void>
 }
 
 function getResolutionConfig(resolution: ResolutionString) {
@@ -225,10 +238,14 @@ export function createLaunchpadDatafeed({
   onResetData,
   tokenAddress,
   symbol,
-}: LaunchpadDatafeedOptions): IBasicDataFeed {
+}: LaunchpadDatafeedOptions): LaunchpadDatafeed {
   const subscriptions = new Map<string, Subscription>()
   const snapshots = new Map<ResolutionString, CandleSnapshotState>()
   const cachedSnapshotReads = new Set<ResolutionString>()
+  const prefetchedSnapshots = new Map<
+    ResolutionString,
+    PrefetchedCandleSnapshot
+  >()
   const streamIdentity = { chainId, tokenAddress }
   const launchTimestamp = Math.floor(Date.parse(createdAt) / 1_000)
 
@@ -332,7 +349,36 @@ export function createLaunchpadDatafeed({
         )
   }
 
+  async function prefetchInitialSnapshot(): Promise<void> {
+    if (prefetchedSnapshots.has(INITIAL_CANDLE_RESOLUTION)) return
+
+    const { seconds } = getResolutionConfig(INITIAL_CANDLE_RESOLUTION)
+    const to = getUnixTime(new Date())
+    const launchBucket = Number.isFinite(launchTimestamp)
+      ? Math.floor(launchTimestamp / seconds) * seconds
+      : 0
+    const from = Math.max(
+      getCandleRequestFrom(
+        to - seconds * INITIAL_CANDLE_PREFETCH_BUCKETS,
+        to,
+        seconds,
+      ),
+      launchBucket,
+    )
+    if (from >= to) return
+
+    const promise = fetchCandleSnapshot({
+      countBack: INITIAL_CANDLE_COUNT_BACK,
+      resolution: INITIAL_CANDLE_RESOLUTION,
+      from,
+      to,
+    }).catch(() => null)
+    prefetchedSnapshots.set(INITIAL_CANDLE_RESOLUTION, { from, promise, to })
+    await promise
+  }
+
   return {
+    prefetchInitialSnapshot,
     onReady(callback) {
       setTimeout(() => callback(CONFIGURATION))
     },
@@ -415,14 +461,29 @@ export function createLaunchpadDatafeed({
           cachedSnapshot !== undefined &&
           requestedFrom >= cachedSnapshot.from &&
           requestedTo <= cachedSnapshot.to + seconds
-        const snapshot = canUseCachedSnapshot
-          ? cachedSnapshot.snapshot
-          : await fetchCandleSnapshot({
-              countBack: requestedCountBack,
-              resolution,
-              from: requestedFrom,
-              to: requestedTo,
-            })
+        const prefetchedSnapshot = prefetchedSnapshots.get(resolution)
+        const canUsePrefetchedSnapshot =
+          prefetchedSnapshot !== undefined &&
+          requestedCountBack <= INITIAL_CANDLE_COUNT_BACK &&
+          requestedFrom >= prefetchedSnapshot.from &&
+          Math.ceil(requestedTo / seconds) ===
+            Math.ceil(prefetchedSnapshot.to / seconds)
+        if (prefetchedSnapshot) {
+          prefetchedSnapshots.delete(resolution)
+        }
+        const prefetched = canUsePrefetchedSnapshot
+          ? await prefetchedSnapshot.promise
+          : null
+        const snapshot =
+          prefetched ??
+          (canUseCachedSnapshot
+            ? cachedSnapshot.snapshot
+            : await fetchCandleSnapshot({
+                countBack: requestedCountBack,
+                resolution,
+                from: requestedFrom,
+                to: requestedTo,
+              }))
         if (!canUseCachedSnapshot) {
           cachedSnapshotReads.delete(resolution)
         }
