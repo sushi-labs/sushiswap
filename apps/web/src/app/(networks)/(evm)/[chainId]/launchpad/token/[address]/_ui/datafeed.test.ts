@@ -91,7 +91,7 @@ describe('launchpad TradingView datafeed', () => {
       datafeed.getBars(
         SYMBOL_INFO,
         FIVE_MINUTE_RESOLUTION,
-        { from, to, countBack: 300, firstDataRequest: true },
+        { from, to, countBack: 329, firstDataRequest: true },
         resolve,
         reject,
       )
@@ -100,7 +100,7 @@ describe('launchpad TradingView datafeed', () => {
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledOnce()
     expect(mocks.getLaunchpadCandles).toHaveBeenCalledWith({
       input: expect.objectContaining({
-        countBack: 300,
+        countBack: 400,
         interval: 'FIVE_MINUTES',
       }),
     })

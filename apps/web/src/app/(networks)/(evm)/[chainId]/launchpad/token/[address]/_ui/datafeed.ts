@@ -34,7 +34,6 @@ const SUPPORTED_RESOLUTIONS = [
 ] as ResolutionString[]
 
 const MAX_CANDLES_PER_REQUEST = 2_000
-const INITIAL_CANDLE_COUNT_BACK = 300
 const INITIAL_CANDLE_PREFETCH_BUCKETS = 400
 const INITIAL_CANDLE_RESOLUTION = '5' as ResolutionString
 
@@ -368,7 +367,7 @@ export function createLaunchpadDatafeed({
     if (from >= to) return
 
     const promise = fetchCandleSnapshot({
-      countBack: INITIAL_CANDLE_COUNT_BACK,
+      countBack: INITIAL_CANDLE_PREFETCH_BUCKETS,
       resolution: INITIAL_CANDLE_RESOLUTION,
       from,
       to,
@@ -464,7 +463,7 @@ export function createLaunchpadDatafeed({
         const prefetchedSnapshot = prefetchedSnapshots.get(resolution)
         const canUsePrefetchedSnapshot =
           prefetchedSnapshot !== undefined &&
-          requestedCountBack <= INITIAL_CANDLE_COUNT_BACK &&
+          requestedCountBack <= INITIAL_CANDLE_PREFETCH_BUCKETS &&
           requestedFrom >= prefetchedSnapshot.from &&
           Math.ceil(requestedTo / seconds) ===
             Math.ceil(prefetchedSnapshot.to / seconds)
