@@ -389,9 +389,9 @@ export function TokenDetailPage({
       detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
     },
     {
-      label: 'FDV',
-      value: formatUsd(metrics?.fullyDilutedValuationUsd),
-      detail: '1B fixed supply',
+      label: 'Market Cap',
+      value: formatUsd(metrics?.marketCapitalizationUsd),
+      detail: 'Live market valuation',
     },
     {
       label: 'Liquidity',

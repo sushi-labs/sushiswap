@@ -55,7 +55,7 @@ const token: LaunchpadToken = {
     version: '1',
     priceUsd: 0.004218,
     marketCapitalizationUsd: 4_218_000,
-    fullyDilutedValuationUsd: 4_218_000,
+    fullyDilutedValuationUsd: 5_000_000,
     currentTvlUsd: 842_100,
     volumeUsd: {
       h1: 10_000,
@@ -136,6 +136,10 @@ describe('launchpad JSON-LD', () => {
               expect.objectContaining({
                 name: 'Liquidity',
                 value: 842_100,
+              }),
+              expect.objectContaining({
+                name: 'Market capitalization',
+                value: 4_218_000,
               }),
             ]),
           }),

@@ -12,8 +12,8 @@ const MARKET_STAT_SKELETONS = [
     detailWidth: 'w-[76px]',
   },
   {
-    key: 'fdv',
-    labelWidth: 'w-6',
+    key: 'market-cap',
+    labelWidth: 'w-[68px]',
     valueWidth: 'w-20',
     detailWidth: 'w-20',
   },

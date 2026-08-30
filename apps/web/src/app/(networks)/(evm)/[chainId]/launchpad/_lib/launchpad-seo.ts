@@ -331,10 +331,7 @@ export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
     getMarketMetric('Price', metrics?.priceUsd),
     getMarketMetric('24-hour trading volume', metrics?.volumeUsd.h24),
     getMarketMetric('Liquidity', metrics?.currentTvlUsd),
-    getMarketMetric(
-      'Fully diluted valuation',
-      metrics?.fullyDilutedValuationUsd,
-    ),
+    getMarketMetric('Market capitalization', metrics?.marketCapitalizationUsd),
   ].filter((metric): metric is PropertyValue => metric !== null)
 
   const breadcrumb: BreadcrumbList = {
