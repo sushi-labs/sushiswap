@@ -1,33 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { cache, cacheConfigurations, getLaunchpadTokenDefinitionMock } =
-  vi.hoisted(() => ({
-    cache: new Map<string, unknown>(),
-    cacheConfigurations: [] as unknown[],
-    getLaunchpadTokenDefinitionMock: vi.fn<() => Promise<unknown>>(),
-  }))
+const { cacheLifeMock, getLaunchpadTokenDefinitionMock } = vi.hoisted(() => ({
+  cacheLifeMock: vi.fn(),
+  getLaunchpadTokenDefinitionMock: vi.fn<() => Promise<unknown>>(),
+}))
 
 vi.mock('@sushiswap/graph-client/data-api', () => ({
   getLaunchpadTokenDefinition: getLaunchpadTokenDefinitionMock,
 }))
 
 vi.mock('next/cache', () => ({
-  unstable_cache: (
-    callback: () => Promise<unknown>,
-    keyParts: string[],
-    configuration: unknown,
-  ) => {
-    cacheConfigurations.push(configuration)
-
-    return async () => {
-      const key = JSON.stringify(keyParts)
-      if (cache.has(key)) return cache.get(key)
-
-      const value = await callback()
-      cache.set(key, value)
-      return value
-    }
-  },
+  cacheLife: cacheLifeMock,
 }))
 
 import { getCachedLaunchpadTokenDefinition } from './get-cached-launchpad-token-definition'
@@ -39,8 +22,7 @@ const input = {
 
 describe('getCachedLaunchpadTokenDefinition', () => {
   beforeEach(() => {
-    cache.clear()
-    cacheConfigurations.length = 0
+    cacheLifeMock.mockReset()
     getLaunchpadTokenDefinitionMock.mockReset()
   })
 
@@ -51,7 +33,7 @@ describe('getCachedLaunchpadTokenDefinition', () => {
 
     await getCachedLaunchpadTokenDefinition(input)
 
-    expect(cacheConfigurations).toContainEqual({ revalidate: 60 * 60 })
+    expect(cacheLifeMock).toHaveBeenCalledWith({ revalidate: 60 * 60 })
   })
 
   it('does not cache a missing definition', async () => {
