@@ -1,8 +1,8 @@
+import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { type EvmAddress, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
-import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
 import { getCachedLaunchpadTokenDefinition } from '../../_lib/get-cached-launchpad-token-definition'
 import {
   getLaunchpadCardValues,
@@ -32,7 +32,7 @@ async function LaunchpadTokenStructuredData({
   chainId: LaunchpadChainId
   address: EvmAddress
 }) {
-  const token = await getCachedLaunchpadToken({ chainId, address })
+  const token = await getLaunchpadToken({ chainId, address }, { retries: 3 })
   if (!token) return null
 
   return (
