@@ -250,18 +250,13 @@ function MetadataLinks({
 
 function TokenHeader({
   token,
-  originalCreator,
   chainKey,
   creatorUrl,
   tokenUrl,
   indexingStatus,
   links = [],
 }: {
-  token: Pick<
-    LaunchpadTokenDefinition,
-    'address' | 'chainId' | 'decimals' | 'name' | 'provider' | 'symbol'
-  >
-  originalCreator: EvmAddress
+  token: LaunchpadTokenDefinition
   chainKey: string
   creatorUrl: string
   tokenUrl: string
@@ -302,7 +297,7 @@ function TokenHeader({
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
               <CopyableExplorerAddress
                 label="Launched by"
-                address={originalCreator}
+                address={token.originalCreator}
                 href={creatorUrl}
                 visibleCharacters={5}
                 linkClassName="text-perps-muted-50 transition hover:text-perps-blue"
@@ -481,7 +476,6 @@ export function TokenDetailPage({
     >
       <TokenHeader
         token={definition}
-        originalCreator={definition.originalCreator}
         chainKey={chainKey}
         creatorUrl={chain.getAccountUrl(definition.originalCreator)}
         tokenUrl={chain.getTokenUrl(definition.address)}
