@@ -112,7 +112,6 @@ async function LaunchpadTokenContent({
     chainId,
     address,
   })
-  if (!definition) return notFound()
 
   return (
     <>

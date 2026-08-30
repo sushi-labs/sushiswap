@@ -42,7 +42,9 @@ describe('getCachedLaunchpadTokenDefinition', () => {
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(definition)
 
-    await expect(getCachedLaunchpadTokenDefinition(input)).resolves.toBeNull()
+    await expect(
+      getCachedLaunchpadTokenDefinition(input),
+    ).rejects.toMatchObject({ digest: 'NEXT_HTTP_ERROR_FALLBACK;404' })
     await expect(getCachedLaunchpadTokenDefinition(input)).resolves.toBe(
       definition,
     )

@@ -1,5 +1,6 @@
 import { getLaunchpadTokenDefinition } from '@sushiswap/graph-client/data-api'
 import { cacheLife } from 'next/cache'
+import { notFound } from 'next/navigation'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
 
@@ -7,9 +8,7 @@ import type { LaunchpadChainId } from '../constants'
 // reorg, so periodically revalidate its existence.
 const LAUNCHPAD_TOKEN_DEFINITION_REVALIDATE_SECONDS = 60 * 60
 
-class LaunchpadTokenDefinitionNotFoundError extends Error {}
-
-async function getCachedLaunchpadTokenDefinitionOrThrow({
+export async function getCachedLaunchpadTokenDefinition({
   chainId,
   address,
 }: {
@@ -23,22 +22,7 @@ async function getCachedLaunchpadTokenDefinitionOrThrow({
     { chainId, address },
     { retries: 3 },
   )
-  if (!definition) throw new LaunchpadTokenDefinitionNotFoundError()
+  if (!definition) notFound()
 
   return definition
-}
-
-export async function getCachedLaunchpadTokenDefinition({
-  chainId,
-  address,
-}: {
-  chainId: LaunchpadChainId
-  address: EvmAddress
-}) {
-  try {
-    return await getCachedLaunchpadTokenDefinitionOrThrow({ chainId, address })
-  } catch (error) {
-    if (error instanceof LaunchpadTokenDefinitionNotFoundError) return null
-    throw error
-  }
 }
