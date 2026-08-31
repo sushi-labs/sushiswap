@@ -14,7 +14,7 @@ export const FiatAmountInput = () => {
       onChange={setFiatAmount}
       currency={paymentCurrency}
       onCurrencyChange={setPaymentCurrency}
-      label="You pay"
+      label="Pay"
     />
   )
 }

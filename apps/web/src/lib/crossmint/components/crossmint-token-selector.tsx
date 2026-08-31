@@ -65,7 +65,7 @@ export function CrossmintTokenSelector({
   disabled = false,
   fiatValue,
   isAmountLoading = false,
-  label = 'You receive',
+  label = 'Receive',
   onAmountChange,
   onSelect,
   selected,
