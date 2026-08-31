@@ -344,6 +344,7 @@ export function CrossmintTokenSelector({
       onSelect={handleSelect}
       selected={selectedCurrency}
       selectedNetwork={activeChainId}
+      hideSearch={true}
     >
       {children ?? tokenTrigger}
     </TokenSelector>
