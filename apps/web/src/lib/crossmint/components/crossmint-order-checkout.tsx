@@ -10,6 +10,7 @@ import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { Button, Collapsible, SkeletonText, classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useDerivedStateFiatBuy } from 'src/app/(networks)/(evm)/[chainId]/(trade)/fiat/_ui/derivedstate-fiat-buy-provider'
 import type { CrossmintSupportedFiatCurrency } from 'src/config'
 import { CROSSMINT_CLIENT_SIDE_API_KEY } from '../crossmint-config'
 import {
@@ -128,7 +129,9 @@ function CrossmintOrderCheckoutContent({
   const [showPaymentMethods, setShowPaymentMethods] = useState(false)
   const isPaymentComplete =
     order?.phase === 'delivery' || order?.phase === 'completed'
-  const isStablecoin = order?.lineItems?.[0]?.metadata?.name === 'USDC'
+  const {
+    state: { token },
+  } = useDerivedStateFiatBuy()
   const availableMethods = useMemo(
     () =>
       getCrossmintAvailableFiatPaymentMethods(
@@ -142,7 +145,6 @@ function CrossmintOrderCheckoutContent({
     [applePay, card, googlePay],
   )
   const checkoutKey = `${orderId}:${selectedMethod ?? ''}`
-  console.log(order)
 
   useEffect(() => {
     if (isPaymentComplete && !completionReported.current) {
@@ -197,7 +199,7 @@ function CrossmintOrderCheckoutContent({
   if (!selectedMethod) {
     return (
       <CrossmintOrderCheckoutSkeleton
-        type={isStablecoin ? 'stablecoin' : 'memecoin'}
+        type={token?.token?.symbol === 'USDC' ? 'stablecoin' : 'memecoin'}
         className={className}
       />
     )
@@ -213,7 +215,7 @@ function CrossmintOrderCheckoutContent({
     >
       {!isReady ? (
         <CrossmintOrderCheckoutSkeleton
-          type={isStablecoin ? 'stablecoin' : 'memecoin'}
+          type={token?.token?.symbol === 'USDC' ? 'stablecoin' : 'memecoin'}
         />
       ) : null}
 
