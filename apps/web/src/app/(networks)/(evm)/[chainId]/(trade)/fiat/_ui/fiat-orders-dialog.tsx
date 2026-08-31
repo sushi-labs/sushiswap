@@ -1,5 +1,6 @@
 'use client'
 
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
 import {
   Button,
   Dialog,
@@ -8,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  LinkExternal,
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useCrossmintOrders } from 'src/lib/crossmint'
@@ -100,6 +102,12 @@ export function FiatOrdersDialog() {
             ) : null}
           </div>
         )}
+        <div className="self-end flex text-[10px] ml-auto">
+          <LinkExternal href="https://crossmint.portal.usepylon.com/forms/contact-support">
+            Contact Support{' '}
+            <ExternalLinkIcon className="inline-block w-2.5 h-2.5" />
+          </LinkExternal>
+        </div>
       </DialogContent>
     </Dialog>
   )
