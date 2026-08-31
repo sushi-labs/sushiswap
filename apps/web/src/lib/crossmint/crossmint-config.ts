@@ -18,6 +18,11 @@ export const CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS = [
   StellarChainId.STELLAR,
 ] as const
 
+export const CROSSMINT_CHAIN_NAME_TO_CHAIN_ID = {
+  'base-sepolia': EvmChainId.BASE,
+  solana: SvmChainId.SOLANA,
+} as const
+
 export type CrossmintConfiguredTokenChainId =
   (typeof CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS)[number]
 export type CrossmintCheckoutToken = TokenFor<
@@ -133,9 +138,9 @@ function isStablecoin(token: SerializedCrossmintToken): boolean {
 function assertSupportedOnrampToken(token: SerializedCrossmintToken): void {
   const symbol = token.symbol.toUpperCase()
 
-  if (symbol !== 'USDC' && symbol !== 'USDT') {
+  if (symbol !== 'USDC') {
     throw new Error(
-      `${token.symbol} is a stablecoin, but Crossmint Onramp currently supports USDC and USDT`,
+      `${token.symbol} is a stablecoin, but Crossmint Onramp currently supports USDC `,
     )
   }
 }

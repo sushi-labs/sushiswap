@@ -8,11 +8,6 @@ import { getChainById } from 'sushi'
 import { EvmChainId, type EvmTxHash } from 'sushi/evm'
 import { StellarChainId } from 'sushi/stellar'
 import { SvmChainId } from 'sushi/svm'
-import { formatUnits } from 'viem'
-
-const EVM_TRANSACTION_HASH_PATTERN = /^0x[0-9a-fA-F]{64}$/
-const SOLANA_TRANSACTION_HASH_PATTERN = /^[1-9A-HJ-NP-Za-km-z]{64,88}$/
-const STELLAR_TRANSACTION_HASH_PATTERN = /^[0-9a-fA-F]{64}$/
 
 export interface FiatOrderHistoryRow {
   explorerUrl?: string
@@ -20,11 +15,13 @@ export interface FiatOrderHistoryRow {
   fiatCurrency?: string
   orderId: string
   paymentMethod?: string
+  paymentStatus: string
   status: string
   timestamp?: string
   tokenAmount?: string
   tokenImageUrl?: string
   tokenSymbol: string
+  network?: string
 }
 
 export function getFiatOrderHistoryRow(
@@ -55,11 +52,13 @@ export function getFiatOrderHistoryRow(
       fiatAmount?.currency ?? getFiatCurrency(order.payment?.currency),
     orderId: order.orderId,
     paymentMethod: order.payment?.method,
+    paymentStatus: order.payment?.status ?? 'unknown',
     status: getOrderStatus(order),
     timestamp: isValidTimestamp(timestamp) ? timestamp : undefined,
     tokenAmount: getTokenAmount(deliveryToken, lineItem?.quantity),
     tokenImageUrl: getSafeImageUrl(lineItem?.metadata?.imageUrl),
     tokenSymbol,
+    network: lineItem?.chain,
   }
 }
 
@@ -138,7 +137,7 @@ export function humanizeCrossmintValue(value: string): string {
 
 export function shortenFiatOrderId(orderId: string): string {
   if (orderId.length <= 20) return orderId
-  return `${orderId.slice(0, 8)}…${orderId.slice(-6)}`
+  return `${orderId.slice(0, 6)}…${orderId.slice(-4)}`
 }
 
 function getTokenAmount(
@@ -151,18 +150,6 @@ function getTokenAmount(
   lineItemQuantity: number | undefined,
 ): string | undefined {
   if (token?.quantity) {
-    if (
-      token.decimals !== undefined &&
-      /^\d+$/.test(token.quantity) &&
-      token.decimals >= 0
-    ) {
-      try {
-        return formatUnits(BigInt(token.quantity), token.decimals)
-      } catch {
-        return token.quantity
-      }
-    }
-
     return token.quantity
   }
 
@@ -233,26 +220,30 @@ function getCrossmintTransactionUrl({
   environment: CrossmintEnvironment | undefined
   txId: string | undefined
 }): string | undefined {
-  if (!chain || environment !== 'production' || !txId) return undefined
+  if (!chain || !txId) return undefined
 
   const normalizedChain = chain.toLowerCase()
 
-  if (normalizedChain === 'base' && EVM_TRANSACTION_HASH_PATTERN.test(txId)) {
-    return getChainById(EvmChainId.BASE).getTransactionUrl(txId as EvmTxHash)
+  if (environment === 'staging') {
+    if (normalizedChain === 'solana') {
+      return `https://solscan.io/tx/${txId}?cluster=devnet`
+    }
+    if (normalizedChain === 'base-sepolia') {
+      return `https://sepolia.basescan.org/tx/${txId}`
+    }
   }
 
-  if (
-    normalizedChain === 'solana' &&
-    SOLANA_TRANSACTION_HASH_PATTERN.test(txId)
-  ) {
+  if (normalizedChain === 'solana') {
     return getChainById(SvmChainId.SOLANA).getTransactionUrl(txId)
   }
 
-  if (
-    normalizedChain === 'stellar' &&
-    STELLAR_TRANSACTION_HASH_PATTERN.test(txId)
-  ) {
+  if (normalizedChain === 'stellar') {
     return getChainById(StellarChainId.STELLAR).getTransactionUrl(txId)
+  }
+
+  //todo: add support for other EVM chains, create record of crossmints chain names to our chainIds
+  if (normalizedChain === 'base') {
+    return getChainById(EvmChainId.BASE).getTransactionUrl(txId as EvmTxHash)
   }
 
   return undefined

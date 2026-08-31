@@ -11,22 +11,20 @@ import {
 } from '@sushiswap/ui'
 import { type ReactNode, useMemo, useState } from 'react'
 import { useCrossmintOrders } from 'src/lib/crossmint'
-import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { useAccounts } from 'src/lib/wallet/hooks/use-accounts'
 import { getFiatOrderHistoryRow } from './fiat-order-history'
 import { FiatOrdersTable } from './fiat-orders-table'
 
 export function FiatOrdersDialog() {
   const [open, setOpen] = useState(false)
-  const evmAddress = useAccount('evm')
-  const stellarAddress = useAccount('stellar')
-  const svmAddress = useAccount('svm')
+  const { evm, svm, stellar } = useAccounts()
 
   const recipientAddress = useMemo(
     () =>
-      [evmAddress, stellarAddress, svmAddress].flatMap((address) =>
+      [evm.address, stellar.address, svm.address].flatMap((address) =>
         address ? [String(address)] : [],
       ),
-    [evmAddress, stellarAddress, svmAddress],
+    [evm.address, stellar.address, svm.address],
   )
   const orders = useCrossmintOrders({
     enabled: open,
@@ -59,7 +57,7 @@ export function FiatOrdersDialog() {
 
         {!hasConnectedWallet ? (
           <OrderHistoryMessage>
-            Connect a wallet to view its Crossmint orders.
+            Connect a wallet to view its orders.
           </OrderHistoryMessage>
         ) : showInitialError ? (
           <OrderHistoryMessage>
@@ -81,16 +79,18 @@ export function FiatOrdersDialog() {
             />
 
             {orders.hasNextPage ? (
-              <Button
-                className="mx-auto flex"
-                loading={orders.isFetchingNextPage}
-                onClick={() => void orders.fetchNextPage()}
-                size="sm"
-                type="button"
-                variant="secondary"
-              >
-                Load more orders
-              </Button>
+              <div className="flex">
+                <Button
+                  className="mx-auto"
+                  loading={orders.isFetchingNextPage}
+                  onClick={() => void orders.fetchNextPage()}
+                  size="sm"
+                  type="button"
+                  variant="secondary"
+                >
+                  Load more orders
+                </Button>
+              </div>
             ) : null}
 
             {orders.isError && rows.length > 0 ? (

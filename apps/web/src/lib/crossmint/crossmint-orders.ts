@@ -135,6 +135,15 @@ export async function fetchCrossmintOrdersPage(
     limit: String(limit),
     recipientAddress: recipientAddress.join(','),
     sort,
+    deliveryStatus: [
+      'in-progress',
+      'partial-delivery',
+      'delivered',
+      'failed',
+    ].join(','),
+    paymentStatus: ['in-progress', 'succeeded', 'declined', 'refunded'].join(
+      ',',
+    ),
   })
 
   if (cursor) {
