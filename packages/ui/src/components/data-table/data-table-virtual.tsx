@@ -36,6 +36,7 @@ import {
 import { DataTableColumnHeader } from './data-table-column-header'
 
 interface DataTableVirtualProps<TData, TValue> {
+  scrollClassName?: string
   testId?: string | ((value: TData, index: number) => string)
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -58,6 +59,7 @@ interface DataTableVirtualProps<TData, TValue> {
 }
 
 export function DataTableVirtual<TData, TValue>({
+  scrollClassName,
   testId,
   columns,
   data,
@@ -125,12 +127,19 @@ export function DataTableVirtual<TData, TValue>({
     overscan,
     enabled: true,
   })
+  const virtualRows = virtualizer.getVirtualItems()
+  const paddingTop = scrollClassName ? virtualRows[0]?.start : 0
+  const paddingBottom = scrollClassName
+    ? virtualizer.getTotalSize() -
+      (virtualRows[virtualRows.length - 1]?.end ?? 0)
+    : 0
 
   return (
     <div
       ref={parentRef}
       className={classNames(
         'space-y-4 border-t border-secondary black:border-white/[0.1] overflow-auto',
+        scrollClassName,
         hideScrollbar ? 'hide-scrollbar' : '',
       )}
     >
@@ -179,65 +188,85 @@ export function DataTableVirtual<TData, TValue>({
                   })}
                 </TableRow>
               ))
-          ) : virtualizer.getVirtualItems()?.length ? (
-            virtualizer.getVirtualItems().map((virtualRow, r) => {
-              const row = rows[virtualRow.index]
-              const _row = (
-                <TableRow
-                  key={r}
-                  data-state={row.getIsSelected() && 'selected'}
-                  testdata-id={
-                    typeof testId === 'function'
-                      ? testId(row.original, r)
-                      : `${testId}-${r}-tr`
-                  }
-                  className={classNames(trClassName ?? '')}
-                >
-                  {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter &&
-                    !cell.column.columnDef.meta?.disableLink ? (
-                      <td
-                        className="!p-0"
-                        style={{ width: cell.column.getSize() }}
-                        key={cell.id}
-                        testdata-id={`${testId}-${r}-${i}-td`}
-                      >
-                        <Link
-                          scroll={false}
-                          shallow={true}
-                          href={linkFormatter(row.original)}
-                          target={externalLink ? '_blank' : '_self'}
-                          className={classNames(
-                            'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
-                            cell.column.columnDef.meta?.body?.className,
-                          )}
+          ) : virtualRows.length ? (
+            <>
+              {paddingTop ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    style={{ height: paddingTop, padding: 0 }}
+                  />
+                </tr>
+              ) : null}
+              {virtualRows.map((virtualRow, r) => {
+                const row = rows[virtualRow.index]
+                const _row = (
+                  <TableRow
+                    key={r}
+                    data-state={row.getIsSelected() && 'selected'}
+                    testdata-id={
+                      typeof testId === 'function'
+                        ? testId(row.original, r)
+                        : `${testId}-${r}-tr`
+                    }
+                    className={classNames(trClassName ?? '')}
+                  >
+                    {row.getVisibleCells().map((cell, i) =>
+                      linkFormatter &&
+                      !cell.column.columnDef.meta?.disableLink ? (
+                        <td
+                          className="!p-0"
+                          style={{ width: cell.column.getSize() }}
+                          key={cell.id}
+                          testdata-id={`${testId}-${r}-${i}-td`}
+                        >
+                          <Link
+                            scroll={false}
+                            shallow={true}
+                            href={linkFormatter(row.original)}
+                            target={externalLink ? '_blank' : '_self'}
+                            className={classNames(
+                              'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
+                              cell.column.columnDef.meta?.body?.className,
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Link>
+                        </td>
+                      ) : (
+                        <TableCell
+                          style={{ width: cell.column.getSize() }}
+                          testdata-id={`${testId}-${r}-${i}-td`}
+                          key={cell.id}
+                          className={
+                            cell.column.columnDef.meta?.body?.className
+                          }
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )}
-                        </Link>
-                      </td>
-                    ) : (
-                      <TableCell
-                        style={{ width: cell.column.getSize() }}
-                        testdata-id={`${testId}-${r}-${i}-td`}
-                        key={cell.id}
-                        className={cell.column.columnDef.meta?.body?.className}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ),
-                  )}
-                </TableRow>
-              )
+                        </TableCell>
+                      ),
+                    )}
+                  </TableRow>
+                )
 
-              if (rowRenderer) return rowRenderer(row, _row)
-              return _row
-            })
+                if (rowRenderer) return rowRenderer(row, _row)
+                return _row
+              })}
+              {paddingBottom ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    style={{ height: paddingBottom, padding: 0 }}
+                  />
+                </tr>
+              ) : null}
+            </>
           ) : (
             <TableRow>
               <TableCell

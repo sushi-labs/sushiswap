@@ -47,6 +47,7 @@ export {
   type CrossmintCheckoutCatalogToken,
   type CrossmintCheckoutToken,
   type CrossmintConfiguredTokenChainId,
+  type CrossmintEnvironment,
   CROSSMINT_CLIENT_SIDE_API_KEY,
   CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS,
   isCrossmintConfiguredTokenChainId,
@@ -57,6 +58,11 @@ export {
   type UseCrossmintCheckoutTokensInput,
   useCrossmintCheckoutTokens,
 } from './hooks/use-crossmint-checkout-tokens'
+export {
+  DEFAULT_CROSSMINT_ORDERS_PAGE_SIZE,
+  type UseCrossmintOrdersInput,
+  useCrossmintOrders,
+} from './hooks/use-crossmint-orders'
 export {
   type UseFiatExchangeRatesInput,
   useFiatExchangeRates,
@@ -69,6 +75,14 @@ export type {
 export type {
   CrossmintCreatedOrder,
   CrossmintCreatedOrderQuote,
+  CrossmintOrder,
+  CrossmintOrderDelivery,
+  CrossmintOrderDeliveryToken,
+  CrossmintOrderLineItem,
+  CrossmintOrderMetadata,
+  CrossmintOrderPayment,
+  CrossmintOrderPhase,
+  CrossmintOrdersPage,
   CrossmintCheckoutTokenAvailability,
   CrossmintCheckoutTokenClass,
   CrossmintCheckoutTokenEntry,
@@ -76,4 +90,5 @@ export type {
   CrossmintCheckoutTokensResponse,
   CrossmintMoney,
   CrossmintReceiveAmountRange,
+  ListCrossmintOrdersInput,
 } from './types'

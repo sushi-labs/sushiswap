@@ -1,3 +1,4 @@
+import { classNames } from '@sushiswap/ui'
 import { useReactTable } from '@tanstack/react-table'
 import { type ColumnDef, getSortedRowModel } from '@tanstack/react-table'
 import { getCoreRowModel } from '@tanstack/react-table'
@@ -12,6 +13,7 @@ export const MobileTable = <T,>({
   isLoading,
   sorting,
   isExpandedOverride,
+  scrollClassName,
 }: {
   columns: ColumnDef<T, unknown>[]
   data: T[]
@@ -21,6 +23,7 @@ export const MobileTable = <T,>({
     desc: boolean
   }[]
   isExpandedOverride?: boolean
+  scrollClassName?: string
 }) => {
   const table = useReactTable({
     data: data,
@@ -64,6 +67,40 @@ export const MobileTable = <T,>({
       <div className="flex flex-col gap-3">
         <div className="rounded-lg border text-xs border-accent bg-secondary p-4 flex gap-2 justify-center">
           No results.
+        </div>
+      </div>
+    )
+  }
+
+  if (scrollClassName) {
+    return (
+      <div
+        className={classNames(scrollClassName, 'min-h-[300px]')}
+        ref={parentRef}
+      >
+        <div
+          className="relative w-full"
+          style={{ height: virtualizer.getTotalSize() }}
+        >
+          {virtualizer.getVirtualItems().map((virtualRow) => {
+            const row = rows[virtualRow.index]
+
+            return (
+              <div
+                className="absolute left-0 top-0 w-full pb-3"
+                data-index={virtualRow.index}
+                key={row.id}
+                ref={virtualizer.measureElement}
+                style={{ transform: `translateY(${virtualRow.start}px)` }}
+              >
+                <MobileCard
+                  row={row}
+                  isExpandedOverride={isExpandedOverride}
+                  headers={headersById}
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
     )

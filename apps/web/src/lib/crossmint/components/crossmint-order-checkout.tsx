@@ -32,9 +32,11 @@ export interface CrossmintOrderCheckoutProps {
 }
 
 export interface CrossmintOrderCheckoutSkeletonProps {
+  type: 'memecoin' | 'stablecoin'
   className?: string
 }
 export function CrossmintOrderCheckoutSkeleton({
+  type,
   className,
 }: CrossmintOrderCheckoutSkeletonProps) {
   return (
@@ -48,6 +50,20 @@ export function CrossmintOrderCheckoutSkeleton({
           <ChevronDownIcon className="h-4 w-4" />
         </div>
       </div>
+      {type === 'stablecoin' ? (
+        <>
+          <div className="w-full h-px bg-accent" />
+          <div className="flex px-1 items-center justify-between gap-2 text-base">
+            <span className="font-medium text-gray-700 dark:text-slate-300">
+              You receive
+            </span>
+            <div className="flex items-center gap-1 font-semibold text-gray-900 dark:text-slate-100">
+              <SkeletonText className="min-w-14" fontSize="default" />
+              <ChevronDownIcon className="h-6 w-6 -rotate-90" />
+            </div>
+          </div>
+        </>
+      ) : null}
       <Button type="button" className="w-full mt-4" size="xl" loading>
         Loading
       </Button>
@@ -104,12 +120,15 @@ function CrossmintOrderCheckoutContent({
   const { applePay, card, googlePay } = allowedMethods
   const { resolvedTheme } = useTheme()
   const { order } = useCrossmintCheckout()
+  const [isReady, setIsReady] = useState(false)
   const completionReported = useRef(false)
-  const [loadedCheckoutKey, setLoadedCheckoutKey] = useState<string>()
   const [selectedMethod, setSelectedMethod] =
     useState<CrossmintFiatPaymentMethod>()
+  const selectedMethodRef = useRef(selectedMethod)
   const [showPaymentMethods, setShowPaymentMethods] = useState(false)
-  const isComplete = order?.phase === 'delivery' || order?.phase === 'completed'
+  const isPaymentComplete =
+    order?.phase === 'delivery' || order?.phase === 'completed'
+  const isStablecoin = order?.lineItems?.[0]?.metadata?.name === 'USDC'
   const availableMethods = useMemo(
     () =>
       getCrossmintAvailableFiatPaymentMethods(
@@ -123,13 +142,14 @@ function CrossmintOrderCheckoutContent({
     [applePay, card, googlePay],
   )
   const checkoutKey = `${orderId}:${selectedMethod ?? ''}`
+  console.log(order)
 
   useEffect(() => {
-    if (isComplete && !completionReported.current) {
+    if (isPaymentComplete && !completionReported.current) {
       completionReported.current = true
       onComplete?.(orderId)
     }
-  }, [isComplete, onComplete, orderId])
+  }, [isPaymentComplete, onComplete, orderId])
 
   useEffect(() => {
     if (availableMethods.length === 0) return
@@ -141,33 +161,74 @@ function CrossmintOrderCheckoutContent({
     )
   }, [availableMethods])
 
-  if (!selectedMethod) {
-    return <CrossmintOrderCheckoutSkeleton className={className} />
-  }
+  useEffect(() => {
+    if (selectedMethodRef.current !== selectedMethod) {
+      setIsReady(false)
+    }
+    selectedMethodRef.current = selectedMethod
+  }, [selectedMethod])
 
-  const selectedAllowedMethods = {
-    applePay: selectedMethod === 'applePay',
-    card: selectedMethod === 'card',
-    googlePay: selectedMethod === 'googlePay',
-  }
+  const selectedAllowedMethods = useMemo(() => {
+    return {
+      applePay: selectedMethod === 'applePay',
+      card: selectedMethod === 'card',
+      googlePay: selectedMethod === 'googlePay',
+    }
+  }, [selectedMethod])
+
   const canChangePaymentMethod = availableMethods.length > 1
-  const isCheckoutLoading = loadedCheckoutKey !== checkoutKey
+
+  // reveal the button once the iframe has content (ui:height.changed)
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (!e.origin.endsWith('.crossmint.com')) return
+      const event = (e.data as { event?: string } | null)?.event
+      if (
+        event === 'ui:height.changed' ||
+        event === 'ui:express-checkout.ready'
+      ) {
+        setIsReady(true)
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
+
+  if (!selectedMethod) {
+    return (
+      <CrossmintOrderCheckoutSkeleton
+        type={isStablecoin ? 'stablecoin' : 'memecoin'}
+        className={className}
+      />
+    )
+  }
 
   return (
-    <div className={classNames('relative', className)}>
-      {isCheckoutLoading ? <CrossmintOrderCheckoutSkeleton /> : null}
+    <div
+      className={classNames(
+        'relative',
+        !isReady ? 'overflow-hidden' : '',
+        className,
+      )}
+    >
+      {!isReady ? (
+        <CrossmintOrderCheckoutSkeleton
+          type={isStablecoin ? 'stablecoin' : 'memecoin'}
+        />
+      ) : null}
 
       <div
         onLoadCapture={(event) => {
-          if (event.target instanceof HTMLIFrameElement) {
-            setTimeout(() => {
-              setLoadedCheckoutKey(checkoutKey)
-            }, 1500)
+          // Card does not emit the express-checkout ready event.
+          if (
+            selectedMethod === 'card' &&
+            event.target instanceof HTMLIFrameElement
+          ) {
+            setIsReady(true)
           }
         }}
         className={classNames(
-          isCheckoutLoading &&
-            'pointer-events-none absolute inset-x-0 top-0 opacity-0',
+          !isReady ? 'pointer-events-none absolute invisible h-0' : '',
         )}
       >
         <div className="flex items-center justify-between gap-2 pb-1 text-sm">
@@ -272,6 +333,7 @@ function CrossmintOrderCheckoutContent({
   )
 }
 
+//can use this if we only want to show if Apple Pay is available without a qr code
 // interface ApplePayWindow extends Window {
 //   ApplePaySession?: {
 //     canMakePayments(): boolean

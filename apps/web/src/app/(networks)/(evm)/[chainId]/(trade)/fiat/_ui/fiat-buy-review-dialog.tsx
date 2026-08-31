@@ -469,7 +469,13 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                     receiptEmail={visibleReceiptEmail}
                   />
                 ) : isCreatingOrder ? (
-                  <CrossmintOrderCheckoutSkeleton />
+                  <CrossmintOrderCheckoutSkeleton
+                    type={
+                      tokenEntry?.token?.symbol === 'USDC'
+                        ? 'stablecoin'
+                        : 'memecoin'
+                    }
+                  />
                 ) : null}
               </div>
             </DialogContent>
