@@ -153,13 +153,15 @@ function CrossmintOrderCheckoutContent({
 
   useEffect(() => {
     if (availableMethods.length === 0) return
-
+    if (applePay && canUseApplePay()) {
+      return setSelectedMethod('applePay')
+    }
     setSelectedMethod((currentMethod) =>
       currentMethod && availableMethods.includes(currentMethod)
         ? currentMethod
         : availableMethods[0],
     )
-  }, [availableMethods])
+  }, [availableMethods, applePay])
 
   useEffect(() => {
     if (selectedMethodRef.current !== selectedMethod) {
@@ -333,19 +335,18 @@ function CrossmintOrderCheckoutContent({
   )
 }
 
-//can use this if we only want to show if Apple Pay is available without a qr code
-// interface ApplePayWindow extends Window {
-//   ApplePaySession?: {
-//     canMakePayments(): boolean
-//   }
-// }
+interface ApplePayWindow extends Window {
+  ApplePaySession?: {
+    canMakePayments(): boolean
+  }
+}
 
-// function canUseApplePay(): boolean {
-//   try {
-//     return Boolean(
-//       (window as ApplePayWindow).ApplePaySession?.canMakePayments(),
-//     )
-//   } catch {
-//     return false
-//   }
-// }
+function canUseApplePay(): boolean {
+  try {
+    return Boolean(
+      (window as ApplePayWindow).ApplePaySession?.canMakePayments(),
+    )
+  } catch {
+    return false
+  }
+}
