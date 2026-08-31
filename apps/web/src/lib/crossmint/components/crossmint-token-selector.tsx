@@ -80,7 +80,7 @@ export function CrossmintTokenSelector({
     environment === 'staging'
       ? chainIds.filter((chainId) =>
           CROSSMINT_STAGING_TOKEN_SELECTOR_CHAIN_IDS.some(
-            (stagingChainId) => stagingChainId === chainId,
+            (stagingChainId) => stagingChainId === chainId && chainId !== -4,
           ),
         )
       : chainIds

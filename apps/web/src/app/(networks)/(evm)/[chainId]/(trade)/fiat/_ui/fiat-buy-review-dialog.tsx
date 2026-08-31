@@ -414,7 +414,6 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                         type="text"
                         value={emailDraft}
                         onValueChange={setEmailDraft}
-                        isError={emailDraft.length > 0 && !canSaveEmail}
                       />
                       <div className="flex items-center gap-1">
                         {hasSavedEmail ? (

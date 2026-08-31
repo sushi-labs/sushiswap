@@ -137,7 +137,7 @@ export function humanizeCrossmintValue(value: string): string {
 
 export function shortenFiatOrderId(orderId: string): string {
   if (orderId.length <= 20) return orderId
-  return `${orderId.slice(0, 6)}…${orderId.slice(-4)}`
+  return `${orderId.slice(0, 4)}...${orderId.slice(-4)}`
 }
 
 function getTokenAmount(
