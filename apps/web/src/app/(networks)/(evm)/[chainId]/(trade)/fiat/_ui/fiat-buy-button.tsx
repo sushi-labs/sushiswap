@@ -32,28 +32,28 @@ export function FiatBuyButton() {
 
   return (
     <FiatBuyReviewDialog>
-      <Checker.Custom
-        showChildren={Boolean(token)}
-        buttonText="Select a token"
-        onClick={() => {}}
-        disabled
+      <Checker.Connect
+        namespace={
+          tokenChainId ? getNamespaceForChainId(tokenChainId) : undefined
+        }
       >
         <Checker.Custom
-          showChildren={isConfiguredToken}
-          buttonText="Checkout unavailable on this network"
+          showChildren={Boolean(token)}
+          buttonText="Select a token"
           onClick={() => {}}
           disabled
         >
           <Checker.Custom
-            showChildren={supportsCardPayments}
-            buttonText="Card payments unavailable"
+            showChildren={isConfiguredToken}
+            buttonText="Checkout unavailable on this network"
             onClick={() => {}}
             disabled
           >
-            <Checker.Connect
-              namespace={
-                tokenChainId ? getNamespaceForChainId(tokenChainId) : undefined
-              }
+            <Checker.Custom
+              showChildren={supportsCardPayments}
+              buttonText="Card payments unavailable"
+              onClick={() => {}}
+              disabled
             >
               <Checker.Network chainId={tokenChainId}>
                 <Checker.Custom
@@ -81,10 +81,10 @@ export function FiatBuyButton() {
                   </Checker.Custom>
                 </Checker.Custom>
               </Checker.Network>
-            </Checker.Connect>
+            </Checker.Custom>
           </Checker.Custom>
         </Checker.Custom>
-      </Checker.Custom>
+      </Checker.Connect>
     </FiatBuyReviewDialog>
   )
 }
