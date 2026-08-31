@@ -15,7 +15,7 @@ function FiatBuyWidgetSkeleton() {
           ))}
         </div>
         <CurrencyInputSkeleton
-          label="Receive"
+          label="Estimated receive"
           className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
         />
       </div>

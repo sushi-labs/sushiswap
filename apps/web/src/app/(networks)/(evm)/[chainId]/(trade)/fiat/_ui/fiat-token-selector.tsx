@@ -107,6 +107,7 @@ export function FiatTokenSelector() {
       defaultToken={USDC[EvmChainId.BASE]}
       fiatValue={fiatValue}
       isAmountLoading={isAmountLoading}
+      label="Estimated receive"
       onAmountChange={
         token && exchangeRate && tokenEstimate.priceUsd
           ? handleAmountChange

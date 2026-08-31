@@ -359,7 +359,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                       )}
                     </ReviewDetail>
                     <ReviewDetail title="Recipient wallet">
-                      <span className="font-mono" title={walletAddress}>
+                      <span title={walletAddress}>
                         {walletAddress ? shortenAddress(walletAddress) : '-'}
                       </span>
                     </ReviewDetail>
