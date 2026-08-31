@@ -98,8 +98,8 @@ describe('getFiatBuyPaymentAmount', () => {
       getFiatBuyPaymentAmount({
         exchangeRate: 1,
         minorUnits: 2,
-        tokenAmount: '50000',
-        tokenPriceUsd: CROSSMINT_STAGING_FALLBACK_TOKEN_PRICE_USD,
+        tokenAmount: '50',
+        tokenPriceUsd: 0.5,
       }),
     ).toBe('25')
   })
