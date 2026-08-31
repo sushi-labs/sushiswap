@@ -9,6 +9,7 @@ import {
   DialogTitle,
   IconButton,
   classNames,
+  useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useState } from 'react'
@@ -18,6 +19,8 @@ import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
 import { useTokenSelectorTheme } from './token-selector-theme'
+
+const MAX_VISIBLE_NETWORKS = 6
 
 interface MobileNetworkSelector<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
@@ -34,18 +37,20 @@ export function MobileNetworkSelector<
   const [open, setOpen] = useState(false)
 
   const chainIds = useChainIds()
+  const overflowCount = Math.max(networks.length - MAX_VISIBLE_NETWORKS, 0)
+  const { isMd } = useBreakpoint('md')
 
   return (
     <>
       <div className="flex flex-wrap gap-3">
-        {networks.slice(0, 10).map((network) => (
+        {networks.slice(0, MAX_VISIBLE_NETWORKS).map((network) => (
           <Button
             key={network}
             className={classNames(
               selectedNetwork === network
                 ? 'border-blue'
                 : 'border-transparent',
-              'border !w-12 !h-12',
+              'border !md:w-12 !w-8 !h-8 !md:h-12 !min-w-8 !min-h-8 !md:!min-w-12 !md:!min-h-12',
             )}
             variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
             onClick={() => onSelect(network)}
@@ -61,17 +66,23 @@ export function MobileNetworkSelector<
                 />
               }
             >
-              <NetworkIcon chainId={network} width={32} height={32} />
+              <NetworkIcon
+                chainId={network}
+                width={isMd ? 32 : 20}
+                height={isMd ? 32 : 20}
+              />
             </Badge>
           </Button>
         ))}
-        <Button
-          className="!w-12 !h-12"
-          variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
-          onClick={() => setOpen(true)}
-        >
-          +{networks.length - 10}
-        </Button>
+        {overflowCount > 0 ? (
+          <Button
+            className=" !md:w-12 !w-8 !h-8 !md:h-12 !min-w-8 !min-h-8 !md:!min-w-12 !md:!min-h-12 !text-xs"
+            variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
+            onClick={() => setOpen(true)}
+          >
+            +{overflowCount}
+          </Button>
+        ) : null}
       </div>
       {open ? (
         <div
