@@ -79,8 +79,14 @@ export async function createCrossmintOrder(
   input: CreateCrossmintOrderInput,
 ): Promise<CrossmintCreatedOrder> {
   const parsedInput = createCrossmintOrderInputSchema.parse(input)
-  const { amountUsd, paymentCurrency, receiptEmail, token, walletAddress } =
-    parsedInput
+  const {
+    amountUsd,
+    paymentCurrency,
+    receiptEmail,
+    slippageBps,
+    token,
+    walletAddress,
+  } = parsedInput
   const target = getCrossmintTarget(token, getCrossmintServerEnvironment())
 
   if (!isValidCrossmintWalletAddress(token, walletAddress)) {
@@ -101,7 +107,7 @@ export async function createCrossmintOrder(
   }
 
   if (target.kind === 'memecoin') {
-    executionParameters.maxSlippageBps = '500'
+    executionParameters.maxSlippageBps = String(slippageBps)
   }
 
   const response = await requestCrossmint('/2022-06-09/orders', 'POST', {

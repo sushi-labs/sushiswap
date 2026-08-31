@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createCrossmintOrder } from './create-crossmint-order'
 
 const SOLANA_WALLET = '11111111111111111111111111111111'
+const SLIPPAGE_BPS = 123
 const BASE_USDC = {
   address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
   chainId: 8453,
@@ -40,6 +41,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '5',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: SOLANA_XMEME,
         walletAddress: SOLANA_WALLET,
       }),
@@ -61,7 +63,7 @@ describe('createCrossmintOrder', () => {
         {
           executionParameters: {
             amount: '5',
-            maxSlippageBps: '500',
+            maxSlippageBps: String(SLIPPAGE_BPS),
             mode: 'exact-in',
           },
           tokenLocator: 'solana:7EivYFyNfgGj8xbUymR7J4LuxUHLKRzpLaERHLvi7Dgu',
@@ -106,6 +108,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '5',
         receiptEmail: 'buyer+onramp@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
@@ -147,6 +150,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '5',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
@@ -190,6 +194,7 @@ describe('createCrossmintOrder', () => {
         amountUsd: '50',
         paymentCurrency: 'eur',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: SOLANA_XMEME,
         walletAddress: SOLANA_WALLET,
       }),
@@ -227,6 +232,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '1000',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
@@ -261,6 +267,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '5',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
@@ -278,6 +285,7 @@ describe('createCrossmintOrder', () => {
       createCrossmintOrder({
         amountUsd: '5',
         receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
         token: BASE_USDC,
         walletAddress: SOLANA_WALLET,
       }),

@@ -1,7 +1,12 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
+import {
+  getSlippageToleranceBasisPoints,
+  useIsMounted,
+  useLocalStorage,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import {
   Button,
   Collapsible,
@@ -77,6 +82,8 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
     CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY,
     '',
   )
+  const [slippageTolerance] = useSlippageTolerance()
+  const slippageBps = getSlippageToleranceBasisPoints(slippageTolerance)
   const isMounted = useIsMounted()
   const { open } = useDialog(DialogType.Review)
   const locale = useFiatLocale()
@@ -163,6 +170,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
       !target ||
       !tokenEntry ||
       !walletAddress ||
+      !slippageBps ||
       !tokenEntry.features.creditCardPayment
     ) {
       return
@@ -174,6 +182,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
       retryCount,
       serializedToken.chainId,
       serializedToken.address,
+      slippageBps,
       visibleReceiptEmail,
       walletAddress,
     ].join(':')
@@ -183,6 +192,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
     requestKeyRef.current = requestKey
     let ignore = false
     const orderAmountUsd = amountUsd
+    const orderSlippageBps = slippageBps
     const orderToken = serializedToken
     const orderWalletAddress = walletAddress
 
@@ -196,6 +206,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
           amountUsd: orderAmountUsd,
           paymentCurrency,
           receiptEmail: visibleReceiptEmail,
+          slippageBps: orderSlippageBps,
           token: orderToken,
           walletAddress: orderWalletAddress,
         })
@@ -220,6 +231,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
     paymentCurrency,
     retryCount,
     serializedToken,
+    slippageBps,
     target,
     tokenEntry,
     visibleReceiptEmail,

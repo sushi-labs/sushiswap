@@ -47,6 +47,7 @@ export const createCrossmintOrderInputSchema = z.object({
     .regex(AMOUNT_PATTERN, 'Enter a valid USD amount with up to two decimals'),
   receiptEmail: z.string().trim().email().max(320),
   paymentCurrency: z.enum(CROSSMINT_SUPPORTED_FIAT_CURRENCIES).default('usd'),
+  slippageBps: z.number().int().positive().max(10_000),
   token: serializedCrossmintTokenSchema,
   walletAddress: z.string().trim().min(1).max(128),
 })

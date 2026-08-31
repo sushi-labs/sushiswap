@@ -34,6 +34,7 @@ export interface CreateCrossmintOrderInput {
   amountUsd: string
   paymentCurrency?: CrossmintSupportedFiatCurrency
   receiptEmail: string
+  slippageBps: number
   token: SerializedCrossmintToken
   walletAddress: string
 }

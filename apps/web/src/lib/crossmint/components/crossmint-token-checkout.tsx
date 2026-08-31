@@ -6,7 +6,12 @@ import {
   CrossmintProvider,
   useCrossmintCheckout,
 } from '@crossmint/client-sdk-react-ui'
-import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
+import {
+  getSlippageToleranceBasisPoints,
+  useIsMounted,
+  useLocalStorage,
+  useSlippageTolerance,
+} from '@sushiswap/hooks'
 import { Button, Card, Currency, TextField, classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react'
@@ -183,6 +188,8 @@ function CrossmintTokenCheckoutForm({
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [receiptEmail, setReceiptEmail, clearReceiptEmail] =
     useLocalStorage<string>(CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY, '')
+  const [slippageTolerance] = useSlippageTolerance()
+  const slippageBps = getSlippageToleranceBasisPoints(slippageTolerance)
   const [walletPayMethod, setWalletPayMethod] =
     useState<WalletPayMethod>('googlePay')
   const amountId = useId()
@@ -257,7 +264,7 @@ function CrossmintTokenCheckoutForm({
   }
 
   async function createOrder(): Promise<void> {
-    if (!walletAddress || !hasSavedEmail) return
+    if (!walletAddress || !hasSavedEmail || !slippageBps) return
 
     const normalizedEmail = visibleReceiptEmail.trim()
     setReceiptEmail(normalizedEmail)
@@ -268,6 +275,7 @@ function CrossmintTokenCheckoutForm({
       const order = await createCrossmintOrder({
         amountUsd,
         receiptEmail: normalizedEmail,
+        slippageBps,
         token,
         walletAddress,
       })
