@@ -363,7 +363,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                         {walletAddress ? shortenAddress(walletAddress) : '-'}
                       </span>
                     </ReviewDetail>
-                    <ReviewDetail title="Crossmint fee">
+                    <ReviewDetail title="Fees">
                       {isCreatingOrder ? (
                         <SkeletonText
                           align="right"
