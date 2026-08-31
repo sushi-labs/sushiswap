@@ -19,13 +19,13 @@ import type { CrossmintCheckoutTokenClass } from '../types'
 
 export { chainIdsToCrossmintName } from '../crossmint-checkout-token-catalog'
 
-export const DEFAULT_CROSSMINT_CHECKOUT_TOKEN_CLASSES = [
+const DEFAULT_CROSSMINT_CHECKOUT_TOKEN_CLASSES = [
   'memecoin',
   'onramp',
 ] as const satisfies readonly CrossmintCheckoutTokenClass[]
-export const DEFAULT_CROSSMINT_CHECKOUT_TOKENS_PAGE_SIZE = 100
+const DEFAULT_CROSSMINT_CHECKOUT_TOKENS_PAGE_SIZE = 100
 
-export interface UseCrossmintCheckoutTokensInput {
+interface UseCrossmintCheckoutTokensInput {
   chainIds?: readonly CrossmintCheckoutSupportedChainId[]
   enabled?: boolean
   limit?: number

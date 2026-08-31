@@ -20,9 +20,7 @@ import {
   getCrossmintAvailableFiatPaymentMethods,
 } from '../crossmint-payment-methods'
 
-export type { CrossmintFiatPaymentMethods } from '../crossmint-payment-methods'
-
-export interface CrossmintOrderCheckoutProps {
+interface CrossmintOrderCheckoutProps {
   allowedMethods: CrossmintFiatPaymentMethods
   className?: string
   clientSecret: string
@@ -32,7 +30,7 @@ export interface CrossmintOrderCheckoutProps {
   receiptEmail: string
 }
 
-export interface CrossmintOrderCheckoutSkeletonProps {
+interface CrossmintOrderCheckoutSkeletonProps {
   type: 'memecoin' | 'stablecoin'
   className?: string
 }

@@ -25,7 +25,6 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY,
   CrossmintOrderCheckout,
   CrossmintOrderCheckoutSkeleton,
   useFiatExchangeRates,
@@ -57,6 +56,8 @@ import {
 interface FiatBuyReviewDialogProps {
   children: ReactNode
 }
+
+const CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY = 'sushi.crossmint.receipt-email'
 
 export function FiatBuyReviewDialog({ children }: FiatBuyReviewDialogProps) {
   return (

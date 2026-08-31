@@ -23,16 +23,14 @@ export const CROSSMINT_CHAIN_NAME_TO_CHAIN_ID = {
   solana: SvmChainId.SOLANA,
 } as const
 
-export type CrossmintConfiguredTokenChainId =
+type CrossmintConfiguredTokenChainId =
   (typeof CROSSMINT_CONFIGURED_TOKEN_CHAIN_IDS)[number]
-export type CrossmintCheckoutToken = TokenFor<
-  EvmChainId | SvmChainId | StellarChainId
->
+type CrossmintCheckoutToken = TokenFor<EvmChainId | SvmChainId | StellarChainId>
 export type CrossmintCheckoutCatalogToken = TokenFor<
   EvmChainId | SvmChainId | StellarChainId
 >
 export type CrossmintEnvironment = 'production' | 'staging'
-export type CrossmintWalletNamespace = 'evm' | 'stellar' | 'svm'
+type CrossmintWalletNamespace = 'evm' | 'stellar' | 'svm'
 
 const CROSSMINT_API_URLS = {
   production: 'https://www.crossmint.com/api',
@@ -48,7 +46,7 @@ export interface SerializedCrossmintToken {
   symbol: string
 }
 
-export interface CrossmintTarget {
+interface CrossmintTarget {
   asset: string
   environment: CrossmintEnvironment
   kind: 'memecoin' | 'stablecoin'
@@ -83,7 +81,7 @@ const STAGING_TARGETS = {
   },
 } as const
 
-export const CROSSMINT_STAGING_XMEME = new SvmToken({
+const CROSSMINT_STAGING_XMEME = new SvmToken({
   address: svmAddress(CROSSMINT_STAGING_XMEME_ADDRESS),
   chainId: SvmChainId.SOLANA,
   decimals: 9,

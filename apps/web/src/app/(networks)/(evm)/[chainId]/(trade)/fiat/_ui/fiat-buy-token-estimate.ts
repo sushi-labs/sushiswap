@@ -2,18 +2,18 @@ import type { CrossmintEnvironment } from 'src/lib/crossmint/crossmint-config'
 
 export const CROSSMINT_STAGING_FALLBACK_TOKEN_PRICE_USD = 1
 
-export interface FiatBuyTokenEstimate {
+interface FiatBuyTokenEstimate {
   amount?: number
   priceUsd?: number
   usesStagingFallback: boolean
 }
 
-export interface FiatBuyTokenPrice {
+interface FiatBuyTokenPrice {
   priceUsd?: number
   usesStagingFallback: boolean
 }
 
-export function getFiatBuyTokenPrice({
+function getFiatBuyTokenPrice({
   allowStagingFallback = true,
   environment,
   sushiTokenPrice,

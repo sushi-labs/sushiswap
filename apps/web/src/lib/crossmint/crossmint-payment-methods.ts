@@ -6,7 +6,7 @@ export interface CrossmintFiatPaymentMethods {
 
 export type CrossmintFiatPaymentMethod = keyof CrossmintFiatPaymentMethods
 
-export interface CrossmintPaymentMethodAvailability {
+interface CrossmintPaymentMethodAvailability {
   applePay: boolean
   googlePay: boolean
 }

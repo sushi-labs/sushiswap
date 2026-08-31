@@ -33,7 +33,7 @@ const crossmintCheckoutTokensResponseSchema: z.ZodType<CrossmintCheckoutTokensRe
       .transform((cursor) => cursor ?? undefined),
   })
 
-export interface FetchCrossmintCheckoutTokensPageInput {
+interface FetchCrossmintCheckoutTokensPageInput {
   chains?: readonly string[]
   cursor?: string
   limit?: number

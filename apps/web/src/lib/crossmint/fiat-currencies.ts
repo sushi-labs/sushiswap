@@ -1,6 +1,6 @@
 import type { CrossmintSupportedFiatCurrency } from 'src/config'
 
-export interface FiatCurrencyDetails {
+interface FiatCurrencyDetails {
   minorUnits: number
   name: string
   symbol: string

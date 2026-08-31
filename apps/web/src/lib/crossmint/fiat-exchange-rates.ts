@@ -4,9 +4,9 @@ import {
 } from 'src/config'
 import { z } from 'zod'
 
-export type FiatExchangeRates = Record<CrossmintSupportedFiatCurrency, number>
+type FiatExchangeRates = Record<CrossmintSupportedFiatCurrency, number>
 
-export interface FiatExchangeRatesResponse {
+interface FiatExchangeRatesResponse {
   base: 'usd'
   date: string
   rates: FiatExchangeRates

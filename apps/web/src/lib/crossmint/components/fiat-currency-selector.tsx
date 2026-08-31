@@ -26,7 +26,7 @@ import {
 import { FIAT_CURRENCY_DETAILS } from '../fiat-currencies'
 import { FiatCurrencyIcon } from './fiat-currency-icon'
 
-export interface FiatCurrencySelectorProps {
+interface FiatCurrencySelectorProps {
   children: ReactNode
   currencies?: readonly CrossmintSupportedFiatCurrency[]
   onSelect(currency: CrossmintSupportedFiatCurrency): void

@@ -68,7 +68,9 @@ describe('Crossmint orders', () => {
     expect(url.pathname).toBe('/api/2022-06-09/orders')
     expect(Object.fromEntries(url.searchParams)).toEqual({
       cursor: 'current-page',
+      deliveryStatus: 'in-progress,partial-delivery,delivered,failed',
       limit: '20',
+      paymentStatus: 'in-progress,succeeded,declined,refunded',
       recipientAddress: RECIPIENT_ADDRESS,
       sort: 'desc',
     })

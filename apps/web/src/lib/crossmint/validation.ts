@@ -13,7 +13,7 @@ import type { SerializedCrossmintToken } from './crossmint-config'
 
 const AMOUNT_PATTERN = /^(?:0\.\d{1,2}|[1-9]\d{0,4}(?:\.\d{1,2})?)$/
 
-export const serializedCrossmintTokenSchema = z
+const serializedCrossmintTokenSchema = z
   .object({
     address: z.string().trim().min(1).max(128),
     chainId: z.union([

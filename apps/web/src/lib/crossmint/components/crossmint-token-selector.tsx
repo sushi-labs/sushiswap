@@ -38,7 +38,7 @@ import {
 
 const CROSSMINT_MEMECOIN_TOKEN_CLASSES = ['memecoin'] as const
 
-export interface CrossmintTokenSelectorProps {
+interface CrossmintTokenSelectorProps {
   amount?: ReactNode
   chainIds?: readonly CrossmintTokenSelectorChainId[]
   children?: ReactElement

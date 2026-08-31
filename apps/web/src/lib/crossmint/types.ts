@@ -49,7 +49,7 @@ export interface CrossmintReceiveAmountRange {
   upperBound: string
 }
 
-export interface CrossmintCreatedOrderQuote {
+interface CrossmintCreatedOrderQuote {
   expiresAt?: string
   receiveAmount?: CrossmintReceiveAmountRange
   totalPrice?: CrossmintMoney
@@ -61,15 +61,15 @@ export interface CrossmintCreatedOrder {
   quote?: CrossmintCreatedOrderQuote
 }
 
-export type CrossmintOrderPhase = 'quote' | 'payment' | 'delivery' | 'completed'
+type CrossmintOrderPhase = 'quote' | 'payment' | 'delivery' | 'completed'
 
-export interface CrossmintOrderMetadata {
+interface CrossmintOrderMetadata {
   description?: string
   imageUrl?: string
   name?: string
 }
 
-export interface CrossmintOrderDeliveryToken {
+interface CrossmintOrderDeliveryToken {
   contractAddress?: string
   decimals?: number
   locator?: string
@@ -79,7 +79,7 @@ export interface CrossmintOrderDeliveryToken {
   tokenId?: string
 }
 
-export interface CrossmintOrderDelivery {
+interface CrossmintOrderDelivery {
   completedAt?: string
   recipient?: {
     locator?: string
@@ -90,7 +90,7 @@ export interface CrossmintOrderDelivery {
   txId?: string
 }
 
-export interface CrossmintOrderLineItem {
+interface CrossmintOrderLineItem {
   chain?: string
   delivery?: CrossmintOrderDelivery
   executionMode?: 'exact-in' | 'exact-out'
@@ -102,7 +102,7 @@ export interface CrossmintOrderLineItem {
   }
 }
 
-export interface CrossmintOrderPayment {
+interface CrossmintOrderPayment {
   currency?: string
   failureReason?: {
     code?: string

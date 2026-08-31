@@ -2,7 +2,7 @@
 
 import { useIsMounted } from '@sushiswap/hooks'
 
-export const DEFAULT_FIAT_LOCALE = 'en-US'
+const DEFAULT_FIAT_LOCALE = 'en-US'
 
 export function useFiatLocale(locale?: string): string {
   const isMounted = useIsMounted()

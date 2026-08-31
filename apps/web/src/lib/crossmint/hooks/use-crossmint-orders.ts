@@ -4,9 +4,9 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { listCrossmintOrders } from '../actions/list-crossmint-orders'
 
-export const DEFAULT_CROSSMINT_ORDERS_PAGE_SIZE = 30
+const DEFAULT_CROSSMINT_ORDERS_PAGE_SIZE = 30
 
-export interface UseCrossmintOrdersInput {
+interface UseCrossmintOrdersInput {
   enabled?: boolean
   limit?: number
   recipientAddress?: readonly string[]

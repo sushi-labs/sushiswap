@@ -7,9 +7,9 @@ import { convertUsdToWholeFiatAmount } from '../fiat-exchange-rates'
 import { useFiatExchangeRates } from '../hooks/use-fiat-exchange-rates'
 import { useFiatLocale } from '../hooks/use-fiat-locale'
 
-export const DEFAULT_QUICK_FIAT_AMOUNTS_USD = [10, 25, 50, 100] as const
+const DEFAULT_QUICK_FIAT_AMOUNTS_USD = [10, 25, 50, 100] as const
 
-export interface QuickFiatAmountSelectProps {
+interface QuickFiatAmountSelectProps {
   amountsUsd?: readonly number[]
   className?: string
   currency: CrossmintSupportedFiatCurrency

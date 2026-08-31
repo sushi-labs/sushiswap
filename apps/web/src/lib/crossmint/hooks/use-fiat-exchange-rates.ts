@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { fetchFiatExchangeRates } from '../fiat-exchange-rates'
 
-export interface UseFiatExchangeRatesInput {
+interface UseFiatExchangeRatesInput {
   enabled?: boolean
 }
 

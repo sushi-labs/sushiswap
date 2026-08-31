@@ -19,7 +19,7 @@ import { useFiatLocale } from '../hooks/use-fiat-locale'
 import { FiatCurrencyIcon } from './fiat-currency-icon'
 import { FiatCurrencySelector } from './fiat-currency-selector'
 
-export interface FiatInputProps {
+interface FiatInputProps {
   className?: string
   currencies?: readonly CrossmintSupportedFiatCurrency[]
   currency: CrossmintSupportedFiatCurrency
