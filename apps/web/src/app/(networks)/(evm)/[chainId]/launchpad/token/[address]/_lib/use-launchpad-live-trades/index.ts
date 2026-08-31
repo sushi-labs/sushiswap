@@ -2,7 +2,6 @@
 
 import {
   type LaunchpadCandle,
-  type LaunchpadCandleSnapshot,
   type LaunchpadMetrics,
   type LaunchpadToken,
   type LaunchpadTradeConnection,
@@ -13,11 +12,9 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { SUSHI_DATA_API_HOST } from 'src/lib/constants'
-import { type EvmAddress, type EvmTxHash, szevm } from 'sushi/evm'
-import { isAddressEqual, isHash } from 'viem'
-import { z } from 'zod'
-import { type LaunchpadChainId, isLaunchpadChainId } from '../../../constants'
-import type { LaunchpadTradesInput } from '../../../types'
+import type { EvmAddress } from 'sushi/evm'
+import { isAddressEqual } from 'viem'
+import type { LaunchpadTradesInput } from '../../../../types'
 import {
   EMPTY_TRADE_CONNECTION,
   type LaunchpadTradeMutation,
@@ -34,141 +31,29 @@ import {
   reconcileLaunchpadTradeResetSnapshot,
   refetchLaunchpadCandleSnapshotsWithRetry,
   subscribeToLaunchpadCandleSnapshot,
-} from './launchpad-stream'
+} from '../launchpad-stream'
+import {
+  closedStreamRetryDelay,
+  isExpectedStream,
+  parseLaunchpadMetricsStreamEvent,
+  parseLaunchpadTradeResetStreamEvent,
+  parseLaunchpadTradeStreamEvent,
+  parseStreamEvent,
+  streamCandleRemoveSchema,
+  streamCandleSchema,
+  streamIdentitySchema,
+  streamResetSchema,
+  streamTradeRemoveSchema,
+  tradeSnapshotRetryBaseDelay,
+  tradeSnapshotRetryMaxDelay,
+  unsignedIntegerSchema,
+} from './events'
 
-const evmAddressSchema = szevm.address()
-const transactionHashSchema = z.custom<EvmTxHash>(
-  (value) => typeof value === 'string' && isHash(value),
-  'Invalid transaction hash',
-)
-const launchpadChainIdSchema = z.custom<LaunchpadChainId>(
-  (value) =>
-    typeof value === 'number' &&
-    Number.isInteger(value) &&
-    isLaunchpadChainId(value),
-  'Invalid launchpad chain ID',
-)
-const unsignedIntegerSchema = z.string().regex(/^(0|[1-9][0-9]*)$/)
-const closedStreamRetryDelay = ms('2s')
-const tradeSnapshotRetryBaseDelay = ms('2s')
-const tradeSnapshotRetryMaxDelay = ms('30s')
-const streamIdentitySchema = z.object({
-  chainId: launchpadChainIdSchema,
-  tokenAddress: evmAddressSchema,
-  eventId: unsignedIntegerSchema,
-})
-const streamTradeSchema = streamIdentitySchema.extend({
-  isNew: z.boolean(),
-  id: z.string().min(1),
-  poolAddress: evmAddressSchema,
-  feeTier: z.number().int().nonnegative(),
-  isLaunchPool: z.boolean(),
-  transactionHash: transactionHashSchema,
-  logIndex: z.number().int().nonnegative(),
-  blockNumber: unsignedIntegerSchema,
-  timestamp: z.string().datetime(),
-  trader: evmAddressSchema.nullable(),
-  direction: z.enum(['BUY', 'SELL']),
-  tokenAmount: unsignedIntegerSchema,
-  quoteToken: z.object({
-    address: evmAddressSchema,
-    symbol: z.string().min(1),
-    name: z.string().min(1),
-    decimals: z.number().int().nonnegative(),
-  }),
-  quoteAmount: unsignedIntegerSchema,
-  marginalPriceUsd: z.number().nonnegative().nullable(),
-  priceUsd: z.number().nonnegative().nullable(),
-  amountUsd: z.number().nonnegative().nullable(),
-})
-const streamTradeRemoveSchema = streamIdentitySchema.extend({
-  transactionHash: transactionHashSchema,
-  logIndex: z.number().int().nonnegative(),
-})
-const streamResetSchema = streamIdentitySchema.extend({
-  reason: z.enum(['CURSOR_EXPIRED', 'CURSOR_INVALID']),
-})
-const candleIntervalSchema = z.enum(['1m', '5m', '15m', '1h', '4h', '1d'])
-const candleSchema = z.object({
-  timestamp: z.number().int().nonnegative(),
-  open: z.number().nonnegative(),
-  high: z.number().nonnegative(),
-  low: z.number().nonnegative(),
-  close: z.number().nonnegative(),
-  volumeUsd: z.number().nonnegative(),
-  tradeCount: z.number().int().nonnegative(),
-})
-const streamCandleSchema = streamIdentitySchema.extend({
-  interval: candleIntervalSchema,
-  candle: candleSchema,
-})
-const streamCandleRemoveSchema = streamIdentitySchema.extend({
-  interval: candleIntervalSchema,
-  timestamp: z.number().int().nonnegative(),
-})
-const nullableWindowValuesSchema = z.object({
-  h1: z.number().nullable(),
-  h6: z.number().nullable(),
-  h12: z.number().nullable(),
-  h24: z.number().nullable(),
-})
-const metricsSchema = z.object({
-  priceUsd: z.number().nonnegative().nullable(),
-  marketCapitalizationUsd: z.number().nonnegative().nullable(),
-  fullyDilutedValuationUsd: z.number().nonnegative().nullable(),
-  currentTvlUsd: z.number().nonnegative().nullable(),
-  volumeUsd: nullableWindowValuesSchema,
-  tvlChangePercent: nullableWindowValuesSchema,
-  asOf: z.string().datetime(),
-  source: z.string().min(1),
-  isStale: z.boolean(),
-})
-const streamMetricsSchema = streamIdentitySchema.extend({
-  version: unsignedIntegerSchema,
-  metrics: metricsSchema,
-})
-
-function parseStreamEvent<T>(
-  event: MessageEvent<string>,
-  schema: z.ZodType<T>,
-): T | null {
-  try {
-    const parsed: unknown = JSON.parse(event.data)
-    const result = schema.safeParse(parsed)
-    return result.success ? result.data : null
-  } catch {
-    return null
-  }
-}
-
-export function parseLaunchpadMetricsStreamEvent(
-  event: MessageEvent<string>,
-): z.infer<typeof streamMetricsSchema> | null {
-  return parseStreamEvent(event, streamMetricsSchema)
-}
-
-export function parseLaunchpadTradeStreamEvent(
-  event: MessageEvent<string>,
-): z.infer<typeof streamTradeSchema> | null {
-  return parseStreamEvent(event, streamTradeSchema)
-}
-
-export function parseLaunchpadTradeResetStreamEvent(
-  event: MessageEvent<string>,
-): z.infer<typeof streamIdentitySchema> | null {
-  return parseStreamEvent(event, streamIdentitySchema)
-}
-
-function isExpectedStream(
-  chainId: LaunchpadChainId,
-  tokenAddress: EvmAddress,
-  event: { chainId: number; tokenAddress: EvmAddress },
-): boolean {
-  return (
-    event.chainId === chainId &&
-    isAddressEqual(event.tokenAddress, tokenAddress)
-  )
-}
+export {
+  parseLaunchpadMetricsStreamEvent,
+  parseLaunchpadTradeResetStreamEvent,
+  parseLaunchpadTradeStreamEvent,
+} from './events'
 
 function useLaunchpadTrades(input: LaunchpadTradesInput, enabled = true) {
   const query = useInfiniteQuery({
@@ -296,22 +181,21 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         .then(() => undefined)
     }
 
-    async function fetchBootstrapCandleSnapshot(
-      fresh: boolean,
-    ): Promise<LaunchpadCandleSnapshot> {
+    async function fetchFallbackCandleSnapshot(): Promise<string> {
       const to = Math.floor(Date.now() / 1_000)
       const from = to - 24 * 60 * 60
 
-      return getLaunchpadCandles({
+      const snapshot = await getLaunchpadCandles({
         input: {
           chainId: input.chainId,
           tokenAddress: input.tokenAddress,
-          interval: 'ONE_HOUR',
+          interval: 'FIVE_MINUTES',
           from,
           to,
-          ...(fresh ? { fresh: true } : {}),
+          fresh: true,
         },
       })
+      return snapshot.streamCursor
     }
 
     function clearClosedStreamRetry(): void {
@@ -710,6 +594,7 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
 
     async function refreshActiveCandleSnapshots(): Promise<{
       streamCursor: string | null
+      subscriberCount: number
       synchronized: boolean
     }> {
       const result = await refetchLaunchpadCandleSnapshotsWithRetry(
@@ -718,9 +603,30 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       )
       return {
         streamCursor: result.streamCursor,
+        subscriberCount: result.subscriberCount,
         synchronized:
           result.subscriberCount === 0 ||
           (result.failedSubscriberCount === 0 && result.streamCursor !== null),
+      }
+    }
+
+    async function refreshCandleSnapshot(refetchCandles: boolean): Promise<{
+      streamCursor: string | null
+      synchronized: boolean
+    }> {
+      if (!refetchCandles) {
+        return {
+          streamCursor: candleSnapshotCursor ?? null,
+          synchronized: true,
+        }
+      }
+
+      const refresh = await refreshActiveCandleSnapshots()
+      if (refresh.subscriberCount > 0) return refresh
+
+      return {
+        streamCursor: await fetchFallbackCandleSnapshot(),
+        synchronized: true,
       }
     }
 
@@ -754,20 +660,10 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       }
 
       try {
-        const knownCandleCursor = candleSnapshotCursor
-        const [result, bootstrapCandleSnapshot, candleRefresh] =
-          await Promise.all([
-            refetch.current(),
-            refetchCandles || !knownCandleCursor
-              ? fetchBootstrapCandleSnapshot(refetchCandles)
-              : Promise.resolve(null),
-            refetchCandles
-              ? refreshActiveCandleSnapshots()
-              : Promise.resolve({
-                  streamCursor: knownCandleCursor ?? null,
-                  synchronized: true,
-                }),
-          ])
+        const [result, candleRefresh] = await Promise.all([
+          refetch.current(),
+          refreshCandleSnapshot(refetchCandles),
+        ])
         if (disposed || currentSynchronization !== synchronization.current) {
           return
         }
@@ -787,24 +683,21 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
         tradeSnapshotCursor = next.streamCursor
         const candleCursors = [
           candleSnapshotCursor,
-          bootstrapCandleSnapshot?.streamCursor,
           candleRefresh.streamCursor,
         ].filter(
           (streamCursor): streamCursor is string =>
             unsignedIntegerSchema.safeParse(streamCursor).success,
         )
         const [firstCandleCursor, ...remainingCandleCursors] = candleCursors
+        hasSnapshot.current = true
+        setData(next)
         if (!firstCandleCursor) {
-          setStreamStatus('reconnecting')
-          scheduleSnapshotRetry()
           return
         }
         candleSnapshotCursor = minimumLaunchpadStreamCursor(
           firstCandleCursor,
           ...remainingCandleCursors,
         )
-        hasSnapshot.current = true
-        setData(next)
         openStreamFromSnapshots(currentSynchronization)
       } catch {
         if (!disposed && currentSynchronization === synchronization.current) {

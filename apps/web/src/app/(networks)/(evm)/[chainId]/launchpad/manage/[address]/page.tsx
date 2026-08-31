@@ -1,7 +1,7 @@
+import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
-import { getCachedLaunchpadToken } from '../../_lib/get-cached-launchpad-token'
 import { isLaunchpadChainId } from '../../constants'
 import { ManageTokenPage } from './_ui/manage-token-page'
 
@@ -26,10 +26,10 @@ export default async function ManageTokenRoute({
   }
   const normalizedAddress = normalizeEvmAddress(address)
 
-  const token = await getCachedLaunchpadToken({
-    chainId,
-    address: normalizedAddress,
-  })
+  const token = await getLaunchpadToken(
+    { chainId, address: normalizedAddress },
+    { retries: 3 },
+  )
   if (!token) return notFound()
 
   return (

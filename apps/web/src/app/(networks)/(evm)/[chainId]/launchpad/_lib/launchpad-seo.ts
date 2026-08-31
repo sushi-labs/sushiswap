@@ -6,6 +6,7 @@ import {
   type LaunchpadTokenConnection,
   getLaunchpadCandles,
   getLaunchpadCreator,
+  getLaunchpadToken,
   getLaunchpadTokens,
 } from '@sushiswap/graph-client/data-api'
 import { unstable_cache } from 'next/cache'
@@ -26,7 +27,6 @@ import { shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
 import type { EvmAddress } from 'sushi/evm'
 import type { LaunchpadChainId } from '../constants'
-import { getCachedLaunchpadToken } from './get-cached-launchpad-token'
 import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 
 const SUSHI_URL = 'https://www.sushi.com'
@@ -92,7 +92,7 @@ export async function getLaunchpadTokenForSeo(
   address: EvmAddress,
 ): Promise<LaunchpadToken | null> {
   try {
-    return await getCachedLaunchpadToken({ chainId, address })
+    return await getLaunchpadToken({ chainId, address }, { retries: 3 })
   } catch {
     return null
   }
