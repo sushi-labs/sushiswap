@@ -319,7 +319,7 @@ function CrossmintOrderCheckoutContent({
               colors: {
                 accent: '#2563eb',
                 backgroundPrimary:
-                  resolvedTheme === 'dark' ? '#1e293b' : '#ffffff',
+                  resolvedTheme === 'dark' ? '#1e293b' : '#f3f4f6',
                 borderPrimary:
                   resolvedTheme === 'dark' ? '#ffffff14' : '#00000014',
                 textPrimary: resolvedTheme === 'dark' ? '#ffffff' : '#111827',
