@@ -20,7 +20,15 @@ export default function ConnectSvmWalletButton({
     try {
       await connect(wallet, onSuccess)
     } catch (error) {
-      onError?.(error as Error)
+      const connectionError =
+        error instanceof Error
+          ? error
+          : new Error('SVM wallet connection failed')
+      if (onError) {
+        onError(connectionError)
+      } else {
+        console.error('SVM wallet connection failed', connectionError)
+      }
     } finally {
       onSettled?.()
     }

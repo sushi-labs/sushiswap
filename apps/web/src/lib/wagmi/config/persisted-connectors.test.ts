@@ -1,4 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { isPrivyEvmConnectorId } from '../../wallet/privy/privy-evm-connector'
+
+const privyConnectorId =
+  'io.privy.wallet.0xAbCd000000000000000000000000000000000001'
 
 type StorageValues = {
   recentConnectorId?: string
@@ -54,6 +58,31 @@ describe('persisted connector factories', () => {
     })
 
     expect(module.getPersistedConnectorFactories()).toHaveLength(2)
+    expect(module.hasPersistedConnections()).toBe(true)
+    expect(module.hasPersistedConnectorMatching(isPrivyEvmConnectorId)).toBe(
+      false,
+    )
+  })
+
+  it('reports a persisted connection without normalizing its id', async () => {
+    const { module } = await loadWithStorage({
+      store: JSON.stringify({
+        state: {
+          connections: {
+            __type: 'Map',
+            value: [['a', { connector: { id: privyConnectorId } }]],
+          },
+        },
+      }),
+    })
+
+    expect(module.hasPersistedConnections()).toBe(true)
+    expect(
+      module.hasPersistedConnectorMatching((id) => id === privyConnectorId),
+    ).toBe(true)
+    expect(module.hasPersistedConnectorMatching(isPrivyEvmConnectorId)).toBe(
+      true,
+    )
   })
 
   it('reports discoverable connectors without eagerly recreating them', async () => {

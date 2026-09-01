@@ -1,8 +1,13 @@
-import { createConfig } from '@privy-io/wagmi'
 import { mock } from '@wagmi/connectors'
+import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
+import { createConfig } from 'wagmi'
+import {
+  createConnectorRestoringStorage,
+  hasPersistedConnectorMatching,
+} from '../persisted-connectors'
 import { accounts, testChains } from './constants'
 
 const anvilPort = String(
@@ -21,6 +26,7 @@ const testWalletIndex = Number(
 const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
 export const createTestConfig = () => {
+  const storage = createConnectorRestoringStorage()
   const mockConnector = mock({
     accounts: [
       accounts.map((x) => privateKeyToAccount(x.privateKey))[testWalletIndex]
@@ -41,6 +47,12 @@ export const createTestConfig = () => {
       {} as Record<EvmChainId, HttpTransport>,
     ),
     pollingInterval: 1_000,
-    connectors: [mockConnector],
+    storage,
+    // The Privy test runtime registers its real injected connector lazily.
+    // Keeping the default mock here would violate the app's one-wallet
+    // invariant and make targeted Privy restoration intentionally fail.
+    connectors: hasPersistedConnectorMatching(isPrivyEvmConnectorId)
+      ? []
+      : [mockConnector],
   })
 }

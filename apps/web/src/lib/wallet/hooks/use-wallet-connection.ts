@@ -39,7 +39,7 @@ export function useWalletConnection(
   namespace?: WalletNamespace,
 ): UseWalletConnectionReturnType<WalletChainId> {
   const { connections } = useWalletContext()
-  const { pendingWalletId } = useWalletState()
+  const { isPending: isWalletPending, pendingWalletId } = useWalletState()
   const isRestoringByNamespace = useWalletRestorationState()
   const connection = namespace
     ? connections.find((connection) => connection.namespace === namespace)
@@ -49,8 +49,9 @@ export function useWalletConnection(
     : Object.values(isRestoringByNamespace).some(Boolean)
   const isConnected = Boolean(connection)
   const isPending = namespace
-    ? pendingWalletId?.startsWith(`${namespace}:`) === true
-    : Boolean(pendingWalletId)
+    ? pendingWalletId?.startsWith(`${namespace}:`) === true ||
+      (namespace === 'evm' && isWalletPending && !pendingWalletId)
+    : isWalletPending
   const status = getWalletConnectionStatus({
     isConnected,
     isPending,
