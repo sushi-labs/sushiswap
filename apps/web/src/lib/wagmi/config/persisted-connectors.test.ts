@@ -1,61 +1,68 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import {
-  getPersistedConnectorFactories,
-  hasPersistedConnector,
-  hasPersistedConnectorMatching,
-  refreshPersistedConnectorSnapshot,
-} from './persisted-connectors'
 
 const privyConnectorId =
-  'io.privy.wallet.0x0000000000000000000000000000000000000001'
+  'io.privy.wallet.0xAbCd000000000000000000000000000000000001'
 
-function installStorage(value: string | null): void {
+type StorageValues = {
+  recentConnectorId?: string
+  store?: string
+}
+
+async function loadWithStorage({
+  recentConnectorId,
+  store,
+}: StorageValues = {}) {
   const values = new Map<string, string>()
-  if (value) values.set('wagmi.store', value)
+  if (recentConnectorId) {
+    values.set('wagmi.recentConnectorId', JSON.stringify(recentConnectorId))
+  }
+  if (store) values.set('wagmi.store', store)
+
   vi.stubGlobal('window', {
     localStorage: {
       getItem: (key: string) => values.get(key) ?? null,
       removeItem: (key: string) => values.delete(key),
-      setItem: (key: string, nextValue: string) => values.set(key, nextValue),
+      setItem: (key: string, value: string) => values.set(key, value),
     },
   })
-  refreshPersistedConnectorSnapshot()
+  vi.resetModules()
+
+  return {
+    module: await import('./persisted-connectors'),
+    values,
+  }
 }
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  vi.resetModules()
 })
 
 describe('persisted connector factories', () => {
-  it('only recreates supported connectors present in Wagmi state', () => {
-    installStorage(
-      JSON.stringify({
+  it('only recreates supported non-discoverable connectors', async () => {
+    const { module } = await loadWithStorage({
+      store: JSON.stringify({
         state: {
           connections: {
             __type: 'Map',
             value: [
               ['a', { connector: { id: 'walletConnect' } }],
-              ['b', { connector: { id: 'coinbaseWalletSDK' } }],
-              ['c', { connector: { id: 'io.metamask' } }],
+              ['b', { connector: { id: 'safe' } }],
+              ['c', { connector: { id: 'metaMaskSDK' } }],
+              ['d', { connector: { id: 'coinbaseWalletSDK' } }],
             ],
           },
         },
       }),
-    )
+    })
 
-    expect(getPersistedConnectorFactories()).toHaveLength(2)
-    expect(hasPersistedConnector('walletConnect')).toBe(true)
-    expect(
-      hasPersistedConnectorMatching((id) => id.startsWith('io.privy.wallet.')),
-    ).toBe(false)
+    expect(module.getPersistedConnectorFactories()).toHaveLength(2)
+    expect(module.hasRestorablePersistedConnector()).toBe(true)
   })
 
-  it('survives createConfig wiping wagmi.store on the initial setState', async () => {
-    const { http, createConfig } = await import('@wagmi/core')
-    const { mainnet } = await import('viem/chains')
-
-    installStorage(
-      JSON.stringify({
+  it('passes persisted ids to predicates without changing their casing', async () => {
+    const { module } = await loadWithStorage({
+      store: JSON.stringify({
         state: {
           connections: {
             __type: 'Map',
@@ -63,30 +70,91 @@ describe('persisted connector factories', () => {
           },
         },
       }),
-    )
-    expect(hasPersistedConnector(privyConnectorId)).toBe(true)
-    expect(
-      hasPersistedConnectorMatching((id) => id.startsWith('io.privy.wallet.')),
-    ).toBe(true)
+    })
 
-    // Wagmi persists its empty initial state immediately, so a later read of
-    // `wagmi.store` sees no connections at all. The snapshot must outlive it.
-    createConfig({
+    expect(
+      module.hasPersistedConnectorMatching((id) => id === privyConnectorId),
+    ).toBe(true)
+  })
+
+  it('does not report discoverable connectors as eager restore candidates', async () => {
+    const { module } = await loadWithStorage({
+      store: JSON.stringify({
+        state: {
+          connections: {
+            __type: 'Map',
+            value: [
+              ['a', { connector: { id: 'metaMaskSDK' } }],
+              ['b', { connector: { id: 'coinbaseWalletSDK' } }],
+            ],
+          },
+        },
+      }),
+    })
+
+    expect(module.getPersistedConnectorFactories()).toEqual([])
+    expect(module.hasRestorablePersistedConnector()).toBe(false)
+  })
+
+  it('preserves the store through only createConfig initial write', async () => {
+    const { http, createConfig } = await import('@wagmi/core')
+    const { mainnet } = await import('viem/chains')
+    const persistedStore = JSON.stringify({
+      state: {
+        connections: {
+          __type: 'Map',
+          value: [['a', { connector: { id: 'walletConnect' } }]],
+        },
+      },
+    })
+    const { module, values } = await loadWithStorage({ store: persistedStore })
+
+    const config = createConfig({
       chains: [mainnet],
       multiInjectedProviderDiscovery: false,
+      storage: module.createConnectorRestoringStorage(),
       transports: { [mainnet.id]: http() },
       ssr: true,
     })
 
-    expect(window.localStorage.getItem('wagmi.store')).toContain('"value":[]')
-    expect(hasPersistedConnector(privyConnectorId)).toBe(true)
+    expect(values.get('wagmi.store')).toBe(persistedStore)
+    expect(module.getPersistedConnectorFactories()).toHaveLength(1)
+
+    config.setState((state) => ({ ...state }))
+    expect(values.get('wagmi.store')).toContain('"value":[]')
+    expect(module.getPersistedConnectorFactories()).toEqual([])
   })
 
-  it('does not initialize connectors without persisted intent', () => {
-    installStorage(null)
-    expect(getPersistedConnectorFactories()).toEqual([])
+  it('does not treat the last-used connector as active restore intent', async () => {
+    const { module } = await loadWithStorage({
+      recentConnectorId: 'walletConnect',
+    })
 
-    installStorage('{')
-    expect(getPersistedConnectorFactories()).toEqual([])
+    expect(module.getPersistedConnectorFactories()).toEqual([])
+    expect(module.hasRestorablePersistedConnector()).toBe(false)
+  })
+
+  it('skips malformed entries without discarding valid ones', async () => {
+    const { module } = await loadWithStorage({
+      store: JSON.stringify({
+        state: {
+          connections: {
+            __type: 'Map',
+            value: [
+              ['a', null],
+              ['b', undefined],
+              ['c', { connector: { id: 'walletConnect' } }],
+            ],
+          },
+        },
+      }),
+    })
+
+    expect(module.getPersistedConnectorFactories()).toHaveLength(1)
+  })
+
+  it('does not initialize connectors from malformed storage', async () => {
+    const { module } = await loadWithStorage({ store: '{' })
+    expect(module.getPersistedConnectorFactories()).toEqual([])
   })
 })

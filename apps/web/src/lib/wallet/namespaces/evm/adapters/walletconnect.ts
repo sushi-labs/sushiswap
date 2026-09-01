@@ -9,7 +9,7 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = evmConnectorFactories.walletconnect()
+  createConnectorFn = evmConnectorFactories.walletConnect()
   return createConnectorFn
 }
 

@@ -6,21 +6,56 @@ import {
 } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
 
+type EvmConnectorFactoryId =
+  | 'coinbaseWalletSDK'
+  | 'metaMaskSDK'
+  | 'safe'
+  | 'walletConnect'
+
+function ignoreSetupErrors(connectorFn: CreateConnectorFn): CreateConnectorFn {
+  return (config) => {
+    const connector = connectorFn(config)
+    const setup = connector.setup
+
+    return {
+      ...connector,
+      async setup() {
+        try {
+          await setup?.call(this)
+        } catch {}
+      },
+    }
+  }
+}
+
 /**
- * Canonical factories for non-discoverable connectors, keyed by lowercase
- * connector id. Both the click-path (wallet adapters) and the reload-restore
- * path (persisted connectors) must use these so connector options never
- * drift apart.
+ * Canonical connector factories. Both the click path (wallet adapters) and
+ * the reload-restore path (for non-discoverable connectors) use these so
+ * connector options never drift apart.
  */
-export const evmConnectorFactories: Record<string, () => CreateConnectorFn> = {
-  coinbasewalletsdk: () =>
+export const evmConnectorFactories = {
+  coinbaseWalletSDK: () =>
     coinbaseWallet({
       preference: { options: 'all', telemetry: false },
     }),
-  metamasksdk: () => metaMask(),
+  metaMaskSDK: () => ignoreSetupErrors(metaMask()),
   safe: () => safe(),
-  walletconnect: () =>
+  walletConnect: () =>
     walletConnect({
       projectId: '3f44629277b155ef0caebf3dc705c4ba',
     }),
+} satisfies Record<EvmConnectorFactoryId, () => CreateConnectorFn>
+
+const evmConnectorFactoryIds = new Map<string, EvmConnectorFactoryId>([
+  ['coinbasewalletsdk', 'coinbaseWalletSDK'],
+  ['metamasksdk', 'metaMaskSDK'],
+  ['safe', 'safe'],
+  ['walletconnect', 'walletConnect'],
+])
+
+export function getEvmConnectorFactory(
+  connectorId: string,
+): (() => CreateConnectorFn) | undefined {
+  const factoryId = evmConnectorFactoryIds.get(connectorId.toLowerCase())
+  return factoryId ? evmConnectorFactories[factoryId] : undefined
 }

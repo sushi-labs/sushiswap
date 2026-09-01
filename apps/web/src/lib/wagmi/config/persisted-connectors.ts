@@ -1,19 +1,36 @@
-import type { CreateConnectorFn } from '@wagmi/core'
-import { evmConnectorFactories } from './connector-factories'
+import {
+  type CreateConnectorFn,
+  type Storage,
+  createStorage,
+} from '@wagmi/core'
+import { getEvmConnectorFactory } from './connector-factories'
 
-type PersistedConnection = {
-  connector?: {
-    id?: unknown
-  }
-}
+// MetaMask and Coinbase are restored through EIP-6963 discovery. Registering
+// their SDK connectors here would make Wagmi dedupe the discovered extensions
+// by `rdns`, removing those extension connectors from `useConnectors()`.
+const eagerlyRestorableConnectorIds = new Set(['safe', 'walletconnect'])
 
-type PersistedWagmiStore = {
-  state?: {
-    connections?: {
-      __type?: unknown
-      value?: unknown
+const browserStorage = {
+  getItem(key: string): string | null {
+    if (typeof window === 'undefined') return null
+    try {
+      return window.localStorage.getItem(key)
+    } catch {
+      return null
     }
-  }
+  },
+  removeItem(key: string): void {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.removeItem(key)
+    } catch {}
+  },
+  setItem(key: string, value: string): void {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.setItem(key, value)
+    } catch {}
+  },
 }
 
 /**
@@ -22,62 +39,87 @@ type PersistedWagmiStore = {
  * therefore cannot reconnect after a reload.
  */
 export function getPersistedConnectorFactories(): CreateConnectorFn[] {
-  return Array.from(getPersistedConnectorIds()).flatMap((id) => {
-    const factory = evmConnectorFactories[id]
-    return factory ? [factory()] : []
-  })
-}
+  const factories = new Set<() => CreateConnectorFn>()
+  for (const id of readPersistedConnectorIds()) {
+    if (!isEagerlyRestorableConnectorId(id)) continue
 
-export function hasPersistedConnector(connectorId: string): boolean {
-  return getPersistedConnectorIds().has(connectorId.toLowerCase())
+    const factory = getEvmConnectorFactory(id)
+    if (factory) factories.add(factory)
+  }
+
+  return [...factories].map((factory) => factory())
 }
 
 export function hasPersistedConnectorMatching(
   predicate: (connectorId: string) => boolean,
 ): boolean {
-  return [...getPersistedConnectorIds()].some(predicate)
+  return [...readPersistedConnectorIds()].some(predicate)
+}
+
+export function hasRestorablePersistedConnector(): boolean {
+  return hasPersistedConnectorMatching(isEagerlyRestorableConnectorId)
 }
 
 /**
- * Snapshotted at module evaluation. `createConfig()` overwrites `wagmi.store`
- * with an empty state as soon as it runs (Zustand's persist middleware writes
- * on the initial `setState`, and `skipHydration` is on for SSR), so any read
- * that happens later - e.g. from a React effect - sees no connections at all.
- * This module is a leaf of the Wagmi config graph, so it is evaluated before
- * that happens.
+ * Wagmi's SSR config immediately persists its empty initial state before it
+ * hydrates. Preserve an existing connection map through that one write, then
+ * delegate every subsequent write to Wagmi as normal.
  */
-let persistedConnectorIds: ReadonlySet<string> = readPersistedConnectorIds()
+export function createConnectorRestoringStorage(): Storage {
+  let preserveNextStoreWrite = readPersistedConnectorIds().size > 0
 
-/** Test-only: re-reads the snapshot after stubbing `window.localStorage`. */
-export function refreshPersistedConnectorSnapshot(): void {
-  persistedConnectorIds = readPersistedConnectorIds()
-}
-
-function getPersistedConnectorIds(): ReadonlySet<string> {
-  return persistedConnectorIds
+  return createStorage({
+    storage: {
+      ...browserStorage,
+      setItem(key, value) {
+        if (key === 'wagmi.store' && preserveNextStoreWrite) {
+          preserveNextStoreWrite = false
+          return
+        }
+        browserStorage.setItem(key, value)
+      },
+    },
+  })
 }
 
 function readPersistedConnectorIds(): ReadonlySet<string> {
-  if (typeof window === 'undefined') return new Set()
+  const ids = new Set<string>()
 
   try {
-    const value = window.localStorage.getItem('wagmi.store')
-    if (!value) return new Set()
+    const value = browserStorage.getItem('wagmi.store')
+    if (!value) return ids
 
-    const parsed = JSON.parse(value) as PersistedWagmiStore
-    const entries = parsed.state?.connections?.value
-    if (!Array.isArray(entries)) return new Set()
+    const parsed: unknown = JSON.parse(value)
+    const entries = getPersistedConnectionEntries(parsed)
 
-    const ids = new Set<string>()
     for (const entry of entries) {
       if (!Array.isArray(entry) || entry.length !== 2) continue
-      const connection = entry[1] as PersistedConnection
-      if (typeof connection.connector?.id !== 'string') continue
-      ids.add(connection.connector.id.toLowerCase())
-    }
 
-    return ids
-  } catch {
-    return new Set()
-  }
+      const connection = entry[1]
+      if (!isRecord(connection)) continue
+
+      const connector = connection.connector
+      if (!isRecord(connector) || typeof connector.id !== 'string') continue
+      ids.add(connector.id)
+    }
+  } catch {}
+
+  return ids
+}
+
+function getPersistedConnectionEntries(value: unknown): unknown[] {
+  if (!isRecord(value) || !isRecord(value.state)) return []
+
+  const connections = value.state.connections
+  if (!isRecord(connections) || !Array.isArray(connections.value)) return []
+
+  return connections.value
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isEagerlyRestorableConnectorId(connectorId: string): boolean {
+  return eagerlyRestorableConnectorIds.has(connectorId.toLowerCase())
 }

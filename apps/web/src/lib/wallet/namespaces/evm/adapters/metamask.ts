@@ -9,7 +9,7 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = evmConnectorFactories.metamasksdk()
+  createConnectorFn = evmConnectorFactories.metaMaskSDK()
   return createConnectorFn
 }
 
