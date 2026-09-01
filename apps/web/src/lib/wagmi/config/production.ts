@@ -3,6 +3,7 @@ import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http } from 'wagmi'
 import type { util } from 'zod'
+import { getPersistedConnectorFactories } from './persisted-connectors'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -77,6 +78,7 @@ export const createProductionConfig = () => {
   // it in a cookie only added weight to every request.
   return createConfig({
     ...publicWagmiConfig,
+    connectors: getPersistedConnectorFactories(),
     transports,
     pollingInterval,
     ssr: true,

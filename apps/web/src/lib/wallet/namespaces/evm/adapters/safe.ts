@@ -1,7 +1,7 @@
 'use client'
 
-import { safe } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
+import { evmConnectorFactories } from 'src/lib/wagmi/config/connector-factories'
 import { getConnectorById } from '../utils/connector'
 
 let createConnectorFn: CreateConnectorFn | undefined
@@ -9,7 +9,7 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = safe()
+  createConnectorFn = evmConnectorFactories.safe()
   return createConnectorFn
 }
 
