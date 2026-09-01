@@ -42,6 +42,11 @@ import {
   getCrossmintTarget,
   serializeCrossmintToken,
 } from 'src/lib/crossmint/crossmint-config'
+import {
+  CROSSMINT_RECEIPT_EMAILS_STORAGE_KEY,
+  getCrossmintReceiptEmailKey,
+  parseCrossmintReceiptEmails,
+} from 'src/lib/crossmint/crossmint-receipt-emails'
 import { convertFiatToUsdAmount } from 'src/lib/crossmint/fiat-exchange-rates'
 import { isValidCrossmintReceiptEmail } from 'src/lib/crossmint/validation'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
@@ -57,7 +62,7 @@ interface FiatBuyReviewDialogProps {
   children: ReactNode
 }
 
-const CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY = 'sushi.crossmint.receipt-email'
+const EMPTY_CROSSMINT_RECEIPT_EMAILS = {}
 
 export function FiatBuyReviewDialog({ children }: FiatBuyReviewDialogProps) {
   return (
@@ -79,10 +84,11 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
   const [isEditingEmail, setIsEditingEmail] = useState(false)
   const [isCreatingOrder, setIsCreatingOrder] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
-  const [receiptEmail, setReceiptEmail] = useLocalStorage<string>(
-    CROSSMINT_RECEIPT_EMAIL_STORAGE_KEY,
-    '',
-  )
+  const [storedReceiptEmails, setStoredReceiptEmails] =
+    useLocalStorage<unknown>(
+      CROSSMINT_RECEIPT_EMAILS_STORAGE_KEY,
+      EMPTY_CROSSMINT_RECEIPT_EMAILS,
+    )
   const [slippageTolerance] = useSlippageTolerance()
   const slippageBps = getSlippageToleranceBasisPoints(slippageTolerance)
   const isMounted = useIsMounted()
@@ -96,8 +102,6 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
     enabled: open,
   })
   const requestKeyRef = useRef<string | undefined>(undefined)
-  const visibleReceiptEmail = isMounted ? receiptEmail : ''
-  const hasSavedEmail = isValidCrossmintReceiptEmail(visibleReceiptEmail)
   const serializedToken = useMemo(() => {
     if (!tokenEntry) return undefined
 
@@ -120,6 +124,18 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
     }
   }, [serializedToken])
   const walletAddress = useAccount(target?.walletNamespace)
+  const receiptEmailKey =
+    target && walletAddress
+      ? getCrossmintReceiptEmailKey(target.walletNamespace, walletAddress)
+      : undefined
+  const previousReceiptEmailKeyRef = useRef(receiptEmailKey)
+  const receiptEmails = useMemo(
+    () => parseCrossmintReceiptEmails(storedReceiptEmails),
+    [storedReceiptEmails],
+  )
+  const visibleReceiptEmail =
+    isMounted && receiptEmailKey ? (receiptEmails[receiptEmailKey] ?? '') : ''
+  const hasSavedEmail = isValidCrossmintReceiptEmail(visibleReceiptEmail)
   const exchangeRate =
     paymentCurrency === 'usd' ? 1 : exchangeRates.data?.rates[paymentCurrency]
   const amountUsd = useMemo(() => {
@@ -149,6 +165,18 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
   useEffect(() => {
     setEmailDraft(visibleReceiptEmail)
   }, [visibleReceiptEmail])
+
+  useEffect(() => {
+    if (previousReceiptEmailKeyRef.current === receiptEmailKey) return
+
+    previousReceiptEmailKeyRef.current = receiptEmailKey
+    requestKeyRef.current = undefined
+    setCheckoutSession(undefined)
+    setError(undefined)
+    setIsEditingEmail(false)
+    setIsCreatingOrder(false)
+    setRetryCount(0)
+  }, [receiptEmailKey])
 
   useEffect(() => {
     if (open) return
@@ -242,14 +270,17 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
   function saveEmail(): void {
     const normalizedEmail = emailDraft.trim()
 
-    if (isValidCrossmintReceiptEmail(normalizedEmail)) {
+    if (receiptEmailKey && isValidCrossmintReceiptEmail(normalizedEmail)) {
       if (normalizedEmail !== visibleReceiptEmail) {
         requestKeyRef.current = undefined
         setCheckoutSession(undefined)
         setError(undefined)
       }
 
-      setReceiptEmail(normalizedEmail)
+      setStoredReceiptEmails((currentValue: unknown) => ({
+        ...parseCrossmintReceiptEmails(currentValue),
+        [receiptEmailKey]: normalizedEmail,
+      }))
       setIsEditingEmail(false)
     }
   }
@@ -296,7 +327,8 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
       : feeLabel === 'Included in quote'
         ? 'Fee included'
         : `${feeLabel} fee`
-  const canSaveEmail = isValidCrossmintReceiptEmail(emailDraft)
+  const canSaveEmail =
+    Boolean(receiptEmailKey) && isValidCrossmintReceiptEmail(emailDraft)
 
   return (
     <DialogReview>
@@ -437,8 +469,11 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Required by Crossmint for payment receipts and saved in
-                      this browser.
+                      Required by Crossmint for payment receipts and saved for
+                      this wallet in this browser.{' '}
+                      {tokenEntry?.token?.symbol === 'USDC'
+                        ? "For USDC purchases, your email is linked to this wallet and can't be changed. Other tokens allow a different email or wallet."
+                        : ''}
                     </p>
                   </div>
                 ) : null}

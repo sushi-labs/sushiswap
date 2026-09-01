@@ -115,7 +115,7 @@ function getFiatOrderColumns(
     },
     {
       id: 'tokenAmount',
-      header: 'Bought',
+      header: 'Received',
       accessorFn: (row) => row.tokenAmount,
       enableSorting: false,
       cell: ({ row }) => (

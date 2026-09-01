@@ -127,6 +127,7 @@ function CrossmintOrderCheckoutContent({
   const [showPaymentMethods, setShowPaymentMethods] = useState(false)
   const isPaymentComplete =
     order?.phase === 'delivery' || order?.phase === 'completed'
+  const requiresKyc = order?.payment?.status === 'requires-kyc'
   const {
     state: { token },
   } = useDerivedStateFiatBuy()
@@ -182,6 +183,10 @@ function CrossmintOrderCheckoutContent({
 
   // reveal the button once the iframe has content (ui:height.changed)
   useEffect(() => {
+    if (requiresKyc) {
+      setIsReady(true)
+      return
+    }
     const onMessage = (e: MessageEvent) => {
       if (!e.origin.endsWith('.crossmint.com')) return
       const event = (e.data as { event?: string } | null)?.event
@@ -194,7 +199,7 @@ function CrossmintOrderCheckoutContent({
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [])
+  }, [requiresKyc])
 
   if (!selectedMethod) {
     return (
