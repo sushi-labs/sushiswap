@@ -1,6 +1,9 @@
-import type { CreateConnectorFn } from '@wagmi/core'
+import type {
+  CreateConnectorFn,
+  Connector as WagmiConnector,
+} from '@wagmi/core'
 
-type Connector = ReturnType<CreateConnectorFn>
+type LoadedConnector = ReturnType<CreateConnectorFn>
 
 export type LazyConnectorDefinition = {
   id: string
@@ -37,11 +40,20 @@ export function createLazyConnector({
   type,
 }: LazyConnectorDefinition): CreateConnectorFn {
   return (config) => {
-    let connectorPromise: Promise<Connector> | undefined
+    let connectorPromise: Promise<LoadedConnector> | undefined
+    let connectorContext: WagmiConnector | undefined
 
-    function getConnector(): Promise<Connector> {
+    function initializeConnector(connector: LoadedConnector): LoadedConnector {
+      if (!connectorContext) return connector
+      return Object.assign(connector, {
+        emitter: connectorContext.emitter,
+        uid: connectorContext.uid,
+      })
+    }
+
+    function getConnector(): Promise<LoadedConnector> {
       connectorPromise ??= load()
-        .then((connectorFn) => connectorFn(config))
+        .then((connectorFn) => initializeConnector(connectorFn(config)))
         .catch((error: unknown) => {
           connectorPromise = undefined
           throw error
@@ -49,7 +61,9 @@ export function createLazyConnector({
       return connectorPromise
     }
 
-    function forwardEvent(callback: (connector: Connector) => void): void {
+    function forwardEvent(
+      callback: (connector: LoadedConnector) => void,
+    ): void {
       void getConnector().then(callback).catch(reportError)
     }
 
@@ -61,10 +75,11 @@ export function createLazyConnector({
       id,
       name,
       type,
-      async setup() {
+      async setup(this: WagmiConnector) {
+        connectorContext = this
         try {
           const connector = await getConnector()
-          await connector.setup?.call(this)
+          await connector.setup?.()
         } catch (error) {
           reportError(error)
         }
@@ -85,13 +100,8 @@ export function createLazyConnector({
         const connector = await getConnector()
         return connector.getChainId()
       },
-      async getClient(parameters) {
-        const connector = await getConnector()
-        if (!connector.getClient) {
-          throw new Error(`${name} connector does not provide a client`)
-        }
-        return connector.getClient(parameters)
-      },
+      // Do not declare optional `getClient` here. Wagmi checks for its
+      // presence and otherwise builds the connector client from `getProvider`.
       async getProvider(parameters) {
         const connector = await getConnector()
         return connector.getProvider(parameters)

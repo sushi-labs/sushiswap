@@ -42,13 +42,21 @@ describe('connector utilities', () => {
 
   it('loads a lazy connector only during setup', async () => {
     const setup = vi.fn()
+    const onSessionDelete = vi.fn()
     const baseConnectorFn = mock({
       accounts: ['0x0000000000000000000000000000000000000001'],
     })
-    const sourceConnectorFn: CreateConnectorFn = (config) => ({
-      ...baseConnectorFn(config),
-      setup,
-    })
+    const sourceConnectorFn: CreateConnectorFn = (config) => {
+      const connector = {
+        ...baseConnectorFn(config),
+        onSessionDelete,
+        async setup() {
+          this.onSessionDelete.bind(this)
+          setup.call(this)
+        },
+      }
+      return connector
+    }
     const load = vi.fn().mockResolvedValue(sourceConnectorFn)
     const connectorFn = createLazyConnector({
       id: 'lazy',
@@ -68,7 +76,12 @@ describe('connector utilities', () => {
 
     await vi.waitFor(() => expect(setup).toHaveBeenCalledOnce())
     expect(load).toHaveBeenCalledOnce()
-    expect(setup.mock.instances).toEqual([connector])
+    expect(connector.getClient).toBeUndefined()
+    expect(setup.mock.instances[0]).toMatchObject({
+      emitter: connector.emitter,
+      onSessionDelete,
+      uid: connector.uid,
+    })
   })
 
   it('retries after a lazy connector load fails', async () => {
