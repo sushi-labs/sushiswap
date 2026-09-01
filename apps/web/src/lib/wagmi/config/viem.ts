@@ -177,10 +177,6 @@ export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
     ...viemChain,
     rpcUrls: {
       ...viemChain.rpcUrls,
-      default: {
-        ...viemChain.rpcUrls.default,
-        http: [rpcUrl],
-      },
       // Privy's patched `getPublicClient` reads this explicit override and
       // restores Sushi's dRPC JWT on the resulting HTTP transport.
       privyWalletOverride: {

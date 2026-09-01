@@ -21,12 +21,19 @@ const initialSnapshot: PrivyRuntimeSnapshot = {
   status: 'unavailable',
 }
 
+interface CreatePrivyRuntimeStoreOptions {
+  evmReconnectTimeoutMs?: number
+}
+
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error('Privy runtime failed')
 }
 
-export function createPrivyRuntimeStore(): PrivyRuntimeStore {
+export function createPrivyRuntimeStore({
+  evmReconnectTimeoutMs,
+}: CreatePrivyRuntimeStoreOptions = {}): PrivyRuntimeStore {
   let snapshot = initialSnapshot
+  let evmReconnectTimeout: ReturnType<typeof setTimeout> | undefined
   const listeners = new Set<PrivyRuntimeListener>()
 
   function publish(nextSnapshot: PrivyRuntimeSnapshot): void {
@@ -35,19 +42,41 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
     for (const listener of listeners) listener(snapshot, previousSnapshot)
   }
 
-  return {
-    clearEvmReconnect() {
+  function cancelEvmReconnectTimeout(): void {
+    if (!evmReconnectTimeout) return
+    clearTimeout(evmReconnectTimeout)
+    evmReconnectTimeout = undefined
+  }
+
+  function clearEvmReconnect(): void {
+    cancelEvmReconnectTimeout()
+    if (!snapshot.evmReconnect) return
+    publish({ ...snapshot, evmReconnect: false })
+  }
+
+  function scheduleEvmReconnectTimeout(): void {
+    if (!evmReconnectTimeoutMs || evmReconnectTimeout) return
+    evmReconnectTimeout = setTimeout(() => {
+      evmReconnectTimeout = undefined
       if (!snapshot.evmReconnect) return
       publish({ ...snapshot, evmReconnect: false })
-    },
+    }, evmReconnectTimeoutMs)
+  }
+
+  return {
+    clearEvmReconnect,
     getSnapshot() {
       return snapshot
     },
     publishRuntime(publication) {
       if (publication.authenticated) {
+        const evmReconnect = publication.hasEvmAccount
+          ? snapshot.evmReconnect
+          : false
+        if (!evmReconnect) cancelEvmReconnectTimeout()
         publish({
           authenticated: true,
-          evmReconnect: snapshot.evmReconnect,
+          evmReconnect,
           evmWallet: publication.evmWallet ?? null,
           hasEvmAccount: publication.hasEvmAccount,
           hasSvmAccount: publication.hasSvmAccount,
@@ -57,9 +86,10 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           svmWallet: publication.svmWallet ?? null,
         })
       } else {
+        cancelEvmReconnectTimeout()
         publish({
           authenticated: false,
-          evmReconnect: snapshot.evmReconnect,
+          evmReconnect: false,
           evmWallet: null,
           operations: publication.operations,
           requested: true,
@@ -80,11 +110,13 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           requested: true,
           status: 'loading',
         })
+        if (evmReconnect) scheduleEvmReconnectTimeout()
         return
       }
 
       if (evmReconnect === snapshot.evmReconnect) return
       publish({ ...snapshot, evmReconnect, requested: true })
+      if (evmReconnect) scheduleEvmReconnectTimeout()
     },
     setError(error) {
       publish({
@@ -117,4 +149,6 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
   }
 }
 
-export const privyRuntimeStore = createPrivyRuntimeStore()
+export const privyRuntimeStore = createPrivyRuntimeStore({
+  evmReconnectTimeoutMs: 5_000,
+})
