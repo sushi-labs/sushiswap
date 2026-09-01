@@ -63,6 +63,8 @@ interface FiatBuyReviewDialogProps {
 }
 
 const EMPTY_CROSSMINT_RECEIPT_EMAILS = {}
+const NEXT_SERVER_ERROR_MESSAGE =
+  'An error occurred in the Server Components render.'
 
 export function FiatBuyReviewDialog({ children }: FiatBuyReviewDialogProps) {
   return (
@@ -231,7 +233,7 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
       setIsCreatingOrder(true)
 
       try {
-        const order = await createCrossmintOrder({
+        const result = await createCrossmintOrder({
           amountUsd: orderAmountUsd,
           paymentCurrency,
           receiptEmail: visibleReceiptEmail,
@@ -240,7 +242,13 @@ function FiatBuyReviewDialogContent({ children }: FiatBuyReviewDialogProps) {
           walletAddress: orderWalletAddress,
         })
 
-        if (!ignore) setCheckoutSession(order)
+        if (ignore) return
+
+        if ('errorMessage' in result) {
+          setError(result.errorMessage)
+        } else {
+          setCheckoutSession(result)
+        }
       } catch (caughtError) {
         if (!ignore) setError(normalizeError(caughtError).message)
       } finally {
@@ -551,9 +559,13 @@ function ReviewDetail({
 }
 
 function normalizeError(error: unknown): Error {
-  return error instanceof Error
-    ? error
-    : new Error('Crossmint checkout could not be started')
+  if (!(error instanceof Error)) {
+    return new Error('Crossmint checkout could not be started')
+  }
+
+  return error.message.startsWith(NEXT_SERVER_ERROR_MESSAGE)
+    ? new Error('Crossmint checkout could not be started. Please try again.')
+    : error
 }
 
 function formatReceiveAmount(

@@ -61,6 +61,14 @@ export interface CrossmintCreatedOrder {
   quote?: CrossmintCreatedOrderQuote
 }
 
+export interface CrossmintOrderError {
+  errorMessage: string
+}
+
+export type CreateCrossmintOrderResult =
+  | CrossmintCreatedOrder
+  | CrossmintOrderError
+
 type CrossmintOrderPhase = 'quote' | 'payment' | 'delivery' | 'completed'
 
 interface CrossmintOrderMetadata {

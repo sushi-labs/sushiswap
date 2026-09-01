@@ -6,7 +6,11 @@ import {
   getCrossmintServerEnvironment,
   requestCrossmint,
 } from '../request-crossmint'
-import type { CreateCrossmintOrderInput, CrossmintCreatedOrder } from '../types'
+import type {
+  CreateCrossmintOrderInput,
+  CreateCrossmintOrderResult,
+  CrossmintCreatedOrder,
+} from '../types'
 import {
   createCrossmintOrderInputSchema,
   isValidCrossmintWalletAddress,
@@ -75,9 +79,23 @@ async function linkCrossmintOnrampWallet({
   )
 }
 
+function emailWalletLinkError(error: unknown): string {
+  if (error instanceof Error) {
+    if (
+      error.message ===
+      'Crossmint request failed: This wallet is already linked to a different user'
+    ) {
+      return 'This wallet is already linked to an email. Use the email associated with this wallet.'
+    }
+    return error.message
+  }
+
+  return 'An unknown error occurred while linking the Crossmint onramp wallet'
+}
+
 export async function createCrossmintOrder(
   input: CreateCrossmintOrderInput,
-): Promise<CrossmintCreatedOrder> {
+): Promise<CreateCrossmintOrderResult> {
   const parsedInput = createCrossmintOrderInputSchema.parse(input)
   const {
     amountUsd,
@@ -94,11 +112,19 @@ export async function createCrossmintOrder(
   }
 
   if (target.kind === 'stablecoin') {
-    await linkCrossmintOnrampWallet({
-      receiptEmail,
-      tokenLocator: target.tokenLocator,
-      walletAddress,
-    })
+    try {
+      await linkCrossmintOnrampWallet({
+        receiptEmail,
+        tokenLocator: target.tokenLocator,
+        walletAddress,
+      })
+    } catch (error) {
+      if (error instanceof Error) {
+        return { errorMessage: emailWalletLinkError(error) }
+      }
+
+      throw error
+    }
   }
 
   const executionParameters: Record<string, string> = {

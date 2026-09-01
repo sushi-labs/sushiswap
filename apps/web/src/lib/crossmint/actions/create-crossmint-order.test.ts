@@ -154,7 +154,36 @@ describe('createCrossmintOrder', () => {
         token: BASE_USDC,
         walletAddress: '0x0000000000000000000000000000000000000001',
       }),
-    ).rejects.toThrow('Crossmint request failed: Wallet could not be linked')
+    ).resolves.toEqual({
+      errorMessage: 'Crossmint request failed: Wallet could not be linked',
+    })
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('returns the known Crossmint wallet-link error message', async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            message: 'This wallet is already linked to a different user',
+          }),
+          { status: 400 },
+        ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(
+      createCrossmintOrder({
+        amountUsd: '5',
+        receiptEmail: 'buyer@example.com',
+        slippageBps: SLIPPAGE_BPS,
+        token: BASE_USDC,
+        walletAddress: '0x0000000000000000000000000000000000000001',
+      }),
+    ).resolves.toEqual({
+      errorMessage:
+        'Crossmint request failed: This wallet is already linked to a different user',
+    })
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
