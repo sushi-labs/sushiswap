@@ -1,7 +1,6 @@
 'use client'
 
 import type { CreateConnectorFn } from '@wagmi/core'
-import { evmConnectorFactories } from 'src/lib/wagmi/config/connector-factories'
 import { getConnectorById } from '../utils/connector'
 
 let createConnectorFn: CreateConnectorFn | undefined
@@ -9,7 +8,10 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = evmConnectorFactories.coinbaseWalletSDK()
+  const { coinbaseWallet } = await import('@wagmi/connectors')
+  createConnectorFn = coinbaseWallet({
+    preference: { options: 'all', telemetry: false },
+  })
   return createConnectorFn
 }
 

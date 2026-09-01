@@ -3,7 +3,8 @@ import {
   type Storage,
   createStorage,
 } from '@wagmi/core'
-import { getEvmConnectorFactory } from './connector-factories'
+import { WALLET_CONNECT_PROJECT_ID } from './connector-options'
+import { createLazyConnector } from './connector-utils'
 
 // MetaMask and Coinbase are restored through EIP-6963 discovery. Registering
 // their SDK connectors here would make Wagmi dedupe the discovered extensions
@@ -39,25 +40,20 @@ const browserStorage = {
  * therefore cannot reconnect after a reload.
  */
 export function getPersistedConnectorFactories(): CreateConnectorFn[] {
-  const factories = new Set<() => CreateConnectorFn>()
+  const factories = new Map<string, CreateConnectorFn>()
   for (const id of readPersistedConnectorIds()) {
-    if (!isEagerlyRestorableConnectorId(id)) continue
+    const normalizedId = id.toLowerCase()
+    if (factories.has(normalizedId)) continue
 
-    const factory = getEvmConnectorFactory(id)
-    if (factory) factories.add(factory)
+    const factory = getPersistedConnectorFactory(normalizedId)
+    if (factory) factories.set(normalizedId, factory)
   }
 
-  return [...factories].map((factory) => factory())
+  return [...factories.values()]
 }
 
-export function hasPersistedConnectorMatching(
-  predicate: (connectorId: string) => boolean,
-): boolean {
-  return [...readPersistedConnectorIds()].some(predicate)
-}
-
-export function hasRestorablePersistedConnector(): boolean {
-  return hasPersistedConnectorMatching(isEagerlyRestorableConnectorId)
+function hasPersistedConnections(): boolean {
+  return readPersistedConnectorIds().size > 0
 }
 
 /**
@@ -66,14 +62,18 @@ export function hasRestorablePersistedConnector(): boolean {
  * delegate every subsequent write to Wagmi as normal.
  */
 export function createConnectorRestoringStorage(): Storage {
-  let preserveNextStoreWrite = readPersistedConnectorIds().size > 0
+  let preservePersistedConnections = hasPersistedConnections()
 
   return createStorage({
     storage: {
       ...browserStorage,
       setItem(key, value) {
-        if (key === 'wagmi.store' && preserveNextStoreWrite) {
-          preserveNextStoreWrite = false
+        if (
+          key === 'wagmi.store' &&
+          preservePersistedConnections &&
+          hasEmptyPersistedConnections(value)
+        ) {
+          preservePersistedConnections = false
           return
         }
         browserStorage.setItem(key, value)
@@ -90,7 +90,7 @@ function readPersistedConnectorIds(): ReadonlySet<string> {
     if (!value) return ids
 
     const parsed: unknown = JSON.parse(value)
-    const entries = getPersistedConnectionEntries(parsed)
+    const entries = getPersistedConnectionEntries(parsed) ?? []
 
     for (const entry of entries) {
       if (!Array.isArray(entry) || entry.length !== 2) continue
@@ -107,19 +107,56 @@ function readPersistedConnectorIds(): ReadonlySet<string> {
   return ids
 }
 
-function getPersistedConnectionEntries(value: unknown): unknown[] {
-  if (!isRecord(value) || !isRecord(value.state)) return []
+function getPersistedConnectionEntries(value: unknown): unknown[] | undefined {
+  if (!isRecord(value) || !isRecord(value.state)) return undefined
 
   const connections = value.state.connections
-  if (!isRecord(connections) || !Array.isArray(connections.value)) return []
+  if (!isRecord(connections) || !Array.isArray(connections.value)) {
+    return undefined
+  }
 
   return connections.value
+}
+
+function hasEmptyPersistedConnections(value: string): boolean {
+  try {
+    return getPersistedConnectionEntries(JSON.parse(value))?.length === 0
+  } catch {
+    return false
+  }
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-function isEagerlyRestorableConnectorId(connectorId: string): boolean {
-  return eagerlyRestorableConnectorIds.has(connectorId.toLowerCase())
+function getPersistedConnectorFactory(
+  normalizedConnectorId: string,
+): CreateConnectorFn | undefined {
+  if (!eagerlyRestorableConnectorIds.has(normalizedConnectorId)) return
+
+  switch (normalizedConnectorId) {
+    case 'safe':
+      return createLazyConnector({
+        id: 'safe',
+        name: 'Safe',
+        type: 'safe',
+        async load() {
+          const { safe } = await import('@wagmi/connectors')
+          return safe()
+        },
+      })
+    case 'walletconnect':
+      return createLazyConnector({
+        id: 'walletConnect',
+        name: 'WalletConnect',
+        type: 'walletConnect',
+        async load() {
+          const { walletConnect } = await import('@wagmi/connectors')
+          return walletConnect({
+            projectId: WALLET_CONNECT_PROJECT_ID,
+          })
+        },
+      })
+  }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import type { CreateConnectorFn } from '@wagmi/core'
-import { evmConnectorFactories } from 'src/lib/wagmi/config/connector-factories'
+import { withConnectorSetupErrorLogging } from 'src/lib/wagmi/config/connector-utils'
 import { getConnectorById } from '../utils/connector'
 
 let createConnectorFn: CreateConnectorFn | undefined
@@ -9,7 +9,8 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = evmConnectorFactories.metaMaskSDK()
+  const { metaMask } = await import('@wagmi/connectors')
+  createConnectorFn = withConnectorSetupErrorLogging(metaMask(), 'MetaMask')
   return createConnectorFn
 }
 

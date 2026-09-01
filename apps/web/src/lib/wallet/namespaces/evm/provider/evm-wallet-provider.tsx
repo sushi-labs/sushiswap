@@ -18,7 +18,6 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { hasRestorablePersistedConnector } from 'src/lib/wagmi/config/persisted-connectors'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import {
   getIsPrivyWalletProviderReady,
@@ -240,5 +239,33 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 async function getHasInitialWagmiReconnectCandidate(): Promise<boolean> {
-  return hasRestorablePersistedConnector()
+  const config = getWagmiConfig()
+  const persistedStore = await config.storage?.getItem('store')
+  const recentConnectorId = await config.storage?.getItem('recentConnectorId')
+  const wasExplicitlyDisconnected =
+    typeof recentConnectorId === 'string' && recentConnectorId.length > 0
+      ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
+      : false
+
+  return (
+    hasCurrentConnection(persistedStore) ||
+    (typeof recentConnectorId === 'string' &&
+      recentConnectorId.length > 0 &&
+      wasExplicitlyDisconnected !== true)
+  )
+}
+
+function hasCurrentConnection(persistedStore: unknown): boolean {
+  if (
+    !persistedStore ||
+    typeof persistedStore !== 'object' ||
+    !('state' in persistedStore)
+  ) {
+    return false
+  }
+
+  const { state } = persistedStore
+  return Boolean(
+    state && typeof state === 'object' && 'current' in state && state.current,
+  )
 }
