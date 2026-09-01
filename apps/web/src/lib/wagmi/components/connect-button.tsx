@@ -4,6 +4,7 @@ import { Button, type ButtonProps } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import type { WalletNamespace } from 'src/lib/wallet'
 import { SelectWalletButton } from 'src/lib/wallet/components/select-wallet-button'
+import { isLivePrivyE2eEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
 import { useWalletContext } from 'src/lib/wallet/provider'
 import { useConnectors } from 'wagmi'
 import { useConnect } from '../hooks/wallet/use-connect'
@@ -18,7 +19,8 @@ export const ConnectButton: FC<ConnectButtonProps> = ({
   pendingText,
   ...props
 }) => {
-  return process.env.NEXT_PUBLIC_APP_ENV === 'test' ? (
+  return process.env.NEXT_PUBLIC_APP_ENV === 'test' &&
+    !isLivePrivyE2eEnabled() ? (
     <TestConnectButton pendingText={pendingText} {...props} />
   ) : (
     <SelectWalletButton

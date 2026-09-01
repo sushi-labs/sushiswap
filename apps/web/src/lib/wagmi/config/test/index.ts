@@ -1,4 +1,5 @@
 import { mock } from '@wagmi/connectors'
+import { isPrivyE2eEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
 import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
@@ -51,8 +52,10 @@ export const createTestConfig = () => {
     // The Privy test runtime registers its real injected connector lazily.
     // Keeping the default mock here would violate the app's one-wallet
     // invariant and make targeted Privy restoration intentionally fail.
-    connectors: hasPersistedConnectorMatching(isPrivyEvmConnectorId)
-      ? []
-      : [mockConnector],
+    connectors:
+      hasPersistedConnectorMatching(isPrivyEvmConnectorId) ||
+      isPrivyE2eEnabled()
+        ? []
+        : [mockConnector],
   })
 }
