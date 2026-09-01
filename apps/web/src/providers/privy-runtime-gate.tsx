@@ -15,13 +15,17 @@ function loadPrivyRuntime(): Promise<{ PrivyRuntime: PrivyRuntimeComponent }> {
   return import('./privy-runtime')
 }
 
-function requestSessionRuntime(): void {
+function requestSessionRuntime(evmReconnect: boolean): void {
   privyRuntimeStore.requestRuntime({
-    evmReconnect: hasPersistedConnectorMatching(isPrivyEvmConnectorId),
+    evmReconnect,
   })
 }
 
-export function PrivyRuntimeGate() {
+export function PrivyRuntimeGate({
+  shouldReconnectPrivyEvm,
+}: {
+  shouldReconnectPrivyEvm: boolean
+}) {
   const { requested, status } = useSyncExternalStore(
     privyRuntimeStore.subscribe,
     privyRuntimeStore.getSnapshot,
@@ -31,15 +35,17 @@ export function PrivyRuntimeGate() {
 
   useEffect(() => {
     if (hasStoredPrivySession()) {
-      requestSessionRuntime()
+      requestSessionRuntime(shouldReconnectPrivyEvm)
     }
-  }, [])
+  }, [shouldReconnectPrivyEvm])
 
   useEffect(() => {
     function onStorage(event: StorageEvent) {
       if (!isPrivySessionStorageKey(event.key)) return
       if (hasStoredPrivySession()) {
-        requestSessionRuntime()
+        requestSessionRuntime(
+          hasPersistedConnectorMatching(isPrivyEvmConnectorId),
+        )
       }
     }
 
