@@ -8,6 +8,14 @@ let isRestoringByNamespace: Record<WalletNamespace, boolean> = {
   svm: shouldTrackWalletRestoration,
   stellar: false,
 }
+// Restoration only covers the initial provider hydration. Once a namespace
+// settles, delayed provider status changes must not put the UI back into its
+// startup loading state.
+const hasFinishedRestoringByNamespace: Record<WalletNamespace, boolean> = {
+  evm: !shouldTrackWalletRestoration,
+  svm: !shouldTrackWalletRestoration,
+  stellar: true,
+}
 const connectionListeners = new Set<() => void>()
 const restorationListeners = new Set<() => void>()
 
@@ -72,7 +80,13 @@ export function setWalletNamespaceRestoring(
   namespace: WalletNamespace,
   isRestoring: boolean,
 ) {
+  if (hasFinishedRestoringByNamespace[namespace]) return
+
   const nextIsRestoring = shouldTrackWalletRestoration && isRestoring
+
+  if (!nextIsRestoring) {
+    hasFinishedRestoringByNamespace[namespace] = true
+  }
 
   if (isRestoringByNamespace[namespace] === nextIsRestoring) return
 
