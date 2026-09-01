@@ -1,7 +1,7 @@
 import type { EvmAddress } from 'sushi/evm'
 import type { SvmAddress } from 'sushi/svm'
 import type { Hex } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createPrivyRuntimeStore } from './privy-runtime-store'
 import type { PrivyEvmWallet, PrivyRuntimeOperationHandlers } from './types'
 
@@ -26,6 +26,8 @@ function createWallet(): PrivyEvmWallet {
 }
 
 describe('Privy runtime store', () => {
+  afterEach(() => vi.useRealTimers())
+
   it('latches runtime requests', () => {
     const store = createPrivyRuntimeStore()
     const listener = vi.fn()
@@ -81,7 +83,7 @@ describe('Privy runtime store', () => {
 
   it('publishes an unauthenticated runtime without wallet capabilities', () => {
     const store = createPrivyRuntimeStore()
-    store.requestRuntime()
+    store.requestRuntime({ evmReconnect: true })
     store.publishRuntime({
       authenticated: false,
       operations: createOperations(),
@@ -89,10 +91,39 @@ describe('Privy runtime store', () => {
 
     expect(store.getSnapshot()).toMatchObject({
       authenticated: false,
+      evmReconnect: false,
       evmWallet: null,
       status: 'ready',
       svmWallet: null,
     })
+  })
+
+  it('clears reconnect when an authenticated user has no EVM account', () => {
+    const store = createPrivyRuntimeStore()
+    store.requestRuntime({ evmReconnect: true })
+
+    store.publishRuntime({
+      authenticated: true,
+      evmWallet: null,
+      hasEvmAccount: false,
+      hasSvmAccount: false,
+      operations: createOperations(),
+      svmWallet: null,
+    })
+
+    expect(store.getSnapshot().evmReconnect).toBe(false)
+  })
+
+  it('expires reconnect when Privy never becomes ready', () => {
+    vi.useFakeTimers()
+    const store = createPrivyRuntimeStore({ evmReconnectTimeoutMs: 1_000 })
+    store.requestRuntime({ evmReconnect: true })
+
+    vi.advanceTimersByTime(999)
+    expect(store.getSnapshot().evmReconnect).toBe(true)
+
+    vi.advanceTimersByTime(1)
+    expect(store.getSnapshot().evmReconnect).toBe(false)
   })
 
   it('publishes the latest wallet synchronously', () => {
@@ -208,14 +239,9 @@ describe('Privy runtime store', () => {
     expect(store.getSnapshot().evmReconnect).toBe(false)
   })
 
-  it('keeps a runtime request latched when the provider unmounts', () => {
+  it('keeps a runtime request latched when the provider unmounts before readiness', () => {
     const store = createPrivyRuntimeStore()
     store.requestRuntime({ evmReconnect: true })
-    store.publishRuntime({
-      authenticated: false,
-      operations: createOperations(),
-    })
-
     store.setUnavailable()
 
     expect(store.getSnapshot()).toEqual({
