@@ -2,6 +2,13 @@ import type { CreateConnectorFn } from '@wagmi/core'
 
 type Connector = ReturnType<CreateConnectorFn>
 
+export type LazyConnectorDefinition = {
+  id: string
+  load: () => Promise<CreateConnectorFn>
+  name: string
+  type: string
+}
+
 export function withConnectorSetupErrorLogging(
   connectorFn: CreateConnectorFn,
   connectorName: string,
@@ -28,12 +35,7 @@ export function createLazyConnector({
   load,
   name,
   type,
-}: {
-  id: string
-  load: () => Promise<CreateConnectorFn>
-  name: string
-  type: string
-}): CreateConnectorFn {
+}: LazyConnectorDefinition): CreateConnectorFn {
   return (config) => {
     let connectorPromise: Promise<Connector> | undefined
 

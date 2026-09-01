@@ -3,13 +3,23 @@ import {
   type Storage,
   createStorage,
 } from '@wagmi/core'
-import { WALLET_CONNECT_PROJECT_ID } from './connector-options'
-import { createLazyConnector } from './connector-utils'
+import { safeConnectorDefinition } from 'src/lib/wallet/namespaces/evm/adapters/safe-definition'
+import { walletConnectConnectorDefinition } from 'src/lib/wallet/namespaces/evm/adapters/walletconnect-definition'
+import {
+  type LazyConnectorDefinition,
+  createLazyConnector,
+} from './connector-utils'
 
 // MetaMask and Coinbase are restored through EIP-6963 discovery. Registering
 // their SDK connectors here would make Wagmi dedupe the discovered extensions
 // by `rdns`, removing those extension connectors from `useConnectors()`.
-const eagerlyRestorableConnectorIds = new Set(['safe', 'walletconnect'])
+const eagerlyRestorableConnectorDefinitions = new Map<
+  string,
+  LazyConnectorDefinition
+>([
+  ['safe', safeConnectorDefinition],
+  ['walletconnect', walletConnectConnectorDefinition],
+])
 
 const browserStorage = {
   getItem(key: string): string | null {
@@ -133,30 +143,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function getPersistedConnectorFactory(
   normalizedConnectorId: string,
 ): CreateConnectorFn | undefined {
-  if (!eagerlyRestorableConnectorIds.has(normalizedConnectorId)) return
-
-  switch (normalizedConnectorId) {
-    case 'safe':
-      return createLazyConnector({
-        id: 'safe',
-        name: 'Safe',
-        type: 'safe',
-        async load() {
-          const { safe } = await import('@wagmi/connectors')
-          return safe()
-        },
-      })
-    case 'walletconnect':
-      return createLazyConnector({
-        id: 'walletConnect',
-        name: 'WalletConnect',
-        type: 'walletConnect',
-        async load() {
-          const { walletConnect } = await import('@wagmi/connectors')
-          return walletConnect({
-            projectId: WALLET_CONNECT_PROJECT_ID,
-          })
-        },
-      })
-  }
+  const definition = eagerlyRestorableConnectorDefinitions.get(
+    normalizedConnectorId,
+  )
+  return definition ? createLazyConnector(definition) : undefined
 }
