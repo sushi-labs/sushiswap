@@ -37,15 +37,10 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/actions/install
-        env:
-          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
-
-      # The shared install action currently selects Node 20. Restore the
-      # repository's required runtime after it completes.
-      - name: Set up Node
-        uses: actions/setup-node@v7
         with:
           node-version: 24
+        env:
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
 
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
