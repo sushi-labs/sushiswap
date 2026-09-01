@@ -1,31 +1,23 @@
 'use client'
 
-import { type ConnectedWallet, useWallets } from '@privy-io/react-auth'
-import {
-  type ConnectedStandardSolanaWallet,
-  useWallets as useSolWallets,
-} from '@privy-io/react-auth/solana'
-import { getEmbeddedPrivyWallet } from 'src/lib/wallet/privy'
+import type { PrivyEvmWallet, PrivySvmWallet } from 'src/lib/wallet/privy/types'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 
 type Namespace = 'evm' | 'svm'
 
 export function usePrivyEmbeddedWallet(
   namespace: 'evm',
-): ConnectedWallet | undefined
+): PrivyEvmWallet | undefined
 
 export function usePrivyEmbeddedWallet(
   namespace: 'svm',
-): ConnectedStandardSolanaWallet | undefined
+): PrivySvmWallet | undefined
 
 export function usePrivyEmbeddedWallet(
   namespace: Namespace,
-): ConnectedWallet | ConnectedStandardSolanaWallet | undefined {
-  const { wallets } = useWallets()
-  const { wallets: solWallets } = useSolWallets()
-
-  if (namespace === 'svm') {
-    return getEmbeddedPrivyWallet(solWallets, 'svm')
-  }
-
-  return getEmbeddedPrivyWallet(wallets, 'evm')
+): PrivyEvmWallet | PrivySvmWallet | undefined {
+  const snapshot = usePrivyRuntime()
+  return namespace === 'svm'
+    ? (snapshot.svmWallet ?? undefined)
+    : (snapshot.evmWallet ?? undefined)
 }

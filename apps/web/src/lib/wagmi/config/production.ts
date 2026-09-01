@@ -1,7 +1,6 @@
-import { createConfig } from '@privy-io/wagmi'
 import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
-import { http } from 'wagmi'
+import { http, createConfig } from 'wagmi'
 import type { util } from 'zod'
 import {
   createConnectorRestoringStorage,

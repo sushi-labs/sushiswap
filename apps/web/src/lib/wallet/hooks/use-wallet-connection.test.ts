@@ -39,7 +39,10 @@ describe('useWalletConnection', () => {
       svm: false,
       stellar: false,
     })
-    mocks.useWalletState.mockReturnValue({ pendingWalletId: undefined })
+    mocks.useWalletState.mockReturnValue({
+      isPending: false,
+      pendingWalletId: undefined,
+    })
   })
 
   it('returns connection information for a namespace', () => {
@@ -82,7 +85,10 @@ describe('useWalletConnection', () => {
       connections: [],
       isConnected: false,
     })
-    mocks.useWalletState.mockReturnValue({ pendingWalletId: 'evm:injected' })
+    mocks.useWalletState.mockReturnValue({
+      isPending: true,
+      pendingWalletId: 'evm:injected',
+    })
     mocks.useWalletRestorationState.mockReturnValue({
       evm: true,
       svm: false,
@@ -100,9 +106,23 @@ describe('useWalletConnection', () => {
   })
 
   it('scopes pending state to the requested namespace', () => {
-    mocks.useWalletState.mockReturnValue({ pendingWalletId: 'svm:phantom' })
+    mocks.useWalletState.mockReturnValue({
+      isPending: true,
+      pendingWalletId: 'svm:phantom',
+    })
 
     expect(useWalletConnection('evm').isPending).toBe(false)
     expect(useWalletConnection('svm').isPending).toBe(true)
+  })
+
+  it('scopes a pending Privy reconnect to EVM', () => {
+    mocks.useWalletState.mockReturnValue({
+      isPending: true,
+      pendingWalletId: undefined,
+    })
+
+    expect(useWalletConnection().isPending).toBe(true)
+    expect(useWalletConnection('evm').isPending).toBe(true)
+    expect(useWalletConnection('svm').isPending).toBe(false)
   })
 })

@@ -62,8 +62,14 @@ export function getPersistedConnectorFactories(): CreateConnectorFn[] {
   return [...factories.values()]
 }
 
-function hasPersistedConnections(): boolean {
+export function hasPersistedConnections(): boolean {
   return readPersistedConnectorIds().size > 0
+}
+
+export function hasPersistedConnectorMatching(
+  predicate: (connectorId: string) => boolean,
+): boolean {
+  return [...readPersistedConnectorIds()].some(predicate)
 }
 
 /**

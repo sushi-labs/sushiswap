@@ -156,17 +156,39 @@ export const publicTransports = {
   [EvmChainId.BOKUTO]: http('https://rpc-bokuto.katanarpc.com'),
 } as const satisfies Record<EvmChainId, Transport>
 
-function pluck<
-  Arr extends readonly Record<string, any>[],
-  K extends keyof Arr[number],
->(arr: Arr, key: K): { [I in keyof Arr]: Arr[I][K] } {
-  // @ts-ignore
-  return arr.map((item) => item[key]) as any
+function mapTuple<const Items extends readonly unknown[], Result>(
+  items: Items,
+  mapper: (item: Items[number]) => Result,
+): { [Index in keyof Items]: Result } {
+  return items.map(mapper) as unknown as { [Index in keyof Items]: Result }
 }
 
-export const publicChains = pluck(evmChains, 'viemChain') satisfies Readonly<
-  Chain[]
->
+export function getPublicRpcUrl(chainId: EvmChainId): string {
+  const rpcUrl = publicTransports[chainId]({ chain: undefined }).value?.url
+
+  if (!rpcUrl) throw new Error(`Missing public RPC URL for chain ${chainId}`)
+  return rpcUrl
+}
+
+export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
+  const rpcUrl = getPublicRpcUrl(viemChain.id)
+
+  return {
+    ...viemChain,
+    rpcUrls: {
+      ...viemChain.rpcUrls,
+      default: {
+        ...viemChain.rpcUrls.default,
+        http: [rpcUrl],
+      },
+      // Privy's patched `getPublicClient` reads this explicit override and
+      // restores Sushi's dRPC JWT on the resulting HTTP transport.
+      privyWalletOverride: {
+        http: [rpcUrl],
+      },
+    },
+  }
+}) satisfies Readonly<Chain[]>
 
 export function fromEntriesConst<
   const Pairs extends readonly (readonly [PropertyKey, any])[],

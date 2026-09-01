@@ -2,6 +2,7 @@
 
 import { type Connector, getConnectors, injected } from '@wagmi/core'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
+import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
 
 function getConnector(uid: string | undefined) {
   const connectors = getConnectors(getWagmiConfig())
@@ -26,8 +27,9 @@ export const getInjectedConnector = async (ctx?: {
 
 export function isInjectedConnector(connector: Connector) {
   return (
-    connector.type === 'injected' ||
-    connector.id === 'injected' ||
-    connector.name.toLowerCase().includes('injected')
+    !isPrivyEvmConnectorId(connector.id) &&
+    (connector.type === 'injected' ||
+      connector.id === 'injected' ||
+      connector.name.toLowerCase().includes('injected'))
   )
 }

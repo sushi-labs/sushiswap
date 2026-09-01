@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useMemo, useState } from 'react'
+import { usePrivyEvmReconnectPending } from '../privy/use-privy-runtime'
 import type { WalletState } from './types'
 
 const WalletStateContext = createContext<WalletState | null>(null)
@@ -21,13 +22,15 @@ export function WalletStateProvider({
   const [pendingWalletId, setPendingWalletId] = useState<string | undefined>(
     undefined,
   )
+  const isPrivyReconnectPending = usePrivyEvmReconnectPending()
 
   const value = useMemo(
     () => ({
+      isPending: Boolean(pendingWalletId) || isPrivyReconnectPending,
       pendingWalletId,
       setPendingWalletId,
     }),
-    [pendingWalletId],
+    [isPrivyReconnectPending, pendingWalletId],
   )
 
   return (

@@ -1,0 +1,407 @@
+'use client'
+
+import type {
+  EIP1193Provider as PrivyEIP1193Provider,
+  User as PrivyUser,
+} from '@privy-io/react-auth'
+import {
+  useConnectOrCreateWallet,
+  useCreateWallet as useCreateEvmWallet,
+  useExportWallet as useExportEvmWallet,
+  useLogin,
+  usePrivy,
+  useSendTransaction,
+  useWallets,
+} from '@privy-io/react-auth'
+import {
+  type PrivyStandardWallet,
+  useCreateWallet as useCreateSvmWallet,
+  useExportWallet as useExportSvmWallet,
+  useStandardWallets as useSolanaStandardWallets,
+} from '@privy-io/react-auth/solana'
+import { getBase58Decoder } from '@solana/kit'
+import type { Wallet as StandardWallet } from '@wallet-standard/base'
+import { useEffect, useMemo, useRef } from 'react'
+import { getWagmiConfig } from 'src/lib/wagmi/config'
+import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
+import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
+import {
+  syncPrivyEvmConnector,
+  unregisterPrivyEvmConnector,
+} from 'src/lib/wallet/privy/privy-evm-connector'
+import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
+import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
+import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
+import type {
+  PrivyEvmWallet,
+  PrivyRuntimeOperationHandlers,
+  PrivySvmWallet,
+} from 'src/lib/wallet/privy/types'
+import { reconnectPrivyEvmWallet } from 'src/lib/wallet/privy/use-privy-runtime'
+import type { EvmAddress, EvmTxHash } from 'sushi/evm'
+import type { SvmAddress, SvmTxHash } from 'sushi/svm'
+import type { EIP1193Provider } from 'viem'
+import { PrivyProvider } from './privy-provider'
+
+type PrivyChainType = 'ethereum' | 'solana'
+type PrivyWalletAccount = Extract<
+  PrivyUser['linkedAccounts'][number],
+  { type: 'wallet' }
+>
+
+function toViemProvider(provider: PrivyEIP1193Provider): EIP1193Provider {
+  // Privy and viem expose the same EIP-1193 surface with incompatible
+  // event-listener overloads.
+  return provider as unknown as EIP1193Provider
+}
+
+/**
+ * Mirrors Privy's own embedded-wallet lookup, which reads `linkedAccounts`
+ * rather than the wallet hooks. `createWallet()` throws for a user who already
+ * has a wallet for the chain type, so this is what must gate provisioning.
+ */
+function getPrivyEmbeddedAccount(
+  user: PrivyUser | null,
+  chainType: PrivyChainType,
+): PrivyWalletAccount | undefined {
+  return user?.linkedAccounts.find(
+    (account): account is PrivyWalletAccount =>
+      account.type === 'wallet' &&
+      account.walletClientType === 'privy' &&
+      account.chainType === chainType,
+  )
+}
+
+function isPrivySvmStandardWallet(
+  wallet: StandardWallet,
+): wallet is PrivyStandardWallet {
+  return (
+    'privy:' in wallet.features &&
+    'isPrivyWallet' in wallet &&
+    wallet.isPrivyWallet === true
+  )
+}
+
+type PendingOperation = {
+  reject(error: Error): void
+  resolve(): void
+}
+
+function createPendingOperation(): {
+  operation: PendingOperation
+  promise: Promise<void>
+} {
+  let operation!: PendingOperation
+  const promise = new Promise<void>((resolve, reject) => {
+    operation = {
+      resolve,
+      reject: (error) => reject(error),
+    }
+  })
+  return { operation, promise }
+}
+
+export function PrivyRuntime() {
+  return (
+    <PrivyProvider>
+      <PrivyRuntimeEffects />
+    </PrivyProvider>
+  )
+}
+
+function PrivyRuntimeEffects() {
+  const { ready, authenticated, logout, user } = usePrivy()
+  const { wallets: evmWallets } = useWallets()
+  const { wallets: svmStandardWallets } = useSolanaStandardWallets()
+  const { sendTransaction } = useSendTransaction()
+  const { createWallet: createEvmWallet } = useCreateEvmWallet()
+  const { createWallet: createSvmWallet } = useCreateSvmWallet()
+  const { exportWallet: exportEvmWallet } = useExportEvmWallet()
+  const { exportWallet: exportSvmWallet } = useExportSvmWallet()
+  const connectPendingRef = useRef<PendingOperation | undefined>(undefined)
+  const loginPendingRef = useRef<PendingOperation | undefined>(undefined)
+
+  const { connectOrCreateWallet } = useConnectOrCreateWallet({
+    onSuccess: () => {
+      connectPendingRef.current?.resolve()
+      connectPendingRef.current = undefined
+    },
+    onError: (error) => {
+      connectPendingRef.current?.reject(
+        new Error(typeof error === 'string' ? error : 'Privy EVM login failed'),
+      )
+      connectPendingRef.current = undefined
+    },
+  })
+
+  const { login } = useLogin({
+    onComplete: () => {
+      loginPendingRef.current?.resolve()
+      loginPendingRef.current = undefined
+    },
+    onError: (error) => {
+      loginPendingRef.current?.reject(
+        new Error(typeof error === 'string' ? error : 'Privy SVM login failed'),
+      )
+      loginPendingRef.current = undefined
+    },
+  })
+
+  const embeddedEvmWallet = useMemo(
+    () =>
+      evmWallets.find(
+        (wallet) =>
+          wallet.connectorType === 'embedded' &&
+          wallet.walletClientType === 'privy',
+      ),
+    [evmWallets],
+  )
+  const svmStandardWallet = useMemo(
+    () => svmStandardWallets.find(isPrivySvmStandardWallet) ?? null,
+    [svmStandardWallets],
+  )
+  const evmWalletAddress = embeddedEvmWallet?.address
+  const embeddedEvmAccount = getPrivyEmbeddedAccount(user, 'ethereum')
+  const embeddedSvmAccount = getPrivyEmbeddedAccount(user, 'solana')
+  const svmWalletAddress = embeddedSvmAccount?.address
+  const hasEvmAccount = Boolean(embeddedEvmAccount)
+  const hasSvmAccount = Boolean(embeddedSvmAccount)
+  const registeredSvmWallet = useMemo(() => {
+    if (!svmStandardWallet || !svmWalletAddress) return null
+    return createPrivySvmWallet({
+      address: svmWalletAddress as SvmAddress,
+      wallet: svmStandardWallet,
+    })
+  }, [svmStandardWallet, svmWalletAddress])
+
+  useEffect(() => {
+    if (!registeredSvmWallet) return
+    return registerPrivySvmWallet(registeredSvmWallet)
+  }, [registeredSvmWallet])
+
+  // Privy hook handles are not referentially stable across renders. Keep the
+  // latest handles behind a ref so the published runtime snapshot keeps a
+  // stable identity unless real wallet state changes.
+  const latestHandlesRef = useRef({
+    authenticated,
+    connectOrCreateWallet,
+    createEvmWallet,
+    createSvmWallet,
+    embeddedEvmWallet,
+    exportEvmWallet,
+    exportSvmWallet,
+    login,
+    logout,
+    sendTransaction,
+    svmStandardWallet,
+    svmWalletAddress,
+  })
+  useEffect(() => {
+    latestHandlesRef.current = {
+      authenticated,
+      connectOrCreateWallet,
+      createEvmWallet,
+      createSvmWallet,
+      embeddedEvmWallet,
+      exportEvmWallet,
+      exportSvmWallet,
+      login,
+      logout,
+      sendTransaction,
+      svmStandardWallet,
+      svmWalletAddress,
+    }
+  })
+
+  const operations = useMemo<PrivyRuntimeOperationHandlers>(
+    () => ({
+      async connectOrCreateEvmWallet() {
+        await provisionPrivyWallet({
+          authenticated: latestHandlesRef.current.authenticated,
+          createWallet: latestHandlesRef.current.createEvmWallet,
+          login: () => {
+            const pending = createPendingOperation()
+            connectPendingRef.current?.reject(
+              new Error('A newer Privy EVM login replaced this request'),
+            )
+            connectPendingRef.current = pending.operation
+            latestHandlesRef.current.connectOrCreateWallet()
+            return pending.promise
+          },
+        })
+      },
+      exportEvmWallet: (address) =>
+        latestHandlesRef.current.exportEvmWallet({ address }),
+      exportSvmWallet: (address) =>
+        latestHandlesRef.current.exportSvmWallet({ address }),
+      async loginSvm() {
+        await provisionPrivyWallet({
+          authenticated: latestHandlesRef.current.authenticated,
+          createWallet: latestHandlesRef.current.createSvmWallet,
+          login: () => {
+            const pending = createPendingOperation()
+            loginPendingRef.current?.reject(
+              new Error('A newer Privy SVM login replaced this request'),
+            )
+            loginPendingRef.current = pending.operation
+            latestHandlesRef.current.login({ walletChainType: 'solana-only' })
+            return pending.promise
+          },
+        })
+      },
+      logout: () => latestHandlesRef.current.logout(),
+      async sendEvmTransaction({ address, transaction, uiOptions }) {
+        const wallet = latestHandlesRef.current.embeddedEvmWallet
+        if (!wallet || wallet.address.toLowerCase() !== address.toLowerCase()) {
+          throw new Error('Privy EVM wallet is not active')
+        }
+        const result = await latestHandlesRef.current.sendTransaction(
+          transaction,
+          { address, uiOptions },
+        )
+        return { hash: result.hash as EvmTxHash }
+      },
+      async signAndSendSvmTransaction({ address, transaction, uiOptions }) {
+        const wallet = latestHandlesRef.current.svmStandardWallet
+        if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
+          throw new Error('Privy SVM wallet is not active')
+        }
+        // Privy's injected implementation accepts the same UI options as its
+        // public hook, but the lower-level feature type omits them.
+        const signAndSendTransaction = wallet.features['privy:'].privy
+          .signAndSendTransaction as (input: {
+          address: string
+          chain: 'solana:mainnet'
+          options?: { uiOptions?: typeof uiOptions }
+          transaction: Uint8Array
+        }) => Promise<{ signature: Uint8Array }>
+        const result = await signAndSendTransaction({
+          transaction,
+          address,
+          chain: 'solana:mainnet',
+          options: { uiOptions },
+        })
+        return {
+          signature: getBase58Decoder().decode(result.signature) as SvmTxHash,
+        }
+      },
+    }),
+    [],
+  )
+
+  useEffect(() => {
+    return () => {
+      connectPendingRef.current?.reject(new Error('Privy runtime unloaded'))
+      loginPendingRef.current?.reject(new Error('Privy runtime unloaded'))
+      unregisterPrivyEvmConnector(getWagmiConfig())
+      privyRuntimeStore.setUnavailable()
+    }
+  }, [])
+
+  const runtimeEvmWallet = useMemo<PrivyEvmWallet | undefined>(() => {
+    if (!evmWalletAddress) return undefined
+    return { address: evmWalletAddress as EvmAddress }
+  }, [evmWalletAddress])
+
+  useEffect(() => {
+    const config = getWagmiConfig()
+    if (!authenticated || !evmWalletAddress) {
+      unregisterPrivyEvmConnector(config)
+      return
+    }
+
+    const wallet = latestHandlesRef.current.embeddedEvmWallet
+    if (!wallet) return
+    let cancelled = false
+
+    syncPrivyEvmConnector({
+      config,
+      shouldRegister: () => !cancelled,
+      wallet: {
+        address: evmWalletAddress as EvmAddress,
+        chainId: wallet.chainId,
+        async getEthereumProvider() {
+          const activeWallet = latestHandlesRef.current.embeddedEvmWallet
+          if (
+            !activeWallet ||
+            activeWallet.address.toLowerCase() !==
+              evmWalletAddress.toLowerCase()
+          ) {
+            throw new Error('Privy EVM wallet is not active')
+          }
+          return toViemProvider(await activeWallet.getEthereumProvider())
+        },
+        meta: wallet.meta,
+        async switchChain(chainId) {
+          const activeWallet = latestHandlesRef.current.embeddedEvmWallet
+          if (
+            !activeWallet ||
+            activeWallet.address.toLowerCase() !==
+              evmWalletAddress.toLowerCase()
+          ) {
+            throw new Error('Privy EVM wallet is not active')
+          }
+          await activeWallet.switchChain(chainId)
+        },
+        walletClientType: wallet.walletClientType,
+      },
+    })
+      .then(() => {
+        if (cancelled) return
+        if (privyRuntimeStore.getSnapshot().evmReconnect) {
+          reconnectPrivyEvmWallet(config)
+            .catch((error) => {
+              console.warn('Privy EVM auto-connect failed', error)
+            })
+            .finally(() => privyRuntimeStore.clearEvmReconnect())
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          console.warn('Privy EVM provider setup failed', error)
+          privyRuntimeStore.clearEvmReconnect()
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authenticated, evmWalletAddress])
+
+  useEffect(() => {
+    if (!ready) return
+    const runtimeSvmWallet: PrivySvmWallet | undefined = svmWalletAddress
+      ? { address: svmWalletAddress as SvmAddress }
+      : undefined
+    if (authenticated) {
+      privyRuntimeStore.publishRuntime({
+        authenticated: true,
+        evmWallet: runtimeEvmWallet,
+        hasEvmAccount,
+        hasSvmAccount,
+        operations,
+        svmWallet: runtimeSvmWallet,
+      })
+    } else {
+      privyRuntimeStore.publishRuntime({
+        authenticated: false,
+        operations,
+      })
+    }
+
+    if (!authenticated) {
+      setPrivySvmReconnect(false)
+      privyRuntimeStore.clearEvmReconnect()
+    }
+  }, [
+    authenticated,
+    hasEvmAccount,
+    hasSvmAccount,
+    operations,
+    ready,
+    runtimeEvmWallet,
+    svmWalletAddress,
+  ])
+
+  return null
+}
