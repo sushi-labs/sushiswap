@@ -1,5 +1,6 @@
 import { mock } from '@wagmi/connectors'
 import type { Config } from '@wagmi/core'
+import { isPrivyE2eEnabled } from 'src/lib/wallet/privy/privy-e2e-mode'
 import {
   hasPrivyEvmReconnectIntent,
   isPrivyEvmConnectorId,
@@ -60,7 +61,8 @@ export const createTestConfig = () => {
         getWagmiState: () => config.state,
       }),
       ...(hasPersistedConnectorMatching(isPrivyEvmConnectorId) ||
-      hasPrivyEvmReconnectIntent()
+      hasPrivyEvmReconnectIntent() ||
+      isPrivyE2eEnabled()
         ? []
         : [mockConnector]),
     ],

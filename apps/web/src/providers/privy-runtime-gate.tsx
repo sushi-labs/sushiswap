@@ -5,11 +5,15 @@ import {
   hasStoredPrivySession,
   isPrivySessionStorageKey,
 } from '../lib/wallet/privy-storage'
+import { isPrivyTestRuntimeEnabled } from '../lib/wallet/privy/privy-e2e-mode'
 import { privyRuntimeStore } from '../lib/wallet/privy/privy-runtime-store'
 
 type PrivyRuntimeComponent = React.ComponentType
 
 function loadPrivyRuntime(): Promise<{ PrivyRuntime: PrivyRuntimeComponent }> {
+  if (isPrivyTestRuntimeEnabled()) {
+    return import('./privy-test-runtime')
+  }
   return import('./privy-runtime')
 }
 
