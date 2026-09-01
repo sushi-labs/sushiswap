@@ -40,7 +40,12 @@ export function createLazyConnector({
     let connectorPromise: Promise<Connector> | undefined
 
     function getConnector(): Promise<Connector> {
-      connectorPromise ??= load().then((connectorFn) => connectorFn(config))
+      connectorPromise ??= load()
+        .then((connectorFn) => connectorFn(config))
+        .catch((error: unknown) => {
+          connectorPromise = undefined
+          throw error
+        })
       return connectorPromise
     }
 

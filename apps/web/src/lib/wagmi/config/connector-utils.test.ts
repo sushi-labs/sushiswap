@@ -70,4 +70,45 @@ describe('connector utilities', () => {
     expect(load).toHaveBeenCalledOnce()
     expect(setup.mock.instances).toEqual([connector])
   })
+
+  it('retries after a lazy connector load fails', async () => {
+    const error = new Error('Chunk failed to load')
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const accounts = ['0x0000000000000000000000000000000000000001'] as const
+    const baseConnectorFn = mock({
+      accounts: ['0x0000000000000000000000000000000000000001'],
+    })
+    const sourceConnectorFn: CreateConnectorFn = (config) => ({
+      ...baseConnectorFn(config),
+      async getAccounts() {
+        return accounts
+      },
+    })
+    const load = vi
+      .fn<() => Promise<CreateConnectorFn>>()
+      .mockRejectedValueOnce(error)
+      .mockResolvedValue(sourceConnectorFn)
+    const connectorFn = createLazyConnector({
+      id: 'lazy',
+      load,
+      name: 'Lazy',
+      type: 'lazy',
+    })
+    const config = createConfig({
+      chains: [mainnet],
+      connectors: [connectorFn],
+      transports: { [mainnet.id]: http() },
+    })
+
+    await vi.waitFor(() =>
+      expect(consoleError).toHaveBeenCalledWith(
+        'Failed to load Lazy connector',
+        error,
+      ),
+    )
+    await expect(config.connectors[0].getAccounts()).resolves.toEqual(accounts)
+    expect(load).toHaveBeenCalledTimes(2)
+
+    consoleError.mockRestore()
+  })
 })
