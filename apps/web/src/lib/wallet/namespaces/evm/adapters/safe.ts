@@ -1,20 +1,20 @@
 'use client'
 
-import { safe } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
 import { getConnectorById } from '../utils/connector'
+import { safeConnectorDefinition } from './safe-definition'
 
 let createConnectorFn: CreateConnectorFn | undefined
 
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
-  createConnectorFn = safe()
+  createConnectorFn = await safeConnectorDefinition.load()
   return createConnectorFn
 }
 
 function getConnector() {
-  return getConnectorById('safe')
+  return getConnectorById(safeConnectorDefinition.id)
 }
 
 export const getSafeConnector = async () => {
