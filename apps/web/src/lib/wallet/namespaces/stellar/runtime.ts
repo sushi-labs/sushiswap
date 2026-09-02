@@ -17,16 +17,21 @@ export async function getStellarWalletConnection(): Promise<
   StellarWalletConnection | undefined
 > {
   const kit = await getStellarWalletKit()
-  const { selectedModuleId } = await import(
+  const { activeAddress, selectedModuleId } = await import(
     '@creit.tech/stellar-wallets-kit/state'
   )
 
-  // The kit's signal is the source of truth: it is set the moment a wallet is
-  // selected, while its localStorage mirror is written by a separate signals
-  // effect. Reading storage here would report "not connected" during a fresh
-  // connect and wipe the account that just arrived.
+  // The kit's signals are the source of truth: they are set the moment a
+  // wallet is selected, while their localStorage mirrors are written by a
+  // separate signals effect.
   const moduleId = selectedModuleId.value
   if (!moduleId) return undefined
+
+  // A wallet is selected but its address has not arrived yet: that is the
+  // normal state while `fetchAddress()` waits on the extension prompt, not a
+  // failure. Calling `kit.getAddress()` here would throw, and the caller
+  // treats a throw as a dead session and disconnects the kit mid-connect.
+  if (!activeAddress.value) return undefined
 
   const [{ address }, supportedWallets] = await Promise.all([
     kit.getAddress(),
