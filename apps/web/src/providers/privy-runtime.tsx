@@ -25,7 +25,10 @@ import { useEffect, useMemo, useRef } from 'react'
 import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
 import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
-import { signAndSendPrivySvmTransaction } from 'src/lib/wallet/privy/privy-svm-signing'
+import {
+  signAndSendPrivySvmTransaction,
+  signPrivySvmTransaction,
+} from 'src/lib/wallet/privy/privy-svm-signing'
 import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
 import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
 import type {
@@ -168,7 +171,6 @@ function PrivyRuntimeEffects() {
       wallet: svmStandardWallet,
     })
   }, [svmStandardWallet, svmWalletAddress])
-
   useEffect(() => {
     if (!registeredSvmWallet) return
     return registerPrivySvmWallet(registeredSvmWallet)
@@ -187,8 +189,8 @@ function PrivyRuntimeEffects() {
     exportSvmWallet,
     login,
     logout,
+    registeredSvmWallet,
     sendTransaction,
-    svmStandardWallet,
     svmWalletAddress,
   })
   useEffect(() => {
@@ -202,8 +204,8 @@ function PrivyRuntimeEffects() {
       exportSvmWallet,
       login,
       logout,
+      registeredSvmWallet,
       sendTransaction,
-      svmStandardWallet,
       svmWalletAddress,
     }
   })
@@ -277,27 +279,26 @@ function PrivyRuntimeEffects() {
         return { hash: result.hash as EvmTxHash }
       },
       async signSvmTransaction({ address, transaction }) {
-        const wallet = latestHandlesRef.current.svmStandardWallet
+        const wallet = latestHandlesRef.current.registeredSvmWallet
         if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
           throw new Error('Privy SVM wallet is not active')
         }
-        return wallet.features['privy:'].privy.signTransaction({
-          transaction,
+        return signPrivySvmTransaction({
           address,
-          chain: 'solana:mainnet',
+          transaction,
+          wallet,
         })
       },
       async signAndSendSvmTransaction({ address, transaction, uiOptions }) {
-        const wallet = latestHandlesRef.current.svmStandardWallet
+        const wallet = latestHandlesRef.current.registeredSvmWallet
         if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
           throw new Error('Privy SVM wallet is not active')
         }
-        const privy = wallet.features['privy:'].privy
-        const result = await signAndSendPrivySvmTransaction(privy, {
-          transaction,
+        const result = await signAndSendPrivySvmTransaction({
           address,
-          chain: 'solana:mainnet',
-          options: { uiOptions },
+          transaction,
+          uiOptions,
+          wallet,
         })
         return {
           signature: getBase58Decoder().decode(result.signature) as SvmTxHash,
