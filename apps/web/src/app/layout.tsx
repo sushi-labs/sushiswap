@@ -57,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} dark`}
+      className={`${inter.variable} dark [scrollbar-gutter:stable]`}
       suppressHydrationWarning
     >
       <head>

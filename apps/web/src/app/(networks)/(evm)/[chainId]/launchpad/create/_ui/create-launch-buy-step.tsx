@@ -1,27 +1,92 @@
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import {
   Button,
   Currency,
+  Dots,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
   Message,
   SelectIcon,
-  Slider,
+  TextField,
   classNames,
 } from '@sushiswap/ui'
 import type { UseFormReturn } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
-import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
-import { Connect } from 'src/lib/wagmi/systems/checker/connect'
-import { Network } from 'src/lib/wagmi/systems/checker/network'
-import { type Amount, formatUSD } from 'sushi'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { Amount, formatUSD } from 'sushi'
 import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
+import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount } from '../../_lib/format'
 import type { LaunchpadChainId } from '../../constants'
+import { LAUNCH_TOKEN_TOTAL_SUPPLY_RAW } from '../_lib/initial-buy-quote'
 import type { CreateLaunchForm, WethPaymentMode } from './create-launch-types'
+
+function formatSupplyShare(amountOut: bigint): string {
+  if (amountOut === 0n) return '0%'
+
+  const percentageScaled =
+    (amountOut * 1_000_000n) / LAUNCH_TOKEN_TOTAL_SUPPLY_RAW
+  if (percentageScaled === 0n) return '<0.0001%'
+
+  return `${(Number(percentageScaled) / 10_000).toLocaleString('en-US', {
+    maximumFractionDigits: 4,
+  })}%`
+}
+
+export function CreateLaunchBuyButton({
+  chainId,
+  checkerAmounts,
+  canNavigateToReview,
+  onReview,
+}: {
+  chainId: LaunchpadChainId
+  checkerAmounts: (Amount<EvmCurrency> | undefined)[]
+  canNavigateToReview: boolean
+  onReview: () => void
+}) {
+  return (
+    <Checker.Connect
+      namespace="evm"
+      fullWidth
+      size="default"
+      variant="perps-default"
+      type="button"
+    >
+      <Checker.Network
+        chainId={chainId}
+        fullWidth
+        size="default"
+        variant="perps-default"
+        type="button"
+      >
+        <Checker.Amounts
+          chainId={chainId}
+          amounts={checkerAmounts}
+          fullWidth
+          size="default"
+          variant="perps-default"
+          type="button"
+        >
+          <Button
+            type="button"
+            fullWidth
+            size="default"
+            variant="perps-default"
+            icon={ArrowRightIcon}
+            iconPosition="end"
+            disabled={!canNavigateToReview}
+            onClick={onReview}
+          >
+            Review launch
+          </Button>
+        </Checker.Amounts>
+      </Checker.Network>
+    </Checker.Connect>
+  )
+}
 
 export function CreateLaunchBuyStep({
   chainId,
@@ -32,20 +97,18 @@ export function CreateLaunchBuyStep({
   isQuoteTokenListPending,
   isQuoteTokenListError,
   onQuoteTokenSelect,
+  isSushiQuoteToken,
   isWethQuoteToken,
   wethPaymentMode,
   onWethPaymentModeChange,
   nativeCurrencySymbol,
-  initialBuyAmountRaw,
-  initialBuyCurrencySymbol,
-  quotePriceUsd,
+  initialBuyCurrency,
+  launchFeeRaw,
+  initialBuyUsd,
   isQuotePriceLoading,
-  maximumInitialBuyUsd,
-  initialBuyStepUsd,
-  checkerAmounts,
-  canNavigateToReview,
-  onBack,
-  onReview,
+  estimatedInitialBuyOutputRaw,
+  isInitialBuyQuoteLoading,
+  isInitialBuyQuoteError,
 }: {
   chainId: LaunchpadChainId
   methods: UseFormReturn<CreateLaunchForm>
@@ -55,21 +118,33 @@ export function CreateLaunchBuyStep({
   isQuoteTokenListPending: boolean
   isQuoteTokenListError: boolean
   onQuoteTokenSelect: (address: EvmAddress) => void
+  isSushiQuoteToken: boolean
   isWethQuoteToken: boolean
   wethPaymentMode: WethPaymentMode
   onWethPaymentModeChange: (mode: WethPaymentMode) => void
   nativeCurrencySymbol: string
-  initialBuyAmountRaw: bigint | undefined
-  initialBuyCurrencySymbol: string | undefined
-  quotePriceUsd: number | undefined
+  initialBuyCurrency: EvmCurrency | undefined
+  launchFeeRaw: bigint | undefined
+  initialBuyUsd: number | undefined
   isQuotePriceLoading: boolean
-  maximumInitialBuyUsd: number
-  initialBuyStepUsd: number
-  checkerAmounts: (Amount<EvmCurrency> | undefined)[]
-  canNavigateToReview: boolean
-  onBack: () => void
-  onReview: () => void
+  estimatedInitialBuyOutputRaw: bigint | undefined
+  isInitialBuyQuoteLoading: boolean
+  isInitialBuyQuoteError: boolean
 }) {
+  const { data: initialBuyBalance, isLoading: isInitialBuyBalanceLoading } =
+    useAmountBalance(initialBuyCurrency)
+  const isNativePayment = isWethQuoteToken && wethPaymentMode === 'native'
+  const maximumInitialBuy = isNativePayment
+    ? initialBuyBalance && launchFeeRaw !== undefined
+      ? new Amount(
+          initialBuyBalance.currency,
+          initialBuyBalance.amount > launchFeeRaw
+            ? initialBuyBalance.amount - launchFeeRaw
+            : 0n,
+        )
+      : undefined
+    : initialBuyBalance
+
   return (
     <PerpsCard className="p-5 sm:p-7" fullWidth>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -121,6 +196,12 @@ export function CreateLaunchBuyStep({
           launch.
         </Message>
       ) : null}
+      {isSushiQuoteToken ? (
+        <Message variant="info" size="sm" className="mb-6">
+          Sushi&apos;s fee share increases from 20% to 30% when SUSHI is not
+          used as the quote asset.
+        </Message>
+      ) : null}
 
       {isWethQuoteToken ? (
         <div className="mb-6 border-t border-white/[0.06] pt-6">
@@ -157,7 +238,7 @@ export function CreateLaunchBuyStep({
 
       <FormField
         control={methods.control}
-        name="initialBuyUsd"
+        name="initialBuyAmount"
         render={({ field }) => (
           <FormItem className="border-t border-white/[0.06] pt-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -167,120 +248,128 @@ export function CreateLaunchBuyStep({
                 </h2>
                 <p className="mt-1 max-w-xl text-sm leading-6 text-perps-muted-50">
                   Optionally make the first purchase atomically with the token
-                  launch. Move the slider to choose how much to spend.
+                  launch. Enter the amount you want to spend in the quote asset.
                 </p>
-              </div>
-              <div className="shrink-0 text-right">
-                <div className="text-xl font-semibold tabular-nums text-perps-muted">
-                  {formatUSD(field.value)}
-                </div>
-                <div className="mt-1 text-xs tabular-nums text-perps-muted-50">
-                  {initialBuyAmountRaw !== undefined && selectedQuoteToken
-                    ? `${formatRawAmount(
-                        initialBuyAmountRaw,
-                        selectedQuoteToken.decimals,
-                        6,
-                      )} ${initialBuyCurrencySymbol ?? selectedQuoteToken.symbol}`
-                    : 'Price unavailable'}
-                </div>
               </div>
             </div>
 
             <FormControl>
-              <Slider
-                aria-label="Initial token purchase in USD"
-                className="mt-6"
-                min={0}
-                max={maximumInitialBuyUsd}
-                step={initialBuyStepUsd}
-                value={[field.value]}
+              <TextField
+                type="number"
+                inputMode="decimal"
+                maxDecimals={initialBuyCurrency?.decimals}
+                aria-label={`Initial token purchase in ${initialBuyCurrency?.symbol ?? 'the quote asset'}`}
+                variant="naked"
+                className="!h-14 !p-0 !text-xl !text-perps-muted"
+                wrapperClassName="mt-6 rounded-xl bg-white/[0.04] px-4"
+                unit={initialBuyCurrency?.symbol ?? '—'}
+                value={field.value}
                 disabled={!selectedQuoteToken}
-                onValueChange={(nextValues) => {
-                  const nextValue = nextValues[0]
-                  if (nextValue !== undefined) field.onChange(nextValue)
-                }}
-                onValueCommit={field.onBlur}
-                rangeClassName="!bg-perps-blue"
-                thumbClassName="!border-white !bg-perps-blue"
+                name={field.name}
+                ref={field.ref}
+                onBlur={field.onBlur}
+                onValueChange={field.onChange}
               />
             </FormControl>
-            <div className="mt-3 flex justify-between text-xs text-perps-muted-50">
-              <span>No buy</span>
-              <span>{formatUSD(maximumInitialBuyUsd / 2)}</span>
-              <span>{formatUSD(maximumInitialBuyUsd)}</span>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-xs tabular-nums text-perps-muted-50">
+                {isInitialBuyBalanceLoading ? (
+                  <Dots>Balance</Dots>
+                ) : initialBuyBalance ? (
+                  `Balance: ${initialBuyBalance.toSignificant(6)} ${initialBuyBalance.currency.symbol}`
+                ) : (
+                  'Connect a wallet to see your balance'
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="perps-secondary"
+                  onClick={() => field.onChange('0')}
+                >
+                  No buy
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="perps-secondary"
+                  disabled={!maximumInitialBuy}
+                  onClick={() => {
+                    if (maximumInitialBuy) {
+                      field.onChange(maximumInitialBuy.toString())
+                    }
+                  }}
+                >
+                  Max
+                </Button>
+              </div>
             </div>
 
-            {isQuotePriceLoading ? (
-              <div className="mt-5 border-t border-white/[0.06] pt-4 text-sm text-perps-muted-50">
-                Loading the quote-token price…
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl bg-white/[0.04] p-4">
+                <div className="text-xs text-perps-muted-50">
+                  Estimated tokens received
+                </div>
+                <div className="mt-1 text-lg font-semibold tabular-nums text-perps-muted">
+                  {isInitialBuyQuoteLoading ? (
+                    <Dots>Calculating</Dots>
+                  ) : estimatedInitialBuyOutputRaw !== undefined ? (
+                    `${formatRawAmount(estimatedInitialBuyOutputRaw, 18, 2)} ${methods.getValues('symbol') || 'tokens'}`
+                  ) : (
+                    '—'
+                  )}
+                </div>
               </div>
-            ) : quotePriceUsd !== undefined && selectedQuoteToken ? (
-              <div className="mt-5 border-t border-white/[0.06] pt-4 text-sm text-perps-muted-50">
-                Current conversion: {formatUSD(quotePriceUsd)} per{' '}
-                {selectedQuoteToken.symbol}. The exact minimum token output is
-                simulated immediately before submission with 1% tolerance.
+              <div className="rounded-xl bg-white/[0.04] p-4">
+                <div className="text-xs text-perps-muted-50">
+                  Estimated supply share
+                </div>
+                <div className="mt-1 text-lg font-semibold tabular-nums text-perps-muted">
+                  {isInitialBuyQuoteLoading ? (
+                    <Dots>Calculating</Dots>
+                  ) : estimatedInitialBuyOutputRaw !== undefined ? (
+                    formatSupplyShare(estimatedInitialBuyOutputRaw)
+                  ) : (
+                    '—'
+                  )}
+                </div>
               </div>
-            ) : selectedQuoteToken ? (
-              <Message variant="destructive" size="sm" className="mt-5">
-                No trusted USD price is available for{' '}
-                {selectedQuoteToken.symbol}. Leave the initial buy at zero,
-                choose another quote asset, or try again.
+            </div>
+            {isInitialBuyQuoteError ? (
+              <Message variant="destructive" size="sm" className="mt-3">
+                The launch-pool estimate is unavailable. Try again before
+                reviewing the launch.
               </Message>
+            ) : null}
+
+            {isQuotePriceLoading || selectedQuoteToken ? (
+              <>
+                <div className="!mt-5 border-t border-white/[0.06]" />
+                <div className="!mt-0 pt-4 text-sm text-perps-muted-50">
+                  {isQuotePriceLoading ? (
+                    'Loading USD value…'
+                  ) : initialBuyUsd !== undefined ? (
+                    <>
+                      Approximate value: {formatUSD(initialBuyUsd)}. The minimum
+                      token output is simulated again immediately before
+                      submission with 1% tolerance.
+                    </>
+                  ) : (
+                    <>
+                      USD value unavailable. You can still enter the buy
+                      directly in{' '}
+                      {initialBuyCurrency?.symbol ?? selectedQuoteToken?.symbol}
+                      .
+                    </>
+                  )}
+                </div>
+              </>
             ) : null}
             <FormMessage />
           </FormItem>
         )}
       />
-
-      <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
-        <Button
-          type="button"
-          variant="perps-secondary"
-          icon={ArrowLeftIcon}
-          onClick={onBack}
-        >
-          Back
-        </Button>
-        <div className="sm:min-w-52">
-          <Connect
-            namespace="evm"
-            fullWidth
-            size="lg"
-            variant="perps-default"
-            type="button"
-          >
-            <Network
-              chainId={chainId}
-              fullWidth
-              size="lg"
-              variant="perps-default"
-              type="button"
-            >
-              <Amounts
-                chainId={chainId}
-                amounts={checkerAmounts}
-                fullWidth
-                size="lg"
-                variant="perps-default"
-                type="button"
-              >
-                <Button
-                  type="button"
-                  fullWidth
-                  size="lg"
-                  variant="perps-default"
-                  icon={ArrowRightIcon}
-                  iconPosition="end"
-                  disabled={!canNavigateToReview}
-                  onClick={onReview}
-                >
-                  Review launch
-                </Button>
-              </Amounts>
-            </Network>
-          </Connect>
-        </div>
-      </div>
     </PerpsCard>
   )
 }

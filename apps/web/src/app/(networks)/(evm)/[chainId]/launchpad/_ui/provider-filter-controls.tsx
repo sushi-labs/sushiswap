@@ -4,7 +4,7 @@ import { classNames } from '@sushiswap/ui'
 import {
   LAUNCHPAD_PROVIDER_FILTERS,
   type LaunchpadProviderFilter,
-  getLaunchpadProvidersForFilter,
+  getLaunchpadProviderIconsForFilter,
 } from '../_lib/launchpad-provider'
 import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import {
@@ -17,9 +17,11 @@ import {
 export function ProviderFilterControls({
   filter,
   onFilterChange,
+  disabled = false,
 }: {
   filter: LaunchpadProviderFilter
   onFilterChange: (filter: LaunchpadProviderFilter) => void
+  disabled?: boolean
 }) {
   return (
     <div
@@ -38,6 +40,7 @@ export function ProviderFilterControls({
             type="button"
             role="radio"
             aria-checked={selected}
+            disabled={disabled}
             onClick={() => onFilterChange(option.value)}
             className={classNames(
               SEGMENTED_ITEM,
@@ -46,7 +49,7 @@ export function ProviderFilterControls({
             )}
           >
             <span className="flex items-center" aria-hidden>
-              {getLaunchpadProvidersForFilter(option.value).map(
+              {getLaunchpadProviderIconsForFilter(option.value).map(
                 (provider, index) => (
                   <LaunchpadProviderMark
                     key={provider}

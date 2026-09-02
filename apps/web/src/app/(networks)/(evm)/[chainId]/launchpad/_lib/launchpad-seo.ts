@@ -225,18 +225,20 @@ function getPoolsFunOrganization(): Organization {
 
 const PROVIDER_ORGANIZATION_IDS = {
   SUSHI_V1: SUSHI_ORGANIZATION_ID,
+  SUSHI_V2: SUSHI_ORGANIZATION_ID,
   POOLS_FUN_V1: POOLS_FUN_ORGANIZATION_ID,
 } as const satisfies Record<LaunchpadProvider, string>
 
 const PROVIDER_ORGANIZATIONS = {
   SUSHI_V1: getSushiOrganization,
+  SUSHI_V2: getSushiOrganization,
   POOLS_FUN_V1: getPoolsFunOrganization,
 } as const satisfies Record<LaunchpadProvider, () => Organization>
 
 function getLaunchpadProviderOrganizations(
   tokens: readonly LaunchpadToken[],
 ): Organization[] {
-  const providers = new Set<LaunchpadProvider>(['SUSHI_V1'])
+  const providers = new Set<LaunchpadProvider>(['SUSHI_V1', 'SUSHI_V2'])
   for (const token of tokens) providers.add(token.provider)
   return [...providers].map((provider) => PROVIDER_ORGANIZATIONS[provider]())
 }
@@ -329,10 +331,7 @@ export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
     getMarketMetric('Price', metrics?.priceUsd),
     getMarketMetric('24-hour trading volume', metrics?.volumeUsd.h24),
     getMarketMetric('Liquidity', metrics?.currentTvlUsd),
-    getMarketMetric(
-      'Fully diluted valuation',
-      metrics?.fullyDilutedValuationUsd,
-    ),
+    getMarketMetric('Market capitalization', metrics?.marketCapitalizationUsd),
   ].filter((metric): metric is PropertyValue => metric !== null)
 
   const breadcrumb: BreadcrumbList = {

@@ -73,17 +73,23 @@ export function TokenSortControls({
   sortBy,
   onSortByChange,
   ariaLabel = 'Sort launches by',
+  disabled = false,
 }: {
   sortBy: LaunchpadTokenSortField
   onSortByChange: (sortBy: LaunchpadTokenSortField) => void
   ariaLabel?: string
+  disabled?: boolean
 }) {
   const sortMetric = getSortMetric(sortBy)
   const volumePeriod = getVolumePeriod(sortBy)
+  const sortMetricLabel = SORT_METRICS.find(
+    (option) => option.value === sortMetric,
+  )?.label
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       <Select
+        disabled={disabled}
         value={sortMetric}
         onValueChange={(value) => {
           const metric = value as SortMetric
@@ -96,7 +102,7 @@ export function TokenSortControls({
           aria-label={ariaLabel}
           className="w-full !border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue md:w-[150px]"
         >
-          <SelectValue />
+          <SelectValue>{sortMetricLabel}</SelectValue>
         </SelectTrigger>
         <SelectContent className="!bg-black/10 backdrop-blur-2xl">
           {SORT_METRICS.map((option) => (
@@ -109,7 +115,7 @@ export function TokenSortControls({
       <div
         role="radiogroup"
         aria-label="Volume period"
-        aria-disabled={sortMetric !== 'VOLUME'}
+        aria-disabled={disabled || sortMetric !== 'VOLUME'}
         className={classNames(
           'flex h-10 shrink-0 items-center rounded-lg border border-white/[0.06] bg-white/[0.04] p-1 transition-opacity justify-between md:justify-start',
           sortMetric !== 'VOLUME' && 'opacity-40',
@@ -123,7 +129,7 @@ export function TokenSortControls({
               type="button"
               role="radio"
               aria-checked={selected}
-              disabled={sortMetric !== 'VOLUME'}
+              disabled={disabled || sortMetric !== 'VOLUME'}
               onClick={() => onSortByChange(VOLUME_SORT_FIELDS[period])}
               className={classNames(
                 'h-8 min-w-10 w-full rounded-md px-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue/50 disabled:cursor-not-allowed',

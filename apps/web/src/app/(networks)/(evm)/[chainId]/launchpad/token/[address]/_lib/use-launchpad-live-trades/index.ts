@@ -317,7 +317,9 @@ export function useLaunchpadLiveTrades(input: LaunchpadTradesInput) {
       tradeSnapshotCursor = undefined
       hasSnapshot.current = false
       mutations.current.clear()
-      setData(EMPTY_TRADE_CONNECTION)
+      // Keep the last good snapshot visible while the replacement catches up
+      // to the reset boundary. New stream mutations are applied to it in the
+      // meantime, then the reconciled snapshot replaces it atomically.
       setLastEventAt(null)
       void refreshTradeSnapshot(
         payload.eventId,

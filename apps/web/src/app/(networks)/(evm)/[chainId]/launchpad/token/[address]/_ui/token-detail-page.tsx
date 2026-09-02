@@ -50,8 +50,9 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_lib/format'
-import { launchpadProviderHasCapability } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
+import { getLaunchCreator } from '../../../_providers/provider-types'
+import { TokenLaunchDetails } from '../../../_providers/token-launch-details'
 import { DetailList } from '../../../_ui/detail-list'
 import {
   LaunchpadCreatorButton,
@@ -67,10 +68,7 @@ import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
-import {
-  TokenMetricsSkeleton,
-  TokenSidebarSkeleton,
-} from './token-detail-skeleton'
+import { TokenDetailSkeleton } from './token-detail-skeleton'
 import { TradeActivity } from './trade-activity'
 import { TradeHistory } from './trade-history'
 
@@ -187,46 +185,13 @@ function CopyableExplorerAddress({
 
 function MetadataLinks({
   links,
-  placement,
 }: {
   links: MetadataLink[]
-  placement: 'header' | 'about'
 }) {
   if (links.length === 0) return null
 
-  if (placement === 'header') {
-    return (
-      <div className="flex flex-wrap gap-2">
-        {links.map((item) => {
-          const label = metadataLinkLabel(item)
-
-          return (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={label}
-              title={label}
-              key={`${item.kind}:${item.url}`}
-            >
-              <Button
-                asChild
-                variant="perps-secondary"
-                size="sm"
-                className="!w-9 !min-w-9 !px-0 [&>div]:items-center [&>div]:justify-center"
-              >
-                <MetadataLinkIcon kind={item.kind} className="h-4 w-4" />
-                <span className="sr-only">{label}</span>
-              </Button>
-            </a>
-          )
-        })}
-      </div>
-    )
-  }
-
   return (
-    <div className="mt-5 flex flex-wrap gap-2 border-t border-white/[0.06] pt-4">
+    <div className="flex flex-wrap gap-2">
       {links.map((item) => {
         const label = metadataLinkLabel(item)
 
@@ -238,13 +203,16 @@ function MetadataLinks({
             rel="noreferrer"
             aria-label={label}
             title={label}
-            className="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.06] bg-white/[0.03] text-perps-muted transition hover:border-perps-blue/30 hover:bg-perps-blue/10 hover:text-perps-blue"
           >
-            <MetadataLinkIcon
-              kind={item.kind}
-              className="h-4 w-4 shrink-0 text-perps-blue"
-            />
-            <span className="sr-only">{label}</span>
+            <Button
+              asChild
+              variant="perps-secondary"
+              size="sm"
+              className="!w-9 !min-w-9 !px-0 [&>div]:items-center [&>div]:justify-center"
+            >
+              <MetadataLinkIcon kind={item.kind} className="h-4 w-4" />
+              <span className="sr-only">{label}</span>
+            </Button>
           </a>
         )
       })}
@@ -316,7 +284,7 @@ function TokenHeader({
             </div>
           </div>
         </div>
-        <MetadataLinks links={links} placement="header" />
+        <MetadataLinks links={links} />
       </div>
     </>
   )
@@ -351,6 +319,23 @@ export function TokenDetailPage({
     price: token?.metrics?.priceUsd,
   })
 
+  if (isTokenPending) {
+    return (
+      <Container
+        maxWidth="8xl"
+        className="w-full px-4 pb-20 lg:pb-14 pt-6 sm:pt-8"
+      >
+        <TokenHeader
+          token={definition}
+          chainKey={chainKey}
+          creatorUrl={chain.getAccountUrl(definition.originalCreator)}
+          tokenUrl={chain.getTokenUrl(definition.address)}
+        />
+        <TokenDetailSkeleton bodyOnly />
+      </Container>
+    )
+  }
+
   if (isTokenError) {
     return (
       <PageState
@@ -365,7 +350,7 @@ export function TokenDetailPage({
     )
   }
 
-  if (!isTokenPending && !token) {
+  if (!token) {
     return (
       <PageState
         icon={<BeakerIcon className="mx-auto h-10 w-10 text-perps-muted-50" />}
@@ -380,65 +365,53 @@ export function TokenDetailPage({
     )
   }
 
-  if (token) {
-    priceChartDataRef.current = {
-      chainId,
-      createdAt: token.createdAt,
-      decimals: token.decimals,
-      initialSupply: token.initialSupply,
-      tokenAddress: address,
-      symbol: token.symbol,
-      price: token.metrics?.priceUsd,
-    }
+  priceChartDataRef.current = {
+    chainId,
+    createdAt: token.createdAt,
+    decimals: token.decimals,
+    initialSupply: token.initialSupply,
+    tokenAddress: address,
+    symbol: token.symbol,
+    price: token.metrics?.priceUsd,
   }
 
-  const metrics = token?.metrics
+  const metrics = token.metrics
   const tvlChangePercent = metrics?.tvlChangePercent.h24
-  const tvlChangeUsd = token
-    ? liquidityChange24hUsd({
-        currentTvlUsd: metrics?.currentTvlUsd ?? null,
-        tvlChangePercent24h: tvlChangePercent ?? null,
-        launchedAt: new Date(token.createdAt),
-      })
-    : null
-  const headerMetrics = token
-    ? [
-        {
-          label: 'Price',
-          value: formatLaunchpadPriceUsd(metrics?.priceUsd),
-          detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
-        },
-        {
-          label: 'FDV',
-          value: formatUsd(metrics?.fullyDilutedValuationUsd),
-          detail: '1B fixed supply',
-        },
-        {
-          label: 'Liquidity',
-          value: formatUsd(metrics?.currentTvlUsd),
-          detail: 'Launch pool liquidity',
-          changeDetail: formatUsdChange(tvlChangeUsd),
-          changeValue: tvlChangeUsd,
-          changeLabel: '24H',
-        },
-        {
-          // Sourced from marketStats so this agrees with the trade activity card:
-          // token.metrics sums whole candle buckets, marketStats measures the exact
-          // trailing 24 hours, and the two do not reconcile.
-          label: '24h volume',
-          value: formatUsd(
-            marketStats?.h24.totalVolumeUsd ?? metrics?.volumeUsd.h24,
-          ),
-          detail: 'Launch pool volume',
-        },
-      ]
-    : null
-  const supportsLockedPositions = token
-    ? launchpadProviderHasCapability(token.provider, 'lockedPositions')
-    : false
-  const showLockedPositions =
-    supportsLockedPositions && (token?.positions.length ?? 0) > 0
-
+  const tvlChangeUsd = liquidityChange24hUsd({
+    currentTvlUsd: metrics?.currentTvlUsd ?? null,
+    tvlChangePercent24h: tvlChangePercent ?? null,
+    launchedAt: new Date(token.createdAt),
+  })
+  const headerMetrics = [
+    {
+      label: 'Price',
+      value: formatLaunchpadPriceUsd(metrics?.priceUsd),
+      detail: metrics?.isStale ? 'Data delayed' : 'Live pool price',
+    },
+    {
+      label: 'Market Cap',
+      value: formatUsd(metrics?.marketCapitalizationUsd),
+      detail: 'Live market valuation',
+    },
+    {
+      label: 'Liquidity',
+      value: formatUsd(metrics?.currentTvlUsd),
+      detail: 'Launch pool liquidity',
+      changeDetail: formatUsdChange(tvlChangeUsd),
+      changeValue: tvlChangeUsd,
+      changeLabel: '24H',
+    },
+    {
+      // Sourced from marketStats so this agrees with the trade activity card:
+      // token.metrics sums whole candle buckets, marketStats measures the exact
+      // trailing 24 hours, and the two do not reconcile.
+      label: '24h volume',
+      value: formatUsd(
+        marketStats?.h24.totalVolumeUsd ?? metrics?.volumeUsd.h24,
+      ),
+      detail: 'Launch pool volume',
+    },
+  ]
   return (
     <Container
       maxWidth="8xl"
@@ -454,55 +427,51 @@ export function TokenDetailPage({
       />
 
       <div className="mt-6">
-        {headerMetrics ? (
-          <MetricStrip>
-            {headerMetrics.map((stat, index) => (
-              <MetricStripItem
-                key={stat.label}
-                index={index}
-                label={stat.label}
-                valueClassName="flex flex-wrap items-end gap-1"
-                value={
-                  <>
-                    {stat.label === 'Price' ? (
-                      <PriceSensitiveText price={metrics?.priceUsd}>
-                        {stat.value}
-                      </PriceSensitiveText>
-                    ) : (
-                      stat.value
-                    )}
-                    {stat.changeDetail && stat.changeValue ? (
-                      <span
-                        className={classNames(
-                          'text-xs mb-1',
-                          stat.changeValue !== undefined &&
-                            stat.changeValue !== null &&
-                            stat.changeValue > 0 &&
-                            '!text-emerald-400',
-                          stat.changeValue !== undefined &&
-                            stat.changeValue !== null &&
-                            stat.changeValue < 0 &&
-                            '!text-red',
-                        )}
-                      >
-                        {stat.changeDetail}{' '}
-                        <span className="text-perps-muted-50 font-normal">
-                          ({stat.changeLabel})
-                        </span>
+        <MetricStrip>
+          {headerMetrics.map((stat, index) => (
+            <MetricStripItem
+              key={stat.label}
+              index={index}
+              label={stat.label}
+              valueClassName="flex flex-wrap items-end gap-1"
+              value={
+                <>
+                  {stat.label === 'Price' ? (
+                    <PriceSensitiveText price={metrics?.priceUsd}>
+                      {stat.value}
+                    </PriceSensitiveText>
+                  ) : (
+                    stat.value
+                  )}
+                  {stat.changeDetail && stat.changeValue ? (
+                    <span
+                      className={classNames(
+                        'text-xs mb-1',
+                        stat.changeValue !== undefined &&
+                          stat.changeValue !== null &&
+                          stat.changeValue > 0 &&
+                          '!text-emerald-400',
+                        stat.changeValue !== undefined &&
+                          stat.changeValue !== null &&
+                          stat.changeValue < 0 &&
+                          '!text-red',
+                      )}
+                    >
+                      {stat.changeDetail}{' '}
+                      <span className="text-perps-muted-50 font-normal">
+                        ({stat.changeLabel})
                       </span>
-                    ) : null}
-                  </>
-                }
-                detail={stat.detail}
-              />
-            ))}
-          </MetricStrip>
-        ) : (
-          <TokenMetricsSkeleton />
-        )}
+                    </span>
+                  ) : null}
+                </>
+              }
+              detail={stat.detail}
+            />
+          ))}
+        </MetricStrip>
       </div>
 
-      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_480px]">
+      <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
         <div className="min-w-0 space-y-4">
           <PriceChart
             key={`${chainId}:${address}`}
@@ -512,135 +481,68 @@ export function TokenDetailPage({
         </div>
 
         <aside className="min-w-0 space-y-4 lg:sticky lg:top-[72px]">
-          {token ? (
-            <>
-              {isLg ? (
-                <SwapPanel token={token} />
-              ) : (
-                <Sheet>
-                  <SheetTrigger asChild className="bg-perps-background">
-                    <Button
-                      type="button"
-                      className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
-                      variant="perps-long"
-                    >
-                      Trade {token.symbol}
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent
-                    side="bottom"
-                    className="max-h-[100svh] overflow-y-auto rounded-t-2xl border-border p-0 pb-6 !bg-perps-background"
-                  >
-                    <SheetHeader className="pr-8 !text-left !space-y-0">
-                      <SheetTitle>Buy/Sell {token.symbol}</SheetTitle>
-                      <SheetDescription aria-describedby={undefined} />
-                    </SheetHeader>
-                    <div className="mt-4">
-                      <SwapPanel token={token} />
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              )}
-
-              <TradeActivity chainId={chainId} tokenAddress={address} />
-
-              <PerpsCard className="p-4" fullWidth>
-                <h2 className="font-semibold text-perps-muted">
-                  About {token.name}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-perps-muted-50">
-                  {token.metadata.description ??
-                    'This creator has not added a description yet.'}
-                </p>
-                <MetadataLinks links={token.metadata.links} placement="about" />
-                <div className="mt-5 flex items-center gap-3 rounded-xl bg-white/[0.04] p-3">
-                  <TokenAvatar token={token} size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-xs text-perps-muted-50">
-                      Created by
-                    </div>
-                    <LaunchpadCreatorLink
-                      token={token}
-                      className="mt-0.5 block truncate text-sm font-medium text-perps-blue hover:underline"
-                    >
-                      {shortenAddress(token.creator, 6)}
-                    </LaunchpadCreatorLink>
-                  </div>
-                  <LaunchpadCreatorButton token={token} />
-                </div>
-              </PerpsCard>
-
-              <PerpsCard className="p-5" fullWidth>
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-lg font-semibold text-perps-muted">
-                    Launch details
-                  </h2>
-                </div>
-                <DetailList
-                  className="mt-5"
-                  valueClassName="max-w-[68%]"
-                  items={[
-                    [
-                      'Supply',
-                      `${formatRawAmount(token.initialSupply, token.decimals, 0)} ${token.symbol}`,
-                    ],
-                    ['Pool fee', `${token.pool.feeTier / 10_000}%`],
-                    ['Starting FDV', formatUsd(Number(token.initialFdvUsd))],
-                    ...(supportsLockedPositions
-                      ? [['Liquidity', 'Single maximum-bound position']]
-                      : []),
-                  ].map(([label, value]) => ({ label, value }))}
-                />
-              </PerpsCard>
-
-              {showLockedPositions ? (
-                <PerpsCard className="overflow-hidden" fullWidth>
-                  <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
-                    <h2 className="font-semibold text-perps-muted">
-                      Locked positions
-                    </h2>
-                  </div>
-                  <div className="divide-y divide-white/[0.06]">
-                    {token.positions.map((position) => (
-                      <div key={position.positionIndex} className="p-4 text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="font-medium text-perps-muted">
-                            Position #{position.positionId}
-                          </span>
-                        </div>
-                        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                          <div>
-                            <div className="text-perps-muted-50">
-                              Tick range
-                            </div>
-                            <div className="mt-1 text-perps-muted">
-                              {position.tickLower.toLocaleString()} →{' '}
-                              {position.tickUpper.toLocaleString()}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-perps-muted-50">
-                              Allocation
-                            </div>
-                            <div className="mt-1 truncate text-perps-muted">
-                              {formatRawAmount(
-                                position.desiredAmount,
-                                token.decimals,
-                                0,
-                              )}{' '}
-                              {token.symbol}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </PerpsCard>
-              ) : null}
-            </>
+          {isLg ? (
+            <SwapPanel token={token} />
           ) : (
-            <TokenSidebarSkeleton />
+            <Sheet>
+              <SheetTrigger asChild className="bg-perps-background">
+                <Button
+                  type="button"
+                  className="fixed inset-x-4 bottom-6 z-40 h-14 rounded-full text-base font-semibold"
+                  variant="perps-long"
+                >
+                  Trade {token.symbol}
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="bottom"
+                className="max-h-[100svh] overflow-y-auto rounded-t-2xl border-border p-0 pb-6 !bg-perps-background"
+              >
+                <SheetHeader className="pr-8 !text-left !space-y-0">
+                  <SheetTitle>Buy/Sell {token.symbol}</SheetTitle>
+                  <SheetDescription aria-describedby={undefined} />
+                </SheetHeader>
+                <div className="mt-4">
+                  <SwapPanel token={token} />
+                </div>
+              </SheetContent>
+            </Sheet>
           )}
+
+          <TradeActivity chainId={chainId} tokenAddress={address} />
+
+          <PerpsCard className="p-4" fullWidth>
+            <h2 className="font-semibold text-perps-muted">
+              About {token.name}
+            </h2>
+            <p className="mt-2 text-sm leading-5 text-perps-muted-50">
+              {token.metadata.description ??
+                'This creator has not added a description yet.'}
+            </p>
+          </PerpsCard>
+
+          {token.__typename !== 'SushiV2LaunchpadToken' ? (
+            <PerpsCard className="p-4" fullWidth>
+              <h2 className="font-semibold text-perps-muted">Creator</h2>
+              <div className="mt-3 flex items-center gap-3">
+                <TokenAvatar token={token} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs text-perps-muted-50">
+                    Creator wallet
+                  </div>
+                  <LaunchpadCreatorLink
+                    token={token}
+                    className="mt-0.5 block truncate text-sm font-medium text-perps-blue hover:underline"
+                  >
+                    {shortenAddress(token.creator, 6)}
+                  </LaunchpadCreatorLink>
+                </div>
+                <LaunchpadCreatorButton token={token} />
+              </div>
+            </PerpsCard>
+          ) : null}
+
+          <TokenLaunchDetails token={token} />
         </aside>
       </div>
     </Container>
