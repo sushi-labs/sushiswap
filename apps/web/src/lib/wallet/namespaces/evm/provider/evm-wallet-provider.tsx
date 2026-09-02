@@ -18,6 +18,7 @@ import {
   hasPrivyEvmReconnectIntent,
   isPrivyEvmConnector,
 } from 'src/lib/wallet/privy/privy-evm-connector'
+import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-session'
 import { logoutPrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
@@ -137,7 +138,11 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     for (const connection of connections) {
       await disconnectConnection(config, connection)
     }
-    if (disconnectsPrivy) await logoutPrivyRuntime()
+    // Privy is one session shared with the other namespaces; only the last
+    // wallet using it may log out.
+    if (disconnectsPrivy && !hasPrivyWalletConnectionOutside('evm')) {
+      await logoutPrivyRuntime()
+    }
   }, [])
 
   const value = useMemo(

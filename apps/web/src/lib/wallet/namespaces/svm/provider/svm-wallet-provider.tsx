@@ -21,6 +21,7 @@ import {
   setPrivySvmReconnect,
   shouldReconnectPrivySvm,
 } from 'src/lib/wallet/privy-storage'
+import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-session'
 import {
   connectPrivySvmWallet,
   logoutPrivyRuntime,
@@ -141,7 +142,11 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     )
     if (disconnectsPrivy) setPrivySvmReconnect(false)
     await svmDisconnect()
-    if (disconnectsPrivy) await logoutPrivyRuntime()
+    // Privy is one session shared with the other namespaces; only the last
+    // wallet using it may log out.
+    if (disconnectsPrivy && !hasPrivyWalletConnectionOutside('svm')) {
+      await logoutPrivyRuntime()
+    }
   }, [connector, svmDisconnect])
 
   useEffect(() => {
