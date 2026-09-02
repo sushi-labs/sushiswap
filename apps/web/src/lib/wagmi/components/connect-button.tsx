@@ -37,9 +37,11 @@ const TestConnectButton: FC<
   const { pending, connect } = useConnect()
   const connectors = useConnectors()
   const { isPending } = useWalletContext()
+  const connector =
+    connectors.find((candidate) => candidate.type === 'mock') ?? connectors[0]
 
   const onConnect = () => {
-    connect({ connector: connectors[0] })
+    if (connector) connect({ connector })
   }
 
   // Pending confirmation state
