@@ -767,9 +767,7 @@ export function SushiV2CreateLaunchPage({
       value:
         initialSushiFeeBps === undefined
           ? 'Loading…'
-          : `${formatBps(initialSushiFeeBps)} Sushi · ${formatBps(
-              10_000 - initialSushiFeeBps,
-            )} non-Sushi`,
+          : `${formatBps(10_000 - initialSushiFeeBps)} Creator`,
     },
     {
       label: 'Launch fee',
