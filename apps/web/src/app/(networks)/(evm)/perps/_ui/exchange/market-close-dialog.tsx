@@ -241,6 +241,7 @@ export const MarketCloseDialog = ({
         startTime: Date.now() - 5000, // last 5 sec
         endTime: Date.now() + 5000, // next 5 sec to account for any delays
         reversed: true, //newest first
+        aggregateByTime: true,
       },
     )
     const firstFill = fills?.[0]
