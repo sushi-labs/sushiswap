@@ -1,13 +1,11 @@
 'use client'
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { hasPersistedConnectorMatching } from 'src/lib/wagmi/config/persisted-connectors'
 import {
   hasStoredPrivySession,
   isPrivySessionStorageKey,
-} from 'src/lib/wallet/privy-storage'
-import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
-import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
+} from '../lib/wallet/privy-storage'
+import { privyRuntimeStore } from '../lib/wallet/privy/privy-runtime-store'
 
 type PrivyRuntimeComponent = React.ComponentType
 
@@ -15,38 +13,28 @@ function loadPrivyRuntime(): Promise<{ PrivyRuntime: PrivyRuntimeComponent }> {
   return import('./privy-runtime')
 }
 
-function requestSessionRuntime(evmReconnect: boolean): void {
-  privyRuntimeStore.requestRuntime({
-    evmReconnect,
-  })
+function requestSessionRuntime(): void {
+  privyRuntimeStore.requestRuntime()
 }
 
-export function PrivyRuntimeGate({
-  shouldReconnectPrivyEvm,
-}: {
-  shouldReconnectPrivyEvm: boolean
-}) {
-  const { requested, status } = useSyncExternalStore(
+export function PrivyRuntimeGate() {
+  const { hostMounted, requested, revision, status } = useSyncExternalStore(
     privyRuntimeStore.subscribe,
     privyRuntimeStore.getSnapshot,
     privyRuntimeStore.getSnapshot,
   )
   const [Runtime, setRuntime] = useState<PrivyRuntimeComponent>()
 
+  useEffect(() => privyRuntimeStore.mountRuntimeHost(), [])
+
   useEffect(() => {
-    if (hasStoredPrivySession()) {
-      requestSessionRuntime(shouldReconnectPrivyEvm)
-    }
-  }, [shouldReconnectPrivyEvm])
+    if (hasStoredPrivySession()) requestSessionRuntime()
+  }, [])
 
   useEffect(() => {
     function onStorage(event: StorageEvent) {
       if (!isPrivySessionStorageKey(event.key)) return
-      if (hasStoredPrivySession()) {
-        requestSessionRuntime(
-          hasPersistedConnectorMatching(isPrivyEvmConnectorId),
-        )
-      }
+      if (hasStoredPrivySession()) requestSessionRuntime()
     }
 
     window.addEventListener('storage', onStorage)
@@ -55,25 +43,32 @@ export function PrivyRuntimeGate({
 
   useEffect(() => {
     let cancelled = false
-    // `status === 'error'` means the previous import failed; wait for a fresh
-    // `requestRuntime()` to reset the store to `loading` before retrying.
-    if (!requested || Runtime || status === 'error') return
+    if (!hostMounted || !requested || Runtime || status === 'error') return
 
     privyRuntimeStore.setLoading()
     loadPrivyRuntime()
       .then(({ PrivyRuntime }) => {
-        if (!cancelled) setRuntime(() => PrivyRuntime)
+        if (
+          !cancelled &&
+          privyRuntimeStore.getSnapshot().revision === revision
+        ) {
+          setRuntime(() => PrivyRuntime)
+        }
       })
       .catch((error: unknown) => {
-        if (cancelled) return
-        privyRuntimeStore.setError(error)
+        if (
+          !cancelled &&
+          privyRuntimeStore.getSnapshot().revision === revision
+        ) {
+          privyRuntimeStore.setError(error)
+        }
       })
 
     return () => {
       cancelled = true
     }
-  }, [requested, status, Runtime])
+  }, [hostMounted, requested, revision, status, Runtime])
 
   if (!requested || !Runtime) return null
-  return <Runtime />
+  return <Runtime key={revision} />
 }

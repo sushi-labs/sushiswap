@@ -47,4 +47,42 @@ describe('waitForValue', () => {
     await assertion
     expect(unsubscribe).toHaveBeenCalledOnce()
   })
+
+  it('rejects an already-aborted wait without subscribing', async () => {
+    const controller = new AbortController()
+    const error = new Error('cancelled before waiting')
+    const subscribe = vi.fn(() => vi.fn())
+    controller.abort(error)
+
+    await expect(
+      waitForValue({
+        getValue: () => 0,
+        predicate: (candidate) => candidate === 1,
+        signal: controller.signal,
+        subscribe,
+        timeoutMessage: 'timed out',
+        timeoutMs: 1_000,
+      }),
+    ).rejects.toBe(error)
+    expect(subscribe).not.toHaveBeenCalled()
+  })
+
+  it('unsubscribes when an active wait is cancelled', async () => {
+    const controller = new AbortController()
+    const error = new Error('cancelled while waiting')
+    const unsubscribe = vi.fn()
+    const result = waitForValue({
+      getValue: () => 0,
+      predicate: (candidate) => candidate === 1,
+      signal: controller.signal,
+      subscribe: () => unsubscribe,
+      timeoutMessage: 'timed out',
+      timeoutMs: 1_000,
+    })
+
+    controller.abort(error)
+
+    await expect(result).rejects.toBe(error)
+    expect(unsubscribe).toHaveBeenCalledOnce()
+  })
 })

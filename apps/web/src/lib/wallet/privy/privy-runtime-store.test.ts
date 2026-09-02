@@ -1,7 +1,7 @@
-import type { EvmAddress } from 'sushi/evm'
-import type { SvmAddress } from 'sushi/svm'
-import type { Hex } from 'viem'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { EvmAddress, EvmTxHash } from 'sushi/evm'
+import type { SvmTxHash } from 'sushi/svm'
+import type { EIP1193Provider } from 'viem'
+import { describe, expect, it, vi } from 'vitest'
 import { createPrivyRuntimeStore } from './privy-runtime-store'
 import type { PrivyEvmWallet, PrivyRuntimeOperationHandlers } from './types'
 
@@ -14,21 +14,32 @@ function createOperations(): PrivyRuntimeOperationHandlers {
     exportSvmWallet: vi.fn(async () => undefined),
     loginSvm: vi.fn(async () => undefined),
     logout: vi.fn(async () => undefined),
-    sendEvmTransaction: vi.fn(async () => ({ hash: '0x01' as Hex })),
+    sendEvmTransaction: vi.fn(async () => ({
+      hash: '0x01' as EvmTxHash,
+    })),
     signAndSendSvmTransaction: vi.fn(async () => ({
-      signature: 'signature',
+      signature: 'signature' as SvmTxHash,
     })),
   }
 }
 
 function createWallet(): PrivyEvmWallet {
-  return { address }
+  return {
+    address,
+    getEthereumProvider: vi.fn(
+      async () =>
+        ({
+          on() {},
+          removeListener() {},
+          request: vi.fn(),
+        }) as unknown as EIP1193Provider,
+    ),
+    switchChain: vi.fn(async () => undefined),
+  }
 }
 
 describe('Privy runtime store', () => {
-  afterEach(() => vi.useRealTimers())
-
-  it('latches runtime requests', () => {
+  it('latches runtime requests without changing revisions', () => {
     const store = createPrivyRuntimeStore()
     const listener = vi.fn()
     store.subscribe(listener)
@@ -37,216 +48,117 @@ describe('Privy runtime store', () => {
     store.requestRuntime()
 
     expect(store.getSnapshot()).toEqual({
-      evmReconnect: false,
+      hostMounted: false,
       requested: true,
+      revision: 0,
       status: 'loading',
     })
-    expect(listener).toHaveBeenCalledTimes(1)
-
-    store.requestRuntime({ evmReconnect: true })
-    store.requestRuntime()
-
-    expect(store.getSnapshot()).toEqual({
-      evmReconnect: true,
-      requested: true,
-      status: 'loading',
-    })
-    expect(listener).toHaveBeenCalledTimes(2)
+    expect(listener).toHaveBeenCalledOnce()
   })
 
-  it('publishes a framework-independent snapshot without provider I/O', () => {
+  it('reference-counts runtime hosts across Strict Mode effect replay', () => {
     const store = createPrivyRuntimeStore()
-    const listener = vi.fn()
-    store.subscribe(listener)
-    const evmWallet = createWallet()
+    const unmountFirst = store.mountRuntimeHost()
+    const unmountSecond = store.mountRuntimeHost()
+
+    expect(store.getSnapshot().hostMounted).toBe(true)
+    unmountFirst()
+    unmountFirst()
+    expect(store.getSnapshot().hostMounted).toBe(true)
+
+    unmountSecond()
+    expect(store.getSnapshot().hostMounted).toBe(false)
+
+    const replayCleanup = store.mountRuntimeHost()
+    expect(store.getSnapshot().hostMounted).toBe(true)
+    replayCleanup()
+    expect(store.getSnapshot().hostMounted).toBe(false)
+  })
+
+  it('publishes settled wallets and provider-capable handles synchronously', async () => {
+    const store = createPrivyRuntimeStore()
+    const wallet = createWallet()
     store.requestRuntime()
 
     store.publishRuntime({
       authenticated: true,
+      evmWallet: wallet,
       hasEvmAccount: true,
-      evmWallet,
-      operations: createOperations(),
-      hasSvmAccount: true,
-      svmWallet: {
-        address: '11111111111111111111111111111111' as SvmAddress,
-      },
-    })
-
-    expect(store.getSnapshot()).toMatchObject({
-      authenticated: true,
-      evmWallet: { address },
-      status: 'ready',
-      svmWallet: { address: '11111111111111111111111111111111' },
-    })
-    expect(listener).toHaveBeenCalledTimes(2)
-  })
-
-  it('publishes an unauthenticated runtime without wallet capabilities', () => {
-    const store = createPrivyRuntimeStore()
-    store.requestRuntime({ evmReconnect: true })
-    store.publishRuntime({
-      authenticated: false,
-      operations: createOperations(),
-    })
-
-    expect(store.getSnapshot()).toMatchObject({
-      authenticated: false,
-      evmReconnect: false,
-      evmWallet: null,
-      status: 'ready',
-      svmWallet: null,
-    })
-  })
-
-  it('clears reconnect when an authenticated user has no EVM account', () => {
-    const store = createPrivyRuntimeStore()
-    store.requestRuntime({ evmReconnect: true })
-
-    store.publishRuntime({
-      authenticated: true,
-      evmWallet: null,
-      hasEvmAccount: false,
       hasSvmAccount: false,
       operations: createOperations(),
       svmWallet: null,
+      walletsReady: true,
     })
-
-    expect(store.getSnapshot().evmReconnect).toBe(false)
-  })
-
-  it('expires reconnect when Privy never becomes ready', () => {
-    vi.useFakeTimers()
-    const store = createPrivyRuntimeStore({ evmReconnectTimeoutMs: 1_000 })
-    store.requestRuntime({ evmReconnect: true })
-
-    vi.advanceTimersByTime(999)
-    expect(store.getSnapshot().evmReconnect).toBe(true)
-
-    vi.advanceTimersByTime(1)
-    expect(store.getSnapshot().evmReconnect).toBe(false)
-  })
-
-  it('publishes the latest wallet synchronously', () => {
-    const store = createPrivyRuntimeStore()
-    const firstWallet = createWallet()
-    const secondWallet = {
-      ...createWallet(),
-      address: '0x0000000000000000000000000000000000000002' as EvmAddress,
-    }
-
-    store.requestRuntime()
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: true,
-      evmWallet: firstWallet,
-      operations: createOperations(),
-      hasSvmAccount: true,
-    })
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: true,
-      evmWallet: secondWallet,
-      operations: createOperations(),
-      hasSvmAccount: true,
-    })
-
-    const snapshot = store.getSnapshot()
-    expect(snapshot.status).toBe('ready')
-    if (snapshot.status !== 'ready') throw new Error('Runtime is not ready')
-    expect(snapshot.evmWallet).toBe(secondWallet)
-  })
-
-  it('clears ready-only capabilities on errors', () => {
-    const store = createPrivyRuntimeStore()
-    store.requestRuntime()
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: true,
-      evmWallet: createWallet(),
-      operations: createOperations(),
-      hasSvmAccount: true,
-    })
-
-    store.setError(new Error('runtime failed'))
 
     const snapshot = store.getSnapshot()
     expect(snapshot).toMatchObject({
-      error: new Error('runtime failed'),
-      requested: true,
-      status: 'error',
+      authenticated: true,
+      evmWallet: wallet,
+      revision: 0,
+      status: 'ready',
+      walletsReady: true,
     })
-    expect('authenticated' in snapshot).toBe(false)
-    expect('evmWallet' in snapshot).toBe(false)
-    expect('operations' in snapshot).toBe(false)
+    if (snapshot.status !== 'ready' || !snapshot.evmWallet) {
+      throw new Error('Runtime wallet was not published')
+    }
+    await snapshot.evmWallet.getEthereumProvider()
+    expect(wallet.getEthereumProvider).toHaveBeenCalledOnce()
   })
 
-  it('publishes linked-account presence so consumers can tell "no wallet" from "not surfaced yet"', () => {
+  it('clears wallet capabilities when the runtime logs out', () => {
     const store = createPrivyRuntimeStore()
-    store.requestRuntime()
-
     store.publishRuntime({
       authenticated: true,
-      evmWallet: null,
+      evmWallet: createWallet(),
       hasEvmAccount: true,
-      hasSvmAccount: true,
+      hasSvmAccount: false,
       operations: createOperations(),
-      svmWallet: null,
+      walletsReady: true,
+    })
+
+    store.publishRuntime({
+      authenticated: false,
+      operations: createOperations(),
+      walletsReady: true,
     })
 
     expect(store.getSnapshot()).toMatchObject({
-      authenticated: true,
+      authenticated: false,
       evmWallet: null,
-      hasEvmAccount: true,
-      hasSvmAccount: true,
+      status: 'ready',
       svmWallet: null,
+      walletsReady: true,
     })
   })
 
-  it('retries after a load error when the runtime is requested again', () => {
+  it('increments revisions when retrying errors or forcing a remount', () => {
     const store = createPrivyRuntimeStore()
-    store.requestRuntime({ evmReconnect: true })
-    store.setError(new Error('chunk load failed'))
+    store.requestRuntime()
+    store.setError(new Error('chunk failed'))
 
     store.requestRuntime()
+    expect(store.getSnapshot()).toMatchObject({
+      revision: 1,
+      status: 'loading',
+    })
 
-    expect(store.getSnapshot()).toEqual({
-      evmReconnect: true,
-      requested: true,
+    store.restartRuntime()
+    expect(store.getSnapshot()).toMatchObject({
+      revision: 2,
       status: 'loading',
     })
   })
 
-  it('clears a consumed reconnect request', () => {
+  it('keeps the request and revision latched across runtime unmounts', () => {
     const store = createPrivyRuntimeStore()
-    const listener = vi.fn()
-    store.requestRuntime({ evmReconnect: true })
-    store.subscribe(listener)
-
-    store.clearEvmReconnect()
-    store.clearEvmReconnect()
-
-    expect(store.getSnapshot().evmReconnect).toBe(false)
-    expect(listener).toHaveBeenCalledTimes(1)
-
-    store.publishRuntime({
-      authenticated: true,
-      hasEvmAccount: true,
-      evmWallet: createWallet(),
-      operations: createOperations(),
-      hasSvmAccount: true,
-    })
-
-    expect(store.getSnapshot().evmReconnect).toBe(false)
-  })
-
-  it('keeps a runtime request latched when the provider unmounts before readiness', () => {
-    const store = createPrivyRuntimeStore()
-    store.requestRuntime({ evmReconnect: true })
+    store.requestRuntime()
+    store.restartRuntime()
     store.setUnavailable()
 
     expect(store.getSnapshot()).toEqual({
-      evmReconnect: true,
+      hostMounted: false,
       requested: true,
+      revision: 1,
       status: 'unavailable',
     })
   })

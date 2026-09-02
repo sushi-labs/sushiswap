@@ -25,17 +25,13 @@ const WagmiTrackers = () => {
 
 export const WagmiProvider: FC<{
   children: ReactNode
-  shouldReconnectPrivyEvm?: boolean
-}> = ({ children, shouldReconnectPrivyEvm = false }) => {
+}> = ({ children }) => {
   // No `initialState`: the connection is restored client-side from Wagmi's
   // local storage. Reading connection state on the server would make every
   // route below this provider request-bound and block partial prerendering.
   return (
     <QueryClientProvider>
-      <_WagmiProvider
-        config={getWagmiConfig()}
-        reconnectOnMount={!shouldReconnectPrivyEvm}
-      >
+      <_WagmiProvider config={getWagmiConfig()}>
         <div className="h-full w-full [&>div]:h-full">
           <WagmiStoreVersionCheck>
             <WagmiTrackers />

@@ -5,35 +5,29 @@ import type {
 } from './types'
 
 export interface PrivyRuntimeStore {
-  clearEvmReconnect(): void
   getSnapshot(): PrivyRuntimeSnapshot
+  mountRuntimeHost(): () => void
   publishRuntime(publication: PrivyRuntimePublication): void
-  requestRuntime(options?: { evmReconnect?: boolean }): void
+  requestRuntime(): void
+  restartRuntime(): void
   setError(error: unknown): void
   setLoading(): void
   setUnavailable(): void
   subscribe(listener: PrivyRuntimeListener): () => void
 }
 
-const initialSnapshot: PrivyRuntimeSnapshot = {
-  evmReconnect: false,
-  requested: false,
-  status: 'unavailable',
-}
-
-interface CreatePrivyRuntimeStoreOptions {
-  evmReconnectTimeoutMs?: number
-}
-
 function normalizeError(error: unknown): Error {
   return error instanceof Error ? error : new Error('Privy runtime failed')
 }
 
-export function createPrivyRuntimeStore({
-  evmReconnectTimeoutMs,
-}: CreatePrivyRuntimeStoreOptions = {}): PrivyRuntimeStore {
-  let snapshot = initialSnapshot
-  let evmReconnectTimeout: ReturnType<typeof setTimeout> | undefined
+export function createPrivyRuntimeStore(): PrivyRuntimeStore {
+  let snapshot: PrivyRuntimeSnapshot = {
+    hostMounted: false,
+    requested: false,
+    revision: 0,
+    status: 'unavailable',
+  }
+  let hostCount = 0
   const listeners = new Set<PrivyRuntimeListener>()
 
   function publish(nextSnapshot: PrivyRuntimeSnapshot): void {
@@ -42,103 +36,98 @@ export function createPrivyRuntimeStore({
     for (const listener of listeners) listener(snapshot, previousSnapshot)
   }
 
-  function cancelEvmReconnectTimeout(): void {
-    if (!evmReconnectTimeout) return
-    clearTimeout(evmReconnectTimeout)
-    evmReconnectTimeout = undefined
-  }
-
-  function clearEvmReconnect(): void {
-    cancelEvmReconnectTimeout()
-    if (!snapshot.evmReconnect) return
-    publish({ ...snapshot, evmReconnect: false })
-  }
-
-  function scheduleEvmReconnectTimeout(): void {
-    if (!evmReconnectTimeoutMs || evmReconnectTimeout) return
-    evmReconnectTimeout = setTimeout(() => {
-      evmReconnectTimeout = undefined
-      if (!snapshot.evmReconnect) return
-      publish({ ...snapshot, evmReconnect: false })
-    }, evmReconnectTimeoutMs)
-  }
-
   return {
-    clearEvmReconnect,
     getSnapshot() {
       return snapshot
     },
+    mountRuntimeHost() {
+      hostCount += 1
+      if (hostCount === 1) publish({ ...snapshot, hostMounted: true })
+
+      let mounted = true
+      return () => {
+        if (!mounted) return
+        mounted = false
+        hostCount = Math.max(0, hostCount - 1)
+        if (hostCount === 0) publish({ ...snapshot, hostMounted: false })
+      }
+    },
     publishRuntime(publication) {
       if (publication.authenticated) {
-        const evmReconnect = publication.hasEvmAccount
-          ? snapshot.evmReconnect
-          : false
-        if (!evmReconnect) cancelEvmReconnectTimeout()
         publish({
           authenticated: true,
-          evmReconnect,
           evmWallet: publication.evmWallet ?? null,
           hasEvmAccount: publication.hasEvmAccount,
           hasSvmAccount: publication.hasSvmAccount,
+          hostMounted: snapshot.hostMounted,
           operations: publication.operations,
           requested: true,
+          revision: snapshot.revision,
           status: 'ready',
           svmWallet: publication.svmWallet ?? null,
+          walletsReady: publication.walletsReady,
         })
       } else {
-        cancelEvmReconnectTimeout()
         publish({
           authenticated: false,
-          evmReconnect: false,
           evmWallet: null,
+          hostMounted: snapshot.hostMounted,
           operations: publication.operations,
           requested: true,
+          revision: snapshot.revision,
           status: 'ready',
           svmWallet: null,
+          walletsReady: publication.walletsReady,
         })
       }
     },
-    requestRuntime(options = {}) {
-      const evmReconnect =
-        snapshot.evmReconnect || Boolean(options.evmReconnect)
+    requestRuntime() {
+      if (snapshot.requested && snapshot.status !== 'error') return
 
-      // A previous load failure must not be permanent: re-requesting the
-      // runtime drops back to `loading` so the gate can retry the import.
-      if (!snapshot.requested || snapshot.status === 'error') {
-        publish({
-          evmReconnect,
-          requested: true,
-          status: 'loading',
-        })
-        if (evmReconnect) scheduleEvmReconnectTimeout()
-        return
-      }
-
-      if (evmReconnect === snapshot.evmReconnect) return
-      publish({ ...snapshot, evmReconnect, requested: true })
-      if (evmReconnect) scheduleEvmReconnectTimeout()
+      // Re-requesting after an import or authentication failure allows the
+      // gate to retry and remount the runtime.
+      publish({
+        hostMounted: snapshot.hostMounted,
+        requested: true,
+        revision:
+          snapshot.status === 'error'
+            ? snapshot.revision + 1
+            : snapshot.revision,
+        status: 'loading',
+      })
+    },
+    restartRuntime() {
+      publish({
+        hostMounted: snapshot.hostMounted,
+        requested: true,
+        revision: snapshot.revision + 1,
+        status: 'loading',
+      })
     },
     setError(error) {
       publish({
         error: normalizeError(error),
-        evmReconnect: snapshot.evmReconnect,
+        hostMounted: snapshot.hostMounted,
         requested: true,
+        revision: snapshot.revision,
         status: 'error',
       })
     },
     setLoading() {
       if (snapshot.status === 'loading') return
       publish({
-        evmReconnect: snapshot.evmReconnect,
+        hostMounted: snapshot.hostMounted,
         requested: true,
+        revision: snapshot.revision,
         status: 'loading',
       })
     },
     setUnavailable() {
-      if (snapshot.status === 'unavailable') return
+      if (snapshot.status === 'unavailable' && snapshot.requested) return
       publish({
-        evmReconnect: snapshot.evmReconnect,
+        hostMounted: snapshot.hostMounted,
         requested: true,
+        revision: snapshot.revision,
         status: 'unavailable',
       })
     },
@@ -149,6 +138,4 @@ export function createPrivyRuntimeStore({
   }
 }
 
-export const privyRuntimeStore = createPrivyRuntimeStore({
-  evmReconnectTimeoutMs: 5_000,
-})
+export const privyRuntimeStore = createPrivyRuntimeStore()

@@ -1,10 +1,12 @@
 import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
-import type { Hex } from 'viem'
+import type { EIP1193Provider, Hex } from 'viem'
 
 /** A framework-independent view of a Privy embedded EVM wallet. */
 export interface PrivyEvmWallet {
   address: EvmAddress
+  getEthereumProvider(): Promise<EIP1193Provider>
+  switchChain(chainId: number): Promise<void>
 }
 
 /** A framework-independent view of a Privy embedded Solana wallet. */
@@ -51,59 +53,58 @@ export interface PrivyRuntimeOperationHandlers {
   }): Promise<{ signature: SvmTxHash }>
 }
 
+interface PrivyRuntimeSnapshotBase {
+  hostMounted: boolean
+  revision: number
+}
+
 interface PrivyRuntimeEmptySnapshot {
   authenticated?: never
   error?: never
   evmWallet?: never
   operations?: never
   svmWallet?: never
+  walletsReady?: never
 }
 
-interface PrivyRuntimeUnrequestedSnapshot extends PrivyRuntimeEmptySnapshot {
-  evmReconnect: false
+interface PrivyRuntimeUnrequestedSnapshot
+  extends PrivyRuntimeSnapshotBase,
+    PrivyRuntimeEmptySnapshot {
   requested: false
   status: 'unavailable'
 }
 
-interface PrivyRuntimeRequestedSnapshotBase {
-  /** Remains true while a persisted Privy EVM connection is being restored. */
-  evmReconnect: boolean
-  requested: true
-}
-
 interface PrivyRuntimeInactiveSnapshot
-  extends PrivyRuntimeRequestedSnapshotBase,
+  extends PrivyRuntimeSnapshotBase,
     PrivyRuntimeEmptySnapshot {
+  requested: true
   status: 'unavailable' | 'loading'
 }
 
-interface PrivyRuntimeErrorSnapshot extends PrivyRuntimeRequestedSnapshotBase {
+interface PrivyRuntimeErrorSnapshot extends PrivyRuntimeSnapshotBase {
   authenticated?: never
   error: Error
   evmWallet?: never
   operations?: never
+  requested: true
   status: 'error'
   svmWallet?: never
+  walletsReady?: never
 }
 
-interface PrivyRuntimeReadySnapshotBase
-  extends PrivyRuntimeRequestedSnapshotBase {
+interface PrivyRuntimeReadySnapshotBase extends PrivyRuntimeSnapshotBase {
   error?: never
   operations: PrivyRuntimeOperationHandlers
+  requested: true
   status: 'ready'
+  walletsReady: boolean
 }
 
 interface PrivyRuntimeAuthenticatedSnapshot
   extends PrivyRuntimeReadySnapshotBase {
   authenticated: true
   evmWallet: PrivyEvmWallet | null
-  /**
-   * Whether the user's Privy account already holds an embedded wallet for the
-   * namespace, read from `user.linkedAccounts`. Privy rejects `createWallet()`
-   * for a user who has one, and the wallet lists surface later than the
-   * account does, so provisioning must key off this rather than off a null
-   * wallet.
-   */
+  /** Whether linked-account state already contains an embedded wallet. */
   hasEvmAccount: boolean
   hasSvmAccount: boolean
   svmWallet: PrivySvmWallet | null
@@ -136,6 +137,7 @@ export type PrivyRuntimePublication =
       hasSvmAccount?: never
       operations: PrivyRuntimeOperationHandlers
       svmWallet?: never
+      walletsReady: boolean
     }
   | {
       authenticated: true
@@ -144,6 +146,7 @@ export type PrivyRuntimePublication =
       hasSvmAccount: boolean
       operations: PrivyRuntimeOperationHandlers
       svmWallet?: PrivySvmWallet | null
+      walletsReady: boolean
     }
 
 export type PrivyRuntimeListener = (

@@ -1,4 +1,6 @@
 import { gtagEvent } from '@sushiswap/ui'
+import type { Config } from '@wagmi/core'
+import { privyEvmConnector } from 'src/lib/wallet/privy/privy-evm-connector'
 import { EvmChainId } from 'sushi/evm'
 import { http, createConfig } from 'wagmi'
 import type { util } from 'zod'
@@ -78,12 +80,18 @@ export const createProductionConfig = () => {
 
   // Keep Wagmi state in localStorage. The wrapper preserves an existing
   // connection map through createConfig's pre-hydration initial write.
-  return createConfig({
+  const config: Config = createConfig({
     ...publicWagmiConfig,
-    connectors: getPersistedConnectorFactories(),
+    connectors: [
+      privyEvmConnector({
+        getWagmiState: () => config.state,
+      }),
+      ...getPersistedConnectorFactories(),
+    ],
     storage,
     transports,
     pollingInterval,
     ssr: true,
   })
+  return config
 }

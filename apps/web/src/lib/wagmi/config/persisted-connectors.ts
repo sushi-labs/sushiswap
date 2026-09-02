@@ -69,7 +69,13 @@ export function hasPersistedConnections(): boolean {
 export function hasPersistedConnectorMatching(
   predicate: (connectorId: string) => boolean,
 ): boolean {
-  return [...readPersistedConnectorIds()].some(predicate)
+  return Boolean(findPersistedConnectorIdMatching(predicate))
+}
+
+export function findPersistedConnectorIdMatching(
+  predicate: (connectorId: string) => boolean,
+): string | undefined {
+  return [...readPersistedConnectorIds()].find(predicate)
 }
 
 /**

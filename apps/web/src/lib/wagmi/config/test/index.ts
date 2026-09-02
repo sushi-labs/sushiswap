@@ -1,5 +1,10 @@
 import { mock } from '@wagmi/connectors'
-import { isPrivyEvmConnectorId } from 'src/lib/wallet/privy/privy-evm-connector'
+import type { Config } from '@wagmi/core'
+import {
+  hasPrivyEvmReconnectIntent,
+  isPrivyEvmConnectorId,
+  privyEvmConnector,
+} from 'src/lib/wallet/privy/privy-evm-connector'
 import type { EvmChainId } from 'sushi/evm'
 import { http, type HttpTransport } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
@@ -37,7 +42,7 @@ export const createTestConfig = () => {
     },
   })
 
-  return createConfig({
+  const config: Config = createConfig({
     chains: testChains,
     transports: testChains.reduce(
       (acc, chain) => {
@@ -48,11 +53,18 @@ export const createTestConfig = () => {
     ),
     pollingInterval: 1_000,
     storage,
-    // The Privy test runtime registers its real injected connector lazily.
-    // Keeping the default mock here would violate the app's one-wallet
-    // invariant and make targeted Privy restoration intentionally fail.
-    connectors: hasPersistedConnectorMatching(isPrivyEvmConnectorId)
-      ? []
-      : [mockConnector],
+    // Reconnect only one EVM wallet in the test app. The registered Privy
+    // connector restores through ordinary Wagmi hydration.
+    connectors: [
+      privyEvmConnector({
+        getWagmiState: () => config.state,
+      }),
+      ...(hasPersistedConnectorMatching(isPrivyEvmConnectorId) ||
+      hasPrivyEvmReconnectIntent()
+        ? []
+        : [mockConnector]),
+    ],
+    ssr: true,
   })
+  return config
 }

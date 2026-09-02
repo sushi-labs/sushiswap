@@ -2,6 +2,7 @@ type WaitForValueOptions<T> = {
   getError?(value: T): Error | undefined
   getValue(): T
   predicate(value: T): boolean
+  signal?: AbortSignal
   subscribe(listener: () => void): () => void
   timeoutMessage: string
   timeoutMs: number
@@ -15,10 +16,19 @@ export function waitForValue<T>({
   getError,
   getValue,
   predicate,
+  signal,
   subscribe,
   timeoutMessage,
   timeoutMs,
 }: WaitForValueOptions<T>): Promise<T> {
+  if (signal?.aborted) {
+    return Promise.reject(
+      signal.reason instanceof Error
+        ? signal.reason
+        : new Error('Waiting for value was cancelled'),
+    )
+  }
+
   const current = getValue()
   const currentError = getError?.(current)
   if (currentError) return Promise.reject(currentError)
@@ -34,7 +44,18 @@ export function waitForValue<T>({
     function finish(): void {
       settled = true
       if (cleanup.timeout) clearTimeout(cleanup.timeout)
+      signal?.removeEventListener('abort', onAbort)
       cleanup.unsubscribe()
+    }
+
+    function onAbort(): void {
+      if (settled) return
+      finish()
+      reject(
+        signal?.reason instanceof Error
+          ? signal.reason
+          : new Error('Waiting for value was cancelled'),
+      )
     }
 
     function check(): void {
@@ -64,6 +85,12 @@ export function waitForValue<T>({
 
     check()
     if (settled) return
+
+    signal?.addEventListener('abort', onAbort, { once: true })
+    if (signal?.aborted) {
+      onAbort()
+      return
+    }
 
     cleanup.timeout = setTimeout(() => {
       if (settled) return

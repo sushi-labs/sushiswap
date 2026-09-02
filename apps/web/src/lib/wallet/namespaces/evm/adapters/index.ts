@@ -1,5 +1,6 @@
 export * from './coinbase-wallet'
 export * from './injected'
 export * from './metamask'
+export * from './privy'
 export * from './safe'
 export * from './walletconnect'
