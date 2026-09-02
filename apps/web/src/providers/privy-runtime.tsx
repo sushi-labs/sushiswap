@@ -275,6 +275,17 @@ function PrivyRuntimeEffects() {
         )
         return { hash: result.hash as EvmTxHash }
       },
+      async signSvmTransaction({ address, transaction }) {
+        const wallet = latestHandlesRef.current.svmStandardWallet
+        if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
+          throw new Error('Privy SVM wallet is not active')
+        }
+        return wallet.features['privy:'].privy.signTransaction({
+          transaction,
+          address,
+          chain: 'solana:mainnet',
+        })
+      },
       async signAndSendSvmTransaction({ address, transaction, uiOptions }) {
         const wallet = latestHandlesRef.current.svmStandardWallet
         if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {

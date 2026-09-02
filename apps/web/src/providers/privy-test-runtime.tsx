@@ -23,6 +23,9 @@ const operations: PrivyRuntimeOperationHandlers = {
   async sendEvmTransaction() {
     throw new Error('Privy test transactions are not implemented')
   },
+  async signSvmTransaction() {
+    throw new Error('Privy test transactions are not implemented')
+  },
   async signAndSendSvmTransaction() {
     throw new Error('Privy test transactions are not implemented')
   },

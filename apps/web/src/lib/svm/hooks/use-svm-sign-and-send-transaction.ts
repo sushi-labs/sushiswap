@@ -2,8 +2,8 @@ import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
 import { useTransactionSigner } from '@solana/connector'
 import type { ReadonlyUint8Array } from '@solana/kit'
 import { useCallback } from 'react'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
-import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
+import { usePrivyEmbeddedWallet } from '../../wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from '../../wallet/privy/use-privy-runtime'
 
 export function useSvmSignAndSendTransaction() {
   const { signer } = useTransactionSigner()
@@ -18,7 +18,6 @@ export function useSvmSignAndSendTransaction() {
       },
     ) => {
       if (
-        options?.uiOptions &&
         privyEmbedded &&
         privyEmbedded.address.toLowerCase() === signer?.address.toLowerCase()
       ) {

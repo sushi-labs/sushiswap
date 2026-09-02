@@ -17,6 +17,9 @@ function createOperations(): PrivyRuntimeOperationHandlers {
     sendEvmTransaction: vi.fn(async () => ({
       hash: '0x01' as EvmTxHash,
     })),
+    signSvmTransaction: vi.fn(async () => ({
+      signedTransaction: new Uint8Array(),
+    })),
     signAndSendSvmTransaction: vi.fn(async () => ({
       signature: 'signature' as SvmTxHash,
     })),

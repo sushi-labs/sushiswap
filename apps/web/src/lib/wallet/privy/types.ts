@@ -46,6 +46,10 @@ export interface PrivyRuntimeOperationHandlers {
     transaction: PrivyEvmTransactionRequest
     uiOptions?: PrivyTransactionUiOptions
   }): Promise<{ hash: EvmTxHash }>
+  signSvmTransaction(input: {
+    address: SvmAddress
+    transaction: Uint8Array
+  }): Promise<{ signedTransaction: Uint8Array }>
   signAndSendSvmTransaction(input: {
     address: SvmAddress
     transaction: Uint8Array

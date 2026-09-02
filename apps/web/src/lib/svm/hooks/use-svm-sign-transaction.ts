@@ -5,6 +5,8 @@ import {
   getTransactionDecoder,
 } from '@solana/kit'
 import { useCallback } from 'react'
+import { usePrivyEmbeddedWallet } from '../../wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from '../../wallet/privy/use-privy-runtime'
 
 function serializeSignedTransaction(
   transaction: SolanaTransaction,
@@ -28,20 +30,30 @@ function serializeSignedTransaction(
 
 export function useSvmSignTransaction() {
   const { signer } = useTransactionSigner()
+  const privyEmbedded = usePrivyEmbeddedWallet('svm')
+  const { operations: privyOperations } = usePrivyRuntime()
 
   const signTransaction = useCallback(
     async (transaction: ReadonlyUint8Array<ArrayBuffer>) => {
       if (!signer) throw new Error('SVM wallet signer is unavailable')
-      const signedTransaction = serializeSignedTransaction(
-        await signer.signTransaction(transaction),
-      )
+      const isPrivySigner =
+        privyEmbedded?.address.toLowerCase() === signer.address.toLowerCase()
+      const signedTransaction = isPrivySigner
+        ? (
+            await privyOperations?.signSvmTransaction({
+              transaction: new Uint8Array(transaction),
+              address: privyEmbedded.address,
+            })
+          )?.signedTransaction
+        : serializeSignedTransaction(await signer.signTransaction(transaction))
+      if (!signedTransaction) throw new Error('Privy runtime is unavailable')
       const base58TxSig = getSignatureFromTransaction(
         getTransactionDecoder().decode(signedTransaction),
       )
       const base64SignedTx = Buffer.from(signedTransaction).toString('base64')
       return { base58TxSig, base64SignedTx }
     },
-    [signer],
+    [privyEmbedded, privyOperations, signer],
   )
   return { signTransaction }
 }
