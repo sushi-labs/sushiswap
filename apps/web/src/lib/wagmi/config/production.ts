@@ -3,6 +3,10 @@ import { gtagEvent } from '@sushiswap/ui'
 import { EvmChainId } from 'sushi/evm'
 import { http } from 'wagmi'
 import type { util } from 'zod'
+import {
+  createConnectorRestoringStorage,
+  getPersistedConnectorFactories,
+} from './persisted-connectors'
 import { publicWagmiConfig } from './public'
 import { publicTransports } from './viem'
 
@@ -27,6 +31,7 @@ const pollingInterval = new Proxy(
 const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
 
 export const createProductionConfig = () => {
+  const storage = createConnectorRestoringStorage()
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
@@ -72,11 +77,12 @@ export const createProductionConfig = () => {
     {} as util.Writeable<typeof publicTransports>,
   )
 
-  // No explicit storage: wagmi defaults to localStorage (with an SSR-safe
-  // fallback). Nothing reads the wagmi state server-side any more, so keeping
-  // it in a cookie only added weight to every request.
+  // Keep Wagmi state in localStorage. The wrapper preserves an existing
+  // connection map through createConfig's pre-hydration initial write.
   return createConfig({
     ...publicWagmiConfig,
+    connectors: getPersistedConnectorFactories(),
+    storage,
     transports,
     pollingInterval,
     ssr: true,
