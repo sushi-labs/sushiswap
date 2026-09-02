@@ -163,16 +163,30 @@ function mapTuple<const Items extends readonly unknown[], Result>(
   return items.map(mapper) as unknown as { [Index in keyof Items]: Result }
 }
 
-// No `privyWalletOverride`: Privy builds its own viem clients in ~9 places
-// (wallet balance, ERC-20 reads, bridging screens, ...) and only passes fetch
-// options in `getPublicClient`. Sushi's dRPC endpoint rejects every request
-// without an `Authorization` JWT, which a browser also cannot attach to the
-// WebSocket, so pointing Privy at it broke each unpatched client. Privy falls
-// back to the chain's own RPC, which needs no credentials.
-export const publicChains = mapTuple(
-  evmChains,
-  ({ viemChain }) => viemChain,
-) satisfies Readonly<Chain[]>
+export function getPublicRpcUrl(chainId: EvmChainId): string {
+  const rpcUrl = publicTransports[chainId]({ chain: undefined }).value?.url
+
+  if (!rpcUrl) throw new Error(`Missing public RPC URL for chain ${chainId}`)
+  return rpcUrl
+}
+
+export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
+  const rpcUrl = getPublicRpcUrl(viemChain.id)
+
+  return {
+    ...viemChain,
+    rpcUrls: {
+      ...viemChain.rpcUrls,
+      // Privy reads this override for every viem client it builds itself, so
+      // its embedded wallet uses Sushi's RPC instead of a public one. Those
+      // clients pass no fetch options, so the `viem@2.55.0` patch attaches the
+      // dRPC JWT inside viem's HTTP client, where it covers all of them.
+      privyWalletOverride: {
+        http: [rpcUrl],
+      },
+    },
+  }
+}) satisfies Readonly<Chain[]>
 
 export function fromEntriesConst<
   const Pairs extends readonly (readonly [PropertyKey, any])[],
