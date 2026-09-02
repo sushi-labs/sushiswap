@@ -4,7 +4,6 @@ import { useKitTransactionSigner } from '@solana/connector'
 import {
   appendTransactionMessageInstructions,
   compileTransaction,
-  createSolanaRpc,
   createTransactionMessage,
   getTransactionEncoder,
   lamports,
@@ -22,7 +21,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount } from 'sushi'
 import { type SvmAddress, SvmChainId, SvmNative, svmAddress } from 'sushi/svm'
-import { SVM_RPC_URL } from '../config'
+import { getSvmRpc } from '../rpc'
 import { waitForSvmSignature } from '../wait-for-svm-signature'
 import { useSvmSignAndSendTransaction } from './use-svm-sign-and-send-transaction'
 
@@ -57,7 +56,7 @@ export const useTransferSol = (params?: {
         throw new Error('Transfer amount must be greater than zero')
       }
 
-      const rpc = createSolanaRpc(SVM_RPC_URL)
+      const rpc = getSvmRpc()
 
       const { value: latestBlockhash } = await rpc
         .getLatestBlockhash({ commitment: 'confirmed' })
