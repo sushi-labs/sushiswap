@@ -16,11 +16,13 @@ import {
   type NearIntentsDepositAddress,
   type NearIntentsDepositAddressFor,
   type NearIntentsSupportedChainId,
-  getNearIntentsAssetId,
   isNearIntentsEvmChainId,
+} from 'src/lib/swap/near-intents'
+import {
   signNearIntentsStellarPayment,
   submitSignedNearIntentsStellarPayment,
-} from 'src/lib/swap/near-intents'
+} from 'src/lib/swap/near-intents/stellar-transaction'
+import { getNearIntentsAssetId } from 'src/lib/swap/near-intents/tokens'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { Amount, getChainById } from 'sushi'
