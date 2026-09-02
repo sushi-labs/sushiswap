@@ -39,7 +39,11 @@ import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-
 import type { Wallet } from 'src/lib/wallet/types'
 import { SvmChainId } from 'sushi/svm'
 import type { WalletNamespaceContext } from '../../types'
-import { PRIVY_SVM_CONNECTOR_ID, SvmAdapterId } from '../config'
+import {
+  PRIVY_SVM_CONNECTOR_ID,
+  PRIVY_SVM_WALLET,
+  SvmAdapterId,
+} from '../config'
 
 function useInSvmContext(): boolean {
   const client = useConnectorClient()
@@ -197,10 +201,14 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     setActiveWalletConnection({
       chainId: SvmChainId.SOLANA,
       id: `svm:${connector.connectorId.toLowerCase()}`,
-      name: walletInfo.name ?? '',
+      name: isPrivyConnector(connector.connectorId)
+        ? PRIVY_SVM_WALLET.name
+        : (walletInfo.name ?? ''),
       namespace: 'svm',
       account: connector.selectedAccount.address,
-      icon: walletInfo.icon ?? undefined,
+      icon: isPrivyConnector(connector.connectorId)
+        ? PRIVY_SVM_WALLET.icon
+        : (walletInfo.icon ?? undefined),
     })
   }, [isConnected, connector, walletInfo.name, walletInfo.icon])
 
