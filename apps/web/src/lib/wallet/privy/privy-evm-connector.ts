@@ -21,6 +21,7 @@ import {
   type PrivyRuntimeStore,
   privyRuntimeStore,
 } from './privy-runtime-store'
+import { PRIVY_WALLET_ICON } from './privy-wallet-icon'
 import type {
   PrivyEvmWallet,
   PrivyRuntimeReadySnapshot,
@@ -31,8 +32,6 @@ import { WaitForValueTimeoutError, waitForValue } from './wait-for-value'
 export const PRIVY_EVM_CONNECTOR_ID = 'io.privy.wallet'
 export const PRIVY_EVM_CONNECTOR_NAME = 'Email'
 export const PRIVY_EVM_CONNECTOR_TYPE = 'privy'
-export const PRIVY_EVM_CONNECTOR_ICON =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSI3IiBmaWxsPSJibGFjayIvPgogIDxwYXRoIGQ9Ik03LjI1IDkuMjVDNy4yNSA4LjY5NzcyIDcuNjk3NzIgOC4yNSA4LjI1IDguMjVIMTkuNzVDMjAuMzAyMyA4LjI1IDIwLjc1IDguNjk3NzIgMjAuNzUgOS4yNVYxOC43NUMyMC43NSAxOS4zMDIzIDIwLjMwMjMgMTkuNzUgMTkuNzUgMTkuNzVIOC4yNUM3LjY5NzcyIDE5Ljc1IDcuMjUgMTkuMzAyMyA3LjI1IDE4Ljc1VjkuMjVaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik03LjkgOS41NUwxNCAxNC4yTDIwLjEgOS41NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjY1IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+'
 
 export const PRIVY_EVM_CONNECTED_STORAGE_KEY = `${PRIVY_EVM_CONNECTOR_ID}.connected`
 export const PRIVY_EVM_DISCONNECTED_STORAGE_KEY = `${PRIVY_EVM_CONNECTOR_ID}.disconnected`
@@ -568,7 +567,7 @@ export function privyEvmConnector({
     }
 
     return {
-      icon: PRIVY_EVM_CONNECTOR_ICON,
+      icon: PRIVY_WALLET_ICON,
       id: PRIVY_EVM_CONNECTOR_ID,
       name: PRIVY_EVM_CONNECTOR_NAME,
       type: PRIVY_EVM_CONNECTOR_TYPE,
