@@ -25,6 +25,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
 import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
+import { signAndSendPrivySvmTransaction } from 'src/lib/wallet/privy/privy-svm-signing'
 import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
 import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
 import type {
@@ -291,16 +292,8 @@ function PrivyRuntimeEffects() {
         if (!wallet || latestHandlesRef.current.svmWalletAddress !== address) {
           throw new Error('Privy SVM wallet is not active')
         }
-        // Privy's injected implementation accepts the same UI options as its
-        // public hook, but the lower-level feature type omits them.
-        const signAndSendTransaction = wallet.features['privy:'].privy
-          .signAndSendTransaction as (input: {
-          address: string
-          chain: 'solana:mainnet'
-          options?: { uiOptions?: typeof uiOptions }
-          transaction: Uint8Array
-        }) => Promise<{ signature: Uint8Array }>
-        const result = await signAndSendTransaction({
+        const privy = wallet.features['privy:'].privy
+        const result = await signAndSendPrivySvmTransaction(privy, {
           transaction,
           address,
           chain: 'solana:mainnet',
