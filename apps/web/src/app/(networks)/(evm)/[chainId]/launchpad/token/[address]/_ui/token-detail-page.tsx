@@ -64,7 +64,10 @@ import { PageState } from '../../../_ui/state-card'
 import { StatusPill } from '../../../_ui/status-pill'
 import { TokenAvatar } from '../../../_ui/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
-import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
+import {
+  LaunchpadLiveDataProvider,
+  useLaunchpadLiveMarketStats,
+} from '../_lib/launchpad-live-data-provider'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import {
@@ -331,6 +334,30 @@ export function TokenDetailPage({
   address: EvmAddress
   definition: LaunchpadTokenDefinition
 }) {
+  return (
+    <LaunchpadLiveDataProvider
+      chainId={chainId}
+      createdAt={definition.createdAt}
+      tokenAddress={address}
+    >
+      <TokenDetailPageContent
+        chainId={chainId}
+        address={address}
+        definition={definition}
+      />
+    </LaunchpadLiveDataProvider>
+  )
+}
+
+function TokenDetailPageContent({
+  chainId,
+  address,
+  definition,
+}: {
+  chainId: LaunchpadChainId
+  address: EvmAddress
+  definition: LaunchpadTokenDefinition
+}) {
   const chain = getEvmChainById(chainId)
   const chainKey = chain.key
   const {
@@ -339,11 +366,9 @@ export function TokenDetailPage({
     isPending: isTokenPending,
     refetch: refetchToken,
   } = useLaunchpadToken(chainId, address)
-  const { data: marketStats } = useLaunchpadMarketStats(chainId, address)
+  const { data: marketStats } = useLaunchpadLiveMarketStats()
   const { isLg } = useBreakpoint('lg')
   const priceChartDataRef = useRef<PriceChartData>({
-    chainId,
-    createdAt: definition.createdAt,
     decimals: token?.decimals ?? definition.decimals,
     initialSupply: token?.initialSupply ?? definition.initialSupply,
     tokenAddress: address,
@@ -382,8 +407,6 @@ export function TokenDetailPage({
 
   if (token) {
     priceChartDataRef.current = {
-      chainId,
-      createdAt: token.createdAt,
       decimals: token.decimals,
       initialSupply: token.initialSupply,
       tokenAddress: address,
@@ -542,7 +565,7 @@ export function TokenDetailPage({
                 </Sheet>
               )}
 
-              <TradeActivity chainId={chainId} tokenAddress={address} />
+              <TradeActivity />
 
               <PerpsCard className="p-4" fullWidth>
                 <h2 className="font-semibold text-perps-muted">

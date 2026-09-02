@@ -5,7 +5,7 @@ import { SignalIcon } from '@heroicons/react/24/outline'
 import { Button, Dots, SkeletonBox, Switch, classNames } from '@sushiswap/ui'
 import { differenceInMinutes, differenceInSeconds, format } from 'date-fns'
 import ms from 'ms'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {
@@ -14,7 +14,7 @@ import {
   shortenAddress,
 } from '../../../_lib/format'
 import type { LaunchpadToken, LaunchpadTrade } from '../../../types'
-import { useLaunchpadLiveTrades } from '../_lib/use-launchpad-live-trades'
+import { useLaunchpadLiveTrades } from '../_lib/launchpad-live-data-provider'
 
 const TRADE_GRID_CLASS_NAME =
   'grid min-w-[680px] grid-cols-[52px_minmax(180px,1fr)_minmax(110px,auto)_minmax(140px,auto)_minmax(90px,auto)] gap-4'
@@ -146,27 +146,19 @@ export function TradeHistory({
 }: {
   token: TradeHistoryToken
 }) {
-  const [includeSmallTrades, setIncludeSmallTrades] = useState(false)
   const [isTableScrolled, setIsTableScrolled] = useState(false)
   const [now, setNow] = useState(0)
-  const input = useMemo(
-    () => ({
-      chainId: token.chainId,
-      tokenAddress: token.address,
-      includeSmallTrades,
-      first: 20,
-    }),
-    [includeSmallTrades, token.address, token.chainId],
-  )
   const {
     data,
     fetchNextPage,
     hasNextPage,
+    includeSmallTrades,
     isFetchingNextPage,
     isPending,
-    streamStatus,
     lastEventAt,
-  } = useLaunchpadLiveTrades(input)
+    setIncludeSmallTrades,
+    streamStatus,
+  } = useLaunchpadLiveTrades()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [loadMoreTarget, setLoadMoreTarget] = useState<HTMLDivElement | null>(
     null,
