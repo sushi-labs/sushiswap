@@ -25,6 +25,15 @@ vi.mock('@solana/connector', () => ({
   useTransactionSigner: () => ({ signer: harness.signer }),
 }))
 
+vi.mock('@solana/connector/react', () => ({
+  useConnector: () => ({
+    wallet: {
+      status: 'connected',
+      session: { connectorId: 'wallet-standard:privy' },
+    },
+  }),
+}))
+
 vi.mock('@solana/kit', () => ({
   getSignatureFromTransaction: () => 'signed-transaction-signature',
   getTransactionDecoder: () => ({ decode: vi.fn(() => ({})) }),
@@ -70,6 +79,7 @@ describe('Privy SVM signing', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    harness.signer.address = ADDRESS
     harness.getPrivyWallet.mockReturnValue({ address: ADDRESS })
     harness.signSvmTransaction.mockResolvedValue({
       signedTransaction: new Uint8Array([9]),
@@ -96,8 +106,9 @@ describe('Privy SVM signing', () => {
     container.remove()
   })
 
-  it('signs Jupiter transactions through the Privy runtime', async () => {
+  it('uses the active Privy connector while wallet addresses reconcile', async () => {
     const transaction = new Uint8Array([1]) as ReadonlyUint8Array<ArrayBuffer>
+    harness.signer.address = '22222222222222222222222222222222'
 
     await expect(handlers.signTransaction(transaction)).resolves.toEqual({
       base58TxSig: 'signed-transaction-signature',

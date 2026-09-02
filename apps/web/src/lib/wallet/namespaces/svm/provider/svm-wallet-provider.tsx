@@ -30,9 +30,9 @@ import {
 import { waitForValue } from 'src/lib/wallet/privy/wait-for-value'
 import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
-  addWalletConnection,
   clearWalletConnections,
   getConnections as getWalletConnections,
+  setActiveWalletConnection,
   setWalletNamespaceRestoring,
 } from 'src/lib/wallet/provider/store'
 import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-initial-wallet-auto-connect-pending'
@@ -194,7 +194,7 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       setPrivySvmReconnect(false)
     }
 
-    addWalletConnection({
+    setActiveWalletConnection({
       chainId: SvmChainId.SOLANA,
       id: `svm:${connector.connectorId.toLowerCase()}`,
       name: walletInfo.name ?? '',

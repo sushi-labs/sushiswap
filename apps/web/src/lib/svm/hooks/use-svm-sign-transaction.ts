@@ -1,4 +1,5 @@
 import { type SolanaTransaction, useTransactionSigner } from '@solana/connector'
+import { useConnector } from '@solana/connector/react'
 import {
   type ReadonlyUint8Array,
   getSignatureFromTransaction,
@@ -6,6 +7,7 @@ import {
 } from '@solana/kit'
 import { useCallback } from 'react'
 import { usePrivyEmbeddedWallet } from '../../wallet/hooks/use-privy-embedded'
+import { PRIVY_SVM_CONNECTOR_ID } from '../../wallet/namespaces/svm/config'
 import { usePrivyRuntime } from '../../wallet/privy/use-privy-runtime'
 
 function serializeSignedTransaction(
@@ -30,6 +32,7 @@ function serializeSignedTransaction(
 
 export function useSvmSignTransaction() {
   const { signer } = useTransactionSigner()
+  const { wallet } = useConnector()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
   const { operations: privyOperations } = usePrivyRuntime()
 
@@ -37,15 +40,22 @@ export function useSvmSignTransaction() {
     async (transaction: ReadonlyUint8Array<ArrayBuffer>) => {
       if (!signer) throw new Error('SVM wallet signer is unavailable')
       const isPrivySigner =
-        privyEmbedded?.address.toLowerCase() === signer.address.toLowerCase()
-      const signedTransaction = isPrivySigner
-        ? (
-            await privyOperations?.signSvmTransaction({
-              transaction: new Uint8Array(transaction),
-              address: privyEmbedded.address,
-            })
-          )?.signedTransaction
-        : serializeSignedTransaction(await signer.signTransaction(transaction))
+        wallet.status === 'connected' &&
+        wallet.session.connectorId === PRIVY_SVM_CONNECTOR_ID
+      let signedTransaction: Uint8Array | undefined
+      if (isPrivySigner) {
+        if (!privyEmbedded) throw new Error('Privy SVM wallet is unavailable')
+        signedTransaction = (
+          await privyOperations?.signSvmTransaction({
+            transaction: new Uint8Array(transaction),
+            address: privyEmbedded.address,
+          })
+        )?.signedTransaction
+      } else {
+        signedTransaction = serializeSignedTransaction(
+          await signer.signTransaction(transaction),
+        )
+      }
       if (!signedTransaction) throw new Error('Privy runtime is unavailable')
       const base58TxSig = getSignatureFromTransaction(
         getTransactionDecoder().decode(signedTransaction),
@@ -53,7 +63,7 @@ export function useSvmSignTransaction() {
       const base64SignedTx = Buffer.from(signedTransaction).toString('base64')
       return { base58TxSig, base64SignedTx }
     },
-    [privyEmbedded, privyOperations, signer],
+    [privyEmbedded, privyOperations, signer, wallet],
   )
   return { signTransaction }
 }

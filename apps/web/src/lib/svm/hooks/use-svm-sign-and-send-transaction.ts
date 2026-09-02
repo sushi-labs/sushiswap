@@ -1,12 +1,15 @@
 import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
 import { useTransactionSigner } from '@solana/connector'
+import { useConnector } from '@solana/connector/react'
 import type { ReadonlyUint8Array } from '@solana/kit'
 import { useCallback } from 'react'
 import { usePrivyEmbeddedWallet } from '../../wallet/hooks/use-privy-embedded'
+import { PRIVY_SVM_CONNECTOR_ID } from '../../wallet/namespaces/svm/config'
 import { usePrivyRuntime } from '../../wallet/privy/use-privy-runtime'
 
 export function useSvmSignAndSendTransaction() {
   const { signer } = useTransactionSigner()
+  const { wallet } = useConnector()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
   const { operations: privyOperations } = usePrivyRuntime()
 
@@ -17,10 +20,11 @@ export function useSvmSignAndSendTransaction() {
         uiOptions?: SendTransactionModalUIOptions
       },
     ) => {
-      if (
-        privyEmbedded &&
-        privyEmbedded.address.toLowerCase() === signer?.address.toLowerCase()
-      ) {
+      const isPrivySigner =
+        wallet.status === 'connected' &&
+        wallet.session.connectorId === PRIVY_SVM_CONNECTOR_ID
+      if (isPrivySigner) {
+        if (!privyEmbedded) throw new Error('Privy SVM wallet is unavailable')
         const tx = await privyOperations?.signAndSendSvmTransaction({
           transaction: new Uint8Array(transaction),
           address: privyEmbedded.address,
@@ -35,7 +39,7 @@ export function useSvmSignAndSendTransaction() {
         return { base58TxSig: txSig }
       }
     },
-    [privyEmbedded, signer, privyOperations],
+    [privyEmbedded, privyOperations, signer, wallet],
   )
   return { signAndSendTransaction }
 }
