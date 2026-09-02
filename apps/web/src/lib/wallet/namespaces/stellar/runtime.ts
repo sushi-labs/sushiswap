@@ -1,10 +1,6 @@
-import {
-  type ISupportedWallet,
-  KitEventType,
-} from '@creit.tech/stellar-wallets-kit'
-import { selectedModuleId } from '@creit.tech/stellar-wallets-kit/state'
+import type { ISupportedWallet } from '@creit.tech/stellar-wallets-kit'
 import type { StellarAddress } from 'sushi/stellar'
-import { stellarWalletKit } from './config'
+import { getStellarWalletKit } from './config'
 
 export interface StellarWalletConnection {
   account: StellarAddress
@@ -20,12 +16,26 @@ interface StellarWalletSubscription {
 export async function getStellarWalletConnection(): Promise<
   StellarWalletConnection | undefined
 > {
+  const kit = await getStellarWalletKit()
+  const { activeAddress, selectedModuleId } = await import(
+    '@creit.tech/stellar-wallets-kit/state'
+  )
+
+  // The kit's signals are the source of truth: they are set the moment a
+  // wallet is selected, while their localStorage mirrors are written by a
+  // separate signals effect.
   const moduleId = selectedModuleId.value
   if (!moduleId) return undefined
 
+  // A wallet is selected but its address has not arrived yet: that is the
+  // normal state while `fetchAddress()` waits on the extension prompt, not a
+  // failure. Calling `kit.getAddress()` here would throw, and the caller
+  // treats a throw as a dead session and disconnects the kit mid-connect.
+  if (!activeAddress.value) return undefined
+
   const [{ address }, supportedWallets] = await Promise.all([
-    stellarWalletKit.getAddress(),
-    stellarWalletKit.refreshSupportedWallets(),
+    kit.getAddress(),
+    kit.refreshSupportedWallets(),
   ])
 
   return {
@@ -35,15 +45,25 @@ export async function getStellarWalletConnection(): Promise<
   }
 }
 
-export function subscribeToStellarWallet({
+/**
+ * Resolves once the listeners are attached, so callers can guarantee they are
+ * in place before triggering a connect. Attaching them after the kit had
+ * already emitted meant a first connect could be missed and then rolled back.
+ */
+export async function subscribeToStellarWallet({
   onDisconnected,
   onStateUpdated,
-}: StellarWalletSubscription): () => void {
-  const unsubscribeStateUpdated = stellarWalletKit.on(
+}: StellarWalletSubscription): Promise<() => void> {
+  const [kit, { KitEventType }] = await Promise.all([
+    getStellarWalletKit(),
+    import('@creit.tech/stellar-wallets-kit'),
+  ])
+
+  const unsubscribeStateUpdated = kit.on(
     KitEventType.STATE_UPDATED,
     onStateUpdated,
   )
-  const unsubscribeDisconnected = stellarWalletKit.on(
+  const unsubscribeDisconnected = kit.on(
     KitEventType.DISCONNECT,
     onDisconnected,
   )
@@ -57,11 +77,13 @@ export function subscribeToStellarWallet({
 export async function connectStellarWallet(
   moduleId: string,
 ): Promise<StellarAddress> {
-  stellarWalletKit.setWallet(moduleId)
-  const { address } = await stellarWalletKit.fetchAddress()
+  const kit = await getStellarWalletKit()
+  kit.setWallet(moduleId)
+  const { address } = await kit.fetchAddress()
   return address as StellarAddress
 }
 
-export function disconnectStellarWallet(): Promise<void> {
-  return stellarWalletKit.disconnect()
+export async function disconnectStellarWallet(): Promise<void> {
+  const kit = await getStellarWalletKit()
+  return kit.disconnect()
 }

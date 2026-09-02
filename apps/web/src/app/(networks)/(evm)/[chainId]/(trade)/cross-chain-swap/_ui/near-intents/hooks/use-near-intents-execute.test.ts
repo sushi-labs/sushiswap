@@ -3,8 +3,9 @@ import { STELLAR_XLM, StellarChainId } from 'sushi/stellar'
 import { describe, expect, it, vi } from 'vitest'
 import type { NearIntentsQuoteResponse } from '~evm/api/cross-chain/near-intents/schemas'
 
+// The kit is loaded on demand; this suite only covers quote assertions.
 vi.mock('src/lib/wallet/namespaces/stellar/config', () => ({
-  stellarWalletKit: undefined,
+  getStellarWalletKit: () => Promise.reject(new Error('not used')),
 }))
 
 import { assertExecutableQuoteIsSafe } from './use-near-intents-execute'

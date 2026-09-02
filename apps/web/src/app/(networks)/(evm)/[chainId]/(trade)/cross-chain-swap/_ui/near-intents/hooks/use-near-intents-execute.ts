@@ -16,13 +16,15 @@ import {
   type NearIntentsDepositAddress,
   type NearIntentsDepositAddressFor,
   type NearIntentsSupportedChainId,
-  getNearIntentsAssetId,
   isNearIntentsEvmChainId,
+} from 'src/lib/swap/near-intents'
+import {
   signNearIntentsStellarPayment,
   submitSignedNearIntentsStellarPayment,
-} from 'src/lib/swap/near-intents'
+} from 'src/lib/swap/near-intents/stellar-transaction'
+import { getNearIntentsAssetId } from 'src/lib/swap/near-intents/tokens'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
+import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { Amount, getChainById } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import {
@@ -189,14 +191,15 @@ export function useNearIntentsExecute({
     signedXdr: string
     txHash: TxHashFor<typeof chainId0>
   }> {
-    if (!stellarWalletKit || !stellarAccount) {
+    if (!stellarAccount) {
       throw new Error('Connect your Stellar wallet')
     }
     if (!token0 || !isStellarChainId(token0.chainId)) {
       throw new Error('Selected Stellar token does not match source chain')
     }
     const signTransaction = async (xdr: string) => {
-      const { signedTxXdr } = await stellarWalletKit.signTransaction(xdr, {
+      const kit = await getStellarWalletKit()
+      const { signedTxXdr } = await kit.signTransaction(xdr, {
         address: stellarAccount,
         networkPassphrase: NETWORK_PASSPHRASE,
       })

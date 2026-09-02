@@ -10,10 +10,8 @@ import {
   useRef,
 } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import {
-  getCurrencyParam,
-  isNearIntentsChainId,
-} from 'src/lib/swap/near-intents'
+import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
+import { getCurrencyParam } from 'src/lib/swap/near-intents/tokens'
 import type {
   NearIntentsCurrencyEntry,
   NearIntentsDepositAddress,

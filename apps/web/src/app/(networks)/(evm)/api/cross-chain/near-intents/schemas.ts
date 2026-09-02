@@ -10,12 +10,12 @@ import {
   type NearIntentsSdkToken,
   type NearIntentsSupportedChainId,
   buildNearIntentsAppFees,
-  filterSupportedTokens,
   formatDeadline,
   getDepositMode,
   getPreviewAddressPlaceholder,
   isNearIntentsChainId,
 } from 'src/lib/swap/near-intents'
+import { filterSupportedTokens } from 'src/lib/swap/near-intents/tokens'
 import { isEvmAddress } from 'sushi/evm'
 import {
   isStellarAccountAddress,
