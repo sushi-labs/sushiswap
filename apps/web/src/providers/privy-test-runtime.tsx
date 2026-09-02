@@ -73,6 +73,10 @@ function createWallet(initialChainId: number) {
           TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
           String(chainId),
         )
+        window.localStorage.setItem(
+          TEST_PRIVY_LAST_REQUEST_CHAIN_ID_STORAGE_KEY,
+          String(chainId),
+        )
       }
       return null
     }
