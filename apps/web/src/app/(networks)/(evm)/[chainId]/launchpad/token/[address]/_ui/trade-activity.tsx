@@ -2,7 +2,6 @@
 
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
-import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatPercent, formatUsd } from '../../../_lib/format'
 import {
@@ -11,14 +10,13 @@ import {
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
 } from '../../../_ui/segmented-control'
-import type { LaunchpadChainId } from '../../../constants'
+import { useLaunchpadLiveMarketStats } from '../_lib/launchpad-live-data-provider'
 import {
   DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   LAUNCHPAD_MARKET_STATS_WINDOWS,
   type LaunchpadMarketStatsWindowKey,
   getLaunchpadMarketActivity,
 } from '../_lib/launchpad-market-stats'
-import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 
 const SEGMENTED_ITEM_COMPACT = 'flex-1 !h-7 !px-2 !text-[11px]'
 
@@ -163,20 +161,11 @@ export function TradeActivitySkeleton() {
  * stream event; 6h and 24h are held in a server cache and will read identically
  * for minutes at a time.
  */
-export function TradeActivity({
-  chainId,
-  tokenAddress,
-}: {
-  chainId: LaunchpadChainId
-  tokenAddress: EvmAddress
-}) {
+export function TradeActivity() {
   const [windowKey, setWindowKey] = useState<LaunchpadMarketStatsWindowKey>(
     DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   )
-  const { data, isPending, latestNewTradeEvent } = useLaunchpadMarketStats(
-    chainId,
-    tokenAddress,
-  )
+  const { data, isPending, latestNewTradeEvent } = useLaunchpadLiveMarketStats()
 
   if (isPending) return <TradeActivitySkeleton />
 

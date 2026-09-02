@@ -4,8 +4,9 @@ import type {
   LaunchpadTrade,
   LaunchpadTradeConnection,
 } from '@sushiswap/graph-client/data-api'
+import { getLaunchpadCandles } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
-import { type EvmAddress, type EvmTxHash, normalizeEvmAddress } from 'sushi/evm'
+import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { LaunchpadChainId } from '../../../constants'
 
 export const EMPTY_TRADE_CONNECTION: LaunchpadTradeConnection = {
@@ -38,11 +39,6 @@ export interface LaunchpadTradeStreamEvent {
   tradeKey: string
 }
 
-export interface LaunchpadTradeStreamSubscriber {
-  onReset: () => void
-  onTrade: (event: LaunchpadTradeStreamEvent) => void
-}
-
 export type LaunchpadCandleStreamInterval =
   | '1m'
   | '5m'
@@ -51,13 +47,13 @@ export type LaunchpadCandleStreamInterval =
   | '4h'
   | '1d'
 
-interface LaunchpadCandleStreamUpdate {
+export interface LaunchpadCandleStreamUpdate {
   candle: LaunchpadCandle
   eventId: string
   interval: LaunchpadCandleStreamInterval
 }
 
-interface LaunchpadCandleStreamRemoval {
+export interface LaunchpadCandleStreamRemoval {
   eventId: string
   interval: LaunchpadCandleStreamInterval
   timestamp: number
@@ -67,7 +63,7 @@ type LaunchpadCandleStreamMutation =
   | { type: 'upsert'; update: LaunchpadCandleStreamUpdate }
   | { type: 'remove'; removal: LaunchpadCandleStreamRemoval }
 
-interface LaunchpadCandleStreamSubscriber {
+export interface LaunchpadCandleStreamSubscriber {
   onRemove: (removal: LaunchpadCandleStreamRemoval) => void
   onReset: (fresh: boolean) => Promise<string | null>
   onUpdate: (update: LaunchpadCandleStreamUpdate) => void
@@ -79,48 +75,8 @@ export interface LaunchpadCandleSnapshotRefreshResult {
   subscriberCount: number
 }
 
-const tradeStreamSubscribers = new Map<
-  string,
-  Set<LaunchpadTradeStreamSubscriber>
->()
-const candleSubscribers = new Map<
-  string,
-  Set<LaunchpadCandleStreamSubscriber>
->()
-const candleSnapshotCursors = new Map<string, string>()
-const candleSnapshotListeners = new Map<
-  string,
-  Set<(streamCursor: string) => void>
->()
-const candleMutations = new Map<
-  string,
-  Map<string, LaunchpadCandleStreamMutation>
->()
-
-function getStreamIdentityKey(
-  chainId: LaunchpadChainId,
-  tokenAddress: EvmAddress,
-): string {
-  return `${chainId}:${normalizeEvmAddress(tokenAddress)}`
-}
-
-function recordCandleMutation(
-  streamKey: string,
-  candleKey: string,
-  mutation: LaunchpadCandleStreamMutation,
-): void {
-  const mutations =
-    candleMutations.get(streamKey) ??
-    new Map<string, LaunchpadCandleStreamMutation>()
-  mutations.set(candleKey, mutation)
-  if (mutations.size > 1_000) {
-    const oldestKey = mutations.keys().next().value
-    if (oldestKey) {
-      mutations.delete(oldestKey)
-    }
-  }
-  candleMutations.set(streamKey, mutations)
-}
+const INITIAL_CANDLE_PREFETCH_BUCKETS = 400
+const INITIAL_CANDLE_INTERVAL_SECONDS = 5 * 60
 
 function compareTrades(left: LaunchpadTrade, right: LaunchpadTrade): number {
   const leftBlock = BigInt(left.blockNumber)
@@ -134,6 +90,19 @@ function shouldIncludeTrade(
   includeSmallTrades: boolean,
 ): boolean {
   return includeSmallTrades || trade.amountUsd === null || trade.amountUsd >= 1
+}
+
+function snapshotIncludesEvent(
+  snapshotCursor: string,
+  eventId: string,
+): boolean {
+  if (
+    !/^(0|[1-9][0-9]*)$/.test(snapshotCursor) ||
+    !/^(0|[1-9][0-9]*)$/.test(eventId)
+  ) {
+    return false
+  }
+  return BigInt(eventId) <= BigInt(snapshotCursor)
 }
 
 export function getLaunchpadTradeKey(trade: {
@@ -191,7 +160,11 @@ export function applyLaunchpadTradeMutation(
     edges: [{ cursor: mutation.eventId, node: mutation.trade }, ...edges].sort(
       (left, right) => compareTrades(left.node, right.node),
     ),
-    totalCount: hadTrade ? connection.totalCount : connection.totalCount + 1,
+    totalCount:
+      hadTrade ||
+      snapshotIncludesEvent(connection.streamCursor, mutation.eventId)
+        ? connection.totalCount
+        : connection.totalCount + 1,
   }
 }
 
@@ -264,35 +237,6 @@ export function removeLaunchpadCandle(
   return candles.filter((candle) => candle.timestamp !== timestamp)
 }
 
-export function applyLaunchpadCandleStreamMutations(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  interval: LaunchpadCandleStreamInterval,
-  snapshot: LaunchpadCandleSnapshot,
-): LaunchpadCandleSnapshot {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  let nodes = snapshot.nodes
-
-  for (const mutation of candleMutations.get(key)?.values() ?? []) {
-    const payload =
-      mutation.type === 'upsert' ? mutation.update : mutation.removal
-    if (
-      payload.interval !== interval ||
-      BigInt(payload.eventId) <= BigInt(snapshot.streamCursor)
-    ) {
-      continue
-    }
-    nodes =
-      mutation.type === 'upsert'
-        ? upsertLaunchpadCandle(nodes, mutation.update.candle)
-        : removeLaunchpadCandle(nodes, mutation.removal.timestamp)
-  }
-
-  return { ...snapshot, nodes }
-}
-
 export function launchpadEventsUrl(input: {
   apiBaseUrl: string
   chainId: number
@@ -306,241 +250,310 @@ export function launchpadEventsUrl(input: {
   return url.toString()
 }
 
-export function publishLaunchpadCandleSnapshot(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  streamCursor: string,
-): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  candleSnapshotCursors.set(key, streamCursor)
-  for (const listener of candleSnapshotListeners.get(key) ?? []) {
-    listener(streamCursor)
-  }
+interface InitialCandleSnapshotState {
+  consumed: boolean
+  from: number
+  promise: Promise<LaunchpadCandleSnapshot | null>
+  settled: boolean
+  to: number
 }
 
-export function subscribeToLaunchpadCandleSnapshot(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  listener: (streamCursor: string) => void,
-): () => void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  const listeners =
-    candleSnapshotListeners.get(key) ??
-    new Set<(streamCursor: string) => void>()
-  listeners.add(listener)
-  candleSnapshotListeners.set(key, listeners)
-
-  const streamCursor = candleSnapshotCursors.get(key)
-  if (streamCursor) {
-    listener(streamCursor)
-  }
-
-  return () => {
-    listeners.delete(listener)
-    if (listeners.size === 0) {
-      candleSnapshotListeners.delete(key)
-    }
-  }
-}
-
-export function clearLaunchpadCandleSnapshot(input: {
-  chainId: LaunchpadChainId
-  tokenAddress: EvmAddress
-}): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  candleSnapshotCursors.delete(key)
+export interface LaunchpadInitialCandleSnapshot {
+  countBack: number
+  from: number
+  snapshot: LaunchpadCandleSnapshot
+  to: number
 }
 
 /**
- * Trade events are published straight off the stream, before the trade list
- * applies its own small-trade filter, because `marketStats` counts every swap.
+ * Imperative candle boundary for one mounted token page. TradingView talks to
+ * this instance directly; snapshots, mutations, and listeners never escape to
+ * module-global state.
  */
-export function subscribeToLaunchpadTradeStream(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  subscriber: LaunchpadTradeStreamSubscriber,
-): () => void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  const subscribers =
-    tradeStreamSubscribers.get(key) ?? new Set<LaunchpadTradeStreamSubscriber>()
-  subscribers.add(subscriber)
-  tradeStreamSubscribers.set(key, subscribers)
+export class LaunchpadCandleController {
+  readonly chainId: LaunchpadChainId
+  readonly createdAt: string
+  readonly tokenAddress: EvmAddress
 
-  return () => {
-    subscribers.delete(subscriber)
-    if (subscribers.size === 0) {
-      tradeStreamSubscribers.delete(key)
+  private readonly mutations = new Map<string, LaunchpadCandleStreamMutation>()
+  private readonly snapshotListeners = new Set<(streamCursor: string) => void>()
+  private readonly subscribers = new Set<LaunchpadCandleStreamSubscriber>()
+  private disposed = false
+  private initialSnapshot: InitialCandleSnapshotState | undefined
+  private snapshotCursor: string | null = null
+
+  constructor(input: {
+    chainId: LaunchpadChainId
+    createdAt: string
+    tokenAddress: EvmAddress
+  }) {
+    this.chainId = input.chainId
+    this.createdAt = input.createdAt
+    this.tokenAddress = input.tokenAddress
+  }
+
+  applyStreamMutations(
+    interval: LaunchpadCandleStreamInterval,
+    snapshot: LaunchpadCandleSnapshot,
+  ): LaunchpadCandleSnapshot {
+    let nodes = snapshot.nodes
+
+    for (const mutation of this.mutations.values()) {
+      const payload =
+        mutation.type === 'upsert' ? mutation.update : mutation.removal
+      if (
+        payload.interval !== interval ||
+        BigInt(payload.eventId) <= BigInt(snapshot.streamCursor)
+      ) {
+        continue
+      }
+      nodes =
+        mutation.type === 'upsert'
+          ? upsertLaunchpadCandle(nodes, mutation.update.candle)
+          : removeLaunchpadCandle(nodes, mutation.removal.timestamp)
+    }
+
+    return { ...snapshot, nodes }
+  }
+
+  publishSnapshot(streamCursor: string): void {
+    if (this.disposed) return
+    this.snapshotCursor = streamCursor
+    for (const listener of this.snapshotListeners) {
+      listener(streamCursor)
     }
   }
-}
 
-export function publishLaunchpadTradeStreamEvent(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  event: LaunchpadTradeStreamEvent,
-): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  for (const subscriber of tradeStreamSubscribers.get(key) ?? []) {
-    subscriber.onTrade(event)
-  }
-}
+  subscribeToSnapshot(listener: (streamCursor: string) => void): () => void {
+    if (this.disposed) return () => undefined
+    this.snapshotListeners.add(listener)
+    if (this.snapshotCursor !== null) {
+      listener(this.snapshotCursor)
+    }
 
-export function publishLaunchpadTradeStreamReset(input: {
-  chainId: LaunchpadChainId
-  tokenAddress: EvmAddress
-}): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  for (const subscriber of tradeStreamSubscribers.get(key) ?? []) {
-    subscriber.onReset()
-  }
-}
-
-export function subscribeToLaunchpadCandleStream(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  subscriber: LaunchpadCandleStreamSubscriber,
-): () => void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  const subscribers =
-    candleSubscribers.get(key) ?? new Set<LaunchpadCandleStreamSubscriber>()
-  subscribers.add(subscriber)
-  candleSubscribers.set(key, subscribers)
-
-  return () => {
-    subscribers.delete(subscriber)
-    if (subscribers.size === 0) {
-      candleSubscribers.delete(key)
+    return () => {
+      this.snapshotListeners.delete(listener)
     }
   }
-}
 
-export function publishLaunchpadCandleUpdate(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  update: LaunchpadCandleStreamUpdate,
-): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  recordCandleMutation(key, `${update.interval}:${update.candle.timestamp}`, {
-    type: 'upsert',
-    update,
-  })
-  for (const subscriber of candleSubscribers.get(key) ?? []) {
-    subscriber.onUpdate(update)
+  subscribe(subscriber: LaunchpadCandleStreamSubscriber): () => void {
+    if (this.disposed) return () => undefined
+    this.subscribers.add(subscriber)
+    return () => {
+      this.subscribers.delete(subscriber)
+    }
   }
-}
 
-export function publishLaunchpadCandleRemove(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  removal: LaunchpadCandleStreamRemoval,
-): void {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  recordCandleMutation(key, `${removal.interval}:${removal.timestamp}`, {
-    type: 'remove',
-    removal,
-  })
-  for (const subscriber of candleSubscribers.get(key) ?? []) {
-    subscriber.onRemove(removal)
+  publishUpdate(update: LaunchpadCandleStreamUpdate): void {
+    if (this.disposed) return
+    if (update.interval === '5m' && this.initialSnapshot?.settled === true) {
+      this.initialSnapshot.consumed = true
+    }
+    this.recordMutation(`${update.interval}:${update.candle.timestamp}`, {
+      type: 'upsert',
+      update,
+    })
+    for (const subscriber of this.subscribers) {
+      subscriber.onUpdate(update)
+    }
   }
-}
 
-export async function refetchLaunchpadCandleSnapshots(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  fresh: boolean,
-): Promise<string | null> {
-  const result = await refetchLaunchpadCandleSnapshotsWithStatus(input, fresh)
-  return result.streamCursor
-}
+  publishRemove(removal: LaunchpadCandleStreamRemoval): void {
+    if (this.disposed) return
+    if (removal.interval === '5m' && this.initialSnapshot?.settled === true) {
+      this.initialSnapshot.consumed = true
+    }
+    this.recordMutation(`${removal.interval}:${removal.timestamp}`, {
+      type: 'remove',
+      removal,
+    })
+    for (const subscriber of this.subscribers) {
+      subscriber.onRemove(removal)
+    }
+  }
 
-async function refetchLaunchpadCandleSnapshotsWithStatus(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  fresh: boolean,
-): Promise<LaunchpadCandleSnapshotRefreshResult> {
-  const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
-  const subscribers = Array.from(candleSubscribers.get(key) ?? [])
-  const results = await Promise.all(
-    subscribers.map((subscriber) =>
-      subscriber.onReset(fresh).catch(() => null),
-    ),
-  )
-  const streamCursors = results.filter(
-    (streamCursor): streamCursor is string => streamCursor !== null,
-  )
-  const failedSubscriberCount = results.length - streamCursors.length
-  const [firstStreamCursor, ...remainingStreamCursors] = streamCursors
+  async prefetchInitialSnapshot(
+    fresh = false,
+  ): Promise<LaunchpadCandleSnapshot | null> {
+    if (this.disposed) return null
+    if (!fresh && this.initialSnapshot) return this.initialSnapshot.promise
 
-  if (firstStreamCursor) {
+    const to = Math.floor(Date.now() / 1_000)
+    const launchTimestamp = Math.floor(Date.parse(this.createdAt) / 1_000)
+    const launchBucket = Number.isFinite(launchTimestamp)
+      ? Math.floor(launchTimestamp / INITIAL_CANDLE_INTERVAL_SECONDS) *
+        INITIAL_CANDLE_INTERVAL_SECONDS
+      : 0
+    const from = Math.max(
+      Math.floor(
+        (to -
+          INITIAL_CANDLE_INTERVAL_SECONDS * INITIAL_CANDLE_PREFETCH_BUCKETS) /
+          INITIAL_CANDLE_INTERVAL_SECONDS,
+      ) * INITIAL_CANDLE_INTERVAL_SECONDS,
+      launchBucket,
+    )
+    if (from >= to) return null
+
+    const state: InitialCandleSnapshotState = {
+      consumed: false,
+      from,
+      promise: Promise.resolve(null),
+      settled: false,
+      to,
+    }
+    state.promise = getLaunchpadCandles({
+      input: {
+        chainId: this.chainId,
+        tokenAddress: this.tokenAddress,
+        interval: 'FIVE_MINUTES',
+        from,
+        to,
+        countBack: INITIAL_CANDLE_PREFETCH_BUCKETS,
+        ...(fresh ? { fresh: true } : {}),
+      },
+    })
+      .then((response) => this.applyStreamMutations('5m', response))
+      .then((snapshot) => {
+        state.settled = true
+        if (!this.disposed && this.initialSnapshot === state) {
+          this.publishSnapshot(snapshot.streamCursor)
+        }
+        return snapshot
+      })
+      .catch(() => {
+        if (this.initialSnapshot === state) {
+          this.initialSnapshot = undefined
+        }
+        return null
+      })
+    this.initialSnapshot = state
+    return state.promise
+  }
+
+  async getInitialSnapshot(input: {
+    countBack: number
+    from: number
+    resolution: string
+    seconds: number
+    to: number
+  }): Promise<LaunchpadInitialCandleSnapshot | null> {
+    if (input.resolution !== '5') return null
+    const initialSnapshot = this.initialSnapshot
+    if (
+      !initialSnapshot ||
+      initialSnapshot.consumed ||
+      input.countBack > INITIAL_CANDLE_PREFETCH_BUCKETS ||
+      input.from < initialSnapshot.from ||
+      Math.ceil(input.to / input.seconds) !==
+        Math.ceil(initialSnapshot.to / input.seconds)
+    ) {
+      return null
+    }
+
+    initialSnapshot.consumed = true
+    const snapshot = await initialSnapshot.promise
+    if (this.initialSnapshot !== initialSnapshot) return null
+    return snapshot
+      ? {
+          countBack: INITIAL_CANDLE_PREFETCH_BUCKETS,
+          from: initialSnapshot.from,
+          snapshot,
+          to: initialSnapshot.to,
+        }
+      : null
+  }
+
+  async refetchSnapshots(fresh: boolean): Promise<string | null> {
+    const result = await this.refetchSnapshotsWithStatus(fresh)
+    return result.streamCursor
+  }
+
+  async refetchSnapshotsWithRetry(
+    fresh: boolean,
+    options: { attempts?: number; retryDelayMs?: number } = {},
+  ): Promise<LaunchpadCandleSnapshotRefreshResult> {
+    const attempts = options.attempts ?? 3
+    const retryDelayMs = options.retryDelayMs ?? ms('500ms')
+    let result: LaunchpadCandleSnapshotRefreshResult = {
+      failedSubscriberCount: 0,
+      streamCursor: null,
+      subscriberCount: 0,
+    }
+
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      result = await this.refetchSnapshotsWithStatus(fresh)
+      if (
+        result.subscriberCount === 0 ||
+        (result.failedSubscriberCount === 0 && result.streamCursor !== null)
+      ) {
+        return result
+      }
+
+      if (attempt < attempts - 1) {
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, retryDelayMs * 2 ** attempt)
+        })
+      }
+    }
+
+    return result
+  }
+
+  dispose(): void {
+    this.disposed = true
+    this.initialSnapshot = undefined
+    this.mutations.clear()
+    this.snapshotCursor = null
+    this.snapshotListeners.clear()
+    this.subscribers.clear()
+  }
+
+  private recordMutation(
+    candleKey: string,
+    mutation: LaunchpadCandleStreamMutation,
+  ): void {
+    this.mutations.set(candleKey, mutation)
+    if (this.mutations.size > 1_000) {
+      const oldestKey = this.mutations.keys().next().value
+      if (oldestKey) {
+        this.mutations.delete(oldestKey)
+      }
+    }
+  }
+
+  private async refetchSnapshotsWithStatus(
+    fresh: boolean,
+  ): Promise<LaunchpadCandleSnapshotRefreshResult> {
+    if (fresh && this.initialSnapshot) {
+      this.initialSnapshot.consumed = true
+    }
+    const subscribers = Array.from(this.subscribers)
+    const results = await Promise.all(
+      subscribers.map((subscriber) =>
+        subscriber.onReset(fresh).catch(() => null),
+      ),
+    )
+    const streamCursors = results.filter(
+      (streamCursor): streamCursor is string => streamCursor !== null,
+    )
+    const failedSubscriberCount = results.length - streamCursors.length
+    const [firstStreamCursor, ...remainingStreamCursors] = streamCursors
+
+    if (firstStreamCursor) {
+      return {
+        failedSubscriberCount,
+        streamCursor: minimumLaunchpadStreamCursor(
+          firstStreamCursor,
+          ...remainingStreamCursors,
+        ),
+        subscriberCount: subscribers.length,
+      }
+    }
+
     return {
       failedSubscriberCount,
-      streamCursor: minimumLaunchpadStreamCursor(
-        firstStreamCursor,
-        ...remainingStreamCursors,
-      ),
+      streamCursor: subscribers.length === 0 ? this.snapshotCursor : null,
       subscriberCount: subscribers.length,
     }
   }
-
-  return {
-    failedSubscriberCount,
-    streamCursor:
-      subscribers.length === 0
-        ? (candleSnapshotCursors.get(key) ?? null)
-        : null,
-    subscriberCount: subscribers.length,
-  }
-}
-
-export async function refetchLaunchpadCandleSnapshotsWithRetry(
-  input: {
-    chainId: LaunchpadChainId
-    tokenAddress: EvmAddress
-  },
-  fresh: boolean,
-  options: { attempts?: number; retryDelayMs?: number } = {},
-): Promise<LaunchpadCandleSnapshotRefreshResult> {
-  const attempts = options.attempts ?? 3
-  const retryDelayMs = options.retryDelayMs ?? ms('500ms')
-  let result: LaunchpadCandleSnapshotRefreshResult = {
-    failedSubscriberCount: 0,
-    streamCursor: null,
-    subscriberCount: 0,
-  }
-
-  for (let attempt = 0; attempt < attempts; attempt++) {
-    result = await refetchLaunchpadCandleSnapshotsWithStatus(input, fresh)
-    if (
-      result.subscriberCount === 0 ||
-      (result.failedSubscriberCount === 0 && result.streamCursor !== null)
-    ) {
-      return result
-    }
-
-    if (attempt < attempts - 1) {
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, retryDelayMs * 2 ** attempt)
-      })
-    }
-  }
-
-  return result
 }

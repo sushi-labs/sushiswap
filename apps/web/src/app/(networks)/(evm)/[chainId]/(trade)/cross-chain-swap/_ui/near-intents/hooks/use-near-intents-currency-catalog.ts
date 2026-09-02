@@ -1,15 +1,17 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
+import type {
+  NearIntentsCurrencyEntry,
+  NearIntentsSupportedChainId,
+  NearIntentsToken,
+} from 'src/lib/swap/near-intents'
 import {
-  type NearIntentsCurrencyEntry,
-  type NearIntentsSupportedChainId,
-  type NearIntentsToken,
   getCurrencyEntryKey,
   getCurrencyParam,
   getDefaultTokenForChain,
   mapNearIntentsTokensToCurrencyEntries,
-} from 'src/lib/swap/near-intents'
+} from 'src/lib/swap/near-intents/tokens'
 
 interface NearIntentsDefaultTokenParams {
   token0Param: string | undefined
