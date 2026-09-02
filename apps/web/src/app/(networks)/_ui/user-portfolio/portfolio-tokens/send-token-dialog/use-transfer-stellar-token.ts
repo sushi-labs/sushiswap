@@ -1,7 +1,7 @@
 import { rpc } from '@stellar/stellar-sdk'
 import { useMutation } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
+import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import type { StellarAddress, StellarCurrency } from 'sushi/stellar'
 import { NETWORK_PASSPHRASE } from '~stellar/_common/lib/constants'
 import { getTokenContractClient } from '~stellar/_common/lib/soroban/client'
@@ -62,7 +62,8 @@ export function useTransferStellarToken(currency: StellarCurrency | undefined) {
         throw new Error(assembledTransaction.simulation.error)
       }
 
-      const { signedTxXdr } = await stellarWalletKit.signTransaction(
+      const kit = await getStellarWalletKit()
+      const { signedTxXdr } = await kit.signTransaction(
         assembledTransaction.toXDR(),
         {
           address: activeWalletAddress,
