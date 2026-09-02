@@ -1,9 +1,6 @@
 import type { ISupportedWallet } from '@creit.tech/stellar-wallets-kit'
 import type { StellarAddress } from 'sushi/stellar'
-import {
-  STELLAR_SELECTED_MODULE_STORAGE_KEY,
-  getStellarWalletKit,
-} from './config'
+import { getStellarWalletKit } from './config'
 
 export interface StellarWalletConnection {
   account: StellarAddress
@@ -16,27 +13,18 @@ interface StellarWalletSubscription {
   onStateUpdated: () => void
 }
 
-/**
- * The kit persists its selected module, so a disconnected visitor can be
- * recognised without loading the kit at all.
- */
-function getPersistedModuleId(): string | undefined {
-  return (
-    globalThis.localStorage?.getItem(STELLAR_SELECTED_MODULE_STORAGE_KEY) ??
-    undefined
-  )
-}
-
 export async function getStellarWalletConnection(): Promise<
   StellarWalletConnection | undefined
 > {
-  if (!getPersistedModuleId()) return undefined
-
   const kit = await getStellarWalletKit()
   const { selectedModuleId } = await import(
     '@creit.tech/stellar-wallets-kit/state'
   )
 
+  // The kit's signal is the source of truth: it is set the moment a wallet is
+  // selected, while its localStorage mirror is written by a separate signals
+  // effect. Reading storage here would report "not connected" during a fresh
+  // connect and wipe the account that just arrived.
   const moduleId = selectedModuleId.value
   if (!moduleId) return undefined
 
@@ -53,46 +41,31 @@ export async function getStellarWalletConnection(): Promise<
 }
 
 /**
- * Keeps a synchronous signature so callers can treat it like any other
- * subscribe: the listeners attach once the kit resolves, and unsubscribing
- * before then cancels the attach.
+ * Resolves once the listeners are attached, so callers can guarantee they are
+ * in place before triggering a connect. Attaching them after the kit had
+ * already emitted meant a first connect could be missed and then rolled back.
  */
-export function subscribeToStellarWallet({
+export async function subscribeToStellarWallet({
   onDisconnected,
   onStateUpdated,
-}: StellarWalletSubscription): () => void {
-  let cancelled = false
-  let detach: (() => void) | undefined
+}: StellarWalletSubscription): Promise<() => void> {
+  const [kit, { KitEventType }] = await Promise.all([
+    getStellarWalletKit(),
+    import('@creit.tech/stellar-wallets-kit'),
+  ])
 
-  void (async () => {
-    try {
-      const [kit, { KitEventType }] = await Promise.all([
-        getStellarWalletKit(),
-        import('@creit.tech/stellar-wallets-kit'),
-      ])
-      if (cancelled) return
-
-      const unsubscribeStateUpdated = kit.on(
-        KitEventType.STATE_UPDATED,
-        onStateUpdated,
-      )
-      const unsubscribeDisconnected = kit.on(
-        KitEventType.DISCONNECT,
-        onDisconnected,
-      )
-      detach = () => {
-        unsubscribeStateUpdated()
-        unsubscribeDisconnected()
-      }
-    } catch (error) {
-      console.error('Failed to subscribe to the Stellar wallet', error)
-    }
-  })()
+  const unsubscribeStateUpdated = kit.on(
+    KitEventType.STATE_UPDATED,
+    onStateUpdated,
+  )
+  const unsubscribeDisconnected = kit.on(
+    KitEventType.DISCONNECT,
+    onDisconnected,
+  )
 
   return () => {
-    cancelled = true
-    detach?.()
-    detach = undefined
+    unsubscribeStateUpdated()
+    unsubscribeDisconnected()
   }
 }
 

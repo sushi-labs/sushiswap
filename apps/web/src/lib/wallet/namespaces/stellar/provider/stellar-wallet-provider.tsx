@@ -95,7 +95,8 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
     const { subscribeToStellarWallet } = await loadStellarWalletRuntime()
     if (unsubscribeRuntimeRef.current) return
 
-    const unsubscribe = subscribeToStellarWallet({
+    // Awaited so the listeners are attached before a connect is triggered.
+    const unsubscribe = await subscribeToStellarWallet({
       onStateUpdated: () => {
         void syncConnection()
       },
@@ -105,6 +106,11 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
         setIsHydrated(true)
       },
     })
+
+    if (unsubscribeRuntimeRef.current) {
+      unsubscribe()
+      return
+    }
 
     unsubscribeRuntimeRef.current = () => {
       unsubscribe()
