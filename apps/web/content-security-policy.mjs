@@ -91,6 +91,7 @@ const PRODUCT_CONNECT_SOURCES = [
 
 const NON_EVM_CONNECT_SOURCES = [
   'https://api.mainnet-beta.solana.com',
+  'wss://api.mainnet-beta.solana.com',
   'https://api.devnet.solana.com',
   'https://api.testnet.solana.com',
   'https://mainnet.helius-rpc.com',
