@@ -10,7 +10,7 @@ import {
   useReducer,
 } from 'react'
 import {
-  STELLAR_USDC,
+  STELLAR_USDT0,
   STELLAR_XLM,
   StellarChainId,
   type StellarToken,
@@ -103,7 +103,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const [internalState, dispatch] = useReducer(reducer, {
     token0: STELLAR_XLM[StellarChainId.STELLAR],
-    token1: STELLAR_USDC[StellarChainId.STELLAR],
+    token1: STELLAR_USDT0[StellarChainId.STELLAR],
     amount: '',
     slippageAmount: 0,
     outputAmount: 0n,
