@@ -30,8 +30,9 @@ export function findEvmWalletConnector(
   config: Config,
   wallet: Wallet,
 ): Connector | undefined {
+  const connectionId = wallet.connectionId ?? wallet.id
   return config.connectors.find(
-    (connector) => toEvmWalletId(connector.id) === wallet.id,
+    (connector) => toEvmWalletId(connector.id) === connectionId,
   )
 }
 

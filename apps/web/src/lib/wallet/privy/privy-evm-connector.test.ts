@@ -110,6 +110,7 @@ function createOperations(
   overrides: Partial<PrivyRuntimeOperationHandlers> = {},
 ): PrivyRuntimeOperationHandlers {
   return {
+    authenticate: vi.fn(async () => undefined),
     connectOrCreateEvmWallet: vi.fn(async () => undefined),
     exportEvmWallet: vi.fn(async () => undefined),
     exportSvmWallet: vi.fn(async () => undefined),

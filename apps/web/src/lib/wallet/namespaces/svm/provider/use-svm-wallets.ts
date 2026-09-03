@@ -6,7 +6,7 @@ import { useRecentWallets } from 'src/lib/wallet/hooks/use-recent-wallets'
 import type { WalletWithState } from '../../../types'
 import {
   PRIVY_SVM_CONNECTOR_ID,
-  PRIVY_SVM_WALLET,
+  PRIVY_SVM_WALLETS,
   SVM_WALLETS,
   SvmAdapterId,
 } from '../config'
@@ -27,16 +27,26 @@ export function getSvmWallets({
   const map = new Map<string, WalletWithState>()
   for (const wallet of wallets) {
     const isPrivyWallet = isPrivy(wallet.connectorId)
-    const walletId = isPrivyWallet
-      ? PRIVY_SVM_WALLET.id
-      : `svm:${wallet.name.toLowerCase()}`
+    if (isPrivyWallet) {
+      for (const privyWallet of PRIVY_SVM_WALLETS) {
+        map.set(privyWallet.id, {
+          ...privyWallet,
+          isInstalled: true,
+          isAvailable: true,
+          isRecent: isRecentWallet(privyWallet.connectionId ?? privyWallet.id),
+        })
+      }
+      continue
+    }
+
+    const walletId = `svm:${wallet.name.toLowerCase()}`
 
     map.set(walletId, {
       id: walletId,
       namespace: 'svm',
-      name: isPrivyWallet ? PRIVY_SVM_WALLET.name : wallet.name,
-      icon: isPrivyWallet ? PRIVY_SVM_WALLET.icon : (wallet.icon ?? ''),
-      adapterId: isPrivyWallet ? SvmAdapterId.Privy : SvmAdapterId.Standard,
+      name: wallet.name,
+      icon: wallet.icon ?? '',
+      adapterId: SvmAdapterId.Standard,
       isInstalled: true,
       isAvailable: true,
       isRecent: isRecentWallet(walletId),
@@ -50,7 +60,7 @@ export function getSvmWallets({
       ...wallet,
       isInstalled: false,
       isAvailable: wallet.adapterId === SvmAdapterId.Privy,
-      isRecent: isRecentWallet(wallet.id),
+      isRecent: isRecentWallet(wallet.connectionId ?? wallet.id),
     })
   }
 

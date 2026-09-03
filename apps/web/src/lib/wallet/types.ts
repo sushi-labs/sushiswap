@@ -4,6 +4,8 @@ import type { SvmChainId } from 'sushi/svm'
 
 export type WalletNamespace = 'evm' | 'svm' | 'stellar'
 
+export type WalletLoginMethod = 'email' | 'twitter'
+
 export type WalletAddressFor<
   TChainId extends EvmChainId | SvmChainId | StellarChainId,
 > = TChainId extends StellarChainId
@@ -31,10 +33,13 @@ export type ChainIdForNamespace<TNamespace extends WalletNamespace> =
 
 export interface Wallet {
   id: string
+  /** Canonical connection shared by multiple login-method entries. */
+  connectionId?: string
   namespace: WalletNamespace
   name: string
   icon: string
   adapterId: string
+  loginMethod?: WalletLoginMethod
   url?: string
   uid?: string
 }

@@ -33,9 +33,11 @@ import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
 import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
 import type {
   PrivyEvmWallet,
+  PrivyLoginWalletChainType,
   PrivyRuntimeOperationHandlers,
   PrivySvmWallet,
 } from 'src/lib/wallet/privy/types'
+import type { WalletLoginMethod } from 'src/lib/wallet/types'
 import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
 import type { EIP1193Provider } from 'viem'
@@ -139,7 +141,7 @@ function PrivyRuntimeEffects() {
     },
     onError: (error) => {
       loginPendingRef.current?.reject(
-        new Error(typeof error === 'string' ? error : 'Privy SVM login failed'),
+        new Error(typeof error === 'string' ? error : 'Privy login failed'),
       )
       loginPendingRef.current = undefined
     },
@@ -210,8 +212,37 @@ function PrivyRuntimeEffects() {
     }
   })
 
-  const operations = useMemo<PrivyRuntimeOperationHandlers>(
-    () => ({
+  const operations = useMemo<PrivyRuntimeOperationHandlers>(() => {
+    function startLogin({
+      loginMethod,
+      walletChainType,
+    }: {
+      loginMethod?: WalletLoginMethod
+      walletChainType: PrivyLoginWalletChainType
+    }): Promise<void> {
+      if (loginPendingRef.current) {
+        throw new Error('A Privy login is already in progress')
+      }
+      const pending = createPendingOperation()
+      loginPendingRef.current = pending.operation
+      try {
+        latestHandlesRef.current.login({
+          ...(loginMethod ? { loginMethods: [loginMethod] } : {}),
+          walletChainType,
+        })
+      } catch (error) {
+        loginPendingRef.current = undefined
+        pending.operation.reject(
+          error instanceof Error ? error : new Error('Privy login failed'),
+        )
+      }
+      return pending.promise
+    }
+
+    return {
+      authenticate(loginMethod, walletChainType) {
+        return startLogin({ loginMethod, walletChainType })
+      },
       async connectOrCreateEvmWallet() {
         await provisionPrivyWallet({
           authenticated: latestHandlesRef.current.authenticated,
@@ -244,26 +275,7 @@ function PrivyRuntimeEffects() {
         await provisionPrivyWallet({
           authenticated: latestHandlesRef.current.authenticated,
           createWallet: latestHandlesRef.current.createSvmWallet,
-          login: () => {
-            if (loginPendingRef.current) {
-              throw new Error('A Privy SVM login is already in progress')
-            }
-            const pending = createPendingOperation()
-            loginPendingRef.current = pending.operation
-            try {
-              latestHandlesRef.current.login({
-                walletChainType: 'solana-only',
-              })
-            } catch (error) {
-              loginPendingRef.current = undefined
-              pending.operation.reject(
-                error instanceof Error
-                  ? error
-                  : new Error('Privy SVM login failed'),
-              )
-            }
-            return pending.promise
-          },
+          login: () => startLogin({ walletChainType: 'solana-only' }),
         })
       },
       logout: () => latestHandlesRef.current.logout(),
@@ -304,9 +316,8 @@ function PrivyRuntimeEffects() {
           signature: getBase58Decoder().decode(result.signature) as SvmTxHash,
         }
       },
-    }),
-    [],
-  )
+    }
+  }, [])
 
   useEffect(() => {
     return () => {

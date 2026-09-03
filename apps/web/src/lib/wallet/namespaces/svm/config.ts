@@ -1,4 +1,7 @@
-import { PRIVY_WALLET_ICON } from '../../privy/privy-wallet-icon'
+import {
+  PRIVY_WALLET_ICON,
+  PRIVY_X_WALLET_ICON,
+} from '../../privy/privy-wallet-icon'
 import type { Wallet } from '../../types'
 
 export enum SvmAdapterId {
@@ -14,11 +17,25 @@ export const PRIVY_SVM_WALLET: Wallet = {
   name: 'Email',
   icon: PRIVY_WALLET_ICON,
   adapterId: SvmAdapterId.Privy,
+  loginMethod: 'email',
   url: 'https://privy.io',
 }
 
+export const PRIVY_X_SVM_WALLET: Wallet = {
+  id: 'svm:privy-twitter',
+  connectionId: PRIVY_SVM_WALLET.id,
+  namespace: 'svm',
+  name: 'X',
+  icon: PRIVY_X_WALLET_ICON,
+  adapterId: SvmAdapterId.Privy,
+  loginMethod: 'twitter',
+  url: 'https://privy.io',
+}
+
+export const PRIVY_SVM_WALLETS = [PRIVY_SVM_WALLET, PRIVY_X_SVM_WALLET] as const
+
 export const SVM_WALLETS: Wallet[] = [
-  PRIVY_SVM_WALLET,
+  ...PRIVY_SVM_WALLETS,
   {
     id: 'svm:solflare',
     namespace: 'svm',

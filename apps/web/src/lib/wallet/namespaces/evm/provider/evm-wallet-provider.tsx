@@ -19,7 +19,10 @@ import {
   isPrivyEvmConnector,
 } from 'src/lib/wallet/privy/privy-evm-connector'
 import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-session'
-import { logoutPrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
+import {
+  authenticatePrivyRuntime,
+  logoutPrivyRuntime,
+} from 'src/lib/wallet/privy/use-privy-runtime'
 import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
   addWalletConnection,
@@ -38,7 +41,7 @@ import {
   useDisconnect,
 } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig } from '../config'
+import { EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
 import {
   findEvmWalletConnector,
@@ -117,6 +120,9 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       if (connectedAccount) {
         onSuccess?.(connectedAccount)
       } else {
+        if (wallet.adapterId === EvmAdapterId.Privy && wallet.loginMethod) {
+          await authenticatePrivyRuntime(wallet.loginMethod, 'ethereum-only')
+        }
         const { accounts } = await wagmiConnect(config, {
           connector: await EvmAdapterConfig[wallet.adapterId]({
             uid: wallet.uid,

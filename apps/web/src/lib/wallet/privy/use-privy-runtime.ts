@@ -3,8 +3,13 @@
 import { useSyncExternalStore } from 'react'
 import type { SvmAddress } from 'sushi/svm'
 import { setPrivySvmReconnect } from '../privy-storage'
+import type { WalletLoginMethod } from '../types'
 import { privyRuntimeStore } from './privy-runtime-store'
-import type { PrivyRuntimeReadySnapshot, PrivyRuntimeSnapshot } from './types'
+import type {
+  PrivyLoginWalletChainType,
+  PrivyRuntimeReadySnapshot,
+  PrivyRuntimeSnapshot,
+} from './types'
 import { waitForValue } from './wait-for-value'
 
 const RUNTIME_TIMEOUT_MS = 30_000
@@ -52,8 +57,32 @@ export async function loadPrivyRuntime(): Promise<PrivyRuntimeReadySnapshot> {
   return waitForReadyPrivyRuntime()
 }
 
-export async function connectPrivySvmWallet(): Promise<SvmAddress> {
+export async function authenticatePrivyRuntime(
+  loginMethod: WalletLoginMethod,
+  walletChainType: PrivyLoginWalletChainType,
+): Promise<void> {
   let snapshot = await loadPrivyRuntime()
+  if (snapshot.authenticated) return
+
+  await snapshot.operations.authenticate(loginMethod, walletChainType)
+  snapshot = await waitForReadyPrivyRuntime(
+    (candidate) => candidate.authenticated,
+  )
+  if (!snapshot.authenticated) {
+    throw new Error('Privy authentication failed')
+  }
+}
+
+export async function connectPrivySvmWallet(
+  loginMethod?: WalletLoginMethod,
+): Promise<SvmAddress> {
+  let snapshot = await loadPrivyRuntime()
+  if (!snapshot.authenticated && loginMethod) {
+    await snapshot.operations.authenticate(loginMethod, 'solana-only')
+    snapshot = await waitForReadyPrivyRuntime(
+      (candidate) => candidate.authenticated,
+    )
+  }
   if (!snapshot.svmWallet) {
     if (!snapshot.authenticated || !snapshot.hasSvmAccount) {
       await snapshot.operations.loginSvm()

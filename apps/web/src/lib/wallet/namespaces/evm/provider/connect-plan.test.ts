@@ -53,8 +53,8 @@ function createNamedConnector(id: string, name: string): CreateConnectorFn {
 }
 
 describe('EVM wallet identity', () => {
-  // Registry lookup replaces a `uid` plumbed through the wallet list, so every
-  // listed wallet's id must line up with the id its connector reports.
+  // Registry lookup replaces a `uid` plumbed through the wallet list, so each
+  // connection id must line up with the id its connector reports.
   it.each([
     ['evm:io.privy.wallet', 'io.privy.wallet'],
     ['evm:safe', 'safe'],
@@ -95,6 +95,21 @@ describe('EVM wallet identity', () => {
         toEvmWalletId(findEvmWalletConnector(config, wallet)?.id ?? ''),
       ).toBe(walletId)
     }
+  })
+
+  it('resolves each Privy login method to the shared connector', () => {
+    const config = createTestConfig([privyEvmConnector()])
+    const emailWallet = getWallet('evm:io.privy.wallet')
+    const twitterWallet = getWallet('evm:io.privy.wallet.twitter')
+
+    expect(emailWallet.loginMethod).toBe('email')
+    expect(twitterWallet.loginMethod).toBe('twitter')
+    expect(findEvmWalletConnector(config, emailWallet)?.id).toBe(
+      'io.privy.wallet',
+    )
+    expect(findEvmWalletConnector(config, twitterWallet)?.id).toBe(
+      'io.privy.wallet',
+    )
   })
 
   it('reports the account only for the live current connection', async () => {

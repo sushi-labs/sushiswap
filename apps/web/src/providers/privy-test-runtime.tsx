@@ -15,6 +15,7 @@ import type { EIP1193Provider } from 'viem'
 const address = TEST_PRIVY_ADDRESS as EvmAddress
 
 const operations: PrivyRuntimeOperationHandlers = {
+  async authenticate() {},
   async connectOrCreateEvmWallet() {},
   async exportEvmWallet() {},
   async exportSvmWallet() {},
