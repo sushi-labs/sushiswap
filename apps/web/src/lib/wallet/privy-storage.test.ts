@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   hasStoredPrivySession,
+  isPrivyOAuthCallback,
   isPrivySessionStorageKey,
   setPrivySvmReconnect,
   shouldReconnectPrivySvm,
@@ -103,6 +104,21 @@ describe('Privy storage', () => {
     expect(isPrivySessionStorageKey('sushi:privy-svm-reconnect')).toBe(false)
     expect(isPrivySessionStorageKey('sushi:privy-session')).toBe(false)
     expect(isPrivySessionStorageKey(null)).toBe(false)
+  })
+
+  it('recognizes only complete Privy OAuth callbacks', () => {
+    expect(
+      isPrivyOAuthCallback(
+        '?privy_oauth_state=state&privy_oauth_provider=twitter&privy_oauth_code=code',
+      ),
+    ).toBe(true)
+    expect(
+      isPrivyOAuthCallback(
+        '?privy_oauth_state=state&privy_oauth_provider=twitter',
+      ),
+    ).toBe(false)
+    expect(isPrivyOAuthCallback('?privy_oauth_code=')).toBe(false)
+    expect(isPrivyOAuthCallback('?unrelated=value')).toBe(false)
   })
 
   it('stores only Solana reconnect intent in Sushi storage', () => {

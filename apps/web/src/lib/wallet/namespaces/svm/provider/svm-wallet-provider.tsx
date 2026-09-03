@@ -100,16 +100,16 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!client) throw new Error('SVM client not found')
       if (wallet.adapterId === SvmAdapterId.Privy) {
-        const account = await connectPrivySvmWallet(wallet.loginMethod)
-        const connectorId = await waitForPrivyConnector(client)
         setPrivySvmReconnect(true)
         try {
+          const account = await connectPrivySvmWallet(wallet.loginMethod)
+          const connectorId = await waitForPrivyConnector(client)
           await connectWallet(connectorId)
+          onSuccess?.(account)
         } catch (error) {
           setPrivySvmReconnect(false)
           throw error
         }
-        onSuccess?.(account)
         return
       }
 

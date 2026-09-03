@@ -7,6 +7,11 @@ const PRIVY_SESSION_STORAGE_KEYS = [
   PRIVY_ACCESS_TOKEN_STORAGE_KEY,
   PRIVY_REFRESH_TOKEN_STORAGE_KEY,
 ] as const
+const PRIVY_OAUTH_CALLBACK_PARAMETERS = [
+  'privy_oauth_code',
+  'privy_oauth_state',
+  'privy_oauth_provider',
+] as const
 
 function readStorageString(key: string): string | undefined {
   if (typeof window === 'undefined') return undefined
@@ -46,6 +51,14 @@ export function hasStoredPrivySession(): boolean {
 
 export function isPrivySessionStorageKey(key: string | null): boolean {
   return PRIVY_SESSION_STORAGE_KEYS.some((storageKey) => storageKey === key)
+}
+
+/** Returns whether the URL contains a complete Privy OAuth callback. */
+export function isPrivyOAuthCallback(search: string): boolean {
+  const searchParams = new URLSearchParams(search)
+  return PRIVY_OAUTH_CALLBACK_PARAMETERS.every((parameter) =>
+    Boolean(searchParams.get(parameter)),
+  )
 }
 
 export function setPrivySvmReconnect(enabled: boolean): void {
