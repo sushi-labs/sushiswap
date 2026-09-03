@@ -1,30 +1,18 @@
 'use client'
 
 import {
-  Button,
-  DialogClose,
   DialogContent,
-  DialogCustom,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogProvider,
   DialogReview,
-  DialogTitle,
   DialogType,
   useDialog,
 } from '@sushiswap/ui'
 import type React from 'react'
 import { type ReactNode, type RefObject, useEffect } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
-import {
-  ConfirmationDialogContent,
-  Divider,
-  GetStateComponent,
-  StepState,
-  failedState,
-  finishedState,
-} from './confirmation-dialog'
+import { CrossChainSwapConfirmationDialog } from '../cross-chain-swap-confirmation-dialog'
+import { ConfirmationDialogContent, StepState } from './confirmation-dialog'
 import { ConfirmSwapButton } from './trade-review-dialog/confirm-swap-button'
 import { DialogBody } from './trade-review-dialog/dialog-body'
 import { useCrossChainSwapTradeReview } from './trade-review-dialog/hooks/use-cross-chain-swap-trade-review'
@@ -136,51 +124,23 @@ function CrossChainSwapTradeReviewDialogContent<
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
-        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-          <DialogHeader>
-            <DialogTitle>Cross-chain swap</DialogTitle>
-            <DialogDescription asChild>
-              <div>
-                <ConfirmationDialogContent
-                  dialogState={stepStates}
-                  bridgeUrl={lifiData?.lifiExplorerLink}
-                  txHash={hash}
-                  dstTxHash={lifiData?.receiving?.txHash}
-                  routeRef={
-                    routeRef as RefObject<UseLifiXSwapSelectedTradeRouteReturn<
-                      TChainId0,
-                      TChainId1
-                    > | null>
-                  }
-                />
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <div className="py-5">
-              <div className="relative flex gap-3">
-                <GetStateComponent index={1} state={stepStates.source} />
-                <Divider />
-                <GetStateComponent index={2} state={stepStates.bridge} />
-                <Divider />
-                <GetStateComponent index={3} state={stepStates.dest} />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button size="xl" fullWidth id="swap-dialog-close">
-                {failedState(stepStates)
-                  ? 'Try again'
-                  : finishedState(stepStates)
-                    ? 'Make another swap'
-                    : 'Close'}
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </DialogCustom>
+      <CrossChainSwapConfirmationDialog
+        stepStates={stepStates}
+        description={
+          <ConfirmationDialogContent
+            dialogState={stepStates}
+            bridgeUrl={lifiData?.lifiExplorerLink}
+            txHash={hash}
+            dstTxHash={lifiData?.receiving?.txHash}
+            routeRef={
+              routeRef as RefObject<UseLifiXSwapSelectedTradeRouteReturn<
+                TChainId0,
+                TChainId1
+              > | null>
+            }
+          />
+        }
+      />
     </>
   )
 }

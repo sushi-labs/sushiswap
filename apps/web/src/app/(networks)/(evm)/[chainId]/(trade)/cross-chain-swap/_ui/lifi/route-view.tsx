@@ -12,6 +12,7 @@ import type {
   CrossChainToolDetails,
 } from 'src/lib/swap/cross-chain/types'
 import { Amount, formatNumber, getChainById, getNativeAddress } from 'sushi'
+import type { StellarChainId } from 'sushi/stellar'
 
 type NewTokenInput = Parameters<typeof newToken>[0]
 
@@ -79,7 +80,7 @@ export function CrossChainSwapRouteView({
   )
 }
 
-function VerticalDivider({
+export function VerticalDivider({
   className,
   count,
 }: { className?: string; count: number }) {
@@ -120,7 +121,9 @@ function VerticalDivider({
   )
 }
 
-function SendAction<TChainId extends LifiXSwapSupportedChainId>({
+export function SendAction<
+  TChainId extends LifiXSwapSupportedChainId | StellarChainId,
+>({
   label,
   amount,
 }: {

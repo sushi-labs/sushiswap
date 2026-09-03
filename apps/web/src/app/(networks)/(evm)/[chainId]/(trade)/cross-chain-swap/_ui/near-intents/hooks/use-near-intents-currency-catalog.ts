@@ -12,6 +12,7 @@ import {
   getDefaultTokenForChain,
   mapNearIntentsTokensToCurrencyEntries,
 } from 'src/lib/swap/near-intents/tokens'
+import { STELLAR_USDT0, StellarChainId } from 'sushi/stellar'
 
 interface NearIntentsDefaultTokenParams {
   token0Param: string | undefined
@@ -33,10 +34,15 @@ export function useNearIntentsCurrencyCatalog(
   tokens: readonly NearIntentsToken[] | undefined,
 ) {
   const nearIntentsTokens = tokens ?? EMPTY_TOKENS
-  const currencyEntries = useMemo(
-    () => mapNearIntentsTokensToCurrencyEntries(nearIntentsTokens),
-    [nearIntentsTokens],
-  )
+  const currencyEntries = useMemo(() => {
+    const entries = mapNearIntentsTokensToCurrencyEntries(nearIntentsTokens)
+    // Make the USDT0 route discoverable without assigning it a NEAR asset ID.
+    const currency = STELLAR_USDT0[StellarChainId.STELLAR]
+    if (!entries.some((entry) => entry.currency.id === currency.id)) {
+      entries.push({ assetId: '', currency, priceUSD: '1', priceUpdatedAt: '' })
+    }
+    return entries
+  }, [nearIntentsTokens])
 
   const currencyEntryByKey = useMemo(() => {
     const entries = new Map<string, NearIntentsCurrencyEntry>()
