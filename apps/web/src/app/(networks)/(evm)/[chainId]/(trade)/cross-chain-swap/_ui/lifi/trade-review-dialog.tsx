@@ -2,9 +2,9 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -84,7 +84,9 @@ function CrossChainSwapTradeReviewDialogContent<
     tracking: { setStepStates },
   } = useCrossChainSwapTradeReview<TChainId0, TChainId1>()
 
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
+    DialogType.Confirm,
+  )
   useEffect(() => {
     if (!confirmDialogOpen) {
       setStepStates({
@@ -136,7 +138,7 @@ function CrossChainSwapTradeReviewDialogContent<
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
@@ -180,7 +182,7 @@ function CrossChainSwapTradeReviewDialogContent<
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogCustom>
+      </Dialog>
     </>
   )
 }

@@ -228,21 +228,6 @@ const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
 }
 DialogReview.displayName = 'DialogReview'
 
-interface DialogCustomProps {
-  children: ReactNode
-  dialogType: DialogType
-}
-
-const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
-  const { open, setOpen } = useDialog(DialogType.Confirm)
-  return (
-    <Dialog {...props} open={open} onOpenChange={setOpen}>
-      {children}
-    </Dialog>
-  )
-}
-DialogCustom.displayName = 'DialogCustom'
-
 interface DialogConfirmProps<TChainId extends ChainId>
   extends DialogContentProps {
   chainId: TChainId
@@ -446,7 +431,6 @@ export {
   DialogClose,
   DialogConfirm,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,

@@ -2,9 +2,9 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -104,7 +104,9 @@ function NearIntentsTradeReviewDialogContent({
     source: StepState.NotStarted,
     execution: StepState.NotStarted,
   })
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
+    DialogType.Confirm,
+  )
 
   const outputAmount =
     token1 && quote?.quote.amountOut
@@ -276,7 +278,7 @@ function NearIntentsTradeReviewDialogContent({
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
@@ -303,7 +305,7 @@ function NearIntentsTradeReviewDialogContent({
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogCustom>
+      </Dialog>
     </>
   )
 }
