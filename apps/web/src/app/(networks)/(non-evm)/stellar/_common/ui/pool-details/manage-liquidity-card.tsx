@@ -410,10 +410,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger value="add" className="flex flex-1">
+            <TabsTrigger value="add" className="flex-1">
               Add
             </TabsTrigger>
-            <TabsTrigger value="remove" className="flex flex-1">
+            <TabsTrigger value="remove" className="flex-1">
               Remove
             </TabsTrigger>
           </TabsList>
