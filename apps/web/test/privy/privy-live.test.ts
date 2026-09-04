@@ -113,17 +113,9 @@ async function expectSvmReconnectState(page: Page): Promise<void> {
 }
 
 test.describe('live Privy authentication', () => {
-  test('logs in and connects the EVM embedded wallet', async ({ page }) => {
-    await authenticatePrivy(page, 'evm')
-    await expectEvmReconnectState(page)
-  })
-
-  test('logs in and connects the SVM embedded wallet', async ({ page }) => {
-    await authenticatePrivy(page, 'svm')
-    await expectSvmReconnectState(page)
-  })
-
-  test('reconnects the EVM embedded wallet after reload', async ({ page }) => {
+  test('logs in, connects, and reconnects the EVM embedded wallet', async ({
+    page,
+  }) => {
     const address = await authenticatePrivy(page, 'evm')
     await expectEvmReconnectState(page)
 
@@ -135,7 +127,9 @@ test.describe('live Privy authentication', () => {
     await expectEvmReconnectState(page)
   })
 
-  test('reconnects the SVM embedded wallet after reload', async ({ page }) => {
+  test('logs in, connects, and reconnects the SVM embedded wallet', async ({
+    page,
+  }) => {
     const address = await authenticatePrivy(page, 'svm')
     await expectSvmReconnectState(page)
 
