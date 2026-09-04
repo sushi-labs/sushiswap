@@ -357,11 +357,15 @@ function PrivyRuntimeEffects() {
   }, [embeddedEvmWallet, evmWalletAddress])
 
   useEffect(() => {
-    if (error) privyRuntimeStore.setError(error)
+    if (!error) return
+    setPrivySvmReconnect(false)
+    privyRuntimeStore.setError(error)
   }, [error])
 
   useEffect(() => {
     if (!ready || error) return
+    // Privy also publishes an unauthenticated snapshot while login or OAuth
+    // resume is pending. Terminal failure and logout paths own intent cleanup.
     const runtimeSvmWallet: PrivySvmWallet | undefined = svmWalletAddress
       ? { address: svmWalletAddress as SvmAddress }
       : undefined
@@ -381,10 +385,6 @@ function PrivyRuntimeEffects() {
         operations,
         walletsReady: evmWalletsReady,
       })
-    }
-
-    if (!authenticated) {
-      setPrivySvmReconnect(false)
     }
   }, [
     authenticated,
