@@ -10,6 +10,12 @@ import {
   useRef,
 } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import {
+  getLayerZeroTokenAddress,
+  isLayerZeroChainId,
+  isLayerZeroTokenParam,
+  isLayerZeroUsdt0Route,
+} from 'src/lib/swap/layerzero/config'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { getCurrencyParam } from 'src/lib/swap/near-intents/tokens'
 import type {
@@ -139,7 +145,9 @@ export function NearIntentsXSwapProvider({
       ? form.chainId1
       : getOppositeDefaultChainId(chainId0)
   const isNearIntentsPair =
-    chainId0 === StellarChainId.STELLAR || chainId1 === StellarChainId.STELLAR
+    (chainId0 === StellarChainId.STELLAR ||
+      chainId1 === StellarChainId.STELLAR) &&
+    !isLayerZeroUsdt0Route(chainId0, chainId1, token0Param, token1Param)
 
   const token0Entry = getCurrencyEntry(chainId0, token0Param)
   const token1Entry = getCurrencyEntry(chainId1, token1Param)
@@ -209,16 +217,44 @@ export function NearIntentsXSwapProvider({
 
   const setToken0 = useCallback(
     (currency: CurrencyFor<NearIntentsSupportedChainId>) => {
+      if (
+        currency.chainId === StellarChainId.STELLAR &&
+        isLayerZeroTokenParam(
+          StellarChainId.STELLAR,
+          getCurrencyParam(currency),
+        ) &&
+        isLayerZeroChainId(chainId1)
+      ) {
+        form.setTokenParams(
+          getCurrencyParam(currency),
+          getLayerZeroTokenAddress(chainId1),
+        )
+        return
+      }
       form.setToken0Param(getCurrencyParam(currency))
     },
-    [form.setToken0Param],
+    [chainId1, form.setToken0Param, form.setTokenParams],
   )
 
   const setToken1 = useCallback(
     (currency: CurrencyFor<NearIntentsSupportedChainId>) => {
+      if (
+        currency.chainId === StellarChainId.STELLAR &&
+        isLayerZeroTokenParam(
+          StellarChainId.STELLAR,
+          getCurrencyParam(currency),
+        ) &&
+        isLayerZeroChainId(chainId0)
+      ) {
+        form.setTokenParams(
+          getLayerZeroTokenAddress(chainId0),
+          getCurrencyParam(currency),
+        )
+        return
+      }
       form.setToken1Param(getCurrencyParam(currency))
     },
-    [form.setToken1Param],
+    [chainId0, form.setToken1Param, form.setTokenParams],
   )
 
   const slippageBps = useMemo(
@@ -232,6 +268,7 @@ export function NearIntentsXSwapProvider({
     destinationAsset: token1NearAssetId,
     amount: swapAmount,
     slippageBps,
+    enabled: isNearIntentsPair,
   })
 
   const executionDuration = useMemo(() => {

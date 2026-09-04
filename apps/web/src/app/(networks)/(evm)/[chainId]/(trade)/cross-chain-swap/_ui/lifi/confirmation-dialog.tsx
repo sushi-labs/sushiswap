@@ -6,6 +6,7 @@ import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { getChainById, shortenAddress } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
+import type { StellarChainId } from 'sushi/stellar'
 import type { Hex } from 'viem'
 import {
   type UseLifiXSwapSelectedTradeRouteReturn,
@@ -76,11 +77,70 @@ export function ConfirmationDialogContent<
       trade.step.includedStepsWithoutFees?.[2]?.type,
     ].includes('swap')
 
+  const fromTokenSymbol =
+    routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
+      ? routeRef.current.step.includedStepsWithoutFees[1]?.action?.fromToken
+          ?.symbol
+      : routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type === 'swap'
+        ? routeRef.current.step.includedStepsWithoutFees[2]?.action?.fromToken
+            ?.symbol
+        : undefined
+
+  return (
+    <CrossChainSwapConfirmationContent
+      chainId0={chainId0}
+      chainId1={chainId1}
+      txHash={txHash}
+      dstTxHash={dstTxHash}
+      bridgeUrl={bridgeUrl}
+      dialogState={dialogState}
+      recipient={recipient}
+      swapOnDest={Boolean(swapOnDest)}
+      amountIn={trade?.amountIn?.toSignificant(6)}
+      amountOut={trade?.amountOut?.toSignificant(6)}
+      token0Symbol={token0?.symbol}
+      token1Symbol={token1?.symbol}
+      fromTokenSymbol={fromTokenSymbol}
+    />
+  )
+}
+
+type ConfirmationChainId =
+  | LifiXSwapSupportedChainId
+  | typeof StellarChainId.STELLAR
+
+/** Shared presentation; provider adapters supply the submitted trade snapshot. */
+export function CrossChainSwapConfirmationContent({
+  chainId0,
+  chainId1,
+  txHash,
+  dstTxHash,
+  bridgeUrl,
+  dialogState,
+  recipient,
+  swapOnDest = false,
+  amountIn,
+  amountOut,
+  token0Symbol,
+  token1Symbol,
+  fromTokenSymbol,
+}: {
+  chainId0: ConfirmationChainId
+  chainId1: ConfirmationChainId
+  txHash?: TxHashFor<ConfirmationChainId>
+  dstTxHash?: TxHashFor<ConfirmationChainId>
+  bridgeUrl?: string
+  dialogState: { source: StepState; bridge: StepState; dest: StepState }
+  recipient?: AddressFor<ConfirmationChainId>
+  swapOnDest?: boolean
+  amountIn?: string
+  amountOut?: string
+  token0Symbol?: string
+  token1Symbol?: string
+  fromTokenSymbol?: string
+}): ReactNode {
   const [chain0, chain1] = useMemo(
-    () => [
-      getChainById(chainId0 as LifiXSwapSupportedChainId),
-      getChainById(chainId1 as LifiXSwapSupportedChainId),
-    ],
+    () => [getChainById(chainId0), getChainById(chainId1)],
     [chainId0, chainId1],
   )
 
@@ -139,19 +199,9 @@ export function ConfirmationDialogContent<
   }
 
   if (dialogState.dest === StepState.PartialSuccess) {
-    const fromTokenSymbol =
-      routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.type === 'swap'
-        ? routeRef?.current?.step?.includedStepsWithoutFees?.[1]?.action
-            ?.fromToken?.symbol
-        : routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.type ===
-            'swap'
-          ? routeRef?.current?.step?.includedStepsWithoutFees?.[2]?.action
-              ?.fromToken?.symbol
-          : undefined
-
     return (
       <>
-        We {`couldn't`} swap {fromTokenSymbol} into {token1?.symbol},{' '}
+        We {`couldn't`} swap {fromTokenSymbol} into {token1Symbol},{' '}
         {fromTokenSymbol} has been send to{' '}
         {recipient ? (
           <Button asChild size="sm" variant="link">
@@ -181,7 +231,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={txHash ? chain0.getTransactionUrl(txHash) : ''}
             >
-              {trade?.amountIn?.toSignificant(6)} {token0?.symbol}
+              {amountIn} {token0Symbol}
             </a>
           </Button>{' '}
           for{' '}
@@ -191,7 +241,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
-              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+              {amountOut} {token1Symbol}
             </a>
           </Button>
         </>
@@ -206,7 +256,7 @@ export function ConfirmationDialogContent<
               rel="noreferrer noopener noreferer"
               href={dstTxHash ? chain1.getTransactionUrl(dstTxHash) : ''}
             >
-              {trade?.amountOut?.toSignificant(6)} {token1?.symbol}
+              {amountOut} {token1Symbol}
             </a>
           </Button>{' '}
           to {recipient ? shortenAddress(recipient) : 'recipient'}
