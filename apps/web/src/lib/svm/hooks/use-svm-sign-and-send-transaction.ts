@@ -1,15 +1,17 @@
 import type { SendTransactionModalUIOptions } from '@privy-io/react-auth'
-import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import { useTransactionSigner } from '@solana/connector'
-import { type ReadonlyUint8Array, getBase58Decoder } from '@solana/kit'
+import { useConnector } from '@solana/connector/react'
+import type { ReadonlyUint8Array } from '@solana/kit'
 import { useCallback } from 'react'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { usePrivyEmbeddedWallet } from '../../wallet/hooks/use-privy-embedded'
+import { PRIVY_SVM_CONNECTOR_ID } from '../../wallet/namespaces/svm/config'
+import { usePrivyRuntime } from '../../wallet/privy/use-privy-runtime'
 
-export const useSvmSignAndSendTransaction = () => {
+export function useSvmSignAndSendTransaction() {
   const { signer } = useTransactionSigner()
+  const { wallet } = useConnector()
   const privyEmbedded = usePrivyEmbeddedWallet('svm')
-  const { signAndSendTransaction: signAndSendTransactionWithPrivy } =
-    useSignAndSendTransaction()
+  const { operations: privyOperations } = usePrivyRuntime()
 
   const signAndSendTransaction = useCallback(
     async (
@@ -18,28 +20,26 @@ export const useSvmSignAndSendTransaction = () => {
         uiOptions?: SendTransactionModalUIOptions
       },
     ) => {
-      if (
-        privyEmbedded &&
-        privyEmbedded?.address.toLowerCase() === signer?.address.toLowerCase()
-      ) {
-        const tx = await signAndSendTransactionWithPrivy({
+      const isPrivySigner =
+        wallet.status === 'connected' &&
+        wallet.session.connectorId === PRIVY_SVM_CONNECTOR_ID
+      if (isPrivySigner) {
+        if (!privyEmbedded) throw new Error('Privy SVM wallet is unavailable')
+        const tx = await privyOperations?.signAndSendSvmTransaction({
           transaction: new Uint8Array(transaction),
-          wallet: privyEmbedded,
-          options,
+          address: privyEmbedded.address,
+          uiOptions: options?.uiOptions,
         })
-
-        const base58TxSig = getBase58Decoder().decode(
-          new Uint8Array(Object.values(tx.signature)),
-        )
-
-        return { base58TxSig }
+        if (!tx) throw new Error('Privy runtime is unavailable')
+        return { base58TxSig: tx.signature }
       } else {
-        const txSig = await signer?.signAndSendTransaction(transaction)
+        if (!signer) throw new Error('SVM wallet signer is unavailable')
+        const txSig = await signer.signAndSendTransaction(transaction)
 
         return { base58TxSig: txSig }
       }
     },
-    [privyEmbedded, signer, signAndSendTransactionWithPrivy],
+    [privyEmbedded, privyOperations, signer, wallet],
   )
   return { signAndSendTransaction }
 }

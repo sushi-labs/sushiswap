@@ -1,11 +1,10 @@
 'use client'
 
 import { faro } from '@grafana/faro-web-sdk'
-import { WagmiProvider as _WagmiProvider } from '@privy-io/wagmi'
 import { type FC, type ReactNode, useEffect } from 'react'
 import { WagmiStoreVersionCheck } from 'src/lib/wagmi/components/wagmi-store-version-check'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { useConnection } from 'wagmi'
+import { WagmiProvider as _WagmiProvider, useConnection } from 'wagmi'
 import { QueryClientProvider } from './query-client-provider'
 
 const WagmiTrackers = () => {
@@ -24,11 +23,12 @@ const WagmiTrackers = () => {
   return null
 }
 
-export const WagmiProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  // No `initialState`: the connection is restored client-side from
-  // `cookieStorage` once Privy has registered its connectors. Reading the
-  // cookie on the server would make every route below this provider
-  // request-bound and block partial prerendering.
+export const WagmiProvider: FC<{
+  children: ReactNode
+}> = ({ children }) => {
+  // No `initialState`: the connection is restored client-side from Wagmi's
+  // local storage. Reading connection state on the server would make every
+  // route below this provider request-bound and block partial prerendering.
   return (
     <QueryClientProvider>
       <_WagmiProvider config={getWagmiConfig()}>

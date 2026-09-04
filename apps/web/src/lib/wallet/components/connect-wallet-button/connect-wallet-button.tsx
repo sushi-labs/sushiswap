@@ -1,5 +1,11 @@
 import { Slot } from '@sushiswap/ui'
-import { Suspense, lazy } from 'react'
+import {
+  type ReactNode,
+  Suspense,
+  cloneElement,
+  isValidElement,
+  lazy,
+} from 'react'
 import type { ConnectWalletButtonProps } from './types'
 
 const ConnectEvmButton = lazy(() => import('./connect-evm-wallet-button'))
@@ -7,6 +13,11 @@ const ConnectSvmButton = lazy(() => import('./connect-svm-wallet-button'))
 const ConnectStellarButton = lazy(
   () => import('./connect-stellar-wallet-button'),
 )
+
+function getLoadingFallback(children: ReactNode): ReactNode {
+  if (!isValidElement<{ disabled?: boolean }>(children)) return children
+  return cloneElement(children, { disabled: true })
+}
 
 export function ConnectWalletButton(props: ConnectWalletButtonProps) {
   if (!props.wallet.isAvailable || props.onClick) {
@@ -34,7 +45,7 @@ export function ConnectWalletButton(props: ConnectWalletButtonProps) {
   const namespace = props.wallet.namespace
 
   return (
-    <Suspense fallback={props.children}>
+    <Suspense fallback={getLoadingFallback(props.children)}>
       {namespace === 'evm' ? (
         <ConnectEvmButton {...props} />
       ) : namespace === 'svm' ? (

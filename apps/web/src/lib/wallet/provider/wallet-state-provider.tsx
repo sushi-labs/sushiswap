@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useMemo, useState } from 'react'
+import { useConnection } from 'wagmi'
 import type { WalletState } from './types'
 
 const WalletStateContext = createContext<WalletState | null>(null)
@@ -18,16 +19,17 @@ export function WalletStateProvider({
 }: {
   children: React.ReactNode
 }) {
+  const { isConnecting, isReconnecting } = useConnection()
   const [pendingWalletId, setPendingWalletId] = useState<string | undefined>(
     undefined,
   )
-
   const value = useMemo(
     () => ({
+      isPending: Boolean(pendingWalletId) || isConnecting || isReconnecting,
       pendingWalletId,
       setPendingWalletId,
     }),
-    [pendingWalletId],
+    [isConnecting, isReconnecting, pendingWalletId],
   )
 
   return (

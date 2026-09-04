@@ -143,7 +143,12 @@ function useSvmSimpleSwapTradeReviewForState({
         const unsignedTransaction = await getUnsignedTransaction()
 
         if (!unsignedTransaction) {
-          throw new Error('Failed to build Solana transaction')
+          const reason = order?.errorMessage
+          throw new Error(
+            reason
+              ? `Failed to build Solana transaction: ${reason}`
+              : 'Failed to build Solana transaction',
+          )
         }
 
         const unsignedBytes = base64Encoder.encode(unsignedTransaction)

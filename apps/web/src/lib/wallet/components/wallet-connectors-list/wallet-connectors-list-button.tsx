@@ -19,7 +19,11 @@ export function WalletConnectorsListButton({
       ? 'Installed'
       : undefined
 
-  const { setPendingWalletId, pendingWalletId } = useWalletState()
+  const {
+    isPending: isWalletPending,
+    pendingWalletId,
+    setPendingWalletId,
+  } = useWalletState()
 
   const isPending = pendingWalletId === wallet.id
 
@@ -42,7 +46,7 @@ export function WalletConnectorsListButton({
         variant="ghost"
         className="!justify-between gap-3 !rounded-none"
         loading={isPending}
-        disabled={Boolean(pendingWalletId)}
+        disabled={isWalletPending}
       >
         <div className="flex flex-1 justify-between gap-3">
           {variant === 'namespace' ? (

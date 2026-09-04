@@ -55,6 +55,27 @@ export function addWalletConnection(connection: WalletConnection) {
   emit(connectionListeners)
 }
 
+/** Replace the active connection for namespaces that only support one wallet. */
+export function setActiveWalletConnection(connection: WalletConnection) {
+  const namespaceConnections = connections.filter(
+    (candidate) => candidate.namespace === connection.namespace,
+  )
+  if (
+    namespaceConnections.length === 1 &&
+    isWalletConnectionEqual(namespaceConnections[0], connection)
+  ) {
+    return
+  }
+
+  connections = [
+    ...connections.filter(
+      (candidate) => candidate.namespace !== connection.namespace,
+    ),
+    connection,
+  ]
+  emit(connectionListeners)
+}
+
 export function removeWalletConnection(id: string) {
   const i = connections.findIndex((x) => x.id === id)
   if (i === -1) return

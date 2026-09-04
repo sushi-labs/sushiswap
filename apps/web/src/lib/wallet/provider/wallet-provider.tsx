@@ -32,16 +32,16 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
 function _WalletProvider({ children }: { children: React.ReactNode }) {
   const connections = useConnections()
-  const { pendingWalletId } = useWalletState()
+  const { isPending } = useWalletState()
   const { addRecentWallet } = useRecentWallets()
 
   const value = useMemo(
     () => ({
       connections,
       isConnected: Boolean(connections.length > 0),
-      isPending: Boolean(pendingWalletId),
+      isPending,
     }),
-    [connections, pendingWalletId],
+    [connections, isPending],
   )
 
   useEffect(() => {
