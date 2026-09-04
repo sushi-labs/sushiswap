@@ -15,6 +15,7 @@ import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
 import { http, createPublicClient } from 'viem'
 import { mainnet } from 'viem/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { XSwapFormState } from '../xswap-form-provider'
 import { LayerZeroXSwapProvider, useLayerZeroXSwap } from './xswap-provider'
 
 const { useForm, usePublicClient, fetchQuote } = vi.hoisted(() => ({
@@ -73,6 +74,8 @@ describe('LayerZero quote initialization', () => {
   let container: HTMLDivElement
   let client: QueryClient
   let value: ReturnType<typeof useLayerZeroXSwap>
+  const setTokenParams = vi.fn()
+  const setChainId1 = vi.fn()
 
   function Harness() {
     value = useLayerZeroXSwap()
@@ -84,13 +87,26 @@ describe('LayerZero quote initialization', () => {
     fromChainId: LayerZeroChainId = -4,
     toChainId: LayerZeroChainId = 1,
   ) {
-    useForm.mockReturnValue({
+    await renderForm({
       chainId0: fromChainId,
       chainId1: toChainId,
       token0Param: getLayerZeroTokenAddress(fromChainId),
       token1Param: getLayerZeroTokenAddress(toChainId),
       swapAmountString: amount,
     })
+  }
+
+  async function renderForm(
+    form: Pick<
+      XSwapFormState,
+      | 'chainId0'
+      | 'chainId1'
+      | 'token0Param'
+      | 'token1Param'
+      | 'swapAmountString'
+    >,
+  ) {
+    useForm.mockReturnValue({ ...form, setTokenParams, setChainId1 })
     await act(async () =>
       root.render(
         <QueryClientProvider client={client}>
@@ -189,5 +205,69 @@ describe('LayerZero quote initialization', () => {
     await render('')
     await advance(5_000)
     expect(fetchQuote).not.toHaveBeenCalled()
+  })
+
+  it('leaves a destination outside LayerZero to the other provider', async () => {
+    await renderForm({
+      chainId0: -4,
+      chainId1: 8453,
+      token0Param: getLayerZeroTokenAddress(-4),
+      token1Param: undefined,
+      swapAmountString: '1',
+    })
+    await advance(30_001)
+    expect(fetchQuote).not.toHaveBeenCalled()
+    expect(setTokenParams).not.toHaveBeenCalled()
+    expect(setChainId1).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    {
+      chainId0: -4,
+      chainId1: 1,
+      token0Param: getLayerZeroTokenAddress(-4),
+      token1Param: 'NATIVE',
+    },
+    {
+      chainId0: 1,
+      chainId1: -4,
+      token0Param: 'NATIVE',
+      token1Param: getLayerZeroTokenAddress(-4),
+    },
+  ] as const)(
+    'does not overwrite another token selected on $chainId0 → $chainId1',
+    async (form) => {
+      await renderForm({ ...form, swapAmountString: '1' })
+      expect(fetchQuote).not.toHaveBeenCalled()
+      expect(setTokenParams).not.toHaveBeenCalled()
+    },
+  )
+
+  it('automatically resolves USDT0 after selecting a supported destination', async () => {
+    await renderForm({
+      chainId0: -4,
+      chainId1: 42161,
+      token0Param: getLayerZeroTokenAddress(-4),
+      token1Param: undefined,
+      swapAmountString: '1',
+    })
+    expect(setTokenParams).toHaveBeenCalledWith(
+      getLayerZeroTokenAddress(-4),
+      getLayerZeroTokenAddress(42161),
+    )
+    expect(fetchQuote).toHaveBeenCalledWith(
+      expect.objectContaining({ fromChainId: -4, toChainId: 42161 }),
+    )
+  })
+
+  it('still initializes the default destination when none is selected', async () => {
+    await renderForm({
+      chainId0: -4,
+      chainId1: undefined,
+      token0Param: getLayerZeroTokenAddress(-4),
+      token1Param: undefined,
+      swapAmountString: '',
+    })
+    expect(setChainId1).toHaveBeenCalledWith(1)
   })
 })

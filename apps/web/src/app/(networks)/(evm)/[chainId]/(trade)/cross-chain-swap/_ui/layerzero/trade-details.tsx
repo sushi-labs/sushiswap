@@ -5,6 +5,7 @@ import { type ReactNode, useId, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
 import { getChainById, shortenAddress } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import { SendAction, VerticalDivider } from '../lifi/route-view'
 import type { LayerZeroTradeAmounts } from './get-trade-amounts'
 import { useLayerZeroArrivalEstimate } from './hooks/use-layerzero-arrival-estimate'
@@ -33,6 +34,8 @@ export function LayerZeroTradeDetails({
   const estimatedMinutes = estimatedSeconds
     ? Math.ceil(estimatedSeconds / 60)
     : undefined
+  const isFallbackEstimate =
+    !estimatedSeconds && quote.fromChainId === StellarChainId.STELLAR
 
   return (
     <>
@@ -40,24 +43,24 @@ export function LayerZeroTradeDetails({
         <List.Control>
           <List.KeyValue
             title="Estimated arrival"
-            subtitle="Typical time after sending, based on recent transfers on these networks."
+            subtitle={
+              isFallbackEstimate
+                ? 'Approximate time after sending from Stellar. Actual arrival time may vary.'
+                : 'Typical time after sending, based on recent transfers on these networks.'
+            }
           >
             {arrivalEstimate.isLoading ? (
               <span aria-label="Loading arrival estimate">
-                <SkeletonText align="right" fontSize="sm" className="w-24" />
+                <SkeletonText
+                  align="right"
+                  fontSize="sm"
+                  className="min-w-24"
+                />
               </span>
             ) : estimatedMinutes ? (
-              `About ${estimatedMinutes} ${estimatedMinutes === 1 ? 'minute' : 'minutes'}`
+              `~${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}`
             ) : (
-              <span
-                title={
-                  arrivalEstimate.isError
-                    ? 'Timing is temporarily unavailable.'
-                    : 'Not enough recent transfer history for this route.'
-                }
-              >
-                Unavailable
-              </span>
+              <span>~30 minutes</span>
             )}
           </List.KeyValue>
           <List.KeyValue

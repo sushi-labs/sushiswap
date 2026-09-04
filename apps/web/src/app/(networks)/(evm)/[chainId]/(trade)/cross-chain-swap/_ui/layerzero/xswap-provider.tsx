@@ -74,7 +74,7 @@ export function LayerZeroXSwapProvider({
         : StellarChainId.STELLAR
   const enabled = isLayerZeroUsdt0Route(
     form.chainId0,
-    chainId1,
+    form.chainId1 ?? chainId1,
     form.token0Param,
     form.token1Param,
   )

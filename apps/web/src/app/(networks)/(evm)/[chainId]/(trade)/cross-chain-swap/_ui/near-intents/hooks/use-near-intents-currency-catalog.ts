@@ -1,6 +1,10 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
+import {
+  isLayerZeroChainId,
+  isLayerZeroTokenParam,
+} from 'src/lib/swap/layerzero/config'
 import type {
   NearIntentsCurrencyEntry,
   NearIntentsSupportedChainId,
@@ -28,6 +32,24 @@ function getCurrencyEntryByTokenAssetId(
   if (!token) return undefined
 
   return entries.find((entry) => entry.assetId === token.assetId)
+}
+
+export function getNearIntentsSelectableCurrencies(
+  chainId: NearIntentsSupportedChainId,
+  otherChainId: NearIntentsSupportedChainId,
+  currencies:
+    | Record<string, CurrencyFor<NearIntentsSupportedChainId>>
+    | undefined,
+): Record<string, CurrencyFor<NearIntentsSupportedChainId>> | undefined {
+  if (chainId !== StellarChainId.STELLAR || isLayerZeroChainId(otherChainId)) {
+    return currencies
+  }
+
+  return Object.fromEntries(
+    Object.entries(currencies ?? {}).filter(
+      ([address]) => !isLayerZeroTokenParam(StellarChainId.STELLAR, address),
+    ),
+  )
 }
 
 export function useNearIntentsCurrencyCatalog(

@@ -235,9 +235,7 @@ describe('LayerZero trade UI', () => {
       ),
     )
     expect(container.textContent).toContain('LayerZero fee: 0.0011 ETH')
-    expect(container.textContent).toContain(
-      'Estimated arrival: About 17 minutes',
-    )
+    expect(container.textContent).toContain('Estimated arrival: ~17 minutes')
     expect(useArrivalEstimate).toHaveBeenCalledWith(1, -4)
     expect(container.textContent).toContain('Send 1 USDT')
     expect(container.textContent).toContain('Receive 0.9 USDT0')
@@ -249,7 +247,7 @@ describe('LayerZero trade UI', () => {
     expect(container.querySelector('.text-muted-foreground')?.textContent).toBe(
       '($1.50)',
     )
-    expect(container.textContent).not.toMatch(/up to|~/i)
+    expect(container.textContent).not.toMatch(/up to/i)
     expect(container.textContent).toContain(
       'Min. received after slippage (0.5%): 0.8955 USDT0',
     )
@@ -401,19 +399,19 @@ describe('LayerZero trade UI', () => {
   it.each([
     [
       { data: { estimatedSeconds: null }, isError: false, isLoading: false },
-      'Unavailable',
+      '~30 minutes',
     ],
     [
       { data: { estimatedSeconds: 1_020 }, isError: true, isLoading: false },
-      'Unavailable',
+      '~30 minutes',
     ],
     [
       { data: { estimatedSeconds: 1_081 }, isError: false, isLoading: false },
-      'About 19 minutes',
+      '~19 minutes',
     ],
     [
       { data: { estimatedSeconds: 45 }, isError: false, isLoading: false },
-      'About 1 minute',
+      '~1 minute',
     ],
   ])(
     'handles approximate and unavailable arrival times (%s)',
@@ -450,6 +448,41 @@ describe('LayerZero trade UI', () => {
     expect(
       container.querySelector('[aria-label="Loading arrival estimate"]'),
     ).not.toBeNull()
-    expect(container.textContent).not.toContain('About')
+    expect(container.textContent).not.toContain('~30 minutes')
   })
+
+  it.each([
+    [{ data: { estimatedSeconds: null }, isError: false }, '~30 minutes'],
+    [{ data: undefined, isError: true }, '~30 minutes'],
+    [{ data: { estimatedSeconds: 1_020 }, isError: true }, '~30 minutes'],
+    [{ data: { estimatedSeconds: 1_885 }, isError: false }, '~32 minutes'],
+  ])(
+    'uses an approximate Stellar fallback only when timing is unavailable (%s)',
+    (estimate, expected) => {
+      useArrivalEstimate.mockReturnValue({ ...estimate, isLoading: false })
+      const stellarQuote: LayerZeroQuote = {
+        ...quote,
+        fromChainId: -4,
+        toChainId: 10,
+        sourceAddress: quote.recipient,
+        recipient: quote.sourceAddress,
+        amountIn: 10_000_000n,
+        amountSent: 10_000_000n,
+        amountOut: 1_000_000n,
+        minAmountOut: 995_000n,
+        maxNativeFee: 1_100_000n,
+      }
+      act(() =>
+        root.render(
+          <LayerZeroTradeDetails
+            quote={stellarQuote}
+            amounts={getLayerZeroTradeAmounts(stellarQuote)}
+            sourceNetworkFee={{ status: 'connect-wallet' }}
+          />,
+        ),
+      )
+      expect(container.textContent).toContain(`Estimated arrival: ${expected}`)
+      expect(container.textContent).not.toContain('Unavailable')
+    },
+  )
 })

@@ -1,12 +1,9 @@
 'use client'
 
-import {
-  isLayerZeroChainId,
-  isLayerZeroTokenParam,
-} from 'src/lib/swap/layerzero/config'
 import { NEAR_INTENTS_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/near-intents/types'
-import { StellarChainId, isStellarChainId } from 'sushi/stellar'
+import { isStellarChainId } from 'sushi/stellar'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
+import { getNearIntentsSelectableCurrencies } from './hooks/use-near-intents-currency-catalog'
 import { useNearIntentsXSwap } from './xswap-provider'
 
 const networks = NEAR_INTENTS_SUPPORTED_CHAIN_IDS
@@ -18,15 +15,11 @@ export function NearIntentsCrossChainSwapToken0Input() {
     currenciesByChain,
     isLoadingTokens,
   } = useNearIntentsXSwap()
-  const currencies =
-    chainId0 === StellarChainId.STELLAR && !isLayerZeroChainId(chainId1)
-      ? Object.fromEntries(
-          Object.entries(currenciesByChain[chainId0] ?? {}).filter(
-            ([address]) =>
-              !isLayerZeroTokenParam(StellarChainId.STELLAR, address),
-          ),
-        )
-      : currenciesByChain[chainId0]
+  const currencies = getNearIntentsSelectableCurrencies(
+    chainId0,
+    chainId1,
+    currenciesByChain[chainId0],
+  )
 
   return (
     <XSwapCurrencyInput

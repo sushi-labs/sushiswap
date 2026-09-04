@@ -1,14 +1,11 @@
 import { EvmChainId, isEvmAddress } from 'sushi/evm'
 import { StellarChainId, isStellarAccountAddress } from 'sushi/stellar'
-import {
-  type Client,
-  type PublicClient,
-  encodeFunctionData,
-  erc20Abi,
-} from 'viem'
+import { type Client, type PublicClient, encodeFunctionData } from 'viem'
 import { estimateTotalFee } from 'viem/op-stack'
-import { LAYERZERO_OFT_ABI } from './abi'
-import { LAYERZERO_USDT0_EVM_DEPLOYMENTS } from './config'
+import {
+  getLayerZeroEvmSendContractParameters,
+  isLayerZeroEvmApprovalRequired,
+} from './evm-send'
 import { buildStellarOftSend } from './stellar'
 import type { LayerZeroQuote } from './types'
 
@@ -57,29 +54,27 @@ export async function estimateLayerZeroSourceNetworkFee({
   if (!isEvmAddress(sourceAddress)) {
     throw new Error('Invalid EVM source account')
   }
-  const deployment = LAYERZERO_USDT0_EVM_DEPLOYMENTS[fromChainId]
-  if (deployment.approvalRequired) {
-    const allowance = await publicClient.readContract({
-      address: deployment.tokenAddress,
-      abi: erc20Abi,
-      functionName: 'allowance',
-      args: [sourceAddress, deployment.oftAddress],
+  if (
+    await isLayerZeroEvmApprovalRequired({
+      publicClient,
+      chainId: fromChainId,
+      account: sourceAddress,
+      amount: sendParam.amountLD,
     })
-    if (allowance < quote.amountSent) return { status: 'approval-required' }
-  }
-  const request = {
+  )
+    return { status: 'approval-required' }
+
+  const contractParameters = getLayerZeroEvmSendContractParameters({
+    chainId: fromChainId,
     account: sourceAddress,
-    to: deployment.oftAddress,
-    data: encodeFunctionData({
-      abi: LAYERZERO_OFT_ABI,
-      functionName: 'send',
-      args: [
-        sendParam,
-        { nativeFee: maxNativeFee, lzTokenFee: 0n },
-        sourceAddress,
-      ],
-    }),
-    value: maxNativeFee,
+    sendParam,
+    maxNativeFee,
+  })
+  const request = {
+    account: contractParameters.account,
+    to: contractParameters.address,
+    data: encodeFunctionData(contractParameters),
+    value: contractParameters.value,
   }
   // Optimism also charges L1 data and operator fees, beyond execution gas.
   if (fromChainId === EvmChainId.OPTIMISM) {

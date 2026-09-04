@@ -3,8 +3,10 @@ import {
   getLayerZeroArrivalEstimate,
   getLayerZeroArrivalEstimateUrl,
 } from 'src/lib/swap/layerzero/arrival-estimate'
-import { isLayerZeroChainId } from 'src/lib/swap/layerzero/config'
-import { StellarChainId } from 'sushi/stellar'
+import {
+  isLayerZeroChainId,
+  isLayerZeroTransferPair,
+} from 'src/lib/swap/layerzero/config'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const fromChainId = Number(request.nextUrl.searchParams.get('fromChainId'))
@@ -12,9 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (
     !isLayerZeroChainId(fromChainId) ||
     !isLayerZeroChainId(toChainId) ||
-    fromChainId === toChainId ||
-    (fromChainId !== StellarChainId.STELLAR &&
-      toChainId !== StellarChainId.STELLAR)
+    !isLayerZeroTransferPair(fromChainId, toChainId)
   ) {
     return NextResponse.json(
       { message: 'Invalid transfer parameters' },

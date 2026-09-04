@@ -204,7 +204,7 @@ describe('LayerZero approval and review flow', () => {
 
   function track() {
     const element = [...container.querySelectorAll('button')].find((item) =>
-      item.textContent?.startsWith('Track swap:'),
+      item.textContent?.startsWith('Track Swap:'),
     )
     if (!element) throw new Error('Missing tracking button')
     act(() => element.click())

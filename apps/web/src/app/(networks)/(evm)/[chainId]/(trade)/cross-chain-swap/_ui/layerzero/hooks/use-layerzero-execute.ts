@@ -15,11 +15,11 @@ import {
 } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/transaction-helpers'
 import { APPROVE_TAG_XSWAP, TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import { LAYERZERO_OFT_ABI } from 'src/lib/swap/layerzero/abi'
+import { isLayerZeroEvmChainId } from 'src/lib/swap/layerzero/config'
 import {
-  LAYERZERO_USDT0_EVM_DEPLOYMENTS,
-  isLayerZeroEvmChainId,
-} from 'src/lib/swap/layerzero/config'
+  getLayerZeroEvmSendContractParameters,
+  isLayerZeroEvmApprovalRequired,
+} from 'src/lib/swap/layerzero/evm-send'
 import {
   assertLayerZeroQuoteIsSafe,
   fetchLayerZeroQuote,
@@ -34,7 +34,7 @@ import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { isEvmAddress } from 'sushi/evm'
 import { StellarChainId, isStellarAccountAddress } from 'sushi/stellar'
-import { type PublicClient, erc20Abi } from 'viem'
+import type { PublicClient } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 import { useLayerZeroXSwap } from '../xswap-provider'
@@ -91,23 +91,26 @@ export function useLayerZeroExecute(): UseMutationResult<
       if (!beginExecution(id, reviewed))
         throw new Error('A source transaction is still being submitted')
 
-      if (isLayerZeroEvmChainId(chainId0)) {
-        if (!publicClient || !isEvmAddress(sourceAddress))
-          throw new Error('Connect the source EVM wallet')
-        const deployment = LAYERZERO_USDT0_EVM_DEPLOYMENTS[chainId0]
-        if (deployment.approvalRequired) {
-          const allowance = await publicClient.readContract({
-            address: deployment.tokenAddress,
-            abi: erc20Abi,
-            functionName: 'allowance',
-            args: [sourceAddress, deployment.oftAddress],
-          })
-          if (allowance < reviewed.amountSent) {
-            throw new Error(
-              'USDT approval changed. Approve the token before swapping.',
-            )
-          }
-        }
+      const evmSource =
+        isLayerZeroEvmChainId(chainId0) &&
+        publicClient &&
+        isEvmAddress(sourceAddress)
+          ? { chainId: chainId0, account: sourceAddress, publicClient }
+          : undefined
+      if (isLayerZeroEvmChainId(chainId0) && !evmSource)
+        throw new Error('Connect the source EVM wallet')
+      if (
+        evmSource &&
+        (await isLayerZeroEvmApprovalRequired({
+          publicClient: evmSource.publicClient,
+          chainId: evmSource.chainId,
+          account: evmSource.account,
+          amount: reviewed.sendParam.amountLD,
+        }))
+      ) {
+        throw new Error(
+          'USDT approval changed. Approve the token before swapping.',
+        )
       }
 
       const executable = await fetchLayerZeroQuote({
@@ -131,33 +134,24 @@ export function useLayerZeroExecute(): UseMutationResult<
         await assertStellarUsdt0Recipient(recipient, executable.amountOut)
       }
 
-      if (isLayerZeroEvmChainId(chainId0)) {
-        if (!publicClient || !isEvmAddress(sourceAddress))
-          throw new Error('Connect the source EVM wallet')
-        const deployment = LAYERZERO_USDT0_EVM_DEPLOYMENTS[chainId0]
-        const request = {
-          account: sourceAddress,
-          address: deployment.oftAddress,
-          abi: LAYERZERO_OFT_ABI,
-          functionName: 'send' as const,
-          args: [
-            sendParam,
-            { nativeFee: reviewed.maxNativeFee, lzTokenFee: 0n },
-            sourceAddress,
-          ] as const,
-          value: reviewed.maxNativeFee,
-        }
+      if (evmSource) {
+        const request = getLayerZeroEvmSendContractParameters({
+          chainId: evmSource.chainId,
+          account: evmSource.account,
+          sendParam,
+          maxNativeFee: reviewed.maxNativeFee,
+        })
         const simulationClient: Pick<PublicClient, 'simulateContract'> =
-          publicClient
+          evmSource.publicClient
         await simulationClient.simulateContract(request)
         const txHash = await writeContractAsync({
           ...request,
-          chainId: chainId0,
+          chainId: evmSource.chainId,
         })
         updateExecution(id, { txHash, sourceStatus: 'PENDING' })
         clearSwapAmountIfUnchanged(reviewed)
         let replacementReason: 'repriced' | 'replaced' | 'cancelled' | undefined
-        const receipt = await publicClient.waitForTransactionReceipt({
+        const receipt = await evmSource.publicClient.waitForTransactionReceipt({
           hash: txHash,
           onReplaced: ({ reason, transactionReceipt }) => {
             replacementReason = reason

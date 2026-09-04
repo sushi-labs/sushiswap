@@ -11,6 +11,7 @@ import {
   getLayerZeroDecimals,
   getLayerZeroTokenAddress,
   isLayerZeroChainId,
+  isLayerZeroTransferPair,
   isLayerZeroUsdt0Route,
 } from './config'
 import { getLayerZeroCurrency } from './tokens'
@@ -19,6 +20,13 @@ const stellarUsdt0 = STELLAR_USDT0[StellarChainId.STELLAR]
 const ethereumUsdt = LAYERZERO_USDT0_EVM_DEPLOYMENTS[1].tokenAddress
 
 describe('LayerZero USDT0 routing', () => {
+  it('only supports transfers between Stellar and a configured EVM chain', () => {
+    expect(isLayerZeroTransferPair(-4, 1)).toBe(true)
+    expect(isLayerZeroTransferPair(1, -4)).toBe(true)
+    expect(isLayerZeroTransferPair(1, 42161)).toBe(false)
+    expect(isLayerZeroTransferPair(-4, -4)).toBe(false)
+  })
+
   it('supports both directions for native USDT0 deployments', () => {
     for (const chainId of LAYERZERO_SUPPORTED_CHAIN_IDS) {
       if (chainId === StellarChainId.STELLAR) continue

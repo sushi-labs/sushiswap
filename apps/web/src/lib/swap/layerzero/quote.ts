@@ -12,6 +12,7 @@ import {
   getLayerZeroDecimals,
   getLayerZeroEid,
   isLayerZeroEvmChainId,
+  isLayerZeroTransferPair,
 } from './config'
 import {
   encodeStellarLayerZeroRecipient,
@@ -58,11 +59,7 @@ export async function fetchLayerZeroQuote({
   recipient?: AddressFor<LayerZeroChainId>
   publicClient?: Pick<PublicClient, 'readContract'>
 }): Promise<LayerZeroQuote> {
-  if (
-    fromChainId === toChainId ||
-    (fromChainId !== StellarChainId.STELLAR &&
-      toChainId !== StellarChainId.STELLAR)
-  ) {
+  if (!isLayerZeroTransferPair(fromChainId, toChainId)) {
     throw new Error('Unsupported LayerZero USDT0 pair')
   }
   if (

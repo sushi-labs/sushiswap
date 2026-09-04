@@ -137,15 +137,14 @@ function LayerZeroTradeReviewDialogContent({
           {pending.map((item) => (
             <Button
               key={item.id}
-              variant="ghost"
-              size="xs"
+              variant="secondary"
               fullWidth
               onClick={() => {
                 setExecutionId(item.id)
                 setConfirmationOpen(true)
               }}
             >
-              Track swap: {getChainById(item.quote.fromChainId).name} →{' '}
+              Track Swap: {getChainById(item.quote.fromChainId).name} →{' '}
               {getChainById(item.quote.toChainId).name}
             </Button>
           ))}
@@ -192,12 +191,6 @@ function LayerZeroTradeReviewDialogContent({
           >
             Track on LayerZero Scan ↗
           </a>
-        ) : null}
-        {execution?.statusError ? (
-          <p className="text-xs text-muted-foreground">
-            Live status is temporarily unavailable. The transfer can still be
-            tracked on LayerZero Scan.
-          </p>
         ) : null}
       </CrossChainSwapConfirmationDialog>
     </>

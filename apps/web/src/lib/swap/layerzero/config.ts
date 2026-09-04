@@ -86,6 +86,17 @@ export function isLayerZeroChainId(
   return chainId === StellarChainId.STELLAR || isLayerZeroEvmChainId(chainId)
 }
 
+export function isLayerZeroTransferPair(
+  fromChainId: LayerZeroChainId,
+  toChainId: LayerZeroChainId,
+): boolean {
+  return (
+    fromChainId !== toChainId &&
+    (fromChainId === StellarChainId.STELLAR ||
+      toChainId === StellarChainId.STELLAR)
+  )
+}
+
 export function getLayerZeroTokenAddress(chainId: LayerZeroChainId): string {
   return chainId === StellarChainId.STELLAR
     ? STELLAR_USDT0_ADDRESS[StellarChainId.STELLAR]
@@ -112,7 +123,7 @@ export function isLayerZeroUsdt0Route(
   if (!isLayerZeroChainId(chainId0) || !isLayerZeroChainId(chainId1)) {
     return false
   }
-  if (chainId0 === chainId1) return false
+  if (!isLayerZeroTransferPair(chainId0, chainId1)) return false
   if (chainId0 === StellarChainId.STELLAR) {
     return (
       isLayerZeroTokenParam(chainId0, token0Param) &&
