@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  getPrivyLoginMethod,
   hasStoredPrivySession,
   isPrivyOAuthCallback,
   isPrivySessionStorageKey,
+  setPrivyLoginMethod,
   setPrivySvmReconnect,
   shouldReconnectPrivySvm,
 } from './privy-storage'
@@ -131,11 +133,29 @@ describe('Privy storage', () => {
     expect(shouldReconnectPrivySvm()).toBe(false)
   })
 
+  it('stores and validates the active Privy login method', () => {
+    expect(getPrivyLoginMethod()).toBeUndefined()
+
+    setPrivyLoginMethod('twitter')
+    expect(getPrivyLoginMethod()).toBe('twitter')
+
+    setPrivyLoginMethod('email')
+    expect(getPrivyLoginMethod()).toBe('email')
+
+    window.localStorage.setItem('sushi:privy-login-method', 'wallet')
+    expect(getPrivyLoginMethod()).toBeUndefined()
+
+    setPrivyLoginMethod(undefined)
+    expect(getPrivyLoginMethod()).toBeUndefined()
+  })
+
   it('fails closed when browser storage is unavailable', () => {
     installBrowser(createBlockedStorage())
 
     expect(hasStoredPrivySession()).toBe(false)
+    expect(getPrivyLoginMethod()).toBeUndefined()
     expect(shouldReconnectPrivySvm()).toBe(false)
+    expect(() => setPrivyLoginMethod('twitter')).not.toThrow()
     expect(() => setPrivySvmReconnect(true)).not.toThrow()
   })
 })

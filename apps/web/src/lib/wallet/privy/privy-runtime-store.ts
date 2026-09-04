@@ -60,6 +60,7 @@ export function createPrivyRuntimeStore(): PrivyRuntimeStore {
           hasEvmAccount: publication.hasEvmAccount,
           hasSvmAccount: publication.hasSvmAccount,
           hostMounted: snapshot.hostMounted,
+          loginMethod: publication.loginMethod,
           operations: publication.operations,
           requested: true,
           revision: snapshot.revision,

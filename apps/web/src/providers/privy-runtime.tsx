@@ -21,8 +21,12 @@ import {
 } from '@privy-io/react-auth/solana'
 import { getBase58Decoder } from '@solana/kit'
 import type { Wallet as StandardWallet } from '@wallet-standard/base'
-import { useEffect, useMemo, useRef } from 'react'
-import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  getPrivyLoginMethod,
+  setPrivyLoginMethod,
+  setPrivySvmReconnect,
+} from 'src/lib/wallet/privy-storage'
 import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 import {
@@ -82,6 +86,19 @@ function isPrivySvmStandardWallet(
   )
 }
 
+function inferLoginMethod(
+  user: PrivyUser | null,
+): WalletLoginMethod | undefined {
+  const supportedLoginMethods = [
+    user?.email ? 'email' : undefined,
+    user?.twitter ? 'twitter' : undefined,
+  ].filter((method): method is WalletLoginMethod => Boolean(method))
+
+  return supportedLoginMethods.length === 1
+    ? supportedLoginMethods[0]
+    : undefined
+}
+
 type PendingOperation = {
   reject(error: Error): void
   resolve(): void
@@ -111,6 +128,9 @@ export function PrivyRuntime() {
 
 function PrivyRuntimeEffects() {
   const { ready, authenticated, error, logout, user } = usePrivy()
+  const [loginMethod, setLoginMethod] = useState<WalletLoginMethod | undefined>(
+    getPrivyLoginMethod,
+  )
   const { ready: evmWalletsReady, wallets: evmWallets } = useWallets()
   const { wallets: svmStandardWallets } = useSolanaStandardWallets()
   const { sendTransaction } = useSendTransaction()
@@ -135,11 +155,20 @@ function PrivyRuntimeEffects() {
   })
 
   const { login } = useLogin({
-    onComplete: () => {
+    onComplete: ({ loginMethod: completedLoginMethod }) => {
+      if (
+        completedLoginMethod === 'email' ||
+        completedLoginMethod === 'twitter'
+      ) {
+        setPrivyLoginMethod(completedLoginMethod)
+        setLoginMethod(completedLoginMethod)
+      }
       loginPendingRef.current?.resolve()
       loginPendingRef.current = undefined
     },
     onError: (error) => {
+      setPrivyLoginMethod(undefined)
+      setLoginMethod(undefined)
       loginPendingRef.current?.reject(
         new Error(typeof error === 'string' ? error : 'Privy login failed'),
       )
@@ -164,6 +193,7 @@ function PrivyRuntimeEffects() {
   const embeddedEvmAccount = getPrivyEmbeddedAccount(user, 'ethereum')
   const embeddedSvmAccount = getPrivyEmbeddedAccount(user, 'solana')
   const svmWalletAddress = embeddedSvmAccount?.address
+  const activeLoginMethod = loginMethod ?? inferLoginMethod(user)
   const hasEvmAccount = Boolean(embeddedEvmAccount)
   const hasSvmAccount = Boolean(embeddedSvmAccount)
   const registeredSvmWallet = useMemo(() => {
@@ -225,6 +255,12 @@ function PrivyRuntimeEffects() {
       }
       const pending = createPendingOperation()
       loginPendingRef.current = pending.operation
+      if (loginMethod) {
+        // OAuth leaves the page before the completion callback runs. Persist
+        // the selected identity up front so the callback page can restore it.
+        setPrivyLoginMethod(loginMethod)
+        setLoginMethod(loginMethod)
+      }
       try {
         latestHandlesRef.current.login({
           ...(loginMethod ? { loginMethods: [loginMethod] } : {}),
@@ -232,6 +268,10 @@ function PrivyRuntimeEffects() {
         })
       } catch (error) {
         loginPendingRef.current = undefined
+        if (loginMethod) {
+          setPrivyLoginMethod(undefined)
+          setLoginMethod(undefined)
+        }
         pending.operation.reject(
           error instanceof Error ? error : new Error('Privy login failed'),
         )
@@ -278,7 +318,11 @@ function PrivyRuntimeEffects() {
           login: () => startLogin({ walletChainType: 'solana-only' }),
         })
       },
-      logout: () => latestHandlesRef.current.logout(),
+      async logout() {
+        await latestHandlesRef.current.logout()
+        setPrivyLoginMethod(undefined)
+        setLoginMethod(undefined)
+      },
       async sendEvmTransaction({ address, transaction, uiOptions }) {
         const wallet = latestHandlesRef.current.embeddedEvmWallet
         if (!wallet || wallet.address.toLowerCase() !== address.toLowerCase()) {
@@ -375,6 +419,7 @@ function PrivyRuntimeEffects() {
         evmWallet: runtimeEvmWallet,
         hasEvmAccount,
         hasSvmAccount,
+        loginMethod: activeLoginMethod,
         operations,
         svmWallet: runtimeSvmWallet,
         walletsReady: evmWalletsReady,
@@ -392,6 +437,7 @@ function PrivyRuntimeEffects() {
     evmWalletsReady,
     hasEvmAccount,
     hasSvmAccount,
+    activeLoginMethod,
     operations,
     ready,
     runtimeEvmWallet,

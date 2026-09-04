@@ -24,6 +24,7 @@ import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-sess
 import {
   authenticatePrivyRuntime,
   logoutPrivyRuntime,
+  usePrivyRuntime,
 } from 'src/lib/wallet/privy/use-privy-runtime'
 import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
@@ -43,7 +44,7 @@ import {
   useDisconnect,
 } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig, EvmAdapterId } from '../config'
+import { EVM_WALLETS, EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
 import {
   findEvmWalletConnector,
@@ -86,6 +87,7 @@ export default function EvmWalletProvider({
 }
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
+  const privyRuntime = usePrivyRuntime()
   const {
     isConnected,
     address,
@@ -180,24 +182,32 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    const privyWallet =
+      isPrivyEvmConnector(connector) &&
+      privyRuntime.status === 'ready' &&
+      privyRuntime.authenticated
+        ? EVM_WALLETS.find(
+            (wallet) => wallet.loginMethod === privyRuntime.loginMethod,
+          )
+        : undefined
+
     addWalletConnection({
       chainId: isEvmChainId(chainId) ? chainId : EvmChainId.ETHEREUM,
       id: toEvmWalletId(connector.id),
-      name: connector.name,
+      name: privyWallet?.name ?? connector.name,
       namespace: 'evm',
       account: address,
-      icon: connector?.icon,
+      icon: privyWallet?.icon ?? connector.icon,
     })
   }, [
     isConnected,
-    connector?.id,
-    connector?.name,
-    connector?.icon,
+    connector,
     address,
     chainId,
     isConnecting,
     isReconnecting,
     isPending,
+    privyRuntime,
   ])
 
   useEffect(() => {

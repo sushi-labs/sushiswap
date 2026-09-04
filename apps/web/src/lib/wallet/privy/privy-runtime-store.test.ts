@@ -89,6 +89,7 @@ describe('Privy runtime store', () => {
       evmWallet: wallet,
       hasEvmAccount: true,
       hasSvmAccount: false,
+      loginMethod: 'twitter',
       operations: createOperations(),
       svmWallet: null,
       walletsReady: true,
@@ -98,6 +99,7 @@ describe('Privy runtime store', () => {
     expect(snapshot).toMatchObject({
       authenticated: true,
       evmWallet: wallet,
+      loginMethod: 'twitter',
       revision: 0,
       status: 'ready',
       walletsReady: true,

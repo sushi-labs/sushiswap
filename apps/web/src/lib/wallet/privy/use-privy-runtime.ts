@@ -62,11 +62,19 @@ export async function authenticatePrivyRuntime(
   walletChainType: PrivyLoginWalletChainType,
 ): Promise<void> {
   let snapshot = await loadPrivyRuntime()
-  if (snapshot.authenticated) return
+  if (snapshot.authenticated && snapshot.loginMethod === loginMethod) return
+
+  if (snapshot.authenticated) {
+    await snapshot.operations.logout()
+    snapshot = await waitForReadyPrivyRuntime(
+      (candidate) => !candidate.authenticated,
+    )
+  }
 
   await snapshot.operations.authenticate(loginMethod, walletChainType)
   snapshot = await waitForReadyPrivyRuntime(
-    (candidate) => candidate.authenticated,
+    (candidate) =>
+      candidate.authenticated && candidate.loginMethod === loginMethod,
   )
   if (!snapshot.authenticated) {
     throw new Error('Privy authentication failed')
@@ -77,10 +85,11 @@ export async function connectPrivySvmWallet(
   loginMethod?: WalletLoginMethod,
 ): Promise<SvmAddress> {
   let snapshot = await loadPrivyRuntime()
-  if (!snapshot.authenticated && loginMethod) {
-    await snapshot.operations.authenticate(loginMethod, 'solana-only')
+  if (loginMethod) {
+    await authenticatePrivyRuntime(loginMethod, 'solana-only')
     snapshot = await waitForReadyPrivyRuntime(
-      (candidate) => candidate.authenticated,
+      (candidate) =>
+        candidate.authenticated && candidate.loginMethod === loginMethod,
     )
   }
   if (!snapshot.svmWallet) {

@@ -118,6 +118,7 @@ interface PrivyRuntimeAuthenticatedSnapshot
   /** Whether linked-account state already contains an embedded wallet. */
   hasEvmAccount: boolean
   hasSvmAccount: boolean
+  loginMethod?: WalletLoginMethod
   svmWallet: PrivySvmWallet | null
 }
 
@@ -155,6 +156,7 @@ export type PrivyRuntimePublication =
       evmWallet?: PrivyEvmWallet | null
       hasEvmAccount: boolean
       hasSvmAccount: boolean
+      loginMethod?: WalletLoginMethod
       operations: PrivyRuntimeOperationHandlers
       svmWallet?: PrivySvmWallet | null
       walletsReady: boolean
