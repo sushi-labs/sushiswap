@@ -40,7 +40,8 @@ const Toggle = React.forwardRef<
   ToggleProps
 >(({ testId, id, className, variant, size, ...props }, ref) => (
   <TogglePrimitive.Root
-    testdata-id={`${testId || id}-button`}
+    id={id}
+    {...(testId || id ? { 'testdata-id': `${testId || id}-button` } : {})}
     ref={ref}
     className={classNames(toggleVariants({ variant, size, className }))}
     {...props}

@@ -6,12 +6,12 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import React, { useState } from 'react'
 
 export interface TimeAgoProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLSpanElement>, 'value'> {
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'value'> {
   asChild?: boolean
   value: Date
 }
 
-const TimeAgo = React.forwardRef<HTMLButtonElement, TimeAgoProps>(
+const TimeAgo = React.forwardRef<HTMLSpanElement, TimeAgoProps>(
   ({ value, asChild, ...props }, ref) => {
     const Comp = asChild ? Slot : 'span'
 
