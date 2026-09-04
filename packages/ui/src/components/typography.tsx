@@ -11,7 +11,7 @@ const typographyVariants = cva('scroll-m-20', {
       blockquote: 'mt-6 border-l-2 pl-6 italic',
       lead: 'leading-7 [&:not(:first-child)]:mt-6 text-lg text-muted-foreground sm:text-xl',
       large: 'text-lg font-semibold',
-      small: 'text-sm font-medium leading-none',
+      small: 'text-sm font-medium [line-height:1]',
       muted: 'text-muted-foreground',
     },
   },

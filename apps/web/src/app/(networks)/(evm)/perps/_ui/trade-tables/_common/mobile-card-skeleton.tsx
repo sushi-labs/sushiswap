@@ -16,8 +16,8 @@ export const MobileCardSkeleton = () => {
                 key={index}
                 className="flex flex-col gap-1 col-span-1 max-w-[100px]"
               >
-                <SkeletonText className="w-16 h-3" />
-                <SkeletonText className="w-24 h-4" />
+                <SkeletonText />
+                <SkeletonText />
               </div>
             )
           })}

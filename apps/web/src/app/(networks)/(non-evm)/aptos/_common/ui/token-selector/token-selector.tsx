@@ -153,18 +153,14 @@ export default function TokenSelector({
                 <div className="flex flex-row items-center flex-grow gap-4">
                   <SkeletonCircle radius={40} />
                   <div className="flex flex-col items-start">
-                    <SkeletonText className="w-full w-[100px]" />
-                    <SkeletonText fontSize="sm" className="w-full w-[60px]" />
+                    <SkeletonText className="w-full" />
+                    <SkeletonText fontSize="sm" className="w-full" />
                   </div>
                 </div>
 
                 <div className="flex flex-col w-full">
-                  <SkeletonText className="w-[80px]" />
-                  <SkeletonText
-                    fontSize="sm"
-                    align="right"
-                    className="w-[40px]"
-                  />
+                  <SkeletonText />
+                  <SkeletonText fontSize="sm" align="right" />
                 </div>
               </div>
             </div>

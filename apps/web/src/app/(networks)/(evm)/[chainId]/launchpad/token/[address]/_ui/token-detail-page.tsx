@@ -296,7 +296,7 @@ function TokenHeader({
               {indexingStatus ? (
                 <StatusPill status={indexingStatus} />
               ) : (
-                <SkeletonBox className="h-6 w-12 rounded-full" />
+                <SkeletonBox className="h-6 w-12" />
               )}
               <LaunchpadProviderBadge provider={token.provider} />
             </div>

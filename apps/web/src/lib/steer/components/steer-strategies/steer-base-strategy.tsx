@@ -85,21 +85,21 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
                 <TabsTrigger
                   testdata-id="add-tab"
                   value="add"
-                  className="flex flex-1"
+                  className="flex-1"
                 >
                   Add
                 </TabsTrigger>
                 <TabsTrigger
                   testdata-id="remove-tab"
                   value="remove"
-                  className="flex flex-1"
+                  className="flex-1"
                 >
                   Remove
                 </TabsTrigger>
                 <TabsTrigger
                   testdata-id="position-tab"
                   value="position"
-                  className="flex flex-1"
+                  className="flex-1"
                 >
                   Position
                 </TabsTrigger>

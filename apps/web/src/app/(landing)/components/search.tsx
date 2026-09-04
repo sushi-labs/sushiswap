@@ -98,8 +98,8 @@
 //             <SkeletonCircle radius={36} />
 //           </div>
 //           <div className="flex flex-col gap-1 w-full">
-//             <SkeletonText fontSize="sm" className="w-[120px]" />
-//             <SkeletonText fontSize="xs" className="w-[60px]" />
+//             <SkeletonText fontSize="sm" />
+//             <SkeletonText fontSize="xs" />
 //           </div>
 //         </div>
 //       </div>
@@ -133,7 +133,7 @@
 //                   width={24}
 //                   height={24}
 //                   className="text-neutral-500"
-//                 />
+// />
 //               </div>
 //               <input
 //                 value={query}
@@ -145,7 +145,7 @@
 //                 )}
 //                 autoComplete="new-password"
 //                 autoCorrect="off"
-//               />
+// />
 //             </div>
 //             <p
 //               onClick={() => setSelectNetwork((prev) => !prev)}
@@ -176,7 +176,7 @@
 //                       setSelectNetwork(false)
 //                       setChainId(el)
 //                     }}
-//                   />
+// />
 //                 ))}
 //               </>
 //             ) : query.length > 2 ? (
@@ -197,7 +197,7 @@
 //                         decimals: web3Token.decimals,
 //                       })
 //                     }
-//                   />
+// />
 //                 ) : query.length > 2 && query !== debouncedQuery ? (
 //                   skeleton
 //                 ) : filteredTokens ? (
@@ -215,7 +215,7 @@
 //                               decimals,
 //                             })
 //                           }
-//                         />
+// />
 //                       ),
 //                     )}
 //                   </>
@@ -261,7 +261,7 @@
 //             currency={currency}
 //             width={36}
 //             height={36}
-//           />
+// />
 //         )}
 //       </div>
 //       <div className="flex flex-col">

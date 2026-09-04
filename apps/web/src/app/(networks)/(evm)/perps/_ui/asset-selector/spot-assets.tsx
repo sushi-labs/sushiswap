@@ -141,7 +141,7 @@ export const SpotAssets = () => {
           <TabsTrigger
             key={tab}
             value={tab}
-            className="flex flex-1 !px-1.5 !max-w-fit !text-xs capitalize !bg-transparent !border-transparent"
+            className="flex-1 !px-1.5 !max-w-fit !text-xs capitalize !bg-transparent !border-transparent"
           >
             {tab}
             {idx !== TABS.length - 1 ? (

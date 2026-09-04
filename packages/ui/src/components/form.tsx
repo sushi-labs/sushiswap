@@ -128,7 +128,7 @@ const FormLabel = React.forwardRef<
         htmlFor={formItemId}
         {...props}
       />
-      <span className="text-sm text-red-500 text-end leading-none">
+      <span className="text-sm text-red-500 text-end [line-height:1]">
         {error ? error.message : ''}
       </span>
     </div>

@@ -38,7 +38,7 @@ export const BarHeader = () => {
             APY (1m)
           </span>
           {isLoading ? (
-            <SkeletonText className="w-12" fontSize="default" />
+            <SkeletonText fontSize="default" />
           ) : (
             <TooltipProvider>
               <Tooltip delayDuration={0}>

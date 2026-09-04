@@ -94,7 +94,7 @@ function TradeSummaryList<
       <List.Control>
         <List.KeyValue title="Estimated arrival">
           {!executionDuration ? (
-            <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+            <SkeletonText align="right" fontSize="sm" />
           ) : (
             `${executionDuration}`
           )}
@@ -204,7 +204,7 @@ function TradeSummaryList<
             >
               <div className="flex flex-col gap-0.5">
                 {!step?.amountOut ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
                     6,
@@ -232,7 +232,7 @@ function TradeSummaryList<
             >
               <div className="flex flex-col gap-0.5">
                 {!step?.amountOutMin ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <span className="text-sm font-medium">{`${step.amountOutMin.toSignificant(
                     6,
@@ -259,7 +259,7 @@ function TradeSummaryList<
           <>
             <List.KeyValue title="Total fee">
               {!totalFeesUSD || !feesBreakdown || chainId0Fees === undefined ? (
-                <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                <SkeletonText align="right" fontSize="sm" />
               ) : (
                 <div className="flex flex-col gap-1">
                   <span>
@@ -278,7 +278,7 @@ function TradeSummaryList<
             >
               <div className="flex flex-col gap-0.5">
                 {!step?.amountOut ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <span className="text-sm font-medium">{`${step.amountOut.toSignificant(
                     6,

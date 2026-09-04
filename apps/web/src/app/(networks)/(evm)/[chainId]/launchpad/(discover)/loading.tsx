@@ -61,7 +61,7 @@ export default function LaunchpadLoading() {
               />
             ))}
             <div className="flex items-center gap-3 border-l border-t border-white/[0.06] px-5 py-4 lg:border-t-0">
-              <SkeletonBox className="hidden h-9 w-9 shrink-0 rounded-full sm:block" />
+              <SkeletonBox className="hidden h-9 w-9 shrink-0 sm:block" />
               <div>
                 <SkeletonBox className="h-[16.5px] w-[86px] rounded-sm" />
                 <SkeletonBox className="mt-1 h-5 w-[42px] rounded-sm" />

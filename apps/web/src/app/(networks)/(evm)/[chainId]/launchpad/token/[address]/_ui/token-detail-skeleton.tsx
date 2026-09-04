@@ -87,13 +87,13 @@ export function TokenSidebarSkeleton() {
             <SkeletonBox className="h-9 w-9 rounded-lg" />
           </div>
           <SkeletonBox className="mt-5 h-12 w-full rounded-xl" />
-          <SkeletonBox className="mt-5 h-[136px] w-full rounded-2xl" />
+          <SkeletonBox className="mt-5 h-[136px] w-full" />
           <div className="my-3 grid grid-cols-4 gap-2">
             {['first', 'second', 'third', 'fourth'].map((preset) => (
               <SkeletonBox key={preset} className="h-7 w-full rounded-lg" />
             ))}
           </div>
-          <SkeletonBox className="h-[108px] w-full rounded-2xl" />
+          <SkeletonBox className="h-[108px] w-full" />
           <SkeletonBox className="mt-4 h-12 w-full rounded-xl" />
         </PerpsCard>
       </div>
@@ -180,13 +180,13 @@ export function TokenDetailSkeleton() {
 
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-4">
-          <SkeletonBox className="h-14 w-14 shrink-0 rounded-full" />
+          <SkeletonBox className="h-14 w-14 shrink-0" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
               <SkeletonBox className="h-8 w-36 rounded-lg sm:h-9 sm:w-52" />
               <SkeletonBox className="h-7 w-12 rounded-md" />
-              <SkeletonBox className="h-6 w-12 rounded-full" />
-              <SkeletonBox className="h-7 w-20 rounded-full" />
+              <SkeletonBox className="h-6 w-12" />
+              <SkeletonBox className="h-7 w-20" />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <SkeletonBox className="h-4 w-32 rounded-sm" />

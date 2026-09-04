@@ -21,21 +21,18 @@ interface PositionCard {
 export const PositionCardSkeleton = () => {
   return (
     <div className="relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-      <SkeletonText fontSize="xs" className="w-[40px]" />
-      <SkeletonText fontSize="2xl" className="w-[160px]" />
+      <SkeletonText fontSize="xs" />
+      <SkeletonText fontSize="2xl" />
       <div className="flex flex-col gap-2 items-center py-7">
         <div className="inline-flex">
           <SkeletonCircle radius={56} />
           <SkeletonCircle radius={56} style={{ marginLeft: -48 / 3 }} />
         </div>
       </div>
-      <SkeletonText fontSize="sm" className="w-[100px]" />
-      <SkeletonText fontSize="sm" className="w-[40px]" />
+      <SkeletonText fontSize="sm" />
+      <SkeletonText fontSize="sm" />
       <div className="absolute bottom-7 right-7">
-        <SkeletonText
-          fontSize="2xl"
-          className="w-[80px] !h-[32px] !rounded-full"
-        />
+        <SkeletonText fontSize="2xl" className="!h-[32px] !rounded-full" />
       </div>
     </div>
   )
