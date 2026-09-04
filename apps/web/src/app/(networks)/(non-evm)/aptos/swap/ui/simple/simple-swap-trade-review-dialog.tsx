@@ -11,14 +11,13 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   Dots,
   List,
   classNames,
 } from '@sushiswap/ui'
 import React, { type FC, type ReactNode } from 'react'
+import { DialogProvider, DialogReview } from 'src/lib/transaction-dialog'
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'

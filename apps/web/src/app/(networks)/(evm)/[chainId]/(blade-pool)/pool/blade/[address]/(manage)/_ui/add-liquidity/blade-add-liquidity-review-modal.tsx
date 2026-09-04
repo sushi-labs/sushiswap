@@ -3,19 +3,14 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
   Currency,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
-  DialogType,
   Dots,
   List,
-  useDialog,
 } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import {
@@ -31,6 +26,13 @@ import type { RfqAllowDepositResponse } from 'src/lib/pool/blade/use-blade-allow
 import { useBladeDepositRequest } from 'src/lib/pool/blade/use-blade-deposit-request'
 import { useBladeDepositTransaction } from 'src/lib/pool/blade/use-blade-deposit-transaction'
 import { getOnchainPriceFromPool } from 'src/lib/pool/blade/utils'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, formatUSD } from 'sushi'

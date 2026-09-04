@@ -4,30 +4,9 @@ import { XMarkIcon } from '@heroicons/react/24/solid'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
-import {
-  type Dispatch,
-  type FC,
-  type ReactNode,
-  type SetStateAction,
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
-import { type ChainId, type TxHashFor, getChainById } from 'sushi'
 
-import type { EvmChainId } from 'sushi/evm'
-import { CheckMarkIcon } from '../icons/check-mark-icon'
-import { FailedMarkIcon } from '../icons/failed-mark-icon'
-import {
-  Button,
-  Dots,
-  IconButton,
-  LinkInternal,
-  Loader,
-  classNames,
-} from '../index'
+import classNames from 'classnames'
+import { IconButton } from './iconbutton'
 
 const dialogContentLayout =
   'rounded-b-none md:rounded-b-2xl bottom-0 md:bottom-[unset] fixed left-[50%] md:top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] md:translate-y-[-50%] gap-4 p-6 rounded-2xl md:w-full data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-bottom-[48%] md:data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-bottom-[48%] md:data-[state=open]:slide-in-from-top-[48%]'
@@ -115,7 +94,7 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-interface DialogContentProps
+export interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogVariants> {
   hideClose?: boolean
@@ -210,252 +189,15 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
-interface DialogReviewProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>,
-    'children' | 'open'
-  > {
-  children: ({ confirm }: { confirm(): void }) => ReactNode
-}
-
-const DialogReview: FC<DialogReviewProps> = ({ children, ...props }) => {
-  const { confirm, open, setOpen } = useDialog(DialogType.Review)
-  return (
-    <Dialog {...props} open={open} onOpenChange={setOpen}>
-      {children({ confirm })}
-    </Dialog>
-  )
-}
-DialogReview.displayName = 'DialogReview'
-
-interface DialogCustomProps {
-  children: ReactNode
-  dialogType: DialogType
-}
-
-const DialogCustom: FC<DialogCustomProps> = ({ children, ...props }) => {
-  const { open, setOpen } = useDialog(DialogType.Confirm)
-  return (
-    <Dialog {...props} open={open} onOpenChange={setOpen}>
-      {children}
-    </Dialog>
-  )
-}
-DialogCustom.displayName = 'DialogCustom'
-
-interface DialogConfirmProps<TChainId extends ChainId>
-  extends DialogContentProps {
-  chainId: TChainId
-  testId: string
-  successMessage: ReactNode
-  buttonLink?: string
-  buttonText?: string
-  txHash: TxHashFor<TChainId> | undefined
-  status: 'pending' | 'success' | 'error'
-}
-
-function DialogConfirm<TChainId extends ChainId>({
-  chainId,
-  testId,
-  successMessage,
-  buttonText = 'Close',
-  buttonLink,
-  status,
-  txHash,
-  variant,
-  ...contentProps
-}: DialogConfirmProps<TChainId>) {
-  const { open, setOpen } = useDialog(DialogType.Confirm)
-  const txHashUrl = useMemo(() => {
-    if (!txHash) return ''
-    return getChainById(chainId).getTransactionUrl(txHash)
-  }, [chainId, txHash])
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent
-        variant={variant}
-        {...contentProps}
-        className={classNames(
-          variant === 'perps' && 'max-w-md',
-          contentProps.className,
-        )}
-      >
-        <DialogHeader>
-          <DialogTitle
-            className={classNames(variant === 'perps' && '!text-perps-muted')}
-          >
-            {status === 'pending' ? (
-              <Dots>Confirming</Dots>
-            ) : status === 'success' ? (
-              'Success!'
-            ) : (
-              'Oops!'
-            )}
-          </DialogTitle>
-          <DialogDescription
-            className={classNames(
-              'font-medium',
-              variant === 'perps' && '!text-perps-muted-50',
-            )}
-          >
-            {status === 'pending' ? (
-              <>
-                Waiting for your{' '}
-                <a
-                  target="_blank"
-                  href={txHashUrl}
-                  className="cursor-pointer text-blue hover:underline"
-                  rel="noreferrer"
-                >
-                  transaction
-                </a>{' '}
-                to be confirmed on the blockchain.
-              </>
-            ) : status === 'success' ? (
-              <a
-                target="_blank"
-                href={txHashUrl}
-                className="cursor-pointer text-blue hover:underline"
-                rel="noreferrer"
-              >
-                {successMessage}
-              </a>
-            ) : (
-              <a
-                target="_blank"
-                href={txHashUrl}
-                className="cursor-pointer text-blue hover:underline"
-                rel="noreferrer"
-              >
-                Something went wrong...
-              </a>
-            )}
-          </DialogDescription>
-          <div className="py-6 flex justify-center">
-            {status === 'pending' ? (
-              <Loader size={132} strokeWidth={1} className="!text-blue" />
-            ) : status === 'success' ? (
-              <CheckMarkIcon width={132} height={132} />
-            ) : (
-              <FailedMarkIcon width={132} height={132} />
-            )}
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button
-                testId={testId}
-                asChild={!!buttonLink}
-                fullWidth
-                size="xl"
-                variant={variant === 'perps' ? 'perps-default' : undefined}
-              >
-                {buttonLink ? (
-                  <LinkInternal href={buttonLink}>{buttonText}</LinkInternal>
-                ) : (
-                  <>{buttonText}</>
-                )}
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  )
-}
-DialogConfirm.displayName = 'DialogConfirm'
-
-enum DialogType {
-  Review = 0,
-  Confirm = 1,
-}
-
-interface DialogContext {
-  state: Record<DialogType, boolean>
-
-  confirm(): void
-
-  setState: Dispatch<SetStateAction<Record<DialogType, boolean>>>
-}
-
-const DialogContext = createContext<DialogContext | undefined>(undefined)
-
-interface DialogProviderProps {
-  children: ReactNode
-}
-
-const DialogProvider: FC<DialogProviderProps> = ({ children }) => {
-  const [state, setState] = useState<Record<DialogType, boolean>>({
-    [DialogType.Review]: false,
-    [DialogType.Confirm]: false,
-  })
-
-  const confirm = useCallback(() => {
-    setState({
-      [DialogType.Review]: false,
-      [DialogType.Confirm]: true,
-    })
-  }, [])
-
-  return (
-    <DialogContext.Provider value={{ state, confirm, setState }}>
-      {children}
-    </DialogContext.Provider>
-  )
-}
-
-type UseDialog<T> = T extends DialogType.Review
-  ? {
-      open: boolean
-      setOpen(open: boolean): void
-      confirm(): void
-    }
-  : {
-      open: boolean
-      setOpen(open: boolean): void
-    }
-
-const useDialog = <T extends DialogType>(type: T): UseDialog<T> => {
-  const context = useContext(DialogContext)
-  if (!context) {
-    throw new Error('Hook can only be used inside Modal Context')
-  }
-
-  const { state, setState, confirm } = context
-
-  return useMemo(() => {
-    if (type === DialogType.Review) {
-      return {
-        open: Boolean(state[type]),
-        setOpen: (val) =>
-          setState((prev) => ({ ...prev, [DialogType.Review]: val })),
-        confirm,
-      } as UseDialog<T>
-    } else {
-      return {
-        open: Boolean(state[type]),
-        setOpen: (val) =>
-          setState((prev) => ({ ...prev, [DialogType.Confirm]: val })),
-      } as UseDialog<T>
-    }
-  }, [state, setState, confirm, type])
-}
-
 export {
   Dialog,
   DialogClose,
-  DialogConfirm,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogOverlay,
   DialogPrimitive,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
-  DialogType,
-  useDialog,
 }

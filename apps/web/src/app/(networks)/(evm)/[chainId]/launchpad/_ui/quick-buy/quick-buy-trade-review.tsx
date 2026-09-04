@@ -1,8 +1,8 @@
 'use client'
 
-import { DialogType, useDialog } from '@sushiswap/ui'
 import { useEffect, useMemo, useRef } from 'react'
 import { APPROVE_TAG_SWAP } from 'src/lib/constants'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { EdgeProvider } from 'src/providers/edge-config-provider'

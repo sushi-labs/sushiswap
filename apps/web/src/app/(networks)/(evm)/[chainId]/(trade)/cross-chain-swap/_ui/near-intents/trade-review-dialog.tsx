@@ -2,22 +2,18 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
   Dots,
   List,
   SelectIcon,
   SkeletonText,
   classNames,
-  useDialog,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ReactNode } from 'react'
@@ -28,6 +24,12 @@ import {
   NEAR_INTENTS_UI_FEE_PERCENT,
 } from 'src/lib/swap/near-intents'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
@@ -104,7 +106,9 @@ function NearIntentsTradeReviewDialogContent({
     source: StepState.NotStarted,
     execution: StepState.NotStarted,
   })
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
+    DialogType.Confirm,
+  )
 
   const outputAmount =
     token1 && quote?.quote.amountOut
@@ -276,7 +280,7 @@ function NearIntentsTradeReviewDialogContent({
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
@@ -303,7 +307,7 @@ function NearIntentsTradeReviewDialogContent({
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogCustom>
+      </Dialog>
     </>
   )
 }

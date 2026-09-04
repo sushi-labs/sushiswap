@@ -19,11 +19,8 @@ import {
   Button,
   Currency,
   DialogContent,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
-  DialogType,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -35,7 +32,6 @@ import {
   Progress,
   SkeletonCircle,
   classNames,
-  useDialog,
 } from '@sushiswap/ui'
 import {
   type FC,
@@ -47,6 +43,12 @@ import {
 } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import {
   type EvmAddress,

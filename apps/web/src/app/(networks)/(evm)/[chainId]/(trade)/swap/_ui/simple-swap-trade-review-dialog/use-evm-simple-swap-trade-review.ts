@@ -6,7 +6,6 @@ import {
   sendAnalyticsEvent,
   useTrace,
 } from '@sushiswap/telemetry'
-import { DialogType, useDialog } from '@sushiswap/ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
 import {
@@ -19,6 +18,7 @@ import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 import { EVM_TRADE_GAS_MARGIN_PERCENT } from 'src/lib/hooks/react-query/trade/evm-trade-gas-margin'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import {

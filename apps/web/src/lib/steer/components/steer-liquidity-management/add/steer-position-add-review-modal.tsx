@@ -9,13 +9,10 @@ import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
   Currency,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   Dots,
   List,
@@ -26,6 +23,11 @@ import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { steerPeripheryAbi } from 'src/lib/steer/abi/steer-periphery'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
 import { useSteerAccountPosition } from 'src/lib/steer/hooks/use-steer-account-position'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { Amount, formatUSD, subtractSlippage } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
