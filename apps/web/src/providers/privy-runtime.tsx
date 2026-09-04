@@ -21,8 +21,12 @@ import {
 } from '@privy-io/react-auth/solana'
 import { getBase58Decoder } from '@solana/kit'
 import type { Wallet as StandardWallet } from '@wallet-standard/base'
-import { useEffect, useMemo, useRef } from 'react'
-import { setPrivySvmReconnect } from 'src/lib/wallet/privy-storage'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  getPrivyLoginMethod,
+  setPrivyLoginMethod,
+  setPrivySvmReconnect,
+} from 'src/lib/wallet/privy-storage'
 import { createPrivySvmWallet } from 'src/lib/wallet/privy/create-privy-svm-wallet'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 import {
@@ -33,9 +37,11 @@ import { provisionPrivyWallet } from 'src/lib/wallet/privy/provision-wallet'
 import { registerPrivySvmWallet } from 'src/lib/wallet/privy/register-privy-svm-wallet'
 import type {
   PrivyEvmWallet,
+  PrivyLoginWalletChainType,
   PrivyRuntimeOperationHandlers,
   PrivySvmWallet,
 } from 'src/lib/wallet/privy/types'
+import type { WalletLoginMethod } from 'src/lib/wallet/types'
 import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
 import type { EIP1193Provider } from 'viem'
@@ -80,6 +86,19 @@ function isPrivySvmStandardWallet(
   )
 }
 
+function inferLoginMethod(
+  user: PrivyUser | null,
+): WalletLoginMethod | undefined {
+  const supportedLoginMethods = [
+    user?.email ? 'email' : undefined,
+    user?.twitter ? 'twitter' : undefined,
+  ].filter((method): method is WalletLoginMethod => Boolean(method))
+
+  return supportedLoginMethods.length === 1
+    ? supportedLoginMethods[0]
+    : undefined
+}
+
 type PendingOperation = {
   reject(error: Error): void
   resolve(): void
@@ -109,6 +128,9 @@ export function PrivyRuntime() {
 
 function PrivyRuntimeEffects() {
   const { ready, authenticated, error, logout, user } = usePrivy()
+  const [loginMethod, setLoginMethod] = useState<WalletLoginMethod | undefined>(
+    getPrivyLoginMethod,
+  )
   const { ready: evmWalletsReady, wallets: evmWallets } = useWallets()
   const { wallets: svmStandardWallets } = useSolanaStandardWallets()
   const { sendTransaction } = useSendTransaction()
@@ -133,13 +155,22 @@ function PrivyRuntimeEffects() {
   })
 
   const { login } = useLogin({
-    onComplete: () => {
+    onComplete: ({ loginMethod: completedLoginMethod }) => {
+      if (
+        completedLoginMethod === 'email' ||
+        completedLoginMethod === 'twitter'
+      ) {
+        setPrivyLoginMethod(completedLoginMethod)
+        setLoginMethod(completedLoginMethod)
+      }
       loginPendingRef.current?.resolve()
       loginPendingRef.current = undefined
     },
     onError: (error) => {
+      setPrivyLoginMethod(undefined)
+      setLoginMethod(undefined)
       loginPendingRef.current?.reject(
-        new Error(typeof error === 'string' ? error : 'Privy SVM login failed'),
+        new Error(typeof error === 'string' ? error : 'Privy login failed'),
       )
       loginPendingRef.current = undefined
     },
@@ -162,6 +193,7 @@ function PrivyRuntimeEffects() {
   const embeddedEvmAccount = getPrivyEmbeddedAccount(user, 'ethereum')
   const embeddedSvmAccount = getPrivyEmbeddedAccount(user, 'solana')
   const svmWalletAddress = embeddedSvmAccount?.address
+  const activeLoginMethod = loginMethod ?? inferLoginMethod(user)
   const hasEvmAccount = Boolean(embeddedEvmAccount)
   const hasSvmAccount = Boolean(embeddedSvmAccount)
   const registeredSvmWallet = useMemo(() => {
@@ -210,8 +242,47 @@ function PrivyRuntimeEffects() {
     }
   })
 
-  const operations = useMemo<PrivyRuntimeOperationHandlers>(
-    () => ({
+  const operations = useMemo<PrivyRuntimeOperationHandlers>(() => {
+    function startLogin({
+      loginMethod,
+      walletChainType,
+    }: {
+      loginMethod?: WalletLoginMethod
+      walletChainType: PrivyLoginWalletChainType
+    }): Promise<void> {
+      if (loginPendingRef.current) {
+        throw new Error('A Privy login is already in progress')
+      }
+      const pending = createPendingOperation()
+      loginPendingRef.current = pending.operation
+      if (loginMethod) {
+        // OAuth leaves the page before the completion callback runs. Persist
+        // the selected identity up front so the callback page can restore it.
+        setPrivyLoginMethod(loginMethod)
+        setLoginMethod(loginMethod)
+      }
+      try {
+        latestHandlesRef.current.login({
+          ...(loginMethod ? { loginMethods: [loginMethod] } : {}),
+          walletChainType,
+        })
+      } catch (error) {
+        loginPendingRef.current = undefined
+        if (loginMethod) {
+          setPrivyLoginMethod(undefined)
+          setLoginMethod(undefined)
+        }
+        pending.operation.reject(
+          error instanceof Error ? error : new Error('Privy login failed'),
+        )
+      }
+      return pending.promise
+    }
+
+    return {
+      authenticate(loginMethod, walletChainType) {
+        return startLogin({ loginMethod, walletChainType })
+      },
       async connectOrCreateEvmWallet() {
         await provisionPrivyWallet({
           authenticated: latestHandlesRef.current.authenticated,
@@ -244,29 +315,14 @@ function PrivyRuntimeEffects() {
         await provisionPrivyWallet({
           authenticated: latestHandlesRef.current.authenticated,
           createWallet: latestHandlesRef.current.createSvmWallet,
-          login: () => {
-            if (loginPendingRef.current) {
-              throw new Error('A Privy SVM login is already in progress')
-            }
-            const pending = createPendingOperation()
-            loginPendingRef.current = pending.operation
-            try {
-              latestHandlesRef.current.login({
-                walletChainType: 'solana-only',
-              })
-            } catch (error) {
-              loginPendingRef.current = undefined
-              pending.operation.reject(
-                error instanceof Error
-                  ? error
-                  : new Error('Privy SVM login failed'),
-              )
-            }
-            return pending.promise
-          },
+          login: () => startLogin({ walletChainType: 'solana-only' }),
         })
       },
-      logout: () => latestHandlesRef.current.logout(),
+      async logout() {
+        await latestHandlesRef.current.logout()
+        setPrivyLoginMethod(undefined)
+        setLoginMethod(undefined)
+      },
       async sendEvmTransaction({ address, transaction, uiOptions }) {
         const wallet = latestHandlesRef.current.embeddedEvmWallet
         if (!wallet || wallet.address.toLowerCase() !== address.toLowerCase()) {
@@ -304,9 +360,8 @@ function PrivyRuntimeEffects() {
           signature: getBase58Decoder().decode(result.signature) as SvmTxHash,
         }
       },
-    }),
-    [],
-  )
+    }
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -346,11 +401,15 @@ function PrivyRuntimeEffects() {
   }, [embeddedEvmWallet, evmWalletAddress])
 
   useEffect(() => {
-    if (error) privyRuntimeStore.setError(error)
+    if (!error) return
+    setPrivySvmReconnect(false)
+    privyRuntimeStore.setError(error)
   }, [error])
 
   useEffect(() => {
     if (!ready || error) return
+    // Privy also publishes an unauthenticated snapshot while login or OAuth
+    // resume is pending. Terminal failure and logout paths own intent cleanup.
     const runtimeSvmWallet: PrivySvmWallet | undefined = svmWalletAddress
       ? { address: svmWalletAddress as SvmAddress }
       : undefined
@@ -360,6 +419,7 @@ function PrivyRuntimeEffects() {
         evmWallet: runtimeEvmWallet,
         hasEvmAccount,
         hasSvmAccount,
+        loginMethod: activeLoginMethod,
         operations,
         svmWallet: runtimeSvmWallet,
         walletsReady: evmWalletsReady,
@@ -371,16 +431,13 @@ function PrivyRuntimeEffects() {
         walletsReady: evmWalletsReady,
       })
     }
-
-    if (!authenticated) {
-      setPrivySvmReconnect(false)
-    }
   }, [
     authenticated,
     error,
     evmWalletsReady,
     hasEvmAccount,
     hasSvmAccount,
+    activeLoginMethod,
     operations,
     ready,
     runtimeEvmWallet,

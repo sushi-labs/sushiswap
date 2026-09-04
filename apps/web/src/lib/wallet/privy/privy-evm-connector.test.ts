@@ -26,6 +26,7 @@ import {
   PrivyRuntimeHostUnavailableError,
   getPrivyEvmConnector,
   hasPrivyEvmReconnectIntent,
+  preparePrivyEvmReconnect,
   privyEvmConnector,
 } from './privy-evm-connector'
 import {
@@ -110,6 +111,7 @@ function createOperations(
   overrides: Partial<PrivyRuntimeOperationHandlers> = {},
 ): PrivyRuntimeOperationHandlers {
   return {
+    authenticate: vi.fn(async () => undefined),
     connectOrCreateEvmWallet: vi.fn(async () => undefined),
     exportEvmWallet: vi.fn(async () => undefined),
     exportSvmWallet: vi.fn(async () => undefined),
@@ -323,6 +325,36 @@ describe('deferred Privy EVM connector', () => {
       expect(runtimeStore.getSnapshot().status).toBe('loading')
     })
     publishAuthenticated({ runtimeStore, wallet })
+
+    await vi.waitFor(() => expect(config.state.status).toBe('connected'))
+    expect(getConnections(config)).toEqual([
+      expect.objectContaining({ accounts: [firstAddress], connector }),
+    ])
+  })
+
+  it('restores a connection started before an OAuth redirect', async () => {
+    seedStorageItem(PRIVY_EVM_DISCONNECTED_STORAGE_KEY, true)
+    const { config, connector, runtimeStore } = createHarness({ ssr: true })
+
+    await preparePrivyEvmReconnect(config)
+    await expect(
+      config.storage?.getItem(PRIVY_EVM_CONNECTED_STORAGE_KEY),
+    ).resolves.toBe(true)
+    await expect(
+      config.storage?.getItem(PRIVY_EVM_DISCONNECTED_STORAGE_KEY),
+    ).resolves.toBeNull()
+    await expect(config.storage?.getItem('recentConnectorId')).resolves.toBe(
+      PRIVY_EVM_CONNECTOR_ID,
+    )
+
+    await hydrate(config, { reconnectOnMount: true }).onMount()
+    await vi.waitFor(() => {
+      expect(runtimeStore.getSnapshot().status).toBe('loading')
+    })
+    publishAuthenticated({
+      runtimeStore,
+      wallet: createWallet(firstAddress),
+    })
 
     await vi.waitFor(() => expect(config.state.status).toBe('connected'))
     expect(getConnections(config)).toEqual([

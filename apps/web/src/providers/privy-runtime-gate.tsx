@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import {
   hasStoredPrivySession,
+  isPrivyOAuthCallback,
   isPrivySessionStorageKey,
 } from '../lib/wallet/privy-storage'
 import { isPrivyTestRuntimeEnabled } from '../lib/wallet/privy/privy-e2e-mode'
@@ -32,7 +33,12 @@ export function PrivyRuntimeGate() {
   useEffect(() => privyRuntimeStore.mountRuntimeHost(), [])
 
   useEffect(() => {
-    if (hasStoredPrivySession()) requestSessionRuntime()
+    if (
+      hasStoredPrivySession() ||
+      isPrivyOAuthCallback(window.location.search)
+    ) {
+      requestSessionRuntime()
+    }
   }, [])
 
   useEffect(() => {

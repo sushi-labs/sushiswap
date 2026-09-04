@@ -9,6 +9,7 @@ const address = '0x0000000000000000000000000000000000000001' as EvmAddress
 
 function createOperations(): PrivyRuntimeOperationHandlers {
   return {
+    authenticate: vi.fn(async () => undefined),
     connectOrCreateEvmWallet: vi.fn(async () => undefined),
     exportEvmWallet: vi.fn(async () => undefined),
     exportSvmWallet: vi.fn(async () => undefined),
@@ -88,6 +89,7 @@ describe('Privy runtime store', () => {
       evmWallet: wallet,
       hasEvmAccount: true,
       hasSvmAccount: false,
+      loginMethod: 'twitter',
       operations: createOperations(),
       svmWallet: null,
       walletsReady: true,
@@ -97,6 +99,7 @@ describe('Privy runtime store', () => {
     expect(snapshot).toMatchObject({
       authenticated: true,
       evmWallet: wallet,
+      loginMethod: 'twitter',
       revision: 0,
       status: 'ready',
       walletsReady: true,

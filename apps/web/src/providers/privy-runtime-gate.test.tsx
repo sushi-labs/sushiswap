@@ -12,6 +12,7 @@ const runtimeLifecycle = vi.hoisted(() => ({
 
 vi.mock('../lib/wallet/privy-storage', () => ({
   hasStoredPrivySession: () => false,
+  isPrivyOAuthCallback: () => false,
   isPrivySessionStorageKey: () => false,
 }))
 
