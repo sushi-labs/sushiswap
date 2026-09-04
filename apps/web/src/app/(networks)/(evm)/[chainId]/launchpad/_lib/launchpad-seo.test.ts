@@ -35,7 +35,6 @@ const token: LaunchpadToken = {
       decimals: 6,
     },
   },
-  positions: [],
   metadata: {
     description: 'A test launchpad token.',
     links: [
