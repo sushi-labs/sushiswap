@@ -15,6 +15,8 @@
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
     "test": "npx playwright test -c test/playwright.config.ts",
+    "test:privy": "playwright test -c test/privy-playwright.config.ts",
+    "test:privy-live": "playwright test -c test/privy-live-playwright.config.ts",
     "test:unit": "vitest --watch=false src"
   },
   "dependencies": {
@@ -60,7 +62,6 @@
     "@orbs-network/spot-react": "1.1.11",
     "@pontem/wallet-adapter-plugin": "0.2.1",
     "@privy-io/react-auth": "3.30.0",
-    "@privy-io/wagmi": "4.0.12",
     "@radix-ui/react-slot": "1.1.1",
     "@radix-ui/react-visually-hidden": "1.1.1",
     "@rise-wallet/wallet-adapter": "0.1.2",

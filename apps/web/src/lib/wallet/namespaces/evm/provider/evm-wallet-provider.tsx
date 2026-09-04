@@ -1,11 +1,6 @@
 import {
-  useConnectOrCreateWallet,
-  usePrivy,
-  useWallets as usePrivyWallets,
-} from '@privy-io/react-auth'
-import { WagmiProvider, useSetActiveWallet } from '@privy-io/wagmi'
-import {
-  getConnections,
+  type Config,
+  type Connection,
   connect as wagmiConnect,
   disconnect as wagmiDisconnect,
 } from '@wagmi/core'
@@ -18,11 +13,14 @@ import {
   useMemo,
 } from 'react'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
-import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { hasPersistedConnections } from 'src/lib/wagmi/config/persisted-connectors'
 import {
-  getIsPrivyWalletProviderReady,
-  getWalletRestorationState,
-} from 'src/lib/wallet/provider/get-wallet-restoration-state'
+  hasPrivyEvmReconnectIntent,
+  isPrivyEvmConnector,
+} from 'src/lib/wallet/privy/privy-evm-connector'
+import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-session'
+import { logoutPrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
+import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
   addWalletConnection,
   clearWalletConnections,
@@ -31,11 +29,23 @@ import {
 } from 'src/lib/wallet/provider/store'
 import { useInitialWalletAutoConnectPending } from 'src/lib/wallet/provider/use-initial-wallet-auto-connect-pending'
 import type { Wallet } from 'src/lib/wallet/types'
+import { PrivyRuntimeGate } from 'src/providers/privy-runtime-gate'
 import { EvmChainId, isEvmChainId } from 'sushi/evm'
-import { WagmiContext, useConnection, useDisconnect } from 'wagmi'
+import {
+  WagmiContext,
+  WagmiProvider,
+  useConnection,
+  useDisconnect,
+} from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig, EvmAdapterId } from '../config'
+import { EvmAdapterConfig } from '../config'
 import { isEvmWallet } from '../types'
+import {
+  findEvmWalletConnector,
+  getConnectedEvmAccount,
+  getEvmConnections,
+  toEvmWalletId,
+} from './connect-plan'
 
 function useInEvmContext(): boolean {
   const context = useContext(WagmiContext)
@@ -64,6 +74,7 @@ export default function EvmWalletProvider({
     return (
       <WagmiProvider config={getWagmiConfig()}>
         <_EvmWalletProvider>{children}</_EvmWalletProvider>
+        <PrivyRuntimeGate />
       </WagmiProvider>
     )
   }
@@ -83,23 +94,6 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
     isConnectionAttemptActive: isConnecting || isReconnecting || isConnected,
   })
   const { isPending } = useDisconnect()
-  const { setActiveWallet } = useSetActiveWallet()
-  const { ready: arePrivyWalletsReady } = usePrivyWallets()
-  const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
-  const {
-    authenticated: isPrivyAuthenticated,
-    ready: isPrivyAuthReady,
-    logout,
-  } = usePrivy()
-
-  const { connectOrCreateWallet } = useConnectOrCreateWallet({
-    onSuccess: async (data) => {
-      if (privyEmbeddedWallet?.address === data.wallet.address) {
-        await setActiveWallet(privyEmbeddedWallet)
-        return
-      }
-    },
-  })
 
   const connect = useCallback(
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
@@ -107,34 +101,23 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
         throw new Error(`Invalid namespace for ${wallet.name}`)
       }
       const config = getWagmiConfig()
-      const connections = getConnections(config)
-      for (const connection of connections) {
-        if (connection.connector.uid !== wallet.uid) {
-          await wagmiDisconnect(config, {
-            connector: connection.connector,
-          })
+      // Identity comes from the connector registry: a statically defined
+      // wallet entry has no `uid`, and a connection still being restored
+      // carries the previous page load's `uid`. Leaving either in place would
+      // strand it in Wagmi's connection map, where a later disconnect would
+      // promote it to the active connection.
+      const target = findEvmWalletConnector(config, wallet)
+      for (const connection of getEvmConnections(config)) {
+        if (connection.connector.uid !== target?.uid) {
+          await disconnectConnection(config, connection)
         }
       }
-      if (wallet.adapterId === EvmAdapterId.Privy && privyEmbeddedWallet) {
-        await setActiveWallet(privyEmbeddedWallet)
-        onSuccess?.(privyEmbeddedWallet.address)
-        return
-      } else if (
-        wallet.adapterId === EvmAdapterId.Privy &&
-        !privyEmbeddedWallet
-      ) {
-        connectOrCreateWallet()
-        return
-      }
 
-      if (
-        connector?.id &&
-        wallet.id === `evm:${connector.id.toLowerCase()}` &&
-        address
-      ) {
-        onSuccess?.(address)
+      const connectedAccount = getConnectedEvmAccount(config, target)
+      if (connectedAccount) {
+        onSuccess?.(connectedAccount)
       } else {
-        const { accounts } = await wagmiConnect(getWagmiConfig(), {
+        const { accounts } = await wagmiConnect(config, {
           connector: await EvmAdapterConfig[wallet.adapterId]({
             uid: wallet.uid,
           }),
@@ -143,27 +126,24 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
         onSuccess?.(accounts[0])
       }
     },
-    [
-      connector?.id,
-      address,
-      privyEmbeddedWallet,
-      setActiveWallet,
-      connectOrCreateWallet,
-    ],
+    [],
   )
 
   const disconnect = useCallback(async () => {
     const config = getWagmiConfig()
-    const connections = getConnections(config)
+    const connections = getEvmConnections(config)
+    const disconnectsPrivy = connections.some((connection) =>
+      isPrivyEvmConnector(connection.connector),
+    )
     for (const connection of connections) {
-      await wagmiDisconnect(config, {
-        connector: connection.connector,
-      })
+      await disconnectConnection(config, connection)
     }
-    if (privyEmbeddedWallet) {
-      await logout()
+    // Privy is one session shared with the other namespaces; only the last
+    // wallet using it may log out.
+    if (disconnectsPrivy && !hasPrivyWalletConnectionOutside('evm')) {
+      await logoutPrivyRuntime()
     }
-  }, [logout, privyEmbeddedWallet])
+  }, [])
 
   const value = useMemo(
     () => ({
@@ -184,7 +164,7 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
 
     addWalletConnection({
       chainId: isEvmChainId(chainId) ? chainId : EvmChainId.ETHEREUM,
-      id: `evm:${connector.id.toLowerCase()}`,
+      id: toEvmWalletId(connector.id),
       name: connector.name,
       namespace: 'evm',
       account: address,
@@ -211,25 +191,13 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       'evm',
       getWalletRestorationState({
         hasRegisteredConnection,
-        isProviderReady: getIsPrivyWalletProviderReady({
-          isAuthReady: isPrivyAuthReady,
-          isAuthenticated: isPrivyAuthenticated,
-          areWalletsReady: arePrivyWalletsReady,
-        }),
+        isProviderReady: true,
         isAutoConnectPending,
         isConnecting: isConnecting || isReconnecting,
         isConnected,
       }),
     )
-  }, [
-    arePrivyWalletsReady,
-    isConnected,
-    isConnecting,
-    isPrivyAuthenticated,
-    isPrivyAuthReady,
-    isReconnecting,
-    isAutoConnectPending,
-  ])
+  }, [isConnected, isConnecting, isReconnecting, isAutoConnectPending])
 
   return (
     <EvmWalletContext.Provider value={value}>
@@ -238,34 +206,44 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-async function getHasInitialWagmiReconnectCandidate(): Promise<boolean> {
-  const config = getWagmiConfig()
-  const persistedStore = await config.storage?.getItem('store')
-  const recentConnectorId = await config.storage?.getItem('recentConnectorId')
-  const wasExplicitlyDisconnected =
-    typeof recentConnectorId === 'string' && recentConnectorId.length > 0
-      ? await config.storage?.getItem(`${recentConnectorId}.disconnected`)
-      : false
-
-  return (
-    hasCurrentConnection(persistedStore) ||
-    (typeof recentConnectorId === 'string' &&
-      recentConnectorId.length > 0 &&
-      wasExplicitlyDisconnected !== true)
+/**
+ * While Wagmi is still reconnecting, hydrated connections only carry the
+ * serialized connector stub (`{ id, name, type, uid }`), which has no
+ * `disconnect()`. Resolve the live connector first and, failing that, drop the
+ * connection from state directly so the user's disconnect still takes effect.
+ */
+async function disconnectConnection(
+  config: Config,
+  connection: Connection,
+): Promise<void> {
+  const stub = connection.connector
+  if (typeof stub.disconnect === 'function') {
+    await wagmiDisconnect(config, { connector: stub })
+    return
+  }
+  const connector = config.connectors.find(
+    (candidate) => candidate.id === stub.id,
   )
+  // Let the live connector record the disconnect (shim, cancelled restore)
+  // even though Wagmi keys the stale entry by the previous session's uid.
+  if (connector) await wagmiDisconnect(config, { connector })
+  config.setState((state) => {
+    if (!state.connections.has(stub.uid)) return state
+    const connections = new Map(state.connections)
+    connections.delete(stub.uid)
+    const current =
+      state.current && connections.has(state.current)
+        ? state.current
+        : (connections.keys().next().value ?? null)
+    return {
+      ...state,
+      connections,
+      current,
+      status: connections.size > 0 ? state.status : 'disconnected',
+    }
+  })
 }
 
-function hasCurrentConnection(persistedStore: unknown): boolean {
-  if (
-    !persistedStore ||
-    typeof persistedStore !== 'object' ||
-    !('state' in persistedStore)
-  ) {
-    return false
-  }
-
-  const { state } = persistedStore
-  return Boolean(
-    state && typeof state === 'object' && 'current' in state && state.current,
-  )
+async function getHasInitialWagmiReconnectCandidate(): Promise<boolean> {
+  return hasPersistedConnections() || hasPrivyEvmReconnectIntent()
 }

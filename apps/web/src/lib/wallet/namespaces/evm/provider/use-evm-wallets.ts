@@ -7,6 +7,7 @@ import type { WalletWithState } from '../../../types'
 import { isInjectedConnector } from '../adapters/injected'
 import { isSafeAppAvailable } from '../adapters/safe'
 import { EVM_WALLETS, EvmAdapterId } from '../config'
+import { toEvmWalletId } from './connect-plan'
 
 export function useEvmWallets() {
   const connectors = useConnectors()
@@ -16,14 +17,11 @@ export function useEvmWallets() {
     () =>
       connectors.filter(
         (connector) =>
-          //we are providing our own privy instance, so we remove the dup here
           isInjectedConnector(connector) &&
-          connector.name !== 'Privy Wallet' &&
           connector.name !== 'MetaMask Wallet',
       ),
     [connectors],
   )
-
   const [isSafeAvailable, setIsSafeAvailable] = useState(false)
 
   // Safe app environment
@@ -41,7 +39,7 @@ export function useEvmWallets() {
   return useMemo(() => {
     const map = new Map<string, WalletWithState>()
     for (const connector of injectedConnectors) {
-      const walletId = `evm:${connector.id.toLowerCase()}`
+      const walletId = toEvmWalletId(connector.id)
 
       map.set(walletId, {
         id: walletId,

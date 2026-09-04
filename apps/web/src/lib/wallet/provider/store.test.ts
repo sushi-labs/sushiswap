@@ -4,12 +4,14 @@ import { createElement } from 'react'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { EvmChainId } from 'sushi/evm'
+import { type SvmAddress, SvmChainId } from 'sushi/svm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { WalletConnection } from '../types'
 import {
   addWalletConnection,
   clearWalletConnections,
   getConnections,
+  setActiveWalletConnection,
   setWalletNamespaceRestoring,
   useWalletRestorationState,
   watchConnections,
@@ -78,6 +80,31 @@ describe('wallet connection store', () => {
 
     expect(listener).not.toHaveBeenCalled()
     unwatch()
+  })
+
+  it('replaces the previous wallet for a single-wallet namespace', () => {
+    addWalletConnection({
+      id: 'svm:solflare',
+      name: 'Solflare',
+      namespace: 'svm',
+      account: '11111111111111111111111111111111' as SvmAddress,
+      chainId: SvmChainId.SOLANA,
+    })
+
+    setActiveWalletConnection({
+      id: 'svm:privy',
+      name: 'Email',
+      namespace: 'svm',
+      account: '22222222222222222222222222222222' as SvmAddress,
+      chainId: SvmChainId.SOLANA,
+    })
+
+    expect(getConnections()).toEqual([
+      expect.objectContaining({
+        id: 'svm:privy',
+        account: '22222222222222222222222222222222',
+      }),
+    ])
   })
 
   it('does not re-enter initial restoration after it finishes', () => {
