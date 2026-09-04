@@ -333,7 +333,6 @@ interface LaunchpadToken {
   initialFdvUsd: BigInt!
   indexingStatus: LaunchpadIndexingStatus!
   pool: LaunchpadPool!
-  positions: [LaunchpadPosition!]! @deprecated(reason: "V2 and Pools.fun do not expose protocol-owned LP positions; this field will be removed with the V1 cleanup")
   metadata: LaunchpadMetadata!
   metrics: LaunchpadMetrics
   creationTransactionHash: Bytes!
@@ -354,7 +353,6 @@ type SushiV1LaunchpadToken implements LaunchpadToken {
   initialFdvUsd: BigInt!
   indexingStatus: LaunchpadIndexingStatus!
   pool: LaunchpadPool!
-  positions: [LaunchpadPosition!]! @deprecated(reason: "This field will be removed with the V1 cleanup")
   metadata: LaunchpadMetadata!
   metrics: LaunchpadMetrics
   creationTransactionHash: Bytes!
@@ -376,7 +374,6 @@ type PoolsFunV1LaunchpadToken implements LaunchpadToken {
   initialFdvUsd: BigInt!
   indexingStatus: LaunchpadIndexingStatus!
   pool: LaunchpadPool!
-  positions: [LaunchpadPosition!]! @deprecated(reason: "Pools.fun positions are not tracked; this field will be removed with the V1 cleanup")
   metadata: LaunchpadMetadata!
   metrics: LaunchpadMetrics
   creationTransactionHash: Bytes!
@@ -392,16 +389,6 @@ type LaunchpadPool {
 type LaunchpadFeeSplit {
   sushiFeeBps: Int!
   creatorFeeBps: Int!
-}
-
-type LaunchpadPosition {
-  positionIndex: Int!
-  positionId: BigInt!
-  tickLower: Int!
-  tickUpper: Int!
-  desiredAmount: BigInt!
-  usedAmount: BigInt!
-  liquidity: BigInt!
 }
 
 type LaunchpadMetadata {

@@ -590,7 +590,6 @@ export function ManageTokenPage({
                 ],
                 ['Decimals', `${token.decimals}`],
                 ['Pool tier', `${token.pool.feeTier / 10_000}%`],
-                ['Positions', `${token.positions.length}`],
               ].map(([label, value]) => ({ label, value }))}
             />
           </PerpsCard>
