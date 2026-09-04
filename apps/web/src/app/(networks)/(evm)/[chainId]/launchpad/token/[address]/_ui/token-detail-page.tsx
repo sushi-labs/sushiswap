@@ -50,7 +50,6 @@ import {
   liquidityChange24hUsd,
   shortenAddress,
 } from '../../../_lib/format'
-import { launchpadProviderHasCapability } from '../../../_lib/launchpad-provider'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { DetailList } from '../../../_ui/detail-list'
 import {
@@ -456,12 +455,6 @@ function TokenDetailPageContent({
         },
       ]
     : null
-  const supportsLockedPositions = token
-    ? launchpadProviderHasCapability(token.provider, 'lockedPositions')
-    : false
-  const showLockedPositions =
-    supportsLockedPositions && (token?.positions.length ?? 0) > 0
-
   return (
     <Container
       maxWidth="8xl"
@@ -609,57 +602,9 @@ function TokenDetailPageContent({
                     ],
                     ['Pool fee', `${token.pool.feeTier / 10_000}%`],
                     ['Starting FDV', formatUsd(Number(token.initialFdvUsd))],
-                    ...(supportsLockedPositions
-                      ? [['Liquidity', 'Single maximum-bound position']]
-                      : []),
                   ].map(([label, value]) => ({ label, value }))}
                 />
               </PerpsCard>
-
-              {showLockedPositions ? (
-                <PerpsCard className="overflow-hidden" fullWidth>
-                  <div className="flex items-center gap-2 border-b border-white/[0.06] p-5">
-                    <h2 className="font-semibold text-perps-muted">
-                      Locked positions
-                    </h2>
-                  </div>
-                  <div className="divide-y divide-white/[0.06]">
-                    {token.positions.map((position) => (
-                      <div key={position.positionIndex} className="p-4 text-sm">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="font-medium text-perps-muted">
-                            Position #{position.positionId}
-                          </span>
-                        </div>
-                        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
-                          <div>
-                            <div className="text-perps-muted-50">
-                              Tick range
-                            </div>
-                            <div className="mt-1 text-perps-muted">
-                              {position.tickLower.toLocaleString()} →{' '}
-                              {position.tickUpper.toLocaleString()}
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-perps-muted-50">
-                              Allocation
-                            </div>
-                            <div className="mt-1 truncate text-perps-muted">
-                              {formatRawAmount(
-                                position.desiredAmount,
-                                token.decimals,
-                                0,
-                              )}{' '}
-                              {token.symbol}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </PerpsCard>
-              ) : null}
             </>
           ) : (
             <TokenSidebarSkeleton />
