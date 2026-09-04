@@ -232,7 +232,7 @@ function NearIntentsTradeReviewDialogContent({
               <DialogHeader className="!text-left">
                 <DialogTitle>
                   {!outputAmount ? (
-                    <SkeletonText fontSize="xs" className="w-2/3" />
+                    <SkeletonText fontSize="xs" />
                   ) : (
                     `Receive ${outputAmount.toSignificant(6)} ${token1?.symbol}`
                   )}
@@ -353,7 +353,7 @@ function NearIntentsTradeDetails({
         <List.Control>
           <List.KeyValue title="Estimated arrival">
             {!executionDuration ? (
-              <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+              <SkeletonText align="right" fontSize="sm" />
             ) : (
               executionDuration
             )}
@@ -367,7 +367,7 @@ function NearIntentsTradeDetails({
                 {networkFeeAmountUsd === undefined ||
                 !networkFeeAmount ||
                 !networkFeeSymbol ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={networkFeeAmount}
@@ -381,7 +381,7 @@ function NearIntentsTradeDetails({
                 subtitle="The fee charged by Sushi."
               >
                 {feeUsd === undefined || !feeTokenAmount || !swapAmount ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={feeTokenAmount}
@@ -412,7 +412,7 @@ function NearIntentsTradeDetails({
                 {totalFeeUsd === undefined ||
                 !networkFeeAmount ||
                 !networkFeeSymbol ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={networkFeeAmount}
@@ -578,7 +578,7 @@ function AmountWithUsd({
   return (
     <div className="flex flex-col gap-0.5">
       {!amount ? (
-        <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+        <SkeletonText align="right" fontSize="sm" />
       ) : (
         <span className="text-sm font-medium">{`${amount.toSignificant(6)} ${amount.currency.symbol}`}</span>
       )}

@@ -26,7 +26,7 @@ export function TradeHeader<
     <DialogHeader className="!text-left">
       <DialogTitle>
         {!step?.amountOut ? (
-          <SkeletonText fontSize="xs" className="w-2/3" />
+          <SkeletonText fontSize="xs" />
         ) : (
           `Receive ${step.amountOut.toSignificant(6)} ${token1?.symbol}`
         )}

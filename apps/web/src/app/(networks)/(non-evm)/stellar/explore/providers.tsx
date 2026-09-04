@@ -15,10 +15,10 @@ function PoolsTableSkeleton() {
       <div className="p-4 space-y-3">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex gap-4">
-            <SkeletonText className="w-1/4" />
-            <SkeletonText className="w-1/6" />
-            <SkeletonText className="w-1/6" />
-            <SkeletonText className="w-1/6" />
+            <SkeletonText />
+            <SkeletonText />
+            <SkeletonText />
+            <SkeletonText />
           </div>
         ))}
       </div>
