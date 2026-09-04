@@ -8,16 +8,12 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
   Dots,
   List,
   SelectIcon,
   SkeletonText,
   classNames,
-  useDialog,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ReactNode } from 'react'
@@ -28,6 +24,12 @@ import {
   NEAR_INTENTS_UI_FEE_PERCENT,
 } from 'src/lib/swap/near-intents'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {

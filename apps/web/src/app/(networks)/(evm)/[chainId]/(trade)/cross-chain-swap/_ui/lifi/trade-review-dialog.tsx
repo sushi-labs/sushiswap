@@ -8,15 +8,17 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
-  useDialog,
 } from '@sushiswap/ui'
 import type React from 'react'
 import { type ReactNode, type RefObject, useEffect } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import {
   ConfirmationDialogContent,
   Divider,

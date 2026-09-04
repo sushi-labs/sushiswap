@@ -3,12 +3,9 @@
 import type { BladePool } from '@sushiswap/graph-client/data-api'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
 } from '@sushiswap/ui'
@@ -17,6 +14,11 @@ import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { useBladeWithdrawTransaction } from 'src/lib/pool/blade/use-blade-withdraw'
 import { getPoolAssets } from 'src/lib/pool/blade/utils'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount, Percent, withoutScientificNotation } from 'sushi'
 import type { Hex } from 'viem'

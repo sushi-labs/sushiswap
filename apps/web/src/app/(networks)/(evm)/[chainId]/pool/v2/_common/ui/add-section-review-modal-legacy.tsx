@@ -8,13 +8,10 @@ import {
   useTrace,
 } from '@sushiswap/telemetry'
 import {
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
   IconButton,
@@ -28,6 +25,11 @@ import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { logger } from 'src/lib/logger'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import {
