@@ -1,6 +1,11 @@
 'use client'
 
-import { GoogleAnalytics, GoogleTagManager, HotJar } from '@sushiswap/ui'
+import {
+  GoogleAds,
+  GoogleAnalytics,
+  GoogleTagManager,
+  HotJar,
+} from '@sushiswap/ui'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { useEnabledCookies } from './_common/cookies/use-enabled-cookies'
@@ -18,6 +23,7 @@ export function Trackers() {
         beforeSend={(event) => (analyiticsEnabled ? event : null)}
       />
       <GoogleAnalytics enabled={analyiticsEnabled} />
+      <GoogleAds enabled={googleEnabled} />
       <GoogleTagManager enabled={googleEnabled} />
       <HotJar enabled={hotjarEnabled} />
       <SpeedInsights />

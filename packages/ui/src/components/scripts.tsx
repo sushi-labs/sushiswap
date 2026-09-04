@@ -1,16 +1,15 @@
 'use client'
 
 import Script from 'next/script'
-import { useEffect } from 'react'
+import { type ReactElement, useEffect } from 'react'
 
-export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
-  if (!enabled) return null
-
+// Next Script deduplicates the shared loader by src and initialization by id.
+function GoogleTag(): ReactElement {
   return (
     <>
       <Script
         strategy="afterInteractive"
-        src={'https://www.googletagmanager.com/gtag/js?id=G-JW8KWJ48EF'}
+        src="https://www.googletagmanager.com/gtag/js?id=AW-18428864292"
       />
       <Script
         id="gtag-init"
@@ -20,12 +19,51 @@ export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
+        `,
+        }}
+      />
+    </>
+  )
+}
+
+export const GoogleAnalytics = ({ enabled }: { enabled: boolean }) => {
+  if (!enabled) return null
+
+  return (
+    <>
+      <GoogleTag />
+      <Script
+        id="gtag-analytics-config"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
           gtag('config', 'G-JW8KWJ48EF', {
             page_path: window.location.pathname,
             cookie_flags: 'max-age=7200;secure;samesite=none'
           });
           gtag('set', 'allow_ad_personalization_signals', false);
           gtag('set', 'allow_google_signals', false);
+        `,
+        }}
+      />
+    </>
+  )
+}
+
+export const GoogleAds = ({ enabled }: { enabled: boolean }) => {
+  if (!enabled) return null
+
+  return (
+    <>
+      <GoogleTag />
+      <Script
+        id="gtag-ads-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+          gtag('config', 'AW-18428864292', {
+            page_path: window.location.pathname,
+          });
         `,
         }}
       />
