@@ -45,7 +45,6 @@ export function WalletConnectorsListButton({
         size="lg"
         variant="ghost"
         className="!justify-between gap-3 !rounded-none"
-        loading={isPending}
         disabled={isWalletPending}
       >
         <div className="flex flex-1 justify-between gap-3">
