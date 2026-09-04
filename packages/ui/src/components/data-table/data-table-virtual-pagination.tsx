@@ -1,20 +1,9 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from '@radix-ui/react-icons'
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons'
 import type { Table } from '@tanstack/react-table'
 
 import { DownTriangleIcon } from '../../icons/down-triangle-icon'
 import { Button } from '../button'
-import {
-  Select,
-  SelectContent,
-  SelectIcon,
-  SelectItem,
-  SelectPrimitive,
-} from '../select'
+import { Select, SelectContent, SelectItem, SelectPrimitive } from '../select'
 interface DataTableVirtualPaginationProps<TData> {
   table: Table<TData>
 }

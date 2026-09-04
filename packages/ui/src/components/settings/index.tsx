@@ -7,7 +7,7 @@ import {
   useSlippageTolerance,
 } from '@sushiswap/hooks'
 import classNames from 'classnames'
-import React, { type FC, type ReactNode, useState } from 'react'
+import React, { type FC, type ReactNode } from 'react'
 
 import { DEFAULT_SLIPPAGE } from 'sushi/evm'
 import { Button } from '../button'
@@ -65,7 +65,6 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
   options,
   theme = 'default',
 }) => {
-  const [_open, setOpen] = useState(false)
   const [slippageTolerance, setSlippageTolerance] = useSlippageTolerance(
     options?.slippageTolerance?.storageKey,
     options?.slippageTolerance?.defaultValue,
@@ -86,7 +85,6 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
             className="!rounded-full"
             variant="secondary"
             icon={Cog6ToothIcon}
-            onClick={() => setOpen(true)}
           >
             {showSlippageBadge ? (
               <TooltipProvider>

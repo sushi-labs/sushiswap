@@ -170,7 +170,7 @@ const PerpsDialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <div className="relative p-6 lg:p-2 overflow-hidden rounded-t-2xl border-b-none lg:border-b border-white/[0.05]">
+  <div className="relative p-6 lg:p-2 overflow-hidden rounded-t-2xl lg:border-b border-white/[0.05]">
     <CircleRows />
     <div
       className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[120%] h-full z-[-1]"

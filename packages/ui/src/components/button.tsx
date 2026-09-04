@@ -126,8 +126,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }),
         )}
         ref={ref}
+        id={id}
         {...props}
-        testdata-id={`${testId || id}-button`}
+        {...(testId || id ? { 'testdata-id': `${testId || id}-button` } : {})}
       >
         <ButtonContent asChild={asChild}>
           {loading ? (

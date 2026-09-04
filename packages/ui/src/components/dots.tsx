@@ -2,13 +2,13 @@ import { Slot } from '@radix-ui/react-slot'
 import classNames from 'classnames'
 import * as React from 'react'
 
-export interface DotsProps extends React.ButtonHTMLAttributes<HTMLSpanElement> {
+export interface DotsProps extends React.HTMLAttributes<HTMLSpanElement> {
   asChild?: boolean
   children?: React.ReactNode
   className?: string
 }
 
-const Dots = React.forwardRef<HTMLButtonElement, DotsProps>(
+const Dots = React.forwardRef<HTMLSpanElement, DotsProps>(
   ({ className, asChild, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'span'
 
