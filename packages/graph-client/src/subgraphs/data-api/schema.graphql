@@ -317,6 +317,8 @@ enum LaunchpadIndexingStatus {
 enum LaunchpadProvider {
   SUSHI_V1
   POOLS_FUN_V1
+  POOLS_FUN_V2
+  POOLS_FUN_V3
 }
 
 interface LaunchpadToken {
@@ -361,6 +363,46 @@ type SushiV1LaunchpadToken implements LaunchpadToken {
 }
 
 type PoolsFunV1LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  provider: LaunchpadProvider!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+}
+
+type PoolsFunV2LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  provider: LaunchpadProvider!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+}
+
+type PoolsFunV3LaunchpadToken implements LaunchpadToken {
   id: ID!
   chainId: LaunchpadChainId!
   address: EvmAddress!
