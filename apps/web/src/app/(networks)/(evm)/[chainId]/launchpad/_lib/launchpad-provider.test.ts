@@ -20,9 +20,7 @@ describe('launchpad provider policy', () => {
   })
 
   it('maps provider filters to provider families', () => {
-    expect(getLaunchpadProvidersForFilter('sushi')).toEqual([
-      'SUSHI_V1',
-    ])
+    expect(getLaunchpadProvidersForFilter('sushi')).toEqual(['SUSHI_V1'])
     expect(getLaunchpadProvidersForFilter('pools-fun')).toEqual([
       'POOLS_FUN_V1',
       'POOLS_FUN_V2',
