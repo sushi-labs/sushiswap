@@ -40,6 +40,12 @@ export const LaunchpadTokenDefinitionQuery = graphql(`
         ... on PoolsFunV1LaunchpadToken {
           originalCreator: creator
         }
+        ... on PoolsFunV2LaunchpadToken {
+          originalCreator: creator
+        }
+        ... on PoolsFunV3LaunchpadToken {
+          originalCreator: creator
+        }
         ... on SushiV2LaunchpadToken {
           originalCreator: launchCreator
         }

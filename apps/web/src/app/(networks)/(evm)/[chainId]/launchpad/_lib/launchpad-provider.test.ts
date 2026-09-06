@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   getLaunchpadProviderConfig,
+  getLaunchpadProviderIconsForFilter,
   getLaunchpadProvidersForFilter,
   launchpadProviderHasCapability,
   parseLaunchpadProviderFilter,
@@ -13,12 +14,29 @@ describe('launchpad provider policy', () => {
     expect(getLaunchpadProvidersForFilter('all')).toEqual([
       'SUSHI_V1',
       'POOLS_FUN_V1',
+      'POOLS_FUN_V2',
+      'POOLS_FUN_V3',
     ])
   })
 
-  it('maps provider filters to one versioned provider', () => {
-    expect(getLaunchpadProvidersForFilter('sushi')).toEqual(['SUSHI_V1'])
+  it('maps provider filters to provider families', () => {
+    expect(getLaunchpadProvidersForFilter('sushi')).toEqual([
+      'SUSHI_V1',
+    ])
     expect(getLaunchpadProvidersForFilter('pools-fun')).toEqual([
+      'POOLS_FUN_V1',
+      'POOLS_FUN_V2',
+      'POOLS_FUN_V3',
+    ])
+  })
+
+  it('shows one icon for each provider family', () => {
+    expect(getLaunchpadProviderIconsForFilter('all')).toEqual([
+      'SUSHI_V1',
+      'POOLS_FUN_V1',
+    ])
+    expect(getLaunchpadProviderIconsForFilter('sushi')).toEqual(['SUSHI_V1'])
+    expect(getLaunchpadProviderIconsForFilter('pools-fun')).toEqual([
       'POOLS_FUN_V1',
     ])
   })
