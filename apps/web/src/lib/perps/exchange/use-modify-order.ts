@@ -54,7 +54,6 @@ export const useModifyOrder = () => {
       activeAccount?.address,
     ],
     mutationFn: async (modifyOrderData: ModifyOrderData) => {
-      console.log(agentAccount)
       if (!agentAccount) {
         throw new Error('Enable trading to modify orders.')
       }
