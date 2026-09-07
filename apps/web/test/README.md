@@ -8,8 +8,11 @@ of UI notifications. External application-data requests fail unless mocked.
 ## Run locally
 
 Install dependencies with `pnpm install` and Chromium with
-`pnpm --filter web exec playwright install chromium`. Foundry's `anvil` must be on
-`PATH`. Configure these environment variables (or use the existing
+`pnpm --filter web exec playwright install chromium`. Foundry's **Anvil 1.5.1** must
+be on `PATH`, matching the pinned E2E CI toolchain. Startup rejects other versions:
+Anvil 1.8.1 reproduces out-of-gas reverts in the unlocked-account V3 flows that
+pass on 1.5.1. Validate toolchain upgrades explicitly before changing the pin.
+Configure these environment variables (or use the existing
 `apps/web/.env.test.local` with the root `pnpm test-web-app` command):
 
 - `ANVIL_FORK_URL`: a Polygon archive RPC URL; never commit this credential.
@@ -66,6 +69,9 @@ through the UI. Position IDs come from mint receipts, never a table row index.
   Reports include durations, retry attempts, skipped tests, and named transaction
   steps. Failed tests retain their initial trace and screenshot; the `network`
   attachment lists mocked/unhandled application requests without URL credentials.
+  Reverted transaction assertions also attach the receipt, transaction gas limit,
+  and Anvil call trace so an out-of-gas failure can be distinguished from a contract
+  validation failure.
 - CI uploads fork/harness evidence before running Privy, and uploads each suite
   even on failure. When selected, simulated Privy still runs after fork failures.
 

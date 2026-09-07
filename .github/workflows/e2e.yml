@@ -81,6 +81,7 @@ jobs:
         uses: ./.github/actions/install
         with:
           node-version: 24
+          foundry-version: v1.5.1
         env:
           TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
 

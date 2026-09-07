@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test'
-import { type TransactionReceipt, isHash } from 'viem'
+import { type TransactionReceipt, isHash, stringify } from 'viem'
 import { transactionTimeout } from '../constants'
 import type { Fork } from '../fixtures'
 
@@ -104,6 +104,26 @@ export class BaseActions {
         hash: body.result,
         timeout: transactionTimeout,
       })
+      if (receipt.status === 'reverted') {
+        const diagnostics = await Promise.allSettled([
+          this.fork.client.getTransaction({ hash: body.result }),
+          fetch(this.fork.url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: 1,
+              method: 'debug_traceTransaction',
+              params: [body.result, { tracer: 'callTracer' }],
+            }),
+            signal: AbortSignal.timeout(10_000),
+          }).then((response) => response.json()),
+        ])
+        await test.info().attach('reverted-transaction', {
+          body: stringify({ receipt, diagnostics }, null, 2),
+          contentType: 'application/json',
+        })
+      }
       expect(
         receipt.status,
         `${name}: transaction ${receipt.transactionHash}`,
