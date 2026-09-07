@@ -1,29 +1,36 @@
-import { type Page, expect } from '@playwright/test'
-import { createERC20 } from 'test/erc20'
+import { type Locator, type Page, expect, test } from '@playwright/test'
+import { type TransactionReceipt, isHash } from 'viem'
+import { transactionTimeout } from '../constants'
+import type { Fork } from '../fixtures'
 
 export class BaseActions {
   readonly page: Page
 
-  constructor(page: Page) {
+  constructor(
+    page: Page,
+    readonly fork: Fork,
+  ) {
     this.page = page
   }
 
   async connect() {
     const connectSelector = this.page
-      .locator('[testdata-id=connect-button]')
+      .locator('[testdata-id=connect-button]:visible')
       .first()
     const connectedWalletSelector = this.page
-      .locator('[data-sidebar-trigger]:not([testdata-id=connect-button])')
+      .locator(
+        '[data-sidebar-trigger]:not([testdata-id=connect-button]):visible',
+      )
       .first()
 
     await expect(
       connectSelector.or(connectedWalletSelector).first(),
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 30_000 })
 
     if (await connectedWalletSelector.isVisible()) return
 
     await expect(connectSelector).toBeEnabled()
-    await connectSelector.click({ delay: 500 })
+    await connectSelector.click()
 
     await expect(connectedWalletSelector).toBeVisible()
   }
@@ -46,25 +53,62 @@ export class BaseActions {
     await switchNetworkBtn.click()
   }
 
-  async deployFakeToken(details: {
-    chainId: number
-    name: string
-    symbol: string
-    decimals: number
-  }) {
-    let fakeToken
-    try {
-      fakeToken = await createERC20({
-        chainId: details.chainId,
-        name: details.name,
-        symbol: details.symbol,
-        decimals: details.decimals,
-      })
-      console.log(`Token created: ${details.name} (${details.symbol})`)
-      return fakeToken
-    } catch (error) {
-      console.error('Error creating fake token', details, error)
-      throw new Error('Failed to create fake token')
+  async approveIfNeeded(approve: Locator, ready: Locator): Promise<void> {
+    await expect
+      .poll(
+        async () => (await approve.isVisible()) || (await ready.isEnabled()),
+        {
+          message: 'Allowance check resolves',
+        },
+      )
+      .toBe(true)
+    if (await approve.isVisible()) {
+      await expect(approve).toBeEnabled()
+      await this.transact('Approve pool token', () => approve.click())
     }
+  }
+
+  async transact(
+    name: string,
+    action: () => Promise<unknown>,
+  ): Promise<TransactionReceipt> {
+    return test.step(name, async () => {
+      const responsePromise = this.page.waitForResponse(
+        (response) => {
+          const request = response.request()
+          if (!request.url().startsWith(new URL(this.fork.url).origin))
+            return false
+          const body: unknown = request.postDataJSON()
+          return (
+            !!body &&
+            typeof body === 'object' &&
+            'method' in body &&
+            (body.method === 'eth_sendTransaction' ||
+              body.method === 'eth_sendRawTransaction')
+          )
+        },
+        { timeout: transactionTimeout },
+      )
+      const [response] = await Promise.all([responsePromise, action()])
+      const body: unknown = await response.json()
+      if (
+        !body ||
+        typeof body !== 'object' ||
+        !('result' in body) ||
+        typeof body.result !== 'string' ||
+        !isHash(body.result)
+      ) {
+        throw new Error(`${name}: wallet RPC did not return a transaction hash`)
+      }
+      const receipt = await this.fork.client.waitForTransactionReceipt({
+        hash: body.result,
+        timeout: transactionTimeout,
+      })
+      expect(
+        receipt.status,
+        `${name}: transaction ${receipt.transactionHash}`,
+      ).toBe('success')
+      return receipt
+    })
   }
 }

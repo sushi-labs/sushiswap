@@ -1,139 +1,47 @@
-import {
-  type PlaywrightTestConfig,
-  defineConfig,
-  devices,
-} from '@playwright/test'
-
 import nextEnv from '@next/env'
-// weird that we have to access it like this, wouldn't work if we imported the function only
+import { defineConfig, devices } from '@playwright/test'
+import { reporting } from './reporting'
+
 nextEnv.loadEnvConfig(process.cwd(), false)
 
-// Use process.env.PORT by default and fallback to port 3000
-const PORT = process.env.PORT || 3000
+const port = Number(process.env.PORT ?? 3000)
 
-// Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = `http://localhost:${PORT}`
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
-
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
-const config: PlaywrightTestConfig = {
-  // quiet: !!process.env.CI,
-  quiet: true,
-  testMatch: [
-    'pool.test.ts',
-    'simple.test.ts',
-    // 'smart.test.ts',
-    // 'cross-chain.test.ts',
-  ],
-  testIgnore: [],
-  /* Maximum time one test can run for. Defaults to 30s. */
-  timeout: 180_000,
-  expect: {
-    /**
-     * Maximum time expect() should wait for the condition to be met.
-     * For example in `await expect(locator).toHaveText();`
-     */
-    // timeout: 10_000,
-    timeout: 180_000,
-  },
-  /* Run tests in files in parallel */
-  fullyParallel: false,
-  workers: 1,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
+export default defineConfig({
+  testDir: '.',
+  testMatch: ['pool.test.ts', 'simple.test.ts', 'failure.test.ts'],
+  timeout: 120_000,
+  expect: { timeout: 10_000 },
+  fullyParallel: true,
+  // Validated with isolation probes and ten retry-free runs per configuration.
+  workers: Number(process.env.E2E_WORKERS ?? 2),
   forbidOnly: !!process.env.CI,
-  // Retry on CI only.
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  // workers: process.env.CI ? 4 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'github' : 'list',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  retries: process.env.CI ? 1 : 0,
+  maxFailures: 0,
+  ...reporting('fork'),
   use: {
-    baseURL,
-    headless: !!process.env.CI,
-    viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
+    baseURL: `http://localhost:${port}`,
+    headless: true,
+    actionTimeout: 10_000,
+    navigationTimeout: 60_000,
+    screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
     video: 'off',
     colorScheme: 'dark',
-
-    /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-    // actionTimeout: 0,
-
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on',
+    serviceWorkers: 'block',
   },
   globalSetup: './global.setup.ts',
-  globalTeardown: './global.teardown.ts',
-
-  /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  webServer: {
+    command: 'pnpm start',
+    url: `http://localhost:${port}/polygon/swap`,
+    timeout: 120_000,
+    reuseExistingServer: !process.env.CI,
+    gracefulShutdown: { signal: 'SIGTERM', timeout: 5_000 },
+    env: {
+      PORT: String(port),
+      NEXT_PUBLIC_APP_ENV: 'test',
+      NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '137',
+      NEXT_TELEMETRY_DISABLED: '1',
     },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
-    // /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: {
-    //     ...devices['Pixel 5'],
-    //   },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 12'],
-    //   },
-    // },
-  ],
-  maxFailures: process.env.CI ? 1 : 0,
-  // Run your local dev server before starting the tests:
-  // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: [
-    {
-      command: [
-        'NODE_ENV=test',
-        `EDGE_CONFIG=${String(process.env.EDGE_CONFIG)}`,
-        'NEXT_PUBLIC_APP_ENV=test',
-        `NEXT_PUBLIC_CHAIN_ID=${String(process.env.NEXT_PUBLIC_CHAIN_ID)}`,
-        `NEXT_PUBLIC_SUSHI_DATA_API_HOST=${String(process.env.NEXT_PUBLIC_SUSHI_DATA_API_HOST)}`,
-        'npm run start',
-      ].join(' '),
-      port: 3000,
-      timeout: 120_000,
-      reuseExistingServer: !process.env.CI,
-      env: {
-        NODE_ENV: 'test',
-        EDGE_CONFIG: String(process.env.EDGE_CONFIG),
-        NEXT_PUBLIC_APP_ENV: 'test',
-        NEXT_PUBLIC_CHAIN_ID: String(process.env.NEXT_PUBLIC_CHAIN_ID),
-        NEXT_PUBLIC_SUSHI_DATA_API_HOST: String(
-          process.env.NEXT_PUBLIC_SUSHI_DATA_API_HOST,
-        ),
-      },
-      // stderr: 'pipe',
-      // stdout: 'pipe',
-    },
-  ],
-}
-
-export default defineConfig(config)
+  },
+})

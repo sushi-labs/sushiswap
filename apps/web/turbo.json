@@ -18,7 +18,12 @@
         "NEXT_PUBLIC_APP_ENV",
         "NEXT_PUBLIC_API_BASE_URL",
         "NEXT_PUBLIC_SUSHI_DATA_API_HOST",
-        "EDGE_CONFIG"
+        "EDGE_CONFIG",
+        "NEXT_PUBLIC_CHAIN_ID",
+        "NEXT_PUBLIC_PRIVY_APP_ID",
+        "NEXT_PUBLIC_PRIVY_TEST_RUNTIME",
+        "NEXT_PUBLIC_PRIVY_E2E",
+        "NEXT_PUBLIC_ANVIL_PORT"
       ]
     },
     "check": {
@@ -55,9 +60,14 @@
         "CHAIN_ID",
         "DRPC_ID",
         "EDGE_CONFIG",
-        "NODE_ENV"
+        "NODE_ENV",
+        "NEXT_PUBLIC_APP_ENV",
+        "NEXT_PUBLIC_CHAIN_ID",
+        "NEXT_PUBLIC_SUSHI_DATA_API_HOST"
       ],
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": false,
+      "passThroughEnv": ["E2E_WORKERS", "PORT"]
     }
   }
 }
