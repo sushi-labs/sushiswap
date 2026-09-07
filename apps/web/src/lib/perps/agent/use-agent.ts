@@ -145,7 +145,7 @@ export const useAgent = () => {
       })
     },
   })
-  console.log(agentAccount)
+
   return {
     agentAccount,
     agentAddress: storedValue?.publicKey,
