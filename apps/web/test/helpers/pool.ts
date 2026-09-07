@@ -1,5 +1,4 @@
 import { type Page, expect } from '@playwright/test'
-import type { NextFixture } from 'next/experimental/testmode/playwright'
 import { isZapSupportedChainId } from 'src/config'
 import { NativeAddress } from 'src/lib/constants'
 import {
@@ -15,6 +14,11 @@ import {
   computeSushiSwapV2PoolAddress,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/evm'
+import type { TransactionReceipt } from 'viem'
+import { graphRequest } from '../api-mocks'
+import { transactionTimeout } from '../constants'
+import type { Fork } from '../fixtures'
+import type { NetworkMocks } from '../intercept-anvil'
 import { BaseActions } from './base' // Adjust the import path as necessary
 
 interface CreateV3PoolArgs {
@@ -48,13 +52,12 @@ interface AddV2LiquidityArgs {
   amount0: string
   amount1: string
 }
-const BASE_URL = 'http://localhost:3000'
 
 export class PoolPage extends BaseActions {
   readonly chainId: EvmChainId
   readonly nativeToken: EvmNative
-  constructor(page: Page, chainId: EvmChainId) {
-    super(page)
+  constructor(page: Page, chainId: EvmChainId, fork: Fork) {
+    super(page, fork)
     this.chainId = chainId
     this.nativeToken = EvmNative.fromChainId(chainId)
   }
@@ -63,7 +66,7 @@ export class PoolPage extends BaseActions {
     await this.page.goto(url)
   }
 
-  async createV3Pool(args: CreateV3PoolArgs) {
+  async createV3Pool(args: CreateV3PoolArgs): Promise<TransactionReceipt> {
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
     const feeOptionSelector = this.page.locator(
@@ -74,8 +77,8 @@ export class PoolPage extends BaseActions {
     await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
 
     const startPriceInput = this.page.locator('[testdata-id=start-price-input]')
-    await startPriceInput.isVisible()
-    await startPriceInput.isEnabled()
+    await expect(startPriceInput).toBeVisible()
+    await expect(startPriceInput).toBeEnabled()
     await startPriceInput.fill(args.startPrice, { timeout: 15_000 })
 
     // Fill min price
@@ -99,9 +102,10 @@ export class PoolPage extends BaseActions {
       const approveTokenLocator = this.page.locator(
         `[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`,
       )
-      await expect(approveTokenLocator).toBeVisible()
-      await expect(approveTokenLocator).toBeEnabled()
-      await approveTokenLocator.click()
+      await this.approveIfNeeded(
+        approveTokenLocator,
+        this.page.locator('[testdata-id=add-liquidity-preview-button]'),
+      )
     }
     const previewLocator = this.page.locator(
       '[testdata-id=add-liquidity-preview-button]',
@@ -109,28 +113,31 @@ export class PoolPage extends BaseActions {
     await expect(previewLocator).toBeVisible({ timeout: 10_000 })
     await expect(previewLocator).toBeEnabled()
     await previewLocator.click()
-    await this.page
-      .locator('[testdata-id=confirm-add-liquidity-button]')
-      .click()
+    const receipt = await this.transact('Add V3 liquidity', () =>
+      this.page.locator('[testdata-id=confirm-add-liquidity-button]').click(),
+    )
 
     const expectedText = `(Created the ${args.token0.symbol}/${args.token1.symbol} liquidity pool)`
     const regex = new RegExp(expectedText)
-    expect(this.page.getByText(regex))
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
+    return receipt
   }
 
-  async createV2Pool(args: CreateV2PoolArgs) {
+  async createV2Pool(args: CreateV2PoolArgs): Promise<TransactionReceipt> {
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
 
     const input0 = this.page.locator('[testdata-id=add-liquidity-token0-input]')
     await expect(input0).toBeEnabled()
     await input0.fill(args.amount0)
-    expect(input0).toHaveValue(args.amount0)
+    await expect(input0).toHaveValue(args.amount0)
 
     const input1 = this.page.locator('[testdata-id=add-liquidity-token1-input]')
     await expect(input1).toBeEnabled()
     await input1.fill(args.amount1)
-    expect(input1).toHaveValue(args.amount1)
+    await expect(input1).toHaveValue(args.amount1)
 
     await this.switchNetwork(this.chainId)
 
@@ -140,9 +147,10 @@ export class PoolPage extends BaseActions {
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
-    await expect(approveTokenLocator).toBeVisible()
-    await expect(approveTokenLocator).toBeEnabled()
-    await approveTokenLocator.click()
+    await this.approveIfNeeded(
+      approveTokenLocator,
+      this.page.locator('[testdata-id=add-liquidity-button]'),
+    )
 
     const reviewSelector = '[testdata-id=add-liquidity-button]'
     const reviewButton = this.page.locator(reviewSelector)
@@ -155,14 +163,19 @@ export class PoolPage extends BaseActions {
     )
     await expect(confirmButton).toBeVisible()
     await expect(confirmButton).toBeEnabled()
-    await confirmButton.click()
+    const receipt = await this.transact('Add V2 liquidity', () =>
+      confirmButton.click(),
+    )
 
     const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
     const regex = new RegExp(expectedText)
-    expect(this.page.getByText(regex))
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
+    return receipt
   }
 
-  async addLiquidityV2(args: AddV2LiquidityArgs) {
+  async addLiquidityV2(args: AddV2LiquidityArgs): Promise<TransactionReceipt> {
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
 
@@ -184,9 +197,18 @@ export class PoolPage extends BaseActions {
     await input.fill(
       args.token0.type === 'native' ? args.amount1 : args.amount0,
     )
-    expect(input).toHaveValue(
+    await expect(input).toHaveValue(
       args.token0.type === 'native' ? args.amount1 : args.amount0,
     )
+
+    if (
+      await this.page
+        .locator(`[testdata-id=switch-network-${this.chainId}-button]`)
+        .first()
+        .isVisible()
+    ) {
+      await this.switchNetwork(this.chainId)
+    }
 
     const approveTokenId = `approve-token-${
       args.token0.type === 'native' ? 1 : 0
@@ -194,9 +216,10 @@ export class PoolPage extends BaseActions {
     const approveTokenLocator = this.page.locator(
       `[testdata-id=${approveTokenId}]`,
     )
-    await expect(approveTokenLocator).toBeVisible()
-    await expect(approveTokenLocator).toBeEnabled()
-    await approveTokenLocator.click()
+    await this.approveIfNeeded(
+      approveTokenLocator,
+      this.page.locator('[testdata-id=add-liquidity-button]'),
+    )
 
     const reviewSelector = '[testdata-id=add-liquidity-button]'
     const reviewButton = this.page.locator(reviewSelector)
@@ -209,14 +232,19 @@ export class PoolPage extends BaseActions {
     )
     await expect(confirmButton).toBeVisible()
     await expect(confirmButton).toBeEnabled()
-    await confirmButton.click()
+    const receipt = await this.transact('Add V2 liquidity', () =>
+      confirmButton.click(),
+    )
 
     const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
     const regex = new RegExp(expectedText)
-    expect(this.page.getByText(regex))
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
+    return receipt
   }
 
-  async addLiquidityV3(args: AddV3LiquidityArgs) {
+  async addLiquidityV3(args: AddV3LiquidityArgs): Promise<TransactionReceipt> {
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
     const feeOptionSelector = this.page.locator(
@@ -225,6 +253,14 @@ export class PoolPage extends BaseActions {
     await expect(feeOptionSelector).toBeEnabled()
     await feeOptionSelector.click()
     await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+
+    const zap = this.page.locator('[testdata-id=toggle-zap-enabled]')
+    if (isZapSupportedChainId(this.chainId)) {
+      await expect(zap).toBeVisible()
+      if ((await zap.getAttribute('data-state')) === 'checked')
+        await zap.click()
+      await expect(zap).toHaveAttribute('data-state', 'unchecked')
+    }
 
     // Fill min price
     const minPriceInput = this.page.locator('[testdata-id=min-price-input]')
@@ -243,15 +279,25 @@ export class PoolPage extends BaseActions {
       .fill(args.amount)
 
     if (
+      await this.page
+        .locator(`[testdata-id=switch-network-${this.chainId}-button]`)
+        .first()
+        .isVisible()
+    ) {
+      await this.switchNetwork(this.chainId)
+    }
+
+    if (
       (args.amountBelongsToToken0 && args.token0.type === 'token') ||
       (!args.amountBelongsToToken0 && args.token1.type === 'token')
     ) {
       const approveTokenLocator = this.page.locator(
         `[testdata-id=${`approve-erc20-${tokenOrderNumber}-button`}]`,
       )
-      await expect(approveTokenLocator).toBeVisible()
-      await expect(approveTokenLocator).toBeEnabled()
-      await approveTokenLocator.click()
+      await this.approveIfNeeded(
+        approveTokenLocator,
+        this.page.locator('[testdata-id=add-liquidity-preview-button]'),
+      )
     }
     const previewLocator = this.page.locator(
       '[testdata-id=add-liquidity-preview-button]',
@@ -259,17 +305,23 @@ export class PoolPage extends BaseActions {
     await expect(previewLocator).toBeVisible({ timeout: 10_000 })
     await expect(previewLocator).toBeEnabled()
     await previewLocator.click()
-    await this.page
-      .locator('[testdata-id=confirm-add-liquidity-button]')
-      .click()
+    const receipt = await this.transact('Add V3 liquidity', () =>
+      this.page.locator('[testdata-id=confirm-add-liquidity-button]').click(),
+    )
 
     const expectedText = `(Successfully added liquidity to the ${args.token0.symbol}/${args.token1.symbol} pair)`
 
     const regex = new RegExp(expectedText)
-    expect(this.page.getByText(regex))
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
+    return receipt
   }
 
-  async removeLiquidityV3(fakeToken: EvmToken) {
+  async removeLiquidityV3(
+    fakeToken: EvmToken,
+    positionId: bigint,
+  ): Promise<void> {
     const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[this.chainId as SushiSwapV3ChainId],
@@ -277,22 +329,10 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
       fee: SushiSwapV3FeeAmount.HIGH,
     })
-    const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/positions`,
-    )
+    const url = `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/${positionId}`
     await this.page.goto(url)
     await this.connect()
 
-    const concentratedPositionTableSelector = this.page.locator(
-      '[testdata-id=concentrated-positions-loading-0]',
-    )
-    await expect(concentratedPositionTableSelector).not.toBeVisible()
-
-    const firstPositionSelector = this.page.locator(
-      '[testdata-id=concentrated-positions-0-0-td]',
-    )
-    await expect(firstPositionSelector).toBeVisible()
-    await firstPositionSelector.click()
     const removeLiquidityTabSelector = this.page.locator(
       '[testdata-id=remove-tab]',
     )
@@ -314,10 +354,14 @@ export class PoolPage extends BaseActions {
     )
     await expect(confirmLiquidityLocator).toBeVisible()
     await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
-    await confirmLiquidityLocator.click({ timeout: 5_000 })
+    await this.transact('Remove V3 liquidity', () =>
+      confirmLiquidityLocator.click(),
+    )
 
-    const regex = /('(Successfully removed liquidity from the .* pair)')/
-    expect(this.page.getByText(regex))
+    const regex = /Successfully removed liquidity from the .* pair/
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
   }
 
   async removeLiquidityV2(fakeToken: EvmToken) {
@@ -328,9 +372,7 @@ export class PoolPage extends BaseActions {
       tokenB: fakeToken,
     })
 
-    const url = BASE_URL.concat(
-      `/${this.chainId.toString()}/pool/v2/${poolAddress.toLowerCase()}/remove`,
-    )
+    const url = `/${this.chainId.toString()}/pool/v2/${poolAddress.toLowerCase()}/remove`
     await this.page.goto(url)
     await this.connect()
 
@@ -364,7 +406,7 @@ export class PoolPage extends BaseActions {
     const approveSlpLocator = this.page.locator(`[testdata-id=${approveSlpId}]`)
     await expect(approveSlpLocator).toBeVisible()
     await expect(approveSlpLocator).toBeEnabled()
-    await approveSlpLocator.click()
+    await this.transact('Approve LP token', () => approveSlpLocator.click())
 
     const removeLiquidityLocator = this.page.locator(
       '[testdata-id=remove-liquidity-button]',
@@ -372,10 +414,14 @@ export class PoolPage extends BaseActions {
 
     await expect(removeLiquidityLocator).toBeVisible()
     await expect(removeLiquidityLocator).toBeEnabled()
-    await removeLiquidityLocator.click()
+    await this.transact('Remove V2 liquidity', () =>
+      removeLiquidityLocator.click(),
+    )
 
-    const regex = /('(Successfully removed liquidity from the .* pair)')/
-    expect(this.page.getByText(regex))
+    const regex = /Successfully removed liquidity from the .* pair/
+    await expect(this.page.getByText(regex).first()).toBeVisible({
+      timeout: transactionTimeout,
+    })
   }
 
   // Private helper methods for internal class use
@@ -385,6 +431,14 @@ export class PoolPage extends BaseActions {
       `[testdata-id=${selectorInfix}-select-button]`,
     )
     await expect(tokenSelector).toBeVisible()
+    const selected = new URL(this.page.url()).searchParams.get(
+      order === 'FIRST' ? 'fromCurrency' : 'toCurrency',
+    )
+    const requested = currency.type === 'native' ? 'NATIVE' : currency.address
+    if (selected?.toLowerCase() === requested.toLowerCase()) {
+      await expect(tokenSelector).toContainText(currency.symbol ?? '')
+      return
+    }
     await tokenSelector.click()
 
     if (currency.type === 'native') {
@@ -396,12 +450,11 @@ export class PoolPage extends BaseActions {
       await chipToSelect.click()
       await expect(tokenSelector).toContainText(currency.symbol as string)
     } else {
-      // const tokenSearch = this.page.locator(
-      //   `[testdata-id=token-selector-address-input]`,
-      // )
-      // await expect(tokenSearch).toBeVisible()
-      // await expect(tokenSearch).toBeEnabled()
-      // await tokenSearch.fill(currency.address)
+      const tokenSearch = this.page.locator(
+        '[testdata-id=token-selector-address-input]',
+      )
+      await expect(tokenSearch).toBeEnabled()
+      await tokenSearch.fill(currency.address)
 
       const tokenToSelect = this.page.locator(
         `[testdata-id=token-selector-row-${currency.address.toLowerCase()}]`,
@@ -414,13 +467,13 @@ export class PoolPage extends BaseActions {
   }
 
   async mockPoolApi(
-    next: NextFixture,
+    mocks: NetworkMocks,
     token0: EvmToken,
     token1: EvmToken,
     fee: number,
     protocol: 'SUSHISWAP_V2' | 'SUSHISWAP_V3',
   ) {
-    next.onFetch(async (request) => {
+    mocks.add(async (request) => {
       // console.log('REQUEST', request.url.toLowerCase())
 
       const [tokenA, tokenB] = token0.sortsBefore(token1)
@@ -558,76 +611,10 @@ export class PoolPage extends BaseActions {
             }
 
       if (request.url.toLowerCase().endsWith('/graphql')) {
-        console.log({ request })
-        const requestBody = await request.json()
+        const requestBody = graphRequest.parse(await request.json())
         const operationName = requestBody.operationName
-        console.log({ operationName })
 
-        if (operationName === 'TrendingTokens') {
-          return new Response(
-            JSON.stringify({
-              data: {
-                trendingTokens: [],
-              },
-            }),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          )
-        }
-
-        if (operationName === 'TokenList') {
-          return new Response(
-            JSON.stringify({
-              data: {
-                trendingTokens: [
-                  {
-                    ...tokenA,
-                    approved: true,
-                  },
-                  {
-                    ...tokenB,
-                    approved: true,
-                  },
-                ],
-              },
-            }),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          )
-        }
-
-        if (operationName === 'TokenListBalances') {
-          return new Response(
-            JSON.stringify({
-              data: {
-                tokenListBalances: [
-                  {
-                    ...tokenA.toJSON(),
-                    approved: true,
-                    balance: '10000000000000000000000',
-                  },
-                  {
-                    ...tokenB.toJSON(),
-                    approved: true,
-                    balance: '10000000000000000000000',
-                  },
-                ],
-              },
-            }),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            },
-          )
-        }
-        if (operationName.includes('Pool')) {
+        if (operationName === 'V2Pool' || operationName === 'V3Pool') {
           return new Response(JSON.stringify(mockPool), {
             headers: {
               'Content-Type': 'application/json',

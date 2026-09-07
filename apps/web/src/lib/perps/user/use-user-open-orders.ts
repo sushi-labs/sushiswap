@@ -1,9 +1,15 @@
+import { frontendOpenOrders } from '@nktkas/hyperliquid/api/info'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAssetListState } from '~evm/perps/_ui/asset-selector'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
+import { hlHttpTransport } from '../transports'
 
-export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
+export const useUserOpenOrders = ({
+  coin,
+  isViewAll = false,
+}: { coin?: string; isViewAll?: boolean }) => {
   const {
     state: { activeAddress },
   } = useActiveAccountState()
@@ -26,12 +32,34 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
       },
     },
   } = useAssetListState()
-  const isLoading = isLoadingOpenOrders || isAssetListLoading
-  const isError = isErrorOpenOrders || isAssetListError
+  const allOpenOrdersQuery = useQuery({
+    queryKey: ['useUserOpenOrders', 'all', address],
+    queryFn: async ({ signal }) => {
+      if (!address) {
+        throw new Error('address is undefined')
+      }
+
+      return frontendOpenOrders(
+        { transport: hlHttpTransport },
+        { user: address, dex: 'ALL_DEXS' },
+        signal,
+      )
+    },
+    enabled: Boolean(address && isViewAll && assetList),
+    staleTime: 0,
+  })
+
+  const openOrders = isViewAll ? allOpenOrdersQuery.data : data?.orders
+  const isLoading = isViewAll
+    ? allOpenOrdersQuery.isLoading || isAssetListLoading
+    : isLoadingOpenOrders || isAssetListLoading
+  const isError = isViewAll
+    ? allOpenOrdersQuery.isError || isAssetListError
+    : isErrorOpenOrders || isAssetListError
 
   const formattedData = useMemo(() => {
-    if (!data) return []
-    const orders = data.orders
+    if (!openOrders) return []
+    const orders = openOrders
       .map((i) => {
         //HL outcomes (their prediction market) has a coin name that starts with a #, which is not a valid asset in our system. We will filter these out for now.
         if (i.coin?.startsWith('#')) return undefined
@@ -56,7 +84,7 @@ export const useUserOpenOrders = ({ coin }: { coin?: string }) => {
       return orders?.filter((o) => o?.coin === coin)
     }
     return orders
-  }, [data, assetList, coin])
+  }, [openOrders, assetList, coin])
 
   return useMemo(() => {
     if (!address) {

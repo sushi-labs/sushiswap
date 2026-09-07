@@ -9,6 +9,7 @@ import { DepositsWithdrawalsTable } from '../_ui/trade-tables/deposit-withdrawal
 import { ExportCsvButton } from '../_ui/trade-tables/export-csv-button'
 import { FundingHistoryTable } from '../_ui/trade-tables/funding-history-table'
 import { InterestTable } from '../_ui/trade-tables/interest-table'
+import { OpenOrdersTable } from '../_ui/trade-tables/open-orders-table'
 import { OrderHistoryTable } from '../_ui/trade-tables/order-history-table'
 import { TradeHistoryTable } from '../_ui/trade-tables/trade-history-table'
 import {
@@ -50,6 +51,10 @@ function DepositsWithdrawalsViewAllTable() {
   return <DepositsWithdrawalsTable isViewAll />
 }
 
+function OpenOrdersViewAllTable() {
+  return <OpenOrdersTable isViewAll />
+}
+
 const viewAllTables = {
   [viewAllHrefs[0]]: {
     title: 'Trade History',
@@ -78,6 +83,10 @@ const viewAllTables = {
   [viewAllHrefs[6]]: {
     title: 'TWAP Fill History',
     Component: FillHistoryTwapViewAllTable,
+  },
+  [viewAllHrefs[7]]: {
+    title: 'Open Orders',
+    Component: OpenOrdersViewAllTable,
   },
 } satisfies Record<ViewAllHref, ViewAllTable>
 

@@ -2,6 +2,10 @@ name: "Install"
 description: "Install dependencies"
 
 inputs:
+  foundry-version:
+    description: "Foundry version"
+    required: false
+    default: stable
   node-version:
     description: "Node.js version"
     required: false
@@ -12,6 +16,8 @@ runs:
   steps:
     - name: Set up foundry
       uses: foundry-rs/foundry-toolchain@v1
+      with:
+        version: ${{ inputs.foundry-version }}
 
     # - name: Install playwright
     #   shell: bash

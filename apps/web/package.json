@@ -14,7 +14,9 @@
     "lint": "TIMING=1 next lint",
     "lint:fix": "TIMING=1 next lint --fix",
     "start": "next start",
-    "test": "npx playwright test -c test/playwright.config.ts",
+    "test": "playwright test -c test/playwright.config.ts",
+    "test:benchmark": "tsx test/scripts/benchmark.ts",
+    "test:harness": "playwright test -c test/harness-playwright.config.ts",
     "test:privy": "playwright test -c test/privy-playwright.config.ts",
     "test:privy-live": "playwright test -c test/privy-live-playwright.config.ts",
     "test:unit": "vitest --watch=false src"
