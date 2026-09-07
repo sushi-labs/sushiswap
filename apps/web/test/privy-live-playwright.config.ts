@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test'
 import config from './playwright.config'
+import { reporting } from './reporting'
 
 const port = Number(process.env.PORT ?? 3000)
 const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID
@@ -10,9 +11,11 @@ if (!privyAppId) {
 
 export default defineConfig({
   ...config,
+  ...reporting('privy-live'),
+  workers: 1,
+  fullyParallel: false,
   quiet: false,
   globalSetup: undefined,
-  globalTeardown: undefined,
   testMatch: ['privy-live.test.ts'],
   timeout: 240_000,
   retries: process.env.CI ? 1 : 0,
@@ -38,6 +41,7 @@ export default defineConfig({
         timeout: 5_000,
       },
       env: {
+        PORT: String(port),
         NEXT_PUBLIC_APP_ENV: 'test',
         NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '137',
         NEXT_PUBLIC_PRIVY_APP_ID: privyAppId,

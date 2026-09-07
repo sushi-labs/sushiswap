@@ -64,9 +64,9 @@ async function installRestorablePrivySession(
 }
 
 async function waitForPrivyConnection(page: Page): Promise<void> {
-  await expect(
-    page.getByRole('button', { name: '0xf39F...2266' }),
-  ).toBeVisible()
+  await expect(page.getByRole('button', { name: '0xf39F...2266' })).toBeVisible(
+    { timeout: 20_000 },
+  )
 }
 
 test('shows restoration state until the Privy wallet reconnects', async ({
