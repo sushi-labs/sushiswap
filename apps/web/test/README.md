@@ -75,6 +75,10 @@ through the UI. Position IDs come from mint receipts, never a table row index.
   in a separate job. This uses the existing GitHub test-account secrets.
 - Fork builds, test execution, and Privy dev-server startup appear as separate
   CI phases. E2E execution is not Turbo-cached; app builds remain cacheable.
+- GitHub Actions restores the Turbo build cache across commits, even when Turbo
+  remote caching is unavailable. Turbo still validates source/dependency/env
+  hashes before reusing outputs. Successful builds are saved before tests run,
+  so a later test failure does not discard the build cache.
 - Each suite writes `test-results/<suite>/artifacts`, `html`, and `results.json`.
   Reports include durations, retry attempts, skipped tests, and named transaction
   steps. Failed tests retain their initial trace and screenshot; the `network`
