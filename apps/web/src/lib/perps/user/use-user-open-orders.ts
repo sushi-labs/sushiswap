@@ -25,7 +25,6 @@ export const useUserOpenOrders = ({
   } = useUserState()
   const {
     state: {
-      uniqueDexes,
       assetListQuery: {
         data: assetList,
         isLoading: isAssetListLoading,
@@ -34,23 +33,17 @@ export const useUserOpenOrders = ({
     },
   } = useAssetListState()
   const allOpenOrdersQuery = useQuery({
-    queryKey: ['useUserOpenOrders', 'all', address, uniqueDexes],
+    queryKey: ['useUserOpenOrders', 'all', address],
     queryFn: async ({ signal }) => {
       if (!address) {
         throw new Error('address is undefined')
       }
 
-      // The default DEX includes spot orders; builder DEXes need separate requests.
-      const orders = await Promise.all(
-        ['', ...uniqueDexes].map((dex) =>
-          frontendOpenOrders(
-            { transport: hlHttpTransport },
-            { user: address, dex },
-            signal,
-          ),
-        ),
+      return frontendOpenOrders(
+        { transport: hlHttpTransport },
+        { user: address, dex: 'ALL_DEXS' },
+        signal,
       )
-      return orders.flat()
     },
     enabled: Boolean(address && isViewAll && assetList),
     staleTime: 0,
