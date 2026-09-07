@@ -54,8 +54,8 @@ export const useModifyOrder = () => {
       activeAccount?.address,
     ],
     mutationFn: async (modifyOrderData: ModifyOrderData) => {
-      if (!agentAccount || !modifyOrderData) {
-        return
+      if (!agentAccount) {
+        throw new Error('Enable trading to modify orders.')
       }
       const asset = assetList?.get(modifyOrderData.asset)
       if (!asset) throw new Error(`Unknown c.asset: ${modifyOrderData.asset}`)
