@@ -87,7 +87,7 @@ export const AssetTabs = () => {
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className="flex w-fit !px-1.5 !text-xs capitalize !bg-transparent !border-transparent"
+            className="w-fit !px-1.5 !text-xs capitalize !bg-transparent !border-transparent"
           >
             {<span className="mr-1">{tab.icon}</span>}
             {tab.value}

@@ -21,7 +21,7 @@ export const Stats: FC = () => {
                   {data?.stats?.price.formatted}
                 </span>
               ) : (
-                <SkeletonText fontSize="3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">
                 Price
@@ -35,7 +35,7 @@ export const Stats: FC = () => {
                   {data?.stats?.liquidity.formatted}
                 </span>
               ) : (
-                <SkeletonText fontSize="3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">
                 Total Liquidity
@@ -49,7 +49,7 @@ export const Stats: FC = () => {
                   {data?.stats?.volume.formatted}
                 </span>
               ) : (
-                <SkeletonText fontSize="3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">
                 Total Volume
@@ -63,7 +63,7 @@ export const Stats: FC = () => {
                   {data?.stats?.pairs.formatted}
                 </span>
               ) : (
-                <SkeletonText fontSize="3xl" className="w-[120px]" />
+                <SkeletonText fontSize="3xl" />
               )}
               <span className="text-xs font-medium uppercase text-neutral-400 -mt-0.5">
                 Total Pairs

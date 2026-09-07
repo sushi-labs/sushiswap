@@ -13,13 +13,10 @@ import {
 } from '@sushiswap/notifications'
 import {
   Button,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   FormattedNumber,
   List,
@@ -29,6 +26,11 @@ import { useMutation } from '@tanstack/react-query'
 import React, { type FC, type ReactNode, useMemo, useState } from 'react'
 import { logger } from 'src/lib/logger'
 import { ORBS_EXPLORER_URL } from 'src/lib/swap/twap'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { type EvmAddress, type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { numberToHex, parseSignature } from 'viem'

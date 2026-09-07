@@ -2,18 +2,13 @@
 
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
   Dots,
   Switch,
-  useDialog,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
@@ -21,6 +16,13 @@ import type React from 'react'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Amount, Fraction } from 'sushi'

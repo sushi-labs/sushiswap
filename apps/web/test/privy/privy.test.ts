@@ -1,5 +1,9 @@
 import { type Page, expect, test } from '@playwright/test'
 import {
+  PRIVY_EVM_CONNECTED_STORAGE_KEY,
+  PRIVY_EVM_CONNECTOR_ID,
+} from 'src/lib/wallet/privy/privy-evm-connector'
+import {
   TEST_PRIVY_ADDRESS,
   TEST_PRIVY_CHAIN_ID_STORAGE_KEY,
   TEST_PRIVY_LAST_REQUEST_CHAIN_ID_STORAGE_KEY,
@@ -77,6 +81,28 @@ test('shows restoration state until the Privy wallet reconnects', async ({
   await expect(page.getByText('Checking Wallet')).toBeVisible()
   await waitForPrivyConnection(page)
   await expect(page.getByText('Checking Wallet')).toBeHidden()
+})
+
+test('finishes connecting after a Privy OAuth redirect', async ({ page }) => {
+  await page.addInitScript(
+    ({ connectedStorageKey, connectorId }) => {
+      window.localStorage.setItem(`wagmi.${connectedStorageKey}`, 'true')
+      window.localStorage.setItem(
+        'wagmi.recentConnectorId',
+        JSON.stringify(connectorId),
+      )
+    },
+    {
+      connectedStorageKey: PRIVY_EVM_CONNECTED_STORAGE_KEY,
+      connectorId: PRIVY_EVM_CONNECTOR_ID,
+    },
+  )
+
+  await page.goto(
+    `${ETHEREUM_SWAP_PATH}?privy_oauth_state=test-state&privy_oauth_provider=twitter&privy_oauth_code=test-code`,
+  )
+
+  await waitForPrivyConnection(page)
 })
 
 test('switches Privy’s backing provider from Ethereum to Robinhood', async ({

@@ -24,7 +24,7 @@ const cardVariants = cva('relative rounded-xl border border-accent', {
 })
 
 export interface CardProps
-  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
@@ -76,13 +76,13 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = 'CardHeader'
 
 const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
     className={classNames(
-      'text-lg font-semibold leading-none tracking-tight',
+      'text-lg font-semibold [line-height:1] tracking-tight',
       className,
     )}
     {...props}
@@ -91,8 +91,8 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = 'CardTitle'
 
 const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}

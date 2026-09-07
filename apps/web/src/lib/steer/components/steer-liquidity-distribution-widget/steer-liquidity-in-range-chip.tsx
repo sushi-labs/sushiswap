@@ -33,8 +33,7 @@ export const SteerLiquidityInRangeChip: FC<SteerLiquidityInRangeChipProps> = ({
     return vault.lowerTick < activeTick && vault.upperTick > activeTick
   }, [vault.lowerTick, vault.upperTick, activeTick])
 
-  if (isActiveTickLoading)
-    return <SkeletonBox className="w-[107px] h-5 rounded-full" />
+  if (isActiveTickLoading) return <SkeletonBox className="w-[107px] h-5" />
 
   return (
     <>

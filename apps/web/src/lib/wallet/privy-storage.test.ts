@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  getPrivyLoginMethod,
   hasStoredPrivySession,
+  isPrivyOAuthCallback,
   isPrivySessionStorageKey,
+  setPrivyLoginMethod,
   setPrivySvmReconnect,
   shouldReconnectPrivySvm,
 } from './privy-storage'
@@ -105,6 +108,21 @@ describe('Privy storage', () => {
     expect(isPrivySessionStorageKey(null)).toBe(false)
   })
 
+  it('recognizes only complete Privy OAuth callbacks', () => {
+    expect(
+      isPrivyOAuthCallback(
+        '?privy_oauth_state=state&privy_oauth_provider=twitter&privy_oauth_code=code',
+      ),
+    ).toBe(true)
+    expect(
+      isPrivyOAuthCallback(
+        '?privy_oauth_state=state&privy_oauth_provider=twitter',
+      ),
+    ).toBe(false)
+    expect(isPrivyOAuthCallback('?privy_oauth_code=')).toBe(false)
+    expect(isPrivyOAuthCallback('?unrelated=value')).toBe(false)
+  })
+
   it('stores only Solana reconnect intent in Sushi storage', () => {
     expect(shouldReconnectPrivySvm()).toBe(false)
 
@@ -115,11 +133,29 @@ describe('Privy storage', () => {
     expect(shouldReconnectPrivySvm()).toBe(false)
   })
 
+  it('stores and validates the active Privy login method', () => {
+    expect(getPrivyLoginMethod()).toBeUndefined()
+
+    setPrivyLoginMethod('twitter')
+    expect(getPrivyLoginMethod()).toBe('twitter')
+
+    setPrivyLoginMethod('email')
+    expect(getPrivyLoginMethod()).toBe('email')
+
+    window.localStorage.setItem('sushi:privy-login-method', 'wallet')
+    expect(getPrivyLoginMethod()).toBeUndefined()
+
+    setPrivyLoginMethod(undefined)
+    expect(getPrivyLoginMethod()).toBeUndefined()
+  })
+
   it('fails closed when browser storage is unavailable', () => {
     installBrowser(createBlockedStorage())
 
     expect(hasStoredPrivySession()).toBe(false)
+    expect(getPrivyLoginMethod()).toBeUndefined()
     expect(shouldReconnectPrivySvm()).toBe(false)
+    expect(() => setPrivyLoginMethod('twitter')).not.toThrow()
     expect(() => setPrivySvmReconnect(true)).not.toThrow()
   })
 })

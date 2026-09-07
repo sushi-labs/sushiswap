@@ -80,10 +80,10 @@ export const ListMenuItem: ListMenuItemComponent = ({
           }}
         >
           {React.createElement(Icon, {
-            ...iconProps,
             width: 18,
             height: 18,
             strokeWidth: 2,
+            ...iconProps,
             className: classNames(iconProps?.className, 'text-blue-500'),
           })}
         </div>

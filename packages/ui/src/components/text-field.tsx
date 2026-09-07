@@ -175,6 +175,7 @@ const Component = <T extends InputType>(
         className={textFieldVariants({
           isError: isError ? 'yes' : 'no',
           variant,
+          size,
           hasIcon: Icon ? 'yes' : 'no',
           hasUnit: unit ? 'yes' : 'no',
           className: classNames(

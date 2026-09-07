@@ -277,6 +277,27 @@ async function safelyRunStorageOperation(
   } catch {}
 }
 
+/** Persists enough intent for Wagmi to finish connecting after an OAuth redirect. */
+export async function preparePrivyEvmReconnect(config: Config): Promise<void> {
+  await Promise.all([
+    safelyRunStorageOperation(
+      config.storage?.removeItem(PRIVY_EVM_DISCONNECTED_STORAGE_KEY),
+    ),
+    safelyRunStorageOperation(
+      config.storage?.setItem(PRIVY_EVM_CONNECTED_STORAGE_KEY, true),
+    ),
+    safelyRunStorageOperation(
+      config.storage?.setItem('recentConnectorId', PRIVY_EVM_CONNECTOR_ID),
+    ),
+  ])
+}
+
+export async function clearPrivyEvmReconnect(config: Config): Promise<void> {
+  await safelyRunStorageOperation(
+    config.storage?.removeItem(PRIVY_EVM_CONNECTED_STORAGE_KEY),
+  )
+}
+
 export function privyEvmConnector({
   connectTimeoutMs = DEFAULT_CONNECT_TIMEOUT_MS,
   getWagmiState,

@@ -135,7 +135,7 @@ export function TradeActivitySkeleton() {
             <SkeletonBox className="ml-auto h-2.5 w-16 rounded-sm" />
           </div>
         </div>
-        <SkeletonBox className="mt-3 h-2 w-full rounded-full" />
+        <SkeletonBox className="mt-3 h-2 w-full" />
         <div className="mt-3 flex items-start justify-between gap-4">
           <div className="space-y-1.5">
             <SkeletonBox className="h-4 w-16 rounded-sm" />

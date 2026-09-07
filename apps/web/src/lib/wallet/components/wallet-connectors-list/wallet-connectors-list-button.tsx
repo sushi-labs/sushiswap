@@ -2,7 +2,9 @@ import { Button, Chip, Loader } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { getChainById } from 'sushi'
 import { DEFAULT_CHAIN_ID_BY_NAMESPACE } from '../../config'
+import { usePrivyRuntime } from '../../privy/use-privy-runtime'
 import { useWalletState } from '../../provider/wallet-state-provider'
+import type { WalletLoginMethod, WalletWithState } from '../../types'
 import { ConnectWalletButton } from '../connect-wallet-button'
 import type { ConnectWalletButtonProps } from '../connect-wallet-button/types'
 
@@ -13,11 +15,16 @@ export function WalletConnectorsListButton({
   variant?: 'wallet' | 'namespace'
 }) {
   const { wallet } = props
-  const rightChip = props.wallet.isRecent
-    ? 'Recent'
-    : props.wallet.isInstalled
-      ? 'Installed'
-      : undefined
+  const privyRuntime = usePrivyRuntime()
+  const rightChip = getWalletStatusLabel({
+    activePrivyLoginMethod:
+      privyRuntime.status === 'ready' && privyRuntime.authenticated
+        ? privyRuntime.loginMethod
+        : undefined,
+    hasPrivySession:
+      privyRuntime.status === 'ready' && privyRuntime.authenticated,
+    wallet,
+  })
 
   const {
     isPending: isWalletPending,
@@ -45,7 +52,6 @@ export function WalletConnectorsListButton({
         size="lg"
         variant="ghost"
         className="!justify-between gap-3 !rounded-none"
-        loading={isPending}
         disabled={isWalletPending}
       >
         <div className="flex flex-1 justify-between gap-3">
@@ -81,4 +87,22 @@ export function WalletConnectorsListButton({
       </Button>
     </ConnectWalletButton>
   )
+}
+
+export function getWalletStatusLabel({
+  activePrivyLoginMethod,
+  hasPrivySession,
+  wallet,
+}: {
+  activePrivyLoginMethod: WalletLoginMethod | undefined
+  hasPrivySession: boolean
+  wallet: WalletWithState
+}): 'Logged in' | 'Recent' | 'Installed' | undefined {
+  if (hasPrivySession && wallet.loginMethod) {
+    return wallet.loginMethod === activePrivyLoginMethod
+      ? 'Logged in'
+      : undefined
+  }
+  if (wallet.isRecent) return 'Recent'
+  return wallet.isInstalled ? 'Installed' : undefined
 }

@@ -82,7 +82,6 @@ export function DifficultyFilterDropdownClient({
                 key={difficulty.slug}
                 value={difficulty.name}
                 title={difficulty.name}
-                className="px-4 text-base"
               >
                 {difficulty.name}
               </SelectItem>

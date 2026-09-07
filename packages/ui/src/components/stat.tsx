@@ -22,9 +22,9 @@ interface StatProps
     VariantProps<typeof statVariants> {}
 
 const Stat = forwardRef<HTMLDivElement, StatProps>(
-  ({ children, className, size }, ref) => {
+  ({ children, className, size, ...props }, ref) => {
     return (
-      <div ref={ref} className={statVariants({ size, className })}>
+      <div ref={ref} className={statVariants({ size, className })} {...props}>
         {children}
       </div>
     )
@@ -58,9 +58,13 @@ interface StatLabelProps
     VariantProps<typeof statLabelVariants> {}
 
 const StatLabel = forwardRef<HTMLSpanElement, StatLabelProps>(
-  ({ align, children, size, className }, ref) => {
+  ({ align, children, size, className, ...props }, ref) => {
     return (
-      <span ref={ref} className={statLabelVariants({ size, align, className })}>
+      <span
+        ref={ref}
+        className={statLabelVariants({ size, align, className })}
+        {...props}
+      >
         {children}
       </span>
     )
@@ -97,11 +101,12 @@ interface StatValueProps
     VariantProps<typeof statValueVariants> {}
 
 const StatValue = forwardRef<HTMLSpanElement, StatValueProps>(
-  ({ align, children, size, className }, ref) => {
+  ({ align, children, size, className, ...props }, ref) => {
     return (
       <span
         ref={ref}
         className={classNames(statValueVariants({ size, align }), className)}
+        {...props}
       >
         {children}
       </span>

@@ -19,10 +19,6 @@ const messageVariants = cva('relative', {
       sm: 'p-6 text-sm rounded-lg',
       default: 'p-6 rounded-xl',
     },
-    hasClose: {
-      yes: '',
-      no: '',
-    },
   },
   defaultVariants: {
     variant: 'info',
@@ -31,7 +27,7 @@ const messageVariants = cva('relative', {
 })
 
 export interface MessageProps
-  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof messageVariants> {
   asChild?: boolean
   children?: React.ReactNode
@@ -46,12 +42,7 @@ const Message = React.forwardRef<HTMLDivElement, MessageProps>(
       <Comp
         {...props}
         ref={ref}
-        className={messageVariants({
-          variant,
-          size,
-          className,
-          hasClose: onClose ? 'yes' : 'no',
-        })}
+        className={messageVariants({ variant, size, className })}
       >
         {children}
         {onClose ? (

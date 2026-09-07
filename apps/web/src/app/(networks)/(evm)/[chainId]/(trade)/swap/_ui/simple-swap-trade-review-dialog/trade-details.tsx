@@ -97,7 +97,7 @@ export function TradeDetails<TChainId extends SupportedChainId>({
               subtitle="The maximum amount you are guaranteed to receive."
             >
               {isSwapQueryFetching ? (
-                <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                <SkeletonText align="right" fontSize="sm" />
               ) : trade?.amountOut ? (
                 `${trade?.amountOut?.toSignificant(6)} ${token1Symbol}`
               ) : (
@@ -109,7 +109,7 @@ export function TradeDetails<TChainId extends SupportedChainId>({
               subtitle="The minimum amount you are guaranteed to receive."
             >
               {isSwapQueryFetching ? (
-                <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+                <SkeletonText align="right" fontSize="sm" />
               ) : trade?.minAmountOut ? (
                 `${trade?.minAmountOut?.toSignificant(6)} ${token1Symbol}`
               ) : (
@@ -124,7 +124,7 @@ export function TradeDetails<TChainId extends SupportedChainId>({
           ) : isSwapQueryFetching ||
             !trade?.gasSpent ||
             trade.gasSpent === '0' ? (
-            <SkeletonText align="right" fontSize="sm" className="w-1/3" />
+            <SkeletonText align="right" fontSize="sm" />
           ) : (
             `${trade.gasSpent} ${nativeSymbol}`
           )}

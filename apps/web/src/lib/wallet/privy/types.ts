@@ -1,6 +1,9 @@
 import type { EvmAddress, EvmTxHash } from 'sushi/evm'
 import type { SvmAddress, SvmTxHash } from 'sushi/svm'
 import type { EIP1193Provider, Hex } from 'viem'
+import type { WalletLoginMethod } from '../types'
+
+export type PrivyLoginWalletChainType = 'ethereum-only' | 'solana-only'
 
 /** A framework-independent view of a Privy embedded EVM wallet. */
 export interface PrivyEvmWallet {
@@ -36,6 +39,10 @@ export interface PrivyEvmTransactionRequest {
  * Privy's React context.
  */
 export interface PrivyRuntimeOperationHandlers {
+  authenticate(
+    loginMethod: WalletLoginMethod,
+    walletChainType: PrivyLoginWalletChainType,
+  ): Promise<void>
   connectOrCreateEvmWallet(): Promise<void>
   exportEvmWallet(address: EvmAddress): Promise<void>
   exportSvmWallet(address: SvmAddress): Promise<void>
@@ -111,6 +118,7 @@ interface PrivyRuntimeAuthenticatedSnapshot
   /** Whether linked-account state already contains an embedded wallet. */
   hasEvmAccount: boolean
   hasSvmAccount: boolean
+  loginMethod?: WalletLoginMethod
   svmWallet: PrivySvmWallet | null
 }
 
@@ -148,6 +156,7 @@ export type PrivyRuntimePublication =
       evmWallet?: PrivyEvmWallet | null
       hasEvmAccount: boolean
       hasSvmAccount: boolean
+      loginMethod?: WalletLoginMethod
       operations: PrivyRuntimeOperationHandlers
       svmWallet?: PrivySvmWallet | null
       walletsReady: boolean

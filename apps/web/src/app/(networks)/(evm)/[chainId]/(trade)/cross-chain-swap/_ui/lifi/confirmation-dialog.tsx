@@ -177,6 +177,7 @@ export function CrossChainSwapConfirmationContent({
   }
 
   if (dialogState.bridge === StepState.Pending) {
+    console.log(bridgeUrl)
     return (
       <>
         Bridging{' '}

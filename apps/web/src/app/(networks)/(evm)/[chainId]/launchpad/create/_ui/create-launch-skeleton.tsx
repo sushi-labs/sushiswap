@@ -105,7 +105,7 @@ export function CreateLaunchSkeleton() {
               key={step}
               className="flex min-h-11 items-center justify-center gap-2 rounded-xl px-2"
             >
-              <SkeletonBox className="h-5 w-5 shrink-0 rounded-full" />
+              <SkeletonBox className="h-5 w-5 shrink-0" />
               <SkeletonBox className="hidden h-4 w-20 rounded-sm sm:block" />
             </div>
           ))}

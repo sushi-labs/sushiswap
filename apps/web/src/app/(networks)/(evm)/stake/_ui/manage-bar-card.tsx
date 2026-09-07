@@ -37,14 +37,14 @@ export const ManageBarCard = () => {
             <TabsTrigger
               testdata-id="stake-tab"
               value="stake"
-              className="flex flex-1"
+              className="flex-1"
             >
               Stake
             </TabsTrigger>
             <TabsTrigger
               testdata-id="unstake-tab"
               value="unstake"
-              className="flex flex-1"
+              className="flex-1"
             >
               Unstake
             </TabsTrigger>

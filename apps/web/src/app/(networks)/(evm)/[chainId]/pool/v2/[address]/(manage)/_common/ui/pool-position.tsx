@@ -38,11 +38,7 @@ const PoolPositionConnected = () => {
       <CardHeader>
         <CardTitle>My Position</CardTitle>
         <CardDescription>
-          {isLoading ? (
-            <SkeletonText className="w-[ch-16]" />
-          ) : (
-            <>{formatUSD(value0 + value1)}</>
-          )}
+          {isLoading ? <SkeletonText /> : <>{formatUSD(value0 + value1)}</>}
         </CardDescription>
       </CardHeader>
       <CardContent>

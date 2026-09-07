@@ -6,17 +6,19 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
   Dots,
   Message,
-  useDialog,
 } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import { type ReactNode, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { getChainById } from 'sushi'
 import { CrossChainSwapConfirmationDialog } from '../cross-chain-swap-confirmation-dialog'

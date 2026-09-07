@@ -1,16 +1,15 @@
 'use client'
 
 import { InterfaceModalName, Trace, useTrace } from '@sushiswap/telemetry'
+import { DialogContent, DialogFooter } from '@sushiswap/ui'
+import { type FC, type ReactNode, useEffect, useRef } from 'react'
 import {
   DialogConfirm,
-  DialogContent,
-  DialogFooter,
   DialogProvider,
   DialogReview,
   DialogType,
   useDialog,
-} from '@sushiswap/ui'
-import { type FC, type ReactNode, useEffect, useRef } from 'react'
+} from 'src/lib/transaction-dialog'
 import { isSvmChainId } from 'sushi/svm'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 import { ConfirmSwapButton } from './simple-swap-trade-review-dialog/confirm-swap-button'

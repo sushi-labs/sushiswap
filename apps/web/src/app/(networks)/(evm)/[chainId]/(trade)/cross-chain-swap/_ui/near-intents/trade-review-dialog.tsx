@@ -2,22 +2,18 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
   Dots,
   List,
   SelectIcon,
   SkeletonText,
   classNames,
-  useDialog,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ReactNode } from 'react'
@@ -28,6 +24,12 @@ import {
   NEAR_INTENTS_UI_FEE_PERCENT,
 } from 'src/lib/swap/near-intents'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
@@ -104,7 +106,9 @@ function NearIntentsTradeReviewDialogContent({
     source: StepState.NotStarted,
     execution: StepState.NotStarted,
   })
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
+    DialogType.Confirm,
+  )
 
   const outputAmount =
     token1 && quote?.quote.amountOut
@@ -228,7 +232,7 @@ function NearIntentsTradeReviewDialogContent({
               <DialogHeader className="!text-left">
                 <DialogTitle>
                   {!outputAmount ? (
-                    <SkeletonText fontSize="xs" className="w-2/3" />
+                    <SkeletonText fontSize="xs" />
                   ) : (
                     `Receive ${outputAmount.toSignificant(6)} ${token1?.symbol}`
                   )}
@@ -276,7 +280,7 @@ function NearIntentsTradeReviewDialogContent({
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
@@ -303,7 +307,7 @@ function NearIntentsTradeReviewDialogContent({
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogCustom>
+      </Dialog>
     </>
   )
 }
@@ -349,7 +353,7 @@ function NearIntentsTradeDetails({
         <List.Control>
           <List.KeyValue title="Estimated arrival">
             {!executionDuration ? (
-              <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+              <SkeletonText align="right" fontSize="sm" />
             ) : (
               executionDuration
             )}
@@ -363,7 +367,7 @@ function NearIntentsTradeDetails({
                 {networkFeeAmountUsd === undefined ||
                 !networkFeeAmount ||
                 !networkFeeSymbol ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={networkFeeAmount}
@@ -377,7 +381,7 @@ function NearIntentsTradeDetails({
                 subtitle="The fee charged by Sushi."
               >
                 {feeUsd === undefined || !feeTokenAmount || !swapAmount ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={feeTokenAmount}
@@ -408,7 +412,7 @@ function NearIntentsTradeDetails({
                 {totalFeeUsd === undefined ||
                 !networkFeeAmount ||
                 !networkFeeSymbol ? (
-                  <SkeletonText align="right" fontSize="sm" className="w-1/5" />
+                  <SkeletonText align="right" fontSize="sm" />
                 ) : (
                   <FeeWithUsd
                     amount={networkFeeAmount}
@@ -574,7 +578,7 @@ function AmountWithUsd({
   return (
     <div className="flex flex-col gap-0.5">
       {!amount ? (
-        <SkeletonText align="right" fontSize="sm" className="w-1/2" />
+        <SkeletonText align="right" fontSize="sm" />
       ) : (
         <span className="text-sm font-medium">{`${amount.toSignificant(6)} ${amount.currency.symbol}`}</span>
       )}

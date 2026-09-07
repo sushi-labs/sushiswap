@@ -70,7 +70,7 @@ export function useEvmWallets() {
           ...wallet,
           isInstalled: false,
           isAvailable: true,
-          isRecent: isRecentWallet(wallet.id),
+          isRecent: isRecentWallet(wallet.connectionId ?? wallet.id),
         })
         continue
       }

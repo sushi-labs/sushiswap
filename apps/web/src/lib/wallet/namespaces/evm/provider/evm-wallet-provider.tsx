@@ -15,11 +15,17 @@ import {
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { hasPersistedConnections } from 'src/lib/wagmi/config/persisted-connectors'
 import {
+  clearPrivyEvmReconnect,
   hasPrivyEvmReconnectIntent,
   isPrivyEvmConnector,
+  preparePrivyEvmReconnect,
 } from 'src/lib/wallet/privy/privy-evm-connector'
 import { hasPrivyWalletConnectionOutside } from 'src/lib/wallet/privy/privy-session'
-import { logoutPrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
+import {
+  authenticatePrivyRuntime,
+  logoutPrivyRuntime,
+  usePrivyRuntime,
+} from 'src/lib/wallet/privy/use-privy-runtime'
 import { getWalletRestorationState } from 'src/lib/wallet/provider/get-wallet-restoration-state'
 import {
   addWalletConnection,
@@ -38,7 +44,7 @@ import {
   useDisconnect,
 } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
-import { EvmAdapterConfig } from '../config'
+import { EVM_WALLETS, EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
 import {
   findEvmWalletConnector,
@@ -81,6 +87,7 @@ export default function EvmWalletProvider({
 }
 
 function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
+  const privyRuntime = usePrivyRuntime()
   const {
     isConnected,
     address,
@@ -117,13 +124,26 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       if (connectedAccount) {
         onSuccess?.(connectedAccount)
       } else {
-        const { accounts } = await wagmiConnect(config, {
-          connector: await EvmAdapterConfig[wallet.adapterId]({
-            uid: wallet.uid,
-          }),
-        })
+        const privyLoginMethod =
+          wallet.adapterId === EvmAdapterId.Privy
+            ? wallet.loginMethod
+            : undefined
+        if (privyLoginMethod) await preparePrivyEvmReconnect(config)
 
-        onSuccess?.(accounts[0])
+        try {
+          if (privyLoginMethod) {
+            await authenticatePrivyRuntime(privyLoginMethod, 'ethereum-only')
+          }
+          const { accounts } = await wagmiConnect(config, {
+            connector: await EvmAdapterConfig[wallet.adapterId]({
+              uid: wallet.uid,
+            }),
+          })
+          onSuccess?.(accounts[0])
+        } catch (error) {
+          if (privyLoginMethod) await clearPrivyEvmReconnect(config)
+          throw error
+        }
       }
     },
     [],
@@ -162,24 +182,32 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
+    const privyWallet =
+      isPrivyEvmConnector(connector) &&
+      privyRuntime.status === 'ready' &&
+      privyRuntime.authenticated
+        ? EVM_WALLETS.find(
+            (wallet) => wallet.loginMethod === privyRuntime.loginMethod,
+          )
+        : undefined
+
     addWalletConnection({
       chainId: isEvmChainId(chainId) ? chainId : EvmChainId.ETHEREUM,
       id: toEvmWalletId(connector.id),
-      name: connector.name,
+      name: privyWallet?.name ?? connector.name,
       namespace: 'evm',
       account: address,
-      icon: connector?.icon,
+      icon: privyWallet?.icon ?? connector.icon,
     })
   }, [
     isConnected,
-    connector?.id,
-    connector?.name,
-    connector?.icon,
+    connector,
     address,
     chainId,
     isConnecting,
     isReconnecting,
     isPending,
+    privyRuntime,
   ])
 
   useEffect(() => {

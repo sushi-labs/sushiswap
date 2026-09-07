@@ -40,13 +40,9 @@ export const ManageBladeLiquidityCard: FC<ManageBladeLiquidityCardProps> = ({
           <TabsList className="!flex">
             <Link
               href={`/${getEvmChainById(pool.chainId).key}/pool/blade/${pool.address}/add`}
-              className="flex flex-1"
+              className="flex-1"
             >
-              <TabsTrigger
-                testdata-id="add-tab"
-                value="add"
-                className="flex flex-1"
-              >
+              <TabsTrigger testdata-id="add-tab" value="add" className="flex-1">
                 Add
               </TabsTrigger>
             </Link>

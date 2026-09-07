@@ -33,7 +33,7 @@ function MonthlyUsageLoading() {
         </span>
       </div>
 
-      <SkeletonBox className="rounded-full h-[16px] w-full" />
+      <SkeletonBox className="h-[16px] w-full" />
     </>
   )
 }

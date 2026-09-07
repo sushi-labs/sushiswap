@@ -404,7 +404,7 @@ function WaitTab({ txData }: { txData: TxData }) {
               {!isConfigLoading && chainConfig ? (
                 <>{chainConfig.confirmations}</>
               ) : (
-                <SkeletonText className="w-4" />
+                <SkeletonText />
               )}
             </span>
           </div>

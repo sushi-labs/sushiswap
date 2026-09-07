@@ -39,7 +39,7 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
           walletChainType: 'ethereum-and-solana',
           walletList: [],
         },
-        loginMethods: ['email'],
+        loginMethods: ['email', 'twitter'],
         embeddedWallets: {
           ethereum: {
             createOnLogin: 'users-without-wallets',

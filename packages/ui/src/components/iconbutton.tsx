@@ -3,7 +3,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import type { IconComponent } from '../types'
-import { buttonIconVariants, type buttonVariants } from './button'
+import { buttonIconVariants } from './button'
 import {
   Tooltip,
   TooltipContent,
@@ -45,7 +45,7 @@ const iconButtonVariants = cva(
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',
         sm: 'min-h-[36px] h-[36px] min-w-[36px] w-[36px] text-sm',
         default: 'min-h-[40px] h-[40px] min-w-[40px] w-[40px] text-sm',
-        lg: 'min-h-[44px] h-[44px] min-w-[44px] w-[44px',
+        lg: 'min-h-[44px] h-[44px] min-w-[44px] w-[44px]',
         xl: 'min-h-[52px] h-[52px] min-w-[52px] w-[52px]',
       },
     },
@@ -58,7 +58,7 @@ const iconButtonVariants = cva(
 
 export interface IconButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+    VariantProps<typeof iconButtonVariants> {
   icon: IconComponent | string
   iconProps?: Omit<React.ComponentProps<'svg'>, 'width' | 'height'>
   name: string

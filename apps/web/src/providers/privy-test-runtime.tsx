@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { getPrivyLoginMethod } from 'src/lib/wallet/privy-storage'
 import { privyRuntimeStore } from 'src/lib/wallet/privy/privy-runtime-store'
 import {
   TEST_PRIVY_ADDRESS,
@@ -15,6 +16,7 @@ import type { EIP1193Provider } from 'viem'
 const address = TEST_PRIVY_ADDRESS as EvmAddress
 
 const operations: PrivyRuntimeOperationHandlers = {
+  async authenticate() {},
   async connectOrCreateEvmWallet() {},
   async exportEvmWallet() {},
   async exportSvmWallet() {},
@@ -131,6 +133,7 @@ export function PrivyRuntime() {
           evmWallet: createWallet(initialChainId),
           hasEvmAccount: true,
           hasSvmAccount: false,
+          loginMethod: getPrivyLoginMethod(),
           operations,
           svmWallet: null,
           walletsReady: true,

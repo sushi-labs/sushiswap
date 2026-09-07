@@ -1,5 +1,8 @@
 import type { Connector, CreateConnectorFn } from 'wagmi'
-import { PRIVY_WALLET_ICON } from '../../privy/privy-wallet-icon'
+import {
+  PRIVY_WALLET_ICON,
+  PRIVY_X_WALLET_ICON,
+} from '../../privy/privy-wallet-icon'
 import type { Wallet } from '../../types'
 import {
   getCoinbaseWalletConnector,
@@ -28,6 +31,17 @@ export const EVM_WALLETS: Wallet[] = [
     name: 'Email',
     icon: PRIVY_WALLET_ICON,
     adapterId: EvmAdapterId.Privy,
+    loginMethod: 'email',
+    url: 'https://privy.io',
+  },
+  {
+    id: 'evm:io.privy.wallet.twitter',
+    connectionId: 'evm:io.privy.wallet',
+    namespace: 'evm',
+    name: 'X',
+    icon: PRIVY_X_WALLET_ICON,
+    adapterId: EvmAdapterId.Privy,
+    loginMethod: 'twitter',
     url: 'https://privy.io',
   },
   {

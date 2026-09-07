@@ -2,16 +2,16 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogType,
 } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import {
   Divider,
   GetStateComponent,
@@ -31,8 +31,9 @@ export function CrossChainSwapConfirmationDialog({
   children?: ReactNode
   closeDisabled?: boolean
 }): ReactNode {
+  const { open, setOpen } = useDialog(DialogType.Confirm)
   return (
-    <DialogCustom dialogType={DialogType.Confirm}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent onInteractOutside={(event) => event.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Cross-chain swap</DialogTitle>
@@ -69,6 +70,6 @@ export function CrossChainSwapConfirmationDialog({
           </DialogClose>
         </DialogFooter>
       </DialogContent>
-    </DialogCustom>
+    </Dialog>
   )
 }

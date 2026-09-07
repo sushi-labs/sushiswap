@@ -4,7 +4,7 @@ import { classNames } from '@sushiswap/ui'
 import {
   LAUNCHPAD_PROVIDER_FILTERS,
   type LaunchpadProviderFilter,
-  getLaunchpadProvidersForFilter,
+  getLaunchpadProviderIconsForFilter,
 } from '../_lib/launchpad-provider'
 import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import {
@@ -46,7 +46,7 @@ export function ProviderFilterControls({
             )}
           >
             <span className="flex items-center" aria-hidden>
-              {getLaunchpadProvidersForFilter(option.value).map(
+              {getLaunchpadProviderIconsForFilter(option.value).map(
                 (provider, index) => (
                   <LaunchpadProviderMark
                     key={provider}

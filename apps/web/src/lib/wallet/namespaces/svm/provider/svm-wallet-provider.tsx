@@ -42,6 +42,7 @@ import type { WalletNamespaceContext } from '../../types'
 import {
   PRIVY_SVM_CONNECTOR_ID,
   PRIVY_SVM_WALLET,
+  PRIVY_SVM_WALLETS,
   SvmAdapterId,
 } from '../config'
 
@@ -100,16 +101,16 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
     async (wallet: Wallet, onSuccess?: (address: string) => void) => {
       if (!client) throw new Error('SVM client not found')
       if (wallet.adapterId === SvmAdapterId.Privy) {
-        const account = await connectPrivySvmWallet()
-        const connectorId = await waitForPrivyConnector(client)
         setPrivySvmReconnect(true)
         try {
+          const account = await connectPrivySvmWallet(wallet.loginMethod)
+          const connectorId = await waitForPrivyConnector(client)
           await connectWallet(connectorId)
+          onSuccess?.(account)
         } catch (error) {
           setPrivySvmReconnect(false)
           throw error
         }
-        onSuccess?.(account)
         return
       }
 
@@ -198,19 +199,28 @@ function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
       setPrivySvmReconnect(false)
     }
 
+    const privyWallet =
+      isPrivyConnector(connector.connectorId) &&
+      privyRuntime.status === 'ready' &&
+      privyRuntime.authenticated
+        ? PRIVY_SVM_WALLETS.find(
+            (wallet) => wallet.loginMethod === privyRuntime.loginMethod,
+          )
+        : undefined
+
     setActiveWalletConnection({
       chainId: SvmChainId.SOLANA,
       id: `svm:${connector.connectorId.toLowerCase()}`,
       name: isPrivyConnector(connector.connectorId)
-        ? PRIVY_SVM_WALLET.name
+        ? (privyWallet?.name ?? PRIVY_SVM_WALLET.name)
         : (walletInfo.name ?? ''),
       namespace: 'svm',
       account: connector.selectedAccount.address,
       icon: isPrivyConnector(connector.connectorId)
-        ? PRIVY_SVM_WALLET.icon
+        ? (privyWallet?.icon ?? PRIVY_SVM_WALLET.icon)
         : (walletInfo.icon ?? undefined),
     })
-  }, [isConnected, connector, walletInfo.name, walletInfo.icon])
+  }, [isConnected, connector, privyRuntime, walletInfo.name, walletInfo.icon])
 
   useEffect(() => {
     const hasRegisteredConnection = getWalletConnections().some(

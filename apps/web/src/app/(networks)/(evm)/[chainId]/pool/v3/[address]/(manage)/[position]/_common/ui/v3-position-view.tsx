@@ -236,21 +236,21 @@ const Component: FC<{
                     <TabsTrigger
                       testdata-id="add-tab"
                       value="add"
-                      className="flex flex-1"
+                      className="flex-1"
                     >
                       Add
                     </TabsTrigger>
                     <TabsTrigger
                       testdata-id="remove-tab"
                       value="remove"
-                      className="flex flex-1"
+                      className="flex-1"
                     >
                       Remove
                     </TabsTrigger>
                     <TabsTrigger
                       testdata-id="fees-tab"
                       value="fees"
-                      className="flex flex-1"
+                      className="flex-1"
                     >
                       Fees
                     </TabsTrigger>
@@ -258,7 +258,7 @@ const Component: FC<{
                       <TabsTrigger
                         testdata-id="rewards-tab"
                         value="rewards"
-                        className="flex flex-1"
+                        className="flex-1"
                       >
                         Rewards
                       </TabsTrigger>
@@ -702,10 +702,10 @@ const Component: FC<{
               <Tabs className="w-full" defaultValue="active">
                 <CardContent>
                   <TabsList className="!flex">
-                    <TabsTrigger value="active" className="flex flex-1">
+                    <TabsTrigger value="active" className="flex-1">
                       Active
                     </TabsTrigger>
-                    <TabsTrigger value="inactive" className="flex flex-1">
+                    <TabsTrigger value="inactive" className="flex-1">
                       Upcoming & Expired
                     </TabsTrigger>
                   </TabsList>

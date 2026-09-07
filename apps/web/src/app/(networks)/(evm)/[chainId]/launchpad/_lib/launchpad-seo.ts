@@ -226,11 +226,15 @@ function getPoolsFunOrganization(): Organization {
 const PROVIDER_ORGANIZATION_IDS = {
   SUSHI_V1: SUSHI_ORGANIZATION_ID,
   POOLS_FUN_V1: POOLS_FUN_ORGANIZATION_ID,
+  POOLS_FUN_V2: POOLS_FUN_ORGANIZATION_ID,
+  POOLS_FUN_V3: POOLS_FUN_ORGANIZATION_ID,
 } as const satisfies Record<LaunchpadProvider, string>
 
 const PROVIDER_ORGANIZATIONS = {
   SUSHI_V1: getSushiOrganization,
   POOLS_FUN_V1: getPoolsFunOrganization,
+  POOLS_FUN_V2: getPoolsFunOrganization,
+  POOLS_FUN_V3: getPoolsFunOrganization,
 } as const satisfies Record<LaunchpadProvider, () => Organization>
 
 function getLaunchpadProviderOrganizations(
