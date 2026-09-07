@@ -80,6 +80,15 @@ vi.mock('@sushiswap/ui/icons/check-mark-icon', () => ({
 vi.mock('@sushiswap/ui/icons/failed-mark-icon', () => ({
   FailedMarkIcon: () => null,
 }))
+vi.mock('src/lib/transaction-dialog', () => ({
+  DialogProvider: ({ children }: PropsWithChildren) => children,
+  DialogReview: ({
+    children,
+  }: { children: (props: { confirm: () => void }) => ReactNode }) =>
+    children({ confirm }),
+  DialogType: { Confirm: 1 },
+  useDialog: () => ({ setOpen }),
+}))
 vi.mock('@sushiswap/ui', () => {
   function Block({ children }: PropsWithChildren) {
     return <div>{children}</div>
@@ -108,21 +117,14 @@ vi.mock('@sushiswap/ui', () => {
   }
   return {
     Button,
+    Dialog: Block,
     DialogContent: Block,
     DialogDescription: Block,
     DialogFooter: Block,
     DialogHeader: Block,
     DialogTitle: Block,
-    DialogProvider: Block,
     DialogTrigger: Block,
     DialogClose: Block,
-    DialogCustom: Block,
-    DialogReview: ({
-      children,
-    }: { children: (props: { confirm: () => void }) => ReactNode }) =>
-      children({ confirm }),
-    DialogType: { Confirm: 'confirm' },
-    useDialog: () => ({ setOpen }),
     Dots: Block,
     Message: Block,
     Loader: () => null,
