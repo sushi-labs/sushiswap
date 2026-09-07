@@ -5,6 +5,18 @@ import { account, createForkClient, stopFork } from '../fork'
 
 const spender = '0x0000000000000000000000000000000000000001'
 
+test('pending and mined timestamps agree despite elapsed wall time', async ({
+  fork,
+}) => {
+  const latest = await fork.client.getBlock()
+  const pending = await fork.client.getBlock({ blockTag: 'pending' })
+  expect(pending.timestamp).toBe(latest.timestamp + 1n)
+  // Deliberately cross a wall-clock second to catch accidental real-time mining.
+  await delay(2100)
+  await fork.client.mine({ blocks: 1 })
+  expect((await fork.client.getBlock()).timestamp).toBe(pending.timestamp)
+})
+
 test('isolates balances, allowances, deployments and nonces between forks', async ({
   fork,
 }, info) => {
@@ -102,3 +114,4 @@ test.describe('snapshot lifecycle', () => {
     })
   }
 })
+import { setTimeout as delay } from 'node:timers/promises'

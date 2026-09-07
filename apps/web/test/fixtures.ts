@@ -25,6 +25,9 @@ export const test = base.extend<
         const actualChain = await client.getChainId()
         if (actualChain !== chainId)
           throw new Error('Fork RPC returned the wrong chain')
+        // Pending-block estimation and mining must use the same timestamp,
+        // independent of CI/browser wall time (V3 oracle writes depend on it).
+        await client.setBlockTimestampInterval({ interval: 1 })
         const token = await createERC20(client)
         await use({ url, client, token })
       } finally {

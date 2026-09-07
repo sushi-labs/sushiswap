@@ -3,6 +3,7 @@ import type {
   FetchHandlerResult,
   NextFixture,
 } from 'next/experimental/testmode/playwright.js'
+import * as z from 'zod'
 import { chainId } from './constants'
 import { account } from './fork'
 
@@ -18,6 +19,21 @@ const telemetryHosts = [
 export type MockHandler = (
   request: Request,
 ) => Promise<Response | undefined> | Response | undefined
+
+const walletTransaction = z
+  .object({
+    id: z.union([z.number(), z.string()]),
+    method: z.literal('eth_sendTransaction'),
+    params: z.tuple([z.object({ gas: z.string().optional() }).passthrough()]),
+  })
+  .passthrough()
+
+const gasEstimate = z.union([
+  z.object({ result: z.string().regex(/^0x[0-9a-f]+$/i) }),
+  z.object({
+    error: z.object({ code: z.number(), message: z.string() }).passthrough(),
+  }),
+])
 
 /** One dispatcher owns browser and server fetches; RPC always takes precedence. */
 export class NetworkMocks {
@@ -49,11 +65,40 @@ export class NetworkMocks {
         const response = await handler(request.clone())
         if (response) return response
       }
+      let body = await request.text()
+      const transaction = walletTransaction.safeParse(JSON.parse(body))
+      if (transaction.success && transaction.data.params[0].gas === undefined) {
+        // Wagmi's mock skips the gas estimation an injected wallet performs.
+        // Use the public RPC estimator instead of Anvil's gasless-send fallback.
+        // Route the estimate through our dispatcher so failure scenarios apply.
+        const estimate = await this.dispatch(
+          new Request(this.rpcUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: transaction.data.id,
+              method: 'eth_estimateGas',
+              params: [...transaction.data.params, 'pending'],
+            }),
+          }),
+        )
+        if (!(estimate instanceof Response))
+          throw new Error('Expected gas estimate response')
+        const result = gasEstimate.parse(await estimate.json())
+        if ('error' in result)
+          return Response.json({
+            jsonrpc: '2.0',
+            id: transaction.data.id,
+            error: result.error,
+          })
+        transaction.data.params[0].gas = result.result
+        body = JSON.stringify(transaction.data)
+      }
       // Forward bodies explicitly; spreading a Request loses its stream/method.
       return fetch(this.rpcUrl, {
         method: request.method,
         headers: { 'content-type': 'application/json' },
-        body: await request.text(),
+        body,
         signal: AbortSignal.timeout(60_000),
       })
     }

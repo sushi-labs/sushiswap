@@ -149,28 +149,34 @@ export async function seedV3Position(fork: Fork): Promise<bigint> {
     }),
   )
   const { timestamp } = await fork.client.getBlock()
+  const mint = {
+    address: manager,
+    abi: nonfungiblePositionManagerAbi_mint,
+    functionName: 'mint',
+    args: [
+      {
+        token0: token0.address,
+        token1: token1.address,
+        fee: 10000,
+        tickLower: -20000,
+        tickUpper: 20000,
+        amount0Desired: parseEther('0.1'),
+        amount1Desired: parseEther('0.1'),
+        amount0Min: 0n,
+        amount1Min: 0n,
+        recipient: account.address,
+        deadline: timestamp + 3600n,
+      },
+    ],
+  } as const
   const receipt = await settled(
     fork,
     await fork.client.writeContract({
-      address: manager,
-      abi: nonfungiblePositionManagerAbi_mint,
-      functionName: 'mint',
-      gas: 3_000_000n,
-      args: [
-        {
-          token0: token0.address,
-          token1: token1.address,
-          fee: 10000,
-          tickLower: -20000,
-          tickUpper: 20000,
-          amount0Desired: parseEther('0.1'),
-          amount1Desired: parseEther('0.1'),
-          amount0Min: 0n,
-          amount1Min: 0n,
-          recipient: account.address,
-          deadline: timestamp + 3600n,
-        },
-      ],
+      ...mint,
+      gas: await fork.client.estimateContractGas({
+        ...mint,
+        blockTag: 'pending',
+      }),
     }),
   )
   const tokenId = mintedPosition(receipt)

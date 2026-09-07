@@ -8,10 +8,9 @@ of UI notifications. External application-data requests fail unless mocked.
 ## Run locally
 
 Install dependencies with `pnpm install` and Chromium with
-`pnpm --filter web exec playwright install chromium`. Foundry's **Anvil 1.5.1** must
-be on `PATH`, matching the pinned E2E CI toolchain. Startup rejects other versions:
-Anvil 1.8.1 reproduces out-of-gas reverts in the unlocked-account V3 flows that
-pass on 1.5.1. Validate toolchain upgrades explicitly before changing the pin.
+`pnpm --filter web exec playwright install chromium`. Foundry's **Anvil 1.8.1** must
+be on `PATH`, matching the pinned E2E CI toolchain. Startup rejects other versions.
+Validate toolchain upgrades explicitly before changing the pin.
 Configure these environment variables (or use the existing
 `apps/web/.env.test.local` with the root `pnpm test-web-app` command):
 
@@ -45,12 +44,23 @@ tests. The worker fixture owns a numeric proxy endpoint based on `workerIndex`,
 a typed Viem client, and a deployed token. Replacement workers get new endpoints.
 Each test takes a fresh snapshot; browser teardown precedes restoration. Never
 share mutable chain state across tests or manually route RPC around the fixture.
+Blocks advance by one second per mined block, independent of wall time, so pending
+gas estimates and actual execution use the same timestamp for V3 oracle writes.
 
 Register HTTP scenarios through `mocks.add` and deliberate RPC failures through
 `mocks.addRpc`. The single dispatcher gives RPC precedence over HTTP handlers;
 do not register additional `next.onFetch` callbacks. Static assets use Next's
 normal routing. Analytics requests are suppressed. Token list balances come from
 the test's fork; unrelated launchpad/merkl data is explicitly empty.
+
+The mock wallet explicitly calls `eth_estimateGas` before gasless
+`eth_sendTransaction` requests and sends that exact gas limit. This models the
+estimation against the pending block normally performed by an injected wallet.
+Anvil's implicit gas-filling path estimates against the latest block, which
+underestimates these V3 transactions in 1.8.1. Explicit gas
+limits and signed transactions pass through unchanged. Estimation errors are
+returned to the wallet without submitting a transaction; scenario RPC mocks also
+apply to these estimates.
 
 Pool add/remove tests seed positions via RPC. Lifecycle tests still create pools
 through the UI. Position IDs come from mint receipts, never a table row index.
@@ -85,8 +95,9 @@ run, and preserves every report under `test-results/benchmark`. The summary
 reports wall-time medians and failed-run counts. Compare cold builds separately
 using the CI build step; these medians include server/worker startup, not builds.
 
-The two-worker default passed the isolation harness and ten retry-free local runs
-per configuration on 2026-09-07: all **360 test executions passed**, with median
+The initial two-worker benchmark (Anvil 1.5.1, before explicit wallet gas
+estimation) passed ten retry-free local runs per configuration on 2026-09-07:
+all **360 test executions passed**, with median
 wall time **89.0 seconds for one worker** and **52.0 seconds for two** (42% lower).
 These measurements exclude the build and cover the 18-test fork suite.
 
