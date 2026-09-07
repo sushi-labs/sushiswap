@@ -24,6 +24,10 @@ export const useOpenOrders = ({ address }: { address?: EvmAddress }) => {
         { transport: hlWebSocketTransport },
         { user: address, dex: 'ALL_DEXS' },
         (openOrdersEvent) => {
+          // Refresh the full list after orders are placed, modified, filled, or cancelled.
+          void queryClient.invalidateQueries({
+            queryKey: ['useUserOpenOrders', 'all', address],
+          })
           queryClient.setQueryData(
             ['useOpenOrders', address],
             (_prevOpenOrdersEvent: OpenOrdersEvent | undefined) => {

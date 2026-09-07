@@ -1,5 +1,9 @@
 import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
-import type { ColumnDef, TableState } from '@tanstack/react-table'
+import type {
+  ColumnDef,
+  PaginationState,
+  TableState,
+} from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import {
   type UserOpenOrdersItemType,
@@ -82,10 +86,16 @@ const getOpenOrdersColumns = ({
   ]
 }
 
-export const OpenOrdersTable = () => {
-  const { data, isLoading, isError } = useUserOpenOrders({})
+export const OpenOrdersTable = ({
+  isViewAll = false,
+}: { isViewAll?: boolean }) => {
+  const { data, isLoading, isError } = useUserOpenOrders({ isViewAll })
   const { isLg } = useBreakpoint('lg')
   const [sorting, setSorting] = useState([{ id: 'timestamp', desc: true }])
+  const [paginationState, setPaginationState] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  })
   const {
     state: { tradeFilter },
   } = useTradeTables()
@@ -166,6 +176,12 @@ export const OpenOrdersTable = () => {
   }, [data, isError, filterValue])
 
   const state: Partial<TableState> = useMemo(() => {
+    if (isViewAll) {
+      return {
+        sorting,
+        pagination: paginationState,
+      }
+    }
     return {
       sorting,
       pagination: {
@@ -173,39 +189,45 @@ export const OpenOrdersTable = () => {
         pageSize: tableData.length,
       },
     }
-  }, [tableData, sorting])
+  }, [tableData, sorting, isViewAll, paginationState])
 
   const columns = useMemo(() => {
     return getOpenOrdersColumns({
       handleConfirmModify,
       isModifyPending: isPending,
-      isMobile: !isLg,
+      isMobile: !isLg && !isViewAll,
       handleCancelOrder,
       isCancelPending,
     })
-  }, [handleConfirmModify, isPending, isLg, handleCancelOrder, isCancelPending])
+  }, [
+    handleConfirmModify,
+    isPending,
+    isLg,
+    isViewAll,
+    handleCancelOrder,
+    isCancelPending,
+  ])
 
-  return (
-    <>
-      {isLg ? (
-        <DataTableVirtual
-          state={state}
-          loading={isLoading}
-          columns={columns}
-          data={tableData}
-          onSortingChange={setSorting}
-          thClassName="!h-8 !px-0"
-          hideScrollbar={true}
-          trClassName={tableRowClassName}
-        />
-      ) : (
-        <MobileTable
-          columns={columns}
-          data={tableData}
-          isLoading={isLoading}
-          sorting={sorting}
-        />
-      )}
-    </>
+  return isLg || isViewAll ? (
+    <DataTableVirtual
+      state={state}
+      loading={isLoading}
+      columns={columns}
+      data={tableData}
+      onSortingChange={setSorting}
+      thClassName="!h-8 !px-0"
+      hideScrollbar={true}
+      trClassName={tableRowClassName}
+      pagination={isViewAll}
+      onPaginationChange={isViewAll ? setPaginationState : undefined}
+      skeletonRowCount={isViewAll ? 25 : 10}
+    />
+  ) : (
+    <MobileTable
+      columns={columns}
+      data={tableData}
+      isLoading={isLoading}
+      sorting={sorting}
+    />
   )
 }
