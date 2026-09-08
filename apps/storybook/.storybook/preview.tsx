@@ -1,41 +1,59 @@
-import { Preview } from '@storybook/react'
+import type { Preview } from '@storybook/nextjs-vite'
 import { BaseProviders } from '@sushiswap/ui'
 import '@sushiswap/ui/index.css'
-import React from 'react'
 import './style.css'
 
-export const withThemeProvider = (Story, context) => {
-  const theme = context.globals.theme
-
-  return (
-    <BaseProviders forcedTheme={theme}>
-      <Story {...context} />
-    </BaseProviders>
-  )
-}
-
-export const preview: Preview = {
+const preview: Preview = {
+  tags: ['autodocs'],
   parameters: {
-    backgrounds: {
-      disable: true,
+    docs: { story: { inline: false, iframeHeight: 420 } },
+    backgrounds: { disable: true },
+    nextjs: { appDirectory: true },
+    chromatic: {
+      modes: {
+        'light desktop': {
+          theme: 'light',
+          viewport: { width: 1280, height: 900 },
+        },
+        'dark desktop': {
+          theme: 'dark',
+          viewport: { width: 1280, height: 900 },
+        },
+        'black desktop': {
+          theme: 'black',
+          viewport: { width: 1280, height: 900 },
+        },
+        'light mobile': {
+          theme: 'light',
+          viewport: { width: 390, height: 844 },
+        },
+        'dark mobile': { theme: 'dark', viewport: { width: 390, height: 844 } },
+        'black mobile': {
+          theme: 'black',
+          viewport: { width: 390, height: 844 },
+        },
+      },
     },
   },
+  initialGlobals: { theme: 'light' },
   globalTypes: {
     theme: {
       description: 'Global theme for components',
-      defaultValue: 'light',
       toolbar: {
-        // The label to show for this toolbar item
         title: 'Theme',
         icon: 'circlehollow',
-        // Array of plain string values or MenuItem shape (see below)
-        items: ['light', 'dark'],
-        // Change title based on selected value
+        items: ['light', 'dark', 'black'],
         dynamicTitle: true,
       },
     },
   },
-  decorators: [withThemeProvider],
+  decorators: [
+    (Story, context) => (
+      <BaseProviders forcedTheme={context.globals.theme}>
+        <Story />
+      </BaseProviders>
+    ),
+  ],
 }
 
 export default preview

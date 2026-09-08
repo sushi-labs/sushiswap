@@ -39,7 +39,7 @@ export const Default = {
     return (
       <TooltipProvider>
         <Tooltip {...args}>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <Button variant="secondary">Hover me</Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -50,3 +50,5 @@ export const Default = {
     )
   },
 } satisfies Story
+
+export const Open = { ...Default, args: { open: true } } satisfies Story
