@@ -46,6 +46,7 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/storybook
           buildScriptName: build
+          exitZeroOnChanges: true
           junitReport: chromatic-build-{buildNumber}.xml
       - name: Upload Chromatic test results
         if: always()

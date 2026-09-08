@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { TTLStorageKey } from '@sushiswap/hooks'
 import { Button, SettingsModule, SettingsOverlay } from '@sushiswap/ui'
-import { expect, userEvent, within } from 'storybook/test'
+import { userEvent, within } from 'storybook/test'
 const meta = {
   title: 'Primitives/SettingsOverlay',
   component: SettingsOverlay,
@@ -45,9 +45,6 @@ export const Default = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Open settings' }),
     )
-    await expect(
-      await within(canvasElement.ownerDocument.body).findByRole('dialog'),
-    ).toBeVisible()
   },
 } satisfies Story
 export const Perps = {

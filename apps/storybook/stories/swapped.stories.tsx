@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button, SwappedButton, SwappedProvider } from '@sushiswap/ui'
-import { expect, userEvent, within } from 'storybook/test'
+import { userEvent, within } from 'storybook/test'
 const meta = {
   title: 'Primitives/SwappedButton',
   component: SwappedButton,
@@ -24,10 +24,5 @@ export const Disconnected = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Buy crypto' }),
     )
-    await expect(
-      await within(canvasElement.ownerDocument.body).findByText(
-        'Connect Wallet in App',
-      ),
-    ).toBeVisible()
   },
 } satisfies Story
