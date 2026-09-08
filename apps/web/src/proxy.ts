@@ -149,6 +149,12 @@ async function _proxy(req: NextRequest) {
       }
     }
 
+    // Solana swap has its own route entry so its initial client graph can stay
+    // separate from EVM swap while both use the same shared widget.
+    if (chain.type === 'svm' && page === 'swap') {
+      return NextResponse.next()
+    }
+
     // Stellar only piggybacks on the EVM trade layout for cross-chain-swap.
     if (
       chain.type === 'evm' ||
