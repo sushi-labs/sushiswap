@@ -25,7 +25,9 @@ export const Disconnected = {
       within(canvasElement).getByRole('button', { name: 'Buy crypto' }),
     )
     await expect(
-      within(document.body).getByText('Connect Wallet in App'),
+      await within(canvasElement.ownerDocument.body).findByText(
+        'Connect Wallet in App',
+      ),
     ).toBeVisible()
   },
 } satisfies Story

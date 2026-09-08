@@ -45,7 +45,9 @@ export const Default = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Open settings' }),
     )
-    await expect(within(document.body).getByRole('dialog')).toBeVisible()
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog'),
+    ).toBeVisible()
   },
 } satisfies Story
 export const Perps = {
