@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { SUPPORTED_CHAIN_IDS, isSupportedChainId } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../header'
 
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return getStaticChainParams(SUPPORTED_CHAIN_IDS)
+  return getStaticChainParams(
+    SUPPORTED_CHAIN_IDS.filter((chainId) => isEvmChainId(chainId)),
+  )
 }
 
 export default async function SwapLayout(props: {
