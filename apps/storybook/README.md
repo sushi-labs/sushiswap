@@ -29,9 +29,10 @@ pnpm --filter @sushiswap/storybook build
 
 The Chromatic workflow runs for changes to stories, UI, shared hooks, telemetry,
 Tailwind, and dependency/build configuration. It builds workspace dependencies,
-checks story types, then uses the lockfile-pinned Chromatic CLI to build and upload
+checks story types, then uses Chromatic's GitHub Action to build and upload
 Storybook. It can also be run with GitHub's workflow dispatch. Local publishing
-uses `pnpm --filter @sushiswap/storybook chromatic` with
+uses the lockfile-pinned CLI through
+`pnpm --filter @sushiswap/storybook chromatic`, with
 `CHROMATIC_PROJECT_TOKEN` in the environment.
 
 ## Adding coverage

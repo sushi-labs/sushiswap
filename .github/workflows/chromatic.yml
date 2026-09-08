@@ -1,8 +1,7 @@
 name: Chromatic
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  push:
     paths:
       - ".github/workflows/chromatic.yml"
       - "apps/storybook/**"
@@ -42,6 +41,9 @@ jobs:
       - name: Check Storybook types
         run: pnpm --filter @sushiswap/storybook check
       - name: Publish to Chromatic
-        run: pnpm --filter @sushiswap/storybook chromatic --exit-once-uploaded
-        env:
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/storybook
+          buildScriptName: build
+          exitOnceUploaded: true
