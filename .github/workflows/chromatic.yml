@@ -46,3 +46,11 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/storybook
           buildScriptName: build
+          junitReport: chromatic-build-{buildNumber}.xml
+      - name: Upload Chromatic test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromatic-test-results
+          path: apps/storybook/chromatic-build-*.xml
+          if-no-files-found: ignore
