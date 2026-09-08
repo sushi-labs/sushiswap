@@ -1,8 +1,12 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
+import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import { QuickBuyProvider } from './quick-buy/quick-buy-provider'
 import { CollectionStateCard } from './state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
+
+const GRID_CLASS_NAME =
+  'grid grid-cols-1 gap-4 [&>*]:min-w-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
 
 const TOKEN_CARD_SKELETONS = [
   'first',
@@ -22,7 +26,7 @@ const TOKEN_CARD_SKELETONS = [
 export function TokenGridSkeleton({ count = 12 }: { count?: number }) {
   return (
     <div
-      className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6"
+      className={GRID_CLASS_NAME}
       aria-label="Loading launches"
       aria-busy="true"
     >
@@ -44,6 +48,8 @@ export function TokenGrid({
   manage?: boolean
   isFetchingNextPage?: boolean
 }) {
+  const { data: stockTokens } = useRobinhoodStockTokens()
+
   const [firstToken] = tokens
 
   if (!firstToken) {
@@ -61,22 +67,27 @@ export function TokenGrid({
   }
 
   return (
-    <QuickBuyProvider chainId={firstToken.chainId}>
-      <div className="grid grid-cols-1 gap-3 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6">
-        {tokens.map((token) => (
-          <TokenCard
-            key={token.id}
-            token={token}
-            sortBy={sortBy}
-            manage={manage}
-          />
-        ))}
-        {isFetchingNextPage
-          ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
-              <TokenCardSkeleton key={`next-${skeleton}`} />
-            ))
-          : null}
-      </div>
-    </QuickBuyProvider>
+    <div className={GRID_CLASS_NAME}>
+      {tokens.map((token) => (
+        <TokenCard
+          key={token.id}
+          token={token}
+          sortBy={sortBy}
+          manage={manage}
+          isStockPair={isRobinhoodStockToken(
+            {
+              chainId: token.chainId,
+              address: token.pool.quoteToken.address,
+            },
+            stockTokens,
+          )}
+        />
+      ))}
+      {isFetchingNextPage
+        ? TOKEN_CARD_SKELETONS.slice(0, 4).map((skeleton) => (
+            <TokenCardSkeleton key={`next-${skeleton}`} />
+          ))
+        : null}
+    </div>
   )
 }

@@ -50,6 +50,7 @@ export type LaunchpadTokenConnection = ResultOf<
   typeof LaunchpadTokensQuery
 >['launchpad']['tokens']
 export type LaunchpadPageInfo = LaunchpadTokenConnection['pageInfo']
+export type LaunchpadTokenEdge = LaunchpadTokenConnection['edges'][number]
 
 export type LaunchpadTokensInput = GetLaunchpadTokens['input']
 export type LaunchpadTokenSortField = NonNullable<

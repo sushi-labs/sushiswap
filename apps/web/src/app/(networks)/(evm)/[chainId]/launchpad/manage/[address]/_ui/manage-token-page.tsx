@@ -345,6 +345,7 @@ export function ManageTokenPage({
         },
         timestamp,
         groupTimestamp: timestamp,
+        variant: 'perps',
       })
 
       await receiptPromise

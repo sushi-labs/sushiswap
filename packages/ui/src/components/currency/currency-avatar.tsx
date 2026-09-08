@@ -1,7 +1,7 @@
 'use client'
 
 import type { ImageProps } from 'next/image'
-import { useState } from 'react'
+import { type ComponentProps, useState } from 'react'
 
 import { getTokenFallbackIconStyle } from '../../lib/token-fallback-icon'
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar'
@@ -12,6 +12,8 @@ type ImageLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
 const DEFAULT_SIZE_IN_PIXELS = 40
 
 interface CurrencyAvatarProps {
+  shape?: ComponentProps<typeof Avatar>['shape']
+  style?: ImageProps['style']
   address: string
   chainId: number | string
   fallback: string
@@ -32,6 +34,8 @@ export function CurrencyAvatar({
   height,
   src,
   width,
+  shape,
+  style,
 }: CurrencyAvatarProps) {
   const [imageState, setImageState] = useState<ImageState>({
     src,
@@ -41,7 +45,16 @@ export function CurrencyAvatar({
   const fallbackSizeInPixels = Number(width) || DEFAULT_SIZE_IN_PIXELS
 
   return (
-    <Avatar key={src} style={{ width, height }}>
+    <Avatar
+      key={src}
+      shape={shape}
+      style={{
+        width,
+        height,
+        ...(shape === 'square' ? { containerType: 'inline-size' } : {}),
+        ...style,
+      }}
+    >
       <AvatarImage
         width={Number(width) || 20}
         src={src}
@@ -49,10 +62,13 @@ export function CurrencyAvatar({
       />
       {status === 'error' ? (
         <AvatarFallback
-          style={getTokenFallbackIconStyle(
-            { address, chainId },
-            fallbackSizeInPixels,
-          )}
+          style={{
+            ...getTokenFallbackIconStyle(
+              { address, chainId },
+              fallbackSizeInPixels,
+            ),
+            ...(shape === 'square' ? { fontSize: '38cqw' } : {}),
+          }}
         >
           {fallback}
         </AvatarFallback>
@@ -60,7 +76,7 @@ export function CurrencyAvatar({
       {status === 'idle' || status === 'loading' ? (
         <div
           aria-hidden="true"
-          className="absolute inset-0 animate-pulse rounded-full bg-black/[0.10] dark:bg-white/[0.10] black:bg-white/[0.25]"
+          className="absolute inset-0 animate-pulse rounded-[inherit] bg-black/[0.10] dark:bg-white/[0.10] black:bg-white/[0.25]"
         />
       ) : null}
     </Avatar>

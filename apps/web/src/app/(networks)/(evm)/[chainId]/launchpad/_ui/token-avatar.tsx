@@ -4,11 +4,13 @@ import { EvmToken } from 'sushi/evm'
 import type { LaunchpadToken } from '../types'
 
 const SIZE_IN_PIXELS = {
+  xs: 20,
   sm: 32,
   md: 44,
   lg: 56,
   xl: 80,
   '2xl': 96,
+  card: 384,
 } as const
 
 export function TokenAvatar({
@@ -33,12 +35,22 @@ export function TokenAvatar({
   const pixels = SIZE_IN_PIXELS[size]
 
   return (
-    <span className="relative inline-flex shrink-0 align-top">
+    <span
+      className={classNames('relative inline-flex shrink-0 align-top', {
+        'w-full overflow-hidden rounded-xl': size === 'card',
+      })}
+    >
       <Currency.Icon
         disableLink
         currency={currency}
         width={pixels}
         height={pixels}
+        shape={size === 'card' ? 'square' : 'circle'}
+        style={
+          size === 'card'
+            ? { width: '100%', height: 'auto', aspectRatio: '1 / 1' }
+            : undefined
+        }
       />
       {badge ? (
         <span className={classNames('absolute -bottom-0.5 -right-0.5')}>

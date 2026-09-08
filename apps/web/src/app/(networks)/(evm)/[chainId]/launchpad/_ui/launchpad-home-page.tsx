@@ -1,25 +1,12 @@
 'use client'
 
-import {
-  ArrowRightIcon,
-  ArrowUpIcon,
-  MagnifyingGlassIcon,
-  SignalIcon,
-} from '@heroicons/react/24/outline'
-import { useDebounce } from '@sushiswap/hooks'
-import {
-  Button,
-  Container,
-  LinkInternal,
-  SkeletonBox,
-  TextField,
-} from '@sushiswap/ui'
+import { ArrowRightIcon, ArrowUpIcon } from '@heroicons/react/24/outline'
+import { useDebounce, useIsMounted, useLocalStorage } from '@sushiswap/hooks'
+import { Button, Container, LinkInternal, SkeletonBox } from '@sushiswap/ui'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
 import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd } from '../_lib/format'
 import {
   getLaunchpadProvidersForFilter,
@@ -28,14 +15,13 @@ import {
 import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../constants'
-import { MetricStrip, MetricStripItem } from './metric-strip'
-import { ProviderFilterControls } from './provider-filter-controls'
+import { LaunchpadExploreControls } from './launchpad-explore-controls'
 import { CollectionStateCard } from './state-card'
 import { TokenGrid, TokenGridSkeleton } from './token-grid'
-import {
-  TokenSortControls,
-  parseLaunchpadTokenSortField,
-} from './token-sort-controls'
+import { TokenPagination } from './token-pagination'
+import { parseLaunchpadTokenSortField } from './token-sort-controls'
+import { TokenTable } from './token-table'
+import { TrendingTokens } from './trending-tokens'
 
 export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key
@@ -47,13 +33,17 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
     searchParams.get('provider'),
   )
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
+  const isMounted = useIsMounted()
+  const [storedView, setView] = useLocalStorage<'grid' | 'table'>(
+    'sushi.launchpad.explore.view',
+    'grid',
+  )
+  const view = isMounted && storedView === 'table' ? 'table' : 'grid'
   const [search, setSearch] = useState(urlSearch)
   const debouncedSearch = useDebounce(search, 250)
-  const [creator, setCreator] = useState(urlCreator)
   const [showScrollToTop, setShowScrollToTop] = useState(false)
 
   useEffect(() => setSearch(urlSearch), [urlSearch])
-  useEffect(() => setCreator(urlCreator), [urlCreator])
   useEffect(() => {
     function handleScroll() {
       setShowScrollToTop(window.scrollY >= 1_000)
@@ -112,170 +102,164 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const {
     data,
     fetchNextPage,
+    hasNextPage,
     isError,
+    isFetching,
     isFetchingNextPage,
+    isFetchNextPageError,
     isPending,
     refetch,
   } = useLaunchpadTokens(input, true)
   const tokens = data.edges.map((edge) => edge.node)
   const { data: stats, isLoading } = useLaunchpadStats({ chainId, providers })
+  const loadMoreTokens = useCallback(() => {
+    if (hasNextPage && !isFetching) void fetchNextPage()
+  }, [fetchNextPage, hasNextPage, isFetching])
 
   return (
     <>
-      <Container maxWidth="7xl" className="w-full px-4 pb-8 pt-8 sm:pt-10">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <h1 className="text-3xl font-semibold tracking-[-0.03em] text-perps-muted sm:text-5xl">
-              Discover tokens as they launch.
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-perps-muted-50 sm:text-base">
-              Follow live markets, trade directly from each token page, and
-              launch with permanently locked Sushi V3 liquidity.
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-3">
-            <LinkInternal href={`/${chainKey}/launchpad/create`}>
-              <Button
-                asChild
-                size="lg"
-                variant="perps-default"
-                icon={ArrowRightIcon}
-                iconPosition="end"
+      <Container
+        maxWidth="7xl"
+        className="w-full px-4 sm:px-8 pb-8 pt-8 sm:pt-10"
+      >
+        <div className="bg-[#151A20] rounded-2xl border border-white/[0.07] px-4 lg:px-10 py-5">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start items-center lg:justify-between">
+            <div className="max-w-3xl flex flex-col gap-2 lg:gap-6 lg:mt-4">
+              <div className="flex flex-col md:flex-row gap-0 md:gap-2 lg:gap-0 lg:flex-col">
+                <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-5xl ">
+                  Launch a token.
+                </h1>
+                <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-5xl ">
+                  Create its market.
+                </h1>
+              </div>
+              <p className="lg:max-w-[400px] text-sm leading-6 text-perps-muted-50 sm:text-base">
+                Launch with live Sushi liquidity and pair with crypto, Stock
+                Tokens and RWAs.
+              </p>
+              <LinkInternal
+                href={`/${chainKey}/launchpad/create`}
+                className="mt-1 md:mx-auto lg:mx-0"
               >
-                Create token
-              </Button>
-            </LinkInternal>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="perps-default"
+                  icon={ArrowRightIcon}
+                  iconPosition="end"
+                  className="!px-8"
+                >
+                  Create token
+                </Button>
+              </LinkInternal>
+            </div>
+            <div className="w-full lg:w-fit">
+              <TrendingTokens chainId={chainId} />
+            </div>
           </div>
-        </div>
+          <hr className="w-full h-px border-white/[0.07] mt-12 mb-6" />
 
-        <div className="mt-7">
-          <MetricStrip>
+          <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-0">
             {[
               {
                 label: 'Tokens launched',
-                value: `${stats?.totalTokensLaunched}`,
+                value: stats?.totalTokensLaunched?.toString() ?? '—',
               },
               {
-                label: '24h volume',
+                label: '24H Volume',
                 value: formatUsd(stats?.totalVolumeUsd24h),
               },
               {
                 label: 'Liquidity',
                 value: formatUsd(stats?.totalLiquidityUsd),
               },
-            ].map((stat, index) => (
-              <MetricStripItem
-                key={stat.label}
-                index={index}
-                label={stat.label}
-                value={
-                  isLoading ? (
-                    <SkeletonBox className="h-7 w-20 rounded-md" />
-                  ) : (
-                    stat.value
-                  )
-                }
-              />
-            ))}
-            <div className="flex items-center gap-3 border-l border-white/[0.06] border-t lg:border-t-0 px-5 py-4">
-              <span className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
-                <SignalIcon className="h-5 w-5" />
-              </span>
-              <div>
-                <div className="text-[11px] uppercase tracking-wide text-perps-muted-50">
-                  Market feeds
+            ].map((stat, idx) => (
+              <div key={stat.label} className="flex items-center">
+                <div className="flex justify-center items-center md:gap-2 flex-col-reverse md:flex-row">
+                  <div className="text-lg font-bold text-white">
+                    {isLoading ? (
+                      <SkeletonBox className="h-6 w-20 rounded-md" />
+                    ) : (
+                      stat.value
+                    )}
+                  </div>
+                  <div className="text-base text-perps-muted-50 whitespace-nowrap">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none" />
-                  Live
-                </div>
+                {idx < 2 && (
+                  <div className="mx-6 hidden h-1 w-1 shrink-0 rounded-full bg-perps-muted-20 md:block" />
+                )}
               </div>
-            </div>
-          </MetricStrip>
+            ))}
+          </div>
         </div>
       </Container>
 
-      <section id="discover" className="border-t border-white/[0.04] py-8">
-        <Container maxWidth="7xl" className="w-full px-4">
-          <PerpsCard className="p-3 sm:p-4" fullWidth>
-            <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <TextField
-                  type="text"
-                  value={search}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    setSearch(value)
-                    updateParams({ search: value || undefined })
-                  }}
-                  icon={MagnifyingGlassIcon}
-                  placeholder="Search name, symbol, or address"
-                  aria-label="Search launches"
-                  className="!bg-white/[0.04] !text-perps-muted"
-                  wrapperClassName="min-w-0 sm:w-[300px] xl:w-[400px]"
-                />
-                <ProviderFilterControls
-                  filter={providerFilter}
-                  onFilterChange={(nextFilter) =>
-                    updateParams({
-                      provider: nextFilter === 'all' ? undefined : nextFilter,
-                    })
+      <section id="discover">
+        <Container maxWidth="8xl" className="w-full px-4 sm:px-8">
+          <div className="bg-[#151A20] rounded-2xl border border-white/[0.07] px-4 py-5 sm:p-8">
+            <LaunchpadExploreControls
+              search={search}
+              onSearchChange={(value) => {
+                setSearch(value)
+                updateParams({ search: value || undefined })
+              }}
+              sortBy={sortBy}
+              onSortByChange={(nextSortBy) =>
+                updateParams({ sortBy: nextSortBy, sortDirection: undefined })
+              }
+              providerFilter={providerFilter}
+              onProviderFilterChange={(nextFilter) =>
+                updateParams({
+                  provider: nextFilter === 'all' ? undefined : nextFilter,
+                })
+              }
+              view={view}
+              onViewChange={setView}
+            />
+
+            <div className="mt-6">
+              {isError && tokens.length === 0 ? (
+                <CollectionStateCard
+                  description="Launches could not be loaded."
+                  action={
+                    <Button variant="perps-secondary" onClick={() => refetch()}>
+                      Try again
+                    </Button>
                   }
                 />
-              </div>
-              <TextField
-                type="text"
-                value={creator}
-                onChange={(event) => {
-                  const value = event.target.value
-                  setCreator(value)
-                  updateParams({ creator: value || undefined })
-                }}
-                placeholder="Filter by creator address"
-                aria-label="Filter by creator address"
-                className="!bg-white/[0.04] !text-perps-muted"
-                wrapperClassName="hidden"
-              />
-              <TokenSortControls
-                sortBy={sortBy}
-                onSortByChange={(nextSortBy) =>
-                  updateParams({
-                    sortBy: nextSortBy,
-                    sortDirection: undefined,
-                  })
-                }
-              />
-            </div>
-          </PerpsCard>
-
-          <div className="mt-6">
-            {isPending ? (
-              <TokenGridSkeleton />
-            ) : isError ? (
-              <CollectionStateCard
-                description="Launches could not be loaded."
-                action={
-                  <Button variant="perps-secondary" onClick={() => refetch()}>
-                    Try again
-                  </Button>
-                }
-              />
-            ) : (
-              <InfiniteScroll
-                key={infiniteScrollKey}
-                dataLength={tokens.length}
-                next={fetchNextPage}
-                hasMore={data.pageInfo.hasNextPage}
-                loader={null}
-                className="!overflow-visible"
-              >
-                <TokenGrid
+              ) : view === 'table' ? (
+                <TokenTable
+                  key={infiniteScrollKey}
                   tokens={tokens}
                   sortBy={sortBy}
+                  isLoading={isPending}
+                  hasNextPage={hasNextPage}
+                  isFetching={isFetching}
                   isFetchingNextPage={isFetchingNextPage}
+                  isFetchNextPageError={isFetchNextPageError}
+                  onLoadMore={loadMoreTokens}
                 />
-              </InfiniteScroll>
-            )}
+              ) : isPending ? (
+                <TokenGridSkeleton />
+              ) : (
+                <div key={infiniteScrollKey}>
+                  <TokenGrid
+                    tokens={tokens}
+                    sortBy={sortBy}
+                    isFetchingNextPage={isFetchingNextPage}
+                  />
+                  <TokenPagination
+                    hasNextPage={hasNextPage}
+                    isFetching={isFetching}
+                    isFetchingNextPage={isFetchingNextPage}
+                    isFetchNextPageError={isFetchNextPageError}
+                    onLoadMore={loadMoreTokens}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </Container>
       </section>

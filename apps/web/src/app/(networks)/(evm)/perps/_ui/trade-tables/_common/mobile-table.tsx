@@ -1,8 +1,12 @@
+import { classNames, useTableVirtualizer } from '@sushiswap/ui'
 import { useReactTable } from '@tanstack/react-table'
-import { type ColumnDef, getSortedRowModel } from '@tanstack/react-table'
+import {
+  type ColumnDef,
+  type Row,
+  getSortedRowModel,
+} from '@tanstack/react-table'
 import { getCoreRowModel } from '@tanstack/react-table'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import { useMemo, useRef } from 'react'
+import { Fragment, type ReactNode, useMemo, useRef } from 'react'
 import { MobileCard } from './mobile-card'
 import { MobileCardSkeleton } from './mobile-card-skeleton'
 
@@ -12,6 +16,11 @@ export const MobileTable = <T,>({
   isLoading,
   sorting,
   isExpandedOverride,
+  scrollClassName,
+  scrollMode = 'element',
+  rowRenderer,
+  skeleton,
+  footer,
 }: {
   columns: ColumnDef<T, unknown>[]
   data: T[]
@@ -21,6 +30,11 @@ export const MobileTable = <T,>({
     desc: boolean
   }[]
   isExpandedOverride?: boolean
+  scrollClassName?: string
+  scrollMode?: 'element' | 'window'
+  rowRenderer?: (row: Row<T>, content: ReactNode) => ReactNode
+  skeleton?: ReactNode
+  footer?: ReactNode
 }) => {
   const table = useReactTable({
     data: data,
@@ -41,15 +55,32 @@ export const MobileTable = <T,>({
   const { rows } = table.getRowModel()
 
   const parentRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
 
-  const virtualizer = useVirtualizer({
+  const { virtualizer, scrollMargin } = useTableVirtualizer({
+    containerRef: parentRef,
+    listRef,
+    scrollMode,
+    loading: isLoading,
     count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => (isExpandedOverride ? 230 : 80),
+    estimateSize: isExpandedOverride ? 230 : 80,
     overscan: 20,
+    getItemKey: (index) => rows[index].id,
   })
 
+  function renderRow(row: Row<T>): ReactNode {
+    const content = (
+      <MobileCard
+        row={row}
+        isExpandedOverride={isExpandedOverride}
+        headers={headersById}
+      />
+    )
+    return rowRenderer ? rowRenderer(row, content) : content
+  }
+
   if (isLoading) {
+    if (skeleton) return skeleton
     return (
       <div className="flex flex-col gap-3">
         <MobileCardSkeleton />
@@ -69,19 +100,47 @@ export const MobileTable = <T,>({
     )
   }
 
+  if (scrollClassName || scrollMode === 'window') {
+    return (
+      <div
+        className={classNames(scrollClassName, 'min-h-[300px]')}
+        ref={parentRef}
+      >
+        <div
+          ref={listRef}
+          className="relative w-full"
+          style={{ height: virtualizer.getTotalSize() }}
+        >
+          {virtualizer.getVirtualItems().map((virtualRow) => {
+            const row = rows[virtualRow.index]
+
+            return (
+              <div
+                className="absolute left-0 top-0 w-full pb-3"
+                data-index={virtualRow.index}
+                key={row.id}
+                ref={virtualizer.measureElement}
+                style={{
+                  transform: `translateY(${virtualRow.start - scrollMargin}px)`,
+                }}
+              >
+                {renderRow(row)}
+              </div>
+            )
+          })}
+        </div>
+        {footer}
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-3 min-h-[300px]" ref={parentRef}>
       {virtualizer.getVirtualItems().map((virtualRow) => {
         const row = rows[virtualRow.index]
-        return (
-          <MobileCard
-            key={row.id}
-            row={row}
-            isExpandedOverride={isExpandedOverride}
-            headers={headersById}
-          />
-        )
+        return <Fragment key={row.id}>{renderRow(row)}</Fragment>
       })}
+      {footer}
     </div>
   )
 }
