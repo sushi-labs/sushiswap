@@ -6,7 +6,7 @@ import { CollectionStateCard } from './state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
 
 const GRID_CLASS_NAME =
-  'grid grid-cols-1 gap-4 [&>*]:min-w-0 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+  'grid grid-cols-1 gap-4 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
 
 const TOKEN_CARD_SKELETONS = [
   'first',

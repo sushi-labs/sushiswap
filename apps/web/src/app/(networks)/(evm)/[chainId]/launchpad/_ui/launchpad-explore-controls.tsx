@@ -6,6 +6,7 @@ import type { ReactElement } from 'react'
 import type { LaunchpadProviderFilter } from '../_lib/launchpad-provider'
 import type { LaunchpadTokenSortField } from '../types'
 import { LaunchpadProviderMark } from './launchpad-provider-mark'
+import { DEFAULT_LAUNCHPAD_TOKEN_SORT } from './token-sort-controls'
 
 const CONTROL_CLASS =
   'flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue disabled:cursor-not-allowed sm:text-base'
@@ -43,6 +44,7 @@ export function LaunchpadExploreControls({
   onProviderFilterChange,
   view,
   onViewChange,
+  disabled = false,
 }: {
   search: string
   onSearchChange: (search: string) => void
@@ -52,6 +54,7 @@ export function LaunchpadExploreControls({
   onProviderFilterChange: (filter: LaunchpadProviderFilter) => void
   view: 'grid' | 'table'
   onViewChange: (view: 'grid' | 'table') => void
+  disabled?: boolean
 }): ReactElement {
   const isVolume = sortBy.startsWith('VOLUME_')
   const volumePeriod = isVolume ? sortBy : 'VOLUME_24H'
@@ -79,6 +82,7 @@ export function LaunchpadExploreControls({
                 key={period.value}
                 type="button"
                 aria-pressed={volumePeriod === period.value}
+                disabled={disabled}
                 onClick={() => onSortByChange(period.value)}
                 className={classNames(
                   CONTROL_CLASS,
@@ -102,6 +106,7 @@ export function LaunchpadExploreControls({
                 key={option}
                 type="button"
                 aria-pressed={view === option}
+                disabled={disabled}
                 onClick={() => onViewChange(option)}
                 className={classNames(
                   CONTROL_CLASS,
@@ -118,6 +123,7 @@ export function LaunchpadExploreControls({
       </div>
       <div className="flex min-w-0 flex-wrap items-center gap-3">
         <TextField
+          disabled={disabled}
           type="text"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
@@ -143,7 +149,7 @@ export function LaunchpadExploreControls({
                   key={option.value}
                   type="button"
                   aria-pressed={selected}
-                  disabled={option.comingSoon}
+                  disabled={disabled || option.comingSoon}
                   title={
                     option.comingSoon
                       ? `${option.label} is coming soon`
@@ -167,6 +173,7 @@ export function LaunchpadExploreControls({
               <button
                 type="button"
                 aria-pressed="true"
+                disabled={disabled}
                 className="h-9 shrink-0 rounded-lg bg-gradient-to-br from-[#24446E] to-[#249DDD] px-3 text-sm font-medium text-white"
               >
                 Liquidity
@@ -185,6 +192,7 @@ export function LaunchpadExploreControls({
               key={option.value}
               type="button"
               aria-pressed={providerFilter === option.value}
+              disabled={disabled}
               onClick={() => onProviderFilterChange(option.value)}
               className={classNames(
                 CONTROL_CLASS,
@@ -209,5 +217,23 @@ export function LaunchpadExploreControls({
         </div>
       </div>
     </div>
+  )
+}
+
+function noop() {}
+
+export function LaunchpadExploreControlsSkeleton(): ReactElement {
+  return (
+    <LaunchpadExploreControls
+      disabled
+      search=""
+      onSearchChange={noop}
+      sortBy={DEFAULT_LAUNCHPAD_TOKEN_SORT}
+      onSortByChange={noop}
+      providerFilter="all"
+      onProviderFilterChange={noop}
+      view="grid"
+      onViewChange={noop}
+    />
   )
 }

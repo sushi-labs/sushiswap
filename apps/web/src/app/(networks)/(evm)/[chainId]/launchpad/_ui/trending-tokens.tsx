@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { type ReactElement, type ReactNode, useMemo } from 'react'
 import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
 import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
 import { getLaunchpadProvidersForFilter } from '../_lib/launchpad-provider'
@@ -12,7 +12,29 @@ import {
 } from './trending-token-card'
 import { TrendingTokenCarousel } from './trending-token-carousel'
 
-export const TrendingTokens = ({ chainId }: { chainId: LaunchpadChainId }) => {
+function TrendingTokensSection({
+  children,
+}: { children: ReactNode }): ReactElement {
+  return (
+    <div className="w-full min-w-0 lg:w-[440px]">
+      <h4 className="uppercase font-bold text-sm mb-2">Trending Now</h4>
+      {children}
+    </div>
+  )
+}
+
+export function TrendingTokensSkeleton(): ReactElement {
+  return (
+    <TrendingTokensSection>
+      <TrendingTokenCardSkeleton />
+      <div aria-hidden="true" className="mt-3 hidden h-9 lg:block" />
+    </TrendingTokensSection>
+  )
+}
+
+export function TrendingTokens({
+  chainId,
+}: { chainId: LaunchpadChainId }): ReactElement {
   const { data: stockTokens } = useRobinhoodStockTokens()
   const { data, isPending, isError } = useLaunchpadTokens(
     {
@@ -45,15 +67,11 @@ export const TrendingTokens = ({ chainId }: { chainId: LaunchpadChainId }) => {
     }))
   }, [topTokens, stockTokens])
 
+  if (isPending) return <TrendingTokensSkeleton />
+
   return (
-    <div className="w-full min-w-0 lg:w-[440px]">
-      <h4 className="uppercase font-bold text-sm mb-2">Trending Now</h4>
-      {isPending ? (
-        <>
-          <TrendingTokenCardSkeleton />
-          <div aria-hidden="true" className="mt-3 hidden h-9 lg:block" />
-        </>
-      ) : topTokens.length > 0 ? (
+    <TrendingTokensSection>
+      {topTokens.length > 0 ? (
         <TrendingTokenCarousel slides={slides} />
       ) : (
         <div className="flex min-h-[130px] items-center justify-center rounded-2xl bg-white/[0.03] p-4 text-sm text-perps-muted-50 lg:min-h-[224px]">
@@ -62,6 +80,6 @@ export const TrendingTokens = ({ chainId }: { chainId: LaunchpadChainId }) => {
             : 'No trending tokens yet.'}
         </div>
       )}
-    </div>
+    </TrendingTokensSection>
   )
 }
