@@ -8,6 +8,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -32,9 +33,9 @@ export const Default = {
   args: {
     children: 'Popover',
   },
-  render: () => (
-    <Popover>
-      <PopoverTrigger>
+  render: (args) => (
+    <Popover {...args}>
+      <PopoverTrigger asChild>
         <Button>Click me</Button>
       </PopoverTrigger>
 
@@ -50,8 +51,8 @@ export const PopoverWithMenu = {
   args: {
     children: 'Popover',
   },
-  render: () => (
-    <Popover>
+  render: (args) => (
+    <Popover {...args}>
       <PopoverTrigger asChild>
         <Button variant="secondary" role="combobox">
           <span>Networks</span>
@@ -61,15 +62,24 @@ export const PopoverWithMenu = {
       <PopoverContent className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
           <CommandInput placeholder="Search network" />
-          <CommandGroup>
-            <CommandItem value="Item 0">Command Item 0</CommandItem>
-            <CommandItem value="Item 1">Command Item 1</CommandItem>
-            <CommandItem value="Item 2">Command Item 2</CommandItem>
-            <CommandItem value="Item 3">Command Item 3</CommandItem>
-          </CommandGroup>
-          <CommandEmpty>No network found.</CommandEmpty>
+          <CommandList>
+            <CommandGroup>
+              <CommandItem value="Item 0">Command Item 0</CommandItem>
+              <CommandItem value="Item 1">Command Item 1</CommandItem>
+              <CommandItem value="Item 2">Command Item 2</CommandItem>
+              <CommandItem value="Item 3">Command Item 3</CommandItem>
+            </CommandGroup>
+            <CommandEmpty>No network found.</CommandEmpty>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
   ),
+} satisfies Story
+
+export const Open = { ...Default, args: { defaultOpen: true } } satisfies Story
+
+export const OpenMenu = {
+  ...PopoverWithMenu,
+  args: { defaultOpen: true },
 } satisfies Story

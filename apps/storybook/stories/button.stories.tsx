@@ -13,6 +13,7 @@ import { ViewGroup } from '../components/view'
 const variants: ButtonProps['variant'][] = [
   'default',
   'secondary',
+  'warning',
   'destructive',
   'ghost',
   'outline',
@@ -91,7 +92,7 @@ export const Sizes = (args) => {
 export const Loading = (args) => {
   const items = [true, false].map((loading, i) => (
     <React.Fragment key={i}>
-      <Button {...args} key={loading} loading={loading}>
+      <Button {...args} key={String(loading)} loading={loading}>
         {loading ? 'Loading' : 'Not Loading'}
       </Button>
     </React.Fragment>
