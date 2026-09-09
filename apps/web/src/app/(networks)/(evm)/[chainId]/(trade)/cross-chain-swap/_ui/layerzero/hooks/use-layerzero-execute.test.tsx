@@ -27,6 +27,7 @@ const {
   waitForReceipt,
   fetchQuote,
   checkRecipient,
+  buildStellarSend,
   clearAmount,
   successToast,
   failedToast,
@@ -41,6 +42,7 @@ const {
   waitForReceipt: vi.fn(),
   fetchQuote: vi.fn(),
   checkRecipient: vi.fn(),
+  buildStellarSend: vi.fn(),
   clearAmount: vi.fn(),
   successToast: vi.fn(),
   failedToast: vi.fn(),
@@ -88,7 +90,7 @@ vi.mock('src/lib/swap/layerzero/quote', async (importOriginal) => ({
 }))
 vi.mock('src/lib/swap/layerzero/stellar', () => ({
   assertStellarUsdt0Recipient: checkRecipient,
-  buildStellarOftSend: vi.fn(),
+  buildStellarOftSend: buildStellarSend,
 }))
 vi.mock('src/lib/wallet/namespaces/stellar/config', () => ({
   getStellarWalletKit: vi.fn(),
@@ -207,14 +209,14 @@ describe('LayerZero execution approval and submission safety', () => {
     expect(writeContract).not.toHaveBeenCalled()
   })
 
-  it('rechecks allowance and never performs an approval inside execution', async () => {
-    readContract.mockResolvedValue(quote.amountIn - 1n)
+  it('does not submit when simulation fails after the checker passes', async () => {
+    simulateContract.mockRejectedValue(new Error('Insufficient allowance'))
     await act(async () => {
       await expect(execute.mutateAsync({ id: 'first', quote })).rejects.toThrow(
-        'Approve the token before swapping',
+        'Insufficient allowance',
       )
     })
-    expect(readContract.mock.lastCall?.[0].functionName).toBe('allowance')
+    expect(readContract).not.toHaveBeenCalled()
     expect(writeContract).not.toHaveBeenCalled()
     expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
     expect(executions.isSubmitting).toBe(false)
@@ -243,6 +245,7 @@ describe('LayerZero execution approval and submission safety', () => {
       }),
     )
     expect(simulateContract).toHaveBeenCalledOnce()
+    expect(readContract).not.toHaveBeenCalled()
     expect(checkRecipient).toHaveBeenCalledWith(
       quote.recipient,
       quote.amountOut,
@@ -273,6 +276,33 @@ describe('LayerZero execution approval and submission safety', () => {
     })
     expect(readContract).not.toHaveBeenCalled()
     expect(writeContract.mock.lastCall?.[0].functionName).toBe('send')
+  })
+
+  it('dispatches Stellar sources to the Stellar builder and releases the lock on failure', async () => {
+    currentQuote = {
+      ...quote,
+      fromChainId: -4,
+      toChainId: 1,
+      sourceAddress: quote.recipient,
+      recipient: quote.sourceAddress,
+    }
+    fetchQuote.mockResolvedValue(currentQuote)
+    buildStellarSend.mockRejectedValue(new Error('Stellar simulation failed'))
+    render()
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('Stellar simulation failed')
+    })
+    expect(buildStellarSend).toHaveBeenCalledWith({
+      from: currentQuote.sourceAddress,
+      sendParam: currentQuote.sendParam,
+      nativeFee: currentQuote.maxNativeFee,
+    })
+    expect(simulateContract).not.toHaveBeenCalled()
+    expect(writeContract).not.toHaveBeenCalled()
+    expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
+    expect(executions.isSubmitting).toBe(false)
   })
 
   it('preserves a broadcast hash and avoids a failure notification when confirmation times out', async () => {

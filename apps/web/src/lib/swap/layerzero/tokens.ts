@@ -1,6 +1,5 @@
 import { EvmToken } from 'sushi/evm'
 import { STELLAR_USDT0, StellarChainId } from 'sushi/stellar'
-import { getAddress } from 'viem'
 import {
   LAYERZERO_USDT0_EVM_DEPLOYMENTS,
   type LayerZeroChainId,
@@ -15,7 +14,7 @@ export function getLayerZeroCurrency(
   const deployment = LAYERZERO_USDT0_EVM_DEPLOYMENTS[chainId]
   return new EvmToken({
     chainId,
-    address: getAddress(deployment.tokenAddress),
+    address: deployment.tokenAddress,
     decimals: 6,
     symbol: deployment.symbol,
     name: deployment.symbol,

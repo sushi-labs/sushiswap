@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   type LayerZeroFeeClient,
   type LayerZeroSourceNetworkFeeEstimate,
@@ -30,8 +31,8 @@ export function useLayerZeroSourceNetworkFee({
       return estimateLayerZeroSourceNetworkFee({ quote, publicClient })
     },
     enabled: enabled && connected,
-    staleTime: 30_000,
-    refetchInterval: 30_000,
+    staleTime: ms('30s'),
+    refetchInterval: ms('30s'),
     retry: false,
   })
 

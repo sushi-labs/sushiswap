@@ -11,7 +11,7 @@ import {
   StellarChainId,
 } from 'sushi/stellar'
 import { hexToBytes, parseUnits, toHex } from 'viem'
-import { z } from 'zod'
+import * as z from 'zod'
 import { LAYERZERO_STELLAR_OFT_ADDRESS } from './config'
 import type { LayerZeroSendParam } from './types'
 

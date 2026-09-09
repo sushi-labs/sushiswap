@@ -1,10 +1,11 @@
 import { useQueries } from '@tanstack/react-query'
+import ms from 'ms'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   LayerZeroQuote,
   LayerZeroStatus,
 } from 'src/lib/swap/layerzero/types'
-import { z } from 'zod'
+import * as z from 'zod'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 
 export interface LayerZeroExecution {
@@ -133,7 +134,7 @@ export function useLayerZeroExecutions(): LayerZeroExecutionState {
       },
       enabled: Boolean(execution.txHash && execution.sourceStatus !== 'FAILED'),
       refetchInterval: (query: { state: { data?: LayerZeroStatus } }) =>
-        query.state.data?.status === 'SUCCESS' ? false : 5_000,
+        query.state.data?.status === 'SUCCESS' ? false : ms('5s'),
     })),
   })
 

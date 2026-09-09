@@ -97,7 +97,6 @@ function CrossChainSwapTradeReviewDialogContent<
       })
     }
   }, [confirmDialogOpen, setStepStates])
-  console.log(lifiData)
   return (
     <>
       <DialogReview>

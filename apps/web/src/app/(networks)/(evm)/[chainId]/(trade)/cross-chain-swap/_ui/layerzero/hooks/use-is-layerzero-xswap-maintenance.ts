@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { z } from 'zod'
+import ms from 'ms'
+import * as z from 'zod'
 
 const responseSchema = z.object({
   success: z.boolean(),
@@ -17,6 +18,6 @@ export function useIsLayerZeroXSwapMaintenance() {
       return data.success && Boolean(data.data?.maintenance)
     },
     initialData: false,
-    refetchInterval: 60_000,
+    refetchInterval: ms('60s'),
   })
 }

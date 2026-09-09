@@ -1,6 +1,6 @@
 import { StrKey } from '@stellar/stellar-sdk'
 import { StellarChainId } from 'sushi/stellar'
-import { z } from 'zod'
+import * as z from 'zod'
 import {
   LAYERZERO_STELLAR_OFT_ADDRESS,
   LAYERZERO_USDT0_EVM_DEPLOYMENTS,

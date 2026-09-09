@@ -7,6 +7,7 @@ import {
   createSuccessToast,
 } from '@sushiswap/notifications'
 import { type UseMutationResult, useMutation } from '@tanstack/react-query'
+import ms from 'ms'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
 import { SorobanClient } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client'
 import {
@@ -15,11 +16,11 @@ import {
 } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/transaction-helpers'
 import { APPROVE_TAG_XSWAP, TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import { isLayerZeroEvmChainId } from 'src/lib/swap/layerzero/config'
 import {
-  getLayerZeroEvmSendContractParameters,
-  isLayerZeroEvmApprovalRequired,
-} from 'src/lib/swap/layerzero/evm-send'
+  type LayerZeroEvmChainId,
+  isLayerZeroEvmChainId,
+} from 'src/lib/swap/layerzero/config'
+import { getLayerZeroEvmSendContractParameters } from 'src/lib/swap/layerzero/evm-send'
 import {
   assertLayerZeroQuoteIsSafe,
   fetchLayerZeroQuote,
@@ -28,11 +29,14 @@ import {
   assertStellarUsdt0Recipient,
   buildStellarOftSend,
 } from 'src/lib/swap/layerzero/stellar'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import type {
+  LayerZeroQuote,
+  LayerZeroSendParam,
+} from 'src/lib/swap/layerzero/types'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
-import { isEvmAddress } from 'sushi/evm'
+import { type EvmAddress, isEvmAddress } from 'sushi/evm'
 import { StellarChainId, isStellarAccountAddress } from 'sushi/stellar'
 import type { PublicClient } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
@@ -65,6 +69,118 @@ export function useLayerZeroExecute(): UseMutationResult<
   const { refetchChain } = useRefetchBalances()
   const { data: maintenance } = useIsLayerZeroXSwapMaintenance()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+
+  async function executeEvmSource(
+    id: string,
+    reviewed: LayerZeroQuote,
+    sendParam: LayerZeroSendParam,
+    evmSource: {
+      chainId: LayerZeroEvmChainId
+      account: EvmAddress
+      publicClient: Pick<
+        PublicClient,
+        'simulateContract' | 'waitForTransactionReceipt'
+      >
+    },
+  ): Promise<string> {
+    const request = getLayerZeroEvmSendContractParameters({
+      chainId: evmSource.chainId,
+      account: evmSource.account,
+      sendParam,
+      maxNativeFee: reviewed.maxNativeFee,
+    })
+    await evmSource.publicClient.simulateContract(request)
+    const txHash = await writeContractAsync({
+      ...request,
+      chainId: evmSource.chainId,
+    })
+    updateExecution(id, { txHash, sourceStatus: 'PENDING' })
+    clearSwapAmountIfUnchanged(reviewed)
+    let replacementReason: 'repriced' | 'replaced' | 'cancelled' | undefined
+    const receipt = await evmSource.publicClient.waitForTransactionReceipt({
+      hash: txHash,
+      onReplaced: ({ reason, transactionReceipt }) => {
+        replacementReason = reason
+        updateExecution(id, {
+          txHash: transactionReceipt.transactionHash,
+        })
+      },
+    })
+    if (receipt.status !== 'success' || replacementReason === 'cancelled') {
+      updateExecution(id, {
+        txHash: receipt.transactionHash,
+        sourceStatus: 'FAILED',
+      })
+      throw new Error('The source transaction reverted or was cancelled')
+    }
+    if (replacementReason === 'replaced')
+      throw new Error(
+        'The source transaction was replaced. Check the existing transaction before sending again.',
+      )
+    updateExecution(id, {
+      txHash: receipt.transactionHash,
+      sourceStatus: 'SUCCESS',
+    })
+    return receipt.transactionHash
+  }
+
+  async function executeStellarSource(
+    id: string,
+    reviewed: LayerZeroQuote,
+    sendParam: LayerZeroSendParam,
+  ): Promise<string> {
+    if (!sourceAddress || !isStellarAccountAddress(sourceAddress))
+      throw new Error('Connect the source Stellar wallet')
+    const transaction = await buildStellarOftSend({
+      from: sourceAddress,
+      sendParam,
+      nativeFee: reviewed.maxNativeFee,
+    })
+    if (!transaction.built)
+      throw new Error('Stellar transaction was not prepared')
+    const kit = await getStellarWalletKit()
+    const { signedTxXdr } = await kit.signTransaction(transaction.toXDR(), {
+      address: sourceAddress,
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
+    const signed = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE)
+    if (
+      !signed.hash().equals(transaction.built.hash()) ||
+      signed.signatures.length === 0
+    ) {
+      throw new Error(
+        'The signed Stellar transaction does not match the reviewed transfer',
+      )
+    }
+    // Record the deterministic hash before submission: an RPC timeout can happen
+    // after broadcast and must not encourage a second transfer.
+    const txHash = signed.hash().toString('hex')
+    updateExecution(id, { txHash, sourceStatus: 'PENDING' })
+    clearSwapAmountIfUnchanged(reviewed)
+    const { result } = await submitTransaction(signedTxXdr)
+    if (result.status === 'ERROR') {
+      updateExecution(id, { txHash, sourceStatus: 'FAILED' })
+      throw new Error('Stellar rejected the LayerZero transaction')
+    }
+    if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
+      throw new Error(
+        'Stellar submission is unconfirmed. Track the existing transaction before retrying.',
+      )
+    }
+    try {
+      await waitForTransaction(txHash, ms('60s'))
+    } catch (error) {
+      const confirmed = await SorobanClient.getTransaction(txHash).catch(
+        () => undefined,
+      )
+      if (confirmed?.status === 'FAILED') {
+        updateExecution(id, { txHash, sourceStatus: 'FAILED' })
+      }
+      throw error
+    }
+    updateExecution(id, { txHash, sourceStatus: 'SUCCESS' })
+    return txHash
+  }
 
   return useMutation({
     mutationKey: ['layerzero-execute', chainId0, chainId1],
@@ -99,19 +215,6 @@ export function useLayerZeroExecute(): UseMutationResult<
           : undefined
       if (isLayerZeroEvmChainId(chainId0) && !evmSource)
         throw new Error('Connect the source EVM wallet')
-      if (
-        evmSource &&
-        (await isLayerZeroEvmApprovalRequired({
-          publicClient: evmSource.publicClient,
-          chainId: evmSource.chainId,
-          account: evmSource.account,
-          amount: reviewed.sendParam.amountLD,
-        }))
-      ) {
-        throw new Error(
-          'USDT approval changed. Approve the token before swapping.',
-        )
-      }
 
       const executable = await fetchLayerZeroQuote({
         fromChainId: chainId0,
@@ -135,100 +238,9 @@ export function useLayerZeroExecute(): UseMutationResult<
       }
 
       if (evmSource) {
-        const request = getLayerZeroEvmSendContractParameters({
-          chainId: evmSource.chainId,
-          account: evmSource.account,
-          sendParam,
-          maxNativeFee: reviewed.maxNativeFee,
-        })
-        const simulationClient: Pick<PublicClient, 'simulateContract'> =
-          evmSource.publicClient
-        await simulationClient.simulateContract(request)
-        const txHash = await writeContractAsync({
-          ...request,
-          chainId: evmSource.chainId,
-        })
-        updateExecution(id, { txHash, sourceStatus: 'PENDING' })
-        clearSwapAmountIfUnchanged(reviewed)
-        let replacementReason: 'repriced' | 'replaced' | 'cancelled' | undefined
-        const receipt = await evmSource.publicClient.waitForTransactionReceipt({
-          hash: txHash,
-          onReplaced: ({ reason, transactionReceipt }) => {
-            replacementReason = reason
-            updateExecution(id, {
-              txHash: transactionReceipt.transactionHash,
-            })
-          },
-        })
-        if (receipt.status !== 'success' || replacementReason === 'cancelled') {
-          updateExecution(id, {
-            txHash: receipt.transactionHash,
-            sourceStatus: 'FAILED',
-          })
-          throw new Error('The source transaction reverted or was cancelled')
-        }
-        if (replacementReason === 'replaced')
-          throw new Error(
-            'The source transaction was replaced. Check the existing transaction before sending again.',
-          )
-        updateExecution(id, {
-          txHash: receipt.transactionHash,
-          sourceStatus: 'SUCCESS',
-        })
-        return receipt.transactionHash
+        return executeEvmSource(id, reviewed, sendParam, evmSource)
       }
-
-      if (!isStellarAccountAddress(sourceAddress))
-        throw new Error('Connect the source Stellar wallet')
-      const transaction = await buildStellarOftSend({
-        from: sourceAddress,
-        sendParam,
-        nativeFee: reviewed.maxNativeFee,
-      })
-      if (!transaction.built)
-        throw new Error('Stellar transaction was not prepared')
-      const kit = await getStellarWalletKit()
-      const { signedTxXdr } = await kit.signTransaction(transaction.toXDR(), {
-        address: sourceAddress,
-        networkPassphrase: NETWORK_PASSPHRASE,
-      })
-      const signed = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE)
-      if (
-        !signed.hash().equals(transaction.built.hash()) ||
-        signed.signatures.length === 0
-      ) {
-        throw new Error(
-          'The signed Stellar transaction does not match the reviewed transfer',
-        )
-      }
-      // Record the deterministic hash before submission: an RPC timeout can happen
-      // after broadcast and must not encourage a second transfer.
-      const txHash = signed.hash().toString('hex')
-      updateExecution(id, { txHash, sourceStatus: 'PENDING' })
-      clearSwapAmountIfUnchanged(reviewed)
-      const { result } = await submitTransaction(signedTxXdr)
-      if (result.status === 'ERROR') {
-        updateExecution(id, { txHash, sourceStatus: 'FAILED' })
-        throw new Error('Stellar rejected the LayerZero transaction')
-      }
-      if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
-        throw new Error(
-          'Stellar submission is unconfirmed. Track the existing transaction before retrying.',
-        )
-      }
-      try {
-        await waitForTransaction(txHash, 60_000)
-      } catch (error) {
-        const confirmed = await SorobanClient.getTransaction(txHash).catch(
-          () => undefined,
-        )
-        if (confirmed?.status === 'FAILED') {
-          updateExecution(id, { txHash, sourceStatus: 'FAILED' })
-        }
-        throw error
-      }
-      updateExecution(id, { txHash, sourceStatus: 'SUCCESS' })
-      return txHash
+      return executeStellarSource(id, reviewed, sendParam)
     },
     onSuccess: (txHash, { quote }) => {
       refetchChain(quote.fromChainId)

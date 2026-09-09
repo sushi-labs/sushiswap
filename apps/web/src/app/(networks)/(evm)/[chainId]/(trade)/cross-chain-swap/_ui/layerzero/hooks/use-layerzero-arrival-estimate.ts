@@ -1,6 +1,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import type { LayerZeroChainId } from 'src/lib/swap/layerzero/config'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const responseSchema = z.object({
   estimatedSeconds: z.number().int().positive().nullable(),
@@ -24,8 +25,8 @@ export function useLayerZeroArrivalEstimate(
       if (!response.ok) throw new Error('LayerZero timing unavailable')
       return responseSchema.parse(await response.json())
     },
-    staleTime: 300_000,
-    refetchInterval: 300_000,
+    staleTime: ms('5m'),
+    refetchInterval: ms('5m'),
     retry: false,
   })
 }

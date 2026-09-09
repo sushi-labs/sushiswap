@@ -1,3 +1,4 @@
+import ms from 'ms'
 import { type NextRequest, NextResponse } from 'next/server'
 import {
   getLayerZeroArrivalEstimate,
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       getLayerZeroArrivalEstimateUrl(fromChainId, toChainId),
       {
         next: { revalidate: 300 },
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.timeout(ms('10s')),
       },
     )
     if (!response.ok) throw new Error('LayerZero timing unavailable')

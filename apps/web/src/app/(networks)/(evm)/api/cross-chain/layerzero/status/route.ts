@@ -1,3 +1,4 @@
+import ms from 'ms'
 import { type NextRequest, NextResponse } from 'next/server'
 import {
   getLayerZeroEid,
@@ -6,7 +7,7 @@ import {
 } from 'src/lib/swap/layerzero/config'
 import { parseLayerZeroStatus } from 'src/lib/swap/layerzero/status'
 import type { LayerZeroStatus } from 'src/lib/swap/layerzero/types'
-import { z } from 'zod'
+import * as z from 'zod'
 
 const messageNotFoundSchema = z.object({ code: z.literal(4040) })
 
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const response = await fetch(
       `https://scan.layerzero-api.com/v1/messages/tx/${encodeURIComponent(txHash)}`,
-      { cache: 'no-store', signal: AbortSignal.timeout(10_000) },
+      { cache: 'no-store', signal: AbortSignal.timeout(ms('10s')) },
     )
     const body: unknown = await response.json()
     let status: LayerZeroStatus

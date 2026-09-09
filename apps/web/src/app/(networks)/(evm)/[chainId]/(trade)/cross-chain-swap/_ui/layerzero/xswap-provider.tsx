@@ -1,6 +1,7 @@
 'use client'
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import {
   type ReactNode,
   createContext,
@@ -166,8 +167,8 @@ export function LayerZeroXSwapProvider({
       enabled &&
       Boolean(swapAmount?.gt(0n)) &&
       (chainId0 === StellarChainId.STELLAR || Boolean(publicClient)),
-    staleTime: 30_000,
-    refetchInterval: 30_000,
+    staleTime: ms('30s'),
+    refetchInterval: ms('30s'),
     // Quotes are read-only: recover transient RPC/spec-loading failures without
     // requiring an amount edit or waiting for the next 30-second refresh.
     retry: 2,
