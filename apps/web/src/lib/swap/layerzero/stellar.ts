@@ -1,4 +1,4 @@
-import { Horizon, StrKey, contract } from '@stellar/stellar-sdk'
+import { BASE_FEE, Horizon, StrKey, contract, rpc } from '@stellar/stellar-sdk'
 import {
   HORIZON_URL,
   NETWORK_PASSPHRASE,
@@ -50,18 +50,36 @@ function toStellarSendParam(param: LayerZeroSendParam) {
   }
 }
 
+async function getStellarInclusionFee(): Promise<string> {
+  const server = new rpc.Server(RPC_URL, { headers: RPC_HEADERS })
+  const stats = await server.getFeeStats()
+  const estimate = z
+    .string()
+    .regex(/^\d+$/, 'Invalid Stellar inclusion fee estimate')
+    .transform(BigInt)
+    .parse(stats.sorobanInclusionFee.p95)
+  // Soroban has its own surge pricing. Allow headroom while the wallet signs;
+  // simulation adds the separate resource fee to this inclusion-fee bid.
+  const buffered = estimate * 2n
+  return (buffered > BigInt(BASE_FEE) ? buffered : BigInt(BASE_FEE)).toString()
+}
+
 async function buildStellarOftTransaction(
   method: 'quote_oft' | 'quote_send' | 'send',
   args: Record<string, unknown>,
   publicKey?: StellarAccountAddress,
 ): Promise<contract.AssembledTransaction<unknown>> {
-  const spec = await getStellarOftSpec()
+  const [spec, inclusionFee] = await Promise.all([
+    getStellarOftSpec(),
+    method === 'send' ? getStellarInclusionFee() : undefined,
+  ])
   return contract.AssembledTransaction.build({
     contractId: LAYERZERO_STELLAR_OFT_ADDRESS,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
     headers: RPC_HEADERS,
     publicKey,
+    fee: inclusionFee,
     timeoutInSeconds: 180,
     method,
     args: spec.funcArgsToScVals(method, args),
@@ -137,6 +155,21 @@ export async function buildStellarOftSend({
     },
     from,
   )
+  // The SDK returns a built envelope even when simulation fails. Only a
+  // successful simulation supplies the resources and authorization for signing.
+  if (!transaction.simulation) {
+    throw new Error('Stellar LayerZero transaction was not simulated')
+  }
+  if (rpc.Api.isSimulationError(transaction.simulation)) {
+    throw new Error(
+      `Stellar LayerZero simulation failed: ${transaction.simulation.error}`,
+    )
+  }
+  if (rpc.Api.isSimulationRestore(transaction.simulation)) {
+    throw new Error(
+      'Stellar contract state must be restored before this LayerZero transfer',
+    )
+  }
   if (transaction.needsNonInvokerSigningBy().length !== 0) {
     throw new Error('LayerZero transfer requires unsupported authorization')
   }

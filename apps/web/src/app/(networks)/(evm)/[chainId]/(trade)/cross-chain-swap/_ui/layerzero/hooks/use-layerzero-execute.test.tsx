@@ -1,6 +1,14 @@
 /** @vitest-environment jsdom */
 
 import {
+  Account,
+  Contract,
+  Networks,
+  Transaction,
+  TransactionBuilder,
+  xdr,
+} from '@stellar/stellar-sdk'
+import {
   QueryClient,
   QueryClientProvider,
   notifyManager,
@@ -28,6 +36,8 @@ const {
   fetchQuote,
   checkRecipient,
   buildStellarSend,
+  signStellarTransaction,
+  submitStellarTransaction,
   clearAmount,
   successToast,
   failedToast,
@@ -43,6 +53,8 @@ const {
   fetchQuote: vi.fn(),
   checkRecipient: vi.fn(),
   buildStellarSend: vi.fn(),
+  signStellarTransaction: vi.fn(),
+  submitStellarTransaction: vi.fn(),
   clearAmount: vi.fn(),
   successToast: vi.fn(),
   failedToast: vi.fn(),
@@ -93,7 +105,9 @@ vi.mock('src/lib/swap/layerzero/stellar', () => ({
   buildStellarOftSend: buildStellarSend,
 }))
 vi.mock('src/lib/wallet/namespaces/stellar/config', () => ({
-  getStellarWalletKit: vi.fn(),
+  getStellarWalletKit: async () => ({
+    signTransaction: signStellarTransaction,
+  }),
 }))
 vi.mock(
   'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client',
@@ -101,7 +115,10 @@ vi.mock(
 )
 vi.mock(
   'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/transaction-helpers',
-  () => ({ submitTransaction: vi.fn(), waitForTransaction: vi.fn() }),
+  () => ({
+    submitTransaction: submitStellarTransaction,
+    waitForTransaction: vi.fn(),
+  }),
 )
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
@@ -194,6 +211,7 @@ describe('LayerZero execution approval and submission safety', () => {
     client.clear()
     container.remove()
     vi.unstubAllGlobals()
+    vi.restoreAllMocks()
     notifyManager.setNotifyFunction((callback) => callback())
   })
 
@@ -325,6 +343,76 @@ describe('LayerZero execution approval and submission safety', () => {
         href: `https://layerzeroscan.com/tx/${txHash}`,
       }),
     )
+  })
+
+  it('preserves the Stellar rejection code in the failed execution and notification', async () => {
+    // Avoid Node Buffer / jsdom Uint8Array realm checks in the SDK's hashing.
+    vi.spyOn(Transaction.prototype, 'hash').mockReturnValue(Buffer.alloc(32, 1))
+    currentQuote = {
+      ...quote,
+      fromChainId: -4,
+      toChainId: 1,
+      sourceAddress: quote.recipient,
+      recipient: quote.sourceAddress,
+    }
+    fetchQuote.mockResolvedValue(currentQuote)
+    const built = new TransactionBuilder(
+      new Account(
+        'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
+        '100',
+      ),
+      {
+        fee: '100',
+        networkPassphrase: Networks.PUBLIC,
+      },
+    )
+      .addOperation(
+        new Contract(
+          'CBOWOLFSDM5PZXNFIVDMP5NZ7U2GSIHED6H6R446QOHF266XINKUMMF6',
+        ).call('send'),
+      )
+      .setTimeout(180)
+      .build()
+    const signed = TransactionBuilder.fromXDR(built.toXDR(), Networks.PUBLIC)
+    signed.signatures.push(
+      new xdr.DecoratedSignature({
+        hint: Buffer.alloc(4),
+        signature: Buffer.alloc(64),
+      }),
+    )
+    buildStellarSend.mockResolvedValue({ built, toXDR: () => built.toXDR() })
+    signStellarTransaction.mockResolvedValue({ signedTxXdr: signed.toXDR() })
+    submitStellarTransaction.mockResolvedValue({
+      result: {
+        status: 'ERROR',
+        errorResult: new xdr.TransactionResult({
+          feeCharged: new xdr.Int64(0),
+          result: xdr.TransactionResultResult.txInsufficientFee(),
+          ext: new xdr.TransactionResultExt(0),
+        }),
+      },
+    })
+    render()
+
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('txInsufficientFee')
+    })
+
+    expect(submitStellarTransaction).toHaveBeenCalledWith(signed.toXDR())
+    expect(executions.executions[0]).toMatchObject({
+      txHash: built.hash().toString('hex'),
+      sourceStatus: 'FAILED',
+      error: 'Stellar rejected the LayerZero transaction: txInsufficientFee',
+    })
+    expect(failedToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        summary:
+          'Stellar rejected the LayerZero transaction: txInsufficientFee',
+      }),
+    )
+    expect(executions.isSubmitting).toBe(false)
   })
 
   it('marks a confirmed source revert as failed while retaining its explorer hash', async () => {

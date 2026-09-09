@@ -160,7 +160,10 @@ export function useLayerZeroExecute(): UseMutationResult<
     const { result } = await submitTransaction(signedTxXdr)
     if (result.status === 'ERROR') {
       updateExecution(id, { txHash, sourceStatus: 'FAILED' })
-      throw new Error('Stellar rejected the LayerZero transaction')
+      const reason = result.errorResult?.result().switch().name
+      throw new Error(
+        `Stellar rejected the LayerZero transaction${reason ? `: ${reason}` : ''}`,
+      )
     }
     if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
       throw new Error(
