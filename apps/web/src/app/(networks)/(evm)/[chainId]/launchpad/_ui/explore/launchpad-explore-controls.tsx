@@ -138,7 +138,7 @@ export function LaunchpadExploreControls({
           <div
             role="group"
             aria-label="Sort launches by"
-            className="contents sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:gap-0.5 sm:overflow-x-auto sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
+            className="contents sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:gap-1 sm:overflow-x-auto sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
           >
             {SORT_OPTIONS.map((option) => {
               const selected =
@@ -159,10 +159,10 @@ export function LaunchpadExploreControls({
                     if (!option.comingSoon) onSortByChange(option.value)
                   }}
                   className={classNames(
-                    'h-8 shrink-0 whitespace-nowrap rounded-lg px-2 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue disabled:cursor-not-allowed sm:px-3 sm:text-base min-[1440px]:px-4',
+                    CONTROL_CLASS,
                     selected
-                      ? 'bg-gradient-to-br from-[#24446E] to-[#249DDD] text-white'
-                      : 'text-perps-muted-50 enabled:hover:bg-white/[0.04] enabled:hover:text-white',
+                      ? SELECTED_CLASS
+                      : ' text-white hover:bg-white/[0.04] border-transparent',
                   )}
                 >
                   {option.label}
