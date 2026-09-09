@@ -7,6 +7,7 @@ import {
   isNearIntentsChainId,
 } from 'src/lib/swap/near-intents'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
+import { LayerZeroXSwapProvider } from './_ui/layerzero/xswap-provider'
 import { LifiXSwapProvider } from './_ui/lifi/xswap-provider'
 import { NearIntentsXSwapProvider } from './_ui/near-intents/xswap-provider'
 import { XSwapFormProvider } from './_ui/xswap-form-provider'
@@ -26,12 +27,16 @@ export async function Providers({
         {isLifiXSwapSupportedChainId(chainId) &&
         isNearIntentsChainId(chainId) ? (
           <NearIntentsXSwapProvider>
-            <LifiXSwapProvider>{children}</LifiXSwapProvider>
+            <LayerZeroXSwapProvider>
+              <LifiXSwapProvider>{children}</LifiXSwapProvider>
+            </LayerZeroXSwapProvider>
           </NearIntentsXSwapProvider>
         ) : isLifiXSwapSupportedChainId(chainId) ? (
           <LifiXSwapProvider>{children}</LifiXSwapProvider>
         ) : (
-          <NearIntentsXSwapProvider>{children}</NearIntentsXSwapProvider>
+          <NearIntentsXSwapProvider>
+            <LayerZeroXSwapProvider>{children}</LayerZeroXSwapProvider>
+          </NearIntentsXSwapProvider>
         )}
       </XSwapFormProvider>
     </EdgeProvider>

@@ -1,14 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getSortedChainIds } from 'src/config'
-import {
-  LIFI_XSWAP_SUPPORTED_CHAIN_IDS,
-  isLifiXSwapSupportedChainId,
-} from 'src/config'
-import {
-  NEAR_INTENTS_SUPPORTED_CHAIN_IDS,
-  isNearIntentsChainId,
-} from 'src/lib/swap/near-intents'
+import { isLifiXSwapSupportedChainId } from 'src/config'
+import { LIFI_XSWAP_SUPPORTED_CHAIN_IDS, getSortedChainIds } from 'src/config'
+import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
+import { NEAR_INTENTS_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/near-intents'
 import { StellarChainId } from 'sushi/stellar'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header as StellarHeader } from '~stellar/header'

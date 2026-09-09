@@ -10,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@sushiswap/ui'
-import type React from 'react'
 import { type ReactNode, type RefObject, useEffect } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import {
@@ -98,7 +97,6 @@ function CrossChainSwapTradeReviewDialogContent<
       })
     }
   }, [confirmDialogOpen, setStepStates])
-
   return (
     <>
       <DialogReview>
