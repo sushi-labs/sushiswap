@@ -2,8 +2,8 @@ import { Button } from '@sushiswap/ui'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { getEvmChainById } from 'sushi/evm'
-import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
-import type { LaunchpadToken } from '../types'
+import { launchpadProviderHasCapability } from '../../_lib/launchpad-provider'
+import type { LaunchpadToken } from '../../types'
 
 type CreatorLinkToken = Pick<LaunchpadToken, 'chainId' | 'creator' | 'provider'>
 

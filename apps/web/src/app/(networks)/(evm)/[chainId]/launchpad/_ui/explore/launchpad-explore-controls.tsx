@@ -3,9 +3,9 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { TextField, classNames } from '@sushiswap/ui'
 import type { ReactElement } from 'react'
-import type { LaunchpadProviderFilter } from '../_lib/launchpad-provider'
-import type { LaunchpadTokenSortField } from '../types'
-import { LaunchpadProviderMark } from './launchpad-provider-mark'
+import type { LaunchpadProviderFilter } from '../../_lib/launchpad-provider'
+import type { LaunchpadTokenSortField } from '../../types'
+import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 import { DEFAULT_LAUNCHPAD_TOKEN_SORT } from './token-sort-controls'
 
 const CONTROL_CLASS =

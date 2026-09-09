@@ -5,7 +5,11 @@ import type { LaunchpadTokenEdge } from '@sushiswap/graph-client/data-api'
 import { Currency, LinkInternal, SkeletonBox, classNames } from '@sushiswap/ui'
 import { type ComponentProps, type ReactElement, useMemo } from 'react'
 import { EvmToken, getEvmChainById } from 'sushi/evm'
-import { formatPercent, formatUsd, volumeChangePercent } from '../_lib/format'
+import {
+  formatPercent,
+  formatUsd,
+  volumeChangePercent,
+} from '../../_lib/format'
 
 function TrendingTokenCardFrame({
   className,

@@ -5,7 +5,7 @@ import { type DragEvent, useEffect, useRef, useState } from 'react'
 import {
   type PreparedLaunchpadLogoFile,
   prepareLaunchpadLogoFile,
-} from '../_lib/launchpad-logo'
+} from '../../_lib/launchpad-logo'
 
 interface LaunchpadLogoInputProps {
   id: string

@@ -10,19 +10,19 @@ import { isAddress } from 'viem'
 import {
   getLaunchpadProvidersForFilter,
   parseLaunchpadProviderFilter,
-} from '../_lib/launchpad-provider'
-import { useLaunchpadStats } from '../_lib/use-launchpad-stats'
-import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
-import type { LaunchpadChainId } from '../constants'
-import { LaunchpadExploreControls } from './launchpad-explore-controls'
-import { LaunchpadExploreSection } from './launchpad-explore-section'
+} from '../../_lib/launchpad-provider'
+import { useLaunchpadStats } from '../../_lib/use-launchpad-stats'
+import { useLaunchpadTokens } from '../../_lib/use-launchpad-tokens'
+import type { LaunchpadChainId } from '../../constants'
+import { CollectionStateCard } from '../_common/state-card'
+import { LaunchpadExploreControls } from '../explore/launchpad-explore-controls'
+import { LaunchpadExploreSection } from '../explore/launchpad-explore-section'
+import { parseLaunchpadTokenSortField } from '../explore/token-sort-controls'
+import { TokenGrid, TokenGridSkeleton } from '../token-list/token-grid'
+import { TokenPagination } from '../token-list/token-pagination'
+import { TokenTable } from '../token-list/token-table'
+import { TrendingTokens } from '../trending/trending-tokens'
 import { LaunchpadHero } from './launchpad-hero'
-import { CollectionStateCard } from './state-card'
-import { TokenGrid, TokenGridSkeleton } from './token-grid'
-import { TokenPagination } from './token-pagination'
-import { parseLaunchpadTokenSortField } from './token-sort-controls'
-import { TokenTable } from './token-table'
-import { TrendingTokens } from './trending-tokens'
 
 export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const chainKey = getEvmChainById(chainId).key

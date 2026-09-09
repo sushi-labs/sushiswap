@@ -3,9 +3,9 @@
 import { type ReactElement, type ReactNode, useMemo } from 'react'
 import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
 import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
-import { getLaunchpadProvidersForFilter } from '../_lib/launchpad-provider'
-import { useLaunchpadTokens } from '../_lib/use-launchpad-tokens'
-import type { LaunchpadChainId } from '../constants'
+import { getLaunchpadProvidersForFilter } from '../../_lib/launchpad-provider'
+import { useLaunchpadTokens } from '../../_lib/use-launchpad-tokens'
+import type { LaunchpadChainId } from '../../constants'
 import {
   TrendingTokenCard,
   TrendingTokenCardSkeleton,

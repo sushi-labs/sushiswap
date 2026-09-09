@@ -43,7 +43,7 @@ import {
   SUSHI_V2_LAUNCHPAD_ADDRESS,
   SUSHI_V2_LIQUIDITY_MODE,
 } from '../../_providers/sushi-v2/contract'
-import { PageHeading } from '../../_ui/page-heading'
+import { PageHeading } from '../../_ui/_common/page-heading'
 import type { LaunchpadChainId } from '../../constants'
 import {
   LAUNCH_FDV_LEVELS_USD,

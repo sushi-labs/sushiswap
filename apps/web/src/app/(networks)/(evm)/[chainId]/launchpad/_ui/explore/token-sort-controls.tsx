@@ -8,7 +8,7 @@ import {
   SelectValue,
   classNames,
 } from '@sushiswap/ui'
-import type { LaunchpadTokenSortField } from '../types'
+import type { LaunchpadTokenSortField } from '../../types'
 
 type SortMetric =
   | 'VOLUME'

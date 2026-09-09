@@ -1,8 +1,8 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
 import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
-import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import { CollectionStateCard } from './state-card'
+import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { CollectionStateCard } from '../_common/state-card'
 import { TokenCard, TokenCardSkeleton } from './token-card'
 
 const GRID_CLASS_NAME =

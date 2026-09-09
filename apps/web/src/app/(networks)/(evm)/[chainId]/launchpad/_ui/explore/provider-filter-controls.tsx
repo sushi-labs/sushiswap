@@ -5,14 +5,14 @@ import {
   LAUNCHPAD_PROVIDER_FILTERS,
   type LaunchpadProviderFilter,
   getLaunchpadProviderIconsForFilter,
-} from '../_lib/launchpad-provider'
-import { LaunchpadProviderMark } from './launchpad-provider-mark'
+} from '../../_lib/launchpad-provider'
 import {
   SEGMENTED_GROUP,
   SEGMENTED_ITEM,
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
-} from './segmented-control'
+} from '../_common/segmented-control'
+import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 
 export function ProviderFilterControls({
   filter,

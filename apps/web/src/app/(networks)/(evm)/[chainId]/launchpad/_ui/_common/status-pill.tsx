@@ -1,5 +1,5 @@
 import { classNames } from '@sushiswap/ui'
-import type { LaunchpadIndexingStatus } from '../types'
+import type { LaunchpadIndexingStatus } from '../../types'
 
 export function StatusPill({ status }: { status: LaunchpadIndexingStatus }) {
   return (

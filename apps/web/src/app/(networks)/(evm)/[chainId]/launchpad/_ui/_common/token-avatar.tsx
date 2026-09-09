@@ -1,7 +1,7 @@
 import { Currency, classNames } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { EvmToken } from 'sushi/evm'
-import type { LaunchpadToken } from '../types'
+import type { LaunchpadToken } from '../../types'
 
 const SIZE_IN_PIXELS = {
   xs: 20,

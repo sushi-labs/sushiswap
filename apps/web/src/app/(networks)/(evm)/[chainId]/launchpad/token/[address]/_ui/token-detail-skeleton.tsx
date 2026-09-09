@@ -1,7 +1,7 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { MetricStrip, MetricStripItem } from '../../../_ui/metric-strip'
+import { MetricStrip, MetricStripItem } from '../../../_ui/metrics/metric-strip'
 import { TradeActivitySkeleton } from './trade-activity'
 
 const MARKET_STAT_SKELETONS = [

@@ -67,10 +67,10 @@ import {
   type SushiV2FeeDisposition,
   normalizeSushiV2Distribution,
 } from '../../../_providers/sushi-v2/contract'
-import { DetailList } from '../../../_ui/detail-list'
-import { LaunchpadLogoInput } from '../../../_ui/launchpad-logo-input'
-import { PageState } from '../../../_ui/state-card'
-import { TokenAvatar } from '../../../_ui/token-avatar'
+import { DetailList } from '../../../_ui/_common/detail-list'
+import { LaunchpadLogoInput } from '../../../_ui/_common/launchpad-logo-input'
+import { PageState } from '../../../_ui/_common/state-card'
+import { TokenAvatar } from '../../../_ui/_common/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
 import { FeeDistributionCard } from './fee-distribution-card'
 

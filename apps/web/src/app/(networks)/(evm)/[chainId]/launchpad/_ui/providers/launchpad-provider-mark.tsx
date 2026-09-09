@@ -3,7 +3,7 @@ import {
   SUSHI_ICON_ASPECT_RATIO,
   SushiIcon,
 } from '@sushiswap/ui/icons/sushi-icon'
-import type { LaunchpadProvider } from '../types'
+import type { LaunchpadProvider } from '../../types'
 
 const MARK_PIXELS = {
   sm: 14,

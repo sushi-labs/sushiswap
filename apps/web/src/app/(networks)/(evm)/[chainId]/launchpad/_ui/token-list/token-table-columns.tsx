@@ -6,10 +6,10 @@ import {
   formatLaunchpadAgeLabel,
   formatPercent,
   formatUsd,
-} from '../_lib/format'
-import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import { LaunchpadProviderMark } from './launchpad-provider-mark'
-import { TokenAvatar } from './token-avatar'
+} from '../../_lib/format'
+import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { TokenAvatar } from '../_common/token-avatar'
+import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 
 const NUMBER_META = {
   header: { className: 'text-right' },

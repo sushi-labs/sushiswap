@@ -25,7 +25,7 @@ import {
   SUSHI_V2_FEE_DISPOSITION_LABELS,
   SUSHI_V2_FEE_DISPOSITION_ORDER,
 } from '../../_providers/sushi-v2/contract'
-import { LaunchpadLogoInput } from '../../_ui/launchpad-logo-input'
+import { LaunchpadLogoInput } from '../../_ui/_common/launchpad-logo-input'
 import { CreateLaunchPreview } from './create-launch-preview'
 import type { CreateLaunchForm } from './create-launch-types'
 

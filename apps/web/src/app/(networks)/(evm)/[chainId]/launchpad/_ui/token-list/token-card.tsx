@@ -8,11 +8,11 @@ import {
   formatLaunchpadAgeLabel,
   formatUsd,
   getSelectedMetric,
-} from '../_lib/format'
-import { launchpadProviderHasCapability } from '../_lib/launchpad-provider'
-import type { LaunchpadToken, LaunchpadTokenSortField } from '../types'
-import { LaunchpadProviderMark } from './launchpad-provider-mark'
-import { TokenAvatar } from './token-avatar'
+} from '../../_lib/format'
+import { launchpadProviderHasCapability } from '../../_lib/launchpad-provider'
+import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { TokenAvatar } from '../_common/token-avatar'
+import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 
 const CARD_CLASS_NAME =
   'group relative flex h-full rounded-2xl cursor-pointer flex-col overflow-hidden bg-[#58585C]/[0.12] transition border border-white/[0.31] duration-200 hover:bg-white/[0.035] hover:-translate-y-0.5'

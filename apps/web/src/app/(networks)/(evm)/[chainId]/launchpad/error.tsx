@@ -2,7 +2,7 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Button } from '@sushiswap/ui'
-import { PageState } from './_ui/state-card'
+import { PageState } from './_ui/_common/state-card'
 
 export default function LaunchpadError({ reset }: { reset: () => void }) {
   return (

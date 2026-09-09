@@ -31,7 +31,7 @@ import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadTokenWithCurrencies } from '../../../_lib/use-launchpad-token'
-import { TokenAvatar } from '../../../_ui/token-avatar'
+import { TokenAvatar } from '../../../_ui/_common/token-avatar'
 import type { LaunchpadChainId } from '../../../constants'
 
 type SwapSide = 'BUY' | 'SELL'

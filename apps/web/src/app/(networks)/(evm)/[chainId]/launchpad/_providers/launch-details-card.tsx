@@ -1,6 +1,6 @@
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import type { DetailListItem } from '../_ui/detail-list'
-import { DetailList } from '../_ui/detail-list'
+import type { DetailListItem } from '../_ui/_common/detail-list'
+import { DetailList } from '../_ui/_common/detail-list'
 
 export interface LaunchDetailSection {
   title?: string

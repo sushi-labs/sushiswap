@@ -10,7 +10,7 @@ import {
   SEGMENTED_ITEM,
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
-} from '../../../_ui/segmented-control'
+} from '../../../_ui/_common/segmented-control'
 import type { LaunchpadChainId } from '../../../constants'
 import {
   DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,

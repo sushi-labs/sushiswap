@@ -1,7 +1,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import { classNames } from '@sushiswap/ui'
-import { getLaunchpadProviderConfig } from '../_lib/launchpad-provider'
-import type { LaunchpadProvider } from '../types'
+import { getLaunchpadProviderConfig } from '../../_lib/launchpad-provider'
+import type { LaunchpadProvider } from '../../types'
 import { LaunchpadProviderMark } from './launchpad-provider-mark'
 
 export function LaunchpadProviderBadge({

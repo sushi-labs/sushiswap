@@ -2,7 +2,7 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import type { LaunchpadStatsType } from '@sushiswap/graph-client/data-api'
 import { Button, Container, LinkInternal, SkeletonBox } from '@sushiswap/ui'
 import type { ReactElement, ReactNode } from 'react'
-import { formatUsd } from '../_lib/format'
+import { formatUsd } from '../../_lib/format'
 
 export function LaunchpadHero({
   createHref,

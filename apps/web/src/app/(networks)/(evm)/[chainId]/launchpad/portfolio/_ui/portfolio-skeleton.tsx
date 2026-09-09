@@ -1,6 +1,6 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { MetricStrip, MetricStripItem } from '../../_ui/metric-strip'
+import { MetricStrip, MetricStripItem } from '../../_ui/metrics/metric-strip'
 
 const HOLDING_SKELETONS = [
   'first',

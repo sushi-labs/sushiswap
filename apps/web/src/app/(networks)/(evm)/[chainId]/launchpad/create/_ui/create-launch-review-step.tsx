@@ -13,7 +13,7 @@ import { Network } from 'src/lib/wagmi/systems/checker/network'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { SUSHI_V2_LAUNCHPAD_ADDRESS } from '../../_providers/sushi-v2/contract'
-import { DetailList, type DetailListItem } from '../../_ui/detail-list'
+import { DetailList, type DetailListItem } from '../../_ui/_common/detail-list'
 import type { LaunchpadChainId } from '../../constants'
 import type { CreateLaunchForm } from './create-launch-types'
 
