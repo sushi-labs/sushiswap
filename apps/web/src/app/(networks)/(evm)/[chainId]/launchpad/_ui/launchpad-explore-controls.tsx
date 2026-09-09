@@ -9,7 +9,7 @@ import { LaunchpadProviderMark } from './launchpad-provider-mark'
 import { DEFAULT_LAUNCHPAD_TOKEN_SORT } from './token-sort-controls'
 
 const CONTROL_CLASS =
-  'flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue disabled:cursor-not-allowed sm:text-base'
+  'flex h-8 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border px-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue disabled:cursor-not-allowed'
 const SELECTED_CLASS = 'border-perps-blue bg-[#1E2F50] text-white'
 const IDLE_CLASS =
   'border-white/[0.07] bg-white/[0.015] text-perps-muted-50 hover:bg-white/[0.04] hover:text-white'
@@ -61,17 +61,17 @@ export function LaunchpadExploreControls({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-perps-muted">
             Explore
           </h2>
-          <p className="mt-2 text-sm leading-6 text-[#6B7280] sm:text-base">
+          <p className="text-sm leading-6 text-[#6B7280] sm:text-base">
             Tokens currently launching on Sushi Launch &amp; pools.fun
           </p>
         </div>
 
-        <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:w-auto sm:max-w-[250px] sm:justify-end lg:max-w-none">
+        <div className="flex w-full flex-wrap items-center justify-between gap-2 lg:gap-4 sm:w-auto sm:max-w-[250px] sm:justify-end lg:max-w-none">
           <div
             role="group"
             aria-label="Volume period"
@@ -86,7 +86,7 @@ export function LaunchpadExploreControls({
                 onClick={() => onSortByChange(period.value)}
                 className={classNames(
                   CONTROL_CLASS,
-                  '!px-3 sm:!px-4',
+                  '!px-2 sm:!px-4',
                   volumePeriod === period.value
                     ? SELECTED_CLASS
                     : 'border-transparent text-[#6B7280] hover:text-white',
@@ -99,7 +99,7 @@ export function LaunchpadExploreControls({
           <div
             role="group"
             aria-label="Token view"
-            className="ml-auto flex items-center gap-1.5 sm:ml-5 border-white/[0.12] border p-1 rounded-xl"
+            className="ml-auto flex items-center gap-1.5 border-white/[0.12] border p-1 rounded-xl"
           >
             {(['grid', 'table'] as const).map((option) => (
               <button
@@ -121,7 +121,7 @@ export function LaunchpadExploreControls({
           </div>
         </div>
       </div>
-      <div className="flex min-w-0 flex-wrap items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center  gap-2 lg:gap-4">
         <TextField
           disabled={disabled}
           type="text"
@@ -159,7 +159,7 @@ export function LaunchpadExploreControls({
                     if (!option.comingSoon) onSortByChange(option.value)
                   }}
                   className={classNames(
-                    'h-9 shrink-0 whitespace-nowrap rounded-lg px-2 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue disabled:cursor-not-allowed sm:px-3 sm:text-base min-[1440px]:px-4',
+                    'h-8 shrink-0 whitespace-nowrap rounded-lg px-2 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue disabled:cursor-not-allowed sm:px-3 sm:text-base min-[1440px]:px-4',
                     selected
                       ? 'bg-gradient-to-br from-[#24446E] to-[#249DDD] text-white'
                       : 'text-perps-muted-50 enabled:hover:bg-white/[0.04] enabled:hover:text-white',
@@ -174,7 +174,7 @@ export function LaunchpadExploreControls({
                 type="button"
                 aria-pressed="true"
                 disabled={disabled}
-                className="h-9 shrink-0 rounded-lg bg-gradient-to-br from-[#24446E] to-[#249DDD] px-3 text-sm font-medium text-white"
+                className="h-8 shrink-0 rounded-lg bg-gradient-to-br from-[#24446E] to-[#249DDD] px-3 text-sm font-medium text-white"
               >
                 Liquidity
               </button>
@@ -196,7 +196,7 @@ export function LaunchpadExploreControls({
               onClick={() => onProviderFilterChange(option.value)}
               className={classNames(
                 CONTROL_CLASS,
-                'flex-1 !px-2 sm:flex-none sm:!px-4',
+                'flex-1 !px-2 sm:flex-none sm:!px-4 !h-10 !rounded-xl',
                 providerFilter === option.value ? SELECTED_CLASS : IDLE_CLASS,
               )}
             >

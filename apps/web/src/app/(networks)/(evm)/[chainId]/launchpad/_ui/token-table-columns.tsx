@@ -1,5 +1,4 @@
-import { Badge, SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { getEvmChainById } from 'sushi/evm'
 import {
@@ -45,14 +44,14 @@ export function getTokenTableColumns(
       enableSorting: false,
       size: 280,
       cell: ({ row: { original: token } }) => {
-        const chain = getEvmChainById(token.chainId)
+        // const chain = getEvmChainById(token.chainId)
         const provider = token.provider.includes('POOLS')
           ? 'pools.fun'
           : 'Sushi Launch'
         return (
           <div className="flex min-w-0 items-center gap-3">
             <div className="shrink-0">
-              <Badge
+              {/* <Badge
                 position="bottom-right"
                 className="!bottom-0 !right-0 rounded-full border-2 border-[#151A20]"
                 badgeContent={
@@ -68,9 +67,9 @@ export function getTokenTableColumns(
                     />
                   </span>
                 }
-              >
-                <TokenAvatar token={token} size="md" />
-              </Badge>
+              > */}
+              <TokenAvatar token={token} size="md" />
+              {/* </Badge> */}
             </div>
             <div className="min-w-0">
               <div className="flex min-w-0 items-center gap-1.5">
