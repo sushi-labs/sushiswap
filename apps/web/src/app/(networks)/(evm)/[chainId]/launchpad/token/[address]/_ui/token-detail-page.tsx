@@ -58,6 +58,7 @@ import {
   LaunchpadCreatorButton,
   LaunchpadCreatorLink,
 } from '../../../_ui/_common/launchpad-creator-link'
+import { MoonModeBadge } from '../../../_ui/_common/moon-mode-badge'
 import { PriceSensitiveText } from '../../../_ui/_common/price-sensitive-text'
 import { PageState } from '../../../_ui/_common/state-card'
 import { StatusPill } from '../../../_ui/_common/status-pill'
@@ -226,6 +227,7 @@ function TokenHeader({
   creatorUrl,
   tokenUrl,
   indexingStatus,
+  isMoonMode = false,
   links = [],
 }: {
   token: LaunchpadTokenDefinition
@@ -233,6 +235,7 @@ function TokenHeader({
   creatorUrl: string
   tokenUrl: string
   indexingStatus?: LaunchpadToken['indexingStatus']
+  isMoonMode?: boolean
   links?: MetadataLink[]
 }) {
   return (
@@ -265,6 +268,7 @@ function TokenHeader({
                 <SkeletonBox className="h-6 w-12 rounded-full" />
               )}
               <LaunchpadProviderBadge provider={token.provider} />
+              {isMoonMode ? <MoonModeBadge /> : null}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-perps-muted-50">
               <CopyableExplorerAddress
@@ -423,6 +427,10 @@ export function TokenDetailPage({
         creatorUrl={chain.getAccountUrl(definition.originalCreator)}
         tokenUrl={chain.getTokenUrl(definition.address)}
         indexingStatus={token?.indexingStatus}
+        isMoonMode={
+          token.__typename === 'SushiV2LaunchpadToken' &&
+          token.liquidityMode === 'MOON'
+        }
         links={token?.metadata.links}
       />
 

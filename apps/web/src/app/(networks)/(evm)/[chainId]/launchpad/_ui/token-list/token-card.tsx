@@ -1,6 +1,6 @@
 'use client'
 import { useMediaQuery } from '@sushiswap/hooks'
-import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
+import { Badge, SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useEffect, useMemo, useRef } from 'react'
 import { SUSHI, getEvmChainById } from 'sushi/evm'
@@ -13,6 +13,7 @@ import {
 } from '../../_lib/format'
 import { launchpadProviderHasCapability } from '../../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { MoonModeBadge } from '../_common/moon-mode-badge'
 import { PercentChange } from '../_common/percent-change'
 import { TokenAvatar } from '../_common/token-avatar'
 
@@ -127,6 +128,9 @@ export function TokenCard({
       animation?.cancel()
     }
   }, [data, motionAllowed, sortBy, token.id])
+  const isMoonMode =
+    token.__typename === 'SushiV2LaunchpadToken' &&
+    token.liquidityMode === 'MOON'
 
   return (
     <div
@@ -141,17 +145,13 @@ export function TokenCard({
         )}
       />
       {/* @dev: for when we support more networks */}
-      {/* <Badge
-        position="bottom-right"
-        className="pointer-events-none !bottom-2 !right-2 rounded-full"
-        badgeContent={
-          <span role="img" aria-label={`${chain.name} network`}>
-            <NetworkIcon chainId={token.chainId} width={14} height={14} />
-          </span>
-        }
-      > */}
-      <TokenAvatar token={token} size="card" />
-      {/* </Badge> */}
+      <Badge
+        position="top-left"
+        className="pointer-events-none !top-2 !left-2 rounded-full"
+        badgeContent={isMoonMode ? <MoonModeBadge /> : <></>}
+      >
+        <TokenAvatar token={token} size="card" />
+      </Badge>
       <div className="flex flex-1 flex-col p-4 pb-2.5">
         <div className="flex items-center gap-2">
           <Link

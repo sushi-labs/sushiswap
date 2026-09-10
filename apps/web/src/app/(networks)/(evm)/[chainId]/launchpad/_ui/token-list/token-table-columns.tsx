@@ -1,4 +1,4 @@
-import { SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
+import { Badge, SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { getEvmChainById } from 'sushi/evm'
 import {
@@ -7,6 +7,7 @@ import {
   formatUsd,
 } from '../../_lib/format'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { MoonModeBadge } from '../_common/moon-mode-badge'
 import { PercentChange } from '../_common/percent-change'
 import { TokenAvatar } from '../_common/token-avatar'
 import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
@@ -48,28 +49,19 @@ export function getTokenTableColumns(
         const provider = token.provider.includes('POOLS')
           ? 'pools.fun'
           : 'Sushi Launch'
+        const isMoonMode =
+          token.__typename === 'SushiV2LaunchpadToken' &&
+          token.liquidityMode === 'MOON'
         return (
           <div className="flex min-w-0 items-center gap-3">
             <div className="shrink-0">
-              {/* <Badge
-                position="bottom-right"
-                className="!bottom-0 !right-0 rounded-full border-2 border-[#151A20]"
-                badgeContent={
-                  <span
-                    role="img"
-                    aria-label={`${chain.name} network`}
-                    title={chain.name}
-                  >
-                    <NetworkIcon
-                      chainId={token.chainId}
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                }
-              > */}
-              <TokenAvatar token={token} size="md" />
-              {/* </Badge> */}
+              <Badge
+                position="top-left"
+                className="pointer-events-none !top-0 !left-0 "
+                badgeContent={isMoonMode ? <MoonModeBadge size="sm" /> : <></>}
+              >
+                <TokenAvatar token={token} size="md" />
+              </Badge>
             </div>
             <div className="min-w-0">
               <div className="flex min-w-0 items-center gap-1.5">
