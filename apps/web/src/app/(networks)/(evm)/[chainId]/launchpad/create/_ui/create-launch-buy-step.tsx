@@ -198,8 +198,8 @@ export function CreateLaunchBuyStep({
       ) : null}
       {isSushiQuoteToken ? (
         <Message variant="info" size="sm" className="mb-6">
-          Sushi&apos;s fee share increases from 20% to 30% when SUSHI is not
-          used as the quote asset.
+          Get a bonus of 10% additional creator fees when using SUSHI as the
+          quote asset.
         </Message>
       ) : null}
 

@@ -1,12 +1,13 @@
+import type { ReactElement } from 'react'
 import { formatRawAmount, formatUsd } from '../../_lib/format'
 import { LaunchDetailsCard } from '../launch-details-card'
 import type { LaunchpadTokenFor } from '../provider-types'
 
-export function PoolsFunV1TokenLaunchDetails({
+export function PoolsFunTokenLaunchDetails({
   token,
 }: {
-  token: LaunchpadTokenFor<'POOLS_FUN_V1'>
-}) {
+  token: LaunchpadTokenFor<'POOLS_FUN_V1' | 'POOLS_FUN_V2' | 'POOLS_FUN_V3'>
+}): ReactElement {
   return (
     <LaunchDetailsCard
       sections={[

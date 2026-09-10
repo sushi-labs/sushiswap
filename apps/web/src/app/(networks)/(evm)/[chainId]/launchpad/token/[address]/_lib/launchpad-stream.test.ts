@@ -90,30 +90,35 @@ describe('launchpad stream', () => {
     })
   })
 
-  it('accepts metrics updates', () => {
-    const payload = parseLaunchpadMetricsStreamEvent(
-      new MessageEvent('metrics', {
-        data: JSON.stringify({
-          chainId: CHAIN_ID,
-          tokenAddress: TOKEN_ADDRESS,
-          eventId: '41',
-          version: '2',
-          metrics: {
-            priceUsd: 1,
-            marketCapitalizationUsd: 1_000_000,
-            fullyDilutedValuationUsd: 1_000_000,
-            currentTvlUsd: 100_000,
-            volumeUsd: { h1: 1, h6: 2, h12: 3, h24: 4 },
-            tvlChangePercent: { h1: null, h6: null, h12: null, h24: null },
-            asOf: '2026-07-25T00:00:00.000Z',
-            source: 'launchpad',
-            isStale: false,
-          },
+  it.each([12.5, -12.5, 0, null])(
+    'accepts metrics updates with a %s price change',
+    (priceChangePercent24h) => {
+      const payload = parseLaunchpadMetricsStreamEvent(
+        new MessageEvent('metrics', {
+          data: JSON.stringify({
+            chainId: CHAIN_ID,
+            tokenAddress: TOKEN_ADDRESS,
+            eventId: '41',
+            version: '2',
+            metrics: {
+              priceUsd: 1,
+              marketCapitalizationUsd: 1_000_000,
+              fullyDilutedValuationUsd: 1_000_000,
+              currentTvlUsd: 100_000,
+              priceChangePercent24h,
+              volumeUsd: { h1: 1, h6: 2, h12: 3, h24: 4 },
+              tvlChangePercent: { h1: null, h6: null, h12: null, h24: null },
+              asOf: '2026-07-25T00:00:00.000Z',
+              source: 'launchpad',
+              isStale: false,
+            },
+          }),
         }),
-      }),
-    )
-    expect(payload?.metrics.marketCapitalizationUsd).toBe(1_000_000)
-  })
+      )
+      expect(payload?.metrics.marketCapitalizationUsd).toBe(1_000_000)
+      expect(payload?.metrics.priceChangePercent24h).toBe(priceChangePercent24h)
+    },
+  )
 
   it('preserves the marginal price from trade updates', () => {
     const payload = parseLaunchpadTradeStreamEvent(

@@ -47,6 +47,8 @@ const PROVIDER_MARKS = {
   SUSHI_V1: SushiProviderMark,
   SUSHI_V2: SushiProviderMark,
   POOLS_FUN_V1: PoolsFunProviderMark,
+  POOLS_FUN_V2: PoolsFunProviderMark,
+  POOLS_FUN_V3: PoolsFunProviderMark,
 } as const satisfies Record<LaunchpadProvider, typeof SushiProviderMark>
 
 export function LaunchpadProviderMark({

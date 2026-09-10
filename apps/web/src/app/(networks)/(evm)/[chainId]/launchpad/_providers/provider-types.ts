@@ -8,6 +8,14 @@ export interface LaunchpadTokenByProvider {
     LaunchpadToken,
     { __typename: 'PoolsFunV1LaunchpadToken' }
   >
+  POOLS_FUN_V2: Extract<
+    LaunchpadToken,
+    { __typename: 'PoolsFunV2LaunchpadToken' }
+  >
+  POOLS_FUN_V3: Extract<
+    LaunchpadToken,
+    { __typename: 'PoolsFunV3LaunchpadToken' }
+  >
   SUSHI_V1: Extract<LaunchpadToken, { __typename: 'SushiV1LaunchpadToken' }>
   SUSHI_V2: Extract<LaunchpadToken, { __typename: 'SushiV2LaunchpadToken' }>
 }

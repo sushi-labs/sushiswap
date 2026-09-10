@@ -38,6 +38,24 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
       metadata: false,
     },
   },
+  POOLS_FUN_V2: {
+    label: 'Pools',
+    websiteUrl: 'https://pools.fun',
+    capabilities: {
+      creatorProfile: false,
+      manage: false,
+      metadata: false,
+    },
+  },
+  POOLS_FUN_V3: {
+    label: 'Pools',
+    websiteUrl: 'https://pools.fun',
+    capabilities: {
+      creatorProfile: false,
+      manage: false,
+      metadata: false,
+    },
+  },
 } as const satisfies Record<LaunchpadProvider, LaunchpadProviderConfig>
 
 export type LaunchpadProviderFilter = 'all' | 'sushi' | 'pools-fun'
@@ -52,9 +70,9 @@ export const LAUNCHPAD_PROVIDER_FILTERS = [
 }[]
 
 const PROVIDERS_BY_FILTER = {
-  all: ['SUSHI_V1', 'SUSHI_V2', 'POOLS_FUN_V1'],
+  all: ['SUSHI_V1', 'SUSHI_V2', 'POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'],
   sushi: ['SUSHI_V1', 'SUSHI_V2'],
-  'pools-fun': ['POOLS_FUN_V1'],
+  'pools-fun': ['POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'],
 } as const satisfies Record<
   LaunchpadProviderFilter,
   readonly LaunchpadProvider[]

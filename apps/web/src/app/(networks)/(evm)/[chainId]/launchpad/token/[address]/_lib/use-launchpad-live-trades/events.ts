@@ -85,6 +85,7 @@ const metricsSchema = z.object({
   marketCapitalizationUsd: z.number().nonnegative().nullable(),
   fullyDilutedValuationUsd: z.number().nonnegative().nullable(),
   currentTvlUsd: z.number().nonnegative().nullable(),
+  priceChangePercent24h: z.number().nullable(),
   volumeUsd: nullableWindowValuesSchema,
   tvlChangePercent: nullableWindowValuesSchema,
   asOf: z.string().datetime(),

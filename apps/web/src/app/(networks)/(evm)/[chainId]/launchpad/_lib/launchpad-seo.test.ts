@@ -57,6 +57,7 @@ const token: LaunchpadToken = {
     marketCapitalizationUsd: 4_218_000,
     fullyDilutedValuationUsd: 5_000_000,
     currentTvlUsd: 842_100,
+    priceChangePercent24h: null,
     volumeUsd: {
       h1: 10_000,
       h6: 200_000,

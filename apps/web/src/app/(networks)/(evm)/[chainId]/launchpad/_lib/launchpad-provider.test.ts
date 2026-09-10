@@ -15,6 +15,8 @@ describe('launchpad provider policy', () => {
       'SUSHI_V1',
       'SUSHI_V2',
       'POOLS_FUN_V1',
+      'POOLS_FUN_V2',
+      'POOLS_FUN_V3',
     ])
   })
 
@@ -25,6 +27,8 @@ describe('launchpad provider policy', () => {
     ])
     expect(getLaunchpadProvidersForFilter('pools-fun')).toEqual([
       'POOLS_FUN_V1',
+      'POOLS_FUN_V2',
+      'POOLS_FUN_V3',
     ])
   })
 
@@ -36,13 +40,17 @@ describe('launchpad provider policy', () => {
     expect(getLaunchpadProviderIconsForFilter('sushi')).toEqual(['SUSHI_V1'])
   })
 
-  it('keeps Pools.fun creator tools disabled and links to its site', () => {
-    expect(launchpadProviderHasCapability('POOLS_FUN_V1', 'manage')).toBe(false)
-    expect(launchpadProviderHasCapability('POOLS_FUN_V1', 'metadata')).toBe(
-      false,
-    )
-    expect(getLaunchpadProviderConfig('POOLS_FUN_V1').websiteUrl).toBe(
-      'https://pools.fun',
-    )
-  })
+  it.each(['POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'] as const)(
+    'keeps %s creator tools disabled and links to its site',
+    (provider) => {
+      expect(launchpadProviderHasCapability(provider, 'manage')).toBe(false)
+      expect(launchpadProviderHasCapability(provider, 'metadata')).toBe(false)
+      expect(launchpadProviderHasCapability(provider, 'creatorProfile')).toBe(
+        false,
+      )
+      expect(getLaunchpadProviderConfig(provider).websiteUrl).toBe(
+        'https://pools.fun',
+      )
+    },
+  )
 })
