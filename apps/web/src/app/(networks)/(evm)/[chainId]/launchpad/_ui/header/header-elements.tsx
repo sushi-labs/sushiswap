@@ -39,7 +39,7 @@ function getLaunchpadNavigationLinks(
     {
       title: 'My Launches',
       href: `${root}/manage`,
-      description: 'Manage metadata and distribute fees.',
+      description: 'Manage metadata and claim fees.',
     },
     {
       title: 'Portfolio',

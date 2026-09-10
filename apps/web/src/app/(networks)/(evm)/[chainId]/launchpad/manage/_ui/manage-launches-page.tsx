@@ -117,7 +117,7 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
                 Your tokens
               </h2>
               <p className="mt-2 text-sm text-perps-muted-50">
-                Select a launch to update its public profile or distribute fees.
+                Select a launch to update its public profile or claim fees.
               </p>
             </div>
           </div>

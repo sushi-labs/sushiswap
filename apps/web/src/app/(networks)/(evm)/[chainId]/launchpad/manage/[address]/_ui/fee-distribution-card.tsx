@@ -94,7 +94,7 @@ export function FeeDistributionCard({
           </span>
           <div>
             <h2 className="font-semibold text-perps-muted">
-              Distribute trading fees
+              Claim trading fees
             </h2>
             <p className="mt-0.5 text-xs leading-5 text-perps-muted-50">
               Collects every registered position in one transaction and routes
@@ -127,13 +127,13 @@ export function FeeDistributionCard({
               >
                 {isDistributing ? (
                   <>
-                    {'Distributing fees'}
+                    {'Claiming fees'}
                     <Dots />
                   </>
                 ) : distributed ? (
-                  'Fees distributed'
+                  'Fees claimed'
                 ) : (
-                  'Distribute fees'
+                  'Claim fees'
                 )}
               </Button>
             </Checker.Network>
