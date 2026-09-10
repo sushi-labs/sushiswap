@@ -1,3 +1,4 @@
+'use client'
 import { useMediaQuery } from '@sushiswap/hooks'
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
