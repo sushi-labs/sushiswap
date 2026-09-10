@@ -1,13 +1,12 @@
+import { useMediaQuery } from '@sushiswap/hooks'
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
-import { useMemo } from 'react'
-import { TriangleIcon } from 'src/app/(cms)/components/icons/triangle-icon'
+import { useEffect, useMemo, useRef } from 'react'
 import { SUSHI, getEvmChainById } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
 import {
   formatLaunchpadAge,
   formatLaunchpadAgeLabel,
-  formatPercent,
   formatUsd,
   getSelectedMetric,
 } from '../../_lib/format'
@@ -17,7 +16,7 @@ import { PercentChange } from '../_common/percent-change'
 import { TokenAvatar } from '../_common/token-avatar'
 
 const CARD_CLASS_NAME =
-  'group relative flex h-full rounded-2xl cursor-pointer flex-col overflow-hidden bg-[#58585C]/[0.12] transition border border-white/[0.31] duration-200 hover:bg-white/[0.035] hover:-translate-y-0.5'
+  'group relative flex h-full rounded-2xl cursor-pointer flex-col overflow-hidden bg-[#58585C]/[0.12] transition border border-white/[0.31] duration-200 hover:bg-white/[0.035] motion-safe:hover:-translate-y-0.5 motion-reduce:transition-none'
 
 export function TokenCardSkeleton(): React.ReactElement {
   return (
@@ -88,9 +87,51 @@ export function TokenCard({
     return ['via-perps-blue/80', 'hover:border-perps-blue/80 ']
   }, [token, isStockPair])
   const pricePctChange = token.metrics?.priceChangePercent24h
+  const cardRef = useRef<HTMLDivElement>(null)
+  const motionAllowed = useMediaQuery({
+    query: '(prefers-reduced-motion: no-preference)',
+  })
+  // Compare card values, excluding polling timestamps and the ticking age.
+  const data = JSON.stringify([
+    token.name,
+    token.symbol,
+    token.pool.quoteToken.address,
+    token.pool.quoteToken.symbol,
+    token.metrics?.marketCapitalizationUsd,
+    pricePctChange,
+    volumeMetric.value,
+  ])
+
+  const previous = useRef({ id: token.id, sortBy, data })
+
+  useEffect(() => {
+    const changed =
+      previous.current.id === token.id &&
+      previous.current.sortBy === sortBy &&
+      previous.current.data !== data
+    previous.current = { id: token.id, sortBy, data }
+
+    if (!changed || !motionAllowed) return
+
+    // Individual translate and rotate preserve the card's hover transform.
+    const animation = cardRef.current?.animate?.(
+      [0, -4, 4, -4, 4, 0].map((x) => ({
+        translate: `${x}px -2px`,
+        rotate: `${x / 2}deg`,
+      })),
+      { duration: 280, easing: 'ease-in-out' },
+    )
+
+    return () => {
+      animation?.cancel()
+    }
+  }, [data, motionAllowed, sortBy, token.id])
 
   return (
-    <div className={classNames(CARD_CLASS_NAME, hoverBorderColor)}>
+    <div
+      ref={cardRef}
+      className={classNames(CARD_CLASS_NAME, hoverBorderColor)}
+    >
       <div
         className={classNames(
           'h-px bg-gradient-to-r from-transparent z-[1] absolute w-full top-0 left-1/2 -translate-x-1/2',
