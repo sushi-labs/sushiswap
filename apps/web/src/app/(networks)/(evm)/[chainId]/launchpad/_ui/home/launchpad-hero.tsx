@@ -38,14 +38,14 @@ export function LaunchpadHero({
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start items-center lg:justify-between">
           <div className="max-w-3xl flex flex-col gap-2 lg:gap-6 lg:mt-4">
             <div className="flex flex-col md:flex-row gap-0 md:gap-2 lg:gap-0 lg:flex-col">
-              <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-5xl ">
+              <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-6xl ">
                 Launch a token.
               </h1>
-              <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-5xl ">
+              <h1 className="text-3xl font-extrabold tracking-[-0.03em] text-perps-muted sm:text-4xl lg:text-6xl ">
                 Create its market.
               </h1>
             </div>
-            <p className="lg:max-w-[400px] text-sm leading-6 text-perps-muted-50 sm:text-base">
+            <p className="lg:max-w-[400px] text-sm leading-6 text-perps-muted-50 sm:text-lg">
               Launch with live Sushi liquidity and pair with crypto, Stock
               Tokens and RWAs.
             </p>
@@ -62,9 +62,9 @@ export function LaunchpadHero({
           </div>
           <div className="w-full lg:w-fit">{trending}</div>
         </div>
-        <hr className="w-full h-px border-white/[0.07] mt-12 mb-6" />
+        <hr className="w-full h-px border-white/[0.07] mt-12 mb-6 hidden md:block" />
 
-        <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:gap-0">
+        <div className="md:flex flex-col items-center justify-center gap-4 md:flex-row md:gap-0 hidden">
           {[
             {
               label: 'Tokens launched',

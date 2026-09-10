@@ -12,7 +12,6 @@ import {
 import { launchpadProviderHasCapability } from '../../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
 import { TokenAvatar } from '../_common/token-avatar'
-import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 
 const CARD_CLASS_NAME =
   'group relative flex h-full rounded-2xl cursor-pointer flex-col overflow-hidden bg-[#58585C]/[0.12] transition border border-white/[0.31] duration-200 hover:bg-white/[0.035] hover:-translate-y-0.5'
@@ -24,27 +23,23 @@ export function TokenCardSkeleton(): React.ReactElement {
       <div className="relative aspect-[1/1] w-full shrink-0 overflow-hidden rounded-xl">
         <SkeletonBox className="absolute inset-0 !rounded-none" />
       </div>
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-4 pb-2.5">
         <div className="flex h-7 items-center">
           <SkeletonBox className="h-6 w-3/4" />
         </div>
         <div className="flex h-5 items-center">
           <SkeletonBox className="h-4 w-1/2" />
         </div>
-        <div className="mt-2 flex flex-wrap items-center justify-between">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3">
           <SkeletonBox className="my-0.5 h-4 w-[70px] max-w-full" />
           <SkeletonBox className="my-0.5 h-4 w-[70px] max-w-full" />
         </div>
-        <div className="flex h-6 items-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-1.5 mt-0.5">
           <SkeletonBox className="h-3 w-16 max-w-full" />
           <SkeletonCircle radius={20} />
           <SkeletonBox className="h-3 w-8 max-w-full" />
         </div>
-        <div className="mt-auto flex items-center justify-between gap-3 pt-7">
-          <div className="flex min-w-0 items-center gap-2">
-            <SkeletonCircle radius={20} />
-            <SkeletonBox className="h-3 w-12 max-w-full" />
-          </div>
+        <div className="mt-auto flex items-center justify-end gap-3 pt-3">
           <SkeletonBox className="h-3 w-8 max-w-full" />
         </div>
       </div>
@@ -111,7 +106,7 @@ export function TokenCard({
       > */}
       <TokenAvatar token={token} size="card" />
       {/* </Badge> */}
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-4 pb-2.5">
         <Link
           href={href}
           prefetch={manage ? 'auto' : true}
@@ -127,7 +122,7 @@ export function TokenCard({
         >
           {token.symbol}
         </div>
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-x-0.5">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3">
           <div
             title="Market capitalization"
             className="flex items-baseline gap-1 whitespace-nowrap"
@@ -147,7 +142,8 @@ export function TokenCard({
             <span className="text-xs text-perps-muted-50">Vol</span>
           </div>
         </div>
-        <div className="flex min-w-0 items-center gap-1.5 text-xs leading-6 text-perps-muted-50">
+
+        <div className="flex min-w-0 items-center gap-1.5 text-xs leading-6 mt-0.5 text-perps-muted-50">
           <span className="shrink-0">Paired with</span>
           <TokenAvatar
             token={{ ...token.pool.quoteToken, chainId: token.chainId }}
@@ -160,17 +156,8 @@ export function TokenCard({
             {token.pool.quoteToken.symbol}
           </span>
         </div>
-        <div className="mt-auto flex items-center justify-between gap-3 pt-7 text-xs leading-5">
-          <div className="flex min-w-0 items-center gap-2 text-perps-muted-50">
-            <LaunchpadProviderMark
-              provider={token.provider}
-              size="md"
-              className="!bg-transparent"
-            />
-            <span className="truncate">
-              {token.provider === 'POOLS_FUN_V1' ? 'pools.fun' : 'Sushi Launch'}
-            </span>
-          </div>
+
+        <div className="mt-auto flex items-center justify-end gap-3 pt-3 text-xs">
           <span
             title={formatLaunchpadAgeLabel(age)}
             className="shrink-0 tabular-nums text-perps-blue"

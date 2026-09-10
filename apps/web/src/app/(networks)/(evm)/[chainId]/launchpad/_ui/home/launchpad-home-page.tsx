@@ -7,10 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
-import {
-  getLaunchpadProvidersForFilter,
-  parseLaunchpadProviderFilter,
-} from '../../_lib/launchpad-provider'
+import { getLaunchpadProvidersForFilter } from '../../_lib/launchpad-provider'
 import { useLaunchpadStats } from '../../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../../_lib/use-launchpad-tokens'
 import type { LaunchpadChainId } from '../../constants'
@@ -30,9 +27,7 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
   const searchParams = useSearchParams()
   const urlSearch = searchParams.get('search') ?? ''
   const urlCreator = searchParams.get('creator') ?? ''
-  const providerFilter = parseLaunchpadProviderFilter(
-    searchParams.get('provider'),
-  )
+  const providerFilter = 'all' as const
   const sortBy = parseLaunchpadTokenSortField(searchParams.get('sortBy'))
   const isMounted = useIsMounted()
   const [storedView, setView] = useLocalStorage<'grid' | 'table'>(
@@ -136,12 +131,6 @@ export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
             sortBy={sortBy}
             onSortByChange={(nextSortBy) =>
               updateParams({ sortBy: nextSortBy, sortDirection: undefined })
-            }
-            providerFilter={providerFilter}
-            onProviderFilterChange={(nextFilter) =>
-              updateParams({
-                provider: nextFilter === 'all' ? undefined : nextFilter,
-              })
             }
             view={view}
             onViewChange={setView}

@@ -1,18 +1,62 @@
 'use client'
 
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline'
 import { TextField, classNames } from '@sushiswap/ui'
-import type { ReactElement } from 'react'
-import type { LaunchpadProviderFilter } from '../../_lib/launchpad-provider'
+import {
+  type ReactElement,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import type { LaunchpadTokenSortField } from '../../types'
-import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 import { DEFAULT_LAUNCHPAD_TOKEN_SORT } from './token-sort-controls'
 
 const CONTROL_CLASS =
   'flex h-8 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border px-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue disabled:cursor-not-allowed'
 const SELECTED_CLASS = 'border-perps-blue bg-[#1E2F50] text-white'
-const IDLE_CLASS =
-  'border-white/[0.07] bg-white/[0.015] text-perps-muted-50 hover:bg-white/[0.04] hover:text-white'
+const SCROLL_CONTROL_CLASS =
+  'absolute inset-y-1 z-10 flex w-8 items-center text-perps-muted hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perps-blue'
+const SCROLL_HINT_WIDTH = 32
+
+function revealSortOption(
+  viewport: HTMLDivElement,
+  button: HTMLButtonElement,
+): void {
+  const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth)
+  if (maxScroll === 0 || viewport.clientWidth === 0) return
+
+  const viewportBounds = viewport.getBoundingClientRect()
+  const buttonBounds = button.getBoundingClientRect()
+  const visibleLeft =
+    viewportBounds.left + (viewport.scrollLeft > 1 ? SCROLL_HINT_WIDTH : 0)
+  const visibleRight =
+    viewportBounds.right -
+    (viewport.scrollLeft < maxScroll - 1 ? SCROLL_HINT_WIDTH : 0)
+
+  if (buttonBounds.left >= visibleLeft && buttonBounds.right <= visibleRight) {
+    return
+  }
+
+  // Scroll only this row, leaving the page position and keyboard focus intact.
+  viewport.scrollTo({
+    left: Math.max(
+      0,
+      Math.min(
+        maxScroll,
+        viewport.scrollLeft +
+          buttonBounds.left -
+          viewportBounds.left -
+          (viewport.clientWidth - buttonBounds.width) / 2,
+      ),
+    ),
+    behavior: 'instant',
+  })
+}
 
 const SORT_OPTIONS = [
   { label: 'Trending', value: 'TRENDING', comingSoon: true },
@@ -29,19 +73,11 @@ const PERIOD_OPTIONS = [
   { label: '24H', value: 'VOLUME_24H' },
 ] as const
 
-const PROVIDER_OPTIONS = [
-  { label: 'All', value: 'all', provider: undefined },
-  { label: 'Sushi Launch', value: 'sushi', provider: 'SUSHI_V1' },
-  { label: 'pools.fun', value: 'pools-fun', provider: 'POOLS_FUN_V1' },
-] as const
-
 export function LaunchpadExploreControls({
   search,
   onSearchChange,
   sortBy,
   onSortByChange,
-  providerFilter,
-  onProviderFilterChange,
   view,
   onViewChange,
   disabled = false,
@@ -50,14 +86,61 @@ export function LaunchpadExploreControls({
   onSearchChange: (search: string) => void
   sortBy: LaunchpadTokenSortField
   onSortByChange: (sortBy: LaunchpadTokenSortField) => void
-  providerFilter: LaunchpadProviderFilter
-  onProviderFilterChange: (filter: LaunchpadProviderFilter) => void
   view: 'grid' | 'table'
   onViewChange: (view: 'grid' | 'table') => void
   disabled?: boolean
 }): ReactElement {
   const isVolume = sortBy.startsWith('VOLUME_')
   const volumePeriod = isVolume ? sortBy : 'VOLUME_24H'
+  const sortOptionsRef = useRef<HTMLDivElement>(null)
+  const [scrollEdges, setScrollEdges] = useState({ left: false, right: false })
+
+  const updateScrollEdges = useCallback(function updateScrollEdges() {
+    const viewport = sortOptionsRef.current
+    if (!viewport) return
+
+    const left = viewport.scrollLeft > 1
+    const right =
+      viewport.scrollLeft + viewport.clientWidth < viewport.scrollWidth - 1
+    setScrollEdges((previous) =>
+      previous.left === left && previous.right === right
+        ? previous
+        : { left, right },
+    )
+  }, [])
+
+  useLayoutEffect(() => {
+    const viewport = sortOptionsRef.current
+    if (!viewport) return
+
+    const activeSort = sortBy.startsWith('VOLUME_') ? 'VOLUME_24H' : sortBy
+    const selected = viewport.querySelector<HTMLButtonElement>(
+      `[data-sort-value="${activeSort}"]`,
+    )
+    function updateLayout() {
+      if (!viewport) return
+      if (selected) revealSortOption(viewport, selected)
+      updateScrollEdges()
+    }
+
+    updateLayout()
+    const observer = new ResizeObserver(updateLayout)
+    observer.observe(viewport)
+    for (const button of viewport.children) observer.observe(button)
+    return () => observer.disconnect()
+  }, [sortBy, updateScrollEdges])
+
+  function scrollSortOptions(direction: -1 | 1): void {
+    const viewport = sortOptionsRef.current
+    if (!viewport) return
+
+    viewport.scrollBy({
+      left: direction * viewport.clientWidth * 0.75,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth',
+    })
+  }
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
@@ -121,7 +204,7 @@ export function LaunchpadExploreControls({
           </div>
         </div>
       </div>
-      <div className="flex min-w-0 flex-wrap items-center  gap-2 lg:gap-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-2 lg:gap-4">
         <TextField
           disabled={disabled}
           type="text"
@@ -134,11 +217,22 @@ export function LaunchpadExploreControls({
           className="!h-11 !rounded-xl !border !border-white/[0.07] !bg-[#101116] !font-normal !text-perps-muted placeholder:!text-[#6B7280]"
           wrapperClassName="order-1 w-full min-w-0 md:w-auto md:flex-[1_1_14rem]"
         />
-        <div className="order-2 grid w-full min-w-0 grid-cols-3 items-center gap-0.5 rounded-xl border border-white/[0.07] bg-white/[0.015] p-1 sm:flex sm:gap-0 md:order-3 xl:order-2 sm:w-fit xl:shrink-0">
+        <div className="relative order-2 flex w-full min-w-0 max-w-full items-center rounded-xl border border-white/[0.07] bg-white/[0.015] p-1 md:order-3 xl:order-2 md:w-fit xl:shrink-0">
           <div
+            ref={sortOptionsRef}
             role="group"
             aria-label="Sort launches by"
-            className="contents sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:gap-1 sm:overflow-x-auto sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden"
+            className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onScroll={updateScrollEdges}
+            onFocusCapture={(event) => {
+              if (
+                event.target instanceof HTMLButtonElement &&
+                event.target.matches(':focus-visible')
+              ) {
+                revealSortOption(event.currentTarget, event.target)
+                updateScrollEdges()
+              }
+            }}
           >
             {SORT_OPTIONS.map((option) => {
               const selected =
@@ -148,6 +242,7 @@ export function LaunchpadExploreControls({
                 <button
                   key={option.value}
                   type="button"
+                  data-sort-value={option.value}
                   aria-pressed={selected}
                   disabled={disabled || option.comingSoon}
                   title={
@@ -160,6 +255,7 @@ export function LaunchpadExploreControls({
                   }}
                   className={classNames(
                     CONTROL_CLASS,
+                    'grow',
                     selected
                       ? SELECTED_CLASS
                       : ' text-white hover:bg-white/[0.04] border-transparent',
@@ -172,48 +268,41 @@ export function LaunchpadExploreControls({
             {sortBy === 'CURRENT_TVL' && (
               <button
                 type="button"
+                data-sort-value="CURRENT_TVL"
                 aria-pressed="true"
                 disabled={disabled}
-                className="h-8 shrink-0 rounded-lg bg-gradient-to-br from-[#24446E] to-[#249DDD] px-3 text-sm font-medium text-white"
+                className={classNames('grow', CONTROL_CLASS, SELECTED_CLASS)}
               >
                 Liquidity
               </button>
             )}
           </div>
-        </div>
-
-        <div
-          role="group"
-          aria-label="Filter launches by provider"
-          className="order-3 flex w-full min-w-0 flex-wrap items-center gap-1.5 sm:flex-nowrap md:order-2 md:w-auto md:shrink-0 xl:order-3"
-        >
-          {PROVIDER_OPTIONS.map((option) => (
+          {scrollEdges.left && (
             <button
-              key={option.value}
               type="button"
-              aria-pressed={providerFilter === option.value}
-              disabled={disabled}
-              onClick={() => onProviderFilterChange(option.value)}
+              aria-label="Scroll sort options left"
+              onClick={() => scrollSortOptions(-1)}
               className={classNames(
-                CONTROL_CLASS,
-                'flex-1 !px-2 sm:flex-none sm:!px-4 !h-10 !rounded-xl',
-                providerFilter === option.value ? SELECTED_CLASS : IDLE_CLASS,
+                SCROLL_CONTROL_CLASS,
+                'left-0 top-1/2 -translate-y-1/2 justify-start h-10 rounded-l-xl bg-gradient-to-r from-[#141519] via-[#141519]/95 to-transparent',
               )}
             >
-              {option.provider && (
-                <LaunchpadProviderMark
-                  provider={option.provider}
-                  size="sm"
-                  className={
-                    option.provider === 'SUSHI_V1'
-                      ? 'grayscale'
-                      : '!bg-transparent'
-                  }
-                />
-              )}
-              {option.label}
+              <ChevronLeftIcon className="h-4 w-4" />
             </button>
-          ))}
+          )}
+          {scrollEdges.right && (
+            <button
+              type="button"
+              aria-label="Scroll sort options right"
+              onClick={() => scrollSortOptions(1)}
+              className={classNames(
+                SCROLL_CONTROL_CLASS,
+                'right-0 top-1/2 -translate-y-1/2 justify-end h-10 rounded-r-xl bg-gradient-to-l from-[#141519] via-[#141519]/95 to-transparent',
+              )}
+            >
+              <ChevronRightIcon className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -230,8 +319,6 @@ export function LaunchpadExploreControlsSkeleton(): ReactElement {
       onSearchChange={noop}
       sortBy={DEFAULT_LAUNCHPAD_TOKEN_SORT}
       onSortByChange={noop}
-      providerFilter="all"
-      onProviderFilterChange={noop}
       view="grid"
       onViewChange={noop}
     />
