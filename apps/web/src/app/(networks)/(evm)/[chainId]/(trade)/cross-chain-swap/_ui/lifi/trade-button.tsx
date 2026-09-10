@@ -19,6 +19,7 @@ import {
   SLIPPAGE_WARNING_THRESHOLD,
   Slippage,
 } from 'src/lib/wagmi/systems/checker/slippage'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { useWallet } from 'src/lib/wallet/hooks/use-wallet'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
@@ -34,7 +35,7 @@ export function CrossChainSwapTradeButton<
 >() {
   const { data: maintenance } = useIsCrossChainSwapMaintenance()
   const {
-    state: { swapAmount, swapAmountString, chainId0, chainId1 },
+    state: { swapAmount, swapAmountString, chainId0, chainId1, token0, token1 },
   } = useLifiXSwap<TChainId0, TChainId1>()
   const { data: route, isError } = useLifiXSwapSelectedTradeRoute()
   const [checked, setChecked] = useState(false)
@@ -76,48 +77,50 @@ export function CrossChainSwapTradeButton<
           <Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
             <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
               <Network fullWidth chainId={chainId0}>
-                <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
-                  <Slippage
-                    fullWidth
-                    text="Swap With High Slippage"
-                    slippageTolerance={slippagePercent}
-                  >
-                    <ApproveERC20
-                      id="approve-erc20"
+                <StockTokenRegion token0={token0} token1={token1}>
+                  <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                    <Slippage
                       fullWidth
-                      amount={swapAmount}
-                      contract={
-                        route?.step?.estimate?.approvalAddress as
-                          | AddressFor<TChainId0>
-                          | undefined
-                      }
+                      text="Swap With High Slippage"
+                      slippageTolerance={slippagePercent}
                     >
-                      <Success tag={APPROVE_TAG_XSWAP}>
-                        <DialogTrigger asChild>
-                          <Button
-                            disabled={Boolean(
-                              !route?.amountOut?.gt(ZERO) ||
-                                isError ||
-                                +swapAmountString === 0 ||
-                                (!checked && showPriceImpactWarning) ||
-                                showChainUnsupportedWarning,
-                            )}
-                            color={showPriceImpactWarning ? 'red' : 'blue'}
-                            fullWidth
-                            size="xl"
-                            testId="swap"
-                          >
-                            {!checked && showPriceImpactWarning
-                              ? 'Price impact too high'
-                              : isError
-                                ? 'No trade found'
-                                : 'Swap'}
-                          </Button>
-                        </DialogTrigger>
-                      </Success>
-                    </ApproveERC20>
-                  </Slippage>
-                </Amounts>
+                      <ApproveERC20
+                        id="approve-erc20"
+                        fullWidth
+                        amount={swapAmount}
+                        contract={
+                          route?.step?.estimate?.approvalAddress as
+                            | AddressFor<TChainId0>
+                            | undefined
+                        }
+                      >
+                        <Success tag={APPROVE_TAG_XSWAP}>
+                          <DialogTrigger asChild>
+                            <Button
+                              disabled={Boolean(
+                                !route?.amountOut?.gt(ZERO) ||
+                                  isError ||
+                                  +swapAmountString === 0 ||
+                                  (!checked && showPriceImpactWarning) ||
+                                  showChainUnsupportedWarning,
+                              )}
+                              color={showPriceImpactWarning ? 'red' : 'blue'}
+                              fullWidth
+                              size="xl"
+                              testId="swap"
+                            >
+                              {!checked && showPriceImpactWarning
+                                ? 'Price impact too high'
+                                : isError
+                                  ? 'No trade found'
+                                  : 'Swap'}
+                            </Button>
+                          </DialogTrigger>
+                        </Success>
+                      </ApproveERC20>
+                    </Slippage>
+                  </Amounts>
+                </StockTokenRegion>
               </Network>
             </Connect>
           </Connect>

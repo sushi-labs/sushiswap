@@ -122,7 +122,7 @@ const TwapTradeChecker: FC<CheckerButtonProps> = ({
 
 export const TwapTradeButton = ({ module }: { module: Module }) => {
   const {
-    state: { swapAmount, chainId },
+    state: { swapAmount, chainId, token0, token1 },
   } = useDerivedStateSimpleSwap()
 
   const errors = useInputErrors()
@@ -133,28 +133,30 @@ export const TwapTradeButton = ({ module }: { module: Module }) => {
       <Checker.Connect>
         <Checker.Network chainId={chainId}>
           <TwapTradeChecker>
-            <Checker.Amounts chainId={chainId} amount={swapAmount}>
-              <WrapNativeChecker amount={swapAmount as Amount<EvmCurrency>}>
-                <Checker.ApproveERC20
-                  id="approve-erc20"
-                  amount={swapAmount?.wrap()}
-                  contract={spender}
-                >
-                  <Checker.Success tag={APPROVE_TAG_SWAP}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="xl"
-                        disabled={!!errors}
-                        fullWidth
-                        testId="swap"
-                      >
-                        Place order
-                      </Button>
-                    </DialogTrigger>
-                  </Checker.Success>
-                </Checker.ApproveERC20>
-              </WrapNativeChecker>
-            </Checker.Amounts>
+            <Checker.StockTokenRegion token0={token0} token1={token1}>
+              <Checker.Amounts chainId={chainId} amount={swapAmount}>
+                <WrapNativeChecker amount={swapAmount as Amount<EvmCurrency>}>
+                  <Checker.ApproveERC20
+                    id="approve-erc20"
+                    amount={swapAmount?.wrap()}
+                    contract={spender}
+                  >
+                    <Checker.Success tag={APPROVE_TAG_SWAP}>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="xl"
+                          disabled={!!errors}
+                          fullWidth
+                          testId="swap"
+                        >
+                          Place order
+                        </Button>
+                      </DialogTrigger>
+                    </Checker.Success>
+                  </Checker.ApproveERC20>
+                </WrapNativeChecker>
+              </Checker.Amounts>
+            </Checker.StockTokenRegion>
           </TwapTradeChecker>
         </Checker.Network>
       </Checker.Connect>
