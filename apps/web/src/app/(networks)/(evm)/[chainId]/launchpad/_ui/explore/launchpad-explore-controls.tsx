@@ -59,11 +59,11 @@ function revealSortOption(
 }
 
 const SORT_OPTIONS = [
-  { label: 'Trending', value: 'TRENDING', comingSoon: true },
-  { label: 'New', value: 'CREATED_AT', comingSoon: false },
-  { label: 'Stock Pairs', value: 'STOCK_PAIRS', comingSoon: true },
-  { label: 'Market Cap', value: 'MARKET_CAPITALIZATION', comingSoon: false },
-  { label: 'Volume', value: 'VOLUME_24H', comingSoon: false },
+  { label: 'Trending', value: 'TRENDING' },
+  { label: 'New', value: 'CREATED_AT' },
+  { label: 'Stock Pairs', value: 'STOCK_TOKENS' },
+  { label: 'Market Cap', value: 'MARKET_CAPITALIZATION' },
+  { label: 'Volume', value: 'VOLUME_24H' },
 ] as const
 
 const PERIOD_OPTIONS = [
@@ -143,7 +143,7 @@ export function LaunchpadExploreControls({
   }
 
   return (
-    <div className="flex min-w-0 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-2">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-extrabold tracking-[-0.03em] text-perps-muted">
@@ -215,9 +215,9 @@ export function LaunchpadExploreControls({
           placeholder="Search tokens, symbols, or addresses"
           aria-label="Search launches"
           className="!h-11 !rounded-xl !border !border-white/[0.07] !bg-[#101116] !font-normal !text-perps-muted placeholder:!text-[#6B7280]"
-          wrapperClassName="order-1 w-full min-w-0 md:w-auto md:flex-[1_1_14rem]"
+          wrapperClassName="order-1 w-full min-w-0 md:w-auto md:flex-[1_1_14rem] md:mr-auto lg:max-w-[400px]"
         />
-        <div className="relative order-2 flex w-full min-w-0 max-w-full items-center rounded-xl border border-white/[0.07] bg-white/[0.015] p-1 md:order-3 xl:order-2 md:w-fit xl:shrink-0">
+        <div className="relative order-2 flex w-full min-w-0 max-w-full items-center rounded-xl border border-white/[0.07] bg-white/[0.015] p-1 md:order-3 xl:order-2 lg:w-fit xl:shrink-0">
           <div
             ref={sortOptionsRef}
             role="group"
@@ -244,14 +244,9 @@ export function LaunchpadExploreControls({
                   type="button"
                   data-sort-value={option.value}
                   aria-pressed={selected}
-                  disabled={disabled || option.comingSoon}
-                  title={
-                    option.comingSoon
-                      ? `${option.label} is coming soon`
-                      : undefined
-                  }
+                  disabled={disabled}
                   onClick={() => {
-                    if (!option.comingSoon) onSortByChange(option.value)
+                    onSortByChange(option.value)
                   }}
                   className={classNames(
                     CONTROL_CLASS,

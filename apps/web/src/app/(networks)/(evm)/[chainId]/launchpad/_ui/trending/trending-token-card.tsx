@@ -5,11 +5,8 @@ import type { LaunchpadTokenEdge } from '@sushiswap/graph-client/data-api'
 import { Currency, LinkInternal, SkeletonBox, classNames } from '@sushiswap/ui'
 import { type ComponentProps, type ReactElement, useMemo } from 'react'
 import { EvmToken, getEvmChainById } from 'sushi/evm'
-import {
-  formatPercent,
-  formatUsd,
-  volumeChangePercent,
-} from '../../_lib/format'
+import { formatPercent, formatUsd } from '../../_lib/format'
+import { PercentChange } from '../_common/percent-change'
 
 function TrendingTokenCardFrame({
   className,
@@ -56,11 +53,7 @@ export function TrendingTokenCard({
     return [base, quote]
   }, [token])
 
-  const volPctChange = volumeChangePercent(
-    token.node.metrics?.volumeUsd.h12,
-    token.node.metrics?.volumeUsd.h24,
-  )
-
+  const pricePctChange = token.node.metrics?.priceChangePercent24h
   return (
     <LinkInternal
       className="block w-full min-w-0 shrink-0 lg:w-[440px]"
@@ -99,19 +92,7 @@ export function TrendingTokenCard({
                 Marketcap
               </div>
             </div>
-            <div
-              title="12h volume change compared with the previous 12 hours"
-              className={classNames(
-                'text-sm font-bold',
-                volPctChange == null
-                  ? 'text-perps-muted-50'
-                  : volPctChange >= 0
-                    ? 'text-perps-green'
-                    : 'text-perps-red',
-              )}
-            >
-              {formatPercent(volPctChange)}
-            </div>
+            <PercentChange value={pricePctChange} />
           </div>
         </div>
         <div className="hidden w-full items-center gap-4 lg:flex">
@@ -132,19 +113,7 @@ export function TrendingTokenCard({
               <div className="font-bold text-white text-2xl">
                 {formatUsd(token.node.metrics?.marketCapitalizationUsd)}
               </div>
-              <div
-                title="12h volume change compared with the previous 12 hours"
-                className={classNames(
-                  'text-sm font-bold',
-                  volPctChange == null
-                    ? 'text-perps-muted-50'
-                    : volPctChange >= 0
-                      ? 'text-perps-green'
-                      : 'text-perps-red',
-                )}
-              >
-                {formatPercent(volPctChange)}
-              </div>
+              <PercentChange value={pricePctChange} />
             </div>
             <div className="flex items-center gap-2 text-perps-muted-50 text-sm">
               <div className="flex items-center gap-1">

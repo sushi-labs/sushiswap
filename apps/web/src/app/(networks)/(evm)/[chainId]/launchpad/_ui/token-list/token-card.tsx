@@ -1,16 +1,19 @@
 import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
 import Link from 'next/link'
 import { useMemo } from 'react'
+import { TriangleIcon } from 'src/app/(cms)/components/icons/triangle-icon'
 import { SUSHI, getEvmChainById } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
 import {
   formatLaunchpadAge,
   formatLaunchpadAgeLabel,
+  formatPercent,
   formatUsd,
   getSelectedMetric,
 } from '../../_lib/format'
 import { launchpadProviderHasCapability } from '../../_lib/launchpad-provider'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { PercentChange } from '../_common/percent-change'
 import { TokenAvatar } from '../_common/token-avatar'
 
 const CARD_CLASS_NAME =
@@ -84,6 +87,7 @@ export function TokenCard({
     }
     return ['via-perps-blue/80', 'hover:border-perps-blue/80 ']
   }, [token, isStockPair])
+  const pricePctChange = token.metrics?.priceChangePercent24h
 
   return (
     <div className={classNames(CARD_CLASS_NAME, hoverBorderColor)}>
@@ -107,15 +111,18 @@ export function TokenCard({
       <TokenAvatar token={token} size="card" />
       {/* </Badge> */}
       <div className="flex flex-1 flex-col p-4 pb-2.5">
-        <Link
-          href={href}
-          prefetch={manage ? 'auto' : true}
-          aria-label={`${manage ? 'Manage' : 'View'} ${token.name}`}
-          title={token.name}
-          className="block truncate text-lg font-bold text-white transition after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-perps-blue/50"
-        >
-          {token.name}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={href}
+            prefetch={manage ? 'auto' : true}
+            aria-label={`${manage ? 'Manage' : 'View'} ${token.name}`}
+            title={token.name}
+            className="block truncate text-lg font-bold text-white transition after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-perps-blue/50"
+          >
+            {token.name}
+          </Link>
+          <PercentChange value={pricePctChange} className="pt-0.5" />
+        </div>
         <div
           title={token.symbol}
           className="truncate text-xs leading-5 text-perps-muted-50"

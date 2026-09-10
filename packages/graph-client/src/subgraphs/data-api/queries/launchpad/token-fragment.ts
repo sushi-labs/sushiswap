@@ -70,6 +70,7 @@ export const LaunchpadTokenFragment = graphql(`
       marketCapitalizationUsd
       fullyDilutedValuationUsd
       currentTvlUsd
+      priceChangePercent24h
       volumeUsd {
         h1
         h6

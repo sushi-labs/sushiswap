@@ -15,6 +15,8 @@ type SortMetric =
   | 'MARKET_CAPITALIZATION'
   | 'CURRENT_TVL'
   | 'CREATED_AT'
+  | 'STOCK_TOKENS'
+  | 'TRENDING'
 type VolumePeriod = '1H' | '6H' | '12H' | '24H'
 
 const SORT_METRICS: Array<{ value: SortMetric; label: string }> = [
@@ -38,6 +40,8 @@ const SORT_FIELDS = new Set<LaunchpadTokenSortField>([
   'MARKET_CAPITALIZATION',
   'CURRENT_TVL',
   'CREATED_AT',
+  'STOCK_TOKENS',
+  'TRENDING',
 ])
 
 export const DEFAULT_LAUNCHPAD_TOKEN_SORT = 'MARKET_CAPITALIZATION' as const
@@ -55,7 +59,9 @@ function getSortMetric(sortBy: LaunchpadTokenSortField): SortMetric {
   if (
     sortBy === 'MARKET_CAPITALIZATION' ||
     sortBy === 'CURRENT_TVL' ||
-    sortBy === 'CREATED_AT'
+    sortBy === 'CREATED_AT' ||
+    sortBy === 'STOCK_TOKENS' ||
+    sortBy === 'TRENDING'
   ) {
     return sortBy
   }

@@ -40,7 +40,7 @@ export function TrendingTokens({
     {
       chainId,
       providers: getLaunchpadProvidersForFilter('all'),
-      sortBy: 'VOLUME_24H',
+      sortBy: 'TRENDING',
       sortDirection: 'DESC',
       first: 4,
     },

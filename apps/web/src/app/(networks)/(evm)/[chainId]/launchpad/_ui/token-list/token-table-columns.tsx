@@ -1,13 +1,13 @@
-import { SkeletonBox, SkeletonCircle, classNames } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { getEvmChainById } from 'sushi/evm'
 import {
   formatLaunchpadAge,
   formatLaunchpadAgeLabel,
-  formatPercent,
   formatUsd,
 } from '../../_lib/format'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
+import { PercentChange } from '../_common/percent-change'
 import { TokenAvatar } from '../_common/token-avatar'
 import { LaunchpadProviderMark } from '../providers/launchpad-provider-mark'
 
@@ -152,20 +152,7 @@ export function getTokenTableColumns(
       size: 140,
       cell: ({ row: { original: token } }) => {
         const change = token.metrics?.tvlChangePercent[window]
-        return (
-          <span
-            className={classNames(
-              'font-medium tabular-nums',
-              change == null || change === 0
-                ? 'text-perps-muted-50'
-                : change > 0
-                  ? 'text-perps-green'
-                  : 'text-perps-red',
-            )}
-          >
-            {formatPercent(change)}
-          </span>
-        )
+        return <PercentChange iconType="sign" value={change} />
       },
       meta: {
         ...NUMBER_META,
@@ -182,9 +169,16 @@ export function getTokenTableColumns(
       enableSorting: false,
       size: 140,
       cell: ({ row }) => (
-        <span className="text-white">
-          {formatUsd(row.original.metrics?.marketCapitalizationUsd)}
-        </span>
+        <div className="flex items-end flex-col w-fit">
+          <span className="text-white">
+            {formatUsd(row.original.metrics?.marketCapitalizationUsd)}
+          </span>
+
+          <PercentChange
+            className="!text-[10px] !font-normal hidden sm:flex"
+            value={row.original.metrics?.priceChangePercent24h}
+          />
+        </div>
       ),
       meta: NUMBER_META,
     },
