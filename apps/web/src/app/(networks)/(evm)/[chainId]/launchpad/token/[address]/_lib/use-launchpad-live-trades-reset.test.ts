@@ -1,17 +1,21 @@
 import type { LaunchpadTradeConnection } from '@sushiswap/graph-client/data-api'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { EMPTY_TRADE_CONNECTION } from './launchpad-stream'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  EMPTY_TRADE_CONNECTION,
+  clearLaunchpadCandleSnapshot,
+  publishLaunchpadCandleSnapshot,
+} from './launchpad-stream'
 import { useLaunchpadLiveTrades } from './use-launchpad-live-trades'
 
 const mocks = vi.hoisted(() => ({
-  getLaunchpadCandles: vi.fn(),
+  effectCleanups: [] as (() => void)[],
   refetch: vi.fn(),
   stateSetters: [] as ReturnType<typeof vi.fn>[],
   stateValues: [] as unknown[],
 }))
 
 vi.mock('@sushiswap/graph-client/data-api', () => ({
-  getLaunchpadCandles: mocks.getLaunchpadCandles,
+  getLaunchpadCandles: vi.fn(),
   getLaunchpadTrades: vi.fn(),
 }))
 
@@ -29,7 +33,8 @@ vi.mock('@tanstack/react-query', () => ({
 
 vi.mock('react', () => ({
   useEffect: (effect: () => undefined | (() => void)) => {
-    effect()
+    const cleanup = effect()
+    if (cleanup) mocks.effectCleanups.push(cleanup)
   },
   useMemo: <T>(factory: () => T) => factory(),
   useRef: <T>(value: T) => ({ current: value }),
@@ -118,7 +123,6 @@ function createDeferred<T>(): {
 
 describe('useLaunchpadLiveTrades reset handling', () => {
   beforeEach(() => {
-    mocks.getLaunchpadCandles.mockReset()
     mocks.refetch.mockReset()
     mocks.stateSetters.length = 0
     mocks.stateValues.length = 0
@@ -126,12 +130,17 @@ describe('useLaunchpadLiveTrades reset handling', () => {
     vi.stubGlobal('EventSource', MockEventSource)
   })
 
+  afterEach(() => {
+    for (const cleanup of mocks.effectCleanups.splice(0)) cleanup()
+    clearLaunchpadCandleSnapshot({
+      chainId: CHAIN_ID,
+      tokenAddress: TOKEN_ADDRESS,
+    })
+    vi.unstubAllGlobals()
+  })
+
   it('keeps the last good trades visible while a reset snapshot is pending', async () => {
     const initialConnection = createConnection()
-    mocks.getLaunchpadCandles.mockResolvedValue({
-      nodes: [],
-      streamCursor: '40',
-    })
     mocks.refetch.mockResolvedValueOnce({
       data: { pages: [initialConnection] },
       isError: false,
@@ -145,8 +154,14 @@ describe('useLaunchpadLiveTrades reset handling', () => {
 
     await vi.waitFor(() => {
       expect(mocks.stateValues[0]).toEqual(initialConnection)
-      expect(MockEventSource.instances).toHaveLength(1)
     })
+    expect(MockEventSource.instances).toHaveLength(0)
+
+    publishLaunchpadCandleSnapshot(
+      { chainId: CHAIN_ID, tokenAddress: TOKEN_ADDRESS },
+      '40',
+    )
+    expect(MockEventSource.instances).toHaveLength(1)
     const setData = mocks.stateSetters[0]
     expect(setData).toBeDefined()
     setData?.mockClear()
