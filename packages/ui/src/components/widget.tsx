@@ -30,7 +30,7 @@ const widgetActionVariants = cva('absolute', {
 })
 
 export interface WidgetProps
-  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof widgetVariants> {}
 
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
@@ -68,7 +68,7 @@ const WidgetTitle = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={classNames(
-      'text-lg font-semibold leading-none tracking-tight mr-[64px]',
+      'text-lg font-semibold [line-height:1] tracking-tight mr-[64px]',
       className,
     )}
     {...props}
@@ -88,7 +88,7 @@ const WidgetDescription = ({
 WidgetDescription.displayName = 'WidgetDescription'
 
 export interface WidgetActionProps
-  extends React.ButtonHTMLAttributes<HTMLDivElement>,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof widgetActionVariants> {}
 
 const WidgetAction = ({ variant, className, ...props }: WidgetActionProps) => (

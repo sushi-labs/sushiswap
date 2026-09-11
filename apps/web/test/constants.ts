@@ -1,59 +1,40 @@
-import { Amount, ChainId, type Native } from 'sushi'
-import { EvmNative } from 'sushi/evm'
+import { Amount } from 'sushi'
+import { EvmChainId, EvmNative } from 'sushi/evm'
 
-export let forkBlockNumber: bigint
-if (process.env.ANVIL_BLOCK_NUMBER) {
-  forkBlockNumber = BigInt(Number(process.env.ANVIL_BLOCK_NUMBER))
-} else {
-  forkBlockNumber = 16280770n
-  // console.warn(
-  //   `\`ANVIL_BLOCK_NUMBER\` not found. Falling back to \`${forkBlockNumber}\`.`,
-  // )
+// Recordings and deployed contracts are pinned to this chain/block together.
+export const chainId = EvmChainId.POLYGON
+export const forkBlockNumber = 71015789
+export const transactionTimeout = 60_000
+export const nativeAmount = new Amount(
+  EvmNative.fromChainId(chainId),
+  10n ** 20n,
+)
+
+export function getAnvilPort(): number {
+  const port = Number(process.env.ANVIL_PORT ?? 8545)
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error('ANVIL_PORT must be an integer between 1 and 65535')
+  }
+  return port
 }
 
-export let forkUrl: string
-if (process.env.ANVIL_FORK_URL) {
-  forkUrl = process.env.ANVIL_FORK_URL
-} else {
-  forkUrl = 'https://cloudflare-eth.com'
-  // console.warn(`\`ANVIL_FORK_URL\` not found. Falling back to \`${forkUrl}\`.`)
+export function getForkOptions(): { forkUrl: string; forkBlockNumber: number } {
+  const forkUrl = process.env.ANVIL_FORK_URL
+  if (!forkUrl || !['http:', 'https:'].includes(new URL(forkUrl).protocol)) {
+    throw new Error('ANVIL_FORK_URL must be an HTTP(S) archive RPC URL')
+  }
+  if (
+    Number(process.env.ANVIL_BLOCK_NUMBER ?? forkBlockNumber) !==
+    forkBlockNumber
+  ) {
+    throw new Error(
+      `ANVIL_BLOCK_NUMBER must match the recordings: ${forkBlockNumber}`,
+    )
+  }
+  if (Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? chainId) !== chainId) {
+    throw new Error(
+      'The fork suite currently has recordings for Polygon (137) only',
+    )
+  }
+  return { forkUrl, forkBlockNumber }
 }
-
-export let blockTime: number
-if (process.env.ANVIL_BLOCK_TIME) {
-  blockTime = Number(process.env.ANVIL_BLOCK_TIME)
-} else {
-  blockTime = 1
-  // console.warn(
-  //   `\`ANVIL_BLOCK_TIME\` not found. Falling back to \`${blockTime}\`.`,
-  // )
-}
-
-export let anvilPort: number
-if (process.env.ANVIL_PORT) {
-  anvilPort = Number(process.env.ANVIL_PORT)
-} else {
-  anvilPort = 8545
-  // console.warn(`\`ANVIL_PORT\` not found. Falling back to \`${anvilPort}\`.`)
-}
-
-export let chainId: typeof ChainId.POLYGON
-if (process.env.NEXT_PUBLIC_CHAIN_ID) {
-  chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID) as typeof ChainId.POLYGON
-} else {
-  chainId = 137
-  // console.warn(`\`ANVIL_PORT\` not found. Falling back to \`${anvilPort}\`.`)
-}
-
-export const testWorkerIndex = Number(process.env.TEST_WORKER_INDEX ?? 0)
-export const testParallelIndex = Number(process.env.TEST_PARALLEL_INDEX ?? 0)
-
-export const localHttpUrl = `http://127.0.0.1:${anvilPort}/${testParallelIndex}`
-export const localWsUrl = `ws://127.0.0.1:${anvilPort}/${testParallelIndex}`
-
-// Assume 100MATIC for Polygon, 1PROBABLY_ETH for the rest
-export const nativeAmounts: Partial<Record<ChainId, Amount<EvmNative>>> = {
-  [ChainId.POLYGON]: new Amount(EvmNative.fromChainId(ChainId.POLYGON), 1e20),
-}
-export const nativeAmount =
-  nativeAmounts[chainId] || new Amount(EvmNative.fromChainId(chainId), 1e18)

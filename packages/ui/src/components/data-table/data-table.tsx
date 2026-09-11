@@ -37,7 +37,7 @@ import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTablePagination } from './data-table-pagination'
 
 declare module '@tanstack/react-table' {
-  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+  // biome-ignore lint/correctness/noUnusedVariables: module augmentation of @tanstack/react-table
   interface ColumnMeta<TData extends RowData, TValue> {
     body?: {
       className?: string

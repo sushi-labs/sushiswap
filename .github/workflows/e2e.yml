@@ -2,15 +2,29 @@ name: E2E
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - ".github/workflows/apps-web-e2e.yml"
+      - ".github/workflows/e2e.yml"
+      - ".github/actions/install/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
+      - "tsconfig.json"
+      - ".nvmrc"
+      - "patches/**"
+      - "scripts/**"
       - "apps/web/**"
       - "config/nextjs/**"
       - "config/tailwindcss/**"
       - "config/typescript/**"
       - "packages/**"
   workflow_dispatch:
+    inputs:
+      benchmark:
+        description: 'Compare one and two workers (10 retry-free repetitions each)'
+        type: boolean
+        default: false
 
 env:
   NODE_OPTIONS: --max-old-space-size=8192
@@ -23,8 +37,13 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # runs-on: buildjet-4vcpu-ubuntu-2204
-    timeout-minutes: 15
+    timeout-minutes: ${{ inputs.benchmark && 90 || 35 }}
+    env:
+      # Test-only portal/BotId configuration is needed at build and runtime.
+      AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts=
+      ZITADEL_ISSUER: https://zitadel.styro.sushi.com
+      ZITADEL_SA_TOKEN: ""
+      BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
     strategy:
       matrix:
         block-number: [71015789]
@@ -35,16 +54,53 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Detect Privy changes
+        if: github.event_name == 'pull_request'
+        id: privy-changes
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          git fetch --no-tags --depth=1 origin "$PR_BASE_SHA"
+          # Compare the PR merge checkout with its base, including deleted paths.
+          changed_files=$(git diff --name-only --no-renames "$PR_BASE_SHA" HEAD -- \
+            ':(glob)apps/web/**/privy/**' \
+            ':(glob)apps/web/**/privy*' \
+            ':(glob)apps/web/**/use-privy*' \
+            'apps/web/test/playwright.config.ts' \
+            'apps/web/test/reporting.ts' \
+            '.github/workflows/e2e.yml')
+          if [[ -n "$changed_files" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        id: install
         uses: ./.github/actions/install
-        env: 
+        with:
+          node-version: 24
+          foundry-version: v1.8.1
+        env:
           TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
+
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
         working-directory: ./apps/web
 
-      - name: Test
-        run: pnpm exec turbo run test --filter web
+      - name: Restore Turbo build cache
+        id: turbo-cache
+        uses: actions/cache/restore@v5
+        with:
+          path: .turbo/cache
+          key: e2e-turbo-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            e2e-turbo-${{ runner.os }}-${{ runner.arch }}-node24-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Build fork test app
+        id: build
+        run: pnpm exec turbo run build --filter web --cache-dir=.turbo/cache
         env:
           ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
           ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
@@ -52,20 +108,94 @@ jobs:
           NEXT_PUBLIC_APP_ENV: 'test'
           NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
           NEXT_TELEMETRY_DISABLED: 1
-          # Portal
-          AUTH_SESSION_SECRET: p1jPq93q2T6Kmxrva3+WR93xSWLLSa584Qen005+4ts= # Random string, separate from Prod
-          ZITADEL_ISSUER: https://zitadel.styro.sushi.com
-          ZITADEL_SA_TOKEN: ""
-          # BotId
-          BOTID_JWT_KEY: HLQsCXPJ6gEZaLVGnigDE2yv8hBOih53JWeknsEKG0A
           # Data API
           NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
-          NEXT_PUBLIC_PRIVY_APP_ID: cmq14gqpd00lb0cl52zln4q4z
 
-      - name: Upload test results
+      - name: Save Turbo build cache
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.turbo-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v5
+        with:
+          path: .turbo/cache
+          key: ${{ steps.turbo-cache.outputs.cache-primary-key }}
+
+      - name: Validate fork harness isolation
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm --filter web test:harness
+
+      - name: Test fork transactions
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && !inputs.benchmark }}
+        run: pnpm --filter web test
+        env:
+          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
+          NEXT_PUBLIC_APP_ENV: 'test'
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
+
+      - name: Benchmark fork transactions
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && inputs.benchmark }}
+        run: pnpm --filter web test:benchmark
+        env:
+          ANVIL_FORK_URL: ${{ secrets.ANVIL_FORK_URL }}
+          ANVIL_BLOCK_NUMBER: ${{ matrix.block-number }}
+          NEXT_PUBLIC_APP_ENV: 'test'
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          NEXT_PUBLIC_SUSHI_DATA_API_HOST: https://production.data-gcp.sushi.com
+
+      - name: Upload fork and harness results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-fork-${{ matrix.chain-id }}
           path: ./apps/web/test-results/
-          retention-days: 30
+          retention-days: 14
+
+      - name: Test Privy runtime integration
+        id: privy
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && (github.event_name != 'pull_request' || steps.privy-changes.outputs.changed == 'true') }}
+        run: pnpm --filter web test:privy
+        env:
+          NEXT_PUBLIC_CHAIN_ID: ${{ matrix.chain-id }}
+
+      - name: Upload Privy runtime results
+        if: ${{ always() && (steps.privy.outcome == 'success' || steps.privy.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-privy
+          path: ./apps/web/test-results/privy/
+          retention-days: 14
+
+  live-privy:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/install
+        with:
+          node-version: 24
+        env:
+          TRADING_VIEW_GH_READ_TOKEN: ${{ secrets.TRADING_VIEW_GH_READ_TOKEN }}
+      - name: Install Chromium
+        run: pnpm --filter web exec playwright install --with-deps chromium
+      - name: Build workspace dependencies
+        run: pnpm exec turbo run build --filter 'web^...'
+      - name: Test live Privy login and reconnect
+        run: pnpm --filter web test:privy-live
+        timeout-minutes: 12
+        env:
+          EDGE_CONFIG: ${{ secrets.EDGE_CONFIG }}
+          NEXT_PUBLIC_CHAIN_ID: '137'
+          NEXT_PUBLIC_PRIVY_APP_ID: cmqto01a1007v0blaefwe3a0p
+          PRIVY_TEST_EMAIL: ${{ secrets.PRIVY_TEST_EMAIL }}
+          PRIVY_TEST_OTP: ${{ secrets.PRIVY_TEST_OTP }}
+      - name: Upload live Privy results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-privy-live
+          path: ./apps/web/test-results/privy-live/
+          retention-days: 14

@@ -109,17 +109,13 @@ export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger
-              testdata-id="add-tab"
-              value="add"
-              className="flex flex-1"
-            >
+            <TabsTrigger testdata-id="add-tab" value="add" className="flex-1">
               Add
             </TabsTrigger>
             <TabsTrigger
               testdata-id="remove-tab"
               value="remove"
-              className="flex flex-1"
+              className="flex-1"
             >
               Remove
             </TabsTrigger>
@@ -127,7 +123,7 @@ export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
               <TabsTrigger
                 testdata-id="stake-tab"
                 value="stake"
-                className="flex flex-1"
+                className="flex-1"
               >
                 Stake
               </TabsTrigger>
@@ -136,7 +132,7 @@ export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
                 testdata-id="stake-tab"
                 disabled
                 value="stake"
-                className="flex flex-1"
+                className="flex-1"
               >
                 Stake
               </TabsTrigger>
@@ -145,7 +141,7 @@ export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
               <TabsTrigger
                 testdata-id="unstake-tab"
                 value="unstake"
-                className="flex flex-1"
+                className="flex-1"
               >
                 Unstake
               </TabsTrigger>
@@ -154,7 +150,7 @@ export const ManageV2LiquidityCard: FC<{ address: string }> = ({ address }) => {
                 testdata-id="unstake-tab"
                 disabled
                 value="unstake"
-                className="flex flex-1"
+                className="flex-1"
               >
                 Unstake
               </TabsTrigger>

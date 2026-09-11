@@ -143,6 +143,8 @@ export const TradeTables = ({ className }: { className?: string }) => {
 
   const hasRows = useMemo(() => {
     switch (activeTab) {
+      case 'open-orders':
+        return openOrdersCount > 0
       case 'trade-history':
         return tradeHistory.length > 0
       case 'funding-history':
@@ -167,6 +169,7 @@ export const TradeTables = ({ className }: { className?: string }) => {
   }, [
     activeTab,
     activeTwapTab,
+    openOrdersCount,
     tradeHistory.length,
     fundingHistory.length,
     orderHistory.length,

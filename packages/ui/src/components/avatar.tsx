@@ -37,7 +37,7 @@ const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
   AvatarImageProps
 >(({ className, width, src, onLoadingStatusChange }, ref) => {
-  const _width = Number(width) ?? 40
+  const _width = Number(width) || 40
   const [directCdnFallbackSrc, setDirectCdnFallbackSrc] = React.useState<
     string | null
   >(null)

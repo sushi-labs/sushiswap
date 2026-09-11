@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { stellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
+import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { useStellarWallets } from 'src/lib/wallet/namespaces/stellar/provider/use-stellar-wallets'
 import type { StellarAccountAddress } from 'sushi/stellar'
 import { NETWORK_PASSPHRASE } from './_common/lib/constants'
@@ -34,11 +34,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
    * @returns The signed transaction
    */
   const signTransaction = async (xdr: string) => {
-    if (!stellarWalletKit || !connectedAddress) {
+    if (!connectedAddress) {
       throw new Error('Stellar wallet not connected')
     }
 
-    const { signedTxXdr } = await stellarWalletKit.signTransaction(xdr, {
+    const kit = await getStellarWalletKit()
+    const { signedTxXdr } = await kit.signTransaction(xdr, {
       address: connectedAddress,
       networkPassphrase: NETWORK_PASSPHRASE,
     })
@@ -53,21 +54,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
    * @returns The signed authorization entry (base64 signature)
    */
   const signAuthEntry = async (entryPreimageXdr: string) => {
-    if (!stellarWalletKit || !connectedAddress) {
+    if (!connectedAddress) {
       throw new Error('Stellar wallet not connected')
     }
 
-    if (typeof stellarWalletKit.signAuthEntry !== 'function') {
+    const kit = await getStellarWalletKit()
+    if (typeof kit.signAuthEntry !== 'function') {
       throw new Error('Connected wallet does not support signAuthEntry')
     }
 
-    const { signedAuthEntry } = await stellarWalletKit.signAuthEntry(
-      entryPreimageXdr,
-      {
-        address: connectedAddress,
-        networkPassphrase: NETWORK_PASSPHRASE,
-      },
-    )
+    const { signedAuthEntry } = await kit.signAuthEntry(entryPreimageXdr, {
+      address: connectedAddress,
+      networkPassphrase: NETWORK_PASSPHRASE,
+    })
 
     return signedAuthEntry
   }

@@ -14,6 +14,7 @@ export type WalletContext<
 }
 
 export type WalletState = {
+  isPending: boolean
   pendingWalletId: string | undefined
   setPendingWalletId: (walletId: string | undefined) => void
 }

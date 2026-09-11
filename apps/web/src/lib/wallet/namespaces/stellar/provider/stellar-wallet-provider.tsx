@@ -65,6 +65,10 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
   const [wallet, setWallet] = useState<Wallet | null>(initialConnection.wallet)
   const [isHydrated, setIsHydrated] = useState(initialConnection.isHydrated)
   const unsubscribeRuntimeRef = useRef<(() => void) | undefined>(undefined)
+  // Subscribing emits an immediate state event, and the kit reports a
+  // wallet-selected-but-no-address state while the wallet prompt is open.
+  // Neither may overwrite what an explicit connect is establishing.
+  const connectingRef = useRef(false)
 
   const syncConnection = useCallback(async () => {
     const { disconnectStellarWallet, getStellarWalletConnection } =
@@ -72,6 +76,8 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const connection = await getStellarWalletConnection()
+      if (connectingRef.current) return
+
       if (!connection) {
         setAccount(undefined)
         setWallet(null)
@@ -81,11 +87,12 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
       setAccount(connection.account)
       setWallet(toWallet(connection.moduleId, connection.wallet))
     } catch {
+      if (connectingRef.current) return
       setAccount(undefined)
       setWallet(null)
       await disconnectStellarWallet().catch(() => undefined)
     } finally {
-      setIsHydrated(true)
+      if (!connectingRef.current) setIsHydrated(true)
     }
   }, [])
 
@@ -95,7 +102,8 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
     const { subscribeToStellarWallet } = await loadStellarWalletRuntime()
     if (unsubscribeRuntimeRef.current) return
 
-    const unsubscribe = subscribeToStellarWallet({
+    // Awaited so the listeners are attached before a connect is triggered.
+    const unsubscribe = await subscribeToStellarWallet({
       onStateUpdated: () => {
         void syncConnection()
       },
@@ -105,6 +113,11 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
         setIsHydrated(true)
       },
     })
+
+    if (unsubscribeRuntimeRef.current) {
+      unsubscribe()
+      return
+    }
 
     unsubscribeRuntimeRef.current = () => {
       unsubscribe()
@@ -142,12 +155,17 @@ function _StellarWalletProvider({ children }: { children: React.ReactNode }) {
       if (!moduleId) throw new Error('Invalid wallet id')
 
       const { connectStellarWallet } = await loadStellarWalletRuntime()
-      await ensureRuntimeSubscription()
-      setWallet(wallet)
-      const address = await connectStellarWallet(moduleId)
-      setAccount(address)
-      setIsHydrated(true)
-      onSuccess?.(address)
+      connectingRef.current = true
+      try {
+        await ensureRuntimeSubscription()
+        setWallet(wallet)
+        const address = await connectStellarWallet(moduleId)
+        setAccount(address)
+        setIsHydrated(true)
+        onSuccess?.(address)
+      } finally {
+        connectingRef.current = false
+      }
     },
     [ensureRuntimeSubscription],
   )

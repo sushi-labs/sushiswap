@@ -1,6 +1,5 @@
 'use client'
 
-import { coinbaseWallet } from '@wagmi/connectors'
 import type { CreateConnectorFn } from '@wagmi/core'
 import { getConnectorById } from '../utils/connector'
 
@@ -9,6 +8,7 @@ let createConnectorFn: CreateConnectorFn | undefined
 async function getCreateConnectorFn() {
   if (createConnectorFn) return createConnectorFn
 
+  const { coinbaseWallet } = await import('@wagmi/connectors')
   createConnectorFn = coinbaseWallet({
     preference: { options: 'all', telemetry: false },
   })

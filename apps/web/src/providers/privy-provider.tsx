@@ -19,7 +19,9 @@ const supportedChains =
     ? [...testChains]
     : [...publicChains]
 const defaultChain =
-  process.env.NEXT_PUBLIC_APP_ENV === 'test' ? undefined : mainnet
+  process.env.NEXT_PUBLIC_APP_ENV === 'test'
+    ? undefined
+    : publicChains.find((chain) => chain.id === mainnet.id)
 
 export const PrivyProvider = ({ children }: { children: ReactNode }) => {
   const { resolvedTheme } = useTheme()
@@ -37,7 +39,7 @@ export const PrivyProvider = ({ children }: { children: ReactNode }) => {
           walletChainType: 'ethereum-and-solana',
           walletList: [],
         },
-        loginMethods: ['email'],
+        loginMethods: ['email', 'twitter'],
         embeddedWallets: {
           ethereum: {
             createOnLogin: 'users-without-wallets',

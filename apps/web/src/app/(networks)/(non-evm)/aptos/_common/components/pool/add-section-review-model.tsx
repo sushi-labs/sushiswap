@@ -7,13 +7,12 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
   List,
 } from '@sushiswap/ui'
 import { type FC, type ReactNode, useCallback } from 'react'
+import { DialogProvider, DialogReview } from 'src/lib/transaction-dialog'
 import { formatUSD } from 'sushi'
 import { networkNameToNetwork } from '~aptos/_common/config/chains'
 import { AptosSDK } from '~aptos/_common/lib/common/aptos-sdk'

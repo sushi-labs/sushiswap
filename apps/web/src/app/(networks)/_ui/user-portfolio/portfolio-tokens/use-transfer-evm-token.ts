@@ -1,10 +1,10 @@
 'use client'
 
-import { useSendTransaction as usePrivySendTransaction } from '@privy-io/react-auth'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 import type { Amount } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
 import {
@@ -25,7 +25,7 @@ export function useTransferEvmToken(currency: EvmCurrency | undefined) {
   const activeWalletAddress = useAccount('evm')
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('evm')
   const publicClient = usePublicClient({ chainId: currency?.chainId })
-  const { sendTransaction: sendPrivyTransaction } = usePrivySendTransaction()
+  const { operations: privyOperations } = usePrivyRuntime()
   const { mutateAsync: sendWagmiTransaction } = useWagmiSendTransaction()
   const isPrivyEmbeddedWalletActive = useMemo(
     () =>
@@ -60,15 +60,18 @@ export function useTransferEvmToken(currency: EvmCurrency | undefined) {
       const hash =
         isPrivyEmbeddedWalletActive && privyEmbeddedWallet
           ? (
-              await sendPrivyTransaction(request, {
+              await privyOperations?.sendEvmTransaction({
                 address: privyEmbeddedWallet.address,
+                transaction: request,
                 uiOptions,
               })
-            ).hash
+            )?.hash
           : await sendWagmiTransaction({
               ...request,
               account: activeWalletAddress,
             })
+
+      if (!hash) throw new Error('Privy runtime is unavailable')
 
       if (publicClient) {
         await publicClient.waitForTransactionReceipt({ hash })

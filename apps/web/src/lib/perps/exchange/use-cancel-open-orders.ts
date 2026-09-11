@@ -39,7 +39,10 @@ export const useCancelOpenOrders = () => {
       activeAccount?.address,
     ],
     mutationFn: async ({ cancelData }: { cancelData: CancelData[] }) => {
-      if (!agentAccount || cancelData.length === 0) {
+      if (!agentAccount) {
+        throw new Error('Enable trading to cancel open orders.')
+      }
+      if (cancelData.length === 0) {
         return
       }
       if (!legalCheck?.ipAllowed || !legalCheck?.userAllowed) {
@@ -105,7 +108,7 @@ export const useCancelOpenOrders = () => {
 
     onError: (error, _vars, ctx) => {
       let message = ''
-      if (error instanceof AbstractWalletError) {
+      if (error instanceof AbstractWalletError || error instanceof Error) {
         message = error.message
       }
       createFailedToast({

@@ -1,0 +1,88 @@
+diff --git a/_cjs/utils/rpc/http.js b/_cjs/utils/rpc/http.js
+index 33c8cad..82cb47e 100644
+--- a/_cjs/utils/rpc/http.js
++++ b/_cjs/utils/rpc/http.js
+@@ -8,6 +8,31 @@ const withTimeout_js_1 = require("../promise/withTimeout.js");
+ const stringify_js_1 = require("../stringify.js");
+ const id_js_1 = require("./id.js");
+ const defaultMaxResponseBodySize = 10_485_760;
++/**
++ * Sushi patch: dRPC rejects every request without an `Authorization` JWT, and
++ * dependencies build their own viem clients without fetch options (Privy alone
++ * does so in ~9 places). Attaching the credential at viem's single HTTP choke
++ * point authenticates all of them, including clients added by future releases.
++ *
++ * An explicit `Authorization` header always wins, so callers that pass their
++ * own credential are untouched.
++ */
++const sushiDrpcJwt = (() => {
++    try {
++        return process.env.NEXT_PUBLIC_DRPC_JWT;
++    }
++    catch {
++        return undefined;
++    }
++})();
++function sushiDrpcAuthorization(url, headers) {
++    if (!sushiDrpcJwt || !url.startsWith('https://lb.drpc.live/'))
++        return undefined;
++    for (const key of Object.keys(headers ?? {}))
++        if (key.toLowerCase() === 'authorization')
++            return undefined;
++    return { Authorization: sushiDrpcJwt };
++}
+ function getHttpRpcClient(url_, options = {}) {
+     const { url, headers: headers_url } = parseUrl(url_);
+     return {
+@@ -37,6 +62,7 @@ function getHttpRpcClient(url_, options = {}) {
+                         headers: {
+                             ...headers_url,
+                             'Content-Type': 'application/json',
++                            ...sushiDrpcAuthorization(url, headers),
+                             ...headers,
+                         },
+                         method: method || 'POST',
+diff --git a/_esm/utils/rpc/http.js b/_esm/utils/rpc/http.js
+index 8ef72bb..4d42926 100644
+--- a/_esm/utils/rpc/http.js
++++ b/_esm/utils/rpc/http.js
+@@ -4,6 +4,31 @@ import { withTimeout, } from '../promise/withTimeout.js';
+ import { stringify } from '../stringify.js';
+ import { idCache } from './id.js';
+ const defaultMaxResponseBodySize = 10_485_760;
++/**
++ * Sushi patch: dRPC rejects every request without an `Authorization` JWT, and
++ * dependencies build their own viem clients without fetch options (Privy alone
++ * does so in ~9 places). Attaching the credential at viem's single HTTP choke
++ * point authenticates all of them, including clients added by future releases.
++ *
++ * An explicit `Authorization` header always wins, so callers that pass their
++ * own credential are untouched.
++ */
++const sushiDrpcJwt = (() => {
++    try {
++        return process.env.NEXT_PUBLIC_DRPC_JWT;
++    }
++    catch {
++        return undefined;
++    }
++})();
++function sushiDrpcAuthorization(url, headers) {
++    if (!sushiDrpcJwt || !url.startsWith('https://lb.drpc.live/'))
++        return undefined;
++    for (const key of Object.keys(headers ?? {}))
++        if (key.toLowerCase() === 'authorization')
++            return undefined;
++    return { Authorization: sushiDrpcJwt };
++}
+ export function getHttpRpcClient(url_, options = {}) {
+     const { url, headers: headers_url } = parseUrl(url_);
+     return {
+@@ -33,6 +58,7 @@ export function getHttpRpcClient(url_, options = {}) {
+                         headers: {
+                             ...headers_url,
+                             'Content-Type': 'application/json',
++                            ...sushiDrpcAuthorization(url, headers),
+                             ...headers,
+                         },
+                         method: method || 'POST',

@@ -2,7 +2,6 @@
 
 import { getBase64Encoder } from '@solana/codecs-strings'
 import { useTransactionSigner } from '@solana/connector'
-import { DialogType, useDialog } from '@sushiswap/ui'
 import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
@@ -10,6 +9,7 @@ import { useCrossChainTradeStep } from 'src/lib/hooks/react-query/cross-chain-tr
 import { useSvmEstimateGas } from 'src/lib/svm/hooks/use-svm-estimate-gas'
 import { useSvmSignAndSendTransaction } from 'src/lib/svm/hooks/use-svm-sign-and-send-transaction'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import type { SvmChainId } from 'sushi/svm'
 import { StepState } from '../../confirmation-dialog'

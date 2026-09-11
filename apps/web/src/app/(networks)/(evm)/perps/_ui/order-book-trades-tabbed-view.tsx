@@ -40,7 +40,7 @@ export const OrderBookTradesTabbedView = () => {
           <TabsList className="!flex !bg-transparent border-0 gap-2 !pt-0 !h-8">
             <TabsTrigger
               value="order-book"
-              className="flex flex-1 !bg-transparent border-0"
+              className="flex-1 !bg-transparent border-0"
               asChild
             >
               <button
@@ -55,7 +55,7 @@ export const OrderBookTradesTabbedView = () => {
             </TabsTrigger>
             <TabsTrigger
               value="trades"
-              className="flex flex-1 !bg-transparent border-0"
+              className="flex-1 !bg-transparent border-0"
               asChild
             >
               <button

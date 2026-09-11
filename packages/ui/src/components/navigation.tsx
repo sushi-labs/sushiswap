@@ -258,7 +258,7 @@ const NavigationListItem = React.forwardRef<
 
   const content = (
     <>
-      <div className="text-sm font-medium leading-none">{title}</div>
+      <div className="text-sm font-medium [line-height:1]">{title}</div>
       <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
         {children}
       </p>

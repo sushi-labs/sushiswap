@@ -1,11 +1,23 @@
 name: "Install"
 description: "Install dependencies"
 
+inputs:
+  foundry-version:
+    description: "Foundry version"
+    required: false
+    default: stable
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: 20.17.0
+
 runs:
   using: "composite"
   steps:
     - name: Set up foundry
       uses: foundry-rs/foundry-toolchain@v1
+      with:
+        version: ${{ inputs.foundry-version }}
 
     # - name: Install playwright
     #   shell: bash
@@ -15,3 +27,4 @@ runs:
       uses: sushi-labs/actions/.github/actions/pnpm@pnpm-10
       with:
         pnpm-version: 10.34.5
+        node-version: ${{ inputs.node-version }}

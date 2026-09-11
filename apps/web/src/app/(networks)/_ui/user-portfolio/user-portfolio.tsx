@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import { Button, cloudinaryFetchLoader } from '@sushiswap/ui'
 import { JazzIcon } from '@sushiswap/ui/icons/jazz-icon'
 import Image from 'next/image'
@@ -26,6 +27,7 @@ export function UserPortfolio({
   isPerps,
 }: UserPortfolioProps) {
   const wallets = useWallets()
+  const isMounted = useIsMounted()
   const { isRestoring } = useWalletConnection()
 
   const wallet = getUserPortfolioWallet(wallets, selectedNetwork)
@@ -52,7 +54,7 @@ export function UserPortfolio({
       .length
   }, [wallets])
 
-  if (!address)
+  if (!address || !isMounted)
     return (
       <ConnectButton
         variant={isPerps ? 'perps-default' : 'secondary'}

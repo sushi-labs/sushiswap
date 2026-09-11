@@ -116,7 +116,7 @@ export function PortfolioTokensList({
               }
               leftContent={
                 <React.Fragment>
-                  <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+                  <div className="text-sm font-medium overflow-hidden overflow-ellipsis max-w-[120px]">
                     {token.name ?? token.symbol}
                   </div>
                   <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">

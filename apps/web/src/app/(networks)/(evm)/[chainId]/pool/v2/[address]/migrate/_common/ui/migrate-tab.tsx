@@ -19,13 +19,10 @@ import {
   CardLabel,
   CardTitle,
   Currency,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
   Dots,
@@ -42,6 +39,11 @@ import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
 import { useV2Pool } from 'src/lib/hooks/api/use-v2-pool'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import {
   V3MigrateContractConfig,
   useV3Migrate,

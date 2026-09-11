@@ -12,8 +12,6 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline'
 import { PlusCircleIcon, UserCircleIcon } from '@heroicons/react/24/solid'
-import { useExportWallet as useExportEvmWallet } from '@privy-io/react-auth'
-import { useExportWallet as useExportSvmWallet } from '@privy-io/react-auth/solana'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Badge,
@@ -43,6 +41,7 @@ import {
 } from 'src/lib/wallet/config'
 import { usePrivyEmbeddedWallet } from 'src/lib/wallet/hooks/use-privy-embedded'
 import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
+import { usePrivyRuntime } from 'src/lib/wallet/privy/use-privy-runtime'
 import { getChainById, shortenAddress } from 'sushi'
 import { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
@@ -245,8 +244,7 @@ function ExportPrivateKeyButton({
 }) {
   const privyEvmWallet = usePrivyEmbeddedWallet('evm')
   const privySvmWallet = usePrivyEmbeddedWallet('svm')
-  const { exportWallet: exportEvmWallet } = useExportEvmWallet()
-  const { exportWallet: exportSvmWallet } = useExportSvmWallet()
+  const { operations: privyOperations } = usePrivyRuntime()
   const [isExporting, setIsExporting] = useState(false)
 
   const isPrivyEmbeddedWallet = useMemo(() => {
@@ -266,9 +264,9 @@ function ExportPrivateKeyButton({
 
     try {
       if (wallet?.namespace === 'evm' && privyEvmWallet) {
-        await exportEvmWallet({ address: privyEvmWallet.address })
+        await privyOperations?.exportEvmWallet(privyEvmWallet.address)
       } else if (wallet?.namespace === 'svm' && privySvmWallet) {
-        await exportSvmWallet({ address: privySvmWallet.address })
+        await privyOperations?.exportSvmWallet(privySvmWallet.address)
       }
     } catch (error) {
       createErrorToast(
@@ -278,7 +276,7 @@ function ExportPrivateKeyButton({
     } finally {
       setIsExporting(false)
     }
-  }, [wallet, privyEvmWallet, privySvmWallet, exportEvmWallet, exportSvmWallet])
+  }, [wallet, privyEvmWallet, privySvmWallet, privyOperations])
 
   if (!isPrivyEmbeddedWallet) return null
 

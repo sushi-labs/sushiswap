@@ -8,6 +8,7 @@ export const viewAllHrefs = [
   '/perps/transferHistory',
   '/perps/twapHistory',
   '/perps/twapFillHistory',
+  '/perps/openOrders',
 ] as const
 
 export type ViewAllHref = (typeof viewAllHrefs)[number]

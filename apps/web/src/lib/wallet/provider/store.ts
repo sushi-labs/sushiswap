@@ -8,6 +8,14 @@ let isRestoringByNamespace: Record<WalletNamespace, boolean> = {
   svm: shouldTrackWalletRestoration,
   stellar: false,
 }
+// Restoration only covers the initial provider hydration. Once a namespace
+// settles, delayed provider status changes must not put the UI back into its
+// startup loading state.
+const hasFinishedRestoringByNamespace: Record<WalletNamespace, boolean> = {
+  evm: !shouldTrackWalletRestoration,
+  svm: !shouldTrackWalletRestoration,
+  stellar: true,
+}
 const connectionListeners = new Set<() => void>()
 const restorationListeners = new Set<() => void>()
 
@@ -47,6 +55,27 @@ export function addWalletConnection(connection: WalletConnection) {
   emit(connectionListeners)
 }
 
+/** Replace the active connection for namespaces that only support one wallet. */
+export function setActiveWalletConnection(connection: WalletConnection) {
+  const namespaceConnections = connections.filter(
+    (candidate) => candidate.namespace === connection.namespace,
+  )
+  if (
+    namespaceConnections.length === 1 &&
+    isWalletConnectionEqual(namespaceConnections[0], connection)
+  ) {
+    return
+  }
+
+  connections = [
+    ...connections.filter(
+      (candidate) => candidate.namespace !== connection.namespace,
+    ),
+    connection,
+  ]
+  emit(connectionListeners)
+}
+
 export function removeWalletConnection(id: string) {
   const i = connections.findIndex((x) => x.id === id)
   if (i === -1) return
@@ -72,7 +101,13 @@ export function setWalletNamespaceRestoring(
   namespace: WalletNamespace,
   isRestoring: boolean,
 ) {
+  if (hasFinishedRestoringByNamespace[namespace]) return
+
   const nextIsRestoring = shouldTrackWalletRestoration && isRestoring
+
+  if (!nextIsRestoring) {
+    hasFinishedRestoringByNamespace[namespace] = true
+  }
 
   if (isRestoringByNamespace[namespace] === nextIsRestoring) return
 

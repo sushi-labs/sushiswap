@@ -33,9 +33,9 @@ type Story = StoryObj<typeof Dialog>
 export const LosslessDialog = {
   name: 'Simple dialog with no followup',
   args: {},
-  render: () => {
+  render: (args) => {
     return (
-      <Dialog>
+      <Dialog {...args}>
         <DialogTrigger asChild>
           <Button>Trigger</Button>
         </DialogTrigger>
@@ -69,4 +69,9 @@ export const LosslessDialog = {
       </Dialog>
     )
   },
+} satisfies Story
+
+export const Open = {
+  ...LosslessDialog,
+  args: { defaultOpen: true },
 } satisfies Story

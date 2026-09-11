@@ -21,6 +21,10 @@ export const VALID_UNTIL_LEDGER_BUMP = 12
 export const MIN_SQRT_RATIO = 4295128739n
 export const MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342n
 
+// The router ABI represents sqrt_price_limit_x96 as u128, while the pool uses
+// u256 and supports the full 160-bit Uniswap V3 sqrt price range.
+const MAX_ROUTER_SQRT_PRICE_LIMIT = (1n << 128n) - 1n
+
 /**
  * Compare two Stellar contract addresses by their decoded bytes.
  *
@@ -71,7 +75,7 @@ export function isAddressLower(addressA: string, addressB: string): boolean {
  * - When swapping token0 -> token1 (zeroForOne = true), price DECREASES
  *   → Use MIN_SQRT_RATIO + 1 as the lower limit
  * - When swapping token1 -> token0 (zeroForOne = false), price INCREASES
- *   → Use MAX_SQRT_RATIO - 1 as the upper limit
+ *   → Use the router's maximum encodable u128 value as the upper limit
  *
  * @param tokenIn - The address of the token being sold
  * @param tokenOut - The address of the token being bought
@@ -89,7 +93,7 @@ export function getSqrtPriceLimitForSwap(
     // Selling token0 for token1 → price decreases → use low limit
     return MIN_SQRT_RATIO + 1n
   } else {
-    // Selling token1 for token0 → price increases → use high limit
-    return MAX_SQRT_RATIO - 1n
+    // The protocol maximum is 160 bits, but the router parameter is only u128.
+    return MAX_ROUTER_SQRT_PRICE_LIMIT
   }
 }

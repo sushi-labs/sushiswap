@@ -97,10 +97,10 @@ const MerklPoolRewardDistributionsCard: FC<
       <Tabs className="w-full" defaultValue="active">
         <CardContent>
           <TabsList className="!flex">
-            <TabsTrigger value="active" className="flex flex-1">
+            <TabsTrigger value="active" className="flex-1">
               Active
             </TabsTrigger>
-            <TabsTrigger value="inactive" className="flex flex-1">
+            <TabsTrigger value="inactive" className="flex-1">
               Upcoming & Expired
             </TabsTrigger>
           </TabsList>

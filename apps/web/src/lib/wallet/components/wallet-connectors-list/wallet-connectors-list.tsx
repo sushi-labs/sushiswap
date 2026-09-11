@@ -149,8 +149,10 @@ const WalletConnectorsList = withWalletsRegistry(
 )
 
 const isBrowserDetectedWallet = (wallet: WalletWithState) =>
-  [
-    EvmAdapterId.Injected,
-    SvmAdapterId.Standard,
-    StellarAdapterId.Standard,
-  ].includes(wallet.adapterId)
+  (
+    [
+      EvmAdapterId.Injected,
+      SvmAdapterId.Standard,
+      StellarAdapterId.Standard,
+    ] as readonly string[]
+  ).includes(wallet.adapterId)

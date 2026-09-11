@@ -5,13 +5,13 @@ import { useTransactionSigner } from '@solana/connector'
 import type { Base64EncodedWireTransaction } from '@solana/kit'
 import { createErrorToast, createToast } from '@sushiswap/notifications'
 import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { DialogType, useDialog } from '@sushiswap/ui'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type { SupportedChainId } from 'src/config'
 import { sendDrilldownLog } from 'src/lib/drilldown-log'
 import type { UseSvmTradeReturn } from 'src/lib/hooks/react-query'
 import { useSvmTradeExecute } from 'src/lib/hooks/react-query/trade/use-svm-trade-execute'
 import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, Percent } from 'sushi'
 import {
@@ -143,7 +143,12 @@ function useSvmSimpleSwapTradeReviewForState({
         const unsignedTransaction = await getUnsignedTransaction()
 
         if (!unsignedTransaction) {
-          throw new Error('Failed to build Solana transaction')
+          const reason = order?.errorMessage
+          throw new Error(
+            reason
+              ? `Failed to build Solana transaction: ${reason}`
+              : 'Failed to build Solana transaction',
+          )
         }
 
         const unsignedBytes = base64Encoder.encode(unsignedTransaction)

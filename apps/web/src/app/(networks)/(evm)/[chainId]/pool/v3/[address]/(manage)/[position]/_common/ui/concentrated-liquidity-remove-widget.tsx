@@ -21,13 +21,10 @@ import {
   CardGroup,
   CardLabel,
   Currency,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
   Dots,
@@ -43,6 +40,11 @@ import React, { type FC, useCallback, useMemo, useState } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {

@@ -5,13 +5,10 @@ import {
   ChipInput,
   Currency,
   DateField,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   DialogTrigger,
   Dots,
@@ -32,6 +29,11 @@ import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
 import { useRewardTokens } from 'src/lib/hooks/react-query/rewards/use-reward-tokens'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {

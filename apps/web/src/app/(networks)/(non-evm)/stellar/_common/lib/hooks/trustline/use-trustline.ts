@@ -5,13 +5,15 @@ import {
 } from '@sushiswap/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ms from 'ms'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { ChainId } from 'sushi'
 import {
   type StellarAccountAddress,
   type StellarContractAddress,
   isStellarAccountAddress,
 } from 'sushi/stellar'
-import { useStellarWallet } from '~stellar/providers'
+import { NETWORK_PASSPHRASE } from '../../constants'
 import {
   checkTrustlineRequired,
   createTrustline,
@@ -79,7 +81,7 @@ export function useHasTrustline(
   assetCode: string,
   assetIssuer: StellarAccountAddress,
 ) {
-  const { connectedAddress } = useStellarWallet()
+  const connectedAddress = useAccount('stellar')
 
   return useQuery({
     queryKey: [
@@ -104,7 +106,7 @@ export function useHasTrustline(
  * Hook to get all trustlines for the connected user
  */
 export function useUserTrustlines() {
-  const { connectedAddress } = useStellarWallet()
+  const connectedAddress = useAccount('stellar')
 
   return useQuery({
     queryKey: ['stellar', 'trustlines', connectedAddress],
@@ -123,7 +125,7 @@ export function useUserTrustlines() {
  * Hook to create a trustline
  */
 export function useCreateTrustline() {
-  const { signTransaction, connectedAddress } = useStellarWallet()
+  const connectedAddress = useAccount('stellar')
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -148,7 +150,14 @@ export function useCreateTrustline() {
         connectedAddress,
         params.assetCode,
         params.assetIssuer,
-        signTransaction,
+        async (xdr) => {
+          const kit = await getStellarWalletKit()
+          const { signedTxXdr } = await kit.signTransaction(xdr, {
+            address: connectedAddress,
+            networkPassphrase: NETWORK_PASSPHRASE,
+          })
+          return signedTxXdr
+        },
         params.limit,
       )
 
@@ -209,7 +218,7 @@ type TokenTrustlineInfo =
  * Now uses dynamic Horizon lookup for tokens without known issuers.
  */
 export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
-  const { connectedAddress } = useStellarWallet()
+  const connectedAddress = useAccount('stellar')
 
   const trustlineQueries = useQuery({
     queryKey: [

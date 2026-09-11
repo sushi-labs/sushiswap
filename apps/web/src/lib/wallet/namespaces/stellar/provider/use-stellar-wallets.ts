@@ -7,7 +7,7 @@ import type { WalletWithState } from '../../../types'
 import {
   StellarAdapterId,
   getStellarWalletId,
-  stellarWalletKit,
+  getStellarWalletKit,
 } from '../config'
 
 export function useStellarWallets() {
@@ -16,7 +16,8 @@ export function useStellarWallets() {
 
   useEffect(() => {
     async function fetchWallets() {
-      const supportedWallets = await stellarWalletKit.refreshSupportedWallets()
+      const kit = await getStellarWalletKit()
+      const supportedWallets = await kit.refreshSupportedWallets()
       setWallets(supportedWallets)
     }
 

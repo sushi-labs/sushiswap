@@ -41,6 +41,7 @@ if (!(chainId in USDC) || !(chainId in USDT) || !(chainId in WBTC)) {
   )
 }
 
+const publicClientOptions = publicClientConfig[chainId]
 const MOCK_DIRECTORY = 'test/swap/mock'
 
 // // To make sure we're in the right place
@@ -48,8 +49,8 @@ if (!fs.existsSync(MOCK_DIRECTORY)) {
   throw new Error(`Directory ${MOCK_DIRECTORY} does not exist`)
 }
 
-fs.rmSync(MOCK_DIRECTORY, { recursive: true })
-fs.mkdirSync(MOCK_DIRECTORY)
+// Preserve other chains and existing recordings if generation fails.
+fs.mkdirSync(MOCK_DIRECTORY, { recursive: true })
 
 const getSwapApiResult = async ({
   fromToken,
@@ -84,8 +85,11 @@ const getSwapApiResult = async ({
   if (source !== undefined) params.searchParams.set('source', `${source}`)
 
   const res = await fetch(params.toString())
+  if (!res.ok) throw new Error(`Swap API returned HTTP ${res.status}`)
   const json = await res.json()
   const resp = tradeValidator02.parse(json)
+  if (resp.status !== 'Success')
+    throw new Error('Swap API did not return a successful recording')
   return resp
 }
 // !
@@ -157,19 +161,35 @@ trades[`${chainId}-wrap`] = {
   slippagePercentage: '0.5',
 }
 
-const main = async () => {
+async function main(): Promise<void> {
   const blockNumber = await getBlockNumber(
-    createPublicClient(publicClientConfig[chainId]),
+    createPublicClient(publicClientOptions),
   )
   console.log('Block number: ', blockNumber)
 
-  for (const [name, trade] of Object.entries(trades)) {
-    const result = await getSwapApiResult(trade)
+  const recordings = await Promise.all(
+    Object.entries(trades).map(async ([name, trade]) => ({
+      name,
+      result: await getSwapApiResult(trade),
+    })),
+  )
+  for (const { name, result } of recordings) {
     fs.writeFileSync(
       `${MOCK_DIRECTORY}/${name}.json`,
       stringify(result, null, 2),
     )
   }
+  fs.writeFileSync(
+    `${MOCK_DIRECTORY}/${chainId}-manifest.json`,
+    JSON.stringify(
+      { chainId, forkBlockNumber: Number(blockNumber), sender, apiVersion: 7 },
+      null,
+      2,
+    ),
+  )
 }
 
-main().then(() => process.exit(0))
+main().catch((error: unknown) => {
+  console.error(error)
+  process.exitCode = 1
+})

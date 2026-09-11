@@ -164,10 +164,10 @@ export function BalanceTopUpDialog({
           className="w-full space-y-4"
         >
           <TabsList className="!flex">
-            <TabsTrigger value="crypto" className="flex flex-1">
+            <TabsTrigger value="crypto" className="flex-1">
               Crypto
             </TabsTrigger>
-            <TabsTrigger value="voucher" className="flex flex-1">
+            <TabsTrigger value="voucher" className="flex-1">
               Voucher
             </TabsTrigger>
           </TabsList>

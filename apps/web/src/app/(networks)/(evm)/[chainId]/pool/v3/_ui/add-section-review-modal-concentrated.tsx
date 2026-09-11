@@ -10,13 +10,10 @@ import {
 import {
   Button,
   Currency,
-  DialogConfirm,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
   Dots,
   FormattedNumber,
@@ -31,6 +28,11 @@ import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
+import {
+  DialogConfirm,
+  DialogProvider,
+  DialogReview,
+} from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import {
   getDefaultTTL,

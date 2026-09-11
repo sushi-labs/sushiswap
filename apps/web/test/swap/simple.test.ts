@@ -1,69 +1,19 @@
-import { expect } from '@playwright/test'
-import { test } from 'next/experimental/testmode/playwright.js'
+import { Amount } from 'sushi'
 import { EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
-import { chainId, nativeAmount } from 'test/constants'
-import { SwapPage } from 'test/helpers/swap'
-import {
-  // createSnapshot,
-  interceptAnvil,
-  // loadSnapshot,
-} from 'test/intercept-anvil'
-
-const BASE_URL = 'http://localhost:3000'
+import { chainId, nativeAmount } from '../constants'
+import { expect, test } from '../fixtures'
+import { SwapPage } from '../helpers/swap'
 
 const native = EvmNative.fromChainId(chainId)
 const wnative = native.wrap()
-
 const usdc = USDC[chainId]
 const usdt = USDT[chainId]
 const wbtc = WBTC[chainId]
-// let snapshot: string
 
-test.beforeAll(async () => {
-  // snapshot = await createSnapshot(chainId)
-})
-
-test.beforeEach(async ({ page, next }) => {
-  page.on('pageerror', (error) => {
-    console.error(error)
-  })
-  // await loadSnapshot(chainId, snapshot)
-
-  try {
-    await page.route(`**/price/v1/${chainId}`, async (route) => {
-      // const response = await route.fetch()
-      // const json = await response.json()
-      await route.fulfill({
-        json: {},
-      })
-    })
-  } catch (error) {
-    console.error('error mocking token api', error)
-  }
-
-  await page.route('http://localhost:3000/api/swap', async (route) => {
-    await route.fulfill({ json: { maintenance: false } })
-  })
-
-  try {
-    await interceptAnvil(page, next)
-  } catch (_e) {
-    throw new Error('error intercepting anvil')
-  }
-
-  next.onFetch(() => {
-    return 'continue'
-  })
-})
-
-// test.afterEach(async ({ page }) => {
-//   await page.unrouteAll({ behavior: 'ignoreErrors' })
-// })
-
-test('Wrap and unwrap', async ({ page }) => {
+test('Wrap and unwrap', async ({ page, fork, mocks }) => {
   // test.slow()
-  const url = BASE_URL.concat(`/${chainId}/swap`)
-  const swapPage = new SwapPage(page, chainId)
+  const url = `/${chainId}/swap`
+  const swapPage = new SwapPage(page, chainId, fork, mocks)
   await swapPage.goTo(url)
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
@@ -73,9 +23,13 @@ test('Wrap and unwrap', async ({ page }) => {
   await swapPage.wrap(wnative, native, 'max')
 })
 
-test('clearing swap input does not refresh the page', async ({ page }) => {
-  const url = BASE_URL.concat(`/${chainId}/swap`)
-  const swapPage = new SwapPage(page, chainId)
+test('clearing swap input does not refresh the page', async ({
+  page,
+  fork,
+  mocks,
+}) => {
+  const url = `/${chainId}/swap`
+  const swapPage = new SwapPage(page, chainId, fork, mocks)
   await swapPage.goTo(url)
 
   const input = page.locator('[testdata-id=swap-from-input]')
@@ -107,9 +61,13 @@ test('clearing swap input does not refresh the page', async ({ page }) => {
     .toBe('alive')
 })
 
-test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
-  const url = BASE_URL.concat(`/${chainId}/swap`)
-  const swapPage = new SwapPage(page, chainId)
+test('swap Native to USDC, then USDC to NATIVE', async ({
+  page,
+  fork,
+  mocks,
+}) => {
+  const url = `/${chainId}/swap`
+  const swapPage = new SwapPage(page, chainId, fork, mocks)
   await swapPage.goTo(url)
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
@@ -117,12 +75,16 @@ test('swap Native to USDC, then USDC to NATIVE', async ({ page }) => {
   await swapPage.swap(native, usdc, nativeAmount)
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdc-to-native.json`)
-  await swapPage.swap(usdc, native, 'max')
+  await swapPage.swap(usdc, native, new Amount(usdc, 1_000_000n))
 })
 
-test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
-  const url = BASE_URL.concat(`/${chainId}/swap`)
-  const swapPage = new SwapPage(page, chainId)
+test('swap Native to USDT, then USDT to NATIVE', async ({
+  page,
+  fork,
+  mocks,
+}) => {
+  const url = `/${chainId}/swap`
+  const swapPage = new SwapPage(page, chainId, fork, mocks)
   await swapPage.goTo(url)
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)
@@ -130,13 +92,13 @@ test('swap Native to USDT, then USDT to NATIVE', async ({ page }) => {
   await swapPage.swap(native, usdt, nativeAmount)
 
   await swapPage.mockSwapApi(`test/swap/mock/${chainId}-usdt-to-native.json`)
-  await swapPage.swap(usdt, native, 'max')
+  await swapPage.swap(usdt, native, new Amount(usdt, 1_000_000n))
 })
 
-test('Swap Native to WBTC', async ({ page }) => {
+test('Swap Native to WBTC', async ({ page, fork, mocks }) => {
   // test.slow()
-  const url = BASE_URL.concat(`/${chainId}/swap`)
-  const swapPage = new SwapPage(page, chainId)
+  const url = `/${chainId}/swap`
+  const swapPage = new SwapPage(page, chainId, fork, mocks)
   await swapPage.goTo(url)
   await swapPage.connect()
   await swapPage.switchNetwork(chainId)

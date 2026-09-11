@@ -2,21 +2,22 @@
 
 import {
   Button,
+  Dialog,
   DialogClose,
   DialogContent,
-  DialogCustom,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogProvider,
-  DialogReview,
   DialogTitle,
-  DialogType,
-  useDialog,
 } from '@sushiswap/ui'
-import type React from 'react'
 import { type ReactNode, type RefObject, useEffect } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
+import {
+  DialogProvider,
+  DialogReview,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -84,7 +85,9 @@ function CrossChainSwapTradeReviewDialogContent<
     tracking: { setStepStates },
   } = useCrossChainSwapTradeReview<TChainId0, TChainId1>()
 
-  const { open: confirmDialogOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
+    DialogType.Confirm,
+  )
   useEffect(() => {
     if (!confirmDialogOpen) {
       setStepStates({
@@ -94,7 +97,6 @@ function CrossChainSwapTradeReviewDialogContent<
       })
     }
   }, [confirmDialogOpen, setStepStates])
-
   return (
     <>
       <DialogReview>
@@ -136,7 +138,7 @@ function CrossChainSwapTradeReviewDialogContent<
           </>
         )}
       </DialogReview>
-      <DialogCustom dialogType={DialogType.Confirm}>
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Cross-chain swap</DialogTitle>
@@ -180,7 +182,7 @@ function CrossChainSwapTradeReviewDialogContent<
             </DialogClose>
           </DialogFooter>
         </DialogContent>
-      </DialogCustom>
+      </Dialog>
     </>
   )
 }

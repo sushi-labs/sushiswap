@@ -52,7 +52,7 @@ export class QuoteService {
       // Calculate the correct sqrt price limit based on swap direction
       // In pools: token0 < token1 (ordered by decoded bytes, not string comparison)
       // - zeroForOne (token0 -> token1): price decreases, use MIN_SQRT_RATIO + 1
-      // - oneForZero (token1 -> token0): price increases, use MAX_SQRT_RATIO - 1
+      // - oneForZero (token1 -> token0): price increases, use the router's u128 max
       const sqrtPriceLimit =
         params.sqrtPriceLimitX96 ??
         getSqrtPriceLimitForSwap(params.tokenIn, params.tokenOut)

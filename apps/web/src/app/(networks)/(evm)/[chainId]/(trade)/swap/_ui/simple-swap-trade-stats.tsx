@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -45,7 +46,7 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
   recipient,
 }: { chainId: TChainId; recipient: AddressFor<TChainId> | undefined }) {
   const address = useAccount(chainId)
-
+  const isMounted = useIsMounted()
   const hasValidRecipient = Boolean(
     recipient &&
       (isSvmChainId(chainId)
@@ -53,7 +54,7 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
         : isEvmAddress(recipient)),
   )
 
-  if (!recipient || !hasValidRecipient) {
+  if (!recipient || !hasValidRecipient || !isMounted) {
     return null
   }
 

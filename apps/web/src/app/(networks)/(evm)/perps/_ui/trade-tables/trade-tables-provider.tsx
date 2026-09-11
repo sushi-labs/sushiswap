@@ -73,6 +73,7 @@ export const TRADE_TABLES_TABS = [
     name: 'Open Orders',
     value: 'open-orders' as const,
     content: OpenOrdersTable,
+    viewAllHref: viewAllHrefs[7],
     mobileChildren: () => (
       <>
         <CancelAllOpenOrdersDialog />
@@ -167,6 +168,7 @@ export const getViewAllHref = (
     'deposits-withdrawals': viewAllHrefs[4],
     history: viewAllHrefs[5],
     'fill-history': viewAllHrefs[6],
+    'open-orders': viewAllHrefs[7],
   } satisfies Partial<
     Record<TradeTablesTabValue | TwapTableTabValue, ViewAllHref>
   >
