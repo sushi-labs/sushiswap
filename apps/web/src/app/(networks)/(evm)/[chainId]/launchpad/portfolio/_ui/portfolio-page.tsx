@@ -21,10 +21,10 @@ import {
   formatUsdChange,
   shortenAddress,
 } from '../../_lib/format'
-import { MetricStrip, MetricStripItem } from '../../_ui/metric-strip'
-import { PageHeading } from '../../_ui/page-heading'
-import { CollectionStateCard } from '../../_ui/state-card'
-import { TokenAvatar } from '../../_ui/token-avatar'
+import { PageHeading } from '../../_ui/_common/page-heading'
+import { CollectionStateCard } from '../../_ui/_common/state-card'
+import { TokenAvatar } from '../../_ui/_common/token-avatar'
+import { MetricStrip, MetricStripItem } from '../../_ui/metrics/metric-strip'
 import type { LaunchpadChainId } from '../../constants'
 import {
   useLaunchpadUserHoldings,

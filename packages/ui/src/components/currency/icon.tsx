@@ -1,5 +1,5 @@
 import type { ImageProps } from 'next/image'
-import type { FC } from 'react'
+import type { ComponentProps, FC } from 'react'
 import { ChainId, type Currency, getChainById } from 'sushi'
 
 import type { EvmAddress } from 'sushi/evm'
@@ -102,6 +102,7 @@ const LOGO: Record<number, string> = {
 }
 
 export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
+  shape?: ComponentProps<typeof CurrencyAvatar>['shape']
   currency: Currency
   disableLink?: boolean
 }
@@ -109,6 +110,7 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
 export const Icon: FC<IconProps> = ({
   currency,
   disableLink = true,
+  shape,
   ...rest
 }) => {
   const address = currency.wrap().address
@@ -121,6 +123,8 @@ export const Icon: FC<IconProps> = ({
 
   const avatar = (
     <CurrencyAvatar
+      shape={shape}
+      style={rest.style}
       src={src}
       width={rest.width}
       height={rest.height}

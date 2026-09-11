@@ -22,7 +22,7 @@ import {
 import type { EvmAddress } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { useLaunchpadCandleController } from '../_lib/launchpad-live-data-provider'
+import type { LaunchpadChainId } from '../../../constants'
 import {
   DEFAULT_LAUNCHPAD_CHART_MODE,
   type LaunchpadChartMode,
@@ -36,6 +36,8 @@ const CHART_MODES: LaunchpadChartMode[] = ['market-cap', 'price']
 const PRICE_CHART_MODE: LaunchpadChartMode[] = ['price']
 
 export interface PriceChartData {
+  chainId: LaunchpadChainId
+  createdAt: string
   decimals: number
   initialSupply: string
   tokenAddress: EvmAddress
@@ -70,9 +72,8 @@ export const PriceChart = memo(function PriceChart({
 }: {
   dataRef: RefObject<PriceChartData>
 }) {
-  const candleController = useLaunchpadCandleController()
   const initialDataRef = useRef(dataRef.current)
-  const { decimals, initialSupply, tokenAddress, symbol } =
+  const { chainId, createdAt, decimals, initialSupply, tokenAddress, symbol } =
     initialDataRef.current
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const tvWidgetRef = useRef<IChartingLibraryWidget | null>(null)
@@ -120,18 +121,22 @@ export const PriceChart = memo(function PriceChart({
   const datafeed = useMemo(
     () =>
       createLaunchpadDatafeed({
-        candleController,
+        chainId,
+        createdAt,
         getPriceMultiplier,
         getPricescale: getChartPricescale,
         onResetData: resetChartData,
+        tokenAddress,
         symbol,
       }),
     [
-      candleController,
+      chainId,
+      createdAt,
       getChartPricescale,
       getPriceMultiplier,
       resetChartData,
       symbol,
+      tokenAddress,
     ],
   )
 

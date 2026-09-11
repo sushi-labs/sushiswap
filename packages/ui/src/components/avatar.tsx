@@ -12,12 +12,15 @@ import {
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & {
+    shape?: 'circle' | 'square'
+  }
+>(({ className, shape = 'circle', ...props }, ref) => (
   <AvatarPrimitive.Root
     ref={ref}
     className={classNames(
-      'relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full',
+      'relative flex h-10 w-10 shrink-0 overflow-hidden',
+      shape === 'circle' ? 'rounded-full' : 'rounded-none',
       className,
     )}
     {...props}
@@ -97,7 +100,7 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={classNames(
-      'flex h-full w-full items-center justify-center rounded-full bg-muted',
+      'flex h-full w-full items-center justify-center rounded-[inherit] bg-muted',
       className,
     )}
     {...props}

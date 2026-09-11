@@ -26,6 +26,34 @@ export const LaunchpadTokenFragment = graphql(`
         decimals
       }
     }
+    ... on SushiV1LaunchpadToken {
+      feeSplit {
+        sushiFeeBps
+        creatorFeeBps
+      }
+    }
+    ... on SushiV2LaunchpadToken {
+      launchCreator
+      currentSupply
+      feeReceiver
+      liquidityMode
+      feeDisposition
+      feeSplit {
+        sushiFeeBps
+        nonSushiFeeBps
+      }
+      devBuy {
+        quoteSpent
+        launchTokenReceived
+      }
+      burns {
+        directFeeBurned
+        buybackBurned
+        protocolBurned
+        totalBurned
+      }
+      poolInitializedAt
+    }
     metadata {
       description
       links {
@@ -42,6 +70,7 @@ export const LaunchpadTokenFragment = graphql(`
       marketCapitalizationUsd
       fullyDilutedValuationUsd
       currentTvlUsd
+      priceChangePercent24h
       volumeUsd {
         h1
         h6

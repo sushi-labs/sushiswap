@@ -1,6 +1,6 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { MetricStrip, MetricStripItem } from '../../_ui/metric-strip'
+import { MetricStrip, MetricStripItem } from '../../_ui/metrics/metric-strip'
 
 const HOLDING_SKELETONS = [
   'first',
@@ -56,7 +56,7 @@ export function HoldingsTableSkeleton() {
               >
                 <td className="h-[84px] px-5">
                   <div className="flex items-center gap-3">
-                    <SkeletonBox className="h-11 w-11 shrink-0" />
+                    <SkeletonBox className="h-11 w-11 shrink-0 rounded-full" />
                     <div className="min-w-0 flex-1">
                       <SkeletonBox className="h-4 w-32 rounded-md" />
                       <SkeletonBox className="mt-2 h-3 w-44 rounded-sm" />
