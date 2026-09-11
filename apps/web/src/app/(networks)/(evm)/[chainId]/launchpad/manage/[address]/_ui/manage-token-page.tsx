@@ -339,9 +339,9 @@ export function ManageTokenPage({
         txHash: hash,
         promise: receiptPromise,
         summary: {
-          pending: `Distributing ${token.symbol} launch fees`,
-          completed: `${token.symbol} launch fees were distributed`,
-          failed: `Something went wrong distributing ${token.symbol} launch fees`,
+          pending: `Claiming ${token.symbol} launch fees`,
+          completed: `${token.symbol} launch fees were claimed`,
+          failed: `Something went wrong claiming ${token.symbol} launch fees`,
         },
         timestamp,
         groupTimestamp: timestamp,
@@ -357,7 +357,7 @@ export function ManageTokenPage({
           error instanceof Error ? error.message : 'Fee distribution failed'
         setDistributionError(
           message.includes('NothingToWithdraw')
-            ? 'No fees are available to distribute.'
+            ? 'No fees are available to claim.'
             : message,
         )
       }
