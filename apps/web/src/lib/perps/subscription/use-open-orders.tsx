@@ -3,7 +3,7 @@ import {
   type OpenOrdersEvent,
   openOrders,
 } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
@@ -13,7 +13,7 @@ export const useOpenOrders = ({ address }: { address?: EvmAddress }) => {
   const query = useQuery<OpenOrdersEvent>({
     queryKey: ['useOpenOrders', address],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
 
   useEffect(() => {

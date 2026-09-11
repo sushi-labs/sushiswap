@@ -1,6 +1,6 @@
 'use client'
 import { notification } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
@@ -12,7 +12,7 @@ export const useUserNotifications = ({ address }: { address?: EvmAddress }) => {
   const query = useQuery<string>({
     queryKey: ['useUserNotifications', address],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
 
   useEffect(() => {

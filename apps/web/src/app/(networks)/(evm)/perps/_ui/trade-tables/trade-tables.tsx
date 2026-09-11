@@ -4,7 +4,7 @@ import type {
 } from '@nktkas/hyperliquid/api/subscription'
 import { Button, LinkInternal, classNames, useBreakpoint } from '@sushiswap/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sushiswap/ui'
-import { useQuery } from '@tanstack/react-query'
+import { skipToken, useQuery } from '@tanstack/react-query'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import {
@@ -87,11 +87,11 @@ export const TradeTables = ({ className }: { className?: string }) => {
   })
   const { data: twapHistory } = useQuery<UserTwapHistoryEvent>({
     queryKey: ['useUserTwapHistory', activeAddress],
-    enabled: false,
+    queryFn: skipToken,
   })
   const { data: twapFillHistory } = useQuery<UserTwapSliceFillsEvent>({
     queryKey: ['useUserTwapFillHistory', activeAddress],
-    enabled: false,
+    queryFn: skipToken,
   })
   const balanceCount = useMemo(() => balances?.length ?? 0, [balances?.length])
   const positionCount = useMemo(

@@ -10,7 +10,7 @@ import {
   allDexsAssetCtxs,
   spotAssetCtxs,
 } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useSpotMeta } from '../info/use-spot-meta'
 import { hlHttpTransport, hlWebSocketTransport } from '../transports'
@@ -204,7 +204,7 @@ export const useAssetList = () => {
   const query = useQuery<AssetData>({
     queryKey: KEY,
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
   const { data: spotMeta } = useSpotMeta()
   useEffect(() => {
