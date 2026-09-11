@@ -1,6 +1,6 @@
 'use client'
 import { type TradesEvent, trades } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { hlWebSocketTransport } from '../transports'
 
@@ -8,7 +8,7 @@ export const useTrades = ({ assetString }: { assetString: string }) => {
   const queryClient = useQueryClient()
   const query = useQuery<TradesEvent>({
     queryKey: ['trade-events', assetString],
-    enabled: false, // never auto-fetch
+    queryFn: skipToken,
     staleTime: Number.POSITIVE_INFINITY,
   })
 

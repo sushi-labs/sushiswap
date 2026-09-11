@@ -3,7 +3,7 @@ import {
   type UserHistoricalOrdersEvent,
   userHistoricalOrders,
 } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { EvmAddress } from 'sushi/evm'
 import { hlWebSocketTransport } from '../transports'
@@ -15,7 +15,7 @@ export const useUserHistoricalOrders = ({
   const query = useQuery<UserHistoricalOrdersEvent>({
     queryKey: ['useUserHistoricalOrders', address],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
 
   useEffect(() => {
