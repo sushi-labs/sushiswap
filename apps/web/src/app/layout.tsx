@@ -14,14 +14,14 @@ const inter = Inter({
 })
 
 const metadataBase = new URL(
-  process.env.VERCEL_URL
+  process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : 'https://www.sushi.com',
 )
 
 export const metadata: Metadata = {
-  // Resolve relative metadata URLs against the Vercel deployment so preview
-  // deployments point to routes that exist on that deployment.
+  // Use the public domain for production sharing images. Preview deployments
+  // resolve against their own host so their image routes can be tested.
   metadataBase,
   title: {
     default: 'Sushi 🍣',
