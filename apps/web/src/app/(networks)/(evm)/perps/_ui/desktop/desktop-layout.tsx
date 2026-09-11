@@ -15,7 +15,7 @@ export const DesktopLayout = () => {
   const { isXl } = useBreakpoint('xl')
 
   return (
-    <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden ">
+    <div className="h-[calc(100vh-60px)] w-full overflow-x-hidden [html:has(&)]:[scrollbar-gutter:auto]">
       <GeoBlockedMessage />
       <VaultTradingMessage />
       <div className="flex gap-1 min-w-0 mt-1 px-1 pb-20">
