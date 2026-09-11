@@ -22,6 +22,7 @@ import {
   SLIPPAGE_WARNING_THRESHOLD,
   Slippage,
 } from 'src/lib/wagmi/systems/checker/slippage'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { ZERO } from 'sushi'
 import {
@@ -134,68 +135,74 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
         >
           <Connect namespace={walletNamespace} variant={buttonVariant}>
             <Network chainId={chainId} variant={buttonVariant}>
-              <Amounts
-                chainId={chainId}
-                amount={swapAmount}
+              <StockTokenRegion
+                token0={token0}
+                token1={token1}
                 variant={buttonVariant}
               >
-                <Slippage
-                  text="Swap With High Slippage"
-                  slippageTolerance={slippagePercent}
+                <Amounts
+                  chainId={chainId}
+                  amount={swapAmount}
+                  variant={buttonVariant}
                 >
-                  <ApproveERC20<EvmChainId | SvmChainId>
-                    id="approve-erc20"
-                    amount={swapAmount}
-                    variant={buttonVariant}
-                    contract={
-                      isRedSnwapperChainId(chainId)
-                        ? RED_SNWAPPER_ADDRESS[chainId]
-                        : undefined
-                    }
+                  <Slippage
+                    text="Swap With High Slippage"
+                    slippageTolerance={slippagePercent}
                   >
-                    <Success tag={APPROVE_TAG_SWAP}>
-                      <PartialRoute
-                        trade={quote}
-                        setSwapAmount={setSwapAmount}
-                        onAccepted={() => setReviewOpen(true)}
-                        variant={buttonVariant}
-                      >
-                        <DialogTrigger asChild>
-                          <Button
-                            size="xl"
-                            variant={buttonVariant}
-                            disabled={Boolean(
-                              isSlippageError ||
-                                error ||
-                                !quote?.amountOut?.gt(ZERO) ||
-                                quote?.status === 'NoWay' ||
-                                +swapAmountString === 0 ||
-                                (!checked && showPriceImpactWarning),
-                            )}
-                            color={
-                              showPriceImpactWarning || showSlippageWarning
-                                ? 'red'
-                                : 'blue'
-                            }
-                            fullWidth
-                            testId="swap"
-                          >
-                            {!checked && showPriceImpactWarning
-                              ? 'Price impact too high'
-                              : quote?.status === 'NoWay'
-                                ? 'No trade found'
-                                : isWrap
-                                  ? 'Wrap'
-                                  : isUnwrap
-                                    ? 'Unwrap'
-                                    : 'Swap'}
-                          </Button>
-                        </DialogTrigger>
-                      </PartialRoute>
-                    </Success>
-                  </ApproveERC20>
-                </Slippage>
-              </Amounts>
+                    <ApproveERC20<EvmChainId | SvmChainId>
+                      id="approve-erc20"
+                      amount={swapAmount}
+                      variant={buttonVariant}
+                      contract={
+                        isRedSnwapperChainId(chainId)
+                          ? RED_SNWAPPER_ADDRESS[chainId]
+                          : undefined
+                      }
+                    >
+                      <Success tag={APPROVE_TAG_SWAP}>
+                        <PartialRoute
+                          trade={quote}
+                          setSwapAmount={setSwapAmount}
+                          onAccepted={() => setReviewOpen(true)}
+                          variant={buttonVariant}
+                        >
+                          <DialogTrigger asChild>
+                            <Button
+                              size="xl"
+                              variant={buttonVariant}
+                              disabled={Boolean(
+                                isSlippageError ||
+                                  error ||
+                                  !quote?.amountOut?.gt(ZERO) ||
+                                  quote?.status === 'NoWay' ||
+                                  +swapAmountString === 0 ||
+                                  (!checked && showPriceImpactWarning),
+                              )}
+                              color={
+                                showPriceImpactWarning || showSlippageWarning
+                                  ? 'red'
+                                  : 'blue'
+                              }
+                              fullWidth
+                              testId="swap"
+                            >
+                              {!checked && showPriceImpactWarning
+                                ? 'Price impact too high'
+                                : quote?.status === 'NoWay'
+                                  ? 'No trade found'
+                                  : isWrap
+                                    ? 'Wrap'
+                                    : isUnwrap
+                                      ? 'Unwrap'
+                                      : 'Swap'}
+                            </Button>
+                          </DialogTrigger>
+                        </PartialRoute>
+                      </Success>
+                    </ApproveERC20>
+                  </Slippage>
+                </Amounts>
+              </StockTokenRegion>
             </Network>
           </Connect>
         </Guard>

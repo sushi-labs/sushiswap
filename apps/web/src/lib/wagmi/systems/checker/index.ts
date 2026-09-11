@@ -32,6 +32,7 @@ import {
   Slippage,
   type SlippageProps,
 } from './slippage'
+import { StockTokenRegion } from './stock-token-region'
 import { Success, type SuccessProps } from './success'
 
 export type CheckerProps<TChainId extends EvmChainId | SvmChainId> = {
@@ -49,6 +50,7 @@ export type CheckerProps<TChainId extends EvmChainId | SvmChainId> = {
   Root: FC<ProviderProps>
   PartialRoute: FC<PartialRouteProps>
   Slippage: FC<SlippageProps>
+  StockTokenRegion: typeof StockTokenRegion
 }
 
 export const Checker: CheckerProps<EvmChainId | SvmChainId> = {
@@ -66,6 +68,7 @@ export const Checker: CheckerProps<EvmChainId | SvmChainId> = {
   Root,
   PartialRoute,
   Slippage,
+  StockTokenRegion,
 }
 
 export { SLIPPAGE_WARNING_THRESHOLD }

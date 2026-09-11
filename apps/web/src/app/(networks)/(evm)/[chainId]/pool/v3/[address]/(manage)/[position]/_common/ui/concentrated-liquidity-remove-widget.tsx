@@ -471,25 +471,27 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                 </Card>
               </CardContent>
               <CardFooter>
-                <Checker.Guard
-                  guardWhen={positionClosed}
-                  guardText="Position already closed"
-                >
-                  <Checker.Connect fullWidth>
-                    <Checker.Network fullWidth chainId={chainId}>
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="xl"
-                          disabled={+value === 0}
-                          testId="remove-or-add-liquidity"
-                        >
-                          {+value === 0 ? 'Enter Amount' : 'Remove'}
-                        </Button>
-                      </DialogTrigger>
-                    </Checker.Network>
-                  </Checker.Connect>
-                </Checker.Guard>
+                <Checker.StockTokenRegion token0={token0} token1={token1}>
+                  <Checker.Guard
+                    guardWhen={positionClosed}
+                    guardText="Position already closed"
+                  >
+                    <Checker.Connect fullWidth>
+                      <Checker.Network fullWidth chainId={chainId}>
+                        <DialogTrigger asChild>
+                          <Button
+                            fullWidth
+                            size="xl"
+                            disabled={+value === 0}
+                            testId="remove-or-add-liquidity"
+                          >
+                            {+value === 0 ? 'Enter Amount' : 'Remove'}
+                          </Button>
+                        </DialogTrigger>
+                      </Checker.Network>
+                    </Checker.Connect>
+                  </Checker.Guard>
+                </Checker.StockTokenRegion>
               </CardFooter>
             </div>
             <DialogContent>

@@ -24,6 +24,7 @@ import { steerMultiPositionManagerAbi } from 'src/lib/steer/abi/steer-multi-posi
 import { useSteerAccountPosition } from 'src/lib/steer/hooks'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { Amount, Percent, subtractSlippage } from 'sushi'
 import { EvmToken } from 'sushi/evm'
 import { type SendTransactionReturnType, UserRejectedRequestError } from 'viem'
@@ -286,26 +287,28 @@ export const SteerPositionRemove: FC<SteerPositionRemoveProps> = ({
           />
         </CardGroup>
       </Card>
-      <Connect testId="connect" fullWidth variant="outline" size="xl">
-        <Network
-          testId="switch-network"
-          fullWidth
-          variant="outline"
-          size="xl"
-          chainId={vault.chainId}
-        >
-          <Button
-            size="xl"
-            loading={isWritePending}
-            disabled={+value === 0 || !write}
+      <StockTokenRegion token0={token0} token1={token1}>
+        <Connect testId="connect" fullWidth variant="outline" size="xl">
+          <Network
+            testId="switch-network"
             fullWidth
-            onClick={write}
-            testId="remove-or-add-steer-liquidity"
+            variant="outline"
+            size="xl"
+            chainId={vault.chainId}
           >
-            {+value === 0 ? 'Enter Amount' : 'Remove'}
-          </Button>
-        </Network>
-      </Connect>
+            <Button
+              size="xl"
+              loading={isWritePending}
+              disabled={+value === 0 || !write}
+              fullWidth
+              onClick={write}
+              testId="remove-or-add-steer-liquidity"
+            >
+              {+value === 0 ? 'Enter Amount' : 'Remove'}
+            </Button>
+          </Network>
+        </Connect>
+      </StockTokenRegion>
     </div>
   )
 }

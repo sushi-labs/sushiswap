@@ -459,60 +459,62 @@ export const RemoveSectionLegacy: FC<RemoveSectionLegacyProps> =
           token1Minimum={minAmount1}
           setPercentage={setPercentage}
         >
-          <Checker.Connect fullWidth>
-            <Checker.Guard
-              fullWidth
-              guardWhen={
-                isMounted &&
-                [
-                  SushiSwapV2PoolState.NOT_EXISTS,
-                  SushiSwapV2PoolState.INVALID,
-                ].includes(poolState)
-              }
-              guardText="Pool not found"
-            >
-              <Checker.Network fullWidth chainId={_pool.chainId}>
-                <Checker.Guard
-                  fullWidth
-                  guardWhen={+percentage <= 0}
-                  guardText="Enter amount"
-                >
-                  <Checker.Slippage
+          <Checker.StockTokenRegion token0={token0} token1={token1}>
+            <Checker.Connect fullWidth>
+              <Checker.Guard
+                fullWidth
+                guardWhen={
+                  isMounted &&
+                  [
+                    SushiSwapV2PoolState.NOT_EXISTS,
+                    SushiSwapV2PoolState.INVALID,
+                  ].includes(poolState)
+                }
+                guardText="Pool not found"
+              >
+                <Checker.Network fullWidth chainId={_pool.chainId}>
+                  <Checker.Guard
                     fullWidth
-                    text="Continue With High Slippage"
-                    slippageTolerance={slippageTolerance}
+                    guardWhen={+percentage <= 0}
+                    guardText="Enter amount"
                   >
-                    <Checker.ApproveERC20WithPermit
+                    <Checker.Slippage
                       fullWidth
-                      id="approve-remove-liquidity-slp"
-                      chainId={_pool.chainId}
-                      amount={amountToRemove}
-                      contract={SUSHISWAP_V2_ROUTER_ADDRESS[_pool.chainId]}
-                      permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
-                      tag={APPROVE_TAG_REMOVE_LEGACY}
-                      ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                      text="Continue With High Slippage"
+                      slippageTolerance={slippageTolerance}
                     >
-                      <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
-                        <Button
-                          fullWidth
-                          onClick={() => send?.()}
-                          disabled={!approved || isWritePending || !send}
-                          testId="remove-liquidity"
-                          size="xl"
-                        >
-                          {isWritePending ? (
-                            <Dots>Confirm transaction</Dots>
-                          ) : (
-                            'Remove Liquidity'
-                          )}
-                        </Button>
-                      </Checker.Success>
-                    </Checker.ApproveERC20WithPermit>
-                  </Checker.Slippage>
-                </Checker.Guard>
-              </Checker.Network>
-            </Checker.Guard>
-          </Checker.Connect>
+                      <Checker.ApproveERC20WithPermit
+                        fullWidth
+                        id="approve-remove-liquidity-slp"
+                        chainId={_pool.chainId}
+                        amount={amountToRemove}
+                        contract={SUSHISWAP_V2_ROUTER_ADDRESS[_pool.chainId]}
+                        permitInfo={REMOVE_V2_LIQUIDITY_PERMIT_INFO}
+                        tag={APPROVE_TAG_REMOVE_LEGACY}
+                        ttlStorageKey={TTLStorageKey.RemoveLiquidity}
+                      >
+                        <Checker.Success tag={APPROVE_TAG_REMOVE_LEGACY}>
+                          <Button
+                            fullWidth
+                            onClick={() => send?.()}
+                            disabled={!approved || isWritePending || !send}
+                            testId="remove-liquidity"
+                            size="xl"
+                          >
+                            {isWritePending ? (
+                              <Dots>Confirm transaction</Dots>
+                            ) : (
+                              'Remove Liquidity'
+                            )}
+                          </Button>
+                        </Checker.Success>
+                      </Checker.ApproveERC20WithPermit>
+                    </Checker.Slippage>
+                  </Checker.Guard>
+                </Checker.Network>
+              </Checker.Guard>
+            </Checker.Connect>
+          </Checker.StockTokenRegion>
         </RemoveSectionWidget>
       </div>
     )

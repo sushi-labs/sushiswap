@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { Guard } from 'src/lib/wagmi/systems/checker/guard'
 import { PartialRoute } from 'src/lib/wagmi/systems/checker/partial-route'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { ZERO, getChainById } from 'sushi'
 import { EvmNative, getEvmChainById } from 'sushi/evm'
 import { useWrapUnwrapTrade } from '~evm/[chainId]/(trade)/swap/_ui/common'
@@ -51,38 +52,40 @@ export const SwapWidgetTradeButton = () => {
   }, [chainId, token0, token1, swapAmountString])
 
   return (
-    <Guard guardWhen={maintenance} guardText="Maintenance in progress">
-      <PartialRoute
-        trade={quote}
-        setSwapAmount={setSwapAmount}
-        onAccepted={() => router.push(url)}
-      >
-        <Link href={url}>
-          <Button
-            size="xl"
-            disabled={Boolean(
-              error ||
-                !quote?.amountOut?.gt(ZERO) ||
-                quote?.status === 'NoWay' ||
-                +swapAmountString === 0 ||
-                showPriceImpactWarning,
-            )}
-            color={showPriceImpactWarning ? 'red' : 'blue'}
-            fullWidth
-            testId="swap"
-          >
-            {showPriceImpactWarning
-              ? 'Price impact too high'
-              : quote?.status === 'NoWay'
-                ? 'No trade found'
-                : isWrap
-                  ? 'Wrap'
-                  : isUnwrap
-                    ? 'Unwrap'
-                    : 'Swap'}
-          </Button>
-        </Link>
-      </PartialRoute>
-    </Guard>
+    <StockTokenRegion token0={token0} token1={token1}>
+      <Guard guardWhen={maintenance} guardText="Maintenance in progress">
+        <PartialRoute
+          trade={quote}
+          setSwapAmount={setSwapAmount}
+          onAccepted={() => router.push(url)}
+        >
+          <Link href={url}>
+            <Button
+              size="xl"
+              disabled={Boolean(
+                error ||
+                  !quote?.amountOut?.gt(ZERO) ||
+                  quote?.status === 'NoWay' ||
+                  +swapAmountString === 0 ||
+                  showPriceImpactWarning,
+              )}
+              color={showPriceImpactWarning ? 'red' : 'blue'}
+              fullWidth
+              testId="swap"
+            >
+              {showPriceImpactWarning
+                ? 'Price impact too high'
+                : quote?.status === 'NoWay'
+                  ? 'No trade found'
+                  : isWrap
+                    ? 'Wrap'
+                    : isUnwrap
+                      ? 'Unwrap'
+                      : 'Swap'}
+            </Button>
+          </Link>
+        </PartialRoute>
+      </Guard>
+    </StockTokenRegion>
   )
 }
