@@ -61,6 +61,9 @@ const HUE_PAIRS = [
 ] as const
 
 const MONOGRAM_SIZE_RATIO = 0.38
+const monogramSegmenter = new Intl.Segmenter(undefined, {
+  granularity: 'grapheme',
+})
 
 /**
  * The token identity the art is derived from. Only the string form matters, so
@@ -108,7 +111,8 @@ export function getTokenFallbackIconStyle(
   }
 }
 
-/** The single character painted over the art. */
+/** The first grapheme painted over the art, preserving complete emoji. */
 export function getTokenFallbackMonogram(symbol: string | undefined): string {
-  return symbol?.charAt(0).toUpperCase() || '?'
+  const firstCharacter = monogramSegmenter.segment(symbol ?? '').containing(0)
+  return firstCharacter?.segment.toUpperCase() || '?'
 }

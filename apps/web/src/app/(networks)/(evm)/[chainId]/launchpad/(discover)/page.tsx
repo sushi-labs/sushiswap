@@ -7,7 +7,7 @@ import {
   getLaunchpadUrl,
   serializeLaunchpadJsonLd,
 } from '../_lib/launchpad-seo'
-import { LaunchpadHomePage } from '../_ui/launchpad-home-page'
+import { LaunchpadHomePage } from '../_ui/home/launchpad-home-page'
 import { isLaunchpadChainId } from '../constants'
 
 const DESCRIPTION =

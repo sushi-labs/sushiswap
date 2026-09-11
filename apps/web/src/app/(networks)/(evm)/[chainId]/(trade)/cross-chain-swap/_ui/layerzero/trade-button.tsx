@@ -12,6 +12,7 @@ import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Guard } from 'src/lib/wagmi/systems/checker/guard'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
@@ -25,7 +26,7 @@ import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroTradeButton(): ReactNode {
   const {
-    state: { chainId0, chainId1, swapAmount, isSubmitting },
+    state: { chainId0, chainId1, swapAmount, isSubmitting, token0, token1 },
     previewQuote,
   } = useLayerZeroXSwap()
   const sourceAccount = useAccount(chainId0)
@@ -57,50 +58,52 @@ export function LayerZeroTradeButton(): ReactNode {
         <Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
           <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
             <Network fullWidth chainId={chainId0}>
-              <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
-                <StellarChecker.Trustline
-                  token={
-                    chainId1 === StellarChainId.STELLAR
-                      ? STELLAR_USDT0[StellarChainId.STELLAR]
-                      : undefined
-                  }
-                >
-                  <ApproveERC20
-                    id="approve-erc20"
-                    fullWidth
-                    amount={approvalAmount}
-                    contract={
-                      deployment?.approvalRequired
-                        ? deployment.oftAddress
+              <StockTokenRegion token0={token0} token1={token1}>
+                <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                  <StellarChecker.Trustline
+                    token={
+                      chainId1 === StellarChainId.STELLAR
+                        ? STELLAR_USDT0[StellarChainId.STELLAR]
                         : undefined
                     }
-                    enabled={ready && Boolean(deployment?.approvalRequired)}
                   >
-                    <Success tag={APPROVE_TAG_XSWAP}>
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="xl"
-                          disabled={!ready}
-                          testId="swap"
-                        >
-                          {isSubmitting ? (
-                            <Dots>Submitting swap</Dots>
-                          ) : !swapAmount?.gt(0n) ? (
-                            'Enter amount'
-                          ) : isLoading ? (
-                            <Dots>Loading quote</Dots>
-                          ) : previewQuote.error ? (
-                            'Quote unavailable'
-                          ) : (
-                            'Swap'
-                          )}
-                        </Button>
-                      </DialogTrigger>
-                    </Success>
-                  </ApproveERC20>
-                </StellarChecker.Trustline>
-              </Amounts>
+                    <ApproveERC20
+                      id="approve-erc20"
+                      fullWidth
+                      amount={approvalAmount}
+                      contract={
+                        deployment?.approvalRequired
+                          ? deployment.oftAddress
+                          : undefined
+                      }
+                      enabled={ready && Boolean(deployment?.approvalRequired)}
+                    >
+                      <Success tag={APPROVE_TAG_XSWAP}>
+                        <DialogTrigger asChild>
+                          <Button
+                            fullWidth
+                            size="xl"
+                            disabled={!ready}
+                            testId="swap"
+                          >
+                            {isSubmitting ? (
+                              <Dots>Submitting swap</Dots>
+                            ) : !swapAmount?.gt(0n) ? (
+                              'Enter amount'
+                            ) : isLoading ? (
+                              <Dots>Loading quote</Dots>
+                            ) : previewQuote.error ? (
+                              'Quote unavailable'
+                            ) : (
+                              'Swap'
+                            )}
+                          </Button>
+                        </DialogTrigger>
+                      </Success>
+                    </ApproveERC20>
+                  </StellarChecker.Trustline>
+                </Amounts>
+              </StockTokenRegion>
             </Network>
           </Connect>
         </Connect>

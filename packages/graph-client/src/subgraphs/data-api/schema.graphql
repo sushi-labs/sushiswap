@@ -1,3 +1,5 @@
+directive @cacheControl(maxAge: Int, inheritMaxAge: Boolean) on FIELD_DEFINITION
+
 """
 Indicates exactly one field must be supplied and this field must not be `null`.
 """
@@ -285,7 +287,7 @@ scalar LaunchpadChainId
 
 type LaunchpadQueries {
   quoteTokenList(chainId: LaunchpadChainId!): [LaunchpadTokenRef!]!
-  stats(chainId: LaunchpadChainId!, providers: [LaunchpadProvider!]! = [SUSHI_V1]): LaunchpadStats!
+  stats(chainId: LaunchpadChainId!, providers: [LaunchpadProvider!]! = [SUSHI_V1, SUSHI_V2]): LaunchpadStats!
   userStats(chainId: LaunchpadChainId!, address: EvmAddress!): LaunchpadUserStats!
   userHoldings(input: LaunchpadUserHoldingsInput!): LaunchpadUserHoldingConnection!
   leaderboard(input: LaunchpadLeaderboardInput!): LaunchpadLeaderboardConnection!
@@ -316,6 +318,7 @@ enum LaunchpadIndexingStatus {
 
 enum LaunchpadProvider {
   SUSHI_V1
+  SUSHI_V2
   POOLS_FUN_V1
   POOLS_FUN_V2
   POOLS_FUN_V3
@@ -422,6 +425,64 @@ type PoolsFunV3LaunchpadToken implements LaunchpadToken {
   createdAt: String!
 }
 
+type SushiV2LaunchpadToken implements LaunchpadToken {
+  id: ID!
+  chainId: LaunchpadChainId!
+  address: EvmAddress!
+  creator: EvmAddress!
+  factoryAddress: EvmAddress!
+  provider: LaunchpadProvider!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  initialSupply: BigInt!
+  initialFdvUsd: BigInt!
+  indexingStatus: LaunchpadIndexingStatus!
+  pool: LaunchpadPool!
+  metadata: LaunchpadMetadata!
+  metrics: LaunchpadMetrics
+  creationTransactionHash: Bytes!
+  createdAt: String!
+  launchCreator: EvmAddress!
+  currentSupply: BigInt!
+  feeReceiver: EvmAddress!
+  feeReceiverLocked: Boolean!
+  liquidityMode: SushiV2LiquidityMode!
+  feeDisposition: SushiV2FeeDisposition!
+  feeSplit: SushiV2FeeSplit!
+  devBuy: SushiV2DevBuy
+  burns: SushiV2Burns!
+  poolInitializedAt: String!
+}
+
+enum SushiV2LiquidityMode {
+  STANDARD
+  MOON
+}
+
+enum SushiV2FeeDisposition {
+  DIRECT_PAYOUT
+  BURN_LAUNCH_TOKEN_FEES
+  BUYBACK_AND_BURN
+}
+
+type SushiV2FeeSplit {
+  sushiFeeBps: Int!
+  nonSushiFeeBps: Int!
+}
+
+type SushiV2DevBuy {
+  quoteSpent: BigInt!
+  launchTokenReceived: BigInt!
+}
+
+type SushiV2Burns {
+  directFeeBurned: BigInt!
+  buybackBurned: BigInt!
+  protocolBurned: BigInt!
+  totalBurned: BigInt!
+}
+
 type LaunchpadPool {
   address: EvmAddress!
   feeTier: Int!
@@ -502,6 +563,7 @@ type LaunchpadUserHoldingToken {
   decimals: Int!
   initialSupply: BigInt!
   name: String!
+  provider: LaunchpadProvider!
   symbol: String!
   quoteToken: LaunchpadTokenRef!
 }
@@ -567,7 +629,7 @@ type LaunchpadLeaderboardEdge {
 
 input LaunchpadTokensInput {
   chainId: LaunchpadChainId!
-  providers: [LaunchpadProvider!]! = [SUSHI_V1]
+  providers: [LaunchpadProvider!]! = [SUSHI_V1, SUSHI_V2]
   creator: EvmAddress
   search: String
   first: Int = 20
@@ -579,6 +641,18 @@ input LaunchpadTokensInput {
 enum LaunchpadTokenSortField {
   CREATED_AT
   MARKET_CAPITALIZATION
+
+  """
+  Only launches quoted in a Robinhood-issued stock token, matched by chain and
+  address. Orders the matching launches by market capitalization.
+  """
+  STOCK_TOKENS
+
+  """
+  Recent volume and liquidity, boosted by capped volume momentum. Uses stored
+  1h/6h volume and current TVL; unavailable metrics sort last.
+  """
+  TRENDING
   VOLUME_1H
   VOLUME_6H
   VOLUME_12H
@@ -614,6 +688,14 @@ type LaunchpadPageInfo {
 type LaunchpadMetrics {
   version: BigInt!
   priceUsd: Float
+
+  """
+  Price change over the 24 hours ending at `asOf`. Uses the last priced trade
+  at or before the window start, or the first priced trade within the window
+  when earlier history is unavailable. Null if the price/baseline is missing
+  or the baseline is zero.
+  """
+  priceChangePercent24h: Float
   marketCapitalizationUsd: Float
   fullyDilutedValuationUsd: Float
   currentTvlUsd: Float
@@ -642,6 +724,8 @@ type LaunchpadTrade {
   tokenAddress: EvmAddress!
   poolAddress: EvmAddress!
   feeTier: Int!
+
+  """Always true: only the canonical launch pool is tracked."""
   isLaunchPool: Boolean!
   transactionHash: Bytes!
   logIndex: Int!
@@ -687,28 +771,28 @@ type LaunchpadMarketStats {
   h6: LaunchpadMarketStatsWindow!
   h24: LaunchpadMarketStatsWindow!
 
-  """Latest non-null trade price before `asOf`, used for live replay."""
+  """
+  Latest non-null post-swap marginal pool price before `asOf`, used for live
+  replay.
+  """
   priceUsd: Float
 
   """
-  The upper bound used to calculate the windows that share this response's
-  stream cursor. Longer windows are refreshed on a slower cadence and carry
-  their own `asOf`, so read each window's own bound rather than this one.
+  The upper bound every window in this response was calculated against. All four
+  come from one database snapshot taken at this instant, so they are always
+  mutually consistent -- a shorter window never reports more volume than a
+  longer one containing it.
   """
   asOf: String!
 
   """
   Resume the token's existing Launchpad event stream after this cursor.
-
-  The cursor shares one database snapshot with every window whose `asOf` equals
-  this response's top-level `asOf`, so for those windows each event at or below
-  the cursor is already counted. Fold a replayed `trade.upsert` into them only
-  when its `timestamp` is at or after that `asOf`; an earlier timestamp is a
-  correction to a trade already included, not a new one.
-
-  Windows with a different `asOf` are refreshed rather than folded — one trade
-  is a rounding error at that length — so do not apply events to them.
-
+  
+  Every window here was calculated in the database snapshot this cursor was
+  taken in, so an event at or below it is already counted. Fold a replayed
+  `trade.upsert` above the cursor into each window it still falls inside --
+  that is, whose start (`asOf` minus the window's own length) it is at or after.
+  
   Folded totals still drift, because rolling windows shed trades that age out
   and `trade.remove` carries no amount to subtract. Neither error accumulates;
   both are bounded by how long a snapshot is held, so re-query to resync.
@@ -718,8 +802,9 @@ type LaunchpadMarketStats {
 
 type LaunchpadMarketStatsWindow {
   """
-  Upper bound this window was calculated against. Short windows share the
-  response's top-level `asOf`; longer ones are cached for longer and may lag it.
+  Upper bound this window was calculated against. Always equal to the response's
+  top-level `asOf`, because every window comes from the same snapshot; read it
+  from either place.
   """
   asOf: String!
   buyVolumeUsd: Float!
@@ -735,7 +820,10 @@ type LaunchpadMarketStatsWindow {
   """
   totalTradeCount: Int!
 
-  """Window-start price used to calculate and replay `priceChangePercent`."""
+  """
+  Window-start marginal pool price used to calculate and replay
+  `priceChangePercent`.
+  """
   priceBaselineUsd: Float
   priceChangePercent: Float
 }

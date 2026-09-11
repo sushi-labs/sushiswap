@@ -2,6 +2,7 @@
 
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
+import type { EvmAddress } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatPercent, formatUsd } from '../../../_lib/format'
 import {
@@ -9,14 +10,15 @@ import {
   SEGMENTED_ITEM,
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
-} from '../../../_ui/segmented-control'
-import { useLaunchpadLiveMarketStats } from '../_lib/launchpad-live-data-provider'
+} from '../../../_ui/_common/segmented-control'
+import type { LaunchpadChainId } from '../../../constants'
 import {
   DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   LAUNCHPAD_MARKET_STATS_WINDOWS,
   type LaunchpadMarketStatsWindowKey,
   getLaunchpadMarketActivity,
 } from '../_lib/launchpad-market-stats'
+import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 
 const SEGMENTED_ITEM_COMPACT = 'flex-1 !h-7 !px-2 !text-[11px]'
 
@@ -135,7 +137,7 @@ export function TradeActivitySkeleton() {
             <SkeletonBox className="ml-auto h-2.5 w-16 rounded-sm" />
           </div>
         </div>
-        <SkeletonBox className="mt-3 h-2 w-full" />
+        <SkeletonBox className="mt-3 h-2 w-full rounded-full" />
         <div className="mt-3 flex items-start justify-between gap-4">
           <div className="space-y-1.5">
             <SkeletonBox className="h-4 w-16 rounded-sm" />
@@ -161,11 +163,20 @@ export function TradeActivitySkeleton() {
  * stream event; 6h and 24h are held in a server cache and will read identically
  * for minutes at a time.
  */
-export function TradeActivity() {
+export function TradeActivity({
+  chainId,
+  tokenAddress,
+}: {
+  chainId: LaunchpadChainId
+  tokenAddress: EvmAddress
+}) {
   const [windowKey, setWindowKey] = useState<LaunchpadMarketStatsWindowKey>(
     DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   )
-  const { data, isPending, latestNewTradeEvent } = useLaunchpadLiveMarketStats()
+  const { data, isPending, latestNewTradeEvent } = useLaunchpadMarketStats(
+    chainId,
+    tokenAddress,
+  )
 
   if (isPending) return <TradeActivitySkeleton />
 

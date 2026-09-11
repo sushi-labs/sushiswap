@@ -158,62 +158,64 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
         onInput1={onChangeToken1TypedAmount}
         toggleZapMode={toggleZapMode}
       >
-        <Checker.Connect fullWidth>
-          <Checker.Guard
-            fullWidth
-            guardWhen={
-              isMounted &&
-              [
-                SushiSwapV2PoolState.NOT_EXISTS,
-                SushiSwapV2PoolState.INVALID,
-              ].includes(poolState)
-            }
-            guardText="Pool not found"
-          >
-            <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
-                <Checker.Slippage
-                  fullWidth
-                  slippageTolerance={slippagePercent}
-                  text="Continue With High Slippage"
-                >
-                  <Checker.ApproveERC20
+        <Checker.StockTokenRegion token0={token0} token1={token1}>
+          <Checker.Connect fullWidth>
+            <Checker.Guard
+              fullWidth
+              guardWhen={
+                isMounted &&
+                [
+                  SushiSwapV2PoolState.NOT_EXISTS,
+                  SushiSwapV2PoolState.INVALID,
+                ].includes(poolState)
+              }
+              guardText="Pool not found"
+            >
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
+                  <Checker.Slippage
                     fullWidth
-                    id="approve-token-0"
-                    className="whitespace-nowrap"
-                    amount={parsedInput0}
-                    contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
+                    slippageTolerance={slippagePercent}
+                    text="Continue With High Slippage"
                   >
                     <Checker.ApproveERC20
                       fullWidth
-                      id="approve-token-1"
+                      id="approve-token-0"
                       className="whitespace-nowrap"
-                      amount={parsedInput1}
+                      amount={parsedInput0}
                       contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
                     >
-                      <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
-                        <AddSectionReviewModalLegacy
-                          poolAddress={pool?.liquidityToken.address}
-                          poolState={poolState}
-                          chainId={chainId}
-                          token0={token0}
-                          token1={token1}
-                          input0={parsedInput0}
-                          input1={parsedInput1}
-                          onSuccess={() => {
-                            setTypedAmounts({ input0: '', input1: '' })
-                          }}
-                        >
-                          <Button fullWidth>Add Liquidity</Button>
-                        </AddSectionReviewModalLegacy>
-                      </Checker.Success>
+                      <Checker.ApproveERC20
+                        fullWidth
+                        id="approve-token-1"
+                        className="whitespace-nowrap"
+                        amount={parsedInput1}
+                        contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
+                      >
+                        <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
+                          <AddSectionReviewModalLegacy
+                            poolAddress={pool?.liquidityToken.address}
+                            poolState={poolState}
+                            chainId={chainId}
+                            token0={token0}
+                            token1={token1}
+                            input0={parsedInput0}
+                            input1={parsedInput1}
+                            onSuccess={() => {
+                              setTypedAmounts({ input0: '', input1: '' })
+                            }}
+                          >
+                            <Button fullWidth>Add Liquidity</Button>
+                          </AddSectionReviewModalLegacy>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
                     </Checker.ApproveERC20>
-                  </Checker.ApproveERC20>
-                </Checker.Slippage>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Guard>
-        </Checker.Connect>
+                  </Checker.Slippage>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Guard>
+          </Checker.Connect>
+        </Checker.StockTokenRegion>
       </AddSectionWidget>
     </CheckerProvider>
   )

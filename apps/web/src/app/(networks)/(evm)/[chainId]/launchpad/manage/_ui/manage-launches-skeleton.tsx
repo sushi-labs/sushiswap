@@ -1,6 +1,6 @@
 import { Container, SkeletonBox } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { TokenGridSkeleton } from '../../_ui/token-grid'
+import { TokenGridSkeleton } from '../../_ui/token-list/token-grid'
 
 export function ManageLaunchesSkeleton() {
   return (

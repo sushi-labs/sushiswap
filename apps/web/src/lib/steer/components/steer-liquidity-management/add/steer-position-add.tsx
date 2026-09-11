@@ -15,6 +15,7 @@ import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Guard } from 'src/lib/wagmi/systems/checker/guard'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
+import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-region'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import {
   useSteerPositionAddActions,
@@ -95,57 +96,65 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
         </div>
 
         {isMounted ? (
-          <Guard guardWhen={vault.isDeprecated} guardText="Vault is deprecated">
-            <Connect testId="connect" fullWidth>
-              <Network
-                testId="switch-network"
-                fullWidth
-                chainId={vault.chainId}
-              >
-                <Amounts
-                  testId="check-amounts"
+          <StockTokenRegion
+            token0={currencies?.CURRENCY_A}
+            token1={currencies?.CURRENCY_B}
+          >
+            <Guard
+              guardWhen={vault.isDeprecated}
+              guardText="Vault is deprecated"
+            >
+              <Connect testId="connect" fullWidth>
+                <Network
+                  testId="switch-network"
                   fullWidth
                   chainId={vault.chainId}
-                  amounts={amounts}
                 >
-                  <ApproveERC20
+                  <Amounts
+                    testId="check-amounts"
                     fullWidth
-                    id="approve-erc20-0"
-                    amount={parsedAmounts?.[Field.CURRENCY_A]}
-                    contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
+                    chainId={vault.chainId}
+                    amounts={amounts}
                   >
                     <ApproveERC20
                       fullWidth
-                      id="approve-erc20-1"
-                      amount={parsedAmounts?.[Field.CURRENCY_B]}
+                      id="approve-erc20-0"
+                      amount={parsedAmounts?.[Field.CURRENCY_A]}
                       contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                     >
-                      <Success tag={APPROVE_TAG_ADD_STEER}>
-                        <SteerPositionAddReviewModal
-                          vault={vault}
-                          onSuccess={() => {
-                            onFieldAInput('')
-                            onFieldBInput('')
-                          }}
-                          // successLink={successLink}
-                        >
-                          <DialogTrigger asChild>
-                            <Button
-                              fullWidth
-                              size="xl"
-                              testId="add-steer-liquidity-preview"
-                            >
-                              Preview
-                            </Button>
-                          </DialogTrigger>
-                        </SteerPositionAddReviewModal>
-                      </Success>
+                      <ApproveERC20
+                        fullWidth
+                        id="approve-erc20-1"
+                        amount={parsedAmounts?.[Field.CURRENCY_B]}
+                        contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
+                      >
+                        <Success tag={APPROVE_TAG_ADD_STEER}>
+                          <SteerPositionAddReviewModal
+                            vault={vault}
+                            onSuccess={() => {
+                              onFieldAInput('')
+                              onFieldBInput('')
+                            }}
+                            // successLink={successLink}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                fullWidth
+                                size="xl"
+                                testId="add-steer-liquidity-preview"
+                              >
+                                Preview
+                              </Button>
+                            </DialogTrigger>
+                          </SteerPositionAddReviewModal>
+                        </Success>
+                      </ApproveERC20>
                     </ApproveERC20>
-                  </ApproveERC20>
-                </Amounts>
-              </Network>
-            </Connect>
-          </Guard>
+                  </Amounts>
+                </Network>
+              </Connect>
+            </Guard>
+          </StockTokenRegion>
         ) : (
           <Button fullWidth size="xl">
             Connect

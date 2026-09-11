@@ -12,14 +12,14 @@ import { type EvmAddress, EvmChainId, getEvmChainById } from 'sushi/evm'
 import { useEnsName } from 'wagmi'
 import { formatUsd, shortenAddress } from '../../../_lib/format'
 import { useLaunchpadCreator } from '../../../_lib/use-launchpad-creator'
-import { MetricCard } from '../../../_ui/metric-card'
-import { PageHeading } from '../../../_ui/page-heading'
-import { CollectionStateCard } from '../../../_ui/state-card'
-import { TokenGrid } from '../../../_ui/token-grid'
+import { PageHeading } from '../../../_ui/_common/page-heading'
+import { CollectionStateCard } from '../../../_ui/_common/state-card'
 import {
   DEFAULT_LAUNCHPAD_TOKEN_SORT,
   TokenSortControls,
-} from '../../../_ui/token-sort-controls'
+} from '../../../_ui/explore/token-sort-controls'
+import { MetricCard } from '../../../_ui/metrics/metric-card'
+import { TokenGrid } from '../../../_ui/token-list/token-grid'
 import type { LaunchpadChainId } from '../../../constants'
 import type { LaunchpadTokenSortField } from '../../../types'
 

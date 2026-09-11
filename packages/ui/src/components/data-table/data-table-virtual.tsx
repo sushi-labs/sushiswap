@@ -19,7 +19,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useVirtualizer } from '@tanstack/react-virtual'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { default as React, type ReactNode } from 'react'
@@ -34,8 +33,12 @@ import {
   TableRow,
 } from '../table'
 import { DataTableColumnHeader } from './data-table-column-header'
+import { useTableVirtualizer } from './use-table-virtualizer'
 
 interface DataTableVirtualProps<TData, TValue> {
+  scrollMode?: 'element' | 'window'
+  scrollClassName?: string
+  footer?: ReactNode
   testId?: string | ((value: TData, index: number) => string)
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -58,6 +61,9 @@ interface DataTableVirtualProps<TData, TValue> {
 }
 
 export function DataTableVirtual<TData, TValue>({
+  scrollMode = 'element',
+  scrollClassName,
+  footer,
   testId,
   columns,
   data,
@@ -117,20 +123,36 @@ export function DataTableVirtual<TData, TValue>({
   const { rows } = table.getRowModel()
 
   const parentRef = React.useRef<HTMLDivElement>(null)
+  const bodyRef = React.useRef<HTMLTableSectionElement>(null)
 
-  const virtualizer = useVirtualizer({
+  const { virtualizer, scrollMargin } = useTableVirtualizer({
+    containerRef: parentRef,
+    listRef: bodyRef,
+    scrollMode,
+    loading,
     count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => estimateSize,
+    estimateSize,
     overscan,
-    enabled: true,
+    getItemKey: (index) => rows[index].id,
   })
+  const virtualRows = virtualizer.getVirtualItems()
+  const hasScrollContainer = Boolean(scrollClassName) || scrollMode === 'window'
+  const paddingTop = hasScrollContainer
+    ? Math.max(0, (virtualRows[0]?.start ?? scrollMargin) - scrollMargin)
+    : 0
+  const paddingBottom = hasScrollContainer
+    ? virtualizer.getTotalSize() -
+      ((virtualRows[virtualRows.length - 1]?.end ?? scrollMargin) -
+        scrollMargin)
+    : 0
 
   return (
     <div
       ref={parentRef}
       className={classNames(
-        'space-y-4 border-t border-secondary black:border-white/[0.1] overflow-auto',
+        'space-y-4 border-t border-secondary black:border-white/[0.1]',
+        scrollMode === 'element' ? 'overflow-auto' : '',
+        scrollClassName,
         hideScrollbar ? 'hide-scrollbar' : '',
       )}
     >
@@ -160,7 +182,7 @@ export function DataTableVirtual<TData, TValue>({
           </TableHeader>
         ) : null}
 
-        <TableBody>
+        <TableBody ref={bodyRef}>
           {loading ? (
             Array.from({ length: skeletonRowCount })
               .fill(null)
@@ -179,65 +201,91 @@ export function DataTableVirtual<TData, TValue>({
                   })}
                 </TableRow>
               ))
-          ) : virtualizer.getVirtualItems()?.length ? (
-            virtualizer.getVirtualItems().map((virtualRow, r) => {
-              const row = rows[virtualRow.index]
-              const _row = (
-                <TableRow
-                  key={r}
-                  data-state={row.getIsSelected() && 'selected'}
-                  testdata-id={
-                    typeof testId === 'function'
-                      ? testId(row.original, r)
-                      : `${testId}-${r}-tr`
-                  }
-                  className={classNames(trClassName ?? '')}
-                >
-                  {row.getVisibleCells().map((cell, i) =>
-                    linkFormatter &&
-                    !cell.column.columnDef.meta?.disableLink ? (
-                      <td
-                        className="!p-0"
-                        style={{ width: cell.column.getSize() }}
-                        key={cell.id}
-                        testdata-id={`${testId}-${r}-${i}-td`}
-                      >
-                        <Link
-                          scroll={false}
-                          shallow={true}
-                          href={linkFormatter(row.original)}
-                          target={externalLink ? '_blank' : '_self'}
-                          className={classNames(
-                            'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
-                            cell.column.columnDef.meta?.body?.className,
-                          )}
+          ) : virtualRows.length ? (
+            <>
+              {paddingTop ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    style={{ height: paddingTop, padding: 0 }}
+                  />
+                </tr>
+              ) : null}
+              {virtualRows.map((virtualRow, r) => {
+                const row = rows[virtualRow.index]
+                const _row = (
+                  <TableRow
+                    key={row.id}
+                    data-index={virtualRow.index}
+                    ref={
+                      hasScrollContainer
+                        ? virtualizer.measureElement
+                        : undefined
+                    }
+                    data-state={row.getIsSelected() && 'selected'}
+                    testdata-id={
+                      typeof testId === 'function'
+                        ? testId(row.original, r)
+                        : `${testId}-${r}-tr`
+                    }
+                    className={classNames(trClassName ?? '')}
+                  >
+                    {row.getVisibleCells().map((cell, i) =>
+                      linkFormatter &&
+                      !cell.column.columnDef.meta?.disableLink ? (
+                        <td
+                          className="!p-0"
+                          style={{ width: cell.column.getSize() }}
+                          key={cell.id}
+                          testdata-id={`${testId}-${r}-${i}-td`}
+                        >
+                          <Link
+                            scroll={false}
+                            shallow={true}
+                            href={linkFormatter(row.original)}
+                            target={externalLink ? '_blank' : '_self'}
+                            className={classNames(
+                              'flex items-center text-sm font-medium p-4 align-middle [&:has([role=checkbox])]:pr-0',
+                              cell.column.columnDef.meta?.body?.className,
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Link>
+                        </td>
+                      ) : (
+                        <TableCell
+                          style={{ width: cell.column.getSize() }}
+                          testdata-id={`${testId}-${r}-${i}-td`}
+                          key={cell.id}
+                          className={
+                            cell.column.columnDef.meta?.body?.className
+                          }
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )}
-                        </Link>
-                      </td>
-                    ) : (
-                      <TableCell
-                        style={{ width: cell.column.getSize() }}
-                        testdata-id={`${testId}-${r}-${i}-td`}
-                        key={cell.id}
-                        className={cell.column.columnDef.meta?.body?.className}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ),
-                  )}
-                </TableRow>
-              )
+                        </TableCell>
+                      ),
+                    )}
+                  </TableRow>
+                )
 
-              if (rowRenderer) return rowRenderer(row, _row)
-              return _row
-            })
+                if (rowRenderer) return rowRenderer(row, _row)
+                return _row
+              })}
+              {paddingBottom ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    style={{ height: paddingBottom, padding: 0 }}
+                  />
+                </tr>
+              ) : null}
+            </>
           ) : (
             <TableRow>
               <TableCell
@@ -251,6 +299,7 @@ export function DataTableVirtual<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      {footer}
       {pagination ? (
         <div>
           <DataTableVirtualPagination table={table} />

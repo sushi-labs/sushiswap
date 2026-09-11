@@ -12,10 +12,10 @@ import { getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../_lib/format'
 import { useLaunchpadCreator } from '../../_lib/use-launchpad-creator'
-import { MetricCard } from '../../_ui/metric-card'
-import { PageHeading } from '../../_ui/page-heading'
-import { CollectionStateCard } from '../../_ui/state-card'
-import { TokenGrid } from '../../_ui/token-grid'
+import { PageHeading } from '../../_ui/_common/page-heading'
+import { CollectionStateCard } from '../../_ui/_common/state-card'
+import { MetricCard } from '../../_ui/metrics/metric-card'
+import { TokenGrid } from '../../_ui/token-list/token-grid'
 import type { LaunchpadChainId } from '../../constants'
 
 export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
@@ -117,7 +117,7 @@ export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
                 Your tokens
               </h2>
               <p className="mt-2 text-sm text-perps-muted-50">
-                Select a launch to update its public profile or distribute fees.
+                Select a launch to update its public profile or claim fees.
               </p>
             </div>
           </div>

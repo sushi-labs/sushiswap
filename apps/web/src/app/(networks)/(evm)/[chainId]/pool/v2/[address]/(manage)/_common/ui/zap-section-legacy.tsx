@@ -276,60 +276,64 @@ const _ZapSectionLegacy: FC<ZapSectionLegacyProps> = ({
       />
       <WidgetFooter>
         <div className="flex flex-col gap-4 w-full">
-          <Checker.Connect fullWidth>
-            <Checker.Network fullWidth chainId={chainId}>
-              <Checker.Amounts
-                fullWidth
-                chainId={chainId}
-                amount={parsedInputAmount}
-              >
-                <Checker.Guard
-                  guardWhen={!checked && showPriceImpactWarning}
-                  guardText="Price impact too high"
-                  variant="destructive"
-                  size="xl"
-                  fullWidth
-                >
-                  <Checker.Slippage
-                    text="Zap With High Slippage"
-                    slippageTolerance={slippageTolerance}
+          <Checker.StockTokenRegion token0={pool?.token0} token1={pool?.token1}>
+            <Checker.StockTokenRegion token0={inputCurrency}>
+              <Checker.Connect fullWidth>
+                <Checker.Network fullWidth chainId={chainId}>
+                  <Checker.Amounts
                     fullWidth
+                    chainId={chainId}
+                    amount={parsedInputAmount}
                   >
-                    <Checker.ApproveERC20
-                      id="approve-token"
-                      className="whitespace-nowrap"
+                    <Checker.Guard
+                      guardWhen={!checked && showPriceImpactWarning}
+                      guardText="Price impact too high"
+                      variant="destructive"
+                      size="xl"
                       fullWidth
-                      amount={parsedInputAmount}
-                      contract={zapResponse?.tx.to}
                     >
-                      <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                        <Button
-                          size="xl"
+                      <Checker.Slippage
+                        text="Zap With High Slippage"
+                        slippageTolerance={slippageTolerance}
+                        fullWidth
+                      >
+                        <Checker.ApproveERC20
+                          id="approve-token"
+                          className="whitespace-nowrap"
                           fullWidth
-                          testId="zap-liquidity"
-                          onClick={() =>
-                            preparedTx && sendTransaction(preparedTx)
-                          }
-                          loading={isZapLoading || isWritePending}
-                          disabled={!preparedTx}
+                          amount={parsedInputAmount}
+                          contract={zapResponse?.tx.to}
                         >
-                          {isZapError ? (
-                            'No route found'
-                          ) : isEstGasError ? (
-                            'Shoot! Something went wrong :('
-                          ) : isWritePending ? (
-                            <Dots>Confirm Transaction</Dots>
-                          ) : (
-                            'Add Liquidity'
-                          )}
-                        </Button>
-                      </Checker.Success>
-                    </Checker.ApproveERC20>
-                  </Checker.Slippage>
-                </Checker.Guard>
-              </Checker.Amounts>
-            </Checker.Network>
-          </Checker.Connect>
+                          <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                            <Button
+                              size="xl"
+                              fullWidth
+                              testId="zap-liquidity"
+                              onClick={() =>
+                                preparedTx && sendTransaction(preparedTx)
+                              }
+                              loading={isZapLoading || isWritePending}
+                              disabled={!preparedTx}
+                            >
+                              {isZapError ? (
+                                'No route found'
+                              ) : isEstGasError ? (
+                                'Shoot! Something went wrong :('
+                              ) : isWritePending ? (
+                                <Dots>Confirm Transaction</Dots>
+                              ) : (
+                                'Add Liquidity'
+                              )}
+                            </Button>
+                          </Checker.Success>
+                        </Checker.ApproveERC20>
+                      </Checker.Slippage>
+                    </Checker.Guard>
+                  </Checker.Amounts>
+                </Checker.Network>
+              </Checker.Connect>
+            </Checker.StockTokenRegion>
+          </Checker.StockTokenRegion>
           {showSlippageWarning && <SlippageWarning className="mt-4" />}
           {showPriceImpactWarning && (
             <PriceImpactWarning

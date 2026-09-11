@@ -63,6 +63,26 @@ export function formatPercent(value: number | null | undefined): string {
   return `${value > 0 ? '+' : ''}${formatPercentValue(value / 100)}`
 }
 
+/** Compare the current window against the preceding, equally sized window. */
+export function volumeChangePercent(
+  currentVolume: number | null | undefined,
+  combinedVolume: number | null | undefined,
+): number | null {
+  if (
+    currentVolume == null ||
+    combinedVolume == null ||
+    !Number.isFinite(currentVolume) ||
+    !Number.isFinite(combinedVolume) ||
+    currentVolume < 0 ||
+    combinedVolume <= currentVolume
+  )
+    return null
+
+  const previousVolume = combinedVolume - currentVolume
+  const change = ((currentVolume - previousVolume) / previousVolume) * 100
+  return Number.isFinite(change) ? change : null
+}
+
 /**
  * Compact age for a launch, e.g. `now`, `11m`, `4h`, `3d`. Recomputed on each
  * render rather than ticking on a timer: the discovery grid already refetches

@@ -14,7 +14,15 @@ interface LaunchpadProviderConfig {
 
 export const LAUNCHPAD_PROVIDER_CONFIG = {
   SUSHI_V1: {
-    label: 'Sushi V1',
+    label: 'Sushi',
+    capabilities: {
+      creatorProfile: true,
+      manage: true,
+      metadata: true,
+    },
+  },
+  SUSHI_V2: {
+    label: 'Sushi V2',
     capabilities: {
       creatorProfile: true,
       manage: true,
@@ -31,7 +39,7 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
     },
   },
   POOLS_FUN_V2: {
-    label: 'Pools V2',
+    label: 'Pools',
     websiteUrl: 'https://pools.fun',
     capabilities: {
       creatorProfile: false,
@@ -40,7 +48,7 @@ export const LAUNCHPAD_PROVIDER_CONFIG = {
     },
   },
   POOLS_FUN_V3: {
-    label: 'Pools V3',
+    label: 'Pools',
     websiteUrl: 'https://pools.fun',
     capabilities: {
       creatorProfile: false,
@@ -62,8 +70,8 @@ export const LAUNCHPAD_PROVIDER_FILTERS = [
 }[]
 
 const PROVIDERS_BY_FILTER = {
-  all: ['SUSHI_V1', 'POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'],
-  sushi: ['SUSHI_V1'],
+  all: ['SUSHI_V1', 'SUSHI_V2', 'POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'],
+  sushi: ['SUSHI_V1', 'SUSHI_V2'],
   'pools-fun': ['POOLS_FUN_V1', 'POOLS_FUN_V2', 'POOLS_FUN_V3'],
 } as const satisfies Record<
   LaunchpadProviderFilter,

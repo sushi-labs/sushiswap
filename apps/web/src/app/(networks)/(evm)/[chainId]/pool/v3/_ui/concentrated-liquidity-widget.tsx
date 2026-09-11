@@ -418,64 +418,66 @@ const WidgetContent: FC<WidgetContentProps> = ({
         />
       </div>
 
-      <Checker.Connect fullWidth>
-        <Checker.Network fullWidth chainId={chainId}>
-          <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
-            <Checker.Slippage
-              fullWidth
-              slippageTolerance={slippagePercent}
-              text="Continue With High Slippage"
-            >
-              <Checker.ApproveERC20
+      <Checker.StockTokenRegion token0={token0} token1={token1}>
+        <Checker.Connect fullWidth>
+          <Checker.Network fullWidth chainId={chainId}>
+            <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
+              <Checker.Slippage
                 fullWidth
-                id="approve-erc20-0"
-                amount={parsedAmounts[Field.CURRENCY_A]}
-                contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                enabled={!depositADisabled}
+                slippageTolerance={slippagePercent}
+                text="Continue With High Slippage"
               >
                 <Checker.ApproveERC20
                   fullWidth
-                  id="approve-erc20-1"
-                  amount={parsedAmounts[Field.CURRENCY_B]}
+                  id="approve-erc20-0"
+                  amount={parsedAmounts[Field.CURRENCY_A]}
                   contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                  enabled={!depositBDisabled}
+                  enabled={!depositADisabled}
                 >
-                  <AddSectionReviewModalConcentrated
-                    chainId={chainId}
-                    feeAmount={feeAmount}
-                    token0={token0}
-                    token1={token1}
-                    input0={parsedAmounts[Field.CURRENCY_A]}
-                    input1={parsedAmounts[Field.CURRENCY_B]}
-                    position={position}
-                    noLiquidity={noLiquidity}
-                    price={price}
-                    pricesAtTicks={pricesAtTicks}
-                    ticksAtLimit={ticksAtLimit}
-                    tokenId={tokenId}
-                    existingPosition={existingPosition}
-                    onSuccess={() => {
-                      _onFieldAInput('')
-                      _onFieldBInput('')
-                    }}
-                    successLink={successLink}
+                  <Checker.ApproveERC20
+                    fullWidth
+                    id="approve-erc20-1"
+                    amount={parsedAmounts[Field.CURRENCY_B]}
+                    contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                    enabled={!depositBDisabled}
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        fullWidth
-                        size="xl"
-                        testId="add-liquidity-preview"
-                      >
-                        Preview
-                      </Button>
-                    </DialogTrigger>
-                  </AddSectionReviewModalConcentrated>
+                    <AddSectionReviewModalConcentrated
+                      chainId={chainId}
+                      feeAmount={feeAmount}
+                      token0={token0}
+                      token1={token1}
+                      input0={parsedAmounts[Field.CURRENCY_A]}
+                      input1={parsedAmounts[Field.CURRENCY_B]}
+                      position={position}
+                      noLiquidity={noLiquidity}
+                      price={price}
+                      pricesAtTicks={pricesAtTicks}
+                      ticksAtLimit={ticksAtLimit}
+                      tokenId={tokenId}
+                      existingPosition={existingPosition}
+                      onSuccess={() => {
+                        _onFieldAInput('')
+                        _onFieldBInput('')
+                      }}
+                      successLink={successLink}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          fullWidth
+                          size="xl"
+                          testId="add-liquidity-preview"
+                        >
+                          Preview
+                        </Button>
+                      </DialogTrigger>
+                    </AddSectionReviewModalConcentrated>
+                  </Checker.ApproveERC20>
                 </Checker.ApproveERC20>
-              </Checker.ApproveERC20>
-            </Checker.Slippage>
-          </Checker.Amounts>
-        </Checker.Network>
-      </Checker.Connect>
+              </Checker.Slippage>
+            </Checker.Amounts>
+          </Checker.Network>
+        </Checker.Connect>
+      </Checker.StockTokenRegion>
     </div>
   )
 }
@@ -674,60 +676,64 @@ const ZapWidgetContent = withCheckerRoot(
           loading={tokensLoading || isLoading}
           allowNative={isEvmWNativeSupported(chainId)}
         />
-        <Checker.Connect fullWidth>
-          <Checker.Network fullWidth chainId={chainId}>
-            <Checker.Amounts
-              fullWidth
-              chainId={chainId}
-              amount={parsedInputAmount}
-            >
-              <Checker.Guard
-                guardWhen={!checked && showPriceImpactWarning}
-                guardText="Price impact too high"
-                variant="destructive"
-                size="xl"
-                fullWidth
-              >
-                <Checker.Slippage
+        <Checker.StockTokenRegion token0={pool?.token0} token1={pool?.token1}>
+          <Checker.StockTokenRegion token0={inputCurrency}>
+            <Checker.Connect fullWidth>
+              <Checker.Network fullWidth chainId={chainId}>
+                <Checker.Amounts
                   fullWidth
-                  text="Zap With High Slippage"
-                  slippageTolerance={slippageTolerance}
+                  chainId={chainId}
+                  amount={parsedInputAmount}
                 >
-                  <Checker.ApproveERC20
-                    id="approve-token"
-                    className="whitespace-nowrap"
+                  <Checker.Guard
+                    guardWhen={!checked && showPriceImpactWarning}
+                    guardText="Price impact too high"
+                    variant="destructive"
+                    size="xl"
                     fullWidth
-                    amount={parsedInputAmount}
-                    contract={zapResponse?.tx.to}
                   >
-                    <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
-                      <Button
-                        size="xl"
+                    <Checker.Slippage
+                      fullWidth
+                      text="Zap With High Slippage"
+                      slippageTolerance={slippageTolerance}
+                    >
+                      <Checker.ApproveERC20
+                        id="approve-token"
+                        className="whitespace-nowrap"
                         fullWidth
-                        testId="zap-liquidity"
-                        onClick={() =>
-                          preparedTx && sendTransaction(preparedTx)
-                        }
-                        loading={isZapLoading || isWritePending}
-                        disabled={!preparedTx}
+                        amount={parsedInputAmount}
+                        contract={zapResponse?.tx.to}
                       >
-                        {isZapError ? (
-                          'No route found'
-                        ) : isEstGasError ? (
-                          'Shoot! Something went wrong :('
-                        ) : isWritePending ? (
-                          <Dots>Confirm Transaction</Dots>
-                        ) : (
-                          'Confirm Transaction'
-                        )}
-                      </Button>
-                    </Checker.Success>
-                  </Checker.ApproveERC20>
-                </Checker.Slippage>
-              </Checker.Guard>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
+                        <Checker.Success tag={APPROVE_TAG_ZAP_LEGACY}>
+                          <Button
+                            size="xl"
+                            fullWidth
+                            testId="zap-liquidity"
+                            onClick={() =>
+                              preparedTx && sendTransaction(preparedTx)
+                            }
+                            loading={isZapLoading || isWritePending}
+                            disabled={!preparedTx}
+                          >
+                            {isZapError ? (
+                              'No route found'
+                            ) : isEstGasError ? (
+                              'Shoot! Something went wrong :('
+                            ) : isWritePending ? (
+                              <Dots>Confirm Transaction</Dots>
+                            ) : (
+                              'Confirm Transaction'
+                            )}
+                          </Button>
+                        </Checker.Success>
+                      </Checker.ApproveERC20>
+                    </Checker.Slippage>
+                  </Checker.Guard>
+                </Checker.Amounts>
+              </Checker.Network>
+            </Checker.Connect>
+          </Checker.StockTokenRegion>
+        </Checker.StockTokenRegion>
         {showSlippageWarning && <SlippageWarning className="mt-4" />}
         {showPriceImpactWarning && (
           <PriceImpactWarning
