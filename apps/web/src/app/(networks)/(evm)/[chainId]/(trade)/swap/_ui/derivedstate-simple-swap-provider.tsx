@@ -3,7 +3,6 @@
 import type { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { useParams, usePathname, useSearchParams } from 'next/navigation'
 import {
-  type FC,
   createContext,
   useCallback,
   useContext,
@@ -11,23 +10,13 @@ import {
   useState,
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
-import { useEvmTrade } from 'src/lib/hooks/react-query/trade/use-evm-trade'
-import { useEvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-evm-trade-quote'
-import { useSvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-svm-trade-quote'
-import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import {
-  type DirectPool,
-  combineEvmTradeQueries,
-  useDirectPoolTrade,
-  useDirectPoolTradeQuote,
-} from 'src/lib/swap/direct-pool'
-import { useCarbonOffset } from 'src/lib/swap/use-carbon-offset'
+import type { DirectPool } from 'src/lib/swap/direct-pool'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { Amount, type Percent, ZERO } from 'sushi'
-import { EvmChainId, isEvmChainId } from 'sushi/evm'
-import { type SvmChainId, isSvmChainId } from 'sushi/svm'
-import { useConnection, useGasPrice } from 'wagmi'
+import { Amount, type Percent } from 'sushi'
+import { EvmChainId } from 'sushi/evm'
+import { isSvmChainId } from 'sushi/svm'
+import { useConnection } from 'wagmi'
 import {
   getDefaultCurrency,
   getNativeIfNativeAndWNativeSupported,
@@ -434,150 +423,9 @@ function useDerivedStateSimpleSwap<TChainId extends SupportedChainId>() {
   return context
 }
 
-function useEvmSimpleSwapTrade(enabled = true) {
-  const {
-    state: {
-      token0,
-      chainId,
-      swapAmount,
-      token1,
-      recipient,
-      fee,
-      directPool,
-      slippageToleranceOptions,
-    },
-  } = useDerivedStateSimpleSwap<EvmChainId & SupportedChainId>()
-
-  const [slippagePercent] = useSlippageTolerance(
-    slippageToleranceOptions?.storageKey,
-    slippageToleranceOptions?.defaultValue,
-  )
-  const [carbonOffset] = useCarbonOffset()
-
-  const evmChainId = isEvmChainId(chainId) ? chainId : undefined
-  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
-
-  if (enabled && !evmChainId) {
-    throw new Error('useEvmSimpleSwapTrade is EVM-only')
-  }
-
-  const params = {
-    chainId: evmChainId,
-    fromToken: token0,
-    toToken: token1,
-    amount: swapAmount,
-    slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-    gasPrice,
-    fee,
-    recipient,
-    enabled: Boolean(enabled && swapAmount?.gt(ZERO)),
-    carbonOffset,
-    directPool,
-  }
-  const aggregatorTrade = useEvmTrade(params)
-  const directPoolTrade = useDirectPoolTrade(params)
-  const trade = combineEvmTradeQueries(
-    aggregatorTrade,
-    directPoolTrade,
-    Boolean(directPool),
-  )
-
-  return trade
-}
-
-function useEvmSimpleSwapTradeQuote() {
-  const { state } = useDerivedStateSimpleSwap()
-
-  const [slippagePercent] = useSlippageTolerance(
-    state.slippageToleranceOptions?.storageKey,
-    state.slippageToleranceOptions?.defaultValue,
-  )
-  const [carbonOffset] = useCarbonOffset()
-
-  const evmChainId = isEvmChainId(state.chainId) ? state.chainId : undefined
-  const { data: gasPrice } = useGasPrice({ chainId: evmChainId })
-
-  const params = useMemo(() => {
-    if (isEvmChainId(state.chainId)) {
-      const _state = state as State<typeof state.chainId>['state']
-
-      return {
-        chainId: _state.chainId,
-        fromToken: _state.token0,
-        toToken: _state.token1,
-        amount: _state.swapAmount,
-        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-        gasPrice,
-        fee: _state.fee,
-        recipient: _state.recipient,
-        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
-        carbonOffset,
-        directPool: _state.directPool,
-      }
-    }
-
-    return undefined
-  }, [state, slippagePercent, gasPrice, carbonOffset])
-
-  const aggregatorQuote = useEvmTradeQuote(params)
-  const directPoolQuote = useDirectPoolTradeQuote(params)
-
-  return combineEvmTradeQueries(
-    aggregatorQuote,
-    directPoolQuote,
-    Boolean(params?.directPool),
-  )
-}
-
-function useSvmSimpleSwapTradeQuote() {
-  const { state } = useDerivedStateSimpleSwap()
-
-  const [slippagePercent] = useSlippageTolerance(
-    state.slippageToleranceOptions?.storageKey,
-    state.slippageToleranceOptions?.defaultValue,
-  )
-
-  const params = useMemo(() => {
-    if (isSvmChainId(state.chainId)) {
-      const _state = state as State<SvmChainId>['state']
-
-      return {
-        chainId: _state.chainId,
-        fromToken: _state.token0,
-        toToken: _state.token1,
-        amount: _state.swapAmount,
-        slippagePercentage: slippagePercent.toString({ fixed: 2 }),
-        recipient: _state.recipient,
-        enabled: Boolean(_state.swapAmount?.gt(ZERO)),
-      }
-    }
-
-    return undefined
-  }, [state, slippagePercent])
-
-  return useSvmTradeQuote(params)
-}
-
-function useSimpleSwapTradeQuote() {
-  const { state } = useDerivedStateSimpleSwap()
-
-  const evmQuote = useEvmSimpleSwapTradeQuote()
-  const svmQuote = useSvmSimpleSwapTradeQuote()
-
-  if (isEvmChainId(state.chainId)) {
-    return evmQuote
-  } else if (isSvmChainId(state.chainId)) {
-    return svmQuote
-  }
-
-  throw new Error('useSimpleSwapTradeQuote: Unsupported chainId')
-}
-
+export { DerivedstateSimpleSwapProvider, useDerivedStateSimpleSwap }
 export {
-  DerivedstateSimpleSwapProvider,
-  useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
-  useEvmSimpleSwapTrade,
   useEvmSimpleSwapTradeQuote,
   useSvmSimpleSwapTradeQuote,
-}
+} from './simple-swap-trade-quote-context'

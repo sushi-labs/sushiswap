@@ -42,11 +42,9 @@ import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { isUnwrapTrade, isWrapTrade } from '../common'
-import {
-  useDerivedStateSimpleSwap,
-  useEvmSimpleSwapTrade,
-} from '../derivedstate-simple-swap-provider'
+import { useDerivedStateSimpleSwap } from '../derivedstate-simple-swap-provider'
 import type { SimpleSwapTradeReviewDialogVariant } from '../simple-swap-trade-review-dialog'
+import { useEvmSimpleSwapTrade } from '../use-evm-simple-swap-trade'
 import type { UseSimpleSwapTradeReviewBaseReturn } from './use-simple-swap-trade-review'
 
 export function useEvmSimpleSwapTradeReview({

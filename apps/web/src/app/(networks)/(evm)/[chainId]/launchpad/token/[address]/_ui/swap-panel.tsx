@@ -25,7 +25,9 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
+import { EvmSimpleSwapTradeQuoteProvider } from '~evm/[chainId]/(trade)/swap/_ui/evm-simple-swap-trade-quote-provider'
 import { SimpleSwapTradeButton } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-button'
+import { EvmSimpleSwapTradeReviewDialog } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-review-dialog/evm-simple-swap-trade-review-dialog'
 import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-config'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
@@ -104,9 +106,11 @@ export function SwapPanel({ token }: { token: LaunchpadTokenWithCurrencies }) {
             feeTier: token.pool.feeTier,
           }}
         >
-          <DetailsInteractionTrackerProvider>
-            <SwapPanelContent token={token} launchToken={token.currency} />
-          </DetailsInteractionTrackerProvider>
+          <EvmSimpleSwapTradeQuoteProvider>
+            <DetailsInteractionTrackerProvider>
+              <SwapPanelContent token={token} launchToken={token.currency} />
+            </DetailsInteractionTrackerProvider>
+          </EvmSimpleSwapTradeQuoteProvider>
         </DerivedstateSimpleSwapProvider>
       </CheckerProvider>
     </EdgeProvider>
@@ -379,7 +383,10 @@ function SwapPanelContent({
       </div>
 
       <div className="mt-4">
-        <SimpleSwapTradeButton variant="perps" />
+        <SimpleSwapTradeButton
+          TradeReviewDialog={EvmSimpleSwapTradeReviewDialog}
+          variant="perps"
+        />
       </div>
     </PerpsCard>
   )

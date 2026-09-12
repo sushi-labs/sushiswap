@@ -36,19 +36,25 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from './derivedstate-simple-swap-provider'
-import {
-  SimpleSwapTradeReviewDialog,
-  type SimpleSwapTradeReviewDialogVariant,
-} from './simple-swap-trade-review-dialog'
+import { SimpleSwapTradeReviewDialog } from './simple-swap-trade-review-dialog'
+import type {
+  SimpleSwapTradeReviewDialogComponent,
+  SimpleSwapTradeReviewDialogVariant,
+} from './simple-swap-trade-review-dialog/types'
 import { useIsSwapMaintenance } from './use-is-swap-maintenance'
 
 export function SimpleSwapTradeButton({
+  TradeReviewDialog,
   variant = 'default',
 }: {
+  TradeReviewDialog: SimpleSwapTradeReviewDialogComponent
   variant?: SimpleSwapTradeReviewDialogVariant
 }) {
   return (
-    <SimpleSwapTradeReviewDialog variant={variant}>
+    <SimpleSwapTradeReviewDialog
+      TradeReviewDialog={TradeReviewDialog}
+      variant={variant}
+    >
       {({ error, isSuccess }) => (
         <_SimpleSwapTradeButton
           error={error}
