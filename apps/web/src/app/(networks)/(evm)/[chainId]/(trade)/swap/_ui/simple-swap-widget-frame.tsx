@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { getChainById } from 'sushi'
+import { type ChainId, getChainById } from 'sushi'
 import { isEvmChainId } from 'sushi/evm'
 import { SwapModeButtons } from '../../_ui/swap-mode-buttons'
 import { SimpleSwapBanner } from './simple-swap-banner'
@@ -10,13 +10,15 @@ import { SimpleSwapSettingsOverlay } from './simple-swap-settings-overlay'
 
 interface SimpleSwapWidgetFrameProps {
   children: ReactNode
+  chainId?: ChainId
 }
 
 export function SimpleSwapWidgetFrame({
   children,
+  chainId: chainIdProp,
 }: SimpleSwapWidgetFrameProps) {
-  const { chainId: chainIdParam } = useParams<{ chainId: string }>()
-  const chainId = Number(chainIdParam)
+  const { chainId: chainIdParam } = useParams<{ chainId?: string }>()
+  const chainId = chainIdProp ?? Number(chainIdParam)
   const swapPathname = isEvmChainId(chainId)
     ? `/${getChainById(chainId).key}/swap`
     : undefined

@@ -9,7 +9,7 @@ import { Providers } from '~evm/[chainId]/(trade)/swap/providers'
 export default function SwapSimplePage() {
   return (
     <Container maxWidth="lg">
-      <SimpleSwapWidgetFrame>
+      <SimpleSwapWidgetFrame chainId={SvmChainId.SOLANA}>
         <Suspense fallback={<SimpleSwapWidgetSkeleton />}>
           <Providers>
             <SvmSimpleSwapRuntime chainId={SvmChainId.SOLANA} />
