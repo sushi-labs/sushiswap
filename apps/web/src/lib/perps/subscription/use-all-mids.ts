@@ -3,7 +3,7 @@ import {
   type AllMidsEvent,
   allMids,
 } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { hlWebSocketTransport } from '../transports'
 
@@ -12,7 +12,7 @@ export const useAllMids = () => {
   const query = useQuery<AllMidsEvent>({
     queryKey: ['useAllMids'],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
 
   useEffect(() => {

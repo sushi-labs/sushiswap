@@ -1,7 +1,7 @@
 'use client'
 import type { L2BookParameters } from '@nktkas/hyperliquid'
 import { type L2BookEvent, l2Book } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo } from 'react'
 import { hlWebSocketTransport } from '../transports'
 import { toFixedTrim } from '../utils'
@@ -109,7 +109,7 @@ export const useL2OrderBook = ({
 
   const query = useQuery<FormattedL2Orders>({
     queryKey: KEY(assetString, nSigFigs, mantissa),
-    enabled: false, // never auto-fetch
+    queryFn: skipToken,
     staleTime: Number.POSITIVE_INFINITY,
   })
 
