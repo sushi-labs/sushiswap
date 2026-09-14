@@ -3,10 +3,15 @@ import { SimpleSwapTokenNotFoundDialog } from './simple-swap-token-not-found-dia
 import { SimpleSwapToken0Input } from './simple-swap-token0-input'
 import { SimpleSwapToken1Input } from './simple-swap-token1-input'
 import { SimpleSwapTradeButton } from './simple-swap-trade-button'
+import type { SimpleSwapTradeReviewDialogComponent } from './simple-swap-trade-review-dialog/types'
 import { SimpleSwapTradeStats } from './simple-swap-trade-stats'
 import { SwapMaintenanceMessage } from './swap-maintenance-message'
 
-export const SimpleSwapWidget = () => {
+export const SimpleSwapWidget = ({
+  TradeReviewDialog,
+}: {
+  TradeReviewDialog: SimpleSwapTradeReviewDialogComponent
+}) => {
   return (
     <>
       <SwapMaintenanceMessage />
@@ -14,7 +19,7 @@ export const SimpleSwapWidget = () => {
       <SimpleSwapSwitchTokensButton />
       <div className="flex flex-col">
         <SimpleSwapToken1Input />
-        <SimpleSwapTradeButton />
+        <SimpleSwapTradeButton TradeReviewDialog={TradeReviewDialog} />
         <div className="mt-2">
           <SimpleSwapTradeStats />
         </div>

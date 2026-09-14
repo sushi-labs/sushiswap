@@ -13,6 +13,7 @@ import {
   useDerivedStateSimpleSwap,
 } from '~evm/[chainId]/(trade)/swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTradeReviewDialog } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-review-dialog'
+import { EvmSimpleSwapTradeReviewDialog } from '~evm/[chainId]/(trade)/swap/_ui/simple-swap-trade-review-dialog/evm-simple-swap-trade-review-dialog'
 import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-config'
 import {
   LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
@@ -65,7 +66,11 @@ export function QuickBuyTradeReview({
         >
           <DetailsInteractionTrackerProvider>
             <Success tag={APPROVE_TAG_SWAP}>
-              <SimpleSwapTradeReviewDialog autoConfirm variant="perps">
+              <SimpleSwapTradeReviewDialog
+                TradeReviewDialog={EvmSimpleSwapTradeReviewDialog}
+                autoConfirm
+                variant="perps"
+              >
                 {() => (
                   <QuickBuyTradeReviewTrigger
                     amount={amount}
