@@ -1,23 +1,27 @@
 import { Container } from '@sushiswap/ui'
+import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { DetailsInteractionTrackerProvider } from '../_ui/details-interaction-tracker-provider'
-import { DerivedstateSimpleSwapProvider } from './_ui/derivedstate-simple-swap-provider'
-import { SimpleSwapWidget } from './_ui/simple-swap-widget'
+import { isSupportedChainId } from 'src/config'
+import { isEvmChainId } from 'sushi/evm'
+import { EvmSimpleSwapRuntime } from './_ui/evm-simple-swap-runtime'
 import { SimpleSwapWidgetFrame } from './_ui/simple-swap-widget-frame'
 import { SimpleSwapWidgetSkeleton } from './_ui/simple-swap-widget-skeleton'
 import { Providers } from './providers'
 
-export default function SwapSimplePage() {
+export default async function SwapSimplePage({
+  params,
+}: {
+  params: Promise<{ chainId: string }>
+}) {
+  const chainId = Number((await params).chainId)
+  if (!isSupportedChainId(chainId) || !isEvmChainId(chainId)) return notFound()
+
   return (
     <Container maxWidth="lg">
       <SimpleSwapWidgetFrame>
         <Suspense fallback={<SimpleSwapWidgetSkeleton />}>
           <Providers>
-            <DerivedstateSimpleSwapProvider>
-              <DetailsInteractionTrackerProvider>
-                <SimpleSwapWidget />
-              </DetailsInteractionTrackerProvider>
-            </DerivedstateSimpleSwapProvider>
+            <EvmSimpleSwapRuntime chainId={chainId} />
           </Providers>
         </Suspense>
       </SimpleSwapWidgetFrame>
