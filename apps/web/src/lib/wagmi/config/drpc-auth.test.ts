@@ -1,65 +1,67 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { getRpcHeaders, getRpcUrl } from 'src/lib/rpc'
+import { EvmChainId } from 'sushi/evm'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 
-/**
- * Guards `patches/viem@2.55.0.patch`.
- *
- * Sushi's dRPC endpoints reject every request without an `Authorization` JWT.
- * Dependencies build their own viem clients without fetch options — Privy alone
- * does so in about nine places, and only the client it passes options to could
- * be patched directly — so the credential is attached inside viem's HTTP
- * client, where it covers all of them.
- */
-async function requestHeaders(
-  url: string,
-  fetchOptions?: { headers?: Record<string, string> },
-): Promise<Record<string, string>> {
-  const { getHttpRpcClient } = await import('viem/utils')
+beforeEach(() => {
+  vi.resetModules()
+  vi.stubEnv('DRPC_ID', 'server-key')
+})
 
-  let headers: Record<string, string> = {}
-  const fetchFn = (async (_url: string, init: RequestInit) => {
-    headers = init.headers as Record<string, string>
-    return new Response('{"result":"0x1"}', {
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }) as unknown as typeof fetch
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
+})
 
-  await getHttpRpcClient(url, { fetchFn }).request({
-    body: { method: 'eth_chainId' },
-    ...(fetchOptions ? { fetchOptions } : {}),
+async function request(chainId: EvmChainId = EvmChainId.ETHEREUM) {
+  const fetch = vi
+    .fn()
+    .mockResolvedValue(new Response('{"jsonrpc":"2.0","id":1,"result":"0x1"}'))
+  vi.stubGlobal('fetch', fetch)
+  const { publicTransports, publicChains } = await import('./viem')
+  await publicTransports[chainId]({ chain: undefined }).request({
+    method: 'eth_chainId',
   })
-  return headers
+  return { fetch, publicChains }
 }
 
-const drpcUrl = 'https://lb.drpc.live/ogrpc?network=robinhood&dkey=test-key'
+it('authenticates server clients directly without putting credentials in URLs', async () => {
+  const { fetch } = await request()
+  expect(fetch).toHaveBeenCalledWith(
+    'https://lb.drpc.live/ethereum',
+    expect.objectContaining({
+      headers: {
+        'Content-Type': 'application/json',
+        'Drpc-Key': 'server-key',
+      },
+    }),
+  )
+})
 
-describe('dRPC authorization', () => {
-  // The patch reads the JWT once, when viem's module is evaluated, and
-  // `vi.resetModules()` does not re-evaluate externalized dependencies. Stub
-  // the environment before the first import instead.
-  beforeAll(() => {
-    vi.stubEnv('NEXT_PUBLIC_DRPC_JWT', 'test-jwt')
-  })
+it('routes browser and Privy clients through the current origin without credentials', async () => {
+  vi.stubGlobal('window', { location: { origin: 'https://preview.sushi.com' } })
+  const { fetch, publicChains } = await request()
+  const url = 'https://preview.sushi.com/api/rpc/ethereum'
+  expect(fetch).toHaveBeenCalledWith(
+    url,
+    expect.objectContaining({
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  )
+  expect(
+    publicChains.find((chain) => chain.id === EvmChainId.ETHEREUM)?.rpcUrls
+      .privyWalletOverride.http,
+  ).toEqual([url])
+  expect(getRpcHeaders()).toEqual({})
+  expect(getRpcUrl('solana')).toBe('https://preview.sushi.com/api/rpc/solana')
+  expect(getRpcUrl('stellar')).toBe('https://preview.sushi.com/api/rpc/stellar')
+})
 
-  it('authenticates clients that pass no fetch options', async () => {
-    const headers = await requestHeaders(drpcUrl)
-
-    expect(headers.Authorization).toBe('test-jwt')
-    expect(headers['Content-Type']).toBe('application/json')
-  })
-
-  it("keeps a caller's own credential", async () => {
-    const headers = await requestHeaders(drpcUrl, {
-      headers: { Authorization: 'caller-jwt' },
-    })
-
-    expect(headers.Authorization).toBe('caller-jwt')
-  })
-
-  it('leaves other hosts untouched', async () => {
-    const headers = await requestHeaders(
-      'https://rpc.mainnet.chain.robinhood.com',
-    )
-
-    expect(headers.Authorization).toBeUndefined()
-  })
+it('leaves non-DRPC transports unauthenticated', async () => {
+  const { fetch } = await request(EvmChainId.BTTC)
+  expect(fetch).toHaveBeenCalledWith(
+    'https://rpc.bittorrentchain.io/',
+    expect.objectContaining({
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  )
 })

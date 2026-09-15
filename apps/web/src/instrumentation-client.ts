@@ -12,6 +12,19 @@ import {
   LogLevel,
   type TransportItem,
 } from '@grafana/faro-web-sdk'
+import { initBotId } from 'botid/client/core'
+
+if (process.env.NEXT_PUBLIC_APP_ENV !== 'test') {
+  initBotId({
+    protect: [
+      {
+        path: '/api/rpc/*',
+        method: 'POST',
+        advancedOptions: { checkLevel: 'basic' },
+      },
+    ],
+  })
+}
 
 const isFaroEnabled = false
 
@@ -26,6 +39,7 @@ const ignoreUrls = [
   'google-analytics.com',
   'https://cdn.sushi.com',
   'lb.drpc.live',
+  '/api/rpc/',
   'api.sushi.com/quote',
   '/_next/static',
   '/_next/data',
