@@ -1,153 +1,65 @@
+import { getRpcHeaders, getRpcUrl } from 'src/lib/rpc'
 import { EvmChainId, evmChains } from 'sushi/evm'
 import { http, type Chain, type Transport } from 'viem'
 
-const drpcId = process.env['DRPC_ID'] || process.env['NEXT_PUBLIC_DRPC_ID']
+function drpc(network: string): ReturnType<typeof http> {
+  return http(getRpcUrl(network), {
+    fetchOptions: { headers: getRpcHeaders() },
+  })
+}
 
 export const publicTransports = {
-  [EvmChainId.ARBITRUM_NOVA]: http(
-    `https://lb.drpc.live/ogrpc?network=arbitrum-nova&dkey=${drpcId}`,
-  ),
-  [EvmChainId.ARBITRUM]: http(
-    `https://lb.drpc.live/ogrpc?network=arbitrum&dkey=${drpcId}`,
-  ),
-  [EvmChainId.AVALANCHE]: http(
-    `https://lb.drpc.live/ogrpc?network=avalanche&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BOBA]: http(
-    `https://lb.drpc.live/ogrpc?network=boba-eth&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BOBA_BNB]: http(
-    `https://lb.drpc.live/ogrpc?network=boba-bnb&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BSC]: http(
-    `https://lb.drpc.live/ogrpc?network=bsc&dkey=${drpcId}`,
-  ),
+  [EvmChainId.ARBITRUM_NOVA]: drpc('arbitrum-nova'),
+  [EvmChainId.ARBITRUM]: drpc('arbitrum'),
+  [EvmChainId.AVALANCHE]: drpc('avalanche'),
+  [EvmChainId.BOBA]: drpc('boba-eth'),
+  [EvmChainId.BOBA_BNB]: drpc('boba-bnb'),
+  [EvmChainId.BSC]: drpc('bsc'),
   [EvmChainId.BTTC]: http('https://rpc.bittorrentchain.io'),
-  [EvmChainId.CELO]: http(
-    `https://lb.drpc.live/ogrpc?network=celo&dkey=${drpcId}`,
-  ),
-  [EvmChainId.ETHEREUM]: http(
-    `https://lb.drpc.live/ogrpc?network=ethereum&dkey=${drpcId}`,
-  ),
-  [EvmChainId.FANTOM]: http(
-    `https://lb.drpc.live/ogrpc?network=fantom&dkey=${drpcId}`,
-  ),
-  [EvmChainId.GNOSIS]: http(
-    `https://lb.drpc.live/ogrpc?network=gnosis&dkey=${drpcId}`,
-  ),
-  [EvmChainId.HARMONY]: http(
-    `https://lb.drpc.live/ogrpc?network=harmony-0&dkey=${drpcId}`,
-  ),
-  [EvmChainId.KAVA]: http(
-    `https://lb.drpc.live/ogrpc?network=kava&dkey=${drpcId}`,
-  ),
-  [EvmChainId.METIS]: http(
-    `https://lb.drpc.live/ogrpc?network=metis&dkey=${drpcId}`,
-  ),
-  [EvmChainId.OPTIMISM]: http(
-    `https://lb.drpc.live/ogrpc?network=optimism&dkey=${drpcId}`,
-  ),
-  [EvmChainId.POLYGON]: http(
-    `https://lb.drpc.live/ogrpc?network=polygon&dkey=${drpcId}`,
-  ),
-  [EvmChainId.POLYGON_ZKEVM]: http(
-    `https://lb.drpc.live/ogrpc?network=polygon-zkevm&dkey=${drpcId}`,
-  ),
-  [EvmChainId.THUNDERCORE]: http(
-    `https://lb.drpc.live/ogrpc?network=thundercore&dkey=${drpcId}`,
-  ),
-  [EvmChainId.HAQQ]: http(
-    `https://lb.drpc.live/ogrpc?network=haqq&dkey=${drpcId}`,
-  ),
-  [EvmChainId.CORE]: http(
-    `https://lb.drpc.live/ogrpc?network=core&dkey=${drpcId}`,
-  ),
-  [EvmChainId.ZKSYNC_ERA]: http(
-    `https://lb.drpc.live/ogrpc?network=zksync&dkey=${drpcId}`,
-  ),
-  [EvmChainId.LINEA]: http(
-    `https://lb.drpc.live/ogrpc?network=linea&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BASE]: http(
-    `https://lb.drpc.live/ogrpc?network=base&dkey=${drpcId}`,
-  ),
-  [EvmChainId.SCROLL]: http(
-    `https://lb.drpc.live/ogrpc?network=scroll&dkey=${drpcId}`,
-  ),
-  [EvmChainId.FILECOIN]: http(
-    'https://api.node.glif.io/rpc/v1',
-    // `https://lb.drpc.live/ogrpc?network=filecoin&dkey=${drpcId}`,
-  ),
-  [EvmChainId.ZETACHAIN]: http(
-    `https://lb.drpc.live/ogrpc?network=zeta-chain&dkey=${drpcId}`,
-  ),
-  [EvmChainId.CRONOS]: http(
-    `https://lb.drpc.live/ogrpc?network=cronos&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BLAST]: http(
-    `https://lb.drpc.live/ogrpc?network=blast&dkey=${drpcId}`,
-  ),
+  [EvmChainId.CELO]: drpc('celo'),
+  [EvmChainId.ETHEREUM]: drpc('ethereum'),
+  [EvmChainId.FANTOM]: drpc('fantom'),
+  [EvmChainId.GNOSIS]: drpc('gnosis'),
+  [EvmChainId.HARMONY]: drpc('harmony-0'),
+  [EvmChainId.KAVA]: drpc('kava'),
+  [EvmChainId.METIS]: drpc('metis'),
+  [EvmChainId.OPTIMISM]: drpc('optimism'),
+  [EvmChainId.POLYGON]: drpc('polygon'),
+  [EvmChainId.POLYGON_ZKEVM]: drpc('polygon-zkevm'),
+  [EvmChainId.THUNDERCORE]: drpc('thundercore'),
+  [EvmChainId.HAQQ]: drpc('haqq'),
+  [EvmChainId.CORE]: drpc('core'),
+  [EvmChainId.ZKSYNC_ERA]: drpc('zksync'),
+  [EvmChainId.LINEA]: drpc('linea'),
+  [EvmChainId.BASE]: drpc('base'),
+  [EvmChainId.SCROLL]: drpc('scroll'),
+  [EvmChainId.FILECOIN]: http('https://api.node.glif.io/rpc/v1'),
+  [EvmChainId.ZETACHAIN]: drpc('zeta-chain'),
+  [EvmChainId.CRONOS]: drpc('cronos'),
+  [EvmChainId.BLAST]: drpc('blast'),
   [EvmChainId.SKALE_EUROPA]: http(
     'https://elated-tan-skat-indexer.skalenodes.com:10072',
   ),
-  [EvmChainId.ROOTSTOCK]: http(
-    `https://lb.drpc.live/ogrpc?network=rootstock&dkey=${drpcId}`,
-  ),
-  [EvmChainId.MANTLE]: http(
-    `https://lb.drpc.live/ogrpc?network=mantle&dkey=${drpcId}`,
-  ),
-  [EvmChainId.MANTA]: http(
-    `https://lb.drpc.live/ogrpc?network=manta-pacific&dkey=${drpcId}`,
-  ),
-  [EvmChainId.MODE]: http(
-    `https://lb.drpc.live/ogrpc?network=mode&dkey=${drpcId}`,
-  ),
-  [EvmChainId.TAIKO]: http(
-    `https://lb.drpc.live/ogrpc?network=taiko&dkey=${drpcId}`,
-  ),
+  [EvmChainId.ROOTSTOCK]: drpc('rootstock'),
+  [EvmChainId.MANTLE]: drpc('mantle'),
+  [EvmChainId.MANTA]: drpc('manta-pacific'),
+  [EvmChainId.MODE]: drpc('mode'),
+  [EvmChainId.TAIKO]: drpc('taiko'),
   [EvmChainId.ZKLINK]: http('https://rpc.zklink.io'),
-  [EvmChainId.APE]: http(
-    `https://lb.drpc.live/ogrpc?network=apechain&dkey=${drpcId}`,
-  ),
-  [EvmChainId.SONIC]: http(
-    `https://lb.drpc.live/ogrpc?network=sonic&dkey=${drpcId}`,
-  ),
-  [EvmChainId.HEMI]: http(
-    `https://lb.drpc.live/ogrpc?network=hemi&dkey=${drpcId}`,
-  ),
-  [EvmChainId.KATANA]: http(
-    `https://lb.drpc.live/ogrpc?network=katana&dkey=${drpcId}`,
-  ),
-  [EvmChainId.HYPEREVM]: http(
-    `https://lb.drpc.live/ogrpc?network=hyperliquid&dkey=${drpcId}`,
-  ),
-  [EvmChainId.BERACHAIN]: http(
-    `https://lb.drpc.live/ogrpc?network=berachain&dkey=${drpcId}`,
-  ),
-  [EvmChainId.PLASMA]: http(
-    `https://lb.drpc.live/ogrpc?network=plasma&dkey=${drpcId}`,
-  ),
-  [EvmChainId.FUSE]: http(
-    `https://lb.drpc.live/ogrpc?network=fuse&dkey=${drpcId}`,
-  ),
-  [EvmChainId.MONAD]: http(
-    `https://lb.drpc.live/ogrpc?network=monad-mainnet&dkey=${drpcId}`,
-  ),
-  [EvmChainId.MEGAETH]: http(
-    `https://lb.drpc.live/ogrpc?network=megaeth&dkey=${drpcId}`,
-  ),
-  [EvmChainId.XLAYER]: http(
-    `https://lb.drpc.live/ogrpc?network=xlayer&dkey=${drpcId}`,
-  ),
-  [EvmChainId.ROBINHOOD]: http(
-    `https://lb.drpc.live/ogrpc?network=robinhood&dkey=${drpcId}`,
-  ),
-  [EvmChainId.UNICHAIN]: http(
-    `https://lb.drpc.live/ogrpc?network=unichain&dkey=${drpcId}`,
-  ),
-  [EvmChainId.WORLDCHAIN]: http(
-    `https://lb.drpc.live/ogrpc?network=worldchain&dkey=${drpcId}`,
-  ),
+  [EvmChainId.APE]: drpc('apechain'),
+  [EvmChainId.SONIC]: drpc('sonic'),
+  [EvmChainId.HEMI]: drpc('hemi'),
+  [EvmChainId.KATANA]: drpc('katana'),
+  [EvmChainId.HYPEREVM]: drpc('hyperliquid'),
+  [EvmChainId.BERACHAIN]: drpc('berachain'),
+  [EvmChainId.PLASMA]: drpc('plasma'),
+  [EvmChainId.FUSE]: drpc('fuse'),
+  [EvmChainId.MONAD]: drpc('monad-mainnet'),
+  [EvmChainId.MEGAETH]: drpc('megaeth'),
+  [EvmChainId.XLAYER]: drpc('xlayer'),
+  [EvmChainId.ROBINHOOD]: drpc('robinhood'),
+  [EvmChainId.UNICHAIN]: drpc('unichain'),
+  [EvmChainId.WORLDCHAIN]: drpc('worldchain'),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
@@ -177,10 +89,7 @@ export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
     ...viemChain,
     rpcUrls: {
       ...viemChain.rpcUrls,
-      // Privy reads this override for every viem client it builds itself, so
-      // its embedded wallet uses Sushi's RPC instead of a public one. Those
-      // clients pass no fetch options, so the `viem@2.55.0` patch attaches the
-      // dRPC JWT inside viem's HTTP client, where it covers all of them.
+      // Privy's own browser clients also use the BotID-protected RPC proxy.
       privyWalletOverride: {
         http: [rpcUrl],
       },

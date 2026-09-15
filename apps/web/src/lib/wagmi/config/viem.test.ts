@@ -14,9 +14,7 @@ describe('publicChains', () => {
       }).value?.url
 
       expect(chain.rpcUrls.default).toEqual(sourceChain?.rpcUrls.default)
-      // Privy builds its own viem clients from this override and passes them no
-      // fetch options; `patches/viem@2.55.0.patch` supplies the dRPC JWT they
-      // need. See `drpc-auth.test.ts`.
+      // Privy's browser clients use the same proxy as Wagmi.
       expect(chain.rpcUrls.privyWalletOverride?.http).toEqual([transportUrl])
     },
   )
