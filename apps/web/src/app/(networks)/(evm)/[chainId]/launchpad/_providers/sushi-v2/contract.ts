@@ -124,7 +124,7 @@ export function getSushiV2FeeDispositionTransitions(
 export interface DistributionPreview {
   quoteCollected: bigint
   tokenCollected: bigint
-  breakdown?: SushiV2DistributionBreakdown
+  breakdown?: SushiV2DistributionResult
 }
 
 interface SushiV2DistributionResult {
@@ -137,17 +137,9 @@ interface SushiV2DistributionResult {
   launchTokenBoughtAndBurned: bigint
 }
 
-interface SushiV2DistributionBreakdown extends SushiV2DistributionResult {
-  quoteToHolders: bigint
-}
-
 export function normalizeSushiV2Distribution(
   result: SushiV2DistributionResult,
-  disposition: SushiV2FeeDisposition,
 ): DistributionPreview {
-  const quoteToHolders =
-    disposition === 'DISTRIBUTE_TO_HOLDERS' ? result.quoteToReceiver : 0n
-
   return {
     quoteCollected:
       result.quoteToSushi + result.quoteToReceiver + result.quoteUsedForBuyback,
@@ -155,11 +147,6 @@ export function normalizeSushiV2Distribution(
       result.launchTokenToSushi +
       result.launchTokenToReceiver +
       result.launchTokenFeesBurned,
-    breakdown: {
-      ...result,
-      quoteToReceiver:
-        disposition === 'DISTRIBUTE_TO_HOLDERS' ? 0n : result.quoteToReceiver,
-      quoteToHolders,
-    },
+    breakdown: result,
   }
 }
