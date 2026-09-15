@@ -51,8 +51,10 @@ export function SushiV2ManagementActions({
   const canTransferCreator = isCurrentCreator || isLaunchpadOwner
   const currentDispositionOrdinal =
     SUSHI_V2_FEE_DISPOSITION[token.feeDisposition]
-  const isFinalDisposition =
-    getSushiV2FeeDispositionTransitions(token.feeDisposition).length === 0
+  const availableTransitions = getSushiV2FeeDispositionTransitions(
+    token.feeDisposition,
+  )
+  const isFinalDisposition = availableTransitions.length === 0
 
   return (
     <div className="mt-5 grid items-start gap-5 lg:grid-cols-2">
@@ -125,7 +127,12 @@ export function SushiV2ManagementActions({
           move further toward burning, never back.
         </p>
         <div className="mt-5 space-y-2">
-          {SUSHI_V2_FEE_DISPOSITION_ORDER.map((disposition) => {
+          {SUSHI_V2_FEE_DISPOSITION_ORDER.filter(
+            (disposition) =>
+              SUSHI_V2_FEE_DISPOSITION[disposition] <=
+                currentDispositionOrdinal ||
+              availableTransitions.includes(disposition),
+          ).map((disposition) => {
             const isCurrent = disposition === token.feeDisposition
             const isPassed =
               SUSHI_V2_FEE_DISPOSITION[disposition] < currentDispositionOrdinal

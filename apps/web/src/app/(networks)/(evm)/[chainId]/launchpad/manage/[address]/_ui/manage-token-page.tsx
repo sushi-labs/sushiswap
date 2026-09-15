@@ -205,9 +205,12 @@ export function ManageTokenPage({
       return null
     }
     const result = distributionSimulation.result
-    return 'quoteToSushi' in result
-      ? normalizeSushiV2Distribution(result)
-      : { quoteCollected: result[0], tokenCollected: result[1] }
+    if ('quoteToSushi' in result) {
+      return isSushiV2
+        ? normalizeSushiV2Distribution(result, token.feeDisposition)
+        : null
+    }
+    return { quoteCollected: result[0], tokenCollected: result[1] }
   })()
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)

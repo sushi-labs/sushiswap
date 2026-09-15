@@ -62,15 +62,35 @@ describe('Sushi V2 launchpad contract adapter', () => {
 
   it('normalizes all distributed quote and launch-token fees', () => {
     expect(
-      normalizeSushiV2Distribution({
-        quoteToSushi: 2n,
-        launchTokenToSushi: 3n,
-        quoteToReceiver: 5n,
-        launchTokenToReceiver: 7n,
-        launchTokenFeesBurned: 11n,
-        quoteUsedForBuyback: 13n,
-        launchTokenBoughtAndBurned: 17n,
-      }),
+      normalizeSushiV2Distribution(
+        {
+          quoteToSushi: 2n,
+          launchTokenToSushi: 3n,
+          quoteToReceiver: 5n,
+          launchTokenToReceiver: 7n,
+          launchTokenFeesBurned: 11n,
+          quoteUsedForBuyback: 13n,
+          launchTokenBoughtAndBurned: 17n,
+        },
+        'DIRECT_PAYOUT',
+      ),
     ).toMatchObject({ quoteCollected: 20n, tokenCollected: 21n })
+  })
+
+  it('normalizes holder rewards from the receiver ABI field', () => {
+    expect(
+      normalizeSushiV2Distribution(
+        {
+          quoteToSushi: 2n,
+          launchTokenToSushi: 3n,
+          quoteToReceiver: 5n,
+          launchTokenToReceiver: 0n,
+          launchTokenFeesBurned: 7n,
+          quoteUsedForBuyback: 0n,
+          launchTokenBoughtAndBurned: 0n,
+        },
+        'DISTRIBUTE_TO_HOLDERS',
+      ).breakdown,
+    ).toMatchObject({ quoteToReceiver: 0n, quoteToHolders: 5n })
   })
 })

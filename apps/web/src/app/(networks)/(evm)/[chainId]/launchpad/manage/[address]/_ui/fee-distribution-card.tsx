@@ -73,7 +73,9 @@ export function FeeDistributionCard({
               ? breakdown.quoteToSushi
               : destination === 'FEE_RECEIVER'
                 ? breakdown.quoteToReceiver
-                : breakdown.quoteUsedForBuyback,
+                : destination === 'HOLDERS'
+                  ? breakdown.quoteToHolders
+                  : breakdown.quoteUsedForBuyback,
           note:
             destination === 'BUYBACK'
               ? `Burns ${formatRawAmount(breakdown.launchTokenBoughtAndBurned, token.decimals, 4)} ${token.symbol}`
