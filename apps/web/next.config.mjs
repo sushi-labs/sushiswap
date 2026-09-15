@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import withBundleAnalyzer from '@next/bundle-analyzer'
+import { withBotId } from 'botid/next/config'
 import { createContentSecurityPolicy } from './content-security-policy.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -202,4 +203,4 @@ const nextConfig = bundleAnalyzer({
   },
 })
 
-export default nextConfig
+export default withBotId(nextConfig)

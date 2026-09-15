@@ -19,6 +19,7 @@
         "NEXT_PUBLIC_API_BASE_URL",
         "NEXT_PUBLIC_SUSHI_DATA_API_HOST",
         "EDGE_CONFIG",
+        "DRPC_ID",
         "NEXT_PUBLIC_CHAIN_ID",
         "NEXT_PUBLIC_PRIVY_APP_ID",
         "NEXT_PUBLIC_PRIVY_TEST_RUNTIME",
@@ -34,6 +35,7 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true,
+      "passThroughEnv": ["DRPC_ID"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env.development.local",

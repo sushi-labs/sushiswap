@@ -1,5 +1,6 @@
 import { gtagEvent } from '@sushiswap/ui'
 import type { Config } from '@wagmi/core'
+import { getRpcHeaders } from 'src/lib/rpc'
 import { privyEvmConnector } from 'src/lib/wallet/privy/privy-evm-connector'
 import { EvmChainId } from 'sushi/evm'
 import { http, createConfig } from 'wagmi'
@@ -29,28 +30,20 @@ const pollingInterval = new Proxy(
   },
 )
 
-const drpcJwt = process.env['NEXT_PUBLIC_DRPC_JWT']
-
 export const createProductionConfig = () => {
   const storage = createConnectorRestoringStorage()
   const transports = Object.entries(publicTransports).reduce(
     (acc, [chainId, transport]) => {
       const transportUrl = transport({ chain: undefined }).value?.url!
 
-      let fetchOptions = {}
-      if (transportUrl.startsWith('https://lb.drpc.live/') && drpcJwt) {
-        fetchOptions = {
-          headers: {
-            Authorization: drpcJwt,
-          },
-        }
-      }
+      const isDrpc =
+        transportUrl.startsWith('https://lb.drpc.live/') ||
+        transportUrl.includes('/api/rpc/')
 
       acc[Number(chainId) as EvmChainId] = http(transportUrl, {
-        fetchOptions,
+        fetchOptions: { headers: isDrpc ? getRpcHeaders() : undefined },
         onFetchRequest(_req) {
-          if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
-            drpcJwt && _req.headers.set('Authorization', drpcJwt)
+          if (typeof window !== 'undefined' && isDrpc) {
             try {
               _req.json().then((json) => {
                 gtagEvent('drpc-request', {
@@ -64,7 +57,7 @@ export const createProductionConfig = () => {
           }
         },
         onFetchResponse(_res) {
-          if (typeof window !== 'undefined' && transportUrl.includes('drpc')) {
+          if (typeof window !== 'undefined' && isDrpc) {
             gtagEvent('drpc-response', {
               pathname: window.location.pathname,
               href: window.location.href,
