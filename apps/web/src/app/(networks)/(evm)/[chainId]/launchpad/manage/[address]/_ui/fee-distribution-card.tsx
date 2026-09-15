@@ -18,6 +18,7 @@ const DESTINATION_LABELS = {
   FEE_RECEIVER: 'Fee receiver',
   BURN: 'Burned',
   BUYBACK: 'Buys back the token',
+  HOLDERS: 'Distributed to token holders',
 } as const satisfies Record<SushiV2FeeDestination, string>
 
 interface FeeRoute {
@@ -70,9 +71,9 @@ export function FeeDistributionCard({
           amount:
             destination === 'SUSHI'
               ? breakdown.quoteToSushi
-              : destination === 'FEE_RECEIVER'
-                ? breakdown.quoteToReceiver
-                : breakdown.quoteUsedForBuyback,
+              : destination === 'BUYBACK'
+                ? breakdown.quoteUsedForBuyback
+                : breakdown.quoteToReceiver,
           note:
             destination === 'BUYBACK'
               ? `Burns ${formatRawAmount(breakdown.launchTokenBoughtAndBurned, token.decimals, 4)} ${token.symbol}`

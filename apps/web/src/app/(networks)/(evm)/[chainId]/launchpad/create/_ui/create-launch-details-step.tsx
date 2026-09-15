@@ -139,7 +139,11 @@ export function CreateLaunchDetailsStep({
                           side="top"
                           className="max-w-[320px] space-y-2 whitespace-normal !bg-black/10 !px-3 !py-2 text-left text-xs"
                         >
-                          {SUSHI_V2_FEE_DISPOSITION_ORDER.map((disposition) => (
+                          {/** // TODO(distribution) **/}
+                          {SUSHI_V2_FEE_DISPOSITION_ORDER.filter(
+                            (disposition) =>
+                              disposition !== 'DISTRIBUTE_TO_HOLDERS',
+                          ).map((disposition) => (
                             <p key={disposition}>
                               <span className="font-semibold">
                                 {SUSHI_V2_FEE_DISPOSITION_LABELS[disposition]}:
