@@ -18,6 +18,7 @@ const DESTINATION_LABELS = {
   FEE_RECEIVER: 'Fee receiver',
   BURN: 'Burned',
   BUYBACK: 'Buys back the token',
+  HOLDERS: 'Token holders',
 } as const satisfies Record<SushiV2FeeDestination, string>
 
 interface FeeRoute {

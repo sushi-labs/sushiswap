@@ -464,6 +464,7 @@ enum SushiV2FeeDisposition {
   DIRECT_PAYOUT
   BURN_LAUNCH_TOKEN_FEES
   BUYBACK_AND_BURN
+  DISTRIBUTE_TO_HOLDERS
 }
 
 type SushiV2FeeSplit {
