@@ -10,6 +10,7 @@ import ms from 'ms'
 import { useCallback, useMemo, useState } from 'react'
 import { useAccounts } from 'src/lib/wallet/hooks/use-accounts'
 import { formatPercent, formatUSD } from 'sushi'
+import { getPortfolioTokenTotals } from './get-portfolio-token-totals'
 import { NetworkFilter, type NetworkFilterType } from './network-filter'
 import { PortfolioTokensList } from './portfolio-tokens-list'
 
@@ -81,10 +82,11 @@ export function PortfolioWalletTokens() {
         return matchesSearch && matchesChainId
       }) ?? []
 
-    const filteredTotalUsd = filteredTokens.reduce(
-      (acc, token) => acc + (token.amountUSD ?? 0),
-      0,
-    )
+    const {
+      totalUSD: filteredTotalUsd,
+      amountUSD24Change,
+      percentageChange24h,
+    } = getPortfolioTokenTotals(filteredTokens)
     if (!query && selectedChainId === 'All') {
       return {
         filteredTokens,
@@ -93,26 +95,6 @@ export function PortfolioWalletTokens() {
         filteredPercentageChange24h: data?.percentageChange24h ?? null,
       }
     }
-
-    // Use the API's dollar changes; missing history is not a zero change.
-    const amountUSD24Change = filteredTokens.reduce<number | null>(
-      (acc, token) =>
-        acc === null || token.amountUSD24Change == null
-          ? null
-          : acc + token.amountUSD24Change,
-      0,
-    )
-    const previousTotalUSD =
-      amountUSD24Change !== null &&
-      filteredTokens.every((token) => token.amountUSD !== null)
-        ? filteredTotalUsd - amountUSD24Change
-        : null
-    const percentageChange24h =
-      amountUSD24Change !== null &&
-      previousTotalUSD !== null &&
-      previousTotalUSD > 0
-        ? amountUSD24Change / previousTotalUSD
-        : null
 
     return {
       filteredTokens,
