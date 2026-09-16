@@ -50,6 +50,7 @@ import {
   LAUNCH_FDV_LEVELS_USD,
   quoteInitialBuy,
 } from '../_lib/initial-buy-quote'
+import { getLaunchpadCreationGas } from '../_lib/launchpad-creation-gas'
 import { useLaunchpadQuoteTokens } from '../_lib/use-launchpad-quote-tokens'
 import {
   CreateLaunchBuyButton,
@@ -527,7 +528,15 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync({ ...launchParameters, chainId })
+        const gasEstimate = await publicClient.estimateContractGas({
+          ...launchParameters,
+          account,
+        })
+        hash = await writeContractAsync({
+          ...launchParameters,
+          chainId,
+          gas: getLaunchpadCreationGas(gasEstimate, chainId),
+        })
       } else if (isNativeInitialBuy) {
         const quoteParameters = {
           address: launchpadAddress,
@@ -570,7 +579,15 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync({ ...launchParameters, chainId })
+        const gasEstimate = await publicClient.estimateContractGas({
+          ...launchParameters,
+          account,
+        })
+        hash = await writeContractAsync({
+          ...launchParameters,
+          chainId,
+          gas: getLaunchpadCreationGas(gasEstimate, chainId),
+        })
       } else {
         const quoteParameters = {
           address: launchpadAddress,
@@ -615,7 +632,15 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync({ ...launchParameters, chainId })
+        const gasEstimate = await publicClient.estimateContractGas({
+          ...launchParameters,
+          account,
+        })
+        hash = await writeContractAsync({
+          ...launchParameters,
+          chainId,
+          gas: getLaunchpadCreationGas(gasEstimate, chainId),
+        })
       }
       const receiptPromise = publicClient.waitForTransactionReceipt({ hash })
       const timestamp = Date.now()
