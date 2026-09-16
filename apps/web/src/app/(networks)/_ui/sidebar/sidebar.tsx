@@ -43,7 +43,7 @@ const ResponsiveSidebarWrapper: FC<{
         avoidCollisions={false}
         collisionPadding={0}
         sideOffset={0}
-        className="!p-0 fixed top-0 right-0 !h-[calc(100vh-72px)] !w-80 overflow-hidden data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full"
+        className="!p-0 fixed top-0 right-0 !h-[calc(100dvh-72px)] !w-80 overflow-hidden data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full"
         onInteractOutside={(e) => {
           if (
             e.target instanceof HTMLElement &&
@@ -58,7 +58,10 @@ const ResponsiveSidebarWrapper: FC<{
     </Popover>
   ) : (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent hideClose className="!p-0 h-[calc(100%-16px)]">
+      <DialogContent
+        hideClose
+        className="!p-0 h-[calc(100dvh-16px)] overflow-hidden"
+      >
         <VisuallyHidden>
           <DialogTitle>Sidebar</DialogTitle>
         </VisuallyHidden>

@@ -32,7 +32,7 @@ const _PortfolioInfoRow: FC<PortfolioInfoRow> = ({
   rightContent,
 }) => {
   return (
-    <div className="flex w-full items-center hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap">
+    <div className="flex w-full items-center border-b border-b-accent hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap">
       <div className="shrink-0">
         <Badge
           className="border-2 border-background bg-background rounded-full z-[11]"
