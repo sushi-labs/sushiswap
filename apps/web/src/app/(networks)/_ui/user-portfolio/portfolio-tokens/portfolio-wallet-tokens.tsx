@@ -180,7 +180,7 @@ export function PortfolioWalletTokens() {
           type="text"
           aria-label="Search tokens"
           placeholder="Search by name, symbol, or address"
-          className="!bg-white/[0.04] !text-perps-muted !border !border-accent"
+          className="bg-secondary !border !border-accent"
           onChange={(event) => setSearch(event.target.value)}
           value={search}
         />

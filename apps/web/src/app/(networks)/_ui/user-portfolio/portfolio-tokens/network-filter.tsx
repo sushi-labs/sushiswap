@@ -24,7 +24,7 @@ export function NetworkFilter({
     >
       <SelectTrigger
         aria-label="Filter by network"
-        className="!w-fit shrink-0 !border !border-accent text-sm !bg-white/[0.04] !text-perps-muted focus:!border-perps-blue"
+        className="!w-fit shrink-0 !border !border-accent text-sm bg-secondary focus:!border-perps-blue"
       >
         {selectedChainId === 'All' ? (
           'All'
@@ -35,7 +35,10 @@ export function NetworkFilter({
         )}
       </SelectTrigger>
 
-      <SelectContent className="!bg-black/30 backdrop-blur-2xl">
+      <SelectContent
+        collisionPadding={32}
+        className="dark:!bg-black/30 bg-white/30 backdrop-blur-2xl"
+      >
         {options.map((option) => (
           <SelectItem key={option} value={String(option)}>
             {option === 'All' ? (

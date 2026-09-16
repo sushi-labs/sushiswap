@@ -39,6 +39,7 @@ import {
 } from 'sushi/svm'
 import { formatUnits } from 'viem'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
+import { useSidebar } from '../../sidebar'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 import { SendTokenDialog } from './send-token-dialog'
 
@@ -133,6 +134,7 @@ export function PortfolioTokensList({
   tokens: _tokens,
   onTransferConfirmed,
 }: PortfolioTokensListProps) {
+  const { close } = useSidebar()
   const wallets = useWallets()
   const [selectedCurrency, setSelectedCurrency] = useState<NonNullable<
     ReturnType<typeof getCurrency>
@@ -173,6 +175,7 @@ export function PortfolioTokensList({
               chainId={token.chainId}
               key={`${token.chainId}:${token.address}`}
               href={url}
+              onClick={close}
               icon={
                 <Currency.Icon currency={currency} width={28} height={28} />
               }
