@@ -5,8 +5,12 @@ import type {
   LaunchpadTradeConnection,
 } from '@sushiswap/graph-client/data-api'
 import ms from 'ms'
-import { type EvmAddress, type EvmTxHash, normalizeEvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../../constants'
+import {
+  type EvmAddress,
+  type EvmTxHash,
+  type LaunchpadV2ChainId,
+  normalizeEvmAddress,
+} from 'sushi/evm'
 
 export const EMPTY_TRADE_CONNECTION: LaunchpadTradeConnection = {
   edges: [],
@@ -98,7 +102,7 @@ const candleMutations = new Map<
 >()
 
 function getStreamIdentityKey(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   tokenAddress: EvmAddress,
 ): string {
   return `${chainId}:${normalizeEvmAddress(tokenAddress)}`
@@ -266,7 +270,7 @@ export function removeLaunchpadCandle(
 
 export function applyLaunchpadCandleStreamMutations(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   interval: LaunchpadCandleStreamInterval,
@@ -308,7 +312,7 @@ export function launchpadEventsUrl(input: {
 
 export function publishLaunchpadCandleSnapshot(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   streamCursor: string,
@@ -322,7 +326,7 @@ export function publishLaunchpadCandleSnapshot(
 
 export function subscribeToLaunchpadCandleSnapshot(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   listener: (streamCursor: string) => void,
@@ -348,7 +352,7 @@ export function subscribeToLaunchpadCandleSnapshot(
 }
 
 export function clearLaunchpadCandleSnapshot(input: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   tokenAddress: EvmAddress
 }): void {
   const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
@@ -361,7 +365,7 @@ export function clearLaunchpadCandleSnapshot(input: {
  */
 export function subscribeToLaunchpadTradeStream(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   subscriber: LaunchpadTradeStreamSubscriber,
@@ -382,7 +386,7 @@ export function subscribeToLaunchpadTradeStream(
 
 export function publishLaunchpadTradeStreamEvent(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   event: LaunchpadTradeStreamEvent,
@@ -394,7 +398,7 @@ export function publishLaunchpadTradeStreamEvent(
 }
 
 export function publishLaunchpadTradeStreamReset(input: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   tokenAddress: EvmAddress
 }): void {
   const key = getStreamIdentityKey(input.chainId, input.tokenAddress)
@@ -405,7 +409,7 @@ export function publishLaunchpadTradeStreamReset(input: {
 
 export function subscribeToLaunchpadCandleStream(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   subscriber: LaunchpadCandleStreamSubscriber,
@@ -426,7 +430,7 @@ export function subscribeToLaunchpadCandleStream(
 
 export function publishLaunchpadCandleUpdate(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   update: LaunchpadCandleStreamUpdate,
@@ -443,7 +447,7 @@ export function publishLaunchpadCandleUpdate(
 
 export function publishLaunchpadCandleRemove(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   removal: LaunchpadCandleStreamRemoval,
@@ -460,7 +464,7 @@ export function publishLaunchpadCandleRemove(
 
 export async function refetchLaunchpadCandleSnapshots(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   fresh: boolean,
@@ -471,7 +475,7 @@ export async function refetchLaunchpadCandleSnapshots(
 
 async function refetchLaunchpadCandleSnapshotsWithStatus(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   fresh: boolean,
@@ -512,7 +516,7 @@ async function refetchLaunchpadCandleSnapshotsWithStatus(
 
 export async function refetchLaunchpadCandleSnapshotsWithRetry(
   input: {
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     tokenAddress: EvmAddress
   },
   fresh: boolean,

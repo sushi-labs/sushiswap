@@ -2,6 +2,7 @@ import { ArrowRightIcon, BanknotesIcon } from '@heroicons/react/24/outline'
 import { Button, Dots, Message, classNames } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { Checker } from 'src/lib/wagmi/systems/checker'
+import type { LaunchpadV2ChainId } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount, shortenAddress } from '../../../_lib/format'
 import {
@@ -10,7 +11,6 @@ import {
   getSushiV2FeeRoutes,
 } from '../../../_providers/sushi-v2/contract'
 import type { DistributionPreview } from '../../../_providers/sushi-v2/contract'
-import type { LaunchpadChainId } from '../../../constants'
 import type { LaunchpadToken } from '../../../types'
 
 const DESTINATION_LABELS = {
@@ -38,7 +38,7 @@ export function FeeDistributionCard({
   onDistribute,
 }: {
   token: LaunchpadToken
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   preview: DistributionPreview | null
   isSimulating: boolean
   isDistributing: boolean

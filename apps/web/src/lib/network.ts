@@ -10,6 +10,13 @@ export const getNetworkKey = (network: ChainId) => {
 }
 
 export const replaceNetworkSlug = (network: ChainId, pathname: string) => {
+  if (pathname === '/launch' || pathname.split('/')[2] === 'launchpad') {
+    const section = pathname.split('/')[3]
+    const suffix = ['create', 'portfolio', 'manage'].includes(section)
+      ? `/${section}`
+      : ''
+    return `/${getNetworkKey(network)}/launchpad${suffix}`
+  }
   if (pathname.includes('/pool/')) {
     return `/${getNetworkKey(network)}/explore/pools`
   }

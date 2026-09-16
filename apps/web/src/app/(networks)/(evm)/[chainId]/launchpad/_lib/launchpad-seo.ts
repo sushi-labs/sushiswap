@@ -24,9 +24,11 @@ import type {
   WebSite,
 } from 'schema-dts'
 import { shortenAddress } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 
 const SUSHI_URL = 'https://www.sushi.com'
@@ -37,7 +39,7 @@ const POOLS_FUN_ORGANIZATION_ID = `${POOLS_FUN_URL}/#organization`
 const LAUNCHPAD_REVALIDATE_SECONDS = 60
 
 const getCachedLaunchpadTokens = unstable_cache(
-  async (chainId: LaunchpadChainId) =>
+  async (chainId: LaunchpadV2ChainId) =>
     getLaunchpadTokens({
       input: {
         chainId,
@@ -52,7 +54,7 @@ const getCachedLaunchpadTokens = unstable_cache(
 )
 
 const getCachedLaunchpadCreator = unstable_cache(
-  async (chainId: LaunchpadChainId, address: EvmAddress) =>
+  async (chainId: LaunchpadV2ChainId, address: EvmAddress) =>
     getLaunchpadCreator({
       chainId,
       address,
@@ -70,7 +72,7 @@ const getCachedLaunchpadCreator = unstable_cache(
 )
 
 const getCachedLaunchpadDayCandles = unstable_cache(
-  async (chainId: LaunchpadChainId, address: EvmAddress) => {
+  async (chainId: LaunchpadV2ChainId, address: EvmAddress) => {
     const to = Math.floor(Date.now() / 1000)
     const { nodes } = await getLaunchpadCandles({
       input: {
@@ -88,7 +90,7 @@ const getCachedLaunchpadDayCandles = unstable_cache(
 )
 
 export async function getLaunchpadTokenForSeo(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
 ): Promise<LaunchpadToken | null> {
   try {
@@ -99,7 +101,7 @@ export async function getLaunchpadTokenForSeo(
 }
 
 export async function getLaunchpadTokensForSeo(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
 ): Promise<LaunchpadTokenConnection | null> {
   try {
     return await getCachedLaunchpadTokens(chainId)
@@ -109,7 +111,7 @@ export async function getLaunchpadTokensForSeo(
 }
 
 export async function getLaunchpadCreatorForSeo(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
 ): Promise<LaunchpadCreator | null> {
   try {
@@ -120,7 +122,7 @@ export async function getLaunchpadCreatorForSeo(
 }
 
 export async function getLaunchpadDayCandlesForSeo(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
 ): Promise<LaunchpadCandle[] | null> {
   try {
@@ -130,7 +132,7 @@ export async function getLaunchpadDayCandlesForSeo(
   }
 }
 
-export function getLaunchpadUrl(chainId: LaunchpadChainId): string {
+export function getLaunchpadUrl(chainId: LaunchpadV2ChainId): string {
   return `${SUSHI_URL}/${getEvmChainById(chainId).key}/launchpad`
 }
 
@@ -151,12 +153,12 @@ export function getLaunchpadTokenCardPath(
   return `/${chainKey}/launchpad/token/${token.address}/card.png?v=${version}`
 }
 
-export function getLaunchpadCreateUrl(chainId: LaunchpadChainId): string {
+export function getLaunchpadCreateUrl(chainId: LaunchpadV2ChainId): string {
   return `${getLaunchpadUrl(chainId)}/create`
 }
 
 export function getLaunchpadCreatorUrl(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
 ): string {
   return `${getLaunchpadUrl(chainId)}/creator/${address}`
@@ -410,7 +412,7 @@ export function getLaunchpadTokenJsonLd(token: LaunchpadToken): Graph {
 }
 
 export function getLaunchpadDiscoverJsonLd(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   connection: LaunchpadTokenConnection | null,
 ): Graph {
   const url = getLaunchpadUrl(chainId)
@@ -483,7 +485,7 @@ export function getLaunchpadDiscoverJsonLd(
 }
 
 export function getLaunchpadCreatorJsonLd(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
   creator: LaunchpadCreator | null,
 ): Graph {

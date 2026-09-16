@@ -46,7 +46,11 @@ const NetworkSelector = <T extends ChainId = ChainId>({
     (chainId: T, close: () => void) => {
       const pathSegments = pathname.split('/')
 
-      if (isChainKey(pathSegments[1]) || isEvmChainId(+pathSegments[1])) {
+      if (
+        pathname === '/launch' ||
+        isChainKey(pathSegments[1]) ||
+        isEvmChainId(+pathSegments[1])
+      ) {
         push(replaceNetworkSlug(chainId, pathname), {
           scroll: false,
         })

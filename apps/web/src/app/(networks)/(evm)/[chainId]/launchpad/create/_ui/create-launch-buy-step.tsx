@@ -16,11 +16,15 @@ import type { UseFormReturn } from 'react-hook-form'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatUSD } from 'sushi'
-import type { EvmAddress, EvmCurrency, EvmToken } from 'sushi/evm'
+import type {
+  EvmAddress,
+  EvmCurrency,
+  EvmToken,
+  LaunchpadV2ChainId,
+} from 'sushi/evm'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatRawAmount } from '../../_lib/format'
-import type { LaunchpadChainId } from '../../constants'
 import { LAUNCH_TOKEN_TOTAL_SUPPLY_RAW } from '../_lib/initial-buy-quote'
 import type { CreateLaunchForm, WethPaymentMode } from './create-launch-types'
 
@@ -42,7 +46,7 @@ export function CreateLaunchBuyButton({
   canNavigateToReview,
   onReview,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   checkerAmounts: (Amount<EvmCurrency> | undefined)[]
   canNavigateToReview: boolean
   onReview: () => void
@@ -110,7 +114,7 @@ export function CreateLaunchBuyStep({
   isInitialBuyQuoteLoading,
   isInitialBuyQuoteError,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   methods: UseFormReturn<CreateLaunchForm>
   selectedQuoteToken: EvmToken | undefined
   quoteTokenMap: Record<string, EvmToken>

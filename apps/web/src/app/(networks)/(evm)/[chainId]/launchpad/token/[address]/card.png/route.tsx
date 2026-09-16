@@ -1,6 +1,11 @@
 import { cacheLife } from 'next/cache'
 import { ImageResponse } from 'next/og'
-import { getEvmChainById, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import {
+  getEvmChainById,
+  isEvmAddress,
+  isLaunchpadV2ChainId,
+  normalizeEvmAddress,
+} from 'sushi/evm'
 import { getLaunchpadCardValues } from '../../../_lib/launchpad-card'
 import { getLaunchpadEmbedFonts } from '../../../_lib/launchpad-embed-fonts'
 import { buildLaunchpadEmbedSparkline } from '../../../_lib/launchpad-embed-sparkline'
@@ -10,7 +15,6 @@ import {
   getLaunchpadTokenForSeo,
 } from '../../../_lib/launchpad-seo'
 import { LaunchpadTokenEmbed } from '../../../_ui/launchpad-embed'
-import { isLaunchpadChainId } from '../../../constants'
 
 const IMAGE_SIZE = {
   width: 1200,
@@ -48,7 +52,7 @@ async function getCardData(chainId: number, address: string) {
   'use cache'
   cacheLife({ revalidate: 60 })
 
-  const isSupportedChain = isLaunchpadChainId(chainId)
+  const isSupportedChain = isLaunchpadV2ChainId(chainId)
   const token =
     isSupportedChain && isEvmAddress(address)
       ? await getLaunchpadTokenForSeo(chainId, address)
@@ -79,7 +83,7 @@ export async function GET(
 ) {
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
-  const embedChainId = isLaunchpadChainId(chainId) ? chainId : undefined
+  const embedChainId = isLaunchpadV2ChainId(chainId) ? chainId : undefined
   if (!isEvmAddress(address)) {
     return new Response('Invalid token address', { status: 400 })
   }

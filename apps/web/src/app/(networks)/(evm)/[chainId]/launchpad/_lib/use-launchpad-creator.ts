@@ -6,14 +6,13 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import type { LaunchpadTokensInput } from '../types'
 import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 import { EMPTY_LAUNCHPAD_TOKEN_CONNECTION } from './launchpad-query-fallbacks'
 
 export function useLaunchpadCreator(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress | undefined,
   filters: Omit<LaunchpadTokensInput, 'chainId' | 'creator' | 'providers'> = {},
 ) {

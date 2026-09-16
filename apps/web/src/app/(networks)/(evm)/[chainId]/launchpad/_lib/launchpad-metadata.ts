@@ -1,8 +1,7 @@
 import { updateLaunchpadMetadata } from '@sushiswap/graph-client/data-api'
-import type { EvmAddress } from 'sushi/evm'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import { type Hex, isAddressEqual, sha256, zeroHash } from 'viem'
 import { z } from 'zod'
-import type { LaunchpadChainId } from '../constants'
 import { prepareLaunchpadLogoFile } from './launchpad-logo'
 
 export const LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES = 4_000
@@ -75,7 +74,7 @@ export interface UpdateMetadataTypedData {
   domain: {
     name: 'Sushi Launchpad API'
     version: '1'
-    chainId: LaunchpadChainId
+    chainId: LaunchpadV2ChainId
     verifyingContract: EvmAddress
   }
   types: typeof metadataTypes
@@ -121,7 +120,7 @@ export function buildLaunchpadMetadataDocument(
 }
 
 export function buildUpdateMetadataTypedData(input: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   factoryAddress: EvmAddress
   tokenAddress: EvmAddress
   expectedRevision: number
@@ -176,7 +175,7 @@ async function prepareLaunchpadLogo(file: File): Promise<{
 }
 
 export async function saveLaunchpadMetadata(input: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   factoryAddress: EvmAddress
   tokenAddress: EvmAddress
   expectedRevision: number

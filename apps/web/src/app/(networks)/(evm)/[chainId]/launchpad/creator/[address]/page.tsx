@@ -2,9 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { shortenAddress } from 'sushi'
-import { getEvmChainById } from 'sushi/evm'
-import type { EvmAddress } from 'sushi/evm'
-import { isAddress } from 'viem'
+import {
+  type EvmAddress,
+  getEvmChainById,
+  isEvmAddress,
+  isLaunchpadV2ChainId,
+} from 'sushi/evm'
 import {
   getLaunchpadCreatorDescription,
   getLaunchpadCreatorForSeo,
@@ -12,7 +15,6 @@ import {
   getLaunchpadCreatorUrl,
   serializeLaunchpadJsonLd,
 } from '../../_lib/launchpad-seo'
-import { isLaunchpadChainId } from '../../constants'
 import { CreatorPage } from './_ui/creator-page'
 
 type LaunchpadCreatorPageParams = Promise<{
@@ -24,7 +26,7 @@ async function getCreatorFromParams(params: LaunchpadCreatorPageParams) {
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
 
-  if (!isLaunchpadChainId(chainId) || !isAddress(address, { strict: false })) {
+  if (!isLaunchpadV2ChainId(chainId) || !isEvmAddress(address)) {
     return null
   }
 

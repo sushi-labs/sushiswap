@@ -12,8 +12,7 @@ import type {
   LibrarySymbolInfo,
   ResolutionString,
 } from 'public/trading-view/charting_library/charting_library'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../../constants'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import {
   type LaunchpadCandleStreamInterval,
   applyLaunchpadCandleStreamMutations,
@@ -103,7 +102,7 @@ export type LaunchpadChartMode = 'market-cap' | 'price'
 export const DEFAULT_LAUNCHPAD_CHART_MODE: LaunchpadChartMode = 'market-cap'
 
 interface LaunchpadDatafeedOptions {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   createdAt: string
   getPriceMultiplier: (chartMode: LaunchpadChartMode) => number
   getPricescale: (chartMode: LaunchpadChartMode) => number

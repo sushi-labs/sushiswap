@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isLaunchpadV2ChainId } from 'sushi/evm'
 import {
   getLaunchpadDiscoverJsonLd,
   getLaunchpadTokensForSeo,
@@ -8,7 +8,6 @@ import {
   serializeLaunchpadJsonLd,
 } from '../_lib/launchpad-seo'
 import { LaunchpadHomePage } from '../_ui/home/launchpad-home-page'
-import { isLaunchpadChainId } from '../constants'
 
 const DESCRIPTION =
   'Create and discover tokens with live markets and permanently locked Sushi V3 liquidity.'
@@ -19,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ chainId: string }>
 }): Promise<Metadata> {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return {}
+  if (!isLaunchpadV2ChainId(chainId)) return {}
 
   const chain = getEvmChainById(chainId)
   const url = getLaunchpadUrl(chainId)
@@ -51,7 +50,7 @@ export default async function LaunchpadPage({
   params: Promise<{ chainId: string }>
 }) {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return notFound()
+  if (!isLaunchpadV2ChainId(chainId)) return notFound()
 
   const connection = await getLaunchpadTokensForSeo(chainId)
   const jsonLd = getLaunchpadDiscoverJsonLd(chainId, connection)

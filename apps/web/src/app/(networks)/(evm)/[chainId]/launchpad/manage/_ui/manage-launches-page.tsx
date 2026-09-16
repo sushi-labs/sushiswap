@@ -8,7 +8,7 @@ import {
 import { Button, Container, LinkInternal, Message } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { getEvmChainById } from 'sushi/evm'
+import { type LaunchpadV2ChainId, getEvmChainById } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatUsd, shortenAddress } from '../../_lib/format'
 import { useLaunchpadCreator } from '../../_lib/use-launchpad-creator'
@@ -16,9 +16,10 @@ import { PageHeading } from '../../_ui/_common/page-heading'
 import { CollectionStateCard } from '../../_ui/_common/state-card'
 import { MetricCard } from '../../_ui/metrics/metric-card'
 import { TokenGrid } from '../../_ui/token-list/token-grid'
-import type { LaunchpadChainId } from '../../constants'
 
-export function ManageLaunchesPage({ chainId }: { chainId: LaunchpadChainId }) {
+export function ManageLaunchesPage({
+  chainId,
+}: { chainId: LaunchpadV2ChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const address = useAccount('evm')
   const filters = useMemo(

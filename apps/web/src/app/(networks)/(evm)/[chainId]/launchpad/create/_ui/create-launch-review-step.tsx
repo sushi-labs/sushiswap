@@ -10,11 +10,10 @@ import type { ComponentProps } from 'react'
 import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
-import type { EvmAddress } from 'sushi/evm'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import { SUSHI_V2_LAUNCHPAD_ADDRESS } from '../../_providers/sushi-v2/contract'
+import { getSushiV2LaunchpadAddress } from '../../_providers/sushi-v2/contract'
 import { DetailList, type DetailListItem } from '../../_ui/_common/detail-list'
-import type { LaunchpadChainId } from '../../constants'
 import type { CreateLaunchForm } from './create-launch-types'
 
 export function CreateLaunchReviewStep({
@@ -36,7 +35,7 @@ export function CreateLaunchReviewStep({
   onOpenLegalDialog,
   onBack,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   values: CreateLaunchForm
   previewImageUrl: string | undefined
   details: readonly DetailListItem[]
@@ -154,7 +153,7 @@ export function CreateLaunchReviewStep({
                       ? initialBuyAmount
                       : undefined
                   }
-                  contract={SUSHI_V2_LAUNCHPAD_ADDRESS}
+                  contract={getSushiV2LaunchpadAddress(chainId)}
                   enabled={
                     !isNativeInitialBuy &&
                     initialBuyAmountRaw !== undefined &&
