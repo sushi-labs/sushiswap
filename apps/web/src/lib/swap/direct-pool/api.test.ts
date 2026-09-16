@@ -10,27 +10,34 @@ const tokenIn = '0x4200000000000000000000000000000000000006'
 const tokenOut = '0x66175075f60c893456ee6a0237ed0f548a9023a2'
 
 describe('direct pool quote API', () => {
-  it('builds a cacheable quote URL from valid parameters', () => {
-    const url = new URL(
-      getDirectPoolQuoteUrl({
-        chainId: EvmChainId.ROBINHOOD,
+  it.each([EvmChainId.ROBINHOOD, EvmChainId.ARC])(
+    'accepts and builds a quote URL for chain %s',
+    (chainId) => {
+      const url = new URL(
+        getDirectPoolQuoteUrl({
+          chainId,
+          tokenIn,
+          tokenOut,
+          amount: '100000000000000000',
+          feeTier: 10_000,
+        }),
+        'https://www.sushi.com',
+      )
+
+      expect(
+        directPoolQuoteInputSchema.parse(Object.fromEntries(url.searchParams))
+          .chainId,
+      ).toBe(chainId)
+      expect(url.pathname).toBe('/api/direct-pool/quote')
+      expect(Object.fromEntries(url.searchParams)).toEqual({
+        chainId: chainId.toString(),
         tokenIn,
         tokenOut,
         amount: '100000000000000000',
-        feeTier: 10_000,
-      }),
-      'https://www.sushi.com',
-    )
-
-    expect(url.pathname).toBe('/api/direct-pool/quote')
-    expect(Object.fromEntries(url.searchParams)).toEqual({
-      chainId: EvmChainId.ROBINHOOD.toString(),
-      tokenIn,
-      tokenOut,
-      amount: '100000000000000000',
-      feeTier: '10000',
-    })
-  })
+        feeTier: '10000',
+      })
+    },
+  )
 
   it('rejects unsupported chains and invalid quote parameters', () => {
     expect(

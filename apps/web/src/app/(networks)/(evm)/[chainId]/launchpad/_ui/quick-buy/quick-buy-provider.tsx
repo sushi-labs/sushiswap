@@ -17,7 +17,10 @@ import { EvmNative, type LaunchpadV2ChainId } from 'sushi/evm'
 import { useChainId, useGasPrice } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
-import { getQuickBuyNativeAmount } from '../../_lib/launchpad-swap'
+import {
+  getLaunchpadSwapCurrency,
+  getQuickBuyNativeAmount,
+} from '../../_lib/launchpad-swap'
 import type { LaunchpadToken } from '../../types'
 import { QuickBuyTradeReview } from './quick-buy-trade-review'
 
@@ -51,7 +54,7 @@ export function QuickBuyProvider({
   const address = useAccount('evm')
   const activeChainId = useChainId()
   const nativeCurrency = useMemo(
-    () => EvmNative.fromChainId(chainId),
+    () => getLaunchpadSwapCurrency(EvmNative.fromChainId(chainId)),
     [chainId],
   )
   const { data: nativeBalance } = useAmountBalance(nativeCurrency)
@@ -121,7 +124,7 @@ export function QuickBuyProvider({
 
         if (!amount) {
           createErrorToast(
-            'Unable to load the current ETH price for this quick buy.',
+            `Unable to load the current ${nativeCurrency.symbol} price for this quick buy.`,
             false,
             'perps',
           )
@@ -130,7 +133,7 @@ export function QuickBuyProvider({
 
         if (!nativeBalance) {
           createErrorToast(
-            'Unable to verify your ETH balance. Please try again.',
+            `Unable to verify your ${nativeCurrency.symbol} balance. Please try again.`,
             false,
             'perps',
           )
@@ -139,7 +142,7 @@ export function QuickBuyProvider({
 
         if (nativeBalance.lte(amount)) {
           createErrorToast(
-            `You do not have enough ETH for this $${usdAmount} quick buy.`,
+            `You do not have enough ${nativeCurrency.symbol} for this $${usdAmount} quick buy.`,
             false,
             'perps',
           )

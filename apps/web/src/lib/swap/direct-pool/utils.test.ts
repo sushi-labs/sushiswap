@@ -1,6 +1,12 @@
 import type { UseEvmTradeReturn } from 'src/lib/hooks/react-query'
 import { Amount, Fraction, Percent, Price } from 'sushi'
-import { EvmChainId, type EvmCurrency, EvmNative, EvmToken } from 'sushi/evm'
+import {
+  EvmChainId,
+  type EvmCurrency,
+  EvmNative,
+  EvmToken,
+  USDC,
+} from 'sushi/evm'
 import {
   type Address,
   type Hex,
@@ -15,6 +21,7 @@ import {
   encodeDirectPoolSwap,
   getBetterTrade,
   getDirectPoolGasCost,
+  getDirectPoolQuoteContractParameters,
   isDirectPoolPair,
 } from './utils'
 
@@ -275,5 +282,85 @@ describe('direct pool route', () => {
     expect(decoded.route.toLowerCase()).toContain(
       `01${weth.address.slice(2).toLowerCase()}01ffff0200`,
     )
+  })
+})
+
+describe('Arc direct pool swaps', () => {
+  const chainId = EvmChainId.ARC
+  const usdc = USDC[chainId]
+  const token = new EvmToken({
+    chainId,
+    address: '0xb96022bdfe1aa1d12e8925e57111204b2c711b60',
+    decimals: 18,
+    symbol: 'USDCAT',
+    name: 'USDCAT',
+  })
+  const pool = {
+    address: '0xcfff2b70c3c6159521440ff1d8d5d794d18c8975',
+    quoteTokenAddress: usdc.address,
+    launchTokenAddress: token.address,
+    feeTier: 10_000,
+  } as const
+
+  it.each(['buy', 'sell'])('encodes a direct ERC-20 %s on Arc', (side) => {
+    const fromToken = side === 'buy' ? usdc : token
+    const toToken = side === 'buy' ? token : usdc
+    expect(
+      isDirectPoolPair({ chainId, fromToken, toToken, directPool: pool }),
+    ).toBe(true)
+    const { data, value } = encodeDirectPoolSwap({
+      chainId,
+      fromToken,
+      toToken,
+      poolAddress: pool.address,
+      recipient,
+      amountIn: 100_000n,
+      amountOut: 10_000n,
+      amountOutMin: 9_000n,
+      fee: 0.01,
+    })
+    expect(value).toBe(0n)
+    const decoded = decodeCommands(data)
+    expect(decoded).toMatchObject({
+      executor: getAddress('0x7906320f8247E36dD9b7B005C8DC740ED4EcC29D'),
+      tokenIn: getAddress(fromToken.address),
+      tokenOut: getAddress(toToken.address),
+      feeAmount: 100n,
+    })
+    expect(decoded.route.toLowerCase()).toContain(pool.address.slice(2))
+    expect(
+      getDirectPoolQuoteContractParameters({
+        chainId,
+        amount: 100_000n,
+        feeTier: pool.feeTier,
+        tokenIn: fromToken.address,
+        tokenOut: toToken.address,
+      }).address.toLowerCase(),
+    ).toBe('0x475d8dab6decbbf89db860d2673f2472fa58e5f4')
+  })
+
+  it('rejects native USDC instead of treating 18-decimal units as ERC-20 units', () => {
+    const fromToken = EvmNative.fromChainId(chainId)
+    expect(
+      isDirectPoolPair({
+        chainId,
+        fromToken,
+        toToken: token,
+        directPool: pool,
+      }),
+    ).toBe(false)
+    expect(() =>
+      encodeDirectPoolSwap({
+        chainId,
+        fromToken,
+        toToken: token,
+        poolAddress: pool.address,
+        recipient,
+        amountIn: 100_000n,
+        amountOut: 10_000n,
+        amountOutMin: 9_000n,
+        fee: 0.01,
+      }),
+    ).toThrow('Native wrapping is not supported')
   })
 })

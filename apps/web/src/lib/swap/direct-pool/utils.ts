@@ -7,11 +7,13 @@ import {
   EvmChainId,
   type EvmCurrency,
   EvmNative,
+  type LaunchpadV2ChainId,
   SUSHISWAP_V3_QUOTER,
   type SushiSwapV3ChainId,
   UI_FEE_COLLECTOR_ADDRESS,
   addGasMargin,
   evmNativeAddress,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { type Hex, encodeFunctionData, encodePacked, parseAbi } from 'viem'
 import type {
@@ -21,7 +23,8 @@ import type {
 
 const ROUTE_PROCESSOR_ADDRESS = {
   [EvmChainId.ROBINHOOD]: '0x0e867974275cd31c25015c2753c9d75f9f355379',
-} as const
+  [EvmChainId.ARC]: '0x7906320f8247E36dD9b7B005C8DC740ED4EcC29D',
+} as const satisfies Record<LaunchpadV2ChainId, EvmAddress>
 
 const routeProcessorAbi = parseAbi([
   'function processRouteWithTransferValueOutput(address transferValueTo, uint256 amountValueTransfer, address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOutQuote, address to, bytes route, bool takeSurplus, uint32 referralCode) payable returns (uint256 amountOut)',
@@ -74,6 +77,12 @@ export function isDirectPoolPair({
   'chainId' | 'fromToken' | 'toToken' | 'directPool'
 >): boolean {
   if (!chainId || !fromToken || !toToken || !directPool) return false
+
+  if (
+    (fromToken.isNative || toToken.isNative) &&
+    !isEvmWNativeSupported(chainId)
+  )
+    return false
 
   const from = fromToken.wrap().address.toLowerCase()
   const to = toToken.wrap().address.toLowerCase()
@@ -221,13 +230,19 @@ export function encodeDirectPoolSwap({
   amountIn: bigint
   amountOut: bigint
   amountOutMin: bigint
-  chainId: typeof EvmChainId.ROBINHOOD
+  chainId: LaunchpadV2ChainId
   fee: number
   fromToken: EvmCurrency
   poolAddress: EvmAddress
   recipient: EvmAddress
   toToken: EvmCurrency
 }): { data: Hex; value: bigint } {
+  if (
+    (fromToken.isNative || toToken.isNative) &&
+    !isEvmWNativeSupported(chainId)
+  )
+    throw new Error('Native wrapping is not supported on this chain')
+
   const routeProcessor = ROUTE_PROCESSOR_ADDRESS[chainId]
   const tokenIn = fromToken.wrap().address
   const tokenOut = toToken.wrap().address

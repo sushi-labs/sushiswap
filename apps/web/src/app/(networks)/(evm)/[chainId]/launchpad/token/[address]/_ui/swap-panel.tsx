@@ -21,7 +21,6 @@ import {
   DEFAULT_SLIPPAGE,
   type EvmToken,
   type LaunchpadV2ChainId,
-  unwrapEvmToken,
 } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
@@ -37,6 +36,7 @@ import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-con
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { getLaunchpadSwapCurrency } from '../../../_lib/launchpad-swap'
 import type { LaunchpadTokenWithCurrencies } from '../../../_lib/use-launchpad-token'
 import { TokenAvatar } from '../../../_ui/_common/token-avatar'
 
@@ -89,7 +89,7 @@ function getBuyPresetAmounts(price: number | undefined): string[] {
 }
 
 export function SwapPanel({ token }: { token: LaunchpadTokenWithCurrencies }) {
-  const defaultQuoteCurrency = unwrapEvmToken(token.quoteCurrency)
+  const defaultQuoteCurrency = getLaunchpadSwapCurrency(token.quoteCurrency)
 
   return (
     <EdgeProvider config={defaultSwapEdgeConfig}>
