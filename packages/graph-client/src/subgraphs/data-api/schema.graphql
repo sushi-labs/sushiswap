@@ -564,6 +564,9 @@ type LaunchpadUserHolding {
 
 type LaunchpadUserHoldingToken {
   address: EvmAddress!
+  factoryAddress: EvmAddress!
+  feeDisposition: SushiV2FeeDisposition
+  tokenVersion: SushiV2TokenVersion
   chainId: LaunchpadChainId!
   createdAt: String!
   creator: EvmAddress!

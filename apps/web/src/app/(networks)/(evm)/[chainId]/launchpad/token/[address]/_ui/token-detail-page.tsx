@@ -69,6 +69,7 @@ import { TokenAvatar } from '../../../_ui/_common/token-avatar'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metrics/metric-strip'
 import { LaunchpadProviderBadge } from '../../../_ui/providers/launchpad-provider-badge'
 import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
+import { DistributeFeesCard } from './distribute-fees-card'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
 import { TokenDetailSkeleton } from './token-detail-skeleton'
@@ -521,7 +522,7 @@ export function TokenDetailPage({
 
           <TradeActivity chainId={chainId} tokenAddress={address} />
 
-          <PerpsCard className="p-4" fullWidth>
+          {/* <PerpsCard className="p-4" fullWidth>
             <h2 className="font-semibold text-perps-muted">
               About {token.name}
             </h2>
@@ -529,7 +530,7 @@ export function TokenDetailPage({
               {token.metadata.description ??
                 'This creator has not added a description yet.'}
             </p>
-          </PerpsCard>
+          </PerpsCard> */}
 
           {token.__typename !== 'SushiV2LaunchpadToken' ? (
             <PerpsCard className="p-4" fullWidth>
@@ -553,6 +554,10 @@ export function TokenDetailPage({
           ) : null}
 
           <TokenLaunchDetails token={token} />
+          {token.__typename === 'SushiV1LaunchpadToken' ||
+          token.__typename === 'SushiV2LaunchpadToken' ? (
+            <DistributeFeesCard key={`${chainId}:${address}`} token={token} />
+          ) : null}
         </aside>
       </div>
     </Container>

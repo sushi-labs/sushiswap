@@ -9,7 +9,6 @@ import {
 } from '@heroicons/react/24/outline'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { LaunchpadToken } from '@sushiswap/graph-client/data-api'
-import { createToast } from '@sushiswap/notifications'
 import {
   Button,
   Container,
@@ -40,7 +39,6 @@ import {
   usePublicClient,
   useReadContract,
   useSignTypedData,
-  useSimulateContract,
   useWriteContract,
 } from 'wagmi'
 import * as z from 'zod'
@@ -56,20 +54,16 @@ import {
   getLaunchpadProviderConfig,
   launchpadProviderHasCapability,
 } from '../../../_lib/launchpad-provider'
+import { useFeeDistribution } from '../../../_lib/use-fee-distribution'
 import { useLaunchpadToken } from '../../../_lib/use-launchpad-token'
 import { ProviderManagementActions } from '../../../_providers/provider-management-actions'
+import { SUSHI_V1_LAUNCHPAD_ADDRESS } from '../../../_providers/sushi-v1/contract'
 import {
-  SUSHI_V1_LAUNCHPAD_ABI,
-  SUSHI_V1_LAUNCHPAD_ADDRESS,
-} from '../../../_providers/sushi-v1/contract'
-import {
-  type DistributionPreview,
   SUSHI_V2_FEE_DISPOSITION,
   SUSHI_V2_LAUNCHPAD_ABI,
   type SushiV2FeeDisposition,
-  getSushiV2LaunchpadAddress,
-  normalizeSushiV2Distribution,
 } from '../../../_providers/sushi-v2/contract'
+import { useSushiV2LaunchInfo } from '../../../_providers/sushi-v2/use-launch-info'
 import { DetailList } from '../../../_ui/_common/detail-list'
 import { LaunchpadLogoInput } from '../../../_ui/_common/launchpad-logo-input'
 import { PageState } from '../../../_ui/_common/state-card'
@@ -126,25 +120,47 @@ export function ManageTokenPage({
   const { mutateAsync: signTypedDataAsync } = useSignTypedData()
   const { mutateAsync: writeContractAsync } = useWriteContract()
   const {
-    data: token,
+    data: indexedToken,
     isError,
     refetch,
   } = useLaunchpadToken(chainId, address, initialToken)
+  const isSushiV2 = indexedToken?.__typename === 'SushiV2LaunchpadToken'
+  const managementAddress = isSushiV2
+    ? indexedToken.factoryAddress
+    : SUSHI_V1_LAUNCHPAD_ADDRESS
+  const {
+    data: launchInfo,
+    isError: isLaunchInfoError,
+    refetch: refetchLaunchInfo,
+  } = useSushiV2LaunchInfo({
+    chainId,
+    factoryAddress: managementAddress,
+    address,
+    enabled: isSushiV2,
+  })
+  const token = useMemo(() => {
+    if (indexedToken?.__typename !== 'SushiV2LaunchpadToken' || !launchInfo) {
+      return indexedToken
+    }
+    return {
+      ...indexedToken,
+      creator: launchInfo.creator,
+      feeReceiver: launchInfo.feeReceiver,
+      feeDisposition: launchInfo.feeDisposition,
+      feeSplit: {
+        sushiFeeBps: launchInfo.sushiFeeBps,
+        nonSushiFeeBps: 10_000 - launchInfo.sushiFeeBps,
+      },
+    }
+  }, [indexedToken, launchInfo])
   const canManage = token
     ? launchpadProviderHasCapability(token.provider, 'manage')
     : false
   const canManageMetadata = token
     ? launchpadProviderHasCapability(token.provider, 'metadata')
     : false
-  const isSushiV2 = token?.__typename === 'SushiV2LaunchpadToken'
-  const managementAddress = isSushiV2
-    ? getSushiV2LaunchpadAddress(chainId)
-    : SUSHI_V1_LAUNCHPAD_ADDRESS
-  const managementAbi = isSushiV2
-    ? SUSHI_V2_LAUNCHPAD_ABI
-    : SUSHI_V1_LAUNCHPAD_ABI
   const { data: launchpadOwner } = useReadContract({
-    address: getSushiV2LaunchpadAddress(chainId),
+    address: managementAddress,
     abi: SUSHI_V2_LAUNCHPAD_ABI,
     chainId,
     functionName: 'owner',
@@ -185,39 +201,16 @@ export function ManageTokenPage({
         ? 'contract'
         : 'eoa'
   const {
-    data: distributionSimulation,
-    isError: isDistributionSimulationError,
-    isPending: isDistributionSimulationPending,
+    preview: distributionPreview,
+    isSimulating: isDistributionSimulationPending,
     refetch: refetchDistributionSimulation,
-  } = useSimulateContract({
-    address: managementAddress,
-    abi: managementAbi,
-    chainId,
-    functionName: 'distributeFees',
-    args: [address],
-    query: {
-      enabled: canManage,
-      retry: false,
-      refetchInterval: ms('1m'),
-      refetchOnWindowFocus: true,
-    },
-  })
-  const distributionPreview: DistributionPreview | null = (() => {
-    if (isDistributionSimulationError || !distributionSimulation?.result) {
-      return null
-    }
-    const result = distributionSimulation.result
-    return 'quoteToSushi' in result
-      ? normalizeSushiV2Distribution(result)
-      : { quoteCollected: result[0], tokenCollected: result[1] }
-  })()
+    distributed,
+    isDistributing,
+    error: distributionError,
+    distributeFees,
+  } = useFeeDistribution({ chainId, address, token })
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
-  const [distributed, setDistributed] = useState(false)
-  const [isDistributing, setIsDistributing] = useState(false)
-  const [distributionError, setDistributionError] = useState<string | null>(
-    null,
-  )
   const [newCreator, setNewCreator] = useState('')
   const [newFeeReceiver, setNewFeeReceiver] = useState('')
   const [managementError, setManagementError] = useState<string | null>(null)
@@ -250,15 +243,6 @@ export function ManageTokenPage({
     const timeout = setTimeout(() => setSaved(false), SAVED_STATUS_DURATION_MS)
     return () => clearTimeout(timeout)
   }, [saved])
-  useEffect(() => {
-    if (!distributed) return
-
-    const timeout = setTimeout(
-      () => setDistributed(false),
-      SAVED_STATUS_DURATION_MS,
-    )
-    return () => clearTimeout(timeout)
-  }, [distributed])
 
   async function onSubmit(values: MetadataForm): Promise<void> {
     setSaved(false)
@@ -297,100 +281,32 @@ export function ManageTokenPage({
     }
   }
 
-  async function distributeFees(): Promise<void> {
-    if (!connectedAddress) return
-
-    setDistributed(false)
-    setDistributionError(null)
-    setIsDistributing(true)
-
-    try {
-      if (!token) throw new Error('Launch token is no longer available')
-      if (!canManage) {
-        throw new Error('This provider is not managed through Sushi')
-      }
-      if (connectedChainId !== chainId) {
-        throw new Error(
-          `Switch your wallet to ${getEvmChainById(chainId).name}`,
-        )
-      }
-      if (!publicClient) {
-        throw new Error('Could not connect to the launchpad network')
-      }
-
-      const distributionParameters = {
-        address: managementAddress,
-        abi: managementAbi,
-        chainId,
-        functionName: 'distributeFees',
-        args: [address],
-      } as const
-      await publicClient.simulateContract({
-        ...distributionParameters,
-        account: connectedAddress,
-      })
-
-      const hash = await writeContractAsync(distributionParameters)
-      const receiptPromise = publicClient.waitForTransactionReceipt({ hash })
-      const timestamp = Date.now()
-
-      void createToast({
-        account: connectedAddress,
-        type: 'claimRewards',
-        chainId,
-        txHash: hash,
-        promise: receiptPromise,
-        summary: {
-          pending: `Claiming ${token.symbol} launch fees`,
-          completed: `${token.symbol} launch fees were claimed`,
-          failed: `Something went wrong claiming ${token.symbol} launch fees`,
-        },
-        timestamp,
-        groupTimestamp: timestamp,
-        variant: 'perps',
-      })
-
-      await receiptPromise
-      await refetchDistributionSimulation()
-      setDistributed(true)
-    } catch (error) {
-      if (!isUserRejectedError(error)) {
-        const message =
-          error instanceof Error ? error.message : 'Fee distribution failed'
-        setDistributionError(
-          message.includes('NothingToWithdraw')
-            ? 'No fees are available to claim.'
-            : message,
-        )
-      }
-    } finally {
-      setIsDistributing(false)
-    }
-  }
-
   async function writeSushiV2Management(
     functionName: 'setFeeDisposition' | 'setFeeReceiver' | 'transferCreator',
     args: readonly [EvmAddress, number | EvmAddress],
   ): Promise<void> {
-    if (!connectedAddress || !publicClient || !token || !isSushiV2) return
+    if (!connectedAddress || !publicClient || !token || !isSushiV2) {
+      throw new Error('Connect your wallet to manage this launch')
+    }
     if (connectedChainId !== chainId) {
       throw new Error(`Switch your wallet to ${getEvmChainById(chainId).name}`)
     }
 
     const parameters = {
-      address: getSushiV2LaunchpadAddress(chainId),
+      address: managementAddress,
       abi: SUSHI_V2_LAUNCHPAD_ABI,
+      account: connectedAddress,
       chainId,
       functionName,
       args,
     } as const
-    await publicClient.simulateContract({
-      ...parameters,
-      account: connectedAddress,
-    })
+    await publicClient.simulateContract(parameters)
     const hash = await writeContractAsync(parameters)
-    await publicClient.waitForTransactionReceipt({ hash })
-    await refetch()
+    const receipt = await publicClient.waitForTransactionReceipt({ hash })
+    if (receipt.status !== 'success')
+      throw new Error('Management update failed')
+    await refetchLaunchInfo()
+    void refetchDistributionSimulation()
   }
 
   async function transferCreator(): Promise<void> {
@@ -759,35 +675,57 @@ export function ManageTokenPage({
         </div>
       </div>
 
-      <div className="mt-5">
-        <FeeDistributionCard
-          token={token}
-          chainId={chainId}
-          preview={distributionPreview}
-          isSimulating={isDistributionSimulationPending}
-          isDistributing={isDistributing}
-          distributed={distributed}
-          error={distributionError}
-          onDistribute={() => void distributeFees()}
-        />
-      </div>
+      {isSushiV2 && (!launchInfo || isLaunchInfoError) ? (
+        <div className="mt-5">
+          <Message variant={isLaunchInfoError ? 'destructive' : 'info'}>
+            {isLaunchInfoError
+              ? 'Could not load fee configuration from the contract.'
+              : 'Loading fee configuration…'}
+            {isLaunchInfoError ? (
+              <Button
+                variant="perps-secondary"
+                size="sm"
+                onClick={() => void refetchLaunchInfo()}
+              >
+                Try again
+              </Button>
+            ) : null}
+          </Message>
+        </div>
+      ) : (
+        <>
+          <div className="mt-5">
+            <FeeDistributionCard
+              token={token}
+              chainId={chainId}
+              preview={distributionPreview}
+              isSimulating={isDistributionSimulationPending}
+              isDistributing={isDistributing}
+              distributed={distributed}
+              error={distributionError}
+              onDistribute={() => void distributeFees()}
+            />
+          </div>
 
-      <div className="mt-5">
-        <ProviderManagementActions
-          token={token}
-          connectedAddress={connectedAddress}
-          isLaunchpadOwner={isLaunchpadOwner}
-          newCreator={newCreator}
-          newFeeReceiver={newFeeReceiver}
-          isUpdating={isUpdatingManagement}
-          error={managementError}
-          onNewCreatorChange={setNewCreator}
-          onNewFeeReceiverChange={setNewFeeReceiver}
-          onTransferCreator={() => void transferCreator()}
-          onSetFeeReceiver={() => void setFeeReceiver()}
-          onSetFeeDisposition={(next) => void setFeeDisposition(next)}
-        />
-      </div>
+          <div className="mt-5">
+            <ProviderManagementActions
+              token={token}
+              supportsHolderRewards={launchInfo?.supportsHolderRewards ?? false}
+              connectedAddress={connectedAddress}
+              isLaunchpadOwner={isLaunchpadOwner}
+              newCreator={newCreator}
+              newFeeReceiver={newFeeReceiver}
+              isUpdating={isUpdatingManagement}
+              error={managementError}
+              onNewCreatorChange={setNewCreator}
+              onNewFeeReceiverChange={setNewFeeReceiver}
+              onTransferCreator={() => void transferCreator()}
+              onSetFeeReceiver={() => void setFeeReceiver()}
+              onSetFeeDisposition={(next) => void setFeeDisposition(next)}
+            />
+          </div>
+        </>
+      )}
     </Container>
   )
 }

@@ -31,17 +31,29 @@ describe('Sushi V2 launchpad contract adapter', () => {
   })
 
   it('only exposes forward fee-disposition transitions', () => {
-    expect(getSushiV2FeeDispositionTransitions('DIRECT_PAYOUT')).toEqual([
+    expect(getSushiV2FeeDispositionTransitions('DIRECT_PAYOUT', true)).toEqual([
       'BURN_LAUNCH_TOKEN_FEES',
       'BUYBACK_AND_BURN',
+      'DISTRIBUTE_TO_HOLDERS',
     ])
     expect(
-      getSushiV2FeeDispositionTransitions('BURN_LAUNCH_TOKEN_FEES'),
-    ).toEqual(['BUYBACK_AND_BURN'])
-    expect(getSushiV2FeeDispositionTransitions('BUYBACK_AND_BURN')).toEqual([])
+      getSushiV2FeeDispositionTransitions('BURN_LAUNCH_TOKEN_FEES', true),
+    ).toEqual(['BUYBACK_AND_BURN', 'DISTRIBUTE_TO_HOLDERS'])
     expect(
-      getSushiV2FeeDispositionTransitions('DISTRIBUTE_TO_HOLDERS'),
+      getSushiV2FeeDispositionTransitions('BUYBACK_AND_BURN', true),
     ).toEqual([])
+    expect(
+      getSushiV2FeeDispositionTransitions('DISTRIBUTE_TO_HOLDERS', true),
+    ).toEqual([])
+  })
+
+  it('does not offer holder rewards for older tokens', () => {
+    expect(getSushiV2FeeDispositionTransitions('DIRECT_PAYOUT', false)).toEqual(
+      ['BURN_LAUNCH_TOKEN_FEES', 'BUYBACK_AND_BURN'],
+    )
+    expect(
+      getSushiV2FeeDispositionTransitions('BURN_LAUNCH_TOKEN_FEES', false),
+    ).toEqual(['BUYBACK_AND_BURN'])
   })
 
   it('orders dispositions by how committed they are', () => {

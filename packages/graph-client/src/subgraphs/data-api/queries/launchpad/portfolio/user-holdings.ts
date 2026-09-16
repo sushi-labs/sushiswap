@@ -22,6 +22,10 @@ export const LaunchpadUserHoldingsQuery = graphql(`
             pnlUsd
             tokenAmount
             token {
+              provider
+              factoryAddress
+              feeDisposition
+              tokenVersion
               address
               chainId
               createdAt

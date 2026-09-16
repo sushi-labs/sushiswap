@@ -183,7 +183,7 @@ export function TokenDetailSkeleton({
 
           <TradeActivitySkeleton />
 
-          <div className="h-[188px]">
+          {/* <div className="h-[188px]">
             <PerpsCard className="p-5" fullHeight fullWidth>
               <SkeletonBox className="h-7 w-36 rounded-md" />
               <div className="mt-3 space-y-2">
@@ -192,7 +192,7 @@ export function TokenDetailSkeleton({
               </div>
               <SkeletonBox className="mt-5 h-14 w-full rounded-xl" />
             </PerpsCard>
-          </div>
+          </div> */}
 
           <PerpsCard className="p-4" fullWidth>
             <SkeletonBox className="h-5 w-28 rounded-md" />
