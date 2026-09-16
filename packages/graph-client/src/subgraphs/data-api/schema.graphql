@@ -447,6 +447,7 @@ type SushiV2LaunchpadToken implements LaunchpadToken {
   currentSupply: BigInt!
   feeReceiver: EvmAddress!
   feeReceiverLocked: Boolean!
+  tokenVersion: SushiV2TokenVersion!
   liquidityMode: SushiV2LiquidityMode!
   feeDisposition: SushiV2FeeDisposition!
   feeSplit: SushiV2FeeSplit!
@@ -458,6 +459,11 @@ type SushiV2LaunchpadToken implements LaunchpadToken {
 enum SushiV2LiquidityMode {
   STANDARD
   MOON
+}
+
+enum SushiV2TokenVersion {
+  V2_0
+  V2_2
 }
 
 enum SushiV2FeeDisposition {
