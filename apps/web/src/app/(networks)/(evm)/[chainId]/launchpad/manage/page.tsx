@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isLaunchpadChainId } from '../constants'
+import { isLaunchpadV2ChainId } from 'sushi/evm'
 import { ManageLaunchesPage } from './_ui/manage-launches-page'
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default async function ManagePage({
   params: Promise<{ chainId: string }>
 }) {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return notFound()
+  if (!isLaunchpadV2ChainId(chainId)) return notFound()
 
   return <ManageLaunchesPage chainId={chainId} />
 }

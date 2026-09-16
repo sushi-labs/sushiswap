@@ -12,7 +12,11 @@ import { type KeyboardEvent, useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { type EvmAddress, getEvmChainById } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {
   formatPercent,
@@ -25,7 +29,6 @@ import { PageHeading } from '../../_ui/_common/page-heading'
 import { CollectionStateCard } from '../../_ui/_common/state-card'
 import { TokenAvatar } from '../../_ui/_common/token-avatar'
 import { MetricStrip, MetricStripItem } from '../../_ui/metrics/metric-strip'
-import type { LaunchpadChainId } from '../../constants'
 import {
   useLaunchpadUserHoldings,
   useLaunchpadUserStats,
@@ -148,7 +151,7 @@ function HoldingsTable({
   holdings,
   isFetchingNextPage,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   holdings: LaunchpadUserHolding[]
   isFetchingNextPage: boolean
 }) {
@@ -199,7 +202,7 @@ function HoldingsTable({
   )
 }
 
-export function PortfolioPage({ chainId }: { chainId: LaunchpadChainId }) {
+export function PortfolioPage({ chainId }: { chainId: LaunchpadV2ChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const address = useAccount('evm')
   const {

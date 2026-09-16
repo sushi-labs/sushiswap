@@ -23,6 +23,7 @@ import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import Link from 'next/link'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'
+import { isLaunchpadV2ChainId } from 'sushi/evm'
 import { CookieDialog } from './cookies/cookie-dialog'
 
 export const EXPLORE_NAVIGATION_LINKS = (
@@ -30,6 +31,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
 ): NavigationElementDropdown['items'] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
+  const _isLaunchpadV2ChainId = chainId && isLaunchpadV2ChainId(chainId)
 
   return [
     {
@@ -49,7 +51,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
     },
     {
       title: 'Launchpad',
-      href: '/launch',
+      href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/launchpad`,
       description: 'Discover and launch tokens with locked Sushi liquidity.',
     },
     {
@@ -125,6 +127,7 @@ export const headerElements = ({
 }: HeaderElements = {}): NavigationElement[] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
+  const _isLaunchpadV2ChainId = chainId && isLaunchpadV2ChainId(chainId)
 
   return [
     {
@@ -248,7 +251,7 @@ export const headerElements = ({
     },
     {
       title: 'Launchpad',
-      href: '/launch',
+      href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/launchpad`,
       show: 'desktop',
       type: NavigationElementType.Single,
     },

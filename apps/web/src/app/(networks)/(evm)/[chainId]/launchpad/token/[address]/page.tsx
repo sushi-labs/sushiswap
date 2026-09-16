@@ -1,7 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
-import { type EvmAddress, isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  isEvmAddress,
+  isLaunchpadV2ChainId,
+  normalizeEvmAddress,
+} from 'sushi/evm'
 import { getCachedLaunchpadTokenDefinition } from '../../_lib/get-cached-launchpad-token-definition'
 import {
   getLaunchpadCardValues,
@@ -15,7 +21,6 @@ import {
   getLaunchpadTokenUrl,
   serializeLaunchpadJsonLd,
 } from '../../_lib/launchpad-seo'
-import { type LaunchpadChainId, isLaunchpadChainId } from '../../constants'
 import { TokenDetailPage } from './_ui/token-detail-page'
 import { TokenDetailSkeleton } from './_ui/token-detail-skeleton'
 
@@ -28,7 +33,7 @@ async function LaunchpadTokenStructuredData({
   chainId,
   address,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress
 }) {
   const token = await getLaunchpadTokenForSeo(chainId, address)
@@ -48,7 +53,7 @@ async function getTokenParams(params: LaunchpadTokenPageParams) {
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
 
-  if (!isLaunchpadChainId(chainId) || !isEvmAddress(address)) {
+  if (!isLaunchpadV2ChainId(chainId) || !isEvmAddress(address)) {
     return null
   }
   const normalizedAddress = normalizeEvmAddress(address)

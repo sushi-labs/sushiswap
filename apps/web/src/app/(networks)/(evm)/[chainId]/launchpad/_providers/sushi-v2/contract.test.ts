@@ -1,3 +1,4 @@
+import { EvmChainId } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
 import {
   SUSHI_V2_FEE_DISPOSITION,
@@ -5,10 +6,20 @@ import {
   SUSHI_V2_LIQUIDITY_MODE,
   getSushiV2FeeDispositionTransitions,
   getSushiV2FeeRoutes,
+  getSushiV2LaunchpadAddress,
   normalizeSushiV2Distribution,
 } from './contract'
 
 describe('Sushi V2 launchpad contract adapter', () => {
+  it('uses the factory deployed on the selected chain', () => {
+    expect(getSushiV2LaunchpadAddress(EvmChainId.ROBINHOOD)).toBe(
+      '0xf1716ebf85836ffe2985db9a50dd29e5814cabe9',
+    )
+    expect(getSushiV2LaunchpadAddress(EvmChainId.ARC)).toBe(
+      '0xf8027a52e2c910d9fff720f311c87cb3b0e76f9a',
+    )
+  })
+
   it('keeps Solidity enum ordinals explicit', () => {
     expect(SUSHI_V2_LIQUIDITY_MODE).toEqual({ STANDARD: 0, MOON: 1 })
     expect(SUSHI_V2_FEE_DISPOSITION).toEqual({

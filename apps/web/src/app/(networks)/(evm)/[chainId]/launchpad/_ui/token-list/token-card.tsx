@@ -78,12 +78,10 @@ export function TokenCard({
     if (isStockPair) {
       return ['via-[#CCFF00]/80', 'hover:border-[#CCFF00]/80']
     }
-    if (
-      isAddressEqual(
-        token.pool.quoteToken.address,
-        SUSHI[token.chainId].address,
-      )
-    ) {
+    const sushi = Object.values(SUSHI).find(
+      (currency) => currency.chainId === token.chainId,
+    )
+    if (sushi && isAddressEqual(token.pool.quoteToken.address, sushi.address)) {
       return ['via-pink/80', 'hover:border-pink/80 ']
     }
     return ['via-perps-blue/80', 'hover:border-perps-blue/80 ']

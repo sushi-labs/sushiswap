@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/ui/icons/sushi-icon'
 import type { ReactNode } from 'react'
 import { ChainId } from 'sushi'
-import type { LaunchpadChainId } from '../constants'
+import type { LaunchpadV2ChainId } from 'sushi/evm'
 
 const CARD_BACKGROUND = '#0D1217'
 const PINK = '#FF8ECA'
@@ -29,7 +29,7 @@ export function LaunchpadDiscoverEmbed({
   chainId,
   chainName,
 }: {
-  chainId?: LaunchpadChainId
+  chainId?: LaunchpadV2ChainId
   chainName: string
 }) {
   return (
@@ -69,7 +69,7 @@ export function LaunchpadTokenEmbed({
   stats,
   symbol,
 }: {
-  chainId?: LaunchpadChainId
+  chainId?: LaunchpadV2ChainId
   chainName: string
   changePercent: number | null
   logoDataUrl?: string
@@ -421,7 +421,7 @@ function ChainBadge({
   chainId,
   chainName,
 }: {
-  chainId?: LaunchpadChainId
+  chainId?: LaunchpadV2ChainId
   chainName: string
 }) {
   return (
@@ -451,7 +451,7 @@ function ChainMark({
   chainId,
   size,
 }: {
-  chainId?: LaunchpadChainId
+  chainId?: LaunchpadV2ChainId
   size: number
 }) {
   if (chainId !== ChainId.ROBINHOOD) {

@@ -5,7 +5,6 @@ import { SushiWithTextIcon } from '@sushiswap/ui/icons/sushi-with-text-icon'
 import type { FC } from 'react'
 import { WagmiHeaderComponents } from 'src/lib/wagmi/components/wagmi-header-components'
 import type { ChainId } from 'sushi'
-import { useChainId } from 'wagmi'
 import { launchpadHeaderElements } from './header-elements'
 
 interface LaunchpadHeaderProps {
@@ -15,13 +14,10 @@ interface LaunchpadHeaderProps {
 }
 
 export const LaunchpadHeader: FC<LaunchpadHeaderProps> = ({
-  chainId: routeChainId,
+  chainId,
   chainKey,
   networks,
 }) => {
-  const connectedChainId = useChainId()
-  const chainId = routeChainId ?? connectedChainId
-
   return (
     <div className="z-20 h-[56px] w-full">
       <div className="fixed z-20 flex w-full">
@@ -47,7 +43,6 @@ export const LaunchpadHeader: FC<LaunchpadHeaderProps> = ({
             <WagmiHeaderComponents
               networks={networks}
               selectedNetwork={chainId}
-              hideNetworkSelector
               isPerps
             />
           }

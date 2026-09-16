@@ -1,8 +1,15 @@
-import type { EvmAddress } from 'sushi/evm'
+import {
+  type EvmAddress,
+  LAUNCHPAD_V2_FACTORIES,
+  type LaunchpadV2ChainId,
+} from 'sushi/evm'
 import { parseAbi } from 'viem'
 
-export const SUSHI_V2_LAUNCHPAD_ADDRESS =
-  '0xF1716eBf85836ffE2985db9A50dd29e5814caBe9' satisfies EvmAddress
+export function getSushiV2LaunchpadAddress(
+  chainId: LaunchpadV2ChainId,
+): EvmAddress {
+  return LAUNCHPAD_V2_FACTORIES[chainId][0].address
+}
 
 export const SUSHI_V2_LAUNCHPAD_ABI = parseAbi([
   'function launch((string name, string symbol) tokenConfig, address quoteToken, uint8 liquidityMode, uint8 feeDisposition) payable returns (address token, address pool, uint256[] positionIds)',

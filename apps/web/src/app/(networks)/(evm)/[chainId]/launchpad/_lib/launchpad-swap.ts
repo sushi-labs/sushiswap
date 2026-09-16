@@ -1,5 +1,16 @@
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { withoutScientificNotation } from 'sushi'
+import {
+  type EvmCurrency,
+  isEvmWNativeSupported,
+  unwrapEvmToken,
+} from 'sushi/evm'
+
+export function getLaunchpadSwapCurrency(currency: EvmCurrency): EvmCurrency {
+  return isEvmWNativeSupported(currency.chainId)
+    ? unwrapEvmToken(currency)
+    : currency.wrap()
+}
 
 export const LAUNCHPAD_SWAP_FEE = 0.01
 

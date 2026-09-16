@@ -8,7 +8,12 @@ import {
 import { useCopyClipboard } from '@sushiswap/hooks'
 import { Button, Container, LinkExternal, TextField } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
-import { type EvmAddress, EvmChainId, getEvmChainById } from 'sushi/evm'
+import {
+  type EvmAddress,
+  EvmChainId,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { useEnsName } from 'wagmi'
 import { formatUsd, shortenAddress } from '../../../_lib/format'
 import { useLaunchpadCreator } from '../../../_lib/use-launchpad-creator'
@@ -20,14 +25,13 @@ import {
 } from '../../../_ui/explore/token-sort-controls'
 import { MetricCard } from '../../../_ui/metrics/metric-card'
 import { TokenGrid } from '../../../_ui/token-list/token-grid'
-import type { LaunchpadChainId } from '../../../constants'
 import type { LaunchpadTokenSortField } from '../../../types'
 
 export function CreatorPage({
   chainId,
   address,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress
 }) {
   const [search, setSearch] = useState('')

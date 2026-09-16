@@ -4,13 +4,13 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import type { LaunchpadChainId } from '../constants'
+import type { LaunchpadV2ChainId } from 'sushi/evm'
 
 export function useLaunchpadStats({
   chainId,
   providers,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   providers: LaunchpadProvider[]
 }) {
   return useQuery({
