@@ -1,7 +1,9 @@
 import type { SupportedChainId } from 'src/config'
 import { isWNativeSupported, normalizeAddress } from 'sushi'
 import {
+  EvmChainId,
   EvmNative,
+  USDC,
   defaultCurrency,
   defaultQuoteCurrency,
   isEvmAddress,
@@ -33,6 +35,10 @@ export function getTokenAsString<TChainId extends SupportedChainId>(
 
 export function getDefaultCurrency(chainId: SupportedChainId) {
   if (isEvmChainId(chainId)) {
+    if (chainId === EvmChainId.ARC) {
+      //todo: fix in sushi pkg
+      return getTokenAsString(chainId, USDC[chainId])
+    }
     return getTokenAsString(chainId, defaultCurrency[chainId])
   } else if (isSvmChainId(chainId)) {
     return getTokenAsString(chainId, svmDefaultCurrency[chainId])

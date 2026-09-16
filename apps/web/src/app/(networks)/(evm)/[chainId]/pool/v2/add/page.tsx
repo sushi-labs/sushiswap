@@ -43,13 +43,14 @@ import {
 import { PoolFinder } from 'src/lib/wagmi/systems/pool-finder/pool-finder'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
-  type EvmChainId,
+  EvmChainId,
   EvmChainKey,
   type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
   type SushiSwapV2ChainId,
   type SushiSwapV2Pool,
+  USDC,
   defaultCurrency,
   defaultQuoteCurrency,
   getEvmChainById,
@@ -91,7 +92,11 @@ function V2PoolPage({ chainId }: { chainId: SushiSwapV2ChainId }) {
   )
 
   useEffect(() => {
-    setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
+    if (chainId === EvmChainId.ARC) {
+      setToken0(USDC[chainId])
+    } else {
+      setToken0(defaultCurrency[chainId as keyof typeof defaultCurrency])
+    }
     setToken1(
       defaultQuoteCurrency[chainId as keyof typeof defaultQuoteCurrency],
     )
@@ -123,7 +128,6 @@ function V2PoolPage({ chainId }: { chainId: SushiSwapV2ChainId }) {
     },
     [token0],
   )
-
   return (
     <PoolFinder
       components={

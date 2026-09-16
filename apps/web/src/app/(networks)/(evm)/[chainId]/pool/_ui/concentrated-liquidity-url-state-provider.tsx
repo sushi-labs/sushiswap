@@ -7,7 +7,9 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useState,
 } from 'react'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import {
@@ -91,13 +93,23 @@ export const ConcentratedLiquidityURLStateProvider: FC<
   supportedNetworks = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
 }) => {
   const pathname = usePathname()
-  const searchParams = useSearchParams()!
+  const routeSearchParams = useSearchParams()!
+  const [searchParams, setSearchParams] =
+    useState<URLSearchParams>(routeSearchParams)
 
-  // Update the URL search params without a router navigation (which would
-  // trigger a full page reload in Next 16); useSearchParams stays in sync.
+  useEffect(() => {
+    setSearchParams(routeSearchParams)
+  }, [routeSearchParams])
+
   const updateSearchParams = useCallback(
     (params: URLSearchParams) => {
-      history.pushState(null, '', `${pathname}?${params.toString()}`)
+      // Preserve Next's history state so form edits don't trigger navigation.
+      history.replaceState(
+        history.state,
+        '',
+        `${pathname}?${params}${window.location.hash}`,
+      )
+      setSearchParams(params)
     },
     [pathname],
   )
