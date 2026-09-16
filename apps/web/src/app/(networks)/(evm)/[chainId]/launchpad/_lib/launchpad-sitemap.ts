@@ -1,9 +1,11 @@
 import { getLaunchpadTokens } from '@sushiswap/graph-client/data-api'
 import type { MetadataRoute } from 'next'
 import { unstable_cache } from 'next/cache'
-import { getEvmChainById } from 'sushi/evm'
-import { LAUNCHPAD_SUPPORTED_CHAIN_IDS } from '../constants'
-import type { LaunchpadChainId } from '../constants'
+import {
+  LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { getLaunchpadProvidersForFilter } from './launchpad-provider'
 import { getLaunchpadCreateUrl, getLaunchpadTokenUrl } from './launchpad-seo'
 
@@ -18,7 +20,7 @@ interface LaunchpadSitemapToken {
 }
 
 const getCachedLaunchpadSitemapTokens = unstable_cache(
-  async (chainId: LaunchpadChainId): Promise<LaunchpadSitemapToken[]> => {
+  async (chainId: LaunchpadV2ChainId): Promise<LaunchpadSitemapToken[]> => {
     const entries: LaunchpadSitemapToken[] = []
     let after: string | undefined
 
@@ -56,8 +58,8 @@ const getCachedLaunchpadSitemapTokens = unstable_cache(
 
 function getLaunchpadChainIdByKey(
   networkKey: string,
-): LaunchpadChainId | undefined {
-  return LAUNCHPAD_SUPPORTED_CHAIN_IDS.find(
+): LaunchpadV2ChainId | undefined {
+  return LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS.find(
     (chainId) => getEvmChainById(chainId).key === networkKey,
   )
 }

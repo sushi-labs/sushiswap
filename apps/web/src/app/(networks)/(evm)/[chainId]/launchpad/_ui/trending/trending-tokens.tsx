@@ -3,9 +3,9 @@
 import { type ReactElement, type ReactNode, useMemo } from 'react'
 import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
 import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
+import type { LaunchpadV2ChainId } from 'sushi/evm'
 import { getLaunchpadProvidersForFilter } from '../../_lib/launchpad-provider'
 import { useLaunchpadTokens } from '../../_lib/use-launchpad-tokens'
-import type { LaunchpadChainId } from '../../constants'
 import {
   TrendingTokenCard,
   TrendingTokenCardSkeleton,
@@ -34,7 +34,7 @@ export function TrendingTokensSkeleton(): ReactElement {
 
 export function TrendingTokens({
   chainId,
-}: { chainId: LaunchpadChainId }): ReactElement {
+}: { chainId: LaunchpadV2ChainId }): ReactElement {
   const { data: stockTokens } = useRobinhoodStockTokens()
   const { data, isPending, isError } = useLaunchpadTokens(
     {

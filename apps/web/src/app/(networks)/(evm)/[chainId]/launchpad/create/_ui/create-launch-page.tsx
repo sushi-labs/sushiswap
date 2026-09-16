@@ -17,9 +17,11 @@ import {
   type EvmAddress,
   EvmNative,
   type EvmToken,
+  type LaunchpadV2ChainId,
   SUSHI,
   WNATIVE,
   getEvmChainById,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { formatEther, isAddressEqual, parseEventLogs } from 'viem'
 import {
@@ -40,11 +42,10 @@ import {
 import {
   SUSHI_V2_FEE_DISPOSITION,
   SUSHI_V2_LAUNCHPAD_ABI,
-  SUSHI_V2_LAUNCHPAD_ADDRESS,
   SUSHI_V2_LIQUIDITY_MODE,
+  getSushiV2LaunchpadAddress,
 } from '../../_providers/sushi-v2/contract'
 import { PageHeading } from '../../_ui/_common/page-heading'
-import type { LaunchpadChainId } from '../../constants'
 import {
   LAUNCH_FDV_LEVELS_USD,
   quoteInitialBuy,
@@ -179,7 +180,7 @@ function wait(milliseconds: number): Promise<void> {
 }
 
 async function waitForLaunchpadIndexing(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   tokenAddress: EvmAddress,
 ): ReturnType<typeof getLaunchpadToken> {
   for (let attempt = 0; attempt < INDEXING_ATTEMPTS; attempt++) {
@@ -199,8 +200,9 @@ async function waitForLaunchpadIndexing(
 export function SushiV2CreateLaunchPage({
   chainId,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
 }) {
+  const launchpadAddress = getSushiV2LaunchpadAddress(chainId)
   const chain = getEvmChainById(chainId)
   const router = useRouter()
   const { address: account } = useConnection()
@@ -232,9 +234,11 @@ export function SushiV2CreateLaunchPage({
       ),
     [quoteTokens],
   )
+  const sushi = Object.values(SUSHI).find((token) => token.chainId === chainId)
   const defaultQuoteToken =
-    quoteTokens.find((quoteToken) =>
-      isAddressEqual(quoteToken.address, SUSHI[chainId].address),
+    quoteTokens.find(
+      (quoteToken) =>
+        sushi && isAddressEqual(quoteToken.address, sushi.address),
     ) ??
     quoteTokens.find((quoteToken) =>
       isAddressEqual(quoteToken.address, WNATIVE[chainId].address),
@@ -266,12 +270,14 @@ export function SushiV2CreateLaunchPage({
   })
   const values = methods.watch()
   const isWethQuoteToken = Boolean(
-    selectedQuoteToken &&
+    isEvmWNativeSupported(chainId) &&
+      selectedQuoteToken &&
       isAddressEqual(selectedQuoteToken.address, WNATIVE[chainId].address),
   )
   const isSushiQuoteToken = Boolean(
-    selectedQuoteToken &&
-      isAddressEqual(selectedQuoteToken.address, SUSHI[chainId].address),
+    sushi &&
+      selectedQuoteToken &&
+      isAddressEqual(selectedQuoteToken.address, sushi.address),
   )
   const isNativeInitialBuy = isWethQuoteToken && wethPaymentMode === 'native'
   const nativeCurrency = useMemo(
@@ -304,19 +310,19 @@ export function SushiV2CreateLaunchPage({
     allowFailure: false,
     contracts: [
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        address: launchpadAddress,
         abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
         functionName: 'launchFee',
       },
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        address: launchpadAddress,
         abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
         functionName: 'defaultSushiFeeBps',
       },
       {
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        address: launchpadAddress,
         abi: SUSHI_V2_LAUNCHPAD_ABI,
         chainId,
         functionName: 'canonicalSushi',
@@ -337,12 +343,12 @@ export function SushiV2CreateLaunchPage({
     contracts: LAUNCH_FDV_LEVELS_USD.map(
       (fdvUsd) =>
         ({
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          address: launchpadAddress,
           abi: SUSHI_V2_LAUNCHPAD_ABI,
           chainId,
           functionName: 'calculateFdvTick',
           args: [
-            selectedQuoteToken?.address ?? SUSHI_V2_LAUNCHPAD_ADDRESS,
+            selectedQuoteToken?.address ?? launchpadAddress,
             BigInt(fdvUsd),
           ],
         }) as const,
@@ -491,7 +497,7 @@ export function SushiV2CreateLaunchPage({
       }
 
       const currentLaunchFee = await publicClient.readContract({
-        address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+        address: launchpadAddress,
         abi: SUSHI_V2_LAUNCHPAD_ABI,
         functionName: 'launchFee',
       })
@@ -505,7 +511,7 @@ export function SushiV2CreateLaunchPage({
 
       if (amountIn === 0n) {
         const launchParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          address: launchpadAddress,
           abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launch',
           args: [
@@ -521,10 +527,10 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync(launchParameters)
+        hash = await writeContractAsync({ ...launchParameters, chainId })
       } else if (isNativeInitialBuy) {
         const quoteParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          address: launchpadAddress,
           abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launchAndBuyNative',
           args: [
@@ -564,10 +570,10 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync(launchParameters)
+        hash = await writeContractAsync({ ...launchParameters, chainId })
       } else {
         const quoteParameters = {
-          address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+          address: launchpadAddress,
           abi: SUSHI_V2_LAUNCHPAD_ABI,
           functionName: 'launchAndBuy',
           args: [
@@ -609,7 +615,7 @@ export function SushiV2CreateLaunchPage({
           ...launchParameters,
           account,
         })
-        hash = await writeContractAsync(launchParameters)
+        hash = await writeContractAsync({ ...launchParameters, chainId })
       }
       const receiptPromise = publicClient.waitForTransactionReceipt({ hash })
       const timestamp = Date.now()
@@ -636,7 +642,7 @@ export function SushiV2CreateLaunchPage({
         abi: SUSHI_V2_LAUNCHPAD_ABI,
         eventName: 'TokenLaunched',
         logs: receipt.logs.filter((log) =>
-          isAddressEqual(log.address, SUSHI_V2_LAUNCHPAD_ADDRESS),
+          isAddressEqual(log.address, launchpadAddress),
         ),
         strict: true,
       })

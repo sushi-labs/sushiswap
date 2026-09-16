@@ -1,8 +1,7 @@
 import { ImageResponse } from 'next/og'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isLaunchpadV2ChainId } from 'sushi/evm'
 import { getLaunchpadEmbedFonts } from './_lib/launchpad-embed-fonts'
 import { LaunchpadDiscoverEmbed } from './_ui/launchpad-embed'
-import { isLaunchpadChainId } from './constants'
 
 export const alt = 'Discover tokens on Sushi Launchpad'
 export const size = {
@@ -16,7 +15,7 @@ export default async function OpenGraphImage({
   params: Promise<{ chainId: string }>
 }) {
   const chainId = Number((await params).chainId)
-  const isSupported = isLaunchpadChainId(chainId)
+  const isSupported = isLaunchpadV2ChainId(chainId)
   const chainName = isSupported ? getEvmChainById(chainId).name : 'Sushi'
   const fonts = await getLaunchpadEmbedFonts()
 

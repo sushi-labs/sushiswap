@@ -17,7 +17,12 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { DEFAULT_SLIPPAGE, type EvmToken, unwrapEvmToken } from 'sushi/evm'
+import {
+  DEFAULT_SLIPPAGE,
+  type EvmToken,
+  type LaunchpadV2ChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
@@ -34,7 +39,6 @@ import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import type { LaunchpadTokenWithCurrencies } from '../../../_lib/use-launchpad-token'
 import { TokenAvatar } from '../../../_ui/_common/token-avatar'
-import type { LaunchpadChainId } from '../../../constants'
 
 type SwapSide = 'BUY' | 'SELL'
 
@@ -134,7 +138,7 @@ function SwapPanelContent({
   const {
     mutate: { setSwapAmount, setToken0, setToken1, switchTokens },
     state: { chainId, swapAmountString, token0, token1 },
-  } = useDerivedStateSimpleSwap<LaunchpadChainId>()
+  } = useDerivedStateSimpleSwap<LaunchpadV2ChainId>()
   const {
     data: quote,
     isFetching: isQuoteFetching,
@@ -172,7 +176,7 @@ function SwapPanelContent({
   }
 
   function selectCounterCurrency(
-    currency: CurrencyFor<LaunchpadChainId>,
+    currency: CurrencyFor<LaunchpadV2ChainId>,
   ): void {
     if (currency.isSame(launchToken)) return
 

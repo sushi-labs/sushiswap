@@ -1,6 +1,6 @@
+import type { LaunchpadV2ChainId } from 'sushi/evm'
 import { hashTypedData } from 'viem'
 import { describe, expect, it } from 'vitest'
-import type { LaunchpadChainId } from '../constants'
 import {
   LAUNCHPAD_METADATA_DESCRIPTION_MAX_BYTES,
   buildLaunchpadMetadataDocument,
@@ -42,7 +42,7 @@ describe('launchpad metadata signature', () => {
     expect(
       hashTypedData(
         buildUpdateMetadataTypedData({
-          chainId: 4663 as LaunchpadChainId,
+          chainId: 4663 as LaunchpadV2ChainId,
           factoryAddress: '0x1111111111111111111111111111111111111111',
           tokenAddress: '0x3333333333333333333333333333333333333333',
           expectedRevision: 2,

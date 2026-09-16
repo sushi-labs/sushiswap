@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isLaunchpadChainId } from '../constants'
+import { isLaunchpadV2ChainId } from 'sushi/evm'
 import { PortfolioPage } from './_ui/portfolio-page'
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default async function LaunchpadPortfolioPage({
   params: Promise<{ chainId: string }>
 }) {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return notFound()
+  if (!isLaunchpadV2ChainId(chainId)) return notFound()
 
   return <PortfolioPage chainId={chainId} />
 }

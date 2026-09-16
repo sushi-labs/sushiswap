@@ -13,19 +13,18 @@ import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useSwitchChain } from 'src/lib/wallet/namespaces/evm/hooks/use-switch-chain'
 import { Amount } from 'sushi'
-import { EvmNative } from 'sushi/evm'
+import { EvmNative, type LaunchpadV2ChainId } from 'sushi/evm'
 import { useChainId, useGasPrice } from 'wagmi'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { getQuickBuyNativeAmount } from '../../_lib/launchpad-swap'
-import type { LaunchpadChainId } from '../../constants'
 import type { LaunchpadToken } from '../../types'
 import { QuickBuyTradeReview } from './quick-buy-trade-review'
 
 type ExecuteQuickBuyInput = {
   token: LaunchpadToken
   usdAmount: number
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
 }
 
 type QuickBuyRequest = ExecuteQuickBuyInput & {
@@ -44,7 +43,7 @@ export function QuickBuyProvider({
   chainId,
   children,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   children: ReactNode
 }) {
   const [pending, setPending] = useState<ExecuteQuickBuyInput>()

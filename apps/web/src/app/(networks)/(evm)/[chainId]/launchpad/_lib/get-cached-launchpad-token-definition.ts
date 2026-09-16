@@ -1,8 +1,7 @@
 import { getLaunchpadTokenDefinition } from '@sushiswap/graph-client/data-api'
 import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 
 // The fields are immutable, but the launch itself can still be orphaned by a
 // reorg, so periodically revalidate its existence.
@@ -12,7 +11,7 @@ export async function getCachedLaunchpadTokenDefinition({
   chainId,
   address,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress
 }) {
   'use cache'

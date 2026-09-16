@@ -6,7 +6,7 @@ import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
-import { EvmNative, EvmToken } from 'sushi/evm'
+import { EvmNative, EvmToken, type LaunchpadV2ChainId } from 'sushi/evm'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
   DerivedstateSimpleSwapProvider,
@@ -19,7 +19,6 @@ import {
   LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS,
   LAUNCHPAD_SWAP_FEE,
 } from '../../_lib/launchpad-swap'
-import type { LaunchpadChainId } from '../../constants'
 import type { LaunchpadToken } from '../../types'
 
 export function QuickBuyTradeReview({
@@ -95,7 +94,7 @@ function QuickBuyTradeReviewTrigger({
 }) {
   const {
     mutate: { setSwapAmount },
-  } = useDerivedStateSimpleSwap<LaunchpadChainId>()
+  } = useDerivedStateSimpleSwap<LaunchpadV2ChainId>()
   const { open: reviewOpen, setOpen: setReviewOpen } = useDialog(
     DialogType.Review,
   )

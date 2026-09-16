@@ -5,12 +5,11 @@ import { useDebounce, useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getEvmChainById } from 'sushi/evm'
+import { type LaunchpadV2ChainId, getEvmChainById } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { getLaunchpadProvidersForFilter } from '../../_lib/launchpad-provider'
 import { useLaunchpadStats } from '../../_lib/use-launchpad-stats'
 import { useLaunchpadTokens } from '../../_lib/use-launchpad-tokens'
-import type { LaunchpadChainId } from '../../constants'
 import { CollectionStateCard } from '../_common/state-card'
 import { LaunchpadExploreControls } from '../explore/launchpad-explore-controls'
 import { LaunchpadExploreSection } from '../explore/launchpad-explore-section'
@@ -21,7 +20,9 @@ import { TokenTable } from '../token-list/token-table'
 import { TrendingTokens } from '../trending/trending-tokens'
 import { LaunchpadHero } from './launchpad-hero'
 
-export function LaunchpadHomePage({ chainId }: { chainId: LaunchpadChainId }) {
+export function LaunchpadHomePage({
+  chainId,
+}: { chainId: LaunchpadV2ChainId }) {
   const chainKey = getEvmChainById(chainId).key
   const pathname = usePathname()
   const searchParams = useSearchParams()

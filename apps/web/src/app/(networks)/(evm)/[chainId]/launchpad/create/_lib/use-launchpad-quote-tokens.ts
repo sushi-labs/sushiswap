@@ -4,12 +4,11 @@ import { getLaunchpadQuoteTokenList } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useCallback } from 'react'
-import { EvmToken } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../constants'
+import { EvmToken, type LaunchpadV2ChainId } from 'sushi/evm'
 
 const EMPTY_QUOTE_TOKEN_LIST: EvmToken[] = []
 
-export function useLaunchpadQuoteTokens(chainId: LaunchpadChainId) {
+export function useLaunchpadQuoteTokens(chainId: LaunchpadV2ChainId) {
   const select = useCallback(
     (tokens: Awaited<ReturnType<typeof getLaunchpadQuoteTokenList>>) =>
       tokens.map((token) => new EvmToken({ chainId, ...token })),

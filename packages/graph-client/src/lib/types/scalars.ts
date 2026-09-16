@@ -1,5 +1,4 @@
 import type { BladeChainId } from 'src/subgraphs/data-api/types/BladeChainId.js'
-import type { LaunchpadChainId } from 'src/subgraphs/data-api/types/LaunchpadChainId.js'
 import type { PoolChainId } from 'src/subgraphs/data-api/types/PoolChainId.js'
 import type { SmartPoolChainId } from 'src/subgraphs/data-api/types/SmartPoolChainId.js'
 import type { SushiSwapChainId } from 'src/subgraphs/data-api/types/SushiSwapChainId.js'
@@ -8,6 +7,7 @@ import type { TrendingTokensChainId } from 'src/subgraphs/data-api/types/Trendin
 import type { ChainId } from 'sushi'
 import type {
   EvmAddress,
+  LaunchpadV2ChainId,
   SushiSwapV2ChainId,
   SushiSwapV3ChainId,
 } from 'sushi/evm'
@@ -47,5 +47,5 @@ export type Scalars = {
 
   TokenListChainId: TokenListChainId
   TrendingTokensChainId: TrendingTokensChainId
-  LaunchpadChainId: LaunchpadChainId
+  LaunchpadChainId: LaunchpadV2ChainId
 }
