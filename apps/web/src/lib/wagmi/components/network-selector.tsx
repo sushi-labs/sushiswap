@@ -64,7 +64,7 @@ const NetworkSelector = <T extends ChainId = ChainId>({
   )
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>{children}</PopoverPrimitive.Trigger>
       <PopoverContent className="!w-60 !p-0 !overflow-x-hidden !overflow-y-scroll scroll">
         <Command>
