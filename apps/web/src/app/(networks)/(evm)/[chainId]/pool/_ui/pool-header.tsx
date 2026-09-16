@@ -12,6 +12,7 @@ import React, { type FC } from 'react'
 import { formatPercent, shortenAddress } from 'sushi'
 import {
   type EvmAddress,
+  EvmChainId,
   EvmToken,
   getEvmChainById,
   unwrapEvmToken,
@@ -40,8 +41,14 @@ export const PoolHeader: FC<PoolHeader> = ({
   priceRange,
   showAddLiquidityButton = false,
 }) => {
-  const token0 = unwrapEvmToken(new EvmToken(pool.token0))
-  const token1 = unwrapEvmToken(new EvmToken(pool.token1))
+  const token0 =
+    pool.chainId === EvmChainId.ARC
+      ? new EvmToken(pool.token0)
+      : unwrapEvmToken(new EvmToken(pool.token0))
+  const token1 =
+    pool.chainId === EvmChainId.ARC
+      ? new EvmToken(pool.token1)
+      : unwrapEvmToken(new EvmToken(pool.token1))
 
   return (
     <div className="flex flex-col gap-6">
