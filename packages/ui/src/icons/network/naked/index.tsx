@@ -5,6 +5,7 @@ import { ApeNaked } from './ape-naked'
 import { AptosNaked } from './aptos-naked'
 import { ArbitrumNaked } from './arbitrum-naked'
 import { ArbitrumNovaNaked } from './arbitrum-nova-naked'
+import { ArcNaked } from './arc-naked'
 import { AvalancheNaked } from './avalanche-naked'
 import { BaseNaked } from './base-naked'
 import { BeraNaked } from './bera-naked'
@@ -56,6 +57,7 @@ export * from './ape-naked'
 export * from './aptos-naked'
 export * from './arbitrum-naked'
 export * from './arbitrum-nova-naked'
+export * from './arc-naked'
 export * from './avalanche-naked'
 export * from './base-naked'
 export * from './bera-naked'
@@ -161,4 +163,5 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.STELLAR]: StellarNaked,
   [ChainId.SOLANA]: SolanaNaked,
   [ChainId.ROBINHOOD]: RobinhoodNaked,
+  [ChainId.ARC]: ArcNaked,
 }

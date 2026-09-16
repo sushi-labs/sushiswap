@@ -1,6 +1,7 @@
 import type { SupportedChainId } from 'src/config'
 import { isWNativeSupported, normalizeAddress } from 'sushi'
 import {
+  EvmChainId,
   EvmNative,
   defaultCurrency,
   defaultQuoteCurrency,
@@ -25,6 +26,12 @@ export function getTokenAsString<TChainId extends SupportedChainId>(
     }
     throw new Error(`Invalid token address: ${token}`)
   } else if (token.type === 'native') {
+    if (chainId === EvmChainId.ARC) {
+      return normalizeAddress(
+        chainId,
+        token.wrap().address as AddressFor<typeof chainId>,
+      )
+    }
     return 'NATIVE' as const
   }
 
