@@ -6,7 +6,7 @@ import {
   activeAssetCtx,
   activeSpotAssetCtx,
 } from '@nktkas/hyperliquid/api/subscription'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { skipToken, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useSpotMeta } from '../info/use-spot-meta'
 import { hlWebSocketTransport } from '../transports'
@@ -94,7 +94,7 @@ export const useActiveAsset = ({ assetString }: { assetString: string }) => {
   const query = useQuery<ActiveAsset>({
     queryKey: ['active-asset', assetString],
     staleTime: Number.POSITIVE_INFINITY,
-    enabled: false,
+    queryFn: skipToken,
   })
 
   useEffect(() => {
