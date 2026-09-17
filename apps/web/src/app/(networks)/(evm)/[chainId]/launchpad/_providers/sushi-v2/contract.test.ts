@@ -1,3 +1,4 @@
+import { EvmChainId } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
 import {
   SUSHI_V2_FEE_DISPOSITION,
@@ -5,16 +6,27 @@ import {
   SUSHI_V2_LIQUIDITY_MODE,
   getSushiV2FeeDispositionTransitions,
   getSushiV2FeeRoutes,
+  getSushiV2LaunchpadAddress,
   normalizeSushiV2Distribution,
 } from './contract'
 
 describe('Sushi V2 launchpad contract adapter', () => {
+  it('uses the factory deployed on the selected chain', () => {
+    expect(getSushiV2LaunchpadAddress(EvmChainId.ROBINHOOD)).toBe(
+      '0xf1716ebf85836ffe2985db9a50dd29e5814cabe9',
+    )
+    expect(getSushiV2LaunchpadAddress(EvmChainId.ARC)).toBe(
+      '0xf8027a52e2c910d9fff720f311c87cb3b0e76f9a',
+    )
+  })
+
   it('keeps Solidity enum ordinals explicit', () => {
     expect(SUSHI_V2_LIQUIDITY_MODE).toEqual({ STANDARD: 0, MOON: 1 })
     expect(SUSHI_V2_FEE_DISPOSITION).toEqual({
       DIRECT_PAYOUT: 0,
       BURN_LAUNCH_TOKEN_FEES: 1,
       BUYBACK_AND_BURN: 2,
+      DISTRIBUTE_TO_HOLDERS: 3,
     })
   })
 
@@ -27,6 +39,9 @@ describe('Sushi V2 launchpad contract adapter', () => {
       getSushiV2FeeDispositionTransitions('BURN_LAUNCH_TOKEN_FEES'),
     ).toEqual(['BUYBACK_AND_BURN'])
     expect(getSushiV2FeeDispositionTransitions('BUYBACK_AND_BURN')).toEqual([])
+    expect(
+      getSushiV2FeeDispositionTransitions('DISTRIBUTE_TO_HOLDERS'),
+    ).toEqual([])
   })
 
   it('orders dispositions by how committed they are', () => {
@@ -34,7 +49,7 @@ describe('Sushi V2 launchpad contract adapter', () => {
       SUSHI_V2_FEE_DISPOSITION_ORDER.map(
         (disposition) => SUSHI_V2_FEE_DISPOSITION[disposition],
       ),
-    ).toEqual([0, 1, 2])
+    ).toEqual([0, 1, 2, 3])
   })
 
   it('routes each fee side by disposition', () => {
@@ -49,6 +64,10 @@ describe('Sushi V2 launchpad contract adapter', () => {
     expect(getSushiV2FeeRoutes('BUYBACK_AND_BURN')).toEqual({
       launchToken: ['SUSHI', 'BURN'],
       quote: ['SUSHI', 'BUYBACK'],
+    })
+    expect(getSushiV2FeeRoutes('DISTRIBUTE_TO_HOLDERS')).toEqual({
+      launchToken: ['SUSHI', 'BURN'],
+      quote: ['SUSHI', 'HOLDERS'],
     })
   })
 

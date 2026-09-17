@@ -19,10 +19,9 @@ import {
   useRef,
   useState,
 } from 'react'
-import type { EvmAddress } from 'sushi/evm'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import type { LaunchpadChainId } from '../../../constants'
 import {
   DEFAULT_LAUNCHPAD_CHART_MODE,
   type LaunchpadChartMode,
@@ -36,7 +35,7 @@ const CHART_MODES: LaunchpadChartMode[] = ['market-cap', 'price']
 const PRICE_CHART_MODE: LaunchpadChartMode[] = ['price']
 
 export interface PriceChartData {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   createdAt: string
   decimals: number
   initialSupply: string

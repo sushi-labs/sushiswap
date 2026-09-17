@@ -1,4 +1,9 @@
-import { type EvmAddress, EvmChainId, szevm } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  isLaunchpadV2ChainId,
+  szevm,
+} from 'sushi/evm'
 import * as z from 'zod'
 
 const uintStringSchema = z.string().regex(/^\d+$/)
@@ -6,8 +11,11 @@ const uintStringSchema = z.string().regex(/^\d+$/)
 export const directPoolQuoteInputSchema = z.object({
   chainId: z.coerce
     .number()
-    .refine((value) => value === EvmChainId.ROBINHOOD)
-    .transform(() => EvmChainId.ROBINHOOD),
+    .pipe(
+      z.custom<LaunchpadV2ChainId>(
+        (value) => typeof value === 'number' && isLaunchpadV2ChainId(value),
+      ),
+    ),
   tokenIn: szevm.address(),
   tokenOut: szevm.address(),
   amount: z
@@ -26,7 +34,7 @@ export const directPoolQuoteResponseSchema = z.object({
 })
 
 export interface DirectPoolQuoteInput {
-  chainId: typeof EvmChainId.ROBINHOOD
+  chainId: LaunchpadV2ChainId
   tokenIn: EvmAddress
   tokenOut: EvmAddress
   amount: string

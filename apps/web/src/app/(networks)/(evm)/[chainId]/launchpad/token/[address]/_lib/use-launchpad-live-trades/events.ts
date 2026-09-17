@@ -1,22 +1,24 @@
 import ms from 'ms'
-import { type EvmAddress, type EvmTxHash, szevm } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type EvmTxHash,
+  type LaunchpadV2ChainId,
+  isLaunchpadV2ChainId,
+  szevm,
+} from 'sushi/evm'
 import { isAddressEqual, isHash } from 'viem'
 import { z } from 'zod'
-import {
-  type LaunchpadChainId,
-  isLaunchpadChainId,
-} from '../../../../constants'
 
 const evmAddressSchema = szevm.address()
 const transactionHashSchema = z.custom<EvmTxHash>(
   (value) => typeof value === 'string' && isHash(value),
   'Invalid transaction hash',
 )
-const launchpadChainIdSchema = z.custom<LaunchpadChainId>(
+const launchpadChainIdSchema = z.custom<LaunchpadV2ChainId>(
   (value) =>
     typeof value === 'number' &&
     Number.isInteger(value) &&
-    isLaunchpadChainId(value),
+    isLaunchpadV2ChainId(value),
   'Invalid launchpad chain ID',
 )
 const unsignedIntegerSchema = z.string().regex(/^(0|[1-9][0-9]*)$/)
@@ -129,7 +131,7 @@ function parseLaunchpadTradeResetStreamEvent(
 }
 
 function isExpectedStream(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   tokenAddress: EvmAddress,
   event: { chainId: number; tokenAddress: EvmAddress },
 ): boolean {

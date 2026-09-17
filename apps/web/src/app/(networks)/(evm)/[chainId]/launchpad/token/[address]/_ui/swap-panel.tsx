@@ -17,7 +17,11 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CheckerProvider } from 'src/lib/wagmi/systems/checker/provider'
 import { EdgeProvider } from 'src/providers/edge-config-provider'
 import { formatUSD, isWNativeSupported } from 'sushi'
-import { DEFAULT_SLIPPAGE, type EvmToken, unwrapEvmToken } from 'sushi/evm'
+import {
+  DEFAULT_SLIPPAGE,
+  type EvmToken,
+  type LaunchpadV2ChainId,
+} from 'sushi/evm'
 import { formatUnits } from 'viem'
 import { DetailsInteractionTrackerProvider } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
 import {
@@ -32,9 +36,9 @@ import { defaultSwapEdgeConfig } from '~evm/[chainId]/(trade)/swap/swap-edge-con
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
+import { getLaunchpadSwapCurrency } from '../../../_lib/launchpad-swap'
 import type { LaunchpadTokenWithCurrencies } from '../../../_lib/use-launchpad-token'
 import { TokenAvatar } from '../../../_ui/_common/token-avatar'
-import type { LaunchpadChainId } from '../../../constants'
 
 type SwapSide = 'BUY' | 'SELL'
 
@@ -85,7 +89,7 @@ function getBuyPresetAmounts(price: number | undefined): string[] {
 }
 
 export function SwapPanel({ token }: { token: LaunchpadTokenWithCurrencies }) {
-  const defaultQuoteCurrency = unwrapEvmToken(token.quoteCurrency)
+  const defaultQuoteCurrency = getLaunchpadSwapCurrency(token.quoteCurrency)
 
   return (
     <EdgeProvider config={defaultSwapEdgeConfig}>
@@ -134,7 +138,7 @@ function SwapPanelContent({
   const {
     mutate: { setSwapAmount, setToken0, setToken1, switchTokens },
     state: { chainId, swapAmountString, token0, token1 },
-  } = useDerivedStateSimpleSwap<LaunchpadChainId>()
+  } = useDerivedStateSimpleSwap<LaunchpadV2ChainId>()
   const {
     data: quote,
     isFetching: isQuoteFetching,
@@ -172,7 +176,7 @@ function SwapPanelContent({
   }
 
   function selectCounterCurrency(
-    currency: CurrencyFor<LaunchpadChainId>,
+    currency: CurrencyFor<LaunchpadV2ChainId>,
   ): void {
     if (currency.isSame(launchToken)) return
 

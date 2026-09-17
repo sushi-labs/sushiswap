@@ -1,8 +1,11 @@
 import { getLaunchpadToken } from '@sushiswap/graph-client/data-api'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { isEvmAddress, normalizeEvmAddress } from 'sushi/evm'
-import { isLaunchpadChainId } from '../../constants'
+import {
+  isEvmAddress,
+  isLaunchpadV2ChainId,
+  normalizeEvmAddress,
+} from 'sushi/evm'
 import { ManageTokenPage } from './_ui/manage-token-page'
 
 export const metadata: Metadata = {
@@ -21,7 +24,7 @@ export default async function ManageTokenRoute({
   const { chainId: chainIdParam, address } = await params
   const chainId = Number(chainIdParam)
 
-  if (!isLaunchpadChainId(chainId) || !isEvmAddress(address)) {
+  if (!isLaunchpadV2ChainId(chainId) || !isEvmAddress(address)) {
     return notFound()
   }
   const normalizedAddress = normalizeEvmAddress(address)

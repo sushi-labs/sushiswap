@@ -4,8 +4,11 @@ import { getLaunchpadMarketStats } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { type EvmAddress, normalizeEvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../../constants'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  normalizeEvmAddress,
+} from 'sushi/evm'
 import {
   type LaunchpadMarketStatsTradeEvent,
   appendLaunchpadMarketStatsTradeEvent,
@@ -23,7 +26,7 @@ import { subscribeToLaunchpadTradeStream } from './launchpad-stream'
 const MARKET_STATS_POLL_INTERVAL = ms('10s')
 
 export function useLaunchpadMarketStats(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
 ) {
   // Normalised so the token page header and the activity card, which read the

@@ -8,8 +8,7 @@ import {
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
-import type { EvmAddress } from 'sushi/evm'
-import type { LaunchpadChainId } from '../../constants'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 
 const EMPTY_USER_HOLDINGS: LaunchpadUserHoldingsType = {
   edges: [],
@@ -21,7 +20,7 @@ const EMPTY_USER_HOLDINGS: LaunchpadUserHoldingsType = {
 }
 
 interface LaunchpadPortfolioQueryOptions {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress | undefined
 }
 

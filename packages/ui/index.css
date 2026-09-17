@@ -68,6 +68,7 @@
 }
 
 html {
+  scrollbar-gutter: stable;
   height: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
@@ -79,6 +80,13 @@ body {
   min-height: 100%;
   margin: 0;
   background-color: transparent !important;
+}
+
+@supports (scrollbar-gutter: stable) {
+  /* Radix scroll locks must not reserve a second scrollbar gap. */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+  }
 }
 
 footer {

@@ -148,6 +148,9 @@ export const publicTransports = {
   [EvmChainId.WORLDCHAIN]: http(
     `https://lb.drpc.live/ogrpc?network=worldchain&dkey=${drpcId}`,
   ),
+  [EvmChainId.ARC]: http(
+    `https://lb.drpc.live/ogrpc?network=arc&dkey=${drpcId}`,
+  ),
   /* Testnets */
   [EvmChainId.ARBITRUM_SEPOLIA]: http('https://sepolia-rollup.arbitrum.io/rpc'),
   // [EvmChainId.POLYGON_TESTNET]: http('https://rpc.ankr.com/polygon_mumbai'),
@@ -177,6 +180,15 @@ export const publicChains = mapTuple(evmChains, ({ viemChain }) => {
     ...viemChain,
     rpcUrls: {
       ...viemChain.rpcUrls,
+      // External wallets use this URL to add Arc and cannot attach our dRPC
+      // JWT. Keep app/Privy traffic on the authenticated transport below.
+      ...(viemChain.id === EvmChainId.ARC //current viem version returns nothing for arc, rm in later verison
+        ? {
+            default: {
+              http: ['https://rpc.quicknode.mainnet.arc.io'],
+            },
+          }
+        : {}),
       // Privy reads this override for every viem client it builds itself, so
       // its embedded wallet uses Sushi's RPC instead of a public one. Those
       // clients pass no fetch options, so the `viem@2.55.0` patch attaches the

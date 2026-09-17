@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AutoDarkMode } from 'src/lib/perps/auto-dark-mode'
-import { getEvmChainById } from 'sushi/evm'
+import {
+  LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS,
+  getEvmChainById,
+  isLaunchpadV2ChainId,
+} from 'sushi/evm'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { LaunchpadHeader } from './_ui/header/launchpad-header'
-import { LAUNCHPAD_SUPPORTED_CHAIN_IDS, isLaunchpadChainId } from './constants'
 
 export const metadata: Metadata = {
   title: 'Launchpad',
@@ -13,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return getStaticChainParams(LAUNCHPAD_SUPPORTED_CHAIN_IDS)
+  return getStaticChainParams(LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS)
 }
 
 export default async function LaunchpadLayout({
@@ -25,7 +28,7 @@ export default async function LaunchpadLayout({
 }) {
   const chainId = Number((await params).chainId)
 
-  if (!isLaunchpadChainId(chainId)) return notFound()
+  if (!isLaunchpadV2ChainId(chainId)) return notFound()
 
   const chainKey = getEvmChainById(chainId).key
 
@@ -34,7 +37,7 @@ export default async function LaunchpadLayout({
       <LaunchpadHeader
         chainId={chainId}
         chainKey={chainKey}
-        networks={LAUNCHPAD_SUPPORTED_CHAIN_IDS}
+        networks={LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS}
       />
       <AutoDarkMode />
       <div className="relative min-h-[calc(100vh-56px)] overflow-x-hidden bg-perps-background text-perps-muted">

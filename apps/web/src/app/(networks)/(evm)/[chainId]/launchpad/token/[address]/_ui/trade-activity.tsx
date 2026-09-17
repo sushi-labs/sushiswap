@@ -2,7 +2,7 @@
 
 import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { useEffect, useRef, useState } from 'react'
-import type { EvmAddress } from 'sushi/evm'
+import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { formatPercent, formatUsd } from '../../../_lib/format'
 import {
@@ -11,7 +11,6 @@ import {
   SEGMENTED_ITEM_IDLE,
   SEGMENTED_ITEM_SELECTED,
 } from '../../../_ui/_common/segmented-control'
-import type { LaunchpadChainId } from '../../../constants'
 import {
   DEFAULT_LAUNCHPAD_MARKET_STATS_WINDOW,
   LAUNCHPAD_MARKET_STATS_WINDOWS,
@@ -167,7 +166,7 @@ export function TradeActivity({
   chainId,
   tokenAddress,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   tokenAddress: EvmAddress
 }) {
   const [windowKey, setWindowKey] = useState<LaunchpadMarketStatsWindowKey>(

@@ -1,8 +1,15 @@
-import type { EvmAddress } from 'sushi/evm'
+import {
+  type EvmAddress,
+  LAUNCHPAD_V2_FACTORIES,
+  type LaunchpadV2ChainId,
+} from 'sushi/evm'
 import { parseAbi } from 'viem'
 
-export const SUSHI_V2_LAUNCHPAD_ADDRESS =
-  '0xF1716eBf85836ffE2985db9A50dd29e5814caBe9' satisfies EvmAddress
+export function getSushiV2LaunchpadAddress(
+  chainId: LaunchpadV2ChainId,
+): EvmAddress {
+  return LAUNCHPAD_V2_FACTORIES[chainId][0].address
+}
 
 export const SUSHI_V2_LAUNCHPAD_ABI = parseAbi([
   'function launch((string name, string symbol) tokenConfig, address quoteToken, uint8 liquidityMode, uint8 feeDisposition) payable returns (address token, address pool, uint256[] positionIds)',
@@ -34,6 +41,7 @@ export const SUSHI_V2_FEE_DISPOSITION = {
   DIRECT_PAYOUT: 0,
   BURN_LAUNCH_TOKEN_FEES: 1,
   BUYBACK_AND_BURN: 2,
+  DISTRIBUTE_TO_HOLDERS: 3,
 } as const
 
 export type SushiV2LiquidityMode = keyof typeof SUSHI_V2_LIQUIDITY_MODE
@@ -44,12 +52,14 @@ export const SUSHI_V2_FEE_DISPOSITION_ORDER = [
   'DIRECT_PAYOUT',
   'BURN_LAUNCH_TOKEN_FEES',
   'BUYBACK_AND_BURN',
+  'DISTRIBUTE_TO_HOLDERS',
 ] as const satisfies readonly SushiV2FeeDisposition[]
 
 export const SUSHI_V2_FEE_DISPOSITION_LABELS = {
   DIRECT_PAYOUT: 'Direct payout',
   BURN_LAUNCH_TOKEN_FEES: 'Burn token fees',
   BUYBACK_AND_BURN: 'Buyback & burn',
+  DISTRIBUTE_TO_HOLDERS: 'Distribute to holders',
 } as const satisfies Record<SushiV2FeeDisposition, string>
 
 export const SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS = {
@@ -58,6 +68,8 @@ export const SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS = {
     'Launch token fees are burned, quote fees are still paid out.',
   BUYBACK_AND_BURN:
     'Launch token fees are burned and quote fees buy the launch token back to burn it.',
+  DISTRIBUTE_TO_HOLDERS:
+    'Launch token fees are burned and quote fees are distributed to the token holders.',
 } as const satisfies Record<SushiV2FeeDisposition, string>
 
 export type SushiV2FeeDestination =
@@ -65,21 +77,38 @@ export type SushiV2FeeDestination =
   | 'FEE_RECEIVER'
   | 'BURN'
   | 'BUYBACK'
+  | 'HOLDERS'
 
 /** Where each side of the collected fees ends up under a given disposition. */
 export function getSushiV2FeeRoutes(disposition: SushiV2FeeDisposition): {
   launchToken: readonly SushiV2FeeDestination[]
   quote: readonly SushiV2FeeDestination[]
 } {
-  return {
-    launchToken:
-      disposition === 'DIRECT_PAYOUT'
-        ? ['SUSHI', 'FEE_RECEIVER']
-        : ['SUSHI', 'BURN'],
-    quote:
-      disposition === 'BUYBACK_AND_BURN'
-        ? ['SUSHI', 'BUYBACK']
-        : ['SUSHI', 'FEE_RECEIVER'],
+  switch (disposition) {
+    case 'DIRECT_PAYOUT': {
+      return {
+        launchToken: ['SUSHI', 'FEE_RECEIVER'],
+        quote: ['SUSHI', 'FEE_RECEIVER'],
+      }
+    }
+    case 'BURN_LAUNCH_TOKEN_FEES': {
+      return {
+        launchToken: ['SUSHI', 'BURN'],
+        quote: ['SUSHI', 'FEE_RECEIVER'],
+      }
+    }
+    case 'BUYBACK_AND_BURN': {
+      return {
+        launchToken: ['SUSHI', 'BURN'],
+        quote: ['SUSHI', 'BUYBACK'],
+      }
+    }
+    case 'DISTRIBUTE_TO_HOLDERS': {
+      return {
+        launchToken: ['SUSHI', 'BURN'],
+        quote: ['SUSHI', 'HOLDERS'],
+      }
+    }
   }
 }
 
@@ -87,6 +116,7 @@ const SUSHI_V2_FEE_TRANSITIONS = {
   DIRECT_PAYOUT: ['BURN_LAUNCH_TOKEN_FEES', 'BUYBACK_AND_BURN'],
   BURN_LAUNCH_TOKEN_FEES: ['BUYBACK_AND_BURN'],
   BUYBACK_AND_BURN: [],
+  DISTRIBUTE_TO_HOLDERS: [],
 } as const satisfies Record<
   SushiV2FeeDisposition,
   readonly SushiV2FeeDisposition[]

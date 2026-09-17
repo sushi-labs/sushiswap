@@ -5,6 +5,7 @@ import { ApeCircle } from './ape-circle'
 import { AptosCircle } from './aptos-circle'
 import { ArbitrumCircle } from './arbitrum-circle'
 import { ArbitrumNovaCircle } from './arbitrum-nova-circle'
+import { ArcCircle } from './arc-circle'
 import { AvalancheCircle } from './avalanche-circle'
 import { BaseCircle } from './base-circle'
 import { BeraCircle } from './bera-circle'
@@ -55,6 +56,7 @@ export * from './ape-circle'
 export * from './aptos-circle'
 export * from './arbitrum-circle'
 export * from './arbitrum-nova-circle'
+export * from './arc-circle'
 export * from './avalanche-circle'
 export * from './base-circle'
 export * from './bera-circle'
@@ -161,4 +163,5 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.STELLAR]: StellarCircle,
   [ChainId.SOLANA]: SolanaCircle,
   [ChainId.ROBINHOOD]: RobinhoodCircle,
+  [ChainId.ARC]: ArcCircle,
 }

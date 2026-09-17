@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getEvmChainById } from 'sushi/evm'
+import { getEvmChainById, isLaunchpadV2ChainId } from 'sushi/evm'
 import { getLaunchpadCreateUrl } from '../_lib/launchpad-seo'
-import { isLaunchpadChainId } from '../constants'
 import { SushiV2CreateLaunchPage } from './_ui/create-launch-page'
 
 const DESCRIPTION =
@@ -14,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ chainId: string }>
 }): Promise<Metadata> {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return {}
+  if (!isLaunchpadV2ChainId(chainId)) return {}
 
   const chain = getEvmChainById(chainId)
   const url = getLaunchpadCreateUrl(chainId)
@@ -45,7 +44,7 @@ export default async function CreatePage({
   params: Promise<{ chainId: string }>
 }) {
   const chainId = Number((await params).chainId)
-  if (!isLaunchpadChainId(chainId)) return notFound()
+  if (!isLaunchpadV2ChainId(chainId)) return notFound()
 
-  return <SushiV2CreateLaunchPage chainId={chainId} />
+  return <SushiV2CreateLaunchPage key={chainId} chainId={chainId} />
 }

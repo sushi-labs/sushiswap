@@ -28,8 +28,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
-import type { EvmAddress } from 'sushi/evm'
-import { getEvmChainById } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { isAddress, isAddressEqual } from 'viem'
 import {
   useBytecode,
@@ -63,15 +66,14 @@ import {
   type DistributionPreview,
   SUSHI_V2_FEE_DISPOSITION,
   SUSHI_V2_LAUNCHPAD_ABI,
-  SUSHI_V2_LAUNCHPAD_ADDRESS,
   type SushiV2FeeDisposition,
+  getSushiV2LaunchpadAddress,
   normalizeSushiV2Distribution,
 } from '../../../_providers/sushi-v2/contract'
 import { DetailList } from '../../../_ui/_common/detail-list'
 import { LaunchpadLogoInput } from '../../../_ui/_common/launchpad-logo-input'
 import { PageState } from '../../../_ui/_common/state-card'
 import { TokenAvatar } from '../../../_ui/_common/token-avatar'
-import type { LaunchpadChainId } from '../../../constants'
 import { FeeDistributionCard } from './fee-distribution-card'
 
 const optionalHttpsUrl = z.union([
@@ -113,7 +115,7 @@ export function ManageTokenPage({
   address,
   initialToken,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress
   initialToken: LaunchpadToken
 }) {
@@ -136,13 +138,13 @@ export function ManageTokenPage({
     : false
   const isSushiV2 = token?.__typename === 'SushiV2LaunchpadToken'
   const managementAddress = isSushiV2
-    ? SUSHI_V2_LAUNCHPAD_ADDRESS
+    ? getSushiV2LaunchpadAddress(chainId)
     : SUSHI_V1_LAUNCHPAD_ADDRESS
   const managementAbi = isSushiV2
     ? SUSHI_V2_LAUNCHPAD_ABI
     : SUSHI_V1_LAUNCHPAD_ABI
   const { data: launchpadOwner } = useReadContract({
-    address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+    address: getSushiV2LaunchpadAddress(chainId),
     abi: SUSHI_V2_LAUNCHPAD_ABI,
     chainId,
     functionName: 'owner',
@@ -376,7 +378,7 @@ export function ManageTokenPage({
     }
 
     const parameters = {
-      address: SUSHI_V2_LAUNCHPAD_ADDRESS,
+      address: getSushiV2LaunchpadAddress(chainId),
       abi: SUSHI_V2_LAUNCHPAD_ABI,
       chainId,
       functionName,

@@ -39,8 +39,11 @@ import { TelegramIcon } from '@sushiswap/ui/icons/telegram-icon'
 import { XIcon } from '@sushiswap/ui/icons/x-icon'
 import Link from 'next/link'
 import { useRef } from 'react'
-import type { EvmAddress } from 'sushi/evm'
-import { getEvmChainById } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type LaunchpadV2ChainId,
+  getEvmChainById,
+} from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import {
   formatLaunchpadPriceUsd,
@@ -65,7 +68,6 @@ import { StatusPill } from '../../../_ui/_common/status-pill'
 import { TokenAvatar } from '../../../_ui/_common/token-avatar'
 import { MetricStrip, MetricStripItem } from '../../../_ui/metrics/metric-strip'
 import { LaunchpadProviderBadge } from '../../../_ui/providers/launchpad-provider-badge'
-import type { LaunchpadChainId } from '../../../constants'
 import { useLaunchpadMarketStats } from '../_lib/use-launchpad-market-stats'
 import { PriceChart, type PriceChartData } from './price-chart'
 import { SwapPanel } from './swap-panel'
@@ -299,7 +301,7 @@ export function TokenDetailPage({
   address,
   definition,
 }: {
-  chainId: LaunchpadChainId
+  chainId: LaunchpadV2ChainId
   address: EvmAddress
   definition: LaunchpadTokenDefinition
 }) {

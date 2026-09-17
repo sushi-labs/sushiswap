@@ -6,8 +6,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
-import { type EvmAddress, EvmToken } from 'sushi/evm'
-import type { LaunchpadChainId } from '../constants'
+import { type EvmAddress, EvmToken, type LaunchpadV2ChainId } from 'sushi/evm'
 
 export type LaunchpadTokenWithCurrencies = LaunchpadToken & {
   currency: EvmToken
@@ -36,7 +35,7 @@ function hydrateLaunchpadToken(
 }
 
 export function useLaunchpadToken(
-  chainId: LaunchpadChainId,
+  chainId: LaunchpadV2ChainId,
   address: EvmAddress,
   initialData?: LaunchpadToken,
 ) {
