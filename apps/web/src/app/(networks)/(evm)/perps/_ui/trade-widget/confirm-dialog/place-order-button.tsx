@@ -549,8 +549,8 @@ const _useTpSlOrder = () => {
       return { tpOrder: undefined, slOrder: undefined }
     }
     const _size = formatSize(size.base, asset?.decimals)
-    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.formatParseDecimals)
-    const _slPrice = parseUnits(slPrice ?? '0', asset?.formatParseDecimals)
+    const _tpPrice = parseUnits(tpPrice || '0', asset?.formatParseDecimals)
+    const _slPrice = parseUnits(slPrice || '0', asset?.formatParseDecimals)
     const tpOrder =
       hasTpSl && tpPrice
         ? {
