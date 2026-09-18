@@ -5,202 +5,25 @@ import {
   ChartPieIcon,
   WalletIcon,
 } from '@heroicons/react/24/outline'
-import type { LaunchpadUserHoldingsType } from '@sushiswap/graph-client/data-api'
-import { Button, Container, LinkInternal, classNames } from '@sushiswap/ui'
-import { useRouter } from 'next/navigation'
-import { type KeyboardEvent, useMemo } from 'react'
+import { Button, Container, LinkInternal } from '@sushiswap/ui'
+import { useMemo } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import {
-  type EvmAddress,
-  type LaunchpadV2ChainId,
-  getEvmChainById,
-} from 'sushi/evm'
-import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
-import {
-  formatPercent,
-  formatRawAmount,
-  formatUsd,
-  formatUsdChange,
-  shortenAddress,
-} from '../../_lib/format'
+import { type LaunchpadV2ChainId, getEvmChainById } from 'sushi/evm'
+import { formatUsd } from '../../_lib/format'
 import { PageHeading } from '../../_ui/_common/page-heading'
 import { CollectionStateCard } from '../../_ui/_common/state-card'
-import { TokenAvatar } from '../../_ui/_common/token-avatar'
 import { MetricStrip, MetricStripItem } from '../../_ui/metrics/metric-strip'
 import {
   useLaunchpadUserHoldings,
   useLaunchpadUserStats,
 } from '../_lib/use-launchpad-portfolio'
+import { HoldingsTable, PnlValue } from './holdings-table'
 import {
   HoldingsTableSkeleton,
   PortfolioStatsSkeleton,
 } from './portfolio-skeleton'
-
-type LaunchpadUserHolding = LaunchpadUserHoldingsType['edges'][number]['node']
-
-function PnlValue({
-  pnlUsd,
-  pnlPercent,
-  large = false,
-}: {
-  pnlUsd: number | null
-  pnlPercent: number | null
-  large?: boolean
-}) {
-  if (pnlUsd === null || pnlPercent === null) {
-    return (
-      <span
-        className={classNames(
-          'font-semibold tracking-tight text-perps-muted',
-          large ? 'text-lg' : 'text-sm',
-        )}
-      >
-        -
-      </span>
-    )
-  }
-
-  return (
-    <div
-      className={classNames(
-        'flex items-baseline gap-1',
-        pnlUsd > 0 && 'text-emerald-400',
-        pnlUsd < 0 && 'text-red',
-        pnlUsd === 0 && 'text-perps-muted',
-      )}
-    >
-      <span
-        className={classNames(
-          'font-semibold tracking-tight',
-          large ? 'text-lg' : 'text-sm',
-        )}
-      >
-        {formatUsdChange(pnlUsd)}
-      </span>
-      <span className={'text-xs font-medium'}>{formatPercent(pnlPercent)}</span>
-    </div>
-  )
-}
-
-function HoldingRow({
-  holding,
-  onOpen,
-}: {
-  holding: LaunchpadUserHolding
-  onOpen: (address: EvmAddress) => void
-}) {
-  function handleKeyDown(event: KeyboardEvent<HTMLTableRowElement>) {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-
-    event.preventDefault()
-    onOpen(holding.token.address)
-  }
-
-  return (
-    <tr
-      role="link"
-      tabIndex={0}
-      aria-label={`View ${holding.token.name}`}
-      onClick={() => onOpen(holding.token.address)}
-      onKeyDown={handleKeyDown}
-      className="group cursor-pointer border-b border-white/[0.06] transition last:border-b-0 hover:bg-white/[0.035] focus-visible:bg-white/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-perps-blue/50"
-    >
-      <td className="h-[84px] px-5">
-        <div className="flex min-w-0 items-center gap-3">
-          <TokenAvatar token={holding.token} size="md" />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="truncate font-semibold text-perps-muted transition group-hover:text-perps-blue">
-                {holding.token.name}
-              </span>
-              {holding.isCreator ? (
-                <span className="shrink-0 rounded-full bg-perps-blue/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-perps-blue">
-                  Creator
-                </span>
-              ) : null}
-            </div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-perps-muted-50">
-              <span>{holding.token.symbol}</span>
-              <span>·</span>
-              <span>{shortenAddress(holding.token.address)}</span>
-            </div>
-          </div>
-        </div>
-      </td>
-      <td className="h-[84px] px-5 text-right">
-        <div className="font-semibold text-perps-muted">
-          {formatUsd(holding.amountUsd)}
-        </div>
-        <div className="mt-1 text-xs text-perps-muted-50">
-          {formatRawAmount(holding.tokenAmount, holding.token.decimals, 4)}
-        </div>
-      </td>
-      <td className="h-[84px] px-5">
-        <div className="flex justify-end">
-          <PnlValue pnlUsd={holding.pnlUsd} pnlPercent={holding.pnlPercent} />
-        </div>
-      </td>
-    </tr>
-  )
-}
-
-function HoldingsTable({
-  chainId,
-  holdings,
-  isFetchingNextPage,
-}: {
-  chainId: LaunchpadV2ChainId
-  holdings: LaunchpadUserHolding[]
-  isFetchingNextPage: boolean
-}) {
-  const chainKey = getEvmChainById(chainId).key
-  const router = useRouter()
-
-  function openToken(address: EvmAddress) {
-    router.push(`/${chainKey}/launchpad/token/${address}`)
-  }
-
-  return (
-    <PerpsCard className="overflow-hidden" fullWidth>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[680px] table-fixed">
-          <thead>
-            <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-              <th className="w-1/2 px-5 py-3 text-left text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                Token
-              </th>
-              <th className="w-1/4 px-5 py-3 text-right text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                Holdings
-              </th>
-              <th className="w-1/4 px-5 py-3 text-right text-[11px] font-medium uppercase tracking-wide text-perps-muted-50">
-                PnL
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {holdings.map((holding) => (
-              <HoldingRow
-                key={holding.token.address}
-                holding={holding}
-                onOpen={openToken}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {isFetchingNextPage ? (
-        <div
-          className="border-t border-white/[0.06] px-5 py-4 text-center text-xs text-perps-muted-50"
-          role="status"
-        >
-          Loading more holdings…
-        </div>
-      ) : null}
-    </PerpsCard>
-  )
-}
 
 export function PortfolioPage({ chainId }: { chainId: LaunchpadV2ChainId }) {
   const chainKey = getEvmChainById(chainId).key
@@ -362,7 +185,7 @@ export function PortfolioPage({ chainId }: { chainId: LaunchpadV2ChainId }) {
                   className="!overflow-visible"
                 >
                   <HoldingsTable
-                    chainId={chainId}
+                    holder={address}
                     holdings={rows}
                     isFetchingNextPage={isFetchingNextPage}
                   />

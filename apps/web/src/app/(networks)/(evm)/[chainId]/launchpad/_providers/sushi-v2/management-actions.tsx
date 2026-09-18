@@ -4,13 +4,13 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline'
 import { Button, Message, TextField, classNames } from '@sushiswap/ui'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import type { EvmAddress } from 'sushi/evm'
 import { isAddressEqual } from 'viem'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { shortenAddress } from '../../_lib/format'
 import type { LaunchpadTokenFor } from '../provider-types'
 import {
-  SUSHI_V2_FEE_DISPOSITION,
   SUSHI_V2_FEE_DISPOSITION_DESCRIPTIONS,
   SUSHI_V2_FEE_DISPOSITION_LABELS,
   SUSHI_V2_FEE_DISPOSITION_ORDER,
@@ -20,6 +20,7 @@ import {
 
 export function SushiV2ManagementActions({
   token,
+  supportsHolderRewards,
   connectedAddress,
   isLaunchpadOwner,
   newCreator,
@@ -33,6 +34,7 @@ export function SushiV2ManagementActions({
   onSetFeeDisposition,
 }: {
   token: LaunchpadTokenFor<'SUSHI_V2'>
+  supportsHolderRewards: boolean
   connectedAddress: EvmAddress | undefined
   isLaunchpadOwner: boolean
   newCreator: string
@@ -49,10 +51,9 @@ export function SushiV2ManagementActions({
     connectedAddress && isAddressEqual(connectedAddress, token.creator),
   )
   const canTransferCreator = isCurrentCreator || isLaunchpadOwner
-  const currentDispositionOrdinal =
-    SUSHI_V2_FEE_DISPOSITION[token.feeDisposition]
   const availableTransitions = getSushiV2FeeDispositionTransitions(
     token.feeDisposition,
+    supportsHolderRewards,
   )
   const isFinalDisposition = availableTransitions.length === 0
 
@@ -123,19 +124,20 @@ export function SushiV2ManagementActions({
           <h2 className="font-semibold text-perps-muted">Fee disposition</h2>
         </div>
         <p className="mt-3 text-xs leading-5 text-perps-muted-50">
-          Where the non-Sushi share of trading fees goes. The creator can only
-          move further toward burning, never back.
+          Where the non-Sushi share of trading fees goes. Changes are
+          irreversible. Buyback &amp; burn and holder rewards are permanent
+          choices.
         </p>
         <div className="mt-5 space-y-2">
           {SUSHI_V2_FEE_DISPOSITION_ORDER.filter(
             (disposition) =>
-              SUSHI_V2_FEE_DISPOSITION[disposition] <=
-                currentDispositionOrdinal ||
-              availableTransitions.includes(disposition),
+              disposition !== 'DISTRIBUTE_TO_HOLDERS' ||
+              supportsHolderRewards ||
+              disposition === token.feeDisposition,
           ).map((disposition) => {
             const isCurrent = disposition === token.feeDisposition
-            const isPassed =
-              SUSHI_V2_FEE_DISPOSITION[disposition] < currentDispositionOrdinal
+            const isUnavailable =
+              !isCurrent && !availableTransitions.includes(disposition)
 
             return (
               <div
@@ -145,7 +147,7 @@ export function SushiV2ManagementActions({
                   isCurrent
                     ? 'border-perps-blue/40 bg-perps-blue/[0.06]'
                     : 'border-white/[0.06] bg-white/[0.02]',
-                  isPassed ? 'opacity-40' : '',
+                  isUnavailable ? 'opacity-40' : '',
                 )}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -161,19 +163,27 @@ export function SushiV2ManagementActions({
                     <span className="rounded-full bg-perps-blue/[0.15] px-2 py-0.5 text-[11px] font-medium text-perps-blue">
                       Current
                     </span>
-                  ) : isPassed ? (
+                  ) : isUnavailable ? (
                     <span className="text-[11px] text-perps-muted-50">
-                      Passed
+                      Unavailable
                     </span>
                   ) : (
-                    <Button
+                    <Checker.Network
+                      chainId={token.chainId}
                       size="xs"
                       variant="perps-secondary"
+                      hideChainName
                       disabled={isUpdating || !isCurrentCreator}
-                      onClick={() => onSetFeeDisposition(disposition)}
                     >
-                      Switch
-                    </Button>
+                      <Button
+                        size="xs"
+                        variant="perps-secondary"
+                        disabled={isUpdating || !isCurrentCreator}
+                        onClick={() => onSetFeeDisposition(disposition)}
+                      >
+                        Switch
+                      </Button>
+                    </Checker.Network>
                   )}
                 </div>
                 <p className="mt-1.5 text-xs leading-5 text-perps-muted-50">
@@ -185,7 +195,7 @@ export function SushiV2ManagementActions({
         </div>
         <p className="mt-4 text-xs leading-5 text-perps-muted-50">
           {isFinalDisposition
-            ? `${SUSHI_V2_FEE_DISPOSITION_LABELS[token.feeDisposition]} is the last step, fee disposition can no longer change for this launch.`
+            ? `${SUSHI_V2_FEE_DISPOSITION_LABELS[token.feeDisposition]} is permanent. Fee disposition can no longer change for this launch.`
             : isCurrentCreator
               ? 'Switching is irreversible and applies to every distribution afterwards.'
               : `Only the current creator (${shortenAddress(token.creator, 4)}) can switch modes.`}

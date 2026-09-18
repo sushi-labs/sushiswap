@@ -113,6 +113,7 @@ const createLaunchSchema = z.object({
     'DIRECT_PAYOUT',
     'BURN_LAUNCH_TOKEN_FEES',
     'BUYBACK_AND_BURN',
+    'DISTRIBUTE_TO_HOLDERS',
   ]),
 })
 

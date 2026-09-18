@@ -152,8 +152,8 @@ export const EditTpSlPositionDialog = ({
       ? formatSize(Math.abs(Number(size)), asset.decimals)
       : '0' //zero is entire size
 
-    const _tpPrice = parseUnits(tpPrice ?? '0', asset?.formatParseDecimals)
-    const _slPrice = parseUnits(slPrice ?? '0', asset?.formatParseDecimals)
+    const _tpPrice = parseUnits(tpPrice || '0', asset?.formatParseDecimals)
+    const _slPrice = parseUnits(slPrice || '0', asset?.formatParseDecimals)
 
     const adjustedTpPrice = formatPrice(
       formatUnits(

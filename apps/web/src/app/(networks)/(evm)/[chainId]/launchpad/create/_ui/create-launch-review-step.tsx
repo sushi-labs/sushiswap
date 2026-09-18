@@ -10,6 +10,7 @@ import type { ComponentProps } from 'react'
 import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
+import { shortenAddress } from 'sushi'
 import type { EvmAddress, LaunchpadV2ChainId } from 'sushi/evm'
 import { PerpsCard } from '~evm/perps/_ui/_common/perps-card'
 import { getSushiV2LaunchpadAddress } from '../../_providers/sushi-v2/contract'
@@ -99,10 +100,15 @@ export function CreateLaunchReviewStep({
         {launchedTokenAddress ? (
           <Message variant="success" className="mt-6">
             <span>
-              Launch confirmed at {launchedTokenAddress}.{' '}
-              {isWaitingForIndexing
-                ? 'Waiting for the launch catalog to index it…'
-                : 'Catalog indexing is taking longer than expected.'}
+              Launch confirmed at {shortenAddress(launchedTokenAddress)}.{' '}
+              {isWaitingForIndexing ? (
+                <>
+                  Waiting for the launch catalog to index it
+                  <Dots />
+                </>
+              ) : (
+                'Catalog indexing is taking longer than expected.'
+              )}
             </span>
           </Message>
         ) : null}

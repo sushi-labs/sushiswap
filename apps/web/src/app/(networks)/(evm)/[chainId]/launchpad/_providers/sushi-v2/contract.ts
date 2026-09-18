@@ -19,6 +19,7 @@ export const SUSHI_V2_LAUNCHPAD_ABI = parseAbi([
   'function transferCreator(address token, address newCreator)',
   'function setFeeReceiver(address token, address newFeeReceiver)',
   'function setFeeDisposition(address token, uint8 newFeeDisposition)',
+  'function launchInfo(address token) view returns ((address creator, address feeReceiver, address quoteToken, address pool, address custodian, uint8 liquidityMode, uint8 feeDisposition, uint16 sushiFeeBps, uint64 poolInitializedAt, bool supportsHolderRewards, address rewardDistributor) info)',
   'function owner() view returns (address)',
   'function launchFee() view returns (uint256)',
   'function defaultSushiFeeBps() view returns (uint16)',
@@ -29,7 +30,16 @@ export const SUSHI_V2_LAUNCHPAD_ABI = parseAbi([
   'error NothingToWithdraw()',
   'error UnauthorizedCreator(address caller)',
   'error InvalidFeeDispositionTransition(uint8 previousMode, uint8 newMode)',
+  'error HolderRewardsUnsupported(address token)',
   'error ZeroAddress()',
+])
+
+export const HOLDER_REWARDS_ABI = parseAbi([
+  'function earned(address holder) view returns (uint256)',
+  'function rewardRateScaled() view returns (uint256)',
+  'function PRECISION() view returns (uint256)',
+  'function eligibleSupply() view returns (uint256)',
+  'function claim(address holder) returns (uint256 amount)',
 ])
 
 export const SUSHI_V2_LIQUIDITY_MODE = {
@@ -47,7 +57,7 @@ export const SUSHI_V2_FEE_DISPOSITION = {
 export type SushiV2LiquidityMode = keyof typeof SUSHI_V2_LIQUIDITY_MODE
 export type SushiV2FeeDisposition = keyof typeof SUSHI_V2_FEE_DISPOSITION
 
-/** Ordered from the least to the most committed disposition. */
+/** Enum order; buyback and holder rewards are separate permanent choices. */
 export const SUSHI_V2_FEE_DISPOSITION_ORDER = [
   'DIRECT_PAYOUT',
   'BURN_LAUNCH_TOKEN_FEES',
@@ -113,8 +123,12 @@ export function getSushiV2FeeRoutes(disposition: SushiV2FeeDisposition): {
 }
 
 const SUSHI_V2_FEE_TRANSITIONS = {
-  DIRECT_PAYOUT: ['BURN_LAUNCH_TOKEN_FEES', 'BUYBACK_AND_BURN'],
-  BURN_LAUNCH_TOKEN_FEES: ['BUYBACK_AND_BURN'],
+  DIRECT_PAYOUT: [
+    'BURN_LAUNCH_TOKEN_FEES',
+    'BUYBACK_AND_BURN',
+    'DISTRIBUTE_TO_HOLDERS',
+  ],
+  BURN_LAUNCH_TOKEN_FEES: ['BUYBACK_AND_BURN', 'DISTRIBUTE_TO_HOLDERS'],
   BUYBACK_AND_BURN: [],
   DISTRIBUTE_TO_HOLDERS: [],
 } as const satisfies Record<
@@ -124,8 +138,13 @@ const SUSHI_V2_FEE_TRANSITIONS = {
 
 export function getSushiV2FeeDispositionTransitions(
   current: SushiV2FeeDisposition,
+  tokenSupportsHolderRewards: boolean,
 ): readonly SushiV2FeeDisposition[] {
-  return SUSHI_V2_FEE_TRANSITIONS[current]
+  const transitions = SUSHI_V2_FEE_TRANSITIONS[current]
+  if (tokenSupportsHolderRewards) return transitions
+
+  // Tokens deployed before V2.2 lack the transfer hooks required for holder rewards.
+  return transitions.filter((next) => next !== 'DISTRIBUTE_TO_HOLDERS')
 }
 
 export interface DistributionPreview {
