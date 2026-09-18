@@ -12,8 +12,7 @@ export interface CreateLaunchForm {
   telegram: string
   initialBuyAmount: string
   liquidityMode: SushiV2LiquidityMode
-  // TODO(distribution)
-  feeDisposition: Exclude<SushiV2FeeDisposition, 'DISTRIBUTE_TO_HOLDERS'>
+  feeDisposition: SushiV2FeeDisposition
 }
 
 export type CreateStep = 'details' | 'buy' | 'review'

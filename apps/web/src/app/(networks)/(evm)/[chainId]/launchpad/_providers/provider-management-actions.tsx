@@ -6,6 +6,7 @@ import { SushiV2ManagementActions } from './sushi-v2/management-actions'
 
 interface ProviderManagementActionsProps {
   token: LaunchpadToken
+  supportsHolderRewards: boolean
   connectedAddress: EvmAddress | undefined
   isLaunchpadOwner: boolean
   newCreator: string

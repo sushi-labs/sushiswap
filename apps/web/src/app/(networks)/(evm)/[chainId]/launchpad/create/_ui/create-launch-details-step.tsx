@@ -139,11 +139,7 @@ export function CreateLaunchDetailsStep({
                           side="top"
                           className="max-w-[320px] space-y-2 whitespace-normal !bg-black/10 !px-3 !py-2 text-left text-xs"
                         >
-                          {/** // TODO(distribution) **/}
-                          {SUSHI_V2_FEE_DISPOSITION_ORDER.filter(
-                            (disposition) =>
-                              disposition !== 'DISTRIBUTE_TO_HOLDERS',
-                          ).map((disposition) => (
+                          {SUSHI_V2_FEE_DISPOSITION_ORDER.map((disposition) => (
                             <p key={disposition}>
                               <span className="font-semibold">
                                 {SUSHI_V2_FEE_DISPOSITION_LABELS[disposition]}:
@@ -173,6 +169,9 @@ export function CreateLaunchDetailsStep({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="!bg-black/30 backdrop-blur-2xl">
+                        <SelectItem value="DISTRIBUTE_TO_HOLDERS">
+                          Distribute to holders
+                        </SelectItem>
                         <SelectItem value="BUYBACK_AND_BURN">
                           Buyback &amp; burn
                         </SelectItem>
