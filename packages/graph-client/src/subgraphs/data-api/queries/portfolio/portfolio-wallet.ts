@@ -27,6 +27,7 @@ export const PortfolioWalletQuery = graphql(
         symbol
         decimals
         price24hChange
+        amountUSD24Change
         balance
         amountUSD
       }

@@ -8,8 +8,23 @@ import {
 } from '@sushiswap/ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
-import { formatPercent, formatUSD, getNativeAddress } from 'sushi'
-import { EvmNative, EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
+import {
+  ChainId,
+  formatPercent,
+  formatUSD,
+  getChainById,
+  getNativeAddress,
+} from 'sushi'
+import {
+  EvmChainId,
+  EvmNative,
+  EvmToken,
+  SUSHI,
+  USDC,
+  evmNativeAddress,
+  isEvmAddress,
+  isEvmChainId,
+} from 'sushi/evm'
 import {
   StellarToken,
   isStellarChainId,
@@ -24,6 +39,7 @@ import {
 } from 'sushi/svm'
 import { formatUnits } from 'viem'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
+import { useSidebar } from '../../sidebar'
 import { PortfolioInfoRow } from '../portfolio-info-row'
 import { SendTokenDialog } from './send-token-dialog'
 
@@ -70,10 +86,55 @@ const getCurrency = (token: PortfolioWalletToken) => {
   }
 }
 
+const nativeAddressAliases = {
+  [ChainId.CELO]: '0x471ece3750da237f93b8e339c536989b8978a438',
+  [ChainId.MANTLE]: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
+  [ChainId.POLYGON]: '0x0000000000000000000000000000000000001010',
+} as Partial<Record<ChainId, `0x${string}`>>
+
+function hasSushiToken(chainId: ChainId): chainId is keyof typeof SUSHI {
+  return Object.hasOwn(SUSHI, chainId)
+}
+
+function getToken0Param(
+  token: PortfolioWalletToken,
+  currency: ReturnType<typeof getCurrency>,
+): string {
+  if (hasSushiToken(token.chainId)) {
+    return ''
+  }
+
+  if (token.chainId === EvmChainId.ARC && token.address === evmNativeAddress) {
+    return `token0=${USDC[token.chainId].address}`
+  }
+  if (nativeAddressAliases?.[token.chainId]) {
+    return `token0=NATIVE`
+  }
+  if (currency?.type === 'native') {
+    return `token0=NATIVE`
+  }
+  return `token0=${token.address}`
+}
+
+function getToken1Param(token: PortfolioWalletToken): string {
+  if (hasSushiToken(token.chainId)) {
+    return `token1=${SUSHI[token.chainId].address}`
+  }
+  return ''
+}
+
+function getTokenParams(
+  token: PortfolioWalletToken,
+  currency: ReturnType<typeof getCurrency>,
+): string {
+  return `${getToken0Param(token, currency)}${getToken1Param(token)}`
+}
+
 export function PortfolioTokensList({
   tokens: _tokens,
   onTransferConfirmed,
 }: PortfolioTokensListProps) {
+  const { close } = useSidebar()
   const wallets = useWallets()
   const [selectedCurrency, setSelectedCurrency] = useState<NonNullable<
     ReturnType<typeof getCurrency>
@@ -99,7 +160,7 @@ export function PortfolioTokensList({
 
   return (
     <>
-      <div className="overflow-y-auto h-full cursor-default">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain cursor-default">
         {tokens.map(({ currency, onSend, token }) => {
           const canSend = Boolean(
             (isEvmChainId(currency.chainId) && wallets.evm?.account) ||
@@ -107,10 +168,14 @@ export function PortfolioTokensList({
               (isStellarChainId(currency.chainId) && wallets.stellar?.account),
           )
 
+          const url = `/${getChainById(token.chainId).key}/swap?${getTokenParams(token, currency)}`
+
           return (
             <PortfolioInfoRow
-              key={`${token.chainId}:${token.id}`}
               chainId={token.chainId}
+              key={`${token.chainId}:${token.address}`}
+              href={url}
+              onClick={close}
               icon={
                 <Currency.Icon currency={currency} width={28} height={28} />
               }
@@ -156,7 +221,10 @@ export function PortfolioTokensList({
                       size="xs"
                       variant="ghost"
                       icon={PaperAirplaneIcon}
-                      onClick={onSend}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onSend()
+                      }}
                       description={`Send ${currency.symbol ?? 'token'}`}
                       name={`Send ${currency.symbol ?? 'token'}`}
                     />

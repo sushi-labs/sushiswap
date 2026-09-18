@@ -2,7 +2,7 @@ import { PortfolioWalletTokens } from './portfolio-wallet-tokens'
 
 export const PortfolioTokens = () => {
   return (
-    <div className="flex flex-col h-full gap-y-5">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <PortfolioWalletTokens />
     </div>
   )
