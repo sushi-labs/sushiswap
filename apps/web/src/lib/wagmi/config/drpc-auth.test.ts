@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 /**
- * Guards `patches/viem@2.55.0.patch`.
+ * Guards `patches/viem@2.56.7.patch`.
  *
  * Sushi's dRPC endpoints reject every request without an `Authorization` JWT.
  * Dependencies build their own viem clients without fetch options — Privy alone

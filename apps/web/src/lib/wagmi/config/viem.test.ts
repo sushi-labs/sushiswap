@@ -21,7 +21,7 @@ describe('publicChains', () => {
       expect(chain.nativeCurrency).toEqual(sourceChain?.nativeCurrency)
       expect(chain.blockExplorers).toEqual(sourceChain?.blockExplorers)
       // Privy builds its own viem clients from this override and passes them no
-      // fetch options; `patches/viem@2.55.0.patch` supplies the dRPC JWT they
+      // fetch options; `patches/viem@2.56.7.patch` supplies the dRPC JWT they
       // need. See `drpc-auth.test.ts`.
       expect(chain.rpcUrls.privyWalletOverride?.http).toEqual([transportUrl])
     },
