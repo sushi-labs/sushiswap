@@ -13,6 +13,7 @@ import {
   getAddress,
   numberToHex,
 } from 'viem'
+import { hasStoredPrivySession, isPrivyOAuthCallback } from '../privy-storage'
 import {
   type DeferredPrivyEvmProvider,
   createDeferredPrivyEvmProvider,
@@ -40,7 +41,7 @@ export const PRIVY_EVM_DISCONNECTED_STORAGE_KEY = `${PRIVY_EVM_CONNECTOR_ID}.dis
 // provider requests). Interactive phases such as the login modal are only
 // cancellable, never timed out: users may take minutes to enter an OTP.
 const DEFAULT_CONNECT_TIMEOUT_MS = 60_000
-const DEFAULT_RECONNECT_TIMEOUT_MS = 30_000
+const DEFAULT_RECONNECT_TIMEOUT_MS = 10_000
 const DEFAULT_PROVIDER_TIMEOUT_MS = 10_000
 const LEGACY_PRIVY_EVM_CONNECTOR_ID_PATTERN =
   /^io\.privy\.wallet\.0x[0-9a-f]{40}$/i
@@ -132,6 +133,14 @@ function normalizeError(error: unknown): Error {
 
 function isSameAddress(first: string, second: string): boolean {
   return first.toLowerCase() === second.toLowerCase()
+}
+
+function hasRestorablePrivySession(): boolean {
+  return (
+    hasStoredPrivySession() ||
+    (typeof window !== 'undefined' &&
+      isPrivyOAuthCallback(window.location.search))
+  )
 }
 
 function parseChainId(value: unknown): number {
@@ -770,7 +779,11 @@ export function privyEvmConnector({
           ) {
             runtimeStore.restartRuntime()
           }
-          if (connectedIntentOwner === attempt && !session) {
+          if (
+            !session &&
+            (connectedIntentOwner === attempt ||
+              (isReconnecting && activeAttempt === attempt))
+          ) {
             connectedIntentOwner = undefined
             await clearConnectedIntent({ disconnected: false })
           }
@@ -805,7 +818,9 @@ export function privyEvmConnector({
             return false
           }
           if (await config.storage?.getItem(PRIVY_EVM_CONNECTED_STORAGE_KEY)) {
-            return true
+            if (hasRestorablePrivySession()) return true
+            await clearConnectedIntent({ disconnected: false })
+            return false
           }
 
           const legacyId = findPersistedConnectorIdMatching(
@@ -815,6 +830,7 @@ export function privyEvmConnector({
           if (await config.storage?.getItem(`${legacyId}.disconnected`)) {
             return false
           }
+          if (!hasRestorablePrivySession()) return false
 
           await safelyRunStorageOperation(
             config.storage?.setItem(PRIVY_EVM_CONNECTED_STORAGE_KEY, true),
