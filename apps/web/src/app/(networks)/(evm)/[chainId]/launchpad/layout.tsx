@@ -40,7 +40,7 @@ export default async function LaunchpadLayout({
         networks={LAUNCHPAD_V2_SUPPORTED_CHAIN_IDS}
       />
       <AutoDarkMode />
-      <div className="relative min-h-[calc(100vh-56px)] overflow-x-hidden bg-perps-background text-perps-muted">
+      <div className="relative min-h-[calc(100vh-56px)] overflow-x-hidden bg-perps-background text-perps-muted [html:has(&)]:!bg-perps-background">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] overflow-hidden">
           <div className="absolute left-[5%] top-0 h-72 w-72 rounded-full bg-perps-blue/[0.08] blur-3xl" />
           <div className="absolute right-[8%] top-16 h-80 w-80 rounded-full bg-pink-500/[0.06] blur-3xl" />
