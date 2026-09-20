@@ -45,6 +45,7 @@ import {
   PRIVY_SVM_WALLETS,
   SvmAdapterId,
 } from '../config'
+import { useSvmSilentReconnect } from './use-svm-silent-reconnect'
 
 function useInSvmContext(): boolean {
   const client = useConnectorClient()
@@ -80,6 +81,7 @@ export default function SvmWalletProvider({
 
 function _SvmWalletProvider({ children }: { children: React.ReactNode }) {
   const client = useConnectorClient()
+  useSvmSilentReconnect(client)
   const privyEmbeddedWallet = usePrivyEmbeddedWallet('svm')
   const privyRuntime = usePrivyRuntime()
   const walletInfo = useWalletInfo()
