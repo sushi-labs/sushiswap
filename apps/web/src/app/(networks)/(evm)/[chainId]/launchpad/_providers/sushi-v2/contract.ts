@@ -37,6 +37,7 @@ export const SUSHI_V2_LAUNCHPAD_ABI = parseAbi([
 export const HOLDER_REWARDS_ABI = parseAbi([
   'function earned(address holder) view returns (uint256)',
   'function rewardRateScaled() view returns (uint256)',
+  'function periodFinish() view returns (uint256)',
   'function PRECISION() view returns (uint256)',
   'function eligibleSupply() view returns (uint256)',
   'function claim(address holder) returns (uint256 amount)',
