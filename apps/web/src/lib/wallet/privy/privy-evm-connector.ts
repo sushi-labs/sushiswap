@@ -41,7 +41,7 @@ export const PRIVY_EVM_DISCONNECTED_STORAGE_KEY = `${PRIVY_EVM_CONNECTOR_ID}.dis
 // provider requests). Interactive phases such as the login modal are only
 // cancellable, never timed out: users may take minutes to enter an OTP.
 const DEFAULT_CONNECT_TIMEOUT_MS = 60_000
-const DEFAULT_RECONNECT_TIMEOUT_MS = 10_000
+const DEFAULT_RECONNECT_TIMEOUT_MS = 15_000
 const DEFAULT_PROVIDER_TIMEOUT_MS = 10_000
 const LEGACY_PRIVY_EVM_CONNECTOR_ID_PATTERN =
   /^io\.privy\.wallet\.0x[0-9a-f]{40}$/i
