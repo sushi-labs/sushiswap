@@ -45,7 +45,7 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 beforeEach(() => {
   notifyManager.setNotifyFunction((callback) => act(callback))
-  values = [7n, precision / 2n, precision, 100n, 10n]
+  values = [7n, precision / 2n, 2_000_000_000n, precision, 100n, 10n]
   request
     .mockReset()
     .mockImplementation(async ({ method }: { method: string }) => {
@@ -105,14 +105,16 @@ async function render(enabled = true) {
 }
 
 it.each([
-  { supply: 100n, balance: 10n, expected: 4320n },
-  { supply: 0n, balance: 10n, expected: 0n },
-  { supply: 100n, balance: 0n, expected: 0n },
+  { periodFinish: 2_000_000_000n, supply: 100n, balance: 10n, expected: 4320n },
+  { periodFinish: 0n, supply: 100n, balance: 10n, expected: 0n },
+  { periodFinish: 2_000_000_000n, supply: 0n, balance: 10n, expected: 0n },
+  { periodFinish: 2_000_000_000n, supply: 100n, balance: 0n, expected: 0n },
 ])(
   'reads rewards and selects the daily rate (case %#)',
-  async ({ supply, balance, expected }) => {
-    values[3] = supply
-    values[4] = balance
+  async ({ periodFinish, supply, balance, expected }) => {
+    values[2] = periodFinish
+    values[4] = supply
+    values[5] = balance
     await render()
     await vi.waitFor(() => expect(container.textContent).toBe(`7:${expected}`))
     expect(request).toHaveBeenCalledOnce()
