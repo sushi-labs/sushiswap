@@ -1,19 +1,18 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
+import type { BuybackReserveTransaction } from '@sushiswap/graph-client/data-api'
 import { Chip, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
+import { BUYBACK_TOKEN } from 'src/lib/hooks/react-query/buyback'
 import { perpsNumberFormatter } from 'src/lib/perps/utils'
 import { getEvmChainById, shortenHash } from 'sushi/evm'
 import { reserveDateFormatter, reserveTimeFormatter } from '../../_lib/format'
-import { mockReserveTransactions } from '../../_lib/mock-data'
-
-type ReserveTransaction = (typeof mockReserveTransactions.transactions)[number]
 
 const columnBodyMeta = {
   className: 'tabular-nums !px-2 first:!pl-0 last:!pr-0',
   skeleton: <SkeletonText fontSize="sm" />,
 }
 
-export const ROUND_COLUMN: ColumnDef<ReserveTransaction> = {
+export const ROUND_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'round',
   header: 'Round',
   accessorKey: 'round',
@@ -27,7 +26,7 @@ export const ROUND_COLUMN: ColumnDef<ReserveTransaction> = {
   meta: { body: columnBodyMeta },
 }
 
-export const SETTLED_COLUMN: ColumnDef<ReserveTransaction> = {
+export const SETTLED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'timestamp',
   header: 'Settled',
   accessorKey: 'timestamp',
@@ -49,7 +48,7 @@ export const SETTLED_COLUMN: ColumnDef<ReserveTransaction> = {
   meta: { body: columnBodyMeta },
 }
 
-export const SPENT_COLUMN: ColumnDef<ReserveTransaction> = {
+export const SPENT_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'spent',
   header: 'Spent',
   enableSorting: false,
@@ -71,7 +70,7 @@ export const SPENT_COLUMN: ColumnDef<ReserveTransaction> = {
   meta: { body: columnBodyMeta },
 }
 
-export const RECEIVED_COLUMN: ColumnDef<ReserveTransaction> = {
+export const RECEIVED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'received',
   header: 'Received',
   enableSorting: false,
@@ -87,16 +86,14 @@ export const RECEIVED_COLUMN: ColumnDef<ReserveTransaction> = {
         <span className="block truncate md:inline" title={received}>
           {received}
         </span>{' '}
-        <span className="text-muted-foreground">
-          {mockReserveTransactions.token.symbol}
-        </span>
+        <span className="text-muted-foreground">{BUYBACK_TOKEN.symbol}</span>
       </span>
     )
   },
   meta: { body: columnBodyMeta },
 }
 
-export const PRICE_COLUMN: ColumnDef<ReserveTransaction> = {
+export const PRICE_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'priceUSD',
   header: 'Price',
   enableSorting: false,
@@ -105,7 +102,7 @@ export const PRICE_COLUMN: ColumnDef<ReserveTransaction> = {
     <span>
       $
       {perpsNumberFormatter({
-        value: row.original.priceUSD,
+        value: row.original.priceUSD || 0,
         minFraxDigits: 5,
         maxFraxDigits: 5,
       })}
@@ -114,16 +111,16 @@ export const PRICE_COLUMN: ColumnDef<ReserveTransaction> = {
   meta: { body: columnBodyMeta },
 }
 
-export const TRANSACTION_COLUMN: ColumnDef<ReserveTransaction> = {
+export const TRANSACTION_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'transactionHash',
   header: 'Transaction',
   enableSorting: false,
   size: 160,
   cell: ({ row }) => (
     <a
-      href={getEvmChainById(
-        mockReserveTransactions.token.chainId,
-      ).getTransactionUrl(row.original.transactionHash)}
+      href={getEvmChainById(BUYBACK_TOKEN.chainId).getTransactionUrl(
+        row.original.transactionHash as `0x${string}`,
+      )}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`View transaction for round ${row.original.round} on Etherscan`}

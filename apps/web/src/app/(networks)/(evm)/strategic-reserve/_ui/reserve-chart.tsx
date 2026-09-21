@@ -1,6 +1,12 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  SkeletonBox,
+} from '@sushiswap/ui'
 import type { EChartsOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
@@ -9,10 +15,10 @@ import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
 import { useMemo } from 'react'
+import { useBuybackReserveHistory } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-history'
 import { perpsNumberFormatter } from 'src/lib/perps/utils'
 import { formatNumber } from 'sushi'
 import { reserveDateFormatter, reserveTimeFormatter } from '../_lib/format'
-import { mockReserveHistory } from '../_lib/mock-data'
 
 echarts.use([CanvasRenderer, LineChart, GridComponent, TooltipComponent])
 
@@ -24,7 +30,12 @@ const chartDateFormatter = new Intl.DateTimeFormat('en-GB', {
 
 export function ReserveChart(): React.ReactElement {
   const { resolvedTheme } = useTheme()
-  const { points, token } = mockReserveHistory
+  const { data, isLoading, isError } = useBuybackReserveHistory({
+    enabled: true,
+  })
+
+  const points = data?.points ?? []
+  const token = data?.token
   const latestPoint = points.at(-1)
   const latestAmount = perpsNumberFormatter({
     value: latestPoint?.amount ?? '0',
@@ -88,7 +99,7 @@ export function ReserveChart(): React.ReactElement {
       },
       series: [
         {
-          name: token.symbol,
+          name: token?.symbol,
           type: 'line',
           step: 'end',
           showSymbol: true,
@@ -113,7 +124,7 @@ export function ReserveChart(): React.ReactElement {
         },
       ],
     }
-  }, [points, latestPoint, token.symbol, resolvedTheme])
+  }, [points, latestPoint, token?.symbol, resolvedTheme])
 
   return (
     <Card>
@@ -121,16 +132,29 @@ export function ReserveChart(): React.ReactElement {
         <CardTitle>SUSHI held over time</CardTitle>
       </CardHeader>
       <CardContent className="px-4 md:px-6">
-        <div
-          role="img"
-          aria-label={`SUSHI held over time: ${latestAmount} SUSHI in reserve.`}
-        >
-          <ReactEchartsCore
-            echarts={echarts}
-            option={option}
-            style={{ height: 260 }}
-          />
-        </div>
+        {isLoading ? (
+          <div role="status" aria-label="Loading reserve history">
+            <SkeletonBox className="h-[260px] w-full" />
+          </div>
+        ) : isError ? (
+          <div
+            role="alert"
+            className="flex h-[260px] items-center justify-center text-sm text-red"
+          >
+            Unable to load reserve history.
+          </div>
+        ) : (
+          <div
+            role="img"
+            aria-label={`SUSHI held over time: ${latestAmount} SUSHI in reserve.`}
+          >
+            <ReactEchartsCore
+              echarts={echarts}
+              option={option}
+              style={{ height: 260 }}
+            />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

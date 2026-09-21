@@ -6,7 +6,7 @@ import { TransactionsTable } from './_ui/transactions-table'
 export default async function Page() {
   return (
     <Container
-      maxWidth="8xl"
+      maxWidth="6xl"
       className="flex flex-col gap-6 px-2 pb-8 sm:px-4 md:gap-8 md:pb-16"
     >
       <DataRow />

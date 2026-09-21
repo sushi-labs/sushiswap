@@ -32,15 +32,17 @@ export const DataItem = ({
       </CardHeader>
       <CardContent className="!gap-2 px-4 md:px-6">
         {isLoading ? (
-          <SkeletonBox className="h-9 w-full" />
+          <SkeletonBox className="h-9 w-3/4" />
         ) : isError ? (
           <span className="text-sm text-red h-9">Error</span>
         ) : (
           <span className="text-3xl font-bold">{value}</span>
         )}
-        {subLabel && (
-          <span className="text-xs text-muted-foreground">{subLabel}</span>
-        )}
+        {isLoading
+          ? subLabel && <SkeletonBox className="h-4 w-1/4" />
+          : subLabel && (
+              <span className="text-xs text-muted-foreground">{subLabel}</span>
+            )}
       </CardContent>
     </Card>
   )

@@ -32,6 +32,21 @@ type Query {
   bladeMints(address: Bytes!, chainId: BladeChainId!): [BladeMint!]!
   bladeBurns(address: Bytes!, chainId: BladeChainId!): [BladeBurn!]!
   bladeSwaps(address: Bytes!, chainId: BladeChainId!): [BladeSwap!]!
+
+  """
+  Reserve holdings and all-time purchase metrics for a token on a Zerion-supported chain.
+  """
+  buybackReserve(chainId: ChainId!, walletAddress: Address!, tokenAddress: ContractAddress!): BuybackReserve!
+
+  """
+  Chronological balance changes, including transfers and outflows. Amounts are token units, not a USD portfolio-value chart.
+  """
+  buybackReserveHistory(chainId: ChainId!, walletAddress: Address!, tokenAddress: ContractAddress!): BuybackReserveHistory!
+
+  """
+  Confirmed purchases, newest first. The cursor is scoped to the chain, wallet and token.
+  """
+  buybackReserveTransactions(chainId: ChainId!, walletAddress: Address!, tokenAddress: ContractAddress!, first: Int = 25, after: Base64): BuybackReserveTransactionPage!
   featuresByChainId(chainId: ChainId!): [ChainIdFeature!]!
   chainIdsByFeature(feature: ChainIdFeature!): [ChainId!]!
   exploreTokens(chainId: SushiSwapChainId!): [ExploreToken!]!
@@ -70,6 +85,7 @@ type Query {
   vaults(chainId: SmartPoolChainId!, poolAddress: Bytes!): [Vault!]!
   sushiBarStats: SushiBarStats!
   sushiBarHistory: SushiBarHistory!
+  terminal: TerminalQueries!
   tokenList(chainId: TokenListChainId!, first: Int = 50, skip: Int, search: String, customTokens: [ContractAddress!], approvalStatuses: [TokenApprovalStatus!] = [APPROVED]): [TokenListEntry!]!
   tokenListBalances(chainId: TokenListChainId!, account: Address!, includeNative: Boolean = true, customTokens: [ContractAddress!]): [TokenListWithBalanceEntry!]!
   trendingTokens(chainId: TrendingTokensChainId!): [TrendingToken!]!
@@ -226,6 +242,85 @@ type BladeSwap {
   amountOutRaw: BigInt!
   outToken: Token!
   feeUSD: Float!
+}
+
+type BuybackReserve {
+  chainId: ChainId!
+  walletAddress: Address!
+  token: Token!
+
+  """Current token balance in decimal units, without precision loss."""
+  amount: String!
+  amountRaw: BigInt!
+  amountUSD: Float
+  spotPriceUSD: Float
+
+  """
+  Total historical USD spent / total tokens bought. Excludes gas, gifts and sales. Null if any purchase cannot be valued.
+  """
+  averageBuyPriceUSD: Float
+
+  """
+  (spotPriceUSD / averageBuyPriceUSD - 1) * 100. Positive means spot is above the average purchase price.
+  """
+  percentageDifference: Float
+
+  """
+  Null when the holder-count provider does not cover this token/chain or is unavailable.
+  """
+  holderCount: Float
+  buybackCount: Int!
+}
+
+type BuybackReserveHistoryPoint {
+  """
+  Unix seconds. The amount is the balance after all transactions at this timestamp.
+  """
+  timestamp: Int!
+  amount: String!
+  amountRaw: BigInt!
+}
+
+type BuybackReserveHistory {
+  token: Token!
+
+  """
+  Whether the indexed transfer history sums to the current balance. False can indicate indexing lag or rebasing tokens.
+  """
+  isReconciled: Boolean!
+  points: [BuybackReserveHistoryPoint!]!
+}
+
+type BuybackReserveSpentToken {
+  token: Token!
+  amount: String!
+  amountRaw: BigInt!
+
+  """Historical USD value of the net amount spent, excluding gas."""
+  amountUSD: Float
+}
+
+type BuybackReserveTransaction {
+  """Chronological purchase number, starting at one."""
+  round: Int!
+  timestamp: Int!
+  transactionHash: String!
+  spent: [BuybackReserveSpentToken!]!
+  received: String!
+  receivedRaw: BigInt!
+
+  """
+  Historical USD spent / net tokens received; not the provider's market price of the received token.
+  """
+  priceUSD: Float
+}
+
+type BuybackReserveTransactionPage {
+  token: Token!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  endCursor: Base64
+  transactions: [BuybackReserveTransaction!]!
 }
 
 enum ChainIdFeature {
@@ -1670,6 +1765,337 @@ type SushiBarHistory {
   hourSnapshots: [SushiBarBucket!]!
   daySnapshots: [SushiBarBucket!]!
   weekSnapshots: [SushiBarBucket!]!
+}
+
+"""A field whose value is a chain ID"""
+scalar TerminalChainId
+
+scalar TerminalPoolKey
+
+type TerminalQueries {
+  """
+  Active pools. Address breaks sort ties; reuse the same ordering on subsequent pages.
+  """
+  pools(chainId: TerminalChainId!, after: EvmAddress, first: Int = 50, orderBy: TerminalPoolOrderBy = CREATED_BLOCK, orderDirection: TerminalOrderDirection = DESC): TerminalPoolConnection!
+  trades(pool: TerminalPoolKey!, first: Int = 50, after: String): TerminalTradeConnection!
+  candles(input: TerminalCandlesInput!): TerminalCandleConnection!
+  market(pool: TerminalPoolKey!): TerminalMarket!
+  metrics(input: TerminalMetricsInput!): TerminalMetrics!
+  marketStats(input: TerminalMetricsInput!): TerminalMarketStats!
+  supply(chainId: TerminalChainId!, token: EvmAddress!): TerminalSupply
+
+  """
+  Verification targets ordered by key ascending; after is a target key, not a pool address.
+  """
+  coverage(chainId: TerminalChainId!, after: ID, first: Int = 100): TerminalCoverageConnection!
+}
+
+enum TerminalPoolOrderBy {
+  ADDRESS
+  CREATED_BLOCK
+  FEE
+}
+
+enum TerminalOrderDirection {
+  ASC
+  DESC
+}
+
+type TerminalPoolConnection {
+  nodes: [TerminalPool!]!
+  hasNextPage: Boolean!
+  endCursor: EvmAddress
+}
+
+type TerminalCoverageConnection {
+  nodes: [TerminalCoverage!]!
+  hasNextPage: Boolean!
+  endCursor: ID
+}
+
+type TerminalPool {
+  key: TerminalPoolKey!
+  chainId: TerminalChainId!
+  address: EvmAddress!
+  deployment: String!
+  dex: String
+  details: TerminalPoolDetails!
+  token0: EvmAddress!
+  token1: EvmAddress!
+  quoteToken: EvmAddress!
+  usdAnchorToken: EvmAddress
+  fee: Int!
+  createdBlock: BigInt!
+}
+
+union TerminalPoolDetails = TerminalV3PoolDetails
+
+type TerminalV3PoolDetails {
+  family: String!
+  tickSpacing: Int!
+}
+
+type TerminalTrade {
+  transactionHash: Bytes!
+  logIndex: Int!
+  blockNumber: BigInt!
+  timestamp: Int!
+  amount0: BigInt!
+  amount1: BigInt!
+
+  """Token1 per token0, independent of the managed quote and USD anchor."""
+  price0Quote: Float!
+
+  """Token0 per token1, independent of the managed quote and USD anchor."""
+  price1Quote: Float!
+  price0Usd: Float
+  price1Usd: Float
+  amountUsd: Float
+  protocolSender: EvmAddress
+  recipient: EvmAddress
+  transactionSender: EvmAddress
+  attributedTrader: EvmAddress
+  attributionSource: String
+}
+
+type TerminalTradeConnection {
+  nodes: [TerminalTrade!]!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  endCursor: String
+  marketRevision: BigInt!
+  streamCursor: BigInt!
+}
+
+enum TerminalDenomination {
+  USD
+  QUOTE
+  TOKEN0
+  TOKEN1
+}
+
+"""
+Resolved price units. QUOTE resolves to TOKEN0 or TOKEN1. USD prices the
+managed base; TOKEN0 prices token1 and TOKEN1 prices token0.
+"""
+type TerminalPriceContext {
+  denomination: TerminalDenomination!
+  baseToken: EvmAddress!
+  quoteToken: EvmAddress!
+}
+
+input TerminalCandlesInput {
+  pool: TerminalPoolKey!
+  denomination: TerminalDenomination = USD
+  interval: TerminalCandleInterval!
+  from: Int!
+  to: Int!
+  countBack: Int
+  fresh: Boolean = false
+}
+
+type TerminalCandleConnection {
+  context: TerminalPriceContext!
+  nodes: [TerminalCandle!]!
+  hasMoreBefore: Boolean!
+  marketRevision: BigInt!
+  repairGeneration: BigInt!
+  streamCursor: BigInt!
+
+  """Resume token for candle SSE, independent of the general event cursor."""
+  candleCursor: String!
+}
+
+type TerminalCandle {
+  timestamp: Int!
+  open: Float!
+  high: Float!
+  low: Float!
+  close: Float!
+
+  """
+  Sum of known USD trade amounts; trades without USD pricing contribute zero.
+  """
+  volumeUsd: Float!
+  volumeBase: Float!
+  volumeQuote: Float!
+
+  """Number of trades with USD amounts, regardless of chart denomination."""
+  pricedCount: Int!
+  tradeCount: Int!
+}
+
+type TerminalWindow {
+  interval: TerminalMarketInterval!
+  volumeUsd: Float!
+  feesUsd: Float!
+  tradeCount: Int!
+  pricedCount: Int!
+  unpricedCount: Int!
+}
+
+type TerminalMarket {
+  pool: TerminalPool!
+  windows: [TerminalWindow!]!
+  price0Quote: Float
+  price1Quote: Float
+  price0Usd: Float
+  price1Usd: Float
+  tvlUsd: Float
+
+  """
+  TVL using Launchpad's quote-side cap: quote value plus at most twice that
+  value from the other token.
+  """
+  limitedTvlUsd: Float
+  fdv0Usd: Float
+  fdv1Usd: Float
+  marketCap0Usd: Float
+  marketCap1Usd: Float
+  asOf: Int!
+  isStale: Boolean!
+  canonicalComplete: Boolean!
+  pricingComplete: Boolean!
+  verifiedThrough: BigInt
+  projectionThrough: BigInt
+  marketRevision: BigInt!
+  streamCursor: BigInt!
+}
+
+type TerminalSupply {
+  contractTotalSupply: BigInt!
+  adjustedSupply: BigInt!
+  blockNumber: BigInt!
+  observedAt: Int!
+  isStale: Boolean!
+}
+
+type TerminalCoverage {
+  key: ID!
+  kind: TerminalCoverageKind!
+  fromBlock: BigInt!
+  verifiedBlock: BigInt
+  verifiedHash: Bytes
+  projectionBlock: BigInt
+  failures: Int!
+  error: String
+}
+
+enum TerminalCoverageKind {
+  FACTORY
+  POOL
+  TOKEN
+}
+
+enum TerminalMarketInterval {
+  FIVE_MINUTES
+  ONE_HOUR
+  SIX_HOURS
+  TWELVE_HOURS
+  ONE_DAY
+}
+
+enum TerminalCandleInterval {
+  ONE_SECOND
+  ONE_MINUTE
+  FIVE_MINUTES
+  FIFTEEN_MINUTES
+  ONE_HOUR
+  FOUR_HOURS
+  ONE_DAY
+}
+
+input TerminalMetricsInput {
+  pool: TerminalPoolKey!
+}
+
+type TerminalMetrics {
+  version: BigInt!
+  priceUsd: Float
+  marketCapitalizationUsd: Float
+  fullyDilutedValuationUsd: Float
+  currentTvlUsd: Float
+  volumeUsd: TerminalNullableWindowValues!
+  tvlChangePercent: TerminalNullableWindowValues!
+  asOf: String!
+  source: String!
+  isStale: Boolean!
+}
+
+type TerminalNullableWindowValues {
+  h1: Float
+  h6: Float
+  h12: Float
+  h24: Float
+}
+
+type TerminalMarketStats {
+  m5: TerminalMarketStatsWindow!
+  h1: TerminalMarketStatsWindow!
+  h6: TerminalMarketStatsWindow!
+  h24: TerminalMarketStatsWindow!
+
+  """
+  Latest non-null post-swap marginal pool price before `asOf`, used for live
+  replay.
+  """
+  priceUsd: Float
+
+  """
+  The upper bound every window in this response was calculated against. All four
+  come from one database snapshot taken at this instant, so they are always
+  mutually consistent -- a shorter window never reports more volume than a
+  longer one containing it.
+  """
+  asOf: String!
+
+  """
+  Terminal pool cursor captured in the same database snapshot as all windows.
+  """
+  streamCursor: BigInt!
+}
+
+type TerminalMarketStatsWindow {
+  pricedCount: Int!
+  unpricedCount: Int!
+
+  """
+  Upper bound this window was calculated against. Always equal to the response's
+  top-level `asOf`, because every window comes from the same snapshot; read it
+  from either place.
+  """
+  asOf: String!
+
+  """
+  Known USD buy volume, or null when none of the window's trades are priced.
+  """
+  buyVolumeUsd: Float
+
+  """
+  Known USD sell volume, or null when none of the window's trades are priced.
+  """
+  sellVolumeUsd: Float
+
+  """
+  Known USD volume. Compare pricedCount with totalTradeCount to distinguish
+  complete, partial and unavailable coverage.
+  """
+  totalVolumeUsd: Float
+  buyCount: Int!
+  sellCount: Int!
+
+  """
+  Trades in the window, counted per pool swap. One transaction that touches the
+  pool more than once — a split route, or an arbitrage that buys and sells —
+  counts once per swap, so this is always `buyCount` + `sellCount`.
+  """
+  totalTradeCount: Int!
+
+  """Window-start marginal USD price of the managed base token."""
+  priceBaselineUsd: Float
+
+  """USD price change from priceBaselineUsd."""
+  priceChangePercent: Float
 }
 
 type StellarTokenMetadata {
