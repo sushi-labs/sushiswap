@@ -20,7 +20,7 @@ const createConnectorConfig = () => {
   return getDefaultConfig({
     appName: 'SushiSwap',
     appUrl: 'https://sushi.com',
-    autoConnect: true,
+    autoConnect: false,
     enableMobile: true,
   })
 }
