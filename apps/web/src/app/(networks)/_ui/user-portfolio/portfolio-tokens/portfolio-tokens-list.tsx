@@ -223,6 +223,7 @@ export function PortfolioTokensList({
                       icon={PaperAirplaneIcon}
                       onClick={(e) => {
                         e.stopPropagation()
+                        e.preventDefault()
                         onSend()
                       }}
                       description={`Send ${currency.symbol ?? 'token'}`}
