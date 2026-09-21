@@ -161,7 +161,7 @@ export function PortfolioWalletTokens() {
         <TextField
           type="text"
           aria-label="Search tokens"
-          placeholder="Search by name, symbol, or address"
+          placeholder="Search tokens"
           className="bg-secondary !border !border-accent"
           onChange={(event) => setSearch(event.target.value)}
           value={search}
