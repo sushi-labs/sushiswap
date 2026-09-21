@@ -33,6 +33,7 @@ export function useHolderRewards({
     contracts: [
       { ...contract, functionName: 'earned', args: [holder] },
       { ...contract, functionName: 'rewardRateScaled' },
+      { ...contract, functionName: 'periodFinish' },
       { ...contract, functionName: 'PRECISION' },
       { ...contract, functionName: 'eligibleSupply' },
       {
@@ -47,11 +48,18 @@ export function useHolderRewards({
       enabled: Boolean(distributor),
       staleTime: 0,
       refetchInterval: ms('15s'),
-      select([earned, rate, precision, supply, balance]): HolderRewards {
+      select([
+        earned,
+        rate,
+        periodFinish,
+        precision,
+        supply,
+        balance,
+      ]): HolderRewards {
         return {
           earned,
-          // ponytail: estimate from the stored rate; add period checks if live accrual is needed.
           ratePerDay:
+            periodFinish <= BigInt(Math.floor(Date.now() / 1000)) ||
             supply === 0n
               ? 0n
               : (balance * rate * 86_400n) / (supply * precision),

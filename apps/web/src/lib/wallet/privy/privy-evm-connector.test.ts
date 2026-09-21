@@ -237,14 +237,24 @@ function seedStorageItem(key: string, value: unknown): void {
   window.localStorage.setItem(`wagmi.${key}`, JSON.stringify(value))
 }
 
+function seedPrivySession(): void {
+  window.localStorage.setItem('privy:pat', JSON.stringify('access-token'))
+  window.localStorage.setItem(
+    'privy:refresh_token',
+    JSON.stringify('refresh-token'),
+  )
+}
+
 function seedPersistedConnection({
   connectorId = PRIVY_EVM_CONNECTOR_ID,
   connectorType = 'privy',
   recentConnectorId = connectorId,
+  restorableSession = true,
 }: {
   connectorId?: string
   connectorType?: string
   recentConnectorId?: string
+  restorableSession?: boolean
 } = {}): void {
   const uid = 'persisted-privy'
   window.localStorage.setItem(
@@ -276,6 +286,7 @@ function seedPersistedConnection({
     }),
   )
   seedStorageItem('recentConnectorId', recentConnectorId)
+  if (restorableSession) seedPrivySession()
 }
 
 function deferred<T>() {
@@ -291,7 +302,10 @@ function deferred<T>() {
 beforeEach(() => {
   vi.stubGlobal(
     'window',
-    Object.assign(new EventTarget(), { localStorage: createLocalStorage() }),
+    Object.assign(new EventTarget(), {
+      localStorage: createLocalStorage(),
+      location: { search: '' },
+    }),
   )
 })
 
@@ -334,6 +348,8 @@ describe('deferred Privy EVM connector', () => {
 
   it('restores a connection started before an OAuth redirect', async () => {
     seedStorageItem(PRIVY_EVM_DISCONNECTED_STORAGE_KEY, true)
+    window.location.search =
+      '?privy_oauth_code=code&privy_oauth_state=state&privy_oauth_provider=twitter'
     const { config, connector, runtimeStore } = createHarness({ ssr: true })
 
     await preparePrivyEvmReconnect(config)
@@ -385,6 +401,20 @@ describe('deferred Privy EVM connector', () => {
       expect(second.config.state.status).toBe('disconnected'),
     )
     expect(second.runtimeStore.getSnapshot().requested).toBe(false)
+  })
+
+  it('skips reconnect when Privy has no restorable session', async () => {
+    seedPersistedConnection({ restorableSession: false })
+    seedStorageItem(PRIVY_EVM_CONNECTED_STORAGE_KEY, true)
+    const { config, runtimeStore } = createHarness({ ssr: true })
+
+    await hydrate(config, { reconnectOnMount: true }).onMount()
+    await vi.waitFor(() => expect(config.state.status).toBe('disconnected'))
+
+    expect(runtimeStore.getSnapshot().requested).toBe(false)
+    await expect(
+      config.storage?.getItem(PRIVY_EVM_CONNECTED_STORAGE_KEY),
+    ).resolves.toBeNull()
   })
 
   it('logs in or provisions on an explicit first connection', async () => {
@@ -724,7 +754,7 @@ describe('deferred Privy EVM connector', () => {
     expect(getConnections(config)).toHaveLength(1)
   })
 
-  it('leaves a slow restore alone and keeps the reconnect intent', async () => {
+  it('settles a timed out restore and drops the reconnect intent', async () => {
     vi.useFakeTimers()
     seedPersistedConnection()
     seedStorageItem(PRIVY_EVM_CONNECTED_STORAGE_KEY, true)
@@ -744,7 +774,7 @@ describe('deferred Privy EVM connector', () => {
     })
     await expect(
       config.storage?.getItem(PRIVY_EVM_CONNECTED_STORAGE_KEY),
-    ).resolves.toBe(true)
+    ).resolves.toBeNull()
   })
 
   it('drops the reconnect intent when Privy logs out underneath a connection', async () => {
@@ -780,6 +810,7 @@ describe('deferred Privy EVM connector', () => {
       connectors: [otherFactory],
       runtimeStore,
     })
+    seedPrivySession()
     await config.storage?.setItem(PRIVY_EVM_CONNECTED_STORAGE_KEY, true)
     publishAuthenticated({ runtimeStore, wallet })
 
