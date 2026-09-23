@@ -8,23 +8,8 @@ import {
 } from '@sushiswap/ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
-import {
-  ChainId,
-  formatPercent,
-  formatUSD,
-  getChainById,
-  getNativeAddress,
-} from 'sushi'
-import {
-  EvmChainId,
-  EvmNative,
-  EvmToken,
-  SUSHI,
-  USDC,
-  evmNativeAddress,
-  isEvmAddress,
-  isEvmChainId,
-} from 'sushi/evm'
+import { formatPercent, formatUSD, getChainById, getNativeAddress } from 'sushi'
+import { EvmNative, EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
   StellarToken,
   isStellarChainId,
@@ -41,6 +26,7 @@ import { formatUnits } from 'viem'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
 import { useSidebar } from '../../sidebar'
 import { PortfolioInfoRow } from '../portfolio-info-row'
+import { getTokenParams } from './get-token-params'
 import { SendTokenDialog } from './send-token-dialog'
 
 interface PortfolioTokensListProps {
@@ -86,50 +72,6 @@ const getCurrency = (token: PortfolioWalletToken) => {
   }
 }
 
-const nativeAddressAliases = {
-  [ChainId.CELO]: '0x471ece3750da237f93b8e339c536989b8978a438',
-  [ChainId.MANTLE]: '0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000',
-  [ChainId.POLYGON]: '0x0000000000000000000000000000000000001010',
-} as Partial<Record<ChainId, `0x${string}`>>
-
-function hasSushiToken(chainId: ChainId): chainId is keyof typeof SUSHI {
-  return Object.hasOwn(SUSHI, chainId)
-}
-
-function getToken0Param(
-  token: PortfolioWalletToken,
-  currency: ReturnType<typeof getCurrency>,
-): string {
-  if (hasSushiToken(token.chainId)) {
-    return ''
-  }
-
-  if (token.chainId === EvmChainId.ARC && token.address === evmNativeAddress) {
-    return `token0=${USDC[token.chainId].address}`
-  }
-  if (nativeAddressAliases?.[token.chainId]) {
-    return `token0=NATIVE`
-  }
-  if (currency?.type === 'native') {
-    return `token0=NATIVE`
-  }
-  return `token0=${token.address}`
-}
-
-function getToken1Param(token: PortfolioWalletToken): string {
-  if (hasSushiToken(token.chainId)) {
-    return `token1=${SUSHI[token.chainId].address}`
-  }
-  return ''
-}
-
-function getTokenParams(
-  token: PortfolioWalletToken,
-  currency: ReturnType<typeof getCurrency>,
-): string {
-  return `${getToken0Param(token, currency)}${getToken1Param(token)}`
-}
-
 export function PortfolioTokensList({
   tokens: _tokens,
   onTransferConfirmed,
@@ -168,7 +110,7 @@ export function PortfolioTokensList({
               (isStellarChainId(currency.chainId) && wallets.stellar?.account),
           )
 
-          const url = `/${getChainById(token.chainId).key}/swap?${getTokenParams(token, currency)}`
+          const url = `/${getChainById(token.chainId).key}/swap?${getTokenParams(token, currency.type === 'native')}`
 
           return (
             <PortfolioInfoRow
