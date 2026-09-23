@@ -30,9 +30,11 @@ export const SidebarPortfolioView = () => {
   }, [tab])
 
   return (
-    <div className="flex flex-col h-full gap-y-3">
-      <PortfolioHeader />
-      <div className="flex px-5 gap-x-2">
+    <div className="flex min-h-0 flex-col h-full gap-y-3 overflow-hidden">
+      <div className="shrink-0">
+        <PortfolioHeader />
+      </div>
+      <div className="flex shrink-0 px-5 gap-x-2">
         {Object.values(PortfolioTab).map((_tab) => (
           <Button
             key={_tab}

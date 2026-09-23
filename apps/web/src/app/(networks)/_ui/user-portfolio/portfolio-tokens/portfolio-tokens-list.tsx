@@ -8,7 +8,7 @@ import {
 } from '@sushiswap/ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useWallets } from 'src/lib/wallet/hooks/use-wallets'
-import { formatPercent, formatUSD, getNativeAddress } from 'sushi'
+import { formatPercent, formatUSD, getChainById, getNativeAddress } from 'sushi'
 import { EvmNative, EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
   StellarToken,
@@ -24,7 +24,9 @@ import {
 } from 'sushi/svm'
 import { formatUnits } from 'viem'
 import { BalanceProvider } from '~evm/_common/ui/balance-provider/balance-provider'
+import { useSidebar } from '../../sidebar'
 import { PortfolioInfoRow } from '../portfolio-info-row'
+import { getTokenParams } from './get-token-params'
 import { SendTokenDialog } from './send-token-dialog'
 
 interface PortfolioTokensListProps {
@@ -74,6 +76,7 @@ export function PortfolioTokensList({
   tokens: _tokens,
   onTransferConfirmed,
 }: PortfolioTokensListProps) {
+  const { close } = useSidebar()
   const wallets = useWallets()
   const [selectedCurrency, setSelectedCurrency] = useState<NonNullable<
     ReturnType<typeof getCurrency>
@@ -99,7 +102,7 @@ export function PortfolioTokensList({
 
   return (
     <>
-      <div className="overflow-y-auto h-full cursor-default">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain cursor-default">
         {tokens.map(({ currency, onSend, token }) => {
           const canSend = Boolean(
             (isEvmChainId(currency.chainId) && wallets.evm?.account) ||
@@ -107,10 +110,14 @@ export function PortfolioTokensList({
               (isStellarChainId(currency.chainId) && wallets.stellar?.account),
           )
 
+          const url = `/${getChainById(token.chainId).key}/swap?${getTokenParams(token, currency.type === 'native')}`
+
           return (
             <PortfolioInfoRow
-              key={`${token.chainId}:${token.id}`}
               chainId={token.chainId}
+              key={`${token.chainId}:${token.address}`}
+              href={url}
+              onClick={close}
               icon={
                 <Currency.Icon currency={currency} width={28} height={28} />
               }
@@ -156,7 +163,11 @@ export function PortfolioTokensList({
                       size="xs"
                       variant="ghost"
                       icon={PaperAirplaneIcon}
-                      onClick={onSend}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        onSend()
+                      }}
                       description={`Send ${currency.symbol ?? 'token'}`}
                       name={`Send ${currency.symbol ?? 'token'}`}
                     />
