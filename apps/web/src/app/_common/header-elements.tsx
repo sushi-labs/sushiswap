@@ -70,6 +70,11 @@ export const EXPLORE_NAVIGATION_LINKS = (
       href: '/stake',
       description: 'Earn protocol fees by staking SUSHI.',
     },
+    {
+      title: 'Strategic Reserve',
+      href: '/strategic-reserve',
+      description: 'View SUSHI Buyback & Strategic Reserve.',
+    },
   ]
 }
 
@@ -292,10 +297,28 @@ export const headerElements = ({
       ),
     },
     {
-      title: 'Stake',
-      href: '/stake',
       show: 'desktop',
-      type: NavigationElementType.Single,
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem className={NavigationElementType.Custom}>
+          <NavigationMenuTrigger>
+            <LinkInternal href={`/stake`}>Stake</LinkInternal>
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="w-[400px] gap-3 p-4">
+              <NavigationListItem title={'Stake'} href={`/stake`}>
+                Stake your SUSHI tokens to earn rewards.
+              </NavigationListItem>
+              <NavigationListItem
+                title={'Strategic Reserve'}
+                href={`/strategic-reserve`}
+              >
+                View SUSHI Buyback & Strategic Reserve.
+              </NavigationListItem>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      ),
     },
   ]
 }
