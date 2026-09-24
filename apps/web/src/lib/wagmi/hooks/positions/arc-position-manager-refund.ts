@@ -8,7 +8,7 @@ import { type Hex, encodeFunctionData, isAddressEqual } from 'viem'
 
 const ARC_V1_POSITION_MANAGER = '0xf27f32580a399bDb55b6E1F025B8985c97e2A9D5'
 
-/** Atomically clears donated native USDC before the legacy Arc NPM pays for liquidity. */
+/** Atomically clears donated native USDC */
 export function withArcPositionManagerRefund({
   chainId,
   positionManager,

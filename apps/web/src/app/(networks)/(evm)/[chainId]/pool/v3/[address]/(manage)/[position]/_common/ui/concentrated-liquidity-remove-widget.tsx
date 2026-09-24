@@ -46,7 +46,6 @@ import {
   DialogReview,
 } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
-import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import {
   getDefaultTTL,
@@ -62,8 +61,8 @@ import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   getEvmChainById,
-  isEvmWNativeSupported,
   isSushiSwapV3ChainId,
+  unwrapEvmToken,
 } from 'sushi/evm'
 import type { Hex, SendTransactionReturnType } from 'viem'
 import {
@@ -178,8 +177,10 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   }, [])
 
   const [expectedToken0, expectedToken1] = useMemo(() => {
-    const expectedToken0 = getPositionCurrency(token0, receiveWrapped)
-    const expectedToken1 = getPositionCurrency(token1, receiveWrapped)
+    const expectedToken0 =
+      !token0 || receiveWrapped ? token0?.wrap() : unwrapEvmToken(token0)
+    const expectedToken1 =
+      !token1 || receiveWrapped ? token1?.wrap() : unwrapEvmToken(token1)
     return [expectedToken0, expectedToken1]
   }, [token0, token1, receiveWrapped])
 
@@ -201,15 +202,14 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const positionHasNativeToken = useMemo(() => {
-    if (!isEvmWNativeSupported(chainId) || !nativeToken || !token0 || !token1)
-      return false
+    if (!nativeToken || !token0 || !token1) return false
     return (
       token0.type === 'native' ||
       token1.type === 'native' ||
       token0.address === nativeToken?.wrap().address ||
       token1.address === nativeToken?.wrap().address
     )
-  }, [chainId, token0, token1, nativeToken])
+  }, [token0, token1, nativeToken])
 
   const prepare = useMemo(() => {
     const liquidityPercentage = new Percent({

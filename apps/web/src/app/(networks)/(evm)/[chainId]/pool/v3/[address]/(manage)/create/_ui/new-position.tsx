@@ -10,9 +10,12 @@ import {
 } from '@sushiswap/ui'
 import React, { type FC, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
-import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import { getChainById } from 'sushi'
-import type { EvmAddress, SushiSwapV3ChainId } from 'sushi/evm'
+import {
+  type EvmAddress,
+  type SushiSwapV3ChainId,
+  unwrapEvmToken,
+} from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
@@ -33,8 +36,8 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
   })
   const [_token0, _token1] = useMemo(() => {
     const tokens = [
-      getPositionCurrency(poolStats?.token0),
-      getPositionCurrency(poolStats?.token1),
+      poolStats?.token0 ? unwrapEvmToken(poolStats.token0) : undefined,
+      poolStats?.token1 ? unwrapEvmToken(poolStats.token1) : undefined,
     ]
 
     return invertTokens ? tokens.reverse() : tokens

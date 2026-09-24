@@ -10,7 +10,7 @@ export async function getCachedV3Pool({
     async () => getV3Pool({ chainId, address }, { retries: 3 }),
     ['v3', 'pool', `${chainId}:${address}`],
     {
-      revalidate: 1,
+      revalidate: 60 * 15,
     },
   )()
 }
