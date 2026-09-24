@@ -34,6 +34,8 @@ import {
   DialogReview,
 } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { withArcPositionManagerRefund } from 'src/lib/wagmi/hooks/positions/arc-position-manager-refund'
+import { getPositionNativePaymentCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import {
   getDefaultTTL,
   useTransactionDeadline,
@@ -245,12 +247,7 @@ export const AddSectionReviewModalConcentrated: FC<
     )
       return undefined
 
-    const useNative =
-      token0.type === 'native'
-        ? token0
-        : token1.type === 'native'
-          ? token1
-          : undefined
+    const useNative = getPositionNativePaymentCurrency(token0, token1)
     const { calldata, value } =
       hasExistingPosition && tokenId
         ? NonfungiblePositionManager.addCallParameters(position, {
@@ -267,12 +264,20 @@ export const AddSectionReviewModalConcentrated: FC<
             createPool: noLiquidity,
           })
 
+    const positionManager = SUSHISWAP_V3_POSITION_MANAGER[chainId]
+    const payment = withArcPositionManagerRefund({
+      chainId,
+      positionManager,
+      calldata: calldata as Hex,
+      value: BigInt(value),
+    })
+
     return {
-      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
+      to: positionManager,
       account: address,
       chainId,
-      data: calldata as Hex,
-      value: BigInt(value),
+      data: payment.calldata,
+      value: payment.value,
     } as const satisfies UseCallParameters
   }, [
     address,

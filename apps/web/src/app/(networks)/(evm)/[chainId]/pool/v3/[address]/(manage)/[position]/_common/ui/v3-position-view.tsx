@@ -47,6 +47,7 @@ import { useIsTickAtLimit } from 'src/lib/pool/v3/use-is-tick-at-limit'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-owner'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
+import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { Checker } from 'src/lib/wagmi/systems/checker'
@@ -117,10 +118,7 @@ const Component: FC<{
   })
 
   const [_token0, _token1] = useMemo(
-    () => [
-      token0 ? unwrapEvmToken(token0) : undefined,
-      token1 ? unwrapEvmToken(token1) : undefined,
-    ],
+    () => [getPositionCurrency(token0), getPositionCurrency(token1)],
     [token0, token1],
   )
 
