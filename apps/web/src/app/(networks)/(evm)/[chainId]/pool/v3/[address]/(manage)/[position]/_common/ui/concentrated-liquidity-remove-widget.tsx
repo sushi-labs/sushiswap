@@ -54,11 +54,11 @@ import {
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
+  EvmChainId,
   type EvmCurrency,
   EvmNative,
   NonfungiblePositionManager,
   type Position,
-  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   getEvmChainById,
   isSushiSwapV3ChainId,
@@ -98,7 +98,9 @@ export const ConcentratedLiquidityRemoveWidget: FC<
   const { chain } = useConnection()
   const client = usePublicClient()
   const [value, setValue] = useState<string>('0')
-  const [receiveWrapped, setReceiveWrapped] = useState(false)
+  const [receiveWrapped, setReceiveWrapped] = useState(
+    chainId === EvmChainId.ARC,
+  )
   const [slippageTolerance] = useSlippageTolerance(
     SlippageToleranceStorageKey.RemoveLiquidity,
   )
@@ -274,7 +276,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
       })
 
       return {
-        to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
+        to: positionDetails.positionManager,
         data: calldata as Hex,
         value: BigInt(_value),
       }
@@ -595,7 +597,7 @@ export const ConcentratedLiquidityRemoveWidget: FC<
                     )}
                   </List.Control>
                 </List>
-                {positionHasNativeToken ? (
+                {positionHasNativeToken && chainId !== EvmChainId.ARC ? (
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
                       {`Receive ${nativeToken.wrap().symbol} instead of ${nativeToken.symbol}`}

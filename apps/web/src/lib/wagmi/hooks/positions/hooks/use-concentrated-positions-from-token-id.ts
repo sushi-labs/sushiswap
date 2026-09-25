@@ -1,5 +1,5 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import type { SushiSwapV3ChainId } from 'sushi/evm'
+import { useQuery } from '@tanstack/react-query'
+import type { EvmAddress, SushiSwapV3ChainId } from 'sushi/evm'
 
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions/get-concentrated-liquidity-positions-from-token-ids'
@@ -7,12 +7,14 @@ import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions/get-co
 interface UseConcentratedLiquidityPositionsFromTokenIdParams {
   tokenId: number | string | undefined
   chainId: SushiSwapV3ChainId
+  positionManager?: EvmAddress
   enabled?: boolean
 }
 
 export const useConcentratedLiquidityPositionsFromTokenId = ({
   tokenId,
   chainId,
+  positionManager,
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
   const config = useConfig()
@@ -20,14 +22,14 @@ export const useConcentratedLiquidityPositionsFromTokenId = ({
   return useQuery({
     queryKey: [
       'useConcentratedLiquidityPositionsFromTokenId',
-      { chainId, tokenIds: tokenId },
+      { chainId, tokenIds: tokenId, positionManager },
     ],
     queryFn: async () => {
       // Shouldn't happen
       if (!tokenId) throw new Error('TokenId is undefined')
 
       const positions = await getConcentratedLiquidityPositionsFromTokenIds({
-        tokenIds: [{ tokenId: BigInt(tokenId), chainId }],
+        tokenIds: [{ tokenId: BigInt(tokenId), chainId, positionManager }],
         config,
       })
 
@@ -35,6 +37,5 @@ export const useConcentratedLiquidityPositionsFromTokenId = ({
     },
     refetchInterval: 10000,
     enabled: Boolean(tokenId && chainId && enabled),
-    placeholderData: keepPreviousData,
   })
 }

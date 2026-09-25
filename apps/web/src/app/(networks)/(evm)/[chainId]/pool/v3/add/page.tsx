@@ -4,12 +4,13 @@ import {
   type SmartPoolChainId,
   isSmartPoolChainId,
 } from '@sushiswap/graph-client/data-api'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { type FC, use, useEffect, useMemo, useState } from 'react'
 import { SelectSmartPoolStrategyWidget } from 'src/lib/steer/components/select-smart-pool-strategy-widget'
 import { SmartPoolLiquidityWidget } from 'src/lib/steer/components/smart-pool-liquidity-widget'
 import { useVaults } from 'src/lib/steer/hooks'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
+import { getPositionManager } from 'src/lib/wagmi/hooks/positions/position-manager'
 import {
   type EvmAddress,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -64,6 +65,11 @@ const _Add: FC = () => {
   } = useConcentratedLiquidityURLState()
 
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const positionManager = getPositionManager(
+    chainId,
+    tokenId ? searchParams?.get('positionManager') : undefined,
+  )
 
   const [_invert, _setInvert] = useState(false)
   const { data: position } = useConcentratedPositionInfo({
@@ -71,6 +77,7 @@ const _Add: FC = () => {
     token0,
     tokenId,
     token1,
+    positionManager,
   })
 
   const poolAddress = useMemo(
@@ -148,6 +155,7 @@ const _Add: FC = () => {
             token1={token1}
             poolAddress={poolAddress}
             tokenId={tokenId}
+            positionManager={positionManager}
             feeAmount={feeAmount}
             switchTokens={switchTokens}
           />
@@ -162,7 +170,8 @@ const _Add: FC = () => {
             tokensLoading={tokensLoading}
             existingPosition={position ?? undefined}
             tokenId={tokenId}
-            successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}`}
+            positionManager={positionManager}
+            successLink={`/${getEvmChainById(chainId).key}/pool/v3/${poolAddress}/${tokenId ?? 'positions'}${tokenId ? `?positionManager=${positionManager}` : ''}`}
           />
         </>
       ) : poolType === V3PoolType.SMART && vaults ? (

@@ -47,7 +47,6 @@ import { SolanaNaked } from './solana-naked'
 import { SonicNaked } from './sonic-naked'
 import { StellarNaked } from './stellar-naked'
 import { TaikoNaked } from './taiko-naked'
-import { ThunderCoreNaked } from './thunder-core-naked'
 import { XLayerNaked } from './x-layer-naked'
 import { ZetaChainNaked } from './zeta-chain-naked'
 import { ZKLinkNaked } from './zk-link-naked'
@@ -131,7 +130,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
-  [ChainId.THUNDERCORE]: ThunderCoreNaked,
   [ChainId.HAQQ]: HaqqNaked,
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: ZKSyncNaked,

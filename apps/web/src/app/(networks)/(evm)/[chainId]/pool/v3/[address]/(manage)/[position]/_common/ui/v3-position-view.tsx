@@ -47,6 +47,7 @@ import { useIsTickAtLimit } from 'src/lib/pool/v3/use-is-tick-at-limit'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
 import { useConcentratedPositionOwner } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-owner'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
+import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { getDefaultTTL } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { Checker } from 'src/lib/wagmi/systems/checker'
@@ -56,8 +57,8 @@ import {
   EvmChainId,
   type SushiSwapV3ChainId,
   getEvmChainById,
+  isEvmWNativeSupported,
   isMerklChainId,
-  unwrapEvmToken,
 } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import {
@@ -75,7 +76,13 @@ const Component: FC<{
   chainId: SushiSwapV3ChainId
   address: EvmAddress
   position: string
-}> = ({ chainId, address: poolAddress, position: tokenId }) => {
+  positionManager: EvmAddress
+}> = ({
+  chainId,
+  address: poolAddress,
+  position: tokenId,
+  positionManager,
+}) => {
   const { address } = useConnection()
   const [invert, setInvert] = useState(false)
 
@@ -83,15 +90,18 @@ const Component: FC<{
     useConcentratedLiquidityPositionsFromTokenId({
       chainId,
       tokenId,
+      positionManager,
     })
 
   const { data: token0, isLoading: token0Loading } = useTokenWithCache({
     chainId,
     address: positionDetails?.token0,
+    keepPreviousData: false,
   })
   const { data: token1, isLoading: token1Loading } = useTokenWithCache({
     chainId,
     address: positionDetails?.token1,
+    keepPreviousData: false,
   })
 
   const { data: position, isInitialLoading: isPositionLoading } =
@@ -100,6 +110,7 @@ const Component: FC<{
       token0,
       tokenId,
       token1,
+      positionManager,
     })
 
   const pricesFromPosition = position
@@ -118,8 +129,8 @@ const Component: FC<{
 
   const [_token0, _token1] = useMemo(
     () => [
-      token0 ? unwrapEvmToken(token0) : undefined,
-      token1 ? unwrapEvmToken(token1) : undefined,
+      token0 ? getPositionCurrency(token0) : undefined,
+      token1 ? getPositionCurrency(token1) : undefined,
     ],
     [token0, token1],
   )
@@ -165,7 +176,11 @@ const Component: FC<{
     tickAtLimit[Bound.LOWER] && tickAtLimit[Bound.UPPER],
   )
 
-  const { data: owner } = useConcentratedPositionOwner({ chainId, tokenId })
+  const { data: owner } = useConcentratedPositionOwner({
+    chainId,
+    tokenId,
+    positionManager,
+  })
 
   const { data: rewardsData, isLoading: isRewardsLoading } =
     useClaimableRewards({
@@ -313,6 +328,7 @@ const Component: FC<{
                       tokensLoading={token0Loading || token1Loading}
                       existingPosition={position ?? undefined}
                       tokenId={tokenId}
+                      positionManager={positionManager}
                     />
                   </CardContent>
                 </TabsContent>
@@ -454,11 +470,13 @@ const Component: FC<{
                     isLoading={isPositionLoading}
                     amount={position?.amount0}
                     fiatValue={formatUSD(fiatValuesPosition[0])}
+                    unwrap={isEvmWNativeSupported(chainId)}
                   />
                   <CardCurrencyAmountItem
                     isLoading={isPositionLoading}
                     amount={position?.amount1}
                     fiatValue={formatUSD(fiatValuesPosition[1])}
+                    unwrap={isEvmWNativeSupported(chainId)}
                   />
                 </CardGroup>
                 <CardGroup>
@@ -467,14 +485,14 @@ const Component: FC<{
                     <CardItem
                       title={
                         <>
-                          1 {unwrapEvmToken(currencyBase)?.symbol} ={' '}
+                          1 {getPositionCurrency(currencyBase).symbol} ={' '}
                           <FormattedNumber
                             number={(inverted
                               ? pool?.token1Price
                               : pool?.token0Price
                             )?.toSignificant(6)}
                           />{' '}
-                          {unwrapEvmToken(currencyQuote)?.symbol}
+                          {getPositionCurrency(currencyQuote).symbol}
                         </>
                       }
                     >
@@ -522,7 +540,7 @@ const Component: FC<{
                                   direction: Bound.LOWER,
                                 })}
                               />{' '}
-                              {unwrapEvmToken(currencyQuote)?.symbol}{' '}
+                              {getPositionCurrency(currencyQuote).symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
@@ -565,7 +583,7 @@ const Component: FC<{
                                       )}{' '}
                                       from the current price, your position will
                                       be 100%{' '}
-                                      {unwrapEvmToken(currencyBase).symbol}
+                                      {getPositionCurrency(currencyBase).symbol}
                                     </CardDescription>
                                   </CardHeader>
                                 </HoverCardContent>
@@ -580,7 +598,8 @@ const Component: FC<{
                     {currencyBase && (
                       <span className="text-xs text-slate-500">
                         Your position will be 100%{' '}
-                        {unwrapEvmToken(currencyBase).symbol} at this price.
+                        {getPositionCurrency(currencyBase).symbol} at this
+                        price.
                       </span>
                     )}
                   </div>
@@ -604,7 +623,7 @@ const Component: FC<{
                                   direction: Bound.UPPER,
                                 })}
                               />{' '}
-                              {unwrapEvmToken(currencyQuote)?.symbol}{' '}
+                              {getPositionCurrency(currencyQuote).symbol}{' '}
                               <HoverCard closeDelay={0} openDelay={0}>
                                 <HoverCardTrigger asChild>
                                   <span className="text-sm underline decoration-dotted underline-offset-2 text-muted-foreground font-normal">
@@ -647,7 +666,10 @@ const Component: FC<{
                                       )}{' '}
                                       from the current price, your position will
                                       be 100%{' '}
-                                      {unwrapEvmToken(currencyQuote).symbol}
+                                      {
+                                        getPositionCurrency(currencyQuote)
+                                          .symbol
+                                      }
                                     </CardDescription>
                                   </CardHeader>
                                 </HoverCardContent>
@@ -662,7 +684,8 @@ const Component: FC<{
                     {currencyQuote && (
                       <span className="text-xs text-slate-500">
                         Your position will be 100%{' '}
-                        {unwrapEvmToken(currencyQuote).symbol} at this price.
+                        {getPositionCurrency(currencyQuote).symbol} at this
+                        price.
                       </span>
                     )}
                   </div>
@@ -737,10 +760,21 @@ export const V3PositionView = ({
   chainId,
   address,
   position,
-}: { chainId: SushiSwapV3ChainId; address: EvmAddress; position: string }) => {
+  positionManager,
+}: {
+  chainId: SushiSwapV3ChainId
+  address: EvmAddress
+  position: string
+  positionManager: EvmAddress
+}) => {
   return (
     <ConcentratedLiquidityProvider>
-      <Component chainId={chainId} address={address} position={position} />
+      <Component
+        chainId={chainId}
+        address={address}
+        position={position}
+        positionManager={positionManager}
+      />
     </ConcentratedLiquidityProvider>
   )
 }

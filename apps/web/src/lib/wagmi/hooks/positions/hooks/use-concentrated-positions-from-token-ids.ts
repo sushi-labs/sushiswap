@@ -1,11 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import type { SushiSwapV3ChainId } from 'sushi/evm'
+import type { EvmAddress, SushiSwapV3ChainId } from 'sushi/evm'
 
 import { useConfig } from 'wagmi'
 import { getConcentratedLiquidityPositionsFromTokenIds } from '../actions/get-concentrated-liquidity-positions-from-token-ids'
 
 interface UseConcentratedLiquidityPositionsFromTokenIdsParams {
-  keys: { tokenId: bigint; chainId: SushiSwapV3ChainId }[] | undefined
+  keys:
+    | {
+        tokenId: bigint
+        chainId: SushiSwapV3ChainId
+        positionManager?: EvmAddress
+      }[]
+    | undefined
   enabled?: boolean
 }
 

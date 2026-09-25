@@ -97,6 +97,7 @@ interface SelectPricesWidget {
   feeAmount: SushiSwapV3FeeAmount | undefined
   switchTokens?(): void
   tokenId: string | undefined
+  positionManager?: EvmAddress
   children?: ReactNode
   showStartPrice?: boolean
 }
@@ -109,6 +110,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   feeAmount,
   switchTokens,
   tokenId,
+  positionManager,
   children,
   showStartPrice = true,
 }) => {
@@ -165,6 +167,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     useConcentratedLiquidityPositionsFromTokenId({
       chainId,
       tokenId,
+      positionManager,
     })
   const hasExistingPosition = !!existingPosition && !positionLoading
 

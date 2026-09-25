@@ -21,6 +21,7 @@ import {
   useState,
 } from 'react'
 import {
+  type EvmAddress,
   type EvmCurrency,
   type Position,
   SUSHISWAP_V3_POSITION_MANAGER,
@@ -80,6 +81,7 @@ interface ConcentratedLiquidityWidget {
   setToken1?(token: EvmCurrency): void
   tokensLoading: boolean
   tokenId: number | string | undefined
+  positionManager?: EvmAddress
   existingPosition: Position | undefined
   onChange?(val: string, input: 'a' | 'b'): void
   successLink?: string
@@ -96,6 +98,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     token0,
     token1,
     tokenId,
+    positionManager = SUSHISWAP_V3_POSITION_MANAGER[chainId],
     existingPosition,
     withTitleAndDescription = true,
   } = props
@@ -103,7 +106,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
   const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const { data: owner, isInitialLoading: isOwnerLoading } =
-    useConcentratedPositionOwner({ chainId, tokenId })
+    useConcentratedPositionOwner({ chainId, tokenId, positionManager })
 
   const isOwner = owner === account
 
@@ -255,6 +258,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
   setToken1,
   tokensLoading,
   tokenId,
+  positionManager = SUSHISWAP_V3_POSITION_MANAGER[chainId],
   existingPosition,
   onChange,
   successLink,
@@ -431,14 +435,14 @@ const WidgetContent: FC<WidgetContentProps> = ({
                   fullWidth
                   id="approve-erc20-0"
                   amount={parsedAmounts[Field.CURRENCY_A]}
-                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                  contract={positionManager}
                   enabled={!depositADisabled}
                 >
                   <Checker.ApproveERC20
                     fullWidth
                     id="approve-erc20-1"
                     amount={parsedAmounts[Field.CURRENCY_B]}
-                    contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                    contract={positionManager}
                     enabled={!depositBDisabled}
                   >
                     <AddSectionReviewModalConcentrated
@@ -454,6 +458,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
                       pricesAtTicks={pricesAtTicks}
                       ticksAtLimit={ticksAtLimit}
                       tokenId={tokenId}
+                      positionManager={positionManager}
                       existingPosition={existingPosition}
                       onSuccess={() => {
                         _onFieldAInput('')

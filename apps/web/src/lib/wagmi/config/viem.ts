@@ -53,9 +53,6 @@ export const publicTransports = {
   [EvmChainId.POLYGON_ZKEVM]: http(
     `https://lb.drpc.live/ogrpc?network=polygon-zkevm&dkey=${drpcId}`,
   ),
-  [EvmChainId.THUNDERCORE]: http(
-    `https://lb.drpc.live/ogrpc?network=thundercore&dkey=${drpcId}`,
-  ),
   [EvmChainId.HAQQ]: http(
     `https://lb.drpc.live/ogrpc?network=haqq&dkey=${drpcId}`,
   ),

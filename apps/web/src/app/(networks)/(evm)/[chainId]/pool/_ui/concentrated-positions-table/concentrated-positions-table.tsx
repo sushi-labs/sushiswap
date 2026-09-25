@@ -197,7 +197,7 @@ export const ConcentratedPositionsTable: FC<
         testId="concentrated-positions"
         loading={isInitialLoading}
         linkFormatter={(row) =>
-          `/${getEvmChainById(chainId).key}/pool/v3/${row.address}/${row.tokenId}`
+          `/${getEvmChainById(chainId).key}/pool/v3/${row.address}/${row.tokenId}?positionManager=${row.positionManager}`
         }
         rowRenderer={rowRenderer}
         columns={COLUMNS}

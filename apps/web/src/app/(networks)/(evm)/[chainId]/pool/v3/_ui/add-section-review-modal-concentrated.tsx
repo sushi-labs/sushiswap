@@ -42,6 +42,7 @@ import {
 } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
+  type EvmAddress,
   type EvmChainId,
   type EvmCurrency,
   NonfungiblePositionManager,
@@ -76,6 +77,7 @@ interface AddSectionReviewModalConcentratedProps
   input1: Amount<EvmCurrency> | undefined
   existingPosition: Position | undefined
   tokenId: number | string | undefined
+  positionManager?: EvmAddress
   children: ReactNode
   onSuccess: () => void
   successLink?: string
@@ -98,6 +100,7 @@ export const AddSectionReviewModalConcentrated: FC<
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
+  positionManager: selectedPositionManager,
   onSuccess: _onSuccess,
   successLink,
 }) => {
@@ -242,6 +245,7 @@ export const AddSectionReviewModalConcentrated: FC<
       !token0 ||
       !token1 ||
       !isSushiSwapV3ChainId(chainId) ||
+      (tokenId !== undefined && !hasExistingPosition) ||
       !position ||
       !deadline
     )
@@ -264,7 +268,8 @@ export const AddSectionReviewModalConcentrated: FC<
             createPool: noLiquidity,
           })
 
-    const positionManager = SUSHISWAP_V3_POSITION_MANAGER[chainId]
+    const positionManager =
+      selectedPositionManager ?? SUSHISWAP_V3_POSITION_MANAGER[chainId]
     const payment = withArcPositionManagerRefund({
       chainId,
       positionManager,
@@ -286,6 +291,7 @@ export const AddSectionReviewModalConcentrated: FC<
     hasExistingPosition,
     noLiquidity,
     position,
+    selectedPositionManager,
     slippageTolerance,
     token0,
     token1,

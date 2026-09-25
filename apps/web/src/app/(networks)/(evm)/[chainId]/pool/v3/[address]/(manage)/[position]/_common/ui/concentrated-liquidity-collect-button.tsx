@@ -15,7 +15,6 @@ import {
   type EvmCurrency,
   NonfungiblePositionManager,
   type Position,
-  SUSHISWAP_V3_POSITION_MANAGER,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { EvmChainId } from 'sushi/evm'
@@ -90,7 +89,7 @@ export const ConcentratedLiquidityCollectButton: FC<
         )
 
       return {
-        to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
+        to: positionDetails.positionManager,
         chainId,
         data: calldata as Hex,
         value: BigInt(value),
