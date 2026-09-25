@@ -9,7 +9,6 @@ import {
   MetamaskSVG,
   OptimismSVG,
   PolygonSVG,
-  ThunderCoreSVG,
   ZkSyncSVG,
 } from './svgs'
 
@@ -45,7 +44,6 @@ export const Partners: FC = () => {
             <OptimismSVG width={120} />
             <PolygonSVG width={120} />
             <ZkSyncSVG width={120} />
-            <ThunderCoreSVG height={35} />
           </div>
         </div>
       </Container>
