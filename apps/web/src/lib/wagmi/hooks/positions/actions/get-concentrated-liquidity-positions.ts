@@ -2,11 +2,12 @@ import { readContracts } from '@wagmi/core/actions'
 import {
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSITION_HELPER,
-  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/evm'
 import type { PublicWagmiConfig } from '../../../config/public'
+import { getPositionManagers } from '../position-manager'
+import type { ConcentratedLiquidityPosition } from '../types'
 
 const abiShard = [
   {
@@ -79,53 +80,55 @@ export const getConcentratedLiquidityPositions = async ({
   account: `0x${string}` | undefined
   chainIds: readonly SushiSwapV3ChainId[]
   config: PublicWagmiConfig
-}) => {
+}): Promise<ConcentratedLiquidityPosition[]> => {
   if (!account) return []
 
   const results = (
     await Promise.allSettled(
-      chainIds.map(async (chainId) => {
-        const pages = []
-        let skip = 0
-        let totalFetched = 0
+      chainIds.flatMap((chainId) =>
+        getPositionManagers(chainId).map(async (positionManager) => {
+          const pages = []
+          let skip = 0
+          let totalFetched = 0
 
-        while (true) {
-          const [res] = await readContracts(config, {
-            contracts: [
-              {
-                address: SUSHISWAP_V3_POSITION_HELPER[chainId],
-                abi: abiShard,
-                chainId,
-                functionName: 'getUserPositions',
-                args: [
-                  SUSHISWAP_V3_POSITION_MANAGER[chainId],
-                  account,
-                  BigInt(skip),
-                  BigInt(BATCH_SIZE),
-                ],
-              } as const,
-            ],
-          })
+          while (true) {
+            const [res] = await readContracts(config, {
+              contracts: [
+                {
+                  address: SUSHISWAP_V3_POSITION_HELPER[chainId],
+                  abi: abiShard,
+                  chainId,
+                  functionName: 'getUserPositions',
+                  args: [
+                    positionManager,
+                    account,
+                    BigInt(skip),
+                    BigInt(BATCH_SIZE),
+                  ],
+                } as const,
+              ],
+            })
 
-          const batch = res?.result
-          if (!batch?.length) break
+            const batch = res?.result ?? []
+            if (!batch.length) break
 
-          for (const position of batch) {
-            pages.push({ chainId, position })
-            totalFetched++
-            if (totalFetched >= MAX_ENTRIES) break
+            for (const position of batch) {
+              pages.push({ chainId, position, positionManager })
+              totalFetched++
+              if (totalFetched >= MAX_ENTRIES) break
+            }
+
+            if (batch.length < BATCH_SIZE || totalFetched >= MAX_ENTRIES) break
+            skip += BATCH_SIZE
           }
 
-          if (batch.length < BATCH_SIZE || totalFetched >= MAX_ENTRIES) break
-          skip += BATCH_SIZE
-        }
-
-        return pages
-      }),
+          return pages
+        }),
+      ),
     )
   ).flatMap((r) => (r.status === 'fulfilled' ? r.value : []))
 
-  return results.map(({ position, chainId }) => {
+  return results.map(({ position, chainId, positionManager }) => {
     return {
       id: position.tokenId.toString(),
       address: computeSushiSwapV3PoolAddress({
@@ -136,6 +139,7 @@ export const getConcentratedLiquidityPositions = async ({
         chainId,
       }),
       chainId,
+      positionManager,
       tokenId: position.tokenId,
       fee: position.fee,
       fees: [position.tokensOwed0, position.tokensOwed1],

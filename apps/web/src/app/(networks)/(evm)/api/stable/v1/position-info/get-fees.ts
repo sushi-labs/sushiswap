@@ -1,9 +1,7 @@
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
-import {
-  SUSHISWAP_V3_POSITION_MANAGER,
-  type SushiSwapV3ChainId,
-} from 'sushi/evm'
-import { type Address, createClient } from 'viem'
+import { getPositionManager } from 'src/lib/wagmi/hooks/positions/position-manager'
+import type { EvmAddress, SushiSwapV3ChainId } from 'sushi/evm'
+import { createClient } from 'viem'
 import { simulateContract } from 'viem/actions'
 
 const MAX_UINT128 = 2n ** 128n - 1n
@@ -61,16 +59,18 @@ export const getFees = async ({
   tokenId,
   owner,
   chainId,
+  positionManager = getPositionManager(chainId),
 }: {
   tokenId: bigint
-  owner: Address
+  owner: EvmAddress
   chainId: SushiSwapV3ChainId
+  positionManager?: EvmAddress
 }) => {
   const client = createClient(publicClientConfig[chainId])
 
   const { result } = await simulateContract(client, {
     abi: abiShard,
-    address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
+    address: positionManager,
     functionName: 'collect',
     args: [
       {

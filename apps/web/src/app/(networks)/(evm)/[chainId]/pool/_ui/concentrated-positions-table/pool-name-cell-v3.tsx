@@ -4,17 +4,18 @@ import { Currency } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo } from 'react'
+import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { formatPercent } from 'sushi'
-import { type EvmCurrency, unwrapEvmToken } from 'sushi/evm'
+import type { EvmCurrency } from 'sushi/evm'
 
 export const PoolNameCellV3: FC<
   Row<ConcentratedLiquidityPositionWithV3Pool>
 > = ({ original }) => {
   const [_token0, _token1]: [EvmCurrency, EvmCurrency] = useMemo(
     () => [
-      unwrapEvmToken(original.pool.token0),
-      unwrapEvmToken(original.pool.token1),
+      getPositionCurrency(original.pool.token0),
+      getPositionCurrency(original.pool.token1),
     ],
     [original],
   )

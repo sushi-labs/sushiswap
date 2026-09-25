@@ -28,7 +28,11 @@ import { useRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-reward
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool-reserves'
 import { formatUSD } from 'sushi'
-import { getEvmChainById, isMerklChainId } from 'sushi/evm'
+import {
+  getEvmChainById,
+  isEvmWNativeSupported,
+  isMerklChainId,
+} from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { KatanaStakingMessage } from '../../_ui/katana-staking-message'
 import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
@@ -108,11 +112,13 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
                   isLoading={isReservesLoading}
                   amount={reserves?.[0]}
                   fiatValue={formatUSD(fiatValues[0])}
+                  unwrap={isEvmWNativeSupported(chainId)}
                 />
                 <CardCurrencyAmountItem
                   isLoading={isReservesLoading}
                   amount={reserves?.[1]}
                   fiatValue={formatUSD(fiatValues[1])}
+                  unwrap={isEvmWNativeSupported(chainId)}
                 />
               </CardGroup>
             </CardContent>

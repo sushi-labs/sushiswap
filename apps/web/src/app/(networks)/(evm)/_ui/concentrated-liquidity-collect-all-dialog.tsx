@@ -12,8 +12,17 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
-import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
 import {
@@ -24,26 +33,27 @@ import {
   useDialog,
 } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { getCollectFeesCalls } from 'src/lib/wagmi/hooks/positions/actions/get-collect-fees-calls'
+import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
-import { Amount, Fraction } from 'sushi'
+import { Amount } from 'sushi'
 import {
   type EvmChainId,
   type EvmCurrency,
   EvmNative,
-  NonfungiblePositionManager,
-  SUSHISWAP_V3_POSITION_MANAGER,
   getEvmChainById,
+  isEvmWNativeSupported,
   isSushiSwapV3ChainId,
-  unwrapEvmToken,
 } from 'sushi/evm'
-import type { Hex, SendTransactionReturnType } from 'viem'
+import { type SendTransactionReturnType, stringify } from 'viem'
 import {
-  useCall,
+  useConfig,
   useSendTransaction,
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useConnection } from 'wagmi'
 import { usePublicClient } from 'wagmi'
+import { call, getConnection } from 'wagmi/actions'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 
 interface ConcentratedLiquidityCollectAllDialog {
@@ -76,13 +86,28 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
 > = ({ positions, chainId, account, children }) => {
   const { open: isOpen } = useDialog(DialogType.Review)
   const { chain } = useConnection()
-  const client = usePublicClient()
+  const config = useConfig()
+  const client = usePublicClient({ chainId })
+  const queryClient = useQueryClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const [receiveWrapped, setReceiveWrapped] = useState(false)
+  const [isCollecting, setIsCollecting] = useState(false)
+  const collected = useRef(
+    new Map<string, { hash: SendTransactionReturnType; success: boolean }>(),
+  )
+  const collectionSession = useRef(0)
+  const isOpenRef = useRef(isOpen)
+
+  useEffect(() => {
+    isOpenRef.current = isOpen
+    collectionSession.current++
+    if (isOpen) collected.current.clear()
+  }, [isOpen])
 
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const hasNativeToken = useMemo(() => {
+    if (!isEvmWNativeSupported(nativeToken.chainId)) return false
     return positions.some(({ pool: { token0, token1 } }) => {
       if (!token0 || !token1 || !nativeToken) return false
       return (
@@ -97,12 +122,8 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
       const { token0, token1 } = position.pool
       if (!token0 || !token1 || !position?.fees || !account) return []
 
-      const expectedToken0 = receiveWrapped
-        ? token0.wrap()
-        : unwrapEvmToken(token0)
-      const expectedToken1 = receiveWrapped
-        ? token1.wrap()
-        : unwrapEvmToken(token1)
+      const expectedToken0 = getPositionCurrency(token0, receiveWrapped)
+      const expectedToken1 = getPositionCurrency(token1, receiveWrapped)
 
       const feeValue0 = new Amount(expectedToken0, position.fees[0])
       const feeValue1 = new Amount(expectedToken1, position.fees[1])
@@ -112,6 +133,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
       return [
         {
           tokenId: position.tokenId.toString(),
+          positionManager: position.positionManager,
           expectedCurrencyOwed0: feeValue0,
           expectedCurrencyOwed1: feeValue1,
           recipient: account,
@@ -164,21 +186,12 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   }, [feeValues])
 
   const prepare = useMemo(() => {
-    if (!isSushiSwapV3ChainId(chainId)) return
+    if (!isSushiSwapV3ChainId(chainId)) return []
 
-    if (positionsToCollect.length === 0) return
-
-    const { calldata, value } =
-      NonfungiblePositionManager.collectCallParameters(positionsToCollect, {
-        minimumAmountTolerance: new Fraction(1),
-      })
-
-    return {
-      to: SUSHISWAP_V3_POSITION_MANAGER[chainId],
-      data: calldata as Hex,
-      value: BigInt(value),
+    return getCollectFeesCalls({
       chainId,
-    }
+      positions: positionsToCollect,
+    })
   }, [positionsToCollect, chainId])
 
   const onSuccess = useCallback(
@@ -196,8 +209,8 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
         txHash: hash,
         promise: receipt,
         summary: {
-          pending: 'Collecting fees from all your pool positions',
-          completed: 'Successfully collected fees from all your pool positions',
+          pending: 'Collecting fees from your pool positions',
+          completed: 'Successfully collected position fees',
           failed: 'Something went wrong when trying to collect fees',
         },
         timestamp: ts,
@@ -219,13 +232,19 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
     createErrorToast(e?.message, true)
   }, [])
 
-  const { isError: isSimulationError } = useCall({
-    ...prepare,
-    chainId,
-    query: {
-      enabled: Boolean(isOpen && prepare && chainId === chain?.id),
-    },
-  })
+  const { isError: isSimulationError, isSuccess: isSimulationSuccess } =
+    useQuery({
+      queryKey: ['simulateCollectFees', { prepare, account }],
+      queryKeyHashFn: stringify,
+      queryFn: async () => {
+        return Promise.all(
+          prepare.map((request) => call(config, { ...request, account })),
+        )
+      },
+      enabled: Boolean(
+        isOpen && account && prepare.length && chainId === chain?.id,
+      ),
+    })
 
   const {
     mutateAsync: sendTransactionAsync,
@@ -234,7 +253,6 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   } = useSendTransaction({
     mutation: {
       onSuccess,
-      onError,
     },
   })
 
@@ -244,15 +262,73 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   })
 
   const send = useMemo(() => {
-    if (!prepare || isSimulationError) return undefined
+    if (
+      !prepare.length ||
+      !isSimulationSuccess ||
+      isCollecting ||
+      !account ||
+      chainId !== chain?.id
+    )
+      return undefined
 
     return async (confirm: () => void) => {
+      const session = collectionSession.current
+      setIsCollecting(true)
       try {
-        await sendTransactionAsync(prepare)
-        confirm()
-      } catch {}
+        for (const request of prepare) {
+          // Closing or reopening the dialog cancels the remaining wallet prompts.
+          if (!isOpenRef.current || session !== collectionSession.current)
+            return
+          const connection = getConnection(config)
+          if (
+            connection.address?.toLowerCase() !== account.toLowerCase() ||
+            connection.chainId !== chainId
+          ) {
+            throw new Error(
+              'Fee collection stopped because the wallet or network changed',
+            )
+          }
+          const key = `${chainId}:${account.toLowerCase()}:${request.to}`
+          let collection = collected.current.get(key)
+          if (collection?.success) continue
+          if (!collection) {
+            const hash = await sendTransactionAsync({ ...request, account })
+            collection = { hash, success: false }
+            collected.current.set(key, collection)
+          }
+          const receipt = await client.waitForTransactionReceipt({
+            hash: collection.hash,
+          })
+          if (receipt.status !== 'success') {
+            collected.current.delete(key)
+            throw new Error('Collecting position fees reverted')
+          }
+          collection.success = true
+        }
+        if (isOpenRef.current && session === collectionSession.current)
+          confirm()
+      } catch (error) {
+        onError(error instanceof Error ? error : new Error(String(error)))
+      } finally {
+        setIsCollecting(false)
+        void queryClient.invalidateQueries({
+          queryKey: ['useConcentratedLiquidityPositions'],
+        })
+      }
     }
-  }, [isSimulationError, prepare, sendTransactionAsync])
+  }, [
+    prepare,
+    isSimulationSuccess,
+    isCollecting,
+    account,
+    chainId,
+    chain?.id,
+    sendTransactionAsync,
+    client,
+    config,
+    onError,
+    queryClient,
+  ])
 
   return (
     <>
@@ -267,6 +343,9 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                 <DialogTitle>Claim V3 Fees</DialogTitle>
                 <DialogDescription>
                   On {getEvmChainById(chainId).name}
+                  {prepare.length > 1
+                    ? ` · ${prepare.length} transactions required`
+                    : ''}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
@@ -327,15 +406,15 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                 <Button
                   fullWidth
                   size="xl"
-                  loading={!send || isWritePending}
+                  loading={!send || isWritePending || isCollecting}
                   onClick={() => send?.(confirm)}
-                  disabled={isSimulationError}
+                  disabled={isSimulationError || isCollecting}
                   testId="confirm-claim-fees"
                   type="button"
                 >
                   {isSimulationError ? (
                     'Shoot! Something went wrong :('
-                  ) : isWritePending ? (
+                  ) : isWritePending || isCollecting ? (
                     <Dots>Confirm Claim</Dots>
                   ) : (
                     'Claim'

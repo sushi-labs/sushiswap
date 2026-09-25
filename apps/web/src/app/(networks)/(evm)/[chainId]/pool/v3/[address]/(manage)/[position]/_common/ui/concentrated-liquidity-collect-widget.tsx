@@ -10,6 +10,7 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { type FC, useMemo, useState } from 'react'
+import { getPositionCurrency } from 'src/lib/wagmi/hooks/positions/position-payment-currency'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatUSD } from 'sushi'
@@ -19,7 +20,7 @@ import {
   type EvmCurrency,
   EvmNative,
   type Position,
-  unwrapEvmToken,
+  isEvmWNativeSupported,
 } from 'sushi/evm'
 import { ConcentratedLiquidityCollectButton } from './concentrated-liquidity-collect-button'
 
@@ -52,7 +53,13 @@ export const ConcentratedLiquidityCollectWidget: FC<
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
   const positionHasNativeToken = useMemo(() => {
-    if (!nativeToken || !token0 || !token1) return false
+    if (
+      !nativeToken ||
+      !isEvmWNativeSupported(nativeToken.chainId) ||
+      !token0 ||
+      !token1
+    )
+      return false
     return (
       token0.type === 'native' ||
       token1.type === 'native' ||
@@ -62,15 +69,17 @@ export const ConcentratedLiquidityCollectWidget: FC<
   }, [token0, token1, nativeToken])
 
   const expectedAmount0 = useMemo(() => {
-    const expectedToken0 =
-      !token0 || receiveWrapped ? token0?.wrap() : unwrapEvmToken(token0)
+    const expectedToken0 = token0
+      ? getPositionCurrency(token0, receiveWrapped)
+      : undefined
     if (amounts[0] === undefined || !expectedToken0) return undefined
     return new Amount(expectedToken0, amounts[0].amount)
   }, [token0, receiveWrapped, amounts])
 
   const expectedAmount1 = useMemo(() => {
-    const expectedToken1 =
-      !token1 || receiveWrapped ? token1?.wrap() : unwrapEvmToken(token1)
+    const expectedToken1 = token1
+      ? getPositionCurrency(token1, receiveWrapped)
+      : undefined
     if (amounts[1] === undefined || !expectedToken1) return undefined
     return new Amount(expectedToken1, amounts[1].amount)
   }, [token1, receiveWrapped, amounts])

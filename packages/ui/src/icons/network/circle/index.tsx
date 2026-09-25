@@ -46,7 +46,6 @@ import { SolanaCircle } from './solana-circle'
 import { SonicCircle } from './sonic-circle'
 import { StellarCircle } from './stellar-circle'
 import { TaikoCircle } from './taiko-circle'
-import { ThunderCoreCircle } from './thunder-core-circle'
 import { XLayerCircle } from './x-layer-circle'
 import { ZetaChainCircle } from './zeta-chain-circle'
 import { ZKLinkCircle } from './zk-link-circle'
@@ -105,7 +104,6 @@ export * from './sonic-circle'
 export * from './stellar-circle'
 export * from './taiko-circle'
 export * from './telos-circle'
-export * from './thunder-core-circle'
 export * from './x-layer-circle'
 export * from './zk-link-circle'
 export * from './zk-sync-circle'
@@ -131,7 +129,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
-  [ChainId.THUNDERCORE]: ThunderCoreCircle,
   [ChainId.HAQQ]: HaqqCircle,
   [ChainId.CORE]: CoreCircle,
   [ChainId.ZKSYNC_ERA]: ZKSyncCircle,

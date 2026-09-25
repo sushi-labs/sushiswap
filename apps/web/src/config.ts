@@ -109,7 +109,6 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.SONIC,
   ChainId.SKALE_EUROPA,
   ChainId.BLAST,
-  ChainId.THUNDERCORE,
   ChainId.APTOS,
   ChainId.CORE,
   ChainId.ZETACHAIN,

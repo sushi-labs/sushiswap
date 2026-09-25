@@ -1,6 +1,6 @@
 import {
+  type EvmAddress,
   SUSHISWAP_V3_FACTORY_ADDRESS,
-  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/evm'
@@ -8,6 +8,7 @@ import { createClient } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { publicClientConfig } from 'src/lib/wagmi/config/viem'
+import { getPositionManager } from 'src/lib/wagmi/hooks/positions/position-manager'
 import { getFees } from './get-fees'
 import { getOwner } from './get-owner'
 
@@ -91,22 +92,24 @@ const abiShard = [
 export const getPosition = async ({
   tokenId,
   chainId,
+  positionManager = getPositionManager(chainId),
 }: {
   tokenId: bigint
   chainId: SushiSwapV3ChainId
+  positionManager?: EvmAddress
 }) => {
   const client = createClient(publicClientConfig[chainId])
 
-  const owner = await getOwner({ tokenId, chainId })
+  const owner = await getOwner({ tokenId, chainId, positionManager })
 
   const [result, fees] = await Promise.all([
     readContract(client, {
       abi: abiShard,
-      address: SUSHISWAP_V3_POSITION_MANAGER[chainId],
+      address: positionManager,
       functionName: 'positions',
       args: [tokenId],
     }),
-    getFees({ tokenId, owner, chainId }),
+    getFees({ tokenId, owner, chainId, positionManager }),
   ])
 
   const [

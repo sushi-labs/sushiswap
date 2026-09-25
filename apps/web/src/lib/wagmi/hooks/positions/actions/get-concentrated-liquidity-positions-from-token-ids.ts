@@ -1,12 +1,13 @@
 import { readContracts } from '@wagmi/core/actions'
 import {
+  type EvmAddress,
   SUSHISWAP_V3_FACTORY_ADDRESS,
   SUSHISWAP_V3_POSITION_HELPER,
-  SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   computeSushiSwapV3PoolAddress,
 } from 'sushi/evm'
 import type { PublicWagmiConfig } from '../../../config/public'
+import { getPositionManager } from '../position-manager'
 import type { ConcentratedLiquidityPosition } from '../types'
 
 const abiShard = [
@@ -45,16 +46,25 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
   tokenIds,
   config,
 }: {
-  tokenIds: { chainId: SushiSwapV3ChainId; tokenId: bigint }[]
+  tokenIds: {
+    chainId: SushiSwapV3ChainId
+    tokenId: bigint
+    positionManager?: EvmAddress
+  }[]
   config: PublicWagmiConfig
 }): Promise<ConcentratedLiquidityPosition[]> => {
+  const keys = tokenIds.map(({ chainId, tokenId, positionManager }) => ({
+    chainId,
+    tokenId,
+    positionManager: getPositionManager(chainId, positionManager),
+  }))
   const results = await readContracts(config, {
-    contracts: tokenIds.map(({ chainId, tokenId }) => ({
+    contracts: keys.map(({ chainId, tokenId, positionManager }) => ({
       address: SUSHISWAP_V3_POSITION_HELPER[chainId],
       abi: abiShard,
       chainId,
       functionName: 'getPosition',
-      args: [SUSHISWAP_V3_POSITION_MANAGER[chainId], tokenId],
+      args: [positionManager, tokenId],
     })),
   })
 
@@ -63,7 +73,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
       if (result.status !== 'success' || !result.result) return undefined
 
       const position = result.result
-      const { tokenId, chainId } = tokenIds[i]
+      const { tokenId, chainId, positionManager } = keys[i]
 
       return {
         id: tokenId.toString(),
@@ -75,6 +85,7 @@ export const getConcentratedLiquidityPositionsFromTokenIds = async ({
           chainId,
         }),
         chainId,
+        positionManager,
         tokenId,
         fee: position.fee,
         fees: [position.tokensOwed0, position.tokensOwed1],

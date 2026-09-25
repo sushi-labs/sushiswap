@@ -1,5 +1,10 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { type EvmCurrency, Position, type SushiSwapV3ChainId } from 'sushi/evm'
+import { useQuery } from '@tanstack/react-query'
+import {
+  type EvmAddress,
+  type EvmCurrency,
+  Position,
+  type SushiSwapV3ChainId,
+} from 'sushi/evm'
 import { stringify } from 'viem'
 
 import { useConfig } from 'wagmi'
@@ -11,6 +16,7 @@ interface UseConcentratedLiquidityPositionsFromTokenIdParams {
   token1: EvmCurrency | undefined
   tokenId: number | string | undefined
   chainId: SushiSwapV3ChainId
+  positionManager?: EvmAddress
   enabled?: boolean
 }
 
@@ -19,12 +25,14 @@ export const useConcentratedPositionInfo = ({
   token1,
   tokenId,
   chainId,
+  positionManager,
   enabled = true,
 }: UseConcentratedLiquidityPositionsFromTokenIdParams) => {
   const { data: positionDetails } =
     useConcentratedLiquidityPositionsFromTokenId({
       chainId,
       tokenId,
+      positionManager,
     })
 
   const config = useConfig()
@@ -32,7 +40,7 @@ export const useConcentratedPositionInfo = ({
   return useQuery({
     queryKey: [
       'useConcentratedPositionInfo',
-      { chainId, token0, token1, tokenId, positionDetails },
+      { chainId, token0, token1, tokenId, positionManager, positionDetails },
     ],
     queryFn: async () => {
       if (!token0 || !token1 || !positionDetails) throw new Error()
@@ -59,7 +67,6 @@ export const useConcentratedPositionInfo = ({
     },
     refetchInterval: 10000,
     enabled: Boolean(token0 && token1 && chainId && enabled && positionDetails),
-    placeholderData: keepPreviousData,
     queryKeyHashFn: stringify,
   })
 }

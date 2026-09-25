@@ -3,8 +3,10 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { ipAddress } from '@vercel/functions'
 import { type NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from 'src/lib/rate-limit'
+import { getPositionManager } from 'src/lib/wagmi/hooks/positions/position-manager'
 import { formatPercent } from 'sushi'
 import {
+  type EvmAddress,
   type EvmChainId,
   EvmToken,
   Position,
@@ -43,6 +45,7 @@ const schema = z.object({
       return chainId as SushiSwapV3ChainId
     }),
   positionId: z.coerce.bigint().positive(),
+  positionManager: z.string().optional(),
 })
 
 export const maxDuration = 10
@@ -64,11 +67,21 @@ export async function GET(request: NextRequest) {
   }
 
   const args = result.data
+  let positionManager: EvmAddress
+  try {
+    positionManager = getPositionManager(args.chainId, args.positionManager)
+  } catch {
+    return NextResponse.json(
+      { error: 'Invalid positionManager' },
+      { status: 400 },
+    )
+  }
 
   try {
     const position = await getPosition({
       chainId: args.chainId,
       tokenId: args.positionId,
+      positionManager,
     })
 
     const [[token0], [token1]] = await Promise.all([

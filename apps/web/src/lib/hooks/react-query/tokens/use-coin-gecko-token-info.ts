@@ -21,7 +21,6 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.OPTIMISM]: 'optimism',
   [ChainId.BTTC]: 'bttc',
   [ChainId.KAVA]: 'kava',
-  [ChainId.THUNDERCORE]: 'thundercore',
   [ChainId.ARBITRUM_NOVA]: 'arbitrum_nova',
   [ChainId.CORE]: 'core',
   [ChainId.FILECOIN]: 'filecoin',

@@ -6,7 +6,8 @@ import {
 } from 'sushi/evm'
 import { type Hex, encodeFunctionData, isAddressEqual } from 'viem'
 
-const ARC_V1_POSITION_MANAGER = '0xf27f32580a399bDb55b6E1F025B8985c97e2A9D5'
+export const ARC_V1_POSITION_MANAGER =
+  '0xf27f32580a399bDb55b6E1F025B8985c97e2A9D5' as EvmAddress
 
 /** Atomically clears donated native USDC */
 export function withArcPositionManagerRefund({

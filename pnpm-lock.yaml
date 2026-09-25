@@ -34,8 +34,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     sushi:
-      specifier: 7.3.15
-      version: 7.3.15
+      specifier: 7.4.0
+      version: 7.4.0
     wagmi:
       specifier: 3.3.2
       version: 3.3.2
@@ -140,7 +140,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 10.6.0
@@ -597,7 +597,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -788,7 +788,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       viem:
         specifier: 2.56.7
         version: 2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -853,7 +853,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.4.19(tsx@4.23.0)(yaml@2.9.0)
@@ -902,7 +902,7 @@ importers:
         version: 19.2.3(@types/react@19.2.17)
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -959,7 +959,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -975,7 +975,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -1244,7 +1244,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.4.19(tsx@4.23.0)(yaml@2.9.0)
@@ -15483,8 +15483,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@7.3.15:
-    resolution: {integrity: sha512-i4L2qg7QDb/3Wb0Zk0YTSP/qWkrxuhezZ/CsGj6J8sj7hAuyrT/fVAlOMToKhBEY3WOJZuwiZiuvnzAUK9j9RA==}
+  sushi@7.4.0:
+    resolution: {integrity: sha512-f0wCjiGPcrT+CjtLSMo+F6mNnuO/nvUa8rMdSmYirqNYoCu4xfE/cLsBUoAj29Qx5VGizc0sGKv3KiOszOuo6g==}
     peerDependencies:
       typescript: 5.9.3
       viem: 2.56.7
@@ -31071,7 +31071,7 @@ snapshots:
       eslint: 9.39.5(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-jsx-a11y: 6.10.0(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-react: 7.37.4(eslint@9.39.5(jiti@2.7.0))
       eslint-plugin-react-hooks: 7.1.1(eslint@9.39.5(jiti@2.7.0))
@@ -31132,13 +31132,13 @@ snapshots:
       debug: 4.4.3
       enhanced-resolve: 5.17.1
       eslint: 9.39.5(jiti@2.7.0)
-      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0))
+      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))
       fast-glob: 3.3.2
       get-tsconfig: 4.14.0
       is-bun-module: 1.2.1
       is-glob: 4.0.3
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-node
@@ -31177,7 +31177,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0)):
+  eslint-module-utils@2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -31223,7 +31223,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -31234,7 +31234,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.5(jiti@2.7.0)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@9.39.5(jiti@2.7.0))
+      eslint-module-utils: 2.14.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -36650,7 +36650,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@7.3.15(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
+  sushi@7.4.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(patch_hash=1b986ee9f764c7d8ab02b8b43dbc6b2dc0a8f7b9fa3850ce9c67428faad8ed9a)(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
     dependencies:
       '@solana/addresses': 6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       tiny-invariant: 1.3.3
