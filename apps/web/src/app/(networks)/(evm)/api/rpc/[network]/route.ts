@@ -1,6 +1,8 @@
 import { checkBotId } from 'botid/server'
 import { getRpcHeaders, getRpcUrl } from 'src/lib/rpc'
 
+export const preferredRegion = ['iad1', 'fra1', 'hkg1']
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ network: string }> },
