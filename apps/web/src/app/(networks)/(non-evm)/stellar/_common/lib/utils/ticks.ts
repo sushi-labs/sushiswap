@@ -86,7 +86,7 @@ export function clampTickRange(
 
 // The deployed pool and manager use the pre-July-2026 negative-tick rounding.
 // Reuse SDK arithmetic, adjusting only that difference; MIN_TICK is special-cased
-// in the contracts. See docs/stellar-contract-compatibility.md for live evidence.
+// in the contracts.
 export function getSqrtRatioAtTick(tick: number): bigint {
   const sqrt = TickMath.getSqrtRatioAtTick(tick)
   return tick < 0 && tick !== TickMath.MIN_TICK ? sqrt - 1n : sqrt
