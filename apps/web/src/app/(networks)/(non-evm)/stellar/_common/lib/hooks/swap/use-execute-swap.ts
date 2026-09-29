@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { ChainId } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { useStellarWallet } from '~stellar/providers'
 import { SwapService } from '../../services/swap-service'
 import { extractErrorMessage } from '../../utils/error-helpers'
@@ -81,6 +82,7 @@ export const useExecuteSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }, _variables, context) => {
+      void invalidateStellarBalances(queryClient)
       // Dismiss the "in progress" info toast
       if (context?.infoToastId) {
         toast.dismiss(context.infoToastId)
@@ -196,6 +198,7 @@ export const useExecuteMultiHopSwap = () => {
       return { result, params }
     },
     onSuccess: ({ result, params }, _variables, context) => {
+      void invalidateStellarBalances(queryClient)
       // Dismiss the "in progress" info toast
       if (context?.infoToastId) {
         toast.dismiss(context.infoToastId)

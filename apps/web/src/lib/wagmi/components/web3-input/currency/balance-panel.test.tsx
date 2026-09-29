@@ -16,7 +16,7 @@ it('uses a supplied liquidity Max calculation and preserves the default reserve-
   const currency = USDC[EvmChainId.ARC]
   const onChange = vi.fn()
   const onMax = vi.fn()
-  function render(custom: boolean, disabled = false): void {
+  function render(custom: boolean, disabled = false, error = false): void {
     act(() =>
       root.render(
         <BalancePanel
@@ -28,6 +28,7 @@ it('uses a supplied liquidity Max calculation and preserves the default reserve-
           onChange={onChange}
           onMax={custom ? onMax : undefined}
           disableMaxButton={disabled}
+          error={error}
         />,
       ),
     )
@@ -45,6 +46,9 @@ it('uses a supplied liquidity Max calculation and preserves the default reserve-
     render(true, true)
     click()
     expect(onMax).toHaveBeenCalledOnce()
+    render(true, false, true)
+    expect(container.textContent).toBe('Balance unavailable')
+    expect(container.querySelector('button')).toBeNull()
     render(false)
     click()
     expect(onChange).toHaveBeenLastCalledWith('9.99')

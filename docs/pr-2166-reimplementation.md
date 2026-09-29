@@ -49,6 +49,14 @@ EVM and Stellar now import the same `SelectTokensWidget`, `FeeTierCard`, and `Li
 
 The shared Stellar chart presents human prices with token-decimal scaling and supports inverted quotes while keeping its callbacks in canonical token order. Management uses the same chart API. Single Sided Left/Right presets select valid aligned boundaries against the exact square-root price and remain fixed when that price changes. Tests cover all three fee tiers, both quote directions, and prices immediately below, at, and above an aligned negative tick, plus protocol limits. Separate regressions cover chart decimals/inversion and the shared Max button's default behavior.
 
+## Balance consistency follow-up
+
+The USDC/deJAAA 0.05% report (range 0.94582318 deJAAA per USDC to infinity) exposed separate balance caches for individual currency inputs and the paired submission checker. Those caches could disagree for nearly five minutes. The contract reader also converted RPC failures into successful zero balances. A regression reproduces a red `Exceeds Balance` input while the paired checker considers the deposit affordable.
+
+Inputs and submission checks now share a query per account/token, refresh every five seconds, and discard previous-account data on account changes. Successful Stellar mutations invalidate both contract balance queries and the token-selector balance queries. Only the explicit missing-classic-trustline error maps to zero; other read failures propagate, show `Balance unavailable`, and prevent deposit submission.
+
+Read-only checks against the reported account confirmed that the selector API and production contract reader both return 0.209641704638935271 deJAAA and 1.8175517 USDC. Contract metadata independently confirms 18 decimals for deJAAA and 7 for USDC, so the reported 0.000176731577784635 deJAAA deposit has valid precision. These are observations at verification time, not fixed account balances. The UI regression uses the actual `CurrencyInput` and `Amounts` checker, covering shared-cache consistency, polling, post-transaction invalidation, failed reads, recovery, and account changes.
+
 ## Validation
 
 Implementation is on branch `feat/stellar-pool-creation-v2`, in the isolated `stellar-pool-creation` worktree.
@@ -58,7 +66,7 @@ Implementation is on branch `feat/stellar-pool-creation-v2`, in the isolated `st
 | `pnpm format` | Passed. |
 | `pnpm lint` | Passed. |
 | `pnpm --filter web check` | Passed. |
-| `pnpm --filter web test:unit` | 867 tests passed; 1 existing test skipped. |
+| `pnpm --filter web test:unit` | 870 tests passed; 1 existing test skipped. |
 | Initial targeted Stellar and native-reserve tests | 72 tests passed, including 40 new tests. |
 | Independent math audit and form regressions | 46 tests passed, including 15 added during the math and source audits; 5,000 arithmetic cases and 160 price cases are checked inside these tests. |
 | Dependency builds (`turbo run build --filter='web^...'`) | Passed for 12 workspace dependencies. |

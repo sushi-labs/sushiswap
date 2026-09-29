@@ -11,6 +11,7 @@ import type {
   StellarAccountAddress,
   StellarContractAddress,
 } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { createAndInitializePool } from '../../soroban/dex-factory-helpers'
 import { formatAddress } from '../../utils/format'
 import { getStellarTxnLink } from '../../utils/stellarchain-helpers'
@@ -53,6 +54,7 @@ export const useCreateAndInitializePool = () => {
       }
     },
     onSuccess: ({ result, params: variables }) => {
+      void invalidateStellarBalances(queryClient)
       // Show success toast with Stellar explorer link
       const timestamp = Date.now()
       createSuccessToast({

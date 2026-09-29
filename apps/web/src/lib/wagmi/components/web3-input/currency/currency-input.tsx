@@ -107,8 +107,11 @@ function CurrencyInput<
   const address = useAccount(chainId)
   const [pending, startTransition] = useTransition()
 
-  const { data: balance, isLoading: isBalanceLoading } =
-    useAmountBalance(currency)
+  const {
+    data: balance,
+    isLoading: isBalanceLoading,
+    isError: isBalanceError,
+  } = useAmountBalance(currency)
 
   const { data: price, isLoading: isPriceLoading } = useCurrencyPrice({
     currency,
@@ -122,6 +125,7 @@ function CurrencyInput<
   const insufficientBalance =
     address &&
     type === 'INPUT' &&
+    !isBalanceError &&
     balance &&
     _value &&
     balance.lt(_value) &&
@@ -370,6 +374,7 @@ function CurrencyInput<
         <BalancePanel
           id={id}
           loading={isBalanceLoading}
+          error={isBalanceError}
           chainId={chainId}
           account={address}
           onChange={onChange}

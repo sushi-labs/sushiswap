@@ -19,6 +19,7 @@ import {
   type StellarToken,
   isStellarAccountAddress,
 } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { NETWORK_PASSPHRASE } from '../../constants'
 import {
   checkTrustlineRequired,
@@ -121,6 +122,7 @@ export function useCreateTrustline() {
       return result
     },
     onSuccess: (result, variables) => {
+      void invalidateStellarBalances(queryClient)
       const timestamp = Date.now()
       createSuccessToast({
         summary: `Trustline created for ${variables.assetCode}`,

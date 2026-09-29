@@ -113,14 +113,9 @@ export async function getTokenBalance(
     )
     return result
   } catch (error) {
-    const errorStr = String(error)
-    if (
-      !errorStr.includes('Error(Storage, MissingValue)') &&
-      !errorStr.includes('trustline entry is missing')
-    ) {
-      console.error('Error fetching token balance:', errorStr)
-    }
-    return 0n
+    // A missing classic trustline means zero; transport or contract failures do not.
+    if (String(error).includes('trustline entry is missing')) return 0n
+    throw error
   }
 }
 

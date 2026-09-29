@@ -12,6 +12,7 @@ import type {
   StellarAccountAddress,
   StellarContractAddress,
 } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { createSushiStellarService } from '../../services/sushi-stellar-service'
 import type { AddLiquidityParams } from '../../services/swap-service'
 import { extractErrorMessage } from '../../utils/error-helpers'
@@ -75,6 +76,7 @@ export const useAddLiquidity = () => {
       return { result, params }
     },
     onSuccess: ({ result, params: variables }) => {
+      void invalidateStellarBalances(queryClient)
       const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',

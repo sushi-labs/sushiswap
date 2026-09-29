@@ -16,6 +16,7 @@ type BalancePanel<TChainId extends BalanceChainId> = Pick<
   'chainId' | 'onChange' | 'onMax' | 'currency' | 'disableMaxButton' | 'loading'
 > & {
   id?: string
+  error?: boolean
   account: string | undefined
   balance: Amount<CurrencyFor<TChainId>> | null | undefined
   type: 'INPUT' | 'OUTPUT'
@@ -29,6 +30,7 @@ export function BalancePanel<TChainId extends BalanceChainId>({
   onMax,
   disableMaxButton,
   loading,
+  error = false,
   type,
 }: BalancePanel<TChainId>) {
   const isMounted = useIsMounted()
@@ -64,6 +66,14 @@ export function BalancePanel<TChainId extends BalanceChainId>({
       <div className="w-[60px] flex items-center">
         <SkeletonText fontSize="lg" className="w-full" />
       </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <span role="status" className="text-sm text-muted-foreground">
+        Balance unavailable
+      </span>
     )
   }
 

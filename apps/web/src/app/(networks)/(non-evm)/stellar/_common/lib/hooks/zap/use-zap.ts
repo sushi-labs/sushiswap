@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -218,6 +219,7 @@ export const useZap = () => {
       }
     },
     onSuccess: ({ txHash, userAddress }) => {
+      void invalidateStellarBalances(queryClient)
       const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',
