@@ -12,7 +12,7 @@ import { contractAddresses } from './contracts'
 // Initialize Soroban RPC server
 // See https://developers.stellar.org/docs/data/apis/api-providers#publicly-accessible-apis
 export const SorobanClient = new Server(RPC_URL, {
-  allowHttp: true,
+  allowHttp: RPC_URL.startsWith('http:'),
   headers: RPC_HEADERS,
 })
 
@@ -36,6 +36,7 @@ export const getFactoryContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -48,6 +49,7 @@ export const getRouterContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -60,6 +62,7 @@ export const getPoolContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -72,6 +75,7 @@ export const getPoolLensContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -84,6 +88,7 @@ export const getTokenContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -103,6 +108,7 @@ export const getPositionManagerContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })
@@ -115,6 +121,7 @@ export const getZapRouterContractClient = ({
     contractId: contractId,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey: publicKey,
   })

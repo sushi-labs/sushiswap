@@ -1,20 +1,18 @@
 import {
   Account,
-  Networks,
   SorobanDataBuilder,
   contract,
   rpc,
   xdr,
 } from '@stellar/stellar-sdk'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LAYERZERO_STELLAR_OFT_ADDRESS } from './config'
 import { buildStellarOftSend } from './stellar'
 import type { LayerZeroSendParam } from './types'
 
 vi.mock('src/app/(networks)/(non-evm)/stellar/_common/lib/constants', () => ({
   HORIZON_URL: 'https://horizon.stellar.org',
   NETWORK_PASSPHRASE: 'Public Global Stellar Network ; September 2015',
-  RPC_URL: 'https://mainnet.sorobanrpc.com',
+  RPC_URL: 'http://localhost:3000/api/rpc/stellar',
   RPC_HEADERS: {},
 }))
 
@@ -29,11 +27,6 @@ const spec = new contract.Spec([
     }),
   ),
 ])
-const client = new contract.Client(spec, {
-  contractId: LAYERZERO_STELLAR_OFT_ADDRESS,
-  networkPassphrase: Networks.PUBLIC,
-  rpcUrl: 'https://mainnet.sorobanrpc.com',
-})
 const sendParam: LayerZeroSendParam = {
   dstEid: 30110,
   to: `0x${'00'.repeat(12)}${'11'.repeat(20)}`,
@@ -88,7 +81,11 @@ function feeStats(p95: string): rpc.Api.GetFeeStatsResponse {
 
 describe('Stellar LayerZero send preparation with the real SDK builder', () => {
   beforeEach(() => {
-    vi.spyOn(contract.Client, 'from').mockResolvedValue(client)
+    vi.spyOn(
+      rpc.Server.prototype,
+      'getContractWasmByContractId',
+    ).mockResolvedValue(Buffer.alloc(0))
+    vi.spyOn(contract.Spec, 'fromWasm').mockResolvedValue(spec)
     vi.spyOn(spec, 'funcArgsToScVals').mockReturnValue([])
     vi.spyOn(rpc.Server.prototype, 'getAccount').mockResolvedValue(
       new Account(ACCOUNT, '100'),
