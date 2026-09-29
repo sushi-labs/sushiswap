@@ -41,6 +41,12 @@ Removed unused `useHasTrustline`, `useUserTrustlines`, `useNeedsTrustline`, `get
 
 The XLM Max regression now verifies the shared reserve policy in integer units rather than duplicating its numeric configuration. It preserves the pre-existing staged reserve value of 5,000,000 stroops (0.5 XLM); only its incorrect comment was corrected.
 
+## EVM v3 UI alignment
+
+Creation now follows the EVM v3 form layout: compact token selectors, fee cards, quote toggles, an interactive liquidity chart for existing pools, range presets and price cards, and stacked deposit inputs with a lock over the unused asset. The balance button reuses the existing paired Max calculation. Only Stellar's three fee tiers are offered; initialization messaging and trustline handling remain specific to Stellar.
+
+The shared Stellar chart presents human prices with token-decimal scaling and supports inverted quotes while keeping its callbacks in canonical token order. Management uses the same chart API. Single Sided Left/Right presets select valid aligned boundaries against the exact square-root price and remain fixed when that price changes. Tests cover all three fee tiers, both quote directions, and prices immediately below, at, and above an aligned negative tick, plus protocol limits. Separate regressions cover chart decimals/inversion and the shared Max button's default behavior.
+
 ## Validation
 
 Implementation is on branch `feat/stellar-pool-creation-v2`, in the isolated `stellar-pool-creation` worktree.
@@ -50,13 +56,14 @@ Implementation is on branch `feat/stellar-pool-creation-v2`, in the isolated `st
 | `pnpm format` | Passed. |
 | `pnpm lint` | Passed. |
 | `pnpm --filter web check` | Passed. |
-| `pnpm --filter web test:unit` | 841 tests passed; 1 existing test skipped. |
+| `pnpm --filter web test:unit` | 864 tests passed; 1 existing test skipped. |
 | Initial targeted Stellar and native-reserve tests | 72 tests passed, including 40 new tests. |
 | Independent math audit and form regressions | 46 tests passed, including 15 added during the math and source audits; 5,000 arithmetic cases and 160 price cases are checked inside these tests. |
 | Dependency builds (`turbo run build --filter='web^...'`) | Passed for 12 workspace dependencies. |
 | `pnpm --filter web build` | Compilation and TypeScript passed. Prerendering fails in the existing cross-chain-swap page because the Vercel Edge Config connection string is not configured. |
 | `PORT=3106 pnpm --filter web test` | Latest rerun cannot start the production server because the incomplete local Next.js build lacks `.next/prerender-manifest.json`. The earlier attempt also exposed global-setup prerequisites: Anvil 1.8.1 is required (installed 1.5.1), and `ANVIL_FORK_URL` is absent. This suite contains 18 EVM fork tests, no Stellar flow tests. |
 | Real-browser checks against live Stellar reads | Passed on desktop and 390px mobile viewport. Verified existing XLM/USDC 0.3% pool discovery; absent/uninitialized 1% pool starting-price flow; either deposit field; paired recalculation; fee-change resets; Full Range and narrower presets; reciprocal starting price and bounds without changing deposits; duplicate-token rejection; accessible deposit labels. |
+| EVM v3 UI alignment browser checks | Desktop and 390px mobile: selected fee cards, chart dragging in both quote directions, full-range 0/∞ labels, single-sided asset locking, starting-price inversion preserving deposits, and no horizontal overflow or browser errors. |
 | `git diff --check` | Passed. |
 
 The new tests cover exact large amounts, precision and protocol limits, token-decimal conversion, inverted initial prices, both single-sided boundaries, liquidity dust, maximum amounts respecting both balances, XLM reserve protection, contract identity and failed trustline reads, deposit validation before signing, discovery failures, creation followed by a failed deposit and successful retry, duplicate submissions, and an unmounted flow not starting its next transaction. Component tests mock wallet, network, and transaction hooks; the arithmetic tests exercise the actual helpers.

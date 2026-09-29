@@ -606,6 +606,7 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
 
                       <TickRangeSelector
                         params={tickRangeSelectorState}
+                        sqrtPriceX96={pool.sqrtPriceX96}
                         token0={pool.token0}
                         token1={pool.token1}
                       />

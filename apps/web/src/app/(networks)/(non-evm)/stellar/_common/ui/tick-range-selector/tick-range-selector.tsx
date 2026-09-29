@@ -1,8 +1,9 @@
 'use client'
 
-import { Button } from '@sushiswap/ui'
+import { Toggle } from '@sushiswap/ui'
 import type { ReactElement } from 'react'
 import { PriceBlock } from 'src/lib/components/price-block'
+import { TickMath } from 'sushi/evm'
 import type { StellarToken } from 'sushi/stellar'
 import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
 import {
@@ -22,6 +23,7 @@ interface TickRangeSelectorProps {
   token0?: StellarToken
   token1?: StellarToken
   inverted?: boolean
+  sqrtPriceX96?: bigint
   variant?: 'default' | 'cards'
 }
 
@@ -30,6 +32,7 @@ export function TickRangeSelector({
   token0,
   token1,
   inverted = false,
+  sqrtPriceX96,
   variant = 'default',
 }: TickRangeSelectorProps): ReactElement {
   const {
@@ -49,12 +52,13 @@ export function TickRangeSelector({
     tickSpacing,
   )
   const presets = [
-    { label: 'Full Range', ...limits },
+    { label: 'Full Range', ...limits, fixed: true },
     ...[2, 1.2, 1.01].map((factor) => {
       // Even the narrowest preset needs a usable tick on each side.
       const offset = Math.max(tickSpacing, Math.log(factor) / Math.log(1.0001))
       return {
         label: `×÷${factor}`,
+        fixed: false,
         ...clampTickRange(
           currentTick - offset,
           currentTick + offset,
@@ -63,6 +67,33 @@ export function TickRangeSelector({
       }
     }),
   ]
+  if (
+    sqrtPriceX96 !== undefined &&
+    sqrtPriceX96 >= TickMath.MIN_SQRT_RATIO &&
+    sqrtPriceX96 < TickMath.MAX_SQRT_RATIO
+  ) {
+    const tick = getTickAtSqrtRatio(sqrtPriceX96)
+    const floor = Math.floor(tick / tickSpacing) * tickSpacing
+    const ceiling =
+      floor >= MAX_TICK_RANGE.lower &&
+      getSqrtRatioAtTick(floor) === sqrtPriceX96
+        ? floor
+        : floor + tickSpacing
+    const left = { lower: limits.lower, upper: floor }
+    const right = { lower: ceiling, upper: limits.upper }
+    presets.push(
+      {
+        label: 'Single Sided (Left)',
+        ...(inverted ? right : left),
+        fixed: true,
+      },
+      {
+        label: 'Single Sided (Right)',
+        ...(inverted ? left : right),
+        fixed: true,
+      },
+    )
+  }
   function display(tick: number): string {
     if (!token0 || !token1) return ''
     return poolPrice(
@@ -76,22 +107,20 @@ export function TickRangeSelector({
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2" aria-label="Price range presets">
         {presets.map((preset) => (
-          <Button
+          <Toggle
             key={preset.label}
             type="button"
             size="sm"
-            variant={
-              tickLower === preset.lower && tickUpper === preset.upper
-                ? 'default'
-                : 'secondary'
-            }
-            aria-pressed={
-              tickLower === preset.lower && tickUpper === preset.upper
-            }
-            onClick={() => applyPresetRange(preset.lower, preset.upper)}
+            variant="outline"
+            pressed={tickLower === preset.lower && tickUpper === preset.upper}
+            disabled={preset.lower >= preset.upper}
+            onClick={() => {
+              applyPresetRange(preset.lower, preset.upper)
+              if (preset.fixed) setIsDynamic(false)
+            }}
           >
             {preset.label}
-          </Button>
+          </Toggle>
         ))}
       </div>
       <div

@@ -4,6 +4,7 @@ import { type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { getGasBalanceReserve } from 'src/lib/wagmi/components/web3-input/currency/native-balance-reserve'
 import { Amount } from 'sushi'
+import { TickMath } from 'sushi/evm'
 import {
   STELLAR_USDC,
   STELLAR_XLM,
@@ -12,7 +13,10 @@ import {
 } from 'sushi/stellar'
 import { parseUnits } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { getSqrtRatioAtTick } from '~stellar/_common/lib/utils/ticks'
+import {
+  TICK_SPACINGS,
+  getSqrtRatioAtTick,
+} from '~stellar/_common/lib/utils/ticks'
 import { PoolPositionForm } from './pool-position-form'
 
 const mocks = vi.hoisted(() => ({
@@ -78,6 +82,9 @@ vi.mock('src/lib/wagmi/systems/checker/amounts', () => ({
 vi.mock('~stellar/_common/ui/checker/trustline', () => ({
   Trustlines: ({ children }: { children: ReactNode }) => children,
 }))
+vi.mock('~stellar/_common/ui/liquidity-chart-range-input', () => ({
+  LiquidityChartRangeInput: () => <div aria-label="Liquidity distribution" />,
+}))
 vi.mock('~evm/_common/ui/balance-provider/use-balance', () => ({
   useAmountBalance: (token: typeof token0) => ({
     data: new Amount(token, 1000n * 10n ** BigInt(token.decimals)),
@@ -89,18 +96,34 @@ vi.mock('src/lib/wagmi/components/web3-input/currency', () => ({
     value,
     disabled,
     onChange,
+    onMax,
+    disableMaxButton,
+    currency,
   }: {
     id: string
     value: string
     disabled: boolean
     onChange(value: string): void
+    onMax(): void
+    disableMaxButton: boolean
+    currency: typeof token0
   }) => (
-    <input
-      aria-label={id}
-      value={value}
-      disabled={disabled}
-      onChange={(event) => onChange(event.target.value)}
-    />
+    <>
+      <input
+        aria-label={id}
+        value={value}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      <button
+        type="button"
+        disabled={disableMaxButton}
+        onClick={onMax}
+        aria-label={`Use maximum ${currency.symbol}`}
+      >
+        Balance
+      </button>
+    </>
   ),
 }))
 
@@ -127,7 +150,9 @@ function input(label: string): HTMLInputElement {
 }
 function button(label: string): HTMLButtonElement {
   const element = Array.from(container.querySelectorAll('button')).find(
-    (element) => element.textContent === label,
+    (element) =>
+      element.textContent === label ||
+      element.getAttribute('aria-label') === label,
   )
   if (!element)
     throw new Error(`Missing button ${label}: ${container.textContent}`)
@@ -279,6 +304,69 @@ describe('Stellar pool creation flow', () => {
       token1Amount: '5',
     })
   })
+  it.each(
+    ([500, 3000, 10000] as const).flatMap((fee) =>
+      [false, true].flatMap((inverted) =>
+        [-1n, 0n, 1n].map((offset) => ({ fee, inverted, offset })),
+      ),
+    ),
+  )(
+    'keeps single-sided presets single-sided at negative boundaries: $fee, inverted=$inverted, offset=$offset',
+    async ({ fee, inverted, offset }) => {
+      mocks.pool.data = poolAddress
+      mocks.initialized = true
+      const price = getSqrtRatioAtTick(-TICK_SPACINGS[fee]) + offset
+      mocks.sqrtPriceX96 = price
+      render(fee)
+      if (inverted) await click(`${token0.symbol} per ${token1.symbol}`)
+      for (const side of ['Left', 'Right'] as const) {
+        await click(`Single Sided (${side})`)
+        const token0Only = (side === 'Right') !== inverted
+        expect(input('stellar-add-liquidity-token0').disabled).toBe(!token0Only)
+        expect(input('stellar-add-liquidity-token1').disabled).toBe(token0Only)
+        fill(`stellar-add-liquidity-token${token0Only ? '0' : '1'}`, '10')
+        await click('Add liquidity')
+        const params = mocks.add.mock.lastCall?.[0]
+        expect(params).toBeDefined()
+        expect(params[token0Only ? 'token1Amount' : 'token0Amount']).toBe('0')
+        expect(Math.abs(params.tickLower % TICK_SPACINGS[fee])).toBe(0)
+        expect(Math.abs(params.tickUpper % TICK_SPACINGS[fee])).toBe(0)
+        if (token0Only)
+          expect(getSqrtRatioAtTick(params.tickLower)).toBeGreaterThanOrEqual(
+            price,
+          )
+        else
+          expect(getSqrtRatioAtTick(params.tickUpper)).toBeLessThanOrEqual(
+            price,
+          )
+      }
+    },
+  )
+  it('disables single-sided presets that cannot fit at the protocol limits', async () => {
+    mocks.pool.data = poolAddress
+    mocks.initialized = true
+    mocks.sqrtPriceX96 = TickMath.MIN_SQRT_RATIO
+    render()
+    expect(button('Single Sided (Left)').disabled).toBe(true)
+    expect(button('Single Sided (Right)').disabled).toBe(false)
+    mocks.sqrtPriceX96 = TickMath.MAX_SQRT_RATIO - 1n
+    render()
+    expect(button('Single Sided (Left)').disabled).toBe(false)
+    expect(button('Single Sided (Right)').disabled).toBe(true)
+  })
+  it('keeps a single-sided range fixed when the pool price moves', async () => {
+    mocks.pool.data = poolAddress
+    mocks.initialized = true
+    mocks.sqrtPriceX96 = getSqrtRatioAtTick(-1)
+    render()
+    await click('Single Sided (Right)')
+    const lower = input('Min Price').value
+    const upper = input('Max Price').value
+    mocks.sqrtPriceX96 = getSqrtRatioAtTick(120)
+    render()
+    expect(input('Min Price').value).toBe(lower)
+    expect(input('Max Price').value).toBe(upper)
+  })
   it('does not create an existing initialized pool', async () => {
     mocks.pool.data = poolAddress
     mocks.initialized = true
@@ -330,7 +418,7 @@ describe('Stellar pool creation flow', () => {
   })
   it('keeps XLM reserved when using maximum liquidity', async () => {
     prepare()
-    await click(`Max ${token0.symbol}`)
+    await click(`Use maximum ${token0.symbol}`)
     const reserve = getGasBalanceReserve(token0)
     expect(reserve).toBeGreaterThan(0n)
     expect(

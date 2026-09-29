@@ -1,7 +1,17 @@
 'use client'
 
-import { Button, FormSection, Label, Message, TextField } from '@sushiswap/ui'
-import { type ReactElement, useState } from 'react'
+import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
+import {
+  Button,
+  FormSection,
+  Label,
+  Message,
+  TextField,
+  TextFieldDescription,
+  Toggle,
+} from '@sushiswap/ui'
+import { Fragment, type ReactElement, useState } from 'react'
+import { Bound } from 'src/lib/constants'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import {
   getGasBalanceReserve,
@@ -26,7 +36,14 @@ import {
   parseStartingPrice,
   poolPrice,
 } from '~stellar/_common/lib/utils/liquidity-amounts'
-import { getSqrtRatioAtTick } from '~stellar/_common/lib/utils/ticks'
+import {
+  MAX_TICK_RANGE,
+  alignTick,
+  clampTickRange,
+  getSqrtRatioAtTick,
+  getTickAtSqrtRatio,
+} from '~stellar/_common/lib/utils/ticks'
+import { LiquidityChartRangeInput } from '~stellar/_common/ui/liquidity-chart-range-input'
 import { TickRangeSelector } from '~stellar/_common/ui/tick-range-selector/tick-range-selector'
 import { PoolSubmit } from './pool-submit'
 
@@ -34,6 +51,7 @@ interface PoolPositionFormProps {
   token0: StellarToken
   token1: StellarToken
   fee: number
+  busy?: boolean
   onBusyChange(busy: boolean): void
 }
 
@@ -41,6 +59,7 @@ export function PoolPositionForm({
   token0,
   token1,
   fee,
+  busy = false,
   onBusyChange,
 }: PoolPositionFormProps): ReactElement {
   const [createdPool, setCreatedPool] = useState<StellarContractAddress>()
@@ -84,6 +103,11 @@ export function PoolPositionForm({
     (initialized.data === true && info.isPending)
   const range = useTickRangeSelector(fee, sqrtPrice)
   const { tickLower, tickUpper, isTickRangeValid } = range
+  const limits = clampTickRange(
+    MAX_TICK_RANGE.lower,
+    MAX_TICK_RANGE.upper,
+    range.tickSpacing,
+  )
   const { data: balance0 } = useAmountBalance(token0)
   const { data: balance1 } = useAmountBalance(token1)
   const below =
@@ -138,6 +162,30 @@ export function PoolPositionForm({
       : proposedPrice
         ? poolPrice(token0, token1, proposedPrice, inverted).toSignificant(12)
         : ''
+  const tokenToggle = (
+    <div className="flex gap-1" role="group" aria-label="Price currency">
+      <Toggle
+        type="button"
+        size="sm"
+        variant="outline"
+        pressed={!inverted}
+        aria-label={`${token1.symbol} per ${token0.symbol}`}
+        onPressedChange={() => setInverted(false)}
+      >
+        {token0.symbol}
+      </Toggle>
+      <Toggle
+        type="button"
+        size="sm"
+        variant="outline"
+        pressed={inverted}
+        aria-label={`${token0.symbol} per ${token1.symbol}`}
+        onPressedChange={() => setInverted(true)}
+      >
+        {token1.symbol}
+      </Toggle>
+    </div>
+  )
 
   function setMaximum(field: LiquidityField): void {
     if (sqrtPrice === undefined || !isTickRangeValid || !balance0 || !balance1)
@@ -158,37 +206,23 @@ export function PoolPositionForm({
     })
   }
 
+  function setChartPrice(value: string, bound: Bound): void {
+    const price = parseStartingPrice(token0, token1, value)
+    if (price === undefined) return
+    range.setIsDynamic(false)
+    const setTick =
+      bound === Bound.LOWER ? range.setTickLower : range.setTickUpper
+    setTick(alignTick(getTickAtSqrtRatio(price), range.tickSpacing))
+  }
+
   return (
     <>
       <FormSection
         title="Range"
-        description="Choose the price range in which your liquidity earns fees."
+        description="Select a price range to provide liquidity. You will not earn fees when the price moves outside this range."
       >
-        <div className="space-y-5">
-          <div
-            className="flex justify-end gap-2"
-            role="group"
-            aria-label="Price currency"
-          >
-            <Button
-              type="button"
-              size="sm"
-              variant={inverted ? 'secondary' : 'default'}
-              aria-pressed={!inverted}
-              onClick={() => setInverted(false)}
-            >
-              {token1.symbol} per {token0.symbol}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={inverted ? 'default' : 'secondary'}
-              aria-pressed={inverted}
-              onClick={() => setInverted(true)}
-            >
-              {token0.symbol} per {token1.symbol}
-            </Button>
-          </div>
+        <div className="flex flex-col gap-6">
+          {tokenToggle}
           {priceError ? (
             <Message variant="destructive" size="sm">
               Unable to load this pool.{' '}
@@ -208,30 +242,68 @@ export function PoolPositionForm({
             <p role="status">Checking pool…</p>
           ) : needsInitialization ? (
             <div className="space-y-3">
-              <Message variant="muted" size="sm">
+              <Message variant="muted" size="sm" className="text-center">
                 Set a starting price to initialize this pool. Initialization
                 requires a separate transaction before adding liquidity.
               </Message>
-              <Label htmlFor="stellar-start-price">
-                Starting price ({inverted ? token0.symbol : token1.symbol} per{' '}
-                {inverted ? token1.symbol : token0.symbol})
-              </Label>
+              <Label htmlFor="stellar-start-price">Start price</Label>
               <TextField
                 id="stellar-start-price"
                 aria-label="Starting price"
                 type="number"
+                variant="outline"
+                unit={`${inverted ? token0.symbol : token1.symbol} per ${inverted ? token1.symbol : token0.symbol}`}
                 value={displayedStartPrice}
                 onValueChange={(value) => setPriceInput({ value, inverted })}
                 placeholder="0.0"
               />
+              <TextFieldDescription>
+                Enter the price of one{' '}
+                {inverted ? token1.symbol : token0.symbol} in{' '}
+                {inverted ? token0.symbol : token1.symbol}.
+              </TextFieldDescription>
             </div>
           ) : sqrtPrice !== undefined ? (
-            <p className="text-sm text-muted-foreground">
-              Current price:{' '}
-              {poolPrice(token0, token1, sqrtPrice, inverted).toSignificant(8)}{' '}
-              {inverted ? token0.symbol : token1.symbol} per{' '}
-              {inverted ? token1.symbol : token0.symbol}
-            </p>
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-muted-foreground">
+                Current price:{' '}
+                {poolPrice(token0, token1, sqrtPrice, inverted).toSignificant(
+                  8,
+                )}{' '}
+                {inverted ? token0.symbol : token1.symbol} per{' '}
+                {inverted ? token1.symbol : token0.symbol}
+              </p>
+              {info.data && (
+                <LiquidityChartRangeInput
+                  pool={info.data}
+                  inverted={inverted}
+                  ticksAtLimit={{
+                    [Bound.LOWER]: tickLower === limits.lower,
+                    [Bound.UPPER]: tickUpper === limits.upper,
+                  }}
+                  priceRange={{
+                    [Bound.LOWER]: poolPrice(
+                      token0,
+                      token1,
+                      getSqrtRatioAtTick(tickLower),
+                    ).toNumber(),
+                    [Bound.UPPER]: poolPrice(
+                      token0,
+                      token1,
+                      getSqrtRatioAtTick(tickUpper),
+                    ).toNumber(),
+                  }}
+                  onLeftRangeInput={(value) =>
+                    setChartPrice(value, Bound.LOWER)
+                  }
+                  onRightRangeInput={(value) =>
+                    setChartPrice(value, Bound.UPPER)
+                  }
+                  interactive={!busy}
+                  hideBrushes={false}
+                />
+              )}
+            </div>
           ) : null}
           <fieldset
             disabled={loading || priceError || sqrtPrice === undefined}
@@ -242,6 +314,7 @@ export function PoolPositionForm({
               token0={token0}
               token1={token1}
               inverted={inverted}
+              sqrtPriceX96={sqrtPrice}
               variant="cards"
             />
           </fieldset>
@@ -249,16 +322,11 @@ export function PoolPositionForm({
       </FormSection>
       <FormSection
         title="Liquidity"
-        description="Enter either token amount. The paired amount is calculated from your price range."
+        description="Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio. Enter either amount to calculate the other."
       >
-        <div className="space-y-4">
-          {initialized.data === true && (
-            <Message variant="muted" size="sm">
-              This pool already exists. Your liquidity will be added to it.
-            </Message>
-          )}
+        <div className="flex flex-col gap-4">
           {(below || above) && (
-            <Message variant="muted" size="sm">
+            <Message variant="warning" size="sm">
               Only {below ? token0.symbol : token1.symbol} is needed. This
               position will not earn fees until the price enters your range.
             </Message>
@@ -278,39 +346,57 @@ export function PoolPositionForm({
                 disabled: below,
               },
             ] as const
-          ).map(({ field, token, value, disabled }) => (
-            <div key={field}>
-              <CurrencyInput
-                chainId={StellarChainId.STELLAR}
-                id={`stellar-add-liquidity-${field}`}
-                label={`${token.symbol} deposit`}
-                type="INPUT"
-                className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
-                currency={token}
-                value={value}
-                onChange={(value) => setInput({ field, value })}
-                disabled={
-                  disabled || sqrtPrice === undefined || loading || priceError
-                }
-                disableMaxButton
-              />
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                aria-label={`Use maximum ${token.symbol}`}
-                disabled={
-                  disabled ||
-                  !balance0 ||
-                  !balance1 ||
-                  sqrtPrice === undefined ||
-                  !isTickRangeValid
-                }
-                onClick={() => setMaximum(field)}
-              >
-                Max {token.symbol}
-              </Button>
-            </div>
+          ).map(({ field, token, value, disabled }, index) => (
+            <Fragment key={field}>
+              {index === 1 && (
+                <div
+                  className="flex items-center justify-center -my-6 z-10"
+                  aria-hidden="true"
+                >
+                  <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
+                    <PlusIcon
+                      width={16}
+                      height={16}
+                      className="text-muted-foreground"
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="relative">
+                {disabled && (
+                  <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex flex-col items-center justify-center gap-2 px-6 text-sm font-medium text-center text-slate-600 dark:text-slate-400">
+                    <LockClosedIcon width={24} height={24} aria-hidden="true" />
+                    <span>
+                      Single-asset deposit only. {token.symbol} is not needed
+                      for this price range.
+                    </span>
+                  </div>
+                )}
+                <CurrencyInput
+                  chainId={StellarChainId.STELLAR}
+                  id={`stellar-add-liquidity-${field}`}
+                  label={`${token.symbol} deposit`}
+                  type="INPUT"
+                  className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
+                  currency={token}
+                  value={value}
+                  onChange={(value) => setInput({ field, value })}
+                  disabled={
+                    disabled || sqrtPrice === undefined || loading || priceError
+                  }
+                  onMax={() => setMaximum(field)}
+                  disableMaxButton={
+                    disabled ||
+                    !balance0 ||
+                    !balance1 ||
+                    sqrtPrice === undefined ||
+                    !isTickRangeValid ||
+                    loading ||
+                    priceError
+                  }
+                />
+              </div>
+            </Fragment>
           ))}
           {quote?.error && (
             <p role="alert" className="text-sm text-red">

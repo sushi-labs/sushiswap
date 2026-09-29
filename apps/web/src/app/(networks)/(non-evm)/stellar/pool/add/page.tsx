@@ -1,6 +1,16 @@
 'use client'
 
-import { Button, Currency, FormSection, SelectIcon } from '@sushiswap/ui'
+import {
+  Button,
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Currency,
+  FormSection,
+  SelectIcon,
+  Toggle,
+} from '@sushiswap/ui'
 import { type ReactElement, useState } from 'react'
 import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
@@ -21,12 +31,12 @@ export default function AddPoolPage(): ReactElement {
       ? [token0, token1]
       : [token1, token0]
   return (
-    <fieldset disabled={busy} className="min-w-0 space-y-6">
+    <fieldset disabled={busy} className="min-w-0">
       <FormSection
         title="Tokens"
-        description="Select the token pair. If a pool exists, liquidity will be added to it."
+        description="Which token pair would you like to add liquidity to?"
       >
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-wrap gap-3">
           {[
             { token: token0, setToken: setToken0 },
             { token: token1, setToken: setToken1 },
@@ -41,11 +51,16 @@ export default function AddPoolPage(): ReactElement {
               <Button
                 type="button"
                 variant="secondary"
-                className="w-full"
+                color={!token && index === 1 ? 'blue' : 'default'}
                 aria-label={`Select token ${index + 1}`}
               >
                 {token && (
-                  <Currency.Icon currency={token} width={24} height={24} />
+                  <Currency.Icon
+                    disableLink
+                    currency={token}
+                    width={16}
+                    height={16}
+                  />
                 )}
                 {token?.symbol ?? 'Select Token'}
                 <SelectIcon />
@@ -60,28 +75,31 @@ export default function AddPoolPage(): ReactElement {
         )}
       </FormSection>
       <FormSection
-        title="Fee Tier"
-        description="Lower fees suit stable pairs. Higher fees suit more volatile pairs."
+        title="Fee tier"
+        description="Choose a fee tier for your pair. Lower fees suit stable pairs; higher fees suit more volatile pairs."
       >
         <div
-          className="grid gap-3 sm:grid-cols-3"
+          className="grid grid-cols-2 gap-4"
           role="group"
           aria-label="Fee tier"
         >
           {FEE_TIERS.map((tier) => (
-            <Button
+            <Toggle
               key={tier.value}
               type="button"
-              variant={fee === tier.value ? 'default' : 'secondary'}
-              aria-pressed={fee === tier.value}
+              pressed={fee === tier.value}
               disabled={!distinct}
               onClick={() => setFee(tier.value)}
               testdata-id={`fee-option-${tier.value}`}
-              className="h-auto flex-col whitespace-normal p-4"
+              className="!h-auto !w-auto !p-0 !text-left !justify-start items-stretch whitespace-normal bg-white dark:bg-background dark:data-[state=on]:bg-secondary"
             >
-              <span>{tier.label}</span>
-              <span className="text-xs font-normal">{tier.description}</span>
-            </Button>
+              <Card variant="outline" className="w-full text-left">
+                <CardHeader>
+                  <CardTitle>{tier.label} Fees</CardTitle>
+                  <CardDescription>{tier.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Toggle>
           ))}
         </div>
       </FormSection>
@@ -91,6 +109,7 @@ export default function AddPoolPage(): ReactElement {
           token0={ordered[0]}
           token1={ordered[1]}
           fee={fee}
+          busy={busy}
           onBusyChange={setBusy}
         />
       ) : (

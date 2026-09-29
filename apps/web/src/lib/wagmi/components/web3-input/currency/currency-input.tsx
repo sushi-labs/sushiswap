@@ -34,6 +34,7 @@ interface CurrencyInputProps<
   disabled?: boolean
   value: string
   onChange?(value: string): void
+  onMax?(): void
   currency: CurrencyFor<TChainId> | undefined
   onSelect?(
     selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
@@ -74,6 +75,7 @@ function CurrencyInput<
     disabled,
     value,
     onChange,
+    onMax,
     currency,
     chainId,
     currencyClassName,
@@ -371,6 +373,7 @@ function CurrencyInput<
           chainId={chainId}
           account={address}
           onChange={onChange}
+          onMax={onMax}
           currency={currency}
           disableMaxButton={disableMaxButton}
           balance={balance}

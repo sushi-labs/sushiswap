@@ -13,7 +13,7 @@ import {
 
 type BalancePanel<TChainId extends BalanceChainId> = Pick<
   CurrencyInputProps<TChainId>,
-  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'
+  'chainId' | 'onChange' | 'onMax' | 'currency' | 'disableMaxButton' | 'loading'
 > & {
   id?: string
   account: string | undefined
@@ -24,7 +24,9 @@ type BalancePanel<TChainId extends BalanceChainId> = Pick<
 export function BalancePanel<TChainId extends BalanceChainId>({
   id,
   balance,
+  currency,
   onChange,
+  onMax,
   disableMaxButton,
   loading,
   type,
@@ -36,6 +38,10 @@ export function BalancePanel<TChainId extends BalanceChainId>({
   ).split('.')
 
   const onClick = useCallback(() => {
+    if (onMax) {
+      onMax()
+      return
+    }
     if (!onChange || !balance?.gt(0n)) return
 
     // Leave gas funds in the selected currency's base units, including Arc's
@@ -51,7 +57,7 @@ export function BalancePanel<TChainId extends BalanceChainId>({
     }
 
     onChange(balance.toString())
-  }, [balance, onChange])
+  }, [balance, onChange, onMax])
 
   if (loading || !isMounted) {
     return (
@@ -66,6 +72,7 @@ export function BalancePanel<TChainId extends BalanceChainId>({
       id={`${id}-balance-button`}
       testdata-id={`${id}-balance-button`}
       type="button"
+      aria-label={`Use maximum ${currency?.symbol ?? ''}`.trim()}
       // variant="ghost"
       onClick={onClick}
       className={classNames(
