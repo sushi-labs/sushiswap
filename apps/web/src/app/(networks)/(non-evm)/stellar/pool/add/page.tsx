@@ -1,18 +1,9 @@
 'use client'
 
-import {
-  Button,
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Currency,
-  FormSection,
-  SelectIcon,
-  Toggle,
-} from '@sushiswap/ui'
+import { FormSection } from '@sushiswap/ui'
 import { type ReactElement, useState } from 'react'
-import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-selector'
+import { FeeTierCard } from 'src/lib/components/fee-tier-card'
+import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { StellarChainId, type StellarToken } from 'sushi/stellar'
 import { isAddressLower } from '~stellar/_common/lib/soroban/constants'
@@ -32,48 +23,19 @@ export default function AddPoolPage(): ReactElement {
       : [token1, token0]
   return (
     <fieldset disabled={busy} className="min-w-0">
-      <FormSection
-        title="Tokens"
-        description="Which token pair would you like to add liquidity to?"
+      <SelectTokensWidget
+        chainId={StellarChainId.STELLAR}
+        token0={token0}
+        token1={token1}
+        setToken0={setToken0}
+        setToken1={setToken1}
       >
-        <div className="flex flex-wrap gap-3">
-          {[
-            { token: token0, setToken: setToken0 },
-            { token: token1, setToken: setToken1 },
-          ].map(({ token, setToken }, index) => (
-            <TokenSelector
-              key={index}
-              id={`token${index}-selector`}
-              chainId={StellarChainId.STELLAR}
-              selected={token}
-              onSelect={setToken}
-            >
-              <Button
-                type="button"
-                variant="secondary"
-                color={!token && index === 1 ? 'blue' : 'default'}
-                aria-label={`Select token ${index + 1}`}
-              >
-                {token && (
-                  <Currency.Icon
-                    disableLink
-                    currency={token}
-                    width={16}
-                    height={16}
-                  />
-                )}
-                {token?.symbol ?? 'Select Token'}
-                <SelectIcon />
-              </Button>
-            </TokenSelector>
-          ))}
-        </div>
         {token0 && token1 && !distinct && (
           <p role="alert" className="text-sm text-red">
             Select two different tokens.
           </p>
         )}
-      </FormSection>
+      </SelectTokensWidget>
       <FormSection
         title="Fee tier"
         description="Choose a fee tier for your pair. Lower fees suit stable pairs; higher fees suit more volatile pairs."
@@ -84,22 +46,14 @@ export default function AddPoolPage(): ReactElement {
           aria-label="Fee tier"
         >
           {FEE_TIERS.map((tier) => (
-            <Toggle
+            <FeeTierCard
               key={tier.value}
-              type="button"
-              pressed={fee === tier.value}
+              fee={tier.value}
+              description={tier.description}
+              selected={fee === tier.value}
               disabled={!distinct}
-              onClick={() => setFee(tier.value)}
-              testdata-id={`fee-option-${tier.value}`}
-              className="!h-auto !w-auto !p-0 !text-left !justify-start items-stretch whitespace-normal bg-white dark:bg-background dark:data-[state=on]:bg-secondary"
-            >
-              <Card variant="outline" className="w-full text-left">
-                <CardHeader>
-                  <CardTitle>{tier.label} Fees</CardTitle>
-                  <CardDescription>{tier.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            </Toggle>
+              onSelect={() => setFee(tier.value)}
+            />
           ))}
         </div>
       </FormSection>

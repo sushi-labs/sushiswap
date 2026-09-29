@@ -28,6 +28,7 @@ import getUnixTime from 'date-fns/getUnixTime'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
+import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import { useRewardTokens } from 'src/lib/hooks/react-query/rewards/use-reward-tokens'
 import {
   DialogConfirm,
@@ -69,7 +70,6 @@ import {
 } from '../_ui/concentrated-liquidity-url-state-provider'
 import { SelectFeeConcentratedWidget } from '../_ui/select-fee-concentrated-widget'
 import { SelectNetworkWidget } from '../_ui/select-network-widget'
-import { SelectTokensWidget } from '../_ui/select-tokens-widget'
 
 const APPROVE_TAG = 'approve-incentivize'
 

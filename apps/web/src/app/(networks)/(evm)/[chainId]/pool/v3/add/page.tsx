@@ -6,6 +6,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { useRouter } from 'next/navigation'
 import { type FC, use, useEffect, useMemo, useState } from 'react'
+import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import { SelectSmartPoolStrategyWidget } from 'src/lib/steer/components/select-smart-pool-strategy-widget'
 import { SmartPoolLiquidityWidget } from 'src/lib/steer/components/smart-pool-liquidity-widget'
 import { useVaults } from 'src/lib/steer/hooks'
@@ -28,7 +29,6 @@ import {
 } from '../../_ui/concentrated-liquidity-url-state-provider'
 import { SelectFeeConcentratedWidget } from '../../_ui/select-fee-concentrated-widget'
 import { SelectNetworkWidget } from '../../_ui/select-network-widget'
-import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
 import { ConcentratedLiquidityWidget } from '../_ui/concentrated-liquidity-widget'
 import {
   SelectV3PoolTypeWidget,

@@ -1,6 +1,5 @@
 'use client'
 
-import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import {
   Button,
   FormSection,
@@ -11,8 +10,11 @@ import {
   Toggle,
 } from '@sushiswap/ui'
 import { Fragment, type ReactElement, useState } from 'react'
+import {
+  LiquidityDepositDivider,
+  LiquidityDepositInput,
+} from 'src/lib/components/liquidity-deposit-input'
 import { Bound } from 'src/lib/constants'
-import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import {
   getGasBalanceReserve,
   getSpendableNativeBalance,
@@ -348,54 +350,29 @@ export function PoolPositionForm({
             ] as const
           ).map(({ field, token, value, disabled }, index) => (
             <Fragment key={field}>
-              {index === 1 && (
-                <div
-                  className="flex items-center justify-center -my-6 z-10"
-                  aria-hidden="true"
-                >
-                  <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-                    <PlusIcon
-                      width={16}
-                      height={16}
-                      className="text-muted-foreground"
-                    />
-                  </div>
-                </div>
-              )}
-              <div className="relative">
-                {disabled && (
-                  <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex flex-col items-center justify-center gap-2 px-6 text-sm font-medium text-center text-slate-600 dark:text-slate-400">
-                    <LockClosedIcon width={24} height={24} aria-hidden="true" />
-                    <span>
-                      Single-asset deposit only. {token.symbol} is not needed
-                      for this price range.
-                    </span>
-                  </div>
-                )}
-                <CurrencyInput
-                  chainId={StellarChainId.STELLAR}
-                  id={`stellar-add-liquidity-${field}`}
-                  label={`${token.symbol} deposit`}
-                  type="INPUT"
-                  className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary"
-                  currency={token}
-                  value={value}
-                  onChange={(value) => setInput({ field, value })}
-                  disabled={
-                    disabled || sqrtPrice === undefined || loading || priceError
-                  }
-                  onMax={() => setMaximum(field)}
-                  disableMaxButton={
-                    disabled ||
-                    !balance0 ||
-                    !balance1 ||
-                    sqrtPrice === undefined ||
-                    !isTickRangeValid ||
-                    loading ||
-                    priceError
-                  }
-                />
-              </div>
+              {index === 1 && <LiquidityDepositDivider />}
+              <LiquidityDepositInput
+                locked={disabled}
+                chainId={StellarChainId.STELLAR}
+                id={`stellar-add-liquidity-${field}`}
+                label={`${token.symbol} deposit`}
+                currency={token}
+                value={value}
+                onChange={(value) => setInput({ field, value })}
+                disabled={
+                  disabled || sqrtPrice === undefined || loading || priceError
+                }
+                onMax={() => setMaximum(field)}
+                disableMaxButton={
+                  disabled ||
+                  !balance0 ||
+                  !balance1 ||
+                  sqrtPrice === undefined ||
+                  !isTickRangeValid ||
+                  loading ||
+                  priceError
+                }
+              />
             </Fragment>
           ))}
           {quote?.error && (
