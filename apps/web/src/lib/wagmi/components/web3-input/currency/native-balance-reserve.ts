@@ -1,11 +1,16 @@
 import { EvmChainId, USDC, isEvmChainId } from 'sushi/evm'
-import type { StellarChainId } from 'sushi/stellar'
+import {
+  STELLAR_XLM,
+  type StellarChainId,
+  isStellarChainId,
+} from 'sushi/stellar'
 import { SvmChainId, isSvmChainId } from 'sushi/svm'
 import { parseUnits } from 'viem'
 
 const MAINNET_NATIVE_RESERVE = parseUnits('0.002', 18) // 0.002 native units
 const EVM_NATIVE_RESERVE = parseUnits('0.00004', 18) // 0.00004 native units
 const SOL_NATIVE_RESERVE = 10_000_000n // 0.01 SOL
+const XLM_NATIVE_RESERVE = 5_000_000n // 0.5 XLM
 // Fixed Max buffer, not a transaction fee estimate. Arc's native and ERC-20
 // USDC interfaces share the same balance, with 18 and 6 decimals respectively.
 const ARC_USDC_RESERVE = '0.01'
@@ -29,6 +34,13 @@ export function getNativeBalanceReserve(
 export function getGasBalanceReserve(
   currency: CurrencyFor<EvmChainId | SvmChainId | StellarChainId>,
 ): bigint {
+  if (
+    isStellarChainId(currency.chainId) &&
+    currency.isSame(STELLAR_XLM[currency.chainId])
+  ) {
+    return XLM_NATIVE_RESERVE
+  }
+
   if (currency.isSame(USDC[EvmChainId.ARC])) {
     return parseUnits(ARC_USDC_RESERVE, currency.decimals)
   }

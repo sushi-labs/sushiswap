@@ -2,11 +2,9 @@ import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/wallet-icon'
 import { useCallback } from 'react'
 import { Amount } from 'sushi'
-import { isStellarChainId } from 'sushi/stellar'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
-import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { CurrencyInputProps } from './currency-input'
 import {
   getGasBalanceReserve,
@@ -22,10 +20,6 @@ type BalancePanel<TChainId extends BalanceChainId> = Pick<
   balance: Amount<CurrencyFor<TChainId>> | null | undefined
   type: 'INPUT' | 'OUTPUT'
 }
-
-// Stellar uses 7 decimals; reserve 2 XLM to cover the base account reserve
-// (1 XLM) plus headroom for a couple of trustlines and txn fees.
-const MIN_XLM_FOR_RESERVE = 2n * 10n ** 7n // 2 XLM
 
 export function BalancePanel<TChainId extends BalanceChainId>({
   id,
@@ -53,20 +47,6 @@ export function BalancePanel<TChainId extends BalanceChainId>({
         getSpendableNativeBalance(balance.amount, reserve),
       )
       onChange(spendableBalance.toString())
-      return
-    }
-
-    // Stellar's XLM is modeled as a regular token (no `native` discriminant),
-    // so guard on the contract address. Reserve covers Stellar's base
-    // account reserve + fees so the wallet stays usable after a max swap.
-    if (
-      isStellarChainId(balance.currency.chainId) &&
-      'address' in balance.currency &&
-      balance.currency.address === contractAddresses.TOKENS.XLM &&
-      balance.gt(MIN_XLM_FOR_RESERVE)
-    ) {
-      const reserve = new Amount(balance.currency, MIN_XLM_FOR_RESERVE)
-      onChange(balance.sub(reserve).toString())
       return
     }
 

@@ -4,6 +4,13 @@ import {
   increaseLiquidity,
   mintPosition,
 } from '../soroban/position-manager-helpers'
+import { parseLiquidityAmount } from '../utils/liquidity-amounts'
+import {
+  MAX_TICK_RANGE,
+  TICK_SPACINGS,
+  isFeeTier,
+  isTickAligned,
+} from '../utils/ticks'
 import { positionService } from './position-service'
 import type { AddLiquidityParams } from './swap-service'
 
@@ -22,17 +29,25 @@ export class SushiStellarService {
     signTransaction: (xdr: string) => Promise<string>,
     signAuthEntry: (entryPreimageXdr: string) => Promise<string>,
   ): Promise<{ txHash: string; tokenId: number; liquidity: bigint }> {
-    // Convert string amounts to bigint
-    const amount0 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token0Amount) * 10 ** params.token0Decimals,
-      ),
+    const amount0 = parseLiquidityAmount(
+      params.token0Amount,
+      params.token0Decimals,
     )
-    const amount1 = BigInt(
-      Math.floor(
-        Number.parseFloat(params.token1Amount) * 10 ** params.token1Decimals,
-      ),
+    const amount1 = parseLiquidityAmount(
+      params.token1Amount,
+      params.token1Decimals,
     )
+    if (amount0 === 0n && amount1 === 0n)
+      throw new Error('Enter a liquidity amount')
+    if (
+      !Number.isInteger(params.tickLower) ||
+      !Number.isInteger(params.tickUpper) ||
+      params.tickLower < MAX_TICK_RANGE.lower ||
+      params.tickUpper > MAX_TICK_RANGE.upper ||
+      params.tickLower >= params.tickUpper
+    ) {
+      throw new Error('Invalid liquidity range')
+    }
 
     const deadline = BigInt(
       params.deadline || Math.floor(addMinutes(new Date(), 5).valueOf() / 1000),
@@ -42,6 +57,14 @@ export class SushiStellarService {
     const poolConfig = await getPoolInfoFromContract(params.poolAddress)
     if (!poolConfig) {
       throw new Error('Pool config not found')
+    }
+
+    if (
+      !isFeeTier(poolConfig.fee) ||
+      !isTickAligned(params.tickLower, TICK_SPACINGS[poolConfig.fee]) ||
+      !isTickAligned(params.tickUpper, TICK_SPACINGS[poolConfig.fee])
+    ) {
+      throw new Error('Liquidity range must align with the pool tick spacing')
     }
 
     // Check if user has existing position for this pool with same tick range

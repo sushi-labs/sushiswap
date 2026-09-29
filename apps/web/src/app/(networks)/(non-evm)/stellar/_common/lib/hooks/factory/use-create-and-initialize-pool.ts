@@ -66,6 +66,8 @@ export const useCreateAndInitializePool = () => {
         timestamp,
       })
 
+      queryClient.invalidateQueries({ queryKey: ['factory', 'getPool'] })
+
       // Invalidate pools list
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'pool', 'allPools'],

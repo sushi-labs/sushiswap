@@ -19,11 +19,7 @@ import { TokenSelector } from 'src/lib/wagmi/components/token-selector/token-sel
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import {
-  type StellarAccountAddress,
-  StellarChainId,
-  type StellarToken,
-} from 'sushi/stellar'
+import { StellarChainId, type StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
 import { ToggleZapCard } from '~evm/[chainId]/pool/_ui/toggle-zap-card'
 import { useRemoveLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-remove-liquidity'
@@ -33,18 +29,14 @@ import { usePoolBalances } from '~stellar/_common/lib/hooks/pool/use-pool-balanc
 import { useMyPosition } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/swap'
 import { useTickRangeSelector } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { useZap } from '~stellar/_common/lib/hooks/zap/use-zap'
-import {
-  calculatePriceFromSqrtPrice,
-  formatPriceBound,
-} from '~stellar/_common/lib/soroban/pool-helpers'
+import { formatPriceBound } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
+import { Trustlines } from '../checker/trustline'
 import { TickRangeSelector } from '../tick-range-selector/tick-range-selector'
-import { CreateTrustlineButton } from '../trustline/create-trustline-button'
 import { LiquidityDepthWidget } from './liquidity-depth-widget'
 
 interface ManageLiquidityCardProps {
@@ -76,51 +68,10 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   const [zapTokenIn, setZapTokenIn] = useState<StellarToken | null>(null)
   const [zapAmountIn, setZapAmountIn] = useState<string>('')
 
-  const currentPrice = calculatePriceFromSqrtPrice(pool.sqrtPriceX96)
   const tickRangeSelectorState = useTickRangeSelector(
     pool.fee,
-    currentPrice ?? 1,
+    pool.sqrtPriceX96,
   )
-
-  // Check trustlines for pool tokens (needed for both add liquidity and zap)
-  const {
-    needsTrustline: needsToken0Trustline,
-    isLoading: isLoadingToken0Trustline,
-    issuer: token0ResolvedIssuer,
-  } = useNeedsTrustline({
-    code: pool.token0.symbol,
-    contract: pool.token0.address,
-    issuer: pool.token0.issuer ?? '',
-  })
-  const {
-    needsTrustline: needsToken1Trustline,
-    isLoading: isLoadingToken1Trustline,
-    issuer: token1ResolvedIssuer,
-  } = useNeedsTrustline({
-    code: pool.token1.symbol,
-    contract: pool.token1.address,
-    issuer: pool.token1.issuer ?? '',
-  })
-  const isLoadingTrustlines =
-    isLoadingToken0Trustline || isLoadingToken1Trustline
-  // Use the resolved issuers from the trustline check (looked up from Horizon if not already known)
-  const tokensNeedingTrustline = useMemo(() => {
-    const tokens: Array<{ code: string; issuer: StellarAccountAddress }> = []
-    if (needsToken0Trustline && token0ResolvedIssuer) {
-      tokens.push({ code: pool.token0.symbol, issuer: token0ResolvedIssuer })
-    }
-    if (needsToken1Trustline && token1ResolvedIssuer) {
-      tokens.push({ code: pool.token1.symbol, issuer: token1ResolvedIssuer })
-    }
-    return tokens
-  }, [
-    needsToken0Trustline,
-    needsToken1Trustline,
-    token0ResolvedIssuer,
-    token1ResolvedIssuer,
-    pool.token0.symbol,
-    pool.token1.symbol,
-  ])
 
   const {
     tickLower,
@@ -200,17 +151,16 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
   // Use typedValue for calculations (will be auto-clamped by useEffect)
   const effectiveTypedValue = typedValue
 
-  const { data: dependentAmountData } = useCalculateDependentAmount(
-    pool.address,
-    effectiveTypedValue,
-    independentField,
-    tickLower,
-    tickUpper,
-    independentToken.decimals,
-    dependentToken.decimals,
-    independentToken.symbol,
-    dependentToken.symbol,
-  )
+  const { data: dependentAmountData, isError: isDependentQueryError } =
+    useCalculateDependentAmount(
+      pool.address,
+      effectiveTypedValue,
+      independentField,
+      tickLower,
+      tickUpper,
+      independentToken.decimals,
+      dependentToken.decimals,
+    )
 
   // Calculate dependent amount (only used in normal mode, not zap mode)
   const parsedAmount = dependentAmountData?.amount ?? '0'
@@ -294,14 +244,14 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
     .div(100)
 
   // Prevent adding liquidity when dependent amount calculation errors occur
-  const isDependentAmountError = dependentAmountData?.status === 'error'
+  const isDependentAmountError =
+    isDependentQueryError ||
+    !dependentAmountData ||
+    dependentAmountData.status === 'idle' ||
+    dependentAmountData.status === 'error'
 
   const canAddLiquidity =
-    hasAmount &&
-    isTickRangeValid &&
-    !isDependentAmountError &&
-    !isLoadingTrustlines &&
-    tokensNeedingTrustline.length === 0
+    hasAmount && isTickRangeValid && !isDependentAmountError
 
   // Handle add liquidity (normal mode only - zap mode has its own handler)
   const handleAddLiquidity = async () => {
@@ -505,109 +455,98 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           </p>
                         </div>
                       )}
-                      {/* Trustline warnings for pool tokens (needed for zap) */}
-                      {tokensNeedingTrustline.length > 0 && (
-                        <CreateTrustlineButton
-                          size="lg"
+                      <Trustlines tokens={[pool.token0, pool.token1]} size="lg">
+                        <Button
                           className="w-full"
-                          tokens={tokensNeedingTrustline}
-                        />
-                      )}
-                      {tokensNeedingTrustline.length === 0 &&
-                        !isLoadingTrustlines && (
-                          <Button
-                            className="w-full"
-                            size="lg"
-                            disabled={
+                          size="lg"
+                          disabled={
+                            !zapTokenIn ||
+                            !zapAmountIn ||
+                            Number.parseFloat(zapAmountIn) <= 0 ||
+                            !isTickRangeValid ||
+                            zapMutation.isPending ||
+                            (isPendingRouteToken0 &&
+                              zapTokenIn.address !== pool.token0.address) ||
+                            (isPendingRouteToken1 &&
+                              zapTokenIn.address !== pool.token1.address)
+                          }
+                          onClick={async () => {
+                            if (
+                              !connectedAddress ||
                               !zapTokenIn ||
-                              !zapAmountIn ||
-                              Number.parseFloat(zapAmountIn) <= 0 ||
-                              !isTickRangeValid ||
-                              isLoadingTrustlines ||
-                              tokensNeedingTrustline.length > 0 ||
-                              zapMutation.isPending ||
-                              (isPendingRouteToken0 &&
-                                zapTokenIn.address !== pool.token0.address) ||
-                              (isPendingRouteToken1 &&
-                                zapTokenIn.address !== pool.token1.address)
-                            }
-                            onClick={async () => {
-                              if (
-                                !connectedAddress ||
-                                !zapTokenIn ||
-                                !zapAmountIn
+                              !zapAmountIn
+                            )
+                              return
+
+                            const alignedLower = alignTick(
+                              tickLower,
+                              tickSpacing,
+                            )
+                            const alignedUpper = alignTick(
+                              tickUpper,
+                              tickSpacing,
+                            )
+
+                            if (!isTickAligned(alignedLower, tickSpacing)) {
+                              console.error(
+                                `Tick lower must be a multiple of ${tickSpacing}`,
                               )
-                                return
-
-                              const alignedLower = alignTick(
-                                tickLower,
-                                tickSpacing,
-                              )
-                              const alignedUpper = alignTick(
-                                tickUpper,
-                                tickSpacing,
-                              )
-
-                              if (!isTickAligned(alignedLower, tickSpacing)) {
-                                console.error(
-                                  `Tick lower must be a multiple of ${tickSpacing}`,
-                                )
-                                setTickLower(alignedLower)
-                                return
-                              }
-
-                              if (!isTickAligned(alignedUpper, tickSpacing)) {
-                                console.error(
-                                  `Tick upper must be a multiple of ${tickSpacing}`,
-                                )
-                                setTickUpper(alignedUpper)
-                                return
-                              }
-
-                              if (alignedLower >= alignedUpper) {
-                                console.error(
-                                  'Tick lower must be less than tick upper',
-                                )
-                                return
-                              }
-
                               setTickLower(alignedLower)
-                              setTickUpper(alignedUpper)
+                              return
+                            }
 
-                              zapMutation.mutate(
-                                {
-                                  userAddress: connectedAddress,
-                                  poolAddress: pool.address,
-                                  tokenIn: zapTokenIn,
-                                  amountIn: zapAmountIn,
-                                  tokenInDecimals: zapTokenIn.decimals,
-                                  token0: pool.token0,
-                                  token1: pool.token1,
-                                  tickLower: alignedLower,
-                                  tickUpper: alignedUpper,
-                                  signTransaction,
-                                  signAuthEntry,
-                                  routeToken0: routeToken0 ?? null,
-                                  routeToken1: routeToken1 ?? null,
-                                },
-                                {
-                                  onSuccess: () => {
-                                    setZapAmountIn('')
-                                  },
-                                  onError: (error) => {
-                                    console.error('Failed to zap:', error)
-                                  },
-                                },
+                            if (!isTickAligned(alignedUpper, tickSpacing)) {
+                              console.error(
+                                `Tick upper must be a multiple of ${tickSpacing}`,
                               )
-                            }}
-                          >
-                            {zapMutation.isPending
-                              ? 'Zapping & Adding Liquidity...'
-                              : !isTickRangeValid
-                                ? 'Adjust Tick Range'
-                                : 'Zap & Add Liquidity'}
-                          </Button>
-                        )}
+                              setTickUpper(alignedUpper)
+                              return
+                            }
+
+                            if (alignedLower >= alignedUpper) {
+                              console.error(
+                                'Tick lower must be less than tick upper',
+                              )
+                              return
+                            }
+
+                            setTickLower(alignedLower)
+                            setTickUpper(alignedUpper)
+
+                            zapMutation.mutate(
+                              {
+                                userAddress: connectedAddress,
+                                poolAddress: pool.address,
+                                tokenIn: zapTokenIn,
+                                amountIn: zapAmountIn,
+                                tokenInDecimals: zapTokenIn.decimals,
+                                token0: pool.token0,
+                                token1: pool.token1,
+                                tickLower: alignedLower,
+                                tickUpper: alignedUpper,
+                                signTransaction,
+                                signAuthEntry,
+                                routeToken0: routeToken0 ?? null,
+                                routeToken1: routeToken1 ?? null,
+                              },
+                              {
+                                onSuccess: () => {
+                                  setZapAmountIn('')
+                                },
+                                onError: (error) => {
+                                  console.error('Failed to zap:', error)
+                                },
+                              },
+                            )
+                          }}
+                        >
+                          {zapMutation.isPending
+                            ? 'Zapping & Adding Liquidity...'
+                            : !isTickRangeValid
+                              ? 'Adjust Tick Range'
+                              : 'Zap & Add Liquidity'}
+                        </Button>
+                      </Trustlines>
                     </>
                   ) : (
                     // Normal Mode: Two token input with dependent amount calculation
@@ -676,38 +615,26 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         tickRangeSelectorState={tickRangeSelectorState}
                       />
 
-                      {/* Trustline check for pool tokens */}
-                      {tokensNeedingTrustline.length > 0 ? (
-                        <CreateTrustlineButton
-                          size="lg"
-                          className="w-full"
-                          tokens={tokensNeedingTrustline}
-                        />
-                      ) : (
-                        /* Submit Button */
+                      <Trustlines tokens={[pool.token0, pool.token1]} size="lg">
                         <Button
                           className="w-full"
                           size="lg"
                           disabled={
-                            !canAddLiquidity ||
-                            addLiquidityMutation.isPending ||
-                            isLoadingTrustlines
+                            !canAddLiquidity || addLiquidityMutation.isPending
                           }
                           onClick={handleAddLiquidity}
                         >
                           {addLiquidityMutation.isPending
                             ? 'Adding Liquidity...'
-                            : isLoadingTrustlines
-                              ? 'Checking trustlines...'
-                              : isDependentAmountError
-                                ? 'Price Range Error'
-                                : !isTickRangeValid
-                                  ? 'Adjust Tick Range'
-                                  : canAddLiquidity
-                                    ? 'Add Liquidity'
-                                    : 'Enter Amount'}
+                            : isDependentAmountError
+                              ? 'Price Range Error'
+                              : !isTickRangeValid
+                                ? 'Adjust Tick Range'
+                                : canAddLiquidity
+                                  ? 'Add Liquidity'
+                                  : 'Enter Amount'}
                         </Button>
-                      )}
+                      </Trustlines>
                     </>
                   )}
                 </>

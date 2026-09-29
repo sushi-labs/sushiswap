@@ -4,9 +4,14 @@ import type {
   StellarAccountAddress,
   StellarContractAddress,
 } from 'sushi/stellar'
-import { FEE_TIERS } from '../utils/ticks'
+import { FEE_TIERS, isFeeTier } from '../utils/ticks'
 import { getFactoryContractClient, getFactoryContractId } from './client'
-import { DEFAULT_TIMEOUT, isAddressLower } from './constants'
+import {
+  DEFAULT_TIMEOUT,
+  MAX_SQRT_RATIO,
+  MIN_SQRT_RATIO,
+  isAddressLower,
+} from './constants'
 import { contractAddresses } from './contracts'
 import { isPoolInitialized } from './pool-initialization'
 import { submitTransaction, waitForTransaction } from './transaction-helpers'
@@ -44,11 +49,11 @@ export async function createAndInitializePool({
     if (tokenA === tokenB) {
       throw new Error('Cannot create pool with the same token')
     }
-    if (!fee || fee <= 0) {
-      throw new Error('Fee must be greater than 0')
+    if (!isFeeTier(fee)) {
+      throw new Error('Unsupported pool fee')
     }
-    if (sqrtPriceX96 <= 0n) {
-      throw new Error('Initial sqrt price must be greater than 0')
+    if (sqrtPriceX96 < MIN_SQRT_RATIO || sqrtPriceX96 >= MAX_SQRT_RATIO) {
+      throw new Error('Initial price is outside the pool limits')
     }
 
     // Order tokens by decoded bytes - EXACTLY like the factory expects
@@ -133,57 +138,6 @@ export async function createAndInitializePool({
 }
 
 /**
- * Encode price as sqrt(price) * 2^96 for pool initialization
- * Uses integer arithmetic to match Rust implementation precision
- * @param amount1 - Amount of token1 (as bigint, string, or number)
- * @param amount0 - Amount of token0 (as bigint, string, or number)
- * @returns sqrt(amount1/amount0) * 2^96 as bigint
- */
-export function encodePriceSqrt(
-  amount1: bigint | string | number,
-  amount0: bigint | string | number,
-): bigint {
-  const amount1Big = typeof amount1 === 'bigint' ? amount1 : BigInt(amount1)
-  const amount0Big = typeof amount0 === 'bigint' ? amount0 : BigInt(amount0)
-
-  // For 1:1 ratio, return exact value from deployment guide
-  if (amount1Big === amount0Big) {
-    return 79228162514264337593543950336n // 2^96 = exact 1:1 ratio
-  }
-
-  // Scale amounts to avoid precision loss
-  const scaledAmount1 = amount1Big * BigInt(1e18)
-  const scaledAmount0 = amount0Big * BigInt(1e18)
-
-  // Calculate ratio as integer: (amount1 * 2^192) / amount0
-  const Q192 = BigInt(2) ** BigInt(192)
-  const ratio = (scaledAmount1 * Q192) / scaledAmount0
-
-  // Integer square root using Newton's method (similar to Rust implementation)
-  return integerSqrt(ratio)
-}
-
-/**
- * Integer square root using Newton's method
- * Equivalent to the u256_sqrt function in Rust
- */
-function integerSqrt(x: bigint): bigint {
-  if (x <= 1n) {
-    return x
-  }
-
-  let z = (x + 1n) / 2n
-  let y = x
-
-  while (z < y) {
-    y = z
-    z = (x / z + z) / 2n
-  }
-
-  return y
-}
-
-/**
  * Get pool using direct SDK approach with Contract method
  * @param tokenA - Address of the first token
  * @param tokenB - Address of the second token
@@ -231,7 +185,7 @@ export async function getPoolDirectSDK({
     return result ?? null
   } catch (error) {
     console.warn('Direct SDK getPool error:', error)
-    return null
+    throw error
   }
 }
 

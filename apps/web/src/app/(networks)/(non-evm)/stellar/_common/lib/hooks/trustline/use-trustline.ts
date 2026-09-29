@@ -3,7 +3,12 @@ import {
   createInfoToast,
   createSuccessToast,
 } from '@sushiswap/notifications'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  type UseQueryResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import ms from 'ms'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
@@ -11,13 +16,13 @@ import { ChainId } from 'sushi'
 import {
   type StellarAccountAddress,
   type StellarContractAddress,
+  type StellarToken,
   isStellarAccountAddress,
 } from 'sushi/stellar'
 import { NETWORK_PASSPHRASE } from '../../constants'
 import {
   checkTrustlineRequired,
   createTrustline,
-  getUserTrustlines,
   hasTrustline,
 } from '../../soroban/trustline-helpers'
 import { extractErrorMessage } from '../../utils/error-helpers'
@@ -30,37 +35,33 @@ type TrustlineParams = {
 }
 
 type TrustlineResult = {
-  hasTrustline: boolean
   needsTrustline: boolean
   issuer: StellarAccountAddress | null
 }
 
 const NO_TRUSTLINE_NEEDED: TrustlineResult = {
-  hasTrustline: true,
   needsTrustline: false,
   issuer: null,
 }
 
-/**
- * Helper function to check if a token needs a trustline
- * Now uses dynamic lookup from Horizon if issuer is not known
- */
+/** Resolve the token contract identity before checking the account. */
 async function checkTokenTrustline(
   connectedAddress: StellarAccountAddress,
   code: string,
   contract: StellarContractAddress,
   issuer: StellarAccountAddress | '',
 ): Promise<TrustlineResult> {
-  // Use the new async function that can look up issuers dynamically
   const { required, issuer: resolvedIssuer } = await checkTrustlineRequired(
     contract,
     code,
     issuer,
   )
 
-  if (!required || !resolvedIssuer) {
+  if (!required || connectedAddress === resolvedIssuer) {
     return NO_TRUSTLINE_NEEDED
   }
+
+  if (!resolvedIssuer) throw new Error('Trustline issuer unavailable')
 
   const hasTrustlineData = await hasTrustline(
     connectedAddress,
@@ -68,57 +69,9 @@ async function checkTokenTrustline(
     resolvedIssuer,
   )
   return {
-    hasTrustline: hasTrustlineData,
     needsTrustline: !hasTrustlineData,
     issuer: resolvedIssuer,
   }
-}
-
-/**
- * Hook to check if a user has a trustline for a specific asset
- */
-export function useHasTrustline(
-  assetCode: string,
-  assetIssuer: StellarAccountAddress,
-) {
-  const connectedAddress = useAccount('stellar')
-
-  return useQuery({
-    queryKey: [
-      'stellar',
-      'trustline',
-      connectedAddress,
-      assetCode,
-      assetIssuer,
-    ],
-    queryFn: async () => {
-      if (!connectedAddress || !assetIssuer) {
-        return true // If no issuer, assume no trustline needed (SAC or XLM)
-      }
-      return await hasTrustline(connectedAddress, assetCode, assetIssuer)
-    },
-    enabled: Boolean(connectedAddress && assetIssuer),
-    staleTime: ms('30s'),
-  })
-}
-
-/**
- * Hook to get all trustlines for the connected user
- */
-export function useUserTrustlines() {
-  const connectedAddress = useAccount('stellar')
-
-  return useQuery({
-    queryKey: ['stellar', 'trustlines', connectedAddress],
-    queryFn: async () => {
-      if (!connectedAddress) {
-        return []
-      }
-      return await getUserTrustlines(connectedAddress)
-    },
-    enabled: Boolean(connectedAddress),
-    staleTime: ms('1m'),
-  })
 }
 
 /**
@@ -180,13 +133,6 @@ export function useCreateTrustline() {
         timestamp,
       })
 
-      // Invalidate trustline queries
-      queryClient.invalidateQueries({
-        queryKey: ['stellar', 'trustline'],
-      })
-      queryClient.invalidateQueries({
-        queryKey: ['stellar', 'trustlines', connectedAddress],
-      })
       queryClient.invalidateQueries({
         queryKey: ['stellar', 'trustlines-batch'],
       })
@@ -199,91 +145,47 @@ export function useCreateTrustline() {
   })
 }
 
-/**
- * Token info for trustline checking
- */
-type TokenTrustlineInfo =
-  | {
-      code: string
-      contract: StellarContractAddress
-      issuer: StellarAccountAddress | ''
-    }
-  | null
-  | undefined
+interface NeedsTrustlinesResult {
+  results: TrustlineResult[]
+  isLoading: boolean
+  isError: boolean
+  refetch: UseQueryResult<TrustlineResult[]>['refetch']
+}
 
-/**
- * Hook to check if multiple tokens need trustlines
- *
- * Takes an array of tokens and returns an array of trustline needs for each token.
- * Now uses dynamic Horizon lookup for tokens without known issuers.
- */
-export function useNeedsTrustlines(tokens: TokenTrustlineInfo[]) {
+/** Check every selected token, including tokens whose issuer needs resolving. */
+export function useNeedsTrustlines(
+  tokens: StellarToken[],
+): NeedsTrustlinesResult {
   const connectedAddress = useAccount('stellar')
-
-  const trustlineQueries = useQuery({
+  const query = useQuery({
     queryKey: [
       'stellar',
       'trustlines-batch',
       connectedAddress,
-      tokens
-        .map((t) => `${t?.code || ''}:${t?.contract || ''}:${t?.issuer || ''}`)
-        .join(','),
+      tokens.map((token) => [token.address, token.symbol, token.issuer]),
     ],
     queryFn: async () => {
-      if (!connectedAddress) {
-        return tokens.map(() => NO_TRUSTLINE_NEEDED)
-      }
-
-      return await Promise.all(
-        tokens.map(async (token) => {
-          if (!token?.code || !token?.contract) {
-            return NO_TRUSTLINE_NEEDED
-          }
-          return await checkTokenTrustline(
+      if (!connectedAddress) throw new Error('Wallet not connected')
+      return Promise.all(
+        tokens.map((token) =>
+          checkTokenTrustline(
             connectedAddress,
-            token.code,
-            token.contract,
+            token.symbol,
+            token.address,
             token.issuer && isStellarAccountAddress(token.issuer)
               ? token.issuer
               : '',
-          )
-        }),
+          ),
+        ),
       )
     },
-    enabled: Boolean(connectedAddress),
+    enabled: Boolean(connectedAddress && tokens.length),
     staleTime: ms('30s'),
   })
-
-  const defaultResults = tokens.map(() => NO_TRUSTLINE_NEEDED)
-
   return {
-    results: trustlineQueries.data || defaultResults,
-    isLoading: trustlineQueries.isLoading,
-    needsAnyTrustline:
-      trustlineQueries.data?.some((result) => result.needsTrustline) || false,
-  }
-}
-
-/**
- * Hook to check if a token needs a trustline
- *
- * Now dynamically looks up asset info from Horizon if issuer is not known.
- * Works with SAC-wrapped classic assets even if issuer wasn't pre-populated.
- */
-export function useNeedsTrustline(
-  params: {
-    code: string
-    contract: StellarContractAddress
-    issuer: StellarAccountAddress | ''
-  } | null,
-) {
-  const { results, isLoading } = useNeedsTrustlines([params])
-  const result = results[0] || NO_TRUSTLINE_NEEDED
-
-  return {
-    needsTrustline: result.needsTrustline,
-    hasTrustline: result.hasTrustline,
-    issuer: result.issuer,
-    isLoading,
+    results: query.data ?? [],
+    isLoading: Boolean(connectedAddress && tokens.length && query.isPending),
+    isError: query.isError,
+    refetch: query.refetch,
   }
 }

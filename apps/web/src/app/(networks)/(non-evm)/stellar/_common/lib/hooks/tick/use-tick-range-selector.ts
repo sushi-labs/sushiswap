@@ -8,15 +8,17 @@ import {
   useRef,
   useState,
 } from 'react'
+import { TickMath } from 'sushi/evm'
 import {
   DEFAULT_FEE_TIER,
   DEFAULT_TICK_RANGE,
+  MAX_TICK_RANGE,
   TICK_SPACINGS,
   alignTick,
+  getTickAtSqrtRatio,
   isFeeTier,
   isTickAligned,
 } from '~stellar/_common/lib/utils/ticks'
-import { calculateTickFromPrice } from '../../soroban/pool-helpers'
 
 export type TickRangeSelectorState = {
   currentTick: number
@@ -37,15 +39,23 @@ export type TickRangeSelectorState = {
 
 export const useTickRangeSelector = (
   fee: number,
-  currentPrice: number,
+  sqrtPriceX96: bigint | undefined,
 ): TickRangeSelectorState => {
   const tickSpacing = useMemo(() => {
     return isFeeTier(fee) ? TICK_SPACINGS[fee] : TICK_SPACINGS[DEFAULT_FEE_TIER]
   }, [fee])
 
   const currentTick = useMemo(
-    () => alignTick(calculateTickFromPrice(currentPrice), tickSpacing),
-    [currentPrice, tickSpacing],
+    () =>
+      alignTick(
+        sqrtPriceX96 !== undefined &&
+          sqrtPriceX96 >= TickMath.MIN_SQRT_RATIO &&
+          sqrtPriceX96 < TickMath.MAX_SQRT_RATIO
+          ? getTickAtSqrtRatio(sqrtPriceX96)
+          : 0,
+        tickSpacing,
+      ),
+    [sqrtPriceX96, tickSpacing],
   )
 
   const defaultLower = useMemo(
@@ -111,8 +121,13 @@ export const useTickRangeSelector = (
     }
   }, [currentTick, tickSpacing, isDynamicState, tickLower, tickUpper])
 
-  // Prevent adding liquidity when price is above range (can't provide token0)
-  const isTickRangeValid = tickLower < tickUpper && ticksAligned
+  const isTickRangeValid =
+    Number.isInteger(tickLower) &&
+    Number.isInteger(tickUpper) &&
+    tickLower >= MAX_TICK_RANGE.lower &&
+    tickUpper <= MAX_TICK_RANGE.upper &&
+    tickLower < tickUpper &&
+    ticksAligned
 
   const setIsDynamic: Dispatch<SetStateAction<boolean>> = (value) => {
     setIsDynamicState((prev) => {
@@ -139,7 +154,10 @@ export const useTickRangeSelector = (
       upper: alignedUpper - currentTick,
     }
 
-    setIsDynamicState(true)
+    const fullRange =
+      alignedLower === alignTick(MAX_TICK_RANGE.lower, tickSpacing) &&
+      alignedUpper === alignTick(MAX_TICK_RANGE.upper, tickSpacing)
+    setIsDynamicState(!fullRange)
     setTickLower(alignedLower)
     setTickUpper(alignedUpper)
   }

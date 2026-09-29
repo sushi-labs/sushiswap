@@ -295,6 +295,7 @@ function CurrencyInput<
         >
           <TextField
             testdata-id={`${id}-input`}
+            aria-label={label}
             type="number"
             variant="naked"
             disabled={disabled}

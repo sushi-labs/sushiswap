@@ -36,6 +36,8 @@ export const CreateTrustlineButton = ({
           assetIssuer: token.issuer,
         })
       }
+    } catch {
+      // useCreateTrustline displays the transaction error; leave the button available to retry.
     } finally {
       setCreatingTrustlines(false)
     }

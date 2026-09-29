@@ -1,3 +1,5 @@
+import { TickMath } from 'sushi/evm'
+
 export const FEE_TIERS = [
   { value: 500, label: '0.05%', description: 'Best for very stable pairs' },
   { value: 3000, label: '0.3%', description: 'Best for most pairs' },
@@ -24,8 +26,8 @@ export const DEFAULT_TICK_RANGE = {
 }
 
 export const MAX_TICK_RANGE = {
-  lower: -887272,
-  upper: 887272,
+  lower: TickMath.MIN_TICK,
+  upper: TickMath.MAX_TICK,
 }
 
 export function alignTick(tick: number, spacing: number): number {
@@ -80,4 +82,20 @@ export function clampTickRange(
   } else {
     return { lower: orderedAlignedLower, upper: orderedAlignedUpper }
   }
+}
+
+// The deployed pool and manager use the pre-July-2026 negative-tick rounding.
+// Reuse SDK arithmetic, adjusting only that difference; MIN_TICK is special-cased
+// in the contracts. See docs/stellar-contract-compatibility.md for live evidence.
+export function getSqrtRatioAtTick(tick: number): bigint {
+  const sqrt = TickMath.getSqrtRatioAtTick(tick)
+  return tick < 0 && tick !== TickMath.MIN_TICK ? sqrt - 1n : sqrt
+}
+
+export function getTickAtSqrtRatio(sqrtPriceX96: bigint): number {
+  const tick = TickMath.getTickAtSqrtRatio(sqrtPriceX96)
+  // A legacy negative boundary is one unit below the corresponding SDK boundary.
+  return tick < -1 && sqrtPriceX96 === getSqrtRatioAtTick(tick + 1)
+    ? tick + 1
+    : tick
 }

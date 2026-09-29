@@ -21,6 +21,7 @@ import {
   waitForTransaction,
 } from '../../soroban/rpc-transaction-helpers'
 import { extractErrorMessage } from '../../utils/error-helpers'
+import { parseLiquidityAmount } from '../../utils/liquidity-amounts'
 import {
   type PoolOracleHints,
   executeWithOracleHints,
@@ -88,9 +89,8 @@ export const useZap = () => {
         throw new Error(`No route from ${tokenIn.symbol} to ${token1.symbol}`)
       }
 
-      const amountInBigInt = BigInt(
-        Math.floor(Number.parseFloat(amountIn) * 10 ** tokenInDecimals),
-      )
+      const amountInBigInt = parseLiquidityAmount(amountIn, tokenInDecimals)
+      if (amountInBigInt === 0n) throw new Error('Enter a zap amount')
 
       const zapRouterClient = getZapRouterContractClient({
         contractId: contractAddresses.ZAP_ROUTER,

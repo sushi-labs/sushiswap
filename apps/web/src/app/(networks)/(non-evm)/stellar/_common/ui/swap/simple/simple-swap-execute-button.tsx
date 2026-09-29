@@ -16,10 +16,9 @@ import {
   useExecuteMultiHopSwap,
   useExecuteSwap,
 } from '~stellar/_common/lib/hooks/swap'
-import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers'
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
-import { CreateTrustlineButton } from '~stellar/_common/ui/trustline/create-trustline-button'
+import { Trustline } from '~stellar/_common/ui/checker/trustline'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 import {
   useSimpleSwapActions,
@@ -43,18 +42,6 @@ export const SimpleSwapExecuteButton = () => {
     setChecked(false)
   }, [setAmount, setOutputAmount, setSlippageAmount, setPriceImpact])
 
-  // Check if output token needs trustline (for native assets)
-  // Note: Input token (token0) doesn't need trustline check - user must already have it to swap FROM it
-  const { needsTrustline: needsToken1Trustline, issuer: token1ResolvedIssuer } =
-    useNeedsTrustline(
-      token1
-        ? {
-            code: token1.symbol,
-            contract: token1.address,
-            issuer: token1.issuer ?? '',
-          }
-        : null,
-    )
   const [, { slippageTolerance }] = useSlippageTolerance(
     SlippageToleranceStorageKey.Swap,
   )
@@ -203,16 +190,12 @@ export const SimpleSwapExecuteButton = () => {
     outputAmount === 0n ||
     executeSwap.isPending ||
     executeMultiHopSwap.isPending ||
-    needsToken1Trustline ||
     (showPriceImpactWarning && !checked)
 
   // Determine button text
   const buttonText = useMemo(() => {
     if (executeSwap.isPending || executeMultiHopSwap.isPending) {
       return 'Executing Swap...'
-    }
-    if (needsToken1Trustline) {
-      return 'Create trustline first'
     }
     if (showPriceImpactWarning && !checked) {
       return 'Price impact too high'
@@ -235,7 +218,6 @@ export const SimpleSwapExecuteButton = () => {
   }, [
     executeSwap.isPending,
     executeMultiHopSwap.isPending,
-    needsToken1Trustline,
     showPriceImpactWarning,
     checked,
     hasRouteButZeroOutput,
@@ -250,13 +232,7 @@ export const SimpleSwapExecuteButton = () => {
     <>
       <div className="pt-4">
         <Connect namespace="stellar" fullWidth size="xl">
-          {needsToken1Trustline && token1 && token1ResolvedIssuer ? (
-            <CreateTrustlineButton
-              tokens={[{ code: token1.symbol, issuer: token1ResolvedIssuer }]}
-              size="xl"
-              fullWidth
-            />
-          ) : (
+          <Trustline token={token1} fullWidth size="xl">
             <Amounts
               chainId={StellarChainId.STELLAR}
               amounts={checkerAmount}
@@ -277,7 +253,7 @@ export const SimpleSwapExecuteButton = () => {
                 {buttonText}
               </Button>
             </Amounts>
-          )}
+          </Trustline>
         </Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

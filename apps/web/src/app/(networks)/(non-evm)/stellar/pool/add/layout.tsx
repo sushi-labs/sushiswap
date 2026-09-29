@@ -11,7 +11,7 @@ export default function CreatePoolLayout({
 }: { children: React.ReactNode }) {
   return (
     <>
-      <Container maxWidth="2xl" className="py-10 px-4">
+      <Container maxWidth="5xl" className="py-10 px-4">
         <div className="flex flex-col gap-2">
           <div className="relative flex items-center gap-3">
             <BackButton
@@ -30,7 +30,7 @@ export default function CreatePoolLayout({
       </Container>
       <section className="flex flex-col flex-1">
         <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-20 h-full">
-          <Container maxWidth="2xl" className="px-4">
+          <Container maxWidth="5xl" className="px-4">
             {children}
           </Container>
         </div>
