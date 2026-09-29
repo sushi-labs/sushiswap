@@ -22,6 +22,7 @@ function getStellarOftSpec(): Promise<contract.Spec> {
     contractId: LAYERZERO_STELLAR_OFT_ADDRESS,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
   })
     .then((client) => client.spec)
@@ -51,7 +52,10 @@ function toStellarSendParam(param: LayerZeroSendParam) {
 }
 
 async function getStellarInclusionFee(): Promise<string> {
-  const server = new rpc.Server(RPC_URL, { headers: RPC_HEADERS })
+  const server = new rpc.Server(RPC_URL, {
+    headers: RPC_HEADERS,
+    allowHttp: RPC_URL.startsWith('http:'),
+  })
   const stats = await server.getFeeStats()
   const estimate = z
     .string()
@@ -77,6 +81,7 @@ async function buildStellarOftTransaction(
     contractId: LAYERZERO_STELLAR_OFT_ADDRESS,
     networkPassphrase: NETWORK_PASSPHRASE,
     rpcUrl: RPC_URL,
+    allowHttp: RPC_URL.startsWith('http:'),
     headers: RPC_HEADERS,
     publicKey,
     fee: inclusionFee,

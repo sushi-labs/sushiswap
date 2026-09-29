@@ -4,7 +4,7 @@ import { publicChains, publicTransports } from './viem'
 
 describe('publicChains', () => {
   test.each(publicChains)(
-    'preserves public chain metadata and configures wallet RPCs for $name',
+    'preserves public chain metadata and overrides only Privy for $name',
     (chain) => {
       const sourceChain = evmChains.find(
         ({ viemChain }) => viemChain.id === chain.id,
@@ -20,9 +20,7 @@ describe('publicChains', () => {
       )
       expect(chain.nativeCurrency).toEqual(sourceChain?.nativeCurrency)
       expect(chain.blockExplorers).toEqual(sourceChain?.blockExplorers)
-      // Privy builds its own viem clients from this override and passes them no
-      // fetch options; `patches/viem@2.56.7.patch` supplies the dRPC JWT they
-      // need. See `drpc-auth.test.ts`.
+      // Privy's browser clients use the same proxy as Wagmi.
       expect(chain.rpcUrls.privyWalletOverride?.http).toEqual([transportUrl])
     },
   )
