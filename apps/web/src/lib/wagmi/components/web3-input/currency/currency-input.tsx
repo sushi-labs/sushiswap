@@ -34,6 +34,7 @@ interface CurrencyInputProps<
   disabled?: boolean
   value: string
   onChange?(value: string): void
+  onMax?(): void
   currency: CurrencyFor<TChainId> | undefined
   onSelect?(
     selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
@@ -74,6 +75,7 @@ function CurrencyInput<
     disabled,
     value,
     onChange,
+    onMax,
     currency,
     chainId,
     currencyClassName,
@@ -105,8 +107,11 @@ function CurrencyInput<
   const address = useAccount(chainId)
   const [pending, startTransition] = useTransition()
 
-  const { data: balance, isLoading: isBalanceLoading } =
-    useAmountBalance(currency)
+  const {
+    data: balance,
+    isLoading: isBalanceLoading,
+    isError: isBalanceError,
+  } = useAmountBalance(currency)
 
   const { data: price, isLoading: isPriceLoading } = useCurrencyPrice({
     currency,
@@ -120,6 +125,7 @@ function CurrencyInput<
   const insufficientBalance =
     address &&
     type === 'INPUT' &&
+    !isBalanceError &&
     balance &&
     _value &&
     balance.lt(_value) &&
@@ -295,6 +301,7 @@ function CurrencyInput<
         >
           <TextField
             testdata-id={`${id}-input`}
+            aria-label={label}
             type="number"
             variant="naked"
             disabled={disabled}
@@ -367,9 +374,11 @@ function CurrencyInput<
         <BalancePanel
           id={id}
           loading={isBalanceLoading}
+          error={isBalanceError}
           chainId={chainId}
           account={address}
           onChange={onChange}
+          onMax={onMax}
           currency={currency}
           disableMaxButton={disableMaxButton}
           balance={balance}

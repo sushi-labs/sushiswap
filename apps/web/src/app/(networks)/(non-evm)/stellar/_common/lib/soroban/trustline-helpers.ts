@@ -6,229 +6,68 @@ import type {
   StellarContractAddress,
 } from 'sushi/stellar'
 import { HORIZON_URL, NETWORK_PASSPHRASE } from '../constants'
+import { SorobanClient, getTokenContractClient } from './client'
 
 const horizonServer = new Horizon.Server(HORIZON_URL)
 
-/**
- * Asset type from Horizon API
- */
-export interface HorizonAssetInfo {
-  asset_type: 'native' | 'credit_alphanum4' | 'credit_alphanum12'
-  asset_code?: string
-  asset_issuer?: string
-  paging_token: string
-}
-
-/**
- * Cache for asset issuer lookups to avoid repeated API calls
- */
 const assetIssuerCache = new Map<string, StellarAccountAddress | null>()
 
-/**
- * Look up asset info from StellarExpert by contract address
- * This is more reliable than looking up by asset code since it uses the exact contract
- */
-async function lookupAssetByContract(
-  contractAddress: StellarContractAddress,
-): Promise<{ code: string; issuer: StellarAccountAddress } | null> {
-  try {
-    // StellarExpert has an API to get asset info by contract address
-    const response = await fetch(
-      `https://api.stellar.expert/explorer/public/contract/${contractAddress}`,
-      { headers: { Accept: 'application/json' } },
-    )
-
-    if (!response.ok) {
-      return null
-    }
-
-    const data = await response.json()
-
-    // Check if this contract is a SAC (Stellar Asset Contract)
-    // The response should include the underlying asset info
-    if (data?.asset) {
-      // Asset format is typically "CODE-ISSUER" or just the asset details
-      const assetStr = data.asset
-      if (typeof assetStr === 'string' && assetStr.includes('-')) {
-        const [code, issuer] = assetStr.split('-')
-        if (code && issuer && isStellarAccountAddress(issuer)) {
-          return { code, issuer }
-        }
-      }
-    }
-
-    // Alternative: check if there's issuer info directly
-    if (
-      data?.issuer &&
-      typeof data.issuer === 'string' &&
-      isStellarAccountAddress(data.issuer)
-    ) {
-      return { code: data.code || '', issuer: data.issuer }
-    }
-
-    return null
-  } catch {
-    return null
-  }
-}
-
-/**
- * Look up asset issuer from Horizon by matching the contract address to a SAC
- * SAC contract addresses are deterministic based on the asset
- */
-async function lookupIssuerFromHorizon(
-  assetCode: string,
-  contractAddress: StellarContractAddress,
-): Promise<StellarAccountAddress | null> {
-  try {
-    // Query Horizon for assets with this code
-    const assets = await horizonServer
-      .assets()
-      .forCode(assetCode)
-      .limit(50)
-      .call()
-
-    // For each asset, compute what its SAC address would be and compare
-    for (const asset of assets.records) {
-      if (asset.asset_issuer) {
-        try {
-          // Create the Stellar Asset object
-          const stellarAsset = new StellarSdk.Asset(
-            asset.asset_code,
-            asset.asset_issuer,
-          )
-
-          // Get the SAC contract ID for this asset
-          const sacContractId = stellarAsset.contractId(NETWORK_PASSPHRASE)
-
-          // Compare with the contract address we're looking for
-          if (sacContractId.toUpperCase() === contractAddress.toUpperCase()) {
-            if (isStellarAccountAddress(asset.asset_issuer)) {
-              return asset.asset_issuer
-            }
-          }
-        } catch {}
-      }
-    }
-
-    return null
-  } catch {
-    return null
-  }
-}
-
-/**
- * Check if an asset requires a trustline by querying multiple sources
- *
- * This uses a multi-step lookup:
- * 1. If issuer is already known, use it
- * 2. Try StellarExpert API to look up asset by contract address
- * 3. Try Horizon and match SAC contract IDs
- *
- * @param contractAddress - The token contract address (C... format)
- * @param assetCode - The asset code (e.g., "USDC", "AQUA")
- * @param assetIssuer - Optional pre-known issuer (G... address)
- * @returns Object with whether trustline is required and the issuer if found
- */
+/** Resolve trustlines from the contract itself; indexer absence is not proof of a custom token. */
 export async function checkTrustlineRequired(
   contractAddress: StellarContractAddress,
   assetCode: string,
   assetIssuer?: StellarAccountAddress | '',
 ): Promise<{ required: boolean; issuer: StellarAccountAddress | null }> {
-  // XLM (native) never needs a trustline
-  if (assetCode === 'XLM' || assetCode === 'native') {
+  if (
+    contractAddress === StellarSdk.Asset.native().contractId(NETWORK_PASSPHRASE)
+  ) {
     return { required: false, issuer: null }
   }
-
-  // If we already have an issuer, use it
-  if (assetIssuer) {
-    return { required: true, issuer: assetIssuer }
+  const cacheKey = `${contractAddress}:${assetCode}`
+  if (assetIssuerCache.has(cacheKey)) {
+    const issuer = assetIssuerCache.get(cacheKey) ?? null
+    return { required: issuer !== null, issuer }
   }
-
-  // Check cache first
-  const cacheKey = contractAddress.toUpperCase()
-  const cachedIssuer = assetIssuerCache.get(cacheKey)
-  if (cachedIssuer !== undefined) {
-    if (cachedIssuer === null) {
-      return { required: false, issuer: null }
-    }
-    return { required: true, issuer: cachedIssuer }
-  }
-
-  // Step 1: Try StellarExpert lookup by contract address
-  const stellarExpertResult = await lookupAssetByContract(contractAddress)
-  if (stellarExpertResult?.issuer) {
-    assetIssuerCache.set(cacheKey, stellarExpertResult.issuer)
-    return { required: true, issuer: stellarExpertResult.issuer }
-  }
-
-  // Step 2: Try Horizon lookup by matching SAC contract IDs
-  const horizonIssuer = await lookupIssuerFromHorizon(
-    assetCode,
+  // https://developers.stellar.org/docs/tokens/stellar-asset-contract
+  const entry = await SorobanClient.getContractData(
     contractAddress,
+    StellarSdk.xdr.ScVal.scvLedgerKeyContractInstance(),
   )
-  if (horizonIssuer) {
-    assetIssuerCache.set(cacheKey, horizonIssuer)
-    return { required: true, issuer: horizonIssuer }
+  const executable = entry.val
+    .contractData()
+    .val()
+    .instance()
+    .executable()
+    .switch().name
+  if (executable === 'contractExecutableWasm') {
+    assetIssuerCache.set(cacheKey, null)
+    return { required: false, issuer: null }
   }
-
-  // Cache as null (no trustline needed) for future lookups
-  assetIssuerCache.set(cacheKey, null)
-
-  // If we couldn't find the asset, assume it's a pure Soroban token
-  // (no trustline needed)
-  return { required: false, issuer: null }
-}
-
-/**
- * Query Horizon API to get asset information and determine asset type
- *
- * Following the pattern:
- * - asset_type === "native" → XLM (no trustline needed)
- * - asset_type.includes("credit_alphanum") → Classic asset (trustline required)
- * - Has contract_address → SAC asset (no trustline needed)
- *
- * @param assetCode - The asset code (e.g., "USDC", "XLM")
- * @param assetIssuer - The issuer account (G... address for classic assets)
- */
-export async function getAssetInfo(
-  assetCode: string,
-  assetIssuer?: StellarAccountAddress,
-): Promise<HorizonAssetInfo | null> {
-  try {
-    if (!assetIssuer) {
-      // If no issuer, it's XLM (native)
-      return {
-        asset_type: 'native',
-        paging_token: '',
-      }
+  if (executable !== 'contractExecutableStellarAsset')
+    throw new Error('Unable to identify the token contract')
+  let issuer = assetIssuer
+  if (!issuer) {
+    const { result: name } = await getTokenContractClient({
+      contractId: contractAddress,
+    }).name()
+    const [code, resolvedIssuer] = name.split(':')
+    if (
+      code !== assetCode ||
+      !resolvedIssuer ||
+      !isStellarAccountAddress(resolvedIssuer)
+    ) {
+      throw new Error('Unable to resolve the asset issuer')
     }
-
-    // Query Horizon for asset information
-    const assets = await horizonServer
-      .assets()
-      .forCode(assetCode)
-      .forIssuer(assetIssuer)
-      .call()
-
-    if (assets.records.length > 0) {
-      const asset = assets.records[0] as HorizonAssetInfo
-
-      // Validate asset type - native, credit_alphanum4, or credit_alphanum12
-      if (
-        asset.asset_type === 'native' ||
-        asset.asset_type === 'credit_alphanum4' ||
-        asset.asset_type === 'credit_alphanum12'
-      ) {
-        return asset
-      }
-    }
-
-    return null
-  } catch (error) {
-    console.error('Error fetching asset info from Horizon:', error)
-    return null
+    issuer = resolvedIssuer
   }
+  if (
+    new StellarSdk.Asset(assetCode, issuer).contractId(NETWORK_PASSPHRASE) !==
+    contractAddress
+  ) {
+    throw new Error('Asset metadata does not match the token contract')
+  }
+  assetIssuerCache.set(cacheKey, issuer)
+  return { required: true, issuer }
 }
 
 /**
@@ -269,7 +108,7 @@ export async function hasTrustline(
     return !!balance
   } catch (error) {
     console.error('Error checking trustline:', error)
-    return false
+    throw error
   }
 }
 
@@ -407,49 +246,5 @@ export async function createTrustline(
       success: false,
       error: errorMessage,
     }
-  }
-}
-
-/**
- * Get all trustlines for a user
- */
-export async function getUserTrustlines(
-  userAddress: StellarAccountAddress,
-): Promise<
-  Array<{
-    assetCode: string
-    assetIssuer: StellarAccountAddress
-    balance: string
-    limit: string
-  }>
-> {
-  try {
-    const account = await horizonServer.loadAccount(userAddress)
-
-    return account.balances
-      .filter(
-        (b) =>
-          b.asset_type !== 'native' && 'asset_code' in b && 'asset_issuer' in b,
-      )
-      .map((b) => {
-        if (
-          'asset_code' in b &&
-          'asset_issuer' in b &&
-          'limit' in b &&
-          isStellarAccountAddress(b.asset_issuer)
-        ) {
-          return {
-            assetCode: b.asset_code,
-            assetIssuer: b.asset_issuer,
-            balance: b.balance,
-            limit: b.limit,
-          }
-        }
-        return null
-      })
-      .filter((item): item is NonNullable<typeof item> => item !== null)
-  } catch (error) {
-    console.error('Error fetching user trustlines:', error)
-    return []
   }
 }

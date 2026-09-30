@@ -1,7 +1,5 @@
 'use client'
 
-import { Transition } from '@headlessui/react'
-import { LockClosedIcon, PlusIcon } from '@heroicons/react-v1/solid'
 import {
   DialogTrigger,
   Dots,
@@ -12,14 +10,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import {
-  type FC,
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   type EvmCurrency,
   type Position,
@@ -38,6 +29,10 @@ import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { isZapSupportedChainId } from 'src/config'
+import {
+  LiquidityDepositDivider,
+  LiquidityDepositInput,
+} from 'src/lib/components/liquidity-deposit-input'
 import { APPROVE_TAG_ZAP_LEGACY, Bound, Field } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useV3Zap } from 'src/lib/hooks/use-v3-zap'
@@ -325,98 +320,31 @@ const WidgetContent: FC<WidgetContentProps> = ({
         'flex flex-col gap-4',
       )}
     >
-      <div className="relative">
-        {depositADisabled && !depositBDisabled ? (
-          <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-              <LockClosedIcon
-                width={24}
-                height={24}
-                className="text-gray-400 dark:text-slate-400 text-slate-600"
-              />
-              <span className="dark:text-slate-400 text-slate-600">
-                The market price is outside your specified price range.
-                Single-asset deposit only.{' '}
-                <a
-                  // TODO
-                  href="https://www.sushi.com/academy"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue hover:text-blue-600"
-                >
-                  Learn More
-                </a>
-              </span>
-            </div>
-          </div>
-        ) : null}
-        <Web3Input.Currency
-          id="add-liquidity-token0"
-          type="INPUT"
-          className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-          chainId={chainId}
-          value={formattedAmounts[Field.CURRENCY_A]}
-          onChange={_onFieldAInput}
-          onSelect={setToken0}
-          currency={token0}
-          disabled={depositADisabled}
-          loading={tokensLoading || isLoading}
-          allowNative={isEvmWNativeSupported(chainId)}
-        />
-      </div>
-      <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-        <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-          <PlusIcon width={16} height={16} className="text-muted-foreground" />
-        </div>
-      </div>
-      <div className="relative">
-        <Transition
-          as={Fragment}
-          show={depositBDisabled && !depositADisabled}
-          enter="transition duration-300 origin-center ease-out"
-          enterFrom="transform opacity-0"
-          enterTo="transform opacity-100"
-          leave="transition duration-75 ease-out"
-          leaveFrom="transform opacity-100"
-          leaveTo="transform opacity-0"
-        >
-          <div className="bg-gray-200 dark:bg-slate-800 absolute inset-0 z-[1] rounded-xl flex items-center justify-center">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-10 text-sm font-medium text-center">
-              <LockClosedIcon
-                width={24}
-                height={24}
-                className="text-gray-400 dark:text-slate-400 text-slate-600"
-              />
-              <span className="dark:text-slate-400 text-slate-600">
-                The market price is outside your specified price range.
-                Single-asset deposit only.{' '}
-                <a
-                  // TODO
-                  href="https://www.sushi.com/academy"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue hover:text-blue-600"
-                >
-                  Learn More
-                </a>
-              </span>
-            </div>
-          </div>
-        </Transition>
-        <Web3Input.Currency
-          id="add-liquidity-token1"
-          type="INPUT"
-          className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-          chainId={chainId}
-          value={formattedAmounts[Field.CURRENCY_B]}
-          onChange={_onFieldBInput}
-          onSelect={setToken1}
-          currency={token1}
-          loading={tokensLoading || isLoading}
-          disabled={depositBDisabled}
-          allowNative={isEvmWNativeSupported(chainId)}
-        />
-      </div>
+      <LiquidityDepositInput
+        locked={depositADisabled && !depositBDisabled}
+        id="add-liquidity-token0"
+        chainId={chainId}
+        value={formattedAmounts[Field.CURRENCY_A]}
+        onChange={_onFieldAInput}
+        onSelect={setToken0}
+        currency={token0}
+        disabled={depositADisabled}
+        loading={tokensLoading || isLoading}
+        allowNative={isEvmWNativeSupported(chainId)}
+      />
+      <LiquidityDepositDivider />
+      <LiquidityDepositInput
+        locked={depositBDisabled && !depositADisabled}
+        id="add-liquidity-token1"
+        chainId={chainId}
+        value={formattedAmounts[Field.CURRENCY_B]}
+        onChange={_onFieldBInput}
+        onSelect={setToken1}
+        currency={token1}
+        loading={tokensLoading || isLoading}
+        disabled={depositBDisabled}
+        allowNative={isEvmWNativeSupported(chainId)}
+      />
 
       <Checker.StockTokenRegion token0={token0} token1={token1}>
         <Checker.Connect fullWidth>

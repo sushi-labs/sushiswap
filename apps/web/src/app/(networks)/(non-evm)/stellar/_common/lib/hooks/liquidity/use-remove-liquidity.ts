@@ -10,6 +10,7 @@ import { addMinutes } from 'date-fns'
 import { ChainId, MAX_UINT128 } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
 import { formatUnits } from 'viem'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { decreaseLiquidity } from '~stellar/_common/lib/soroban/position-manager-helpers'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useStellarWallet } from '~stellar/providers'
@@ -82,6 +83,7 @@ export const useRemoveLiquidity = ({
       }
     },
     onSuccess: (result, variables) => {
+      void invalidateStellarBalances(queryClient)
       const timestamp = Date.now()
       createSuccessToast({
         summary: `Liquidity ready to collect!`,

@@ -4,6 +4,7 @@ import type {
   StellarAccountAddress,
   StellarContractAddress,
 } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import { positionService } from '../../services/position-service'
 import { waitForTransaction } from '../../soroban/transaction-helpers'
 
@@ -139,6 +140,7 @@ export function useCollectFees({
       return collectFeesResult
     },
     onSuccess: (_result, variables) => {
+      void invalidateStellarBalances(queryClient)
       // Invalidate position queries to refresh data
       queryClient.invalidateQueries({
         queryKey: [

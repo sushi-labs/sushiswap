@@ -2,11 +2,9 @@ import { SkeletonText, classNames } from '@sushiswap/ui'
 import { WalletIcon } from '@sushiswap/ui/icons/wallet-icon'
 import { useCallback } from 'react'
 import { Amount } from 'sushi'
-import { isStellarChainId } from 'sushi/stellar'
 
 import { useIsMounted } from '@sushiswap/hooks'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
-import { contractAddresses } from '~stellar/_common/lib/soroban/contracts'
 import type { CurrencyInputProps } from './currency-input'
 import {
   getGasBalanceReserve,
@@ -15,24 +13,24 @@ import {
 
 type BalancePanel<TChainId extends BalanceChainId> = Pick<
   CurrencyInputProps<TChainId>,
-  'chainId' | 'onChange' | 'currency' | 'disableMaxButton' | 'loading'
+  'chainId' | 'onChange' | 'onMax' | 'currency' | 'disableMaxButton' | 'loading'
 > & {
   id?: string
+  error?: boolean
   account: string | undefined
   balance: Amount<CurrencyFor<TChainId>> | null | undefined
   type: 'INPUT' | 'OUTPUT'
 }
 
-// Stellar uses 7 decimals; reserve 2 XLM to cover the base account reserve
-// (1 XLM) plus headroom for a couple of trustlines and txn fees.
-const MIN_XLM_FOR_RESERVE = 2n * 10n ** 7n // 2 XLM
-
 export function BalancePanel<TChainId extends BalanceChainId>({
   id,
   balance,
+  currency,
   onChange,
+  onMax,
   disableMaxButton,
   loading,
+  error = false,
   type,
 }: BalancePanel<TChainId>) {
   const isMounted = useIsMounted()
@@ -42,6 +40,10 @@ export function BalancePanel<TChainId extends BalanceChainId>({
   ).split('.')
 
   const onClick = useCallback(() => {
+    if (onMax) {
+      onMax()
+      return
+    }
     if (!onChange || !balance?.gt(0n)) return
 
     // Leave gas funds in the selected currency's base units, including Arc's
@@ -56,22 +58,8 @@ export function BalancePanel<TChainId extends BalanceChainId>({
       return
     }
 
-    // Stellar's XLM is modeled as a regular token (no `native` discriminant),
-    // so guard on the contract address. Reserve covers Stellar's base
-    // account reserve + fees so the wallet stays usable after a max swap.
-    if (
-      isStellarChainId(balance.currency.chainId) &&
-      'address' in balance.currency &&
-      balance.currency.address === contractAddresses.TOKENS.XLM &&
-      balance.gt(MIN_XLM_FOR_RESERVE)
-    ) {
-      const reserve = new Amount(balance.currency, MIN_XLM_FOR_RESERVE)
-      onChange(balance.sub(reserve).toString())
-      return
-    }
-
     onChange(balance.toString())
-  }, [balance, onChange])
+  }, [balance, onChange, onMax])
 
   if (loading || !isMounted) {
     return (
@@ -81,11 +69,20 @@ export function BalancePanel<TChainId extends BalanceChainId>({
     )
   }
 
+  if (error) {
+    return (
+      <span role="status" className="text-sm text-muted-foreground">
+        Balance unavailable
+      </span>
+    )
+  }
+
   return (
     <button
       id={`${id}-balance-button`}
       testdata-id={`${id}-balance-button`}
       type="button"
+      aria-label={`Use maximum ${currency?.symbol ?? ''}`.trim()}
       // variant="ghost"
       onClick={onClick}
       className={classNames(

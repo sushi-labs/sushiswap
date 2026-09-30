@@ -1,4 +1,5 @@
 import { Account, StrKey } from '@stellar/stellar-sdk'
+import { TickMath } from 'sushi/evm'
 
 export const ZERO_ADDRESS =
   'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
@@ -18,8 +19,8 @@ export const VALID_UNTIL_LEDGER_BUMP = 12
  * MIN_SQRT_RATIO corresponds to tick -887272 (minimum valid tick)
  * MAX_SQRT_RATIO corresponds to tick 887272 (maximum valid tick)
  */
-export const MIN_SQRT_RATIO = 4295128739n
-export const MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342n
+export const MIN_SQRT_RATIO = TickMath.MIN_SQRT_RATIO
+export const MAX_SQRT_RATIO = TickMath.MAX_SQRT_RATIO
 
 // The router ABI represents sqrt_price_limit_x96 as u128, while the pool uses
 // u256 and supports the full 160-bit Uniswap V3 sqrt price range.
@@ -40,20 +41,9 @@ export function compareContractAddresses(
   addressA: string,
   addressB: string,
 ): number {
-  // Decode the base32 contract addresses to raw bytes
-  const bytesA = StrKey.decodeContract(addressA)
-  const bytesB = StrKey.decodeContract(addressB)
-
-  // Compare byte by byte
-  const minLength = Math.min(bytesA.length, bytesB.length)
-  for (let i = 0; i < minLength; i++) {
-    if (bytesA[i] !== bytesB[i]) {
-      return bytesA[i] - bytesB[i]
-    }
-  }
-
-  // If all compared bytes are equal, shorter array comes first
-  return bytesA.length - bytesB.length
+  return StrKey.decodeContract(addressA).compare(
+    StrKey.decodeContract(addressB),
+  )
 }
 
 /**

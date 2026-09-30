@@ -19,8 +19,8 @@ import type {
   ZoomLevels,
 } from '~evm/[chainId]/_ui/liquidity-chart-range-input/types'
 
-import { calculatePriceFromTick } from '~stellar/_common/lib/soroban/pool-helpers'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
+import { poolPrice } from '~stellar/_common/lib/utils/liquidity-amounts'
 import { type FeeTier, isFeeTier } from '~stellar/_common/lib/utils/ticks'
 import { useDensityChartData } from '../../lib/hooks/tick/use-density-chart-data'
 
@@ -79,12 +79,14 @@ const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
 interface LiquidityChartRangeInputProps {
   pool: PoolInfo | null | undefined
   ticksAtLimit?: { [_bound in Bound]?: boolean | undefined }
+  // Human token1/token0 prices; inversion changes presentation, not this API.
   priceRange: { [_bound in Bound]: number }
   onLeftRangeInput?: (typedValue: string) => void
   onRightRangeInput?: (typedValue: string) => void
   interactive?: boolean
   hideBrushes?: boolean
   tokenToggle?: ReactNode
+  inverted?: boolean
 }
 
 export function LiquidityChartRangeInput({
@@ -96,6 +98,7 @@ export function LiquidityChartRangeInput({
   interactive = false,
   hideBrushes = true,
   tokenToggle,
+  inverted = false,
 }: LiquidityChartRangeInputProps) {
   const { isLoading, error, data } = useDensityChartData({
     pool,
@@ -104,18 +107,36 @@ export function LiquidityChartRangeInput({
 
   const [isDefaultGraphRange, setIsDefaultGraphRange] = useState<boolean>(false)
 
-  // Calculate current price from tick
+  const priceScale = pool
+    ? 10 ** (pool.token0.decimals - pool.token1.decimals)
+    : 1
   const price = useMemo(() => {
     if (!pool) return undefined
-    return calculatePriceFromTick(pool.tick)
-  }, [pool])
+    return poolPrice(
+      pool.token0,
+      pool.token1,
+      pool.sqrtPriceX96,
+      inverted,
+    ).toNumber()
+  }, [pool, inverted])
+  const chartData = useMemo(() => {
+    const scaled = data
+      ?.map((entry) => ({
+        ...entry,
+        price0: inverted
+          ? 1 / (entry.price0 * priceScale)
+          : entry.price0 * priceScale,
+      }))
+      .filter((entry) => Number.isFinite(entry.price0) && entry.price0 > 0)
+    return inverted ? scaled?.reverse() : scaled
+  }, [data, priceScale, inverted])
 
-  const feeAmount = pool?.fee as FeeTier | undefined
+  const feeAmount = pool?.fee
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
-      const leftRangeValue = Number(domain[0])
-      const rightRangeValue = Number(domain[1])
+      const leftRangeValue = inverted ? 1 / domain[1] : domain[0]
+      const rightRangeValue = inverted ? 1 / domain[0] : domain[1]
 
       onLeftRangeInput(leftRangeValue.toString())
       onRightRangeInput(rightRangeValue.toString())
@@ -126,19 +147,23 @@ export function LiquidityChartRangeInput({
         setIsDefaultGraphRange(false)
       }
     },
-    [onLeftRangeInput, onRightRangeInput],
+    [onLeftRangeInput, onRightRangeInput, inverted],
   )
 
   const brushDomain: [number, number] | undefined = useMemo(() => {
-    return [priceRange[Bound.LOWER], priceRange[Bound.UPPER]]
-  }, [priceRange])
+    const lower = priceRange[Bound.LOWER]
+    const upper = priceRange[Bound.UPPER]
+    return inverted ? [1 / upper, 1 / lower] : [lower, upper]
+  }, [priceRange, inverted])
 
   const brushLabelValue = useCallback(
     (d: 'w' | 'e', x: number) => {
       if (!price) return ''
 
-      if (d === 'w' && ticksAtLimit[Bound.LOWER]) return '0'
-      if (d === 'e' && ticksAtLimit[Bound.UPPER]) return '∞'
+      if (d === 'w' && ticksAtLimit[inverted ? Bound.UPPER : Bound.LOWER])
+        return '0'
+      if (d === 'e' && ticksAtLimit[inverted ? Bound.LOWER : Bound.UPPER])
+        return '∞'
 
       const percent =
         (x < price ? -1 : 1) *
@@ -149,7 +174,7 @@ export function LiquidityChartRangeInput({
         ? `${format(Math.abs(percent) > 1 ? '.2~s' : '.2~f')(percent)}%`
         : ''
     },
-    [price, ticksAtLimit],
+    [price, ticksAtLimit, inverted],
   )
 
   // Only consider uninitialized when no pool is provided
@@ -207,7 +232,7 @@ export function LiquidityChartRangeInput({
             }
           />
         </div>
-      ) : !data || data.length === 0 || !price ? (
+      ) : !chartData || chartData.length === 0 || !price ? (
         <div className="flex flex-col gap-2">
           {tokenToggle}
           <InfoBox
@@ -224,7 +249,7 @@ export function LiquidityChartRangeInput({
       ) : (
         <div className="relative items-center justify-center">
           <Chart
-            data={{ series: data, current: price }}
+            data={{ series: chartData, current: price }}
             dimensions={{ width: 400, height: 300 }}
             margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
             styles={{

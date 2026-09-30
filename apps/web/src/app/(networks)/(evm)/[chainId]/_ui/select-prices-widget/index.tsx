@@ -30,6 +30,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { PriceBlock } from 'src/lib/components/price-block'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import {
@@ -57,7 +58,6 @@ import {
   useRangeHopCallbacks,
 } from '../concentrated-liquidity-provider'
 import { LiquidityChartRangeInput } from '../liquidity-chart-range-input'
-import { PriceBlock } from './price-block'
 
 enum PriceRange {
   FULL_RANGE = 0,

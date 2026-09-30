@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addMinutes } from 'date-fns'
 import { ChainId } from 'sushi'
 import type { StellarContractAddress, StellarToken } from 'sushi/stellar'
+import { invalidateStellarBalances } from '~evm/_common/ui/balance-provider/use-stellar-balances'
 import type { RouteWithTokens } from '~stellar/swap/lib/swap-get-route'
 import { calculateAmountOutMinimum } from '../../services/router-service'
 import { DEFAULT_TIMEOUT, contractAddresses } from '../../soroban'
@@ -21,6 +22,7 @@ import {
   waitForTransaction,
 } from '../../soroban/rpc-transaction-helpers'
 import { extractErrorMessage } from '../../utils/error-helpers'
+import { parseLiquidityAmount } from '../../utils/liquidity-amounts'
 import {
   type PoolOracleHints,
   executeWithOracleHints,
@@ -88,9 +90,8 @@ export const useZap = () => {
         throw new Error(`No route from ${tokenIn.symbol} to ${token1.symbol}`)
       }
 
-      const amountInBigInt = BigInt(
-        Math.floor(Number.parseFloat(amountIn) * 10 ** tokenInDecimals),
-      )
+      const amountInBigInt = parseLiquidityAmount(amountIn, tokenInDecimals)
+      if (amountInBigInt === 0n) throw new Error('Enter a zap amount')
 
       const zapRouterClient = getZapRouterContractClient({
         contractId: contractAddresses.ZAP_ROUTER,
@@ -218,6 +219,7 @@ export const useZap = () => {
       }
     },
     onSuccess: ({ txHash, userAddress }) => {
+      void invalidateStellarBalances(queryClient)
       const timestamp = Date.now()
       createSuccessToast({
         summary: 'Liquidity added successfully',

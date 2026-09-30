@@ -1,0 +1,10 @@
+[package]
+name = "stellar-e2e-wasm"
+version = "0.1.0"
+edition = "2021"
+[dependencies]
+soroban-sdk = { version = "=23.0.2", features = ["testutils"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+[profile.dev]
+debug = 0

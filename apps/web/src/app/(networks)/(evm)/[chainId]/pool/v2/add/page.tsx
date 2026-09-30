@@ -21,6 +21,7 @@ import React, {
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
+import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import {
   APPROVE_TAG_ADD_LEGACY,
   APPROVE_TAG_ZAP_LEGACY,
@@ -67,7 +68,6 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { SelectNetworkWidget } from '../../_ui/select-network-widget'
-import { SelectTokensWidget } from '../../_ui/select-tokens-widget'
 import { ToggleZapCard } from '../../_ui/toggle-zap-card'
 import { AddSectionReviewModalLegacy } from '../_common/ui/add-section-review-modal-legacy'
 import { V2ZapInfoCard } from '../_common/ui/v2-zap-info-card'

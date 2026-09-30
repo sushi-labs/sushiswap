@@ -10,12 +10,17 @@ import {
 import React, { type FC } from 'react'
 import { Bound } from 'src/lib/constants'
 import type { TickRangeSelectorState } from '~stellar/_common/lib/hooks/tick/use-tick-range-selector'
-import {
-  calculatePriceFromTick,
-  calculateTickFromPrice,
-} from '~stellar/_common/lib/soroban'
 import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
-import { MAX_TICK_RANGE, alignTick } from '~stellar/_common/lib/utils/ticks'
+import {
+  parseStartingPrice,
+  poolPrice,
+} from '~stellar/_common/lib/utils/liquidity-amounts'
+import {
+  MAX_TICK_RANGE,
+  alignTick,
+  getSqrtRatioAtTick,
+  getTickAtSqrtRatio,
+} from '~stellar/_common/lib/utils/ticks'
 import { LiquidityChartRangeInput } from '../liquidity-chart-range-input'
 
 interface LiquidityDepthWidgetProps {
@@ -43,6 +48,15 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidgetProps> = ({
     setIsDynamic,
   } = tickRangeSelectorState
 
+  function setPrice(value: string, bound: Bound): void {
+    if (!pool) return
+    const price = parseStartingPrice(pool.token0, pool.token1, value)
+    if (price === undefined) return
+    setIsDynamic(false)
+    const setTick = bound === Bound.LOWER ? setTickLower : setTickUpper
+    setTick(alignTick(getTickAtSqrtRatio(price), tickSpacing))
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -63,27 +77,19 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidgetProps> = ({
                 tickUpper >= alignTick(MAX_TICK_RANGE.upper, tickSpacing),
             }}
             priceRange={{
-              [Bound.LOWER]: calculatePriceFromTick(tickLower),
-              [Bound.UPPER]: calculatePriceFromTick(tickUpper),
+              [Bound.LOWER]: poolPrice(
+                pool.token0,
+                pool.token1,
+                getSqrtRatioAtTick(tickLower),
+              ).toNumber(),
+              [Bound.UPPER]: poolPrice(
+                pool.token0,
+                pool.token1,
+                getSqrtRatioAtTick(tickUpper),
+              ).toNumber(),
             }}
-            onLeftRangeInput={(typedValue) => {
-              setIsDynamic(false)
-              setTickLower(
-                alignTick(
-                  calculateTickFromPrice(Number.parseFloat(typedValue)),
-                  tickSpacing,
-                ),
-              )
-            }}
-            onRightRangeInput={(typedValue) => {
-              setIsDynamic(false)
-              setTickUpper(
-                alignTick(
-                  calculateTickFromPrice(Number.parseFloat(typedValue)),
-                  tickSpacing,
-                ),
-              )
-            }}
+            onLeftRangeInput={(value) => setPrice(value, Bound.LOWER)}
+            onRightRangeInput={(value) => setPrice(value, Bound.UPPER)}
             interactive={true}
             hideBrushes={false}
           />

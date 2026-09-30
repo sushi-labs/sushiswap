@@ -1,80 +1,71 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { type QueryClient, useQueries } from '@tanstack/react-query'
+import ms from 'ms'
 import { useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import type { StellarChainId, StellarContractAddress } from 'sushi/stellar'
-import { STALE_TIME } from './config'
+import { StellarChainId, type StellarContractAddress } from 'sushi/stellar'
 import type { UseBalancesReturn } from './types'
+
+export async function invalidateStellarBalances(
+  client: QueryClient,
+): Promise<void> {
+  await Promise.all([
+    client.invalidateQueries({ queryKey: ['stellar-balances'] }),
+    client.invalidateQueries({
+      queryKey: [
+        'data-api-token-list-balances',
+        { chainId: StellarChainId.STELLAR },
+      ],
+    }),
+  ])
+}
 
 export function useStellarBalances(
   chainId: StellarChainId | undefined,
   tokenAddresses: StellarContractAddress[] | undefined,
 ): UseBalancesReturn<StellarChainId> {
   const account = useAccount('stellar')
-
-  const uniqueTokenAddresses = useMemo(() => {
-    if (!tokenAddresses) {
-      return undefined
-    }
-    return Array.from(new Set(tokenAddresses))
-  }, [tokenAddresses])
-
-  const hasTokens = Boolean(uniqueTokenAddresses?.length)
-
-  const query = useQuery({
-    queryKey: [
-      'stellar-balances',
-      { chainId, account, tokenAddresses: uniqueTokenAddresses },
-    ],
-    queryFn: async () => {
-      if (!chainId || !account || !uniqueTokenAddresses) {
-        throw new Error('Missing parameters for fetching Stellar balances')
-      }
-
-      const { fetchStellarBalances } = await import('./fetch-stellar-balances')
-      return fetchStellarBalances({
-        chainId,
-        tokenAddresses: uniqueTokenAddresses,
-        account,
-      })
-    },
-    enabled: Boolean(chainId && account && hasTokens),
-    placeholderData: keepPreviousData,
-    staleTime: STALE_TIME,
-    refetchInterval: STALE_TIME,
+  const uniqueTokenAddresses = useMemo(
+    () => Array.from(new Set(tokenAddresses)),
+    [tokenAddresses],
+  )
+  const enabled = Boolean(chainId && account)
+  const queries = useQueries({
+    queries: uniqueTokenAddresses.map((tokenAddress) => ({
+      // Inputs and multi-token checkers must observe the same account/token query.
+      queryKey: ['stellar-balances', { chainId, account, tokenAddress }],
+      queryFn: async () => {
+        if (!chainId || !account) {
+          throw new Error('Missing parameters for fetching Stellar balances')
+        }
+        const { fetchStellarBalances } = await import(
+          './fetch-stellar-balances'
+        )
+        return fetchStellarBalances({
+          chainId,
+          account,
+          tokenAddresses: [tokenAddress],
+        })
+      },
+      enabled,
+      staleTime: ms('5s'),
+      refetchInterval: ms('5s'),
+    })),
   })
 
-  return useMemo(() => {
-    if (!chainId || !tokenAddresses) {
-      return {
-        data: undefined,
-        isError: false,
-        isLoading: false,
-        isFetching: false,
-      }
-    }
-
-    if (!hasTokens) {
-      return {
-        data: new Map(),
-        isError: false,
-        isLoading: false,
-        isFetching: false,
-      }
-    }
-
-    return {
-      data: query.data,
-      isError: query.isError,
-      isLoading: query.isLoading,
-      isFetching: query.isFetching,
-    }
-  }, [
-    query.data,
-    query.isError,
-    query.isFetching,
-    query.isLoading,
-    chainId,
-    tokenAddresses,
-    hasTokens,
-  ])
+  const isError = queries.some((query) => query.isError)
+  const isLoading = queries.some((query) => query.isLoading)
+  const isFetching = queries.some((query) => query.isFetching)
+  const unavailable =
+    !enabled ||
+    !tokenAddresses ||
+    isError ||
+    queries.some((query) => !query.data)
+  return {
+    data: unavailable
+      ? undefined
+      : new Map(queries.flatMap((query) => [...(query.data ?? [])])),
+    isError,
+    isLoading,
+    isFetching,
+  }
 }

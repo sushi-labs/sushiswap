@@ -8,7 +8,6 @@ import {
 } from '@sushiswap/telemetry'
 import {
   Button,
-  Card,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -19,10 +18,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
   LinkInternal,
-  Toggle,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
 import React, { type FC, memo, useCallback, useMemo } from 'react'
+import { FeeTierCard } from 'src/lib/components/fee-tier-card'
 import { usePoolsByTokenPair } from 'src/lib/hooks/use-pools-by-token-pair'
 import {
   EvmChainId,
@@ -146,31 +145,25 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
             className="grid grid-cols-2 gap-4"
             disabled={!token0 || !token1}
           >
-            {FEE_OPTIONS.map((option, i) =>
-              disableIfNotExists && !tvlDistribution.get(option.value) ? (
-                <HoverCard key={i} openDelay={0} closeDelay={0}>
+            {FEE_OPTIONS.map((option) => {
+              const tvlShare = tvlDistribution.get(option.value)
+              const badge = tvlShare ? (
+                <Chip key={option.value} variant="secondary">
+                  {isLoading ? (
+                    <Dots />
+                  ) : (
+                    `${(tvlShare * 100).toFixed(0)}% Selected`
+                  )}
+                </Chip>
+              ) : null
+              return disableIfNotExists && !tvlShare ? (
+                <HoverCard key={option.value} openDelay={0} closeDelay={0}>
                   <HoverCardTrigger>
-                    <Card className="opacity-40">
-                      <CardHeader>
-                        <CardTitle>
-                          <span className="flex flex-wrap items-center gap-2">
-                            <span>{option.value / 10000}% Fees</span>
-                            {tvlDistribution.get(option.value) && (
-                              <Chip variant="secondary">
-                                {isLoading ? (
-                                  <Dots />
-                                ) : (
-                                  `${(
-                                    tvlDistribution.get(option.value)! * 100
-                                  )?.toFixed(0)}% Selected`
-                                )}
-                              </Chip>
-                            )}
-                          </span>
-                        </CardTitle>
-                        <CardDescription>{option.subtitle}</CardDescription>
-                      </CardHeader>
-                    </Card>
+                    <FeeTierCard
+                      fee={option.value}
+                      description={option.subtitle}
+                      badge={badge}
+                    />
                   </HoverCardTrigger>
                   <HoverCardContent className="!p-0">
                     <CardHeader>
@@ -211,38 +204,17 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                   </HoverCardContent>
                 </HoverCard>
               ) : (
-                <Toggle
-                  pressed={feeAmount === option.value}
-                  onClick={() => setFeeAmount(option.value)}
-                  asChild
-                  key={i}
-                  testdata-id={`fee-option-${option.value}`}
-                  className="!h-[unset] !w-[unset] !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
-                >
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>
-                        <span className="flex flex-wrap items-center gap-2">
-                          <span>{option.value / 10000}% Fees</span>
-                          {tvlDistribution.get(option.value) && (
-                            <Chip variant="secondary">
-                              {isLoading ? (
-                                <Dots />
-                              ) : (
-                                `${(
-                                  tvlDistribution.get(option.value)! * 100
-                                )?.toFixed(0)}% Selected`
-                              )}
-                            </Chip>
-                          )}
-                        </span>
-                      </CardTitle>
-                      <CardDescription>{option.subtitle}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Toggle>
-              ),
-            )}
+                <FeeTierCard
+                  key={option.value}
+                  fee={option.value}
+                  description={option.subtitle}
+                  badge={badge}
+                  selected={feeAmount === option.value}
+                  disabled={!token0 || !token1}
+                  onSelect={() => setFeeAmount(option.value)}
+                />
+              )
+            })}
           </RadioGroup>
         </div>
       </FormSection>

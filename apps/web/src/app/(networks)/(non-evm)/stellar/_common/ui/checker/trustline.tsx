@@ -1,65 +1,67 @@
 'use client'
 
-import { Button, type ButtonProps, Dots } from '@sushiswap/ui'
-import type { FC, ReactNode } from 'react'
+import { Button, type ButtonProps } from '@sushiswap/ui'
+import type { ReactElement, ReactNode } from 'react'
 import type { StellarToken } from 'sushi/stellar'
-import { useNeedsTrustline } from '~stellar/_common/lib/hooks/trustline/use-trustline'
+import { useNeedsTrustlines } from '~stellar/_common/lib/hooks/trustline/use-trustline'
 import { CreateTrustlineButton } from '~stellar/_common/ui/trustline/create-trustline-button'
 
-interface TrustlineProps extends ButtonProps {
+export interface TrustlineProps extends ButtonProps {
   token: StellarToken | undefined
   children: ReactNode
 }
 
-const Trustline: FC<TrustlineProps> = ({
-  token,
+interface TrustlinesProps extends ButtonProps {
+  tokens: (StellarToken | undefined)[]
+  children: ReactNode
+}
+
+export function Trustline({ token, ...props }: TrustlineProps): ReactElement {
+  return <Trustlines tokens={[token]} {...props} />
+}
+
+export function Trustlines({
+  tokens,
   children,
   fullWidth = true,
   size = 'xl',
   ...props
-}) => {
-  const enabled = Boolean(token?.issuer)
-
-  const { needsTrustline, isLoading, issuer } = useNeedsTrustline(
-    enabled && token
-      ? {
-          code: token.symbol,
-          contract: token.address,
-          issuer: token.issuer ?? '',
-        }
-      : null,
+}: TrustlinesProps): ReactElement {
+  const definedTokens = tokens.filter((token): token is StellarToken =>
+    Boolean(token),
   )
-
-  if (!enabled) return <>{children}</>
-
-  if (isLoading) {
+  const { results, isLoading, isError, refetch } =
+    useNeedsTrustlines(definedTokens)
+  if (isError)
     return (
-      <Button {...props} fullWidth={fullWidth} size={size} loading disabled>
-        Checking trustline
-        <Dots />
+      <Button
+        {...props}
+        fullWidth={fullWidth}
+        size={size}
+        onClick={() => void refetch()}
+      >
+        Trustlines unavailable — Retry
       </Button>
     )
-  }
-
-  if (needsTrustline) {
-    const trustlineIssuer = issuer ?? token!.issuer
-    if (!trustlineIssuer) {
-      return (
-        <Button {...props} fullWidth={fullWidth} size={size} disabled>
-          Trustline unavailable
-        </Button>
-      )
-    }
+  if (isLoading)
+    return (
+      <Button {...props} fullWidth={fullWidth} size={size} loading disabled>
+        Checking trustlines
+      </Button>
+    )
+  const needed = results.flatMap((result, index) =>
+    result.needsTrustline && result.issuer
+      ? [{ code: definedTokens[index].symbol, issuer: result.issuer }]
+      : [],
+  )
+  if (needed.length)
     return (
       <CreateTrustlineButton
-        tokens={[{ code: token!.symbol, issuer: trustlineIssuer }]}
-        size={size}
+        {...props}
         fullWidth={fullWidth}
+        size={size}
+        tokens={needed}
       />
     )
-  }
-
   return <>{children}</>
 }
-
-export { Trustline, type TrustlineProps }
