@@ -22,6 +22,46 @@ const cachedBlockNumber = blockNumberResponse.pick({ result: true }).extend({
   expiresAt: z.number(),
 })
 const blockNumbers = getCache({ namespace: 'rpc-block-number-v1' })
+const blockNumberCacheNetworks = new Set([
+  'base',
+  'bsc',
+  'avalanche',
+  'robinhood',
+])
+
+async function readCachedBlockNumber(network: string): Promise<string | null> {
+  const cached = cachedBlockNumber.safeParse(
+    await blockNumbers.get(network).catch(() => null),
+  )
+  return cached.success && cached.data.expiresAt > Date.now()
+    ? cached.data.result
+    : null
+}
+
+async function cacheBlockNumber(
+  network: string,
+  id: z.infer<typeof rpcEnvelope>['id'],
+  response: Response,
+  fetchStartedAt: number,
+): Promise<void> {
+  if (!response.ok) return
+
+  const rpcResponse = blockNumberResponse.safeParse(
+    await response
+      .clone()
+      .json()
+      .catch(() => null),
+  )
+  if (rpcResponse.success && rpcResponse.data.id === id) {
+    await blockNumbers
+      .set(
+        network,
+        { result: rpcResponse.data.result, expiresAt: fetchStartedAt + 1_000 },
+        { ttl: 1 },
+      )
+      .catch(() => undefined)
+  }
+}
 
 export async function POST(
   request: Request,
@@ -58,16 +98,16 @@ export async function POST(
     const rpcRequest = blockNumberRequest.safeParse(
       await new Response(body).json().catch(() => null),
     )
-    if (rpcRequest.success) {
-      const cached = cachedBlockNumber.safeParse(
-        await blockNumbers.get(network).catch(() => null),
-      )
-      if (cached.success && cached.data.expiresAt > Date.now()) {
+    const cacheable =
+      blockNumberCacheNetworks.has(network) && rpcRequest.success
+    if (cacheable) {
+      const result = await readCachedBlockNumber(network)
+      if (result !== null) {
         return Response.json(
           {
             jsonrpc: '2.0',
             id: rpcRequest.data.id,
-            result: cached.data.result,
+            result,
           },
           { headers: { 'Cache-Control': 'no-store' } },
         )
@@ -84,22 +124,8 @@ export async function POST(
       signal: request.signal,
     })
 
-    if (rpcRequest.success && response.ok) {
-      const rpcResponse = blockNumberResponse.safeParse(
-        await response
-          .clone()
-          .json()
-          .catch(() => null),
-      )
-      if (rpcResponse.success && rpcResponse.data.id === rpcRequest.data.id) {
-        await blockNumbers
-          .set(
-            network,
-            { result: rpcResponse.data.result, expiresAt: now + 1_000 },
-            { ttl: 1 },
-          )
-          .catch(() => undefined)
-      }
+    if (cacheable) {
+      await cacheBlockNumber(network, rpcRequest.data.id, response, now)
     }
 
     const headers = new Headers({ 'Cache-Control': 'no-store' })

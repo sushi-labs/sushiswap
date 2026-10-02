@@ -36,7 +36,7 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-function request(body: string, network = 'ethereum') {
+function request(body: string, network = 'base') {
   return POST(
     new Request(
       `https://sushi.com/api/rpc/${encodeURIComponent(network)}?dkey=ignored`,
@@ -132,6 +132,62 @@ function blockNumberRequest(id: string | number | null) {
   return JSON.stringify({ jsonrpc: '2.0', id, method: 'eth_blockNumber' })
 }
 
+it.each(['base', 'bsc', 'avalanche', 'robinhood'])(
+  'caches block numbers for allowlisted network %s',
+  async (network) => {
+    fetch.mockImplementation(() =>
+      Response.json({ jsonrpc: '2.0', id: 1, result: '0x123' }),
+    )
+
+    await request(blockNumberRequest(1), network)
+    expect(
+      await (await request(blockNumberRequest(2), network)).json(),
+    ).toEqual({
+      jsonrpc: '2.0',
+      id: 2,
+      result: '0x123',
+    })
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(cache.set).toHaveBeenCalledTimes(1)
+  },
+)
+
+it.each([
+  'ethereum',
+  'optimism',
+  'polygon',
+  'katana',
+  'arbitrum',
+  'base-mainnet',
+])(
+  'forwards block numbers without cache access for network %s',
+  async (network) => {
+    cache.get.mockResolvedValue({
+      result: '0x122',
+      expiresAt: Date.now() + 1_000,
+    })
+    fetch.mockImplementation(() =>
+      Response.json({ jsonrpc: '2.0', id: 1, result: '0x123' }),
+    )
+    const body = blockNumberRequest(1)
+
+    for (let i = 0; i < 2; i++) {
+      expect(await (await request(body, network)).json()).toEqual({
+        jsonrpc: '2.0',
+        id: 1,
+        result: '0x123',
+      })
+    }
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch).toHaveBeenLastCalledWith(
+      `https://lb.drpc.live/${network}`,
+      expect.objectContaining({ body: new TextEncoder().encode(body).buffer }),
+    )
+    expect(cache.get).not.toHaveBeenCalled()
+    expect(cache.set).not.toHaveBeenCalled()
+  },
+)
+
 it('shares block numbers across instances for one second per network and preserves caller IDs', async () => {
   vi.useFakeTimers()
   fetch.mockImplementation(() =>
@@ -144,7 +200,7 @@ it('shares block numbers across instances for one second per network and preserv
     result: '0x123',
   })
   expect(cache.set).toHaveBeenCalledWith(
-    'ethereum',
+    'base',
     { result: '0x123', expiresAt: Date.now() + 1_000 },
     { ttl: 1 },
   )
@@ -164,7 +220,7 @@ it('shares block numbers across instances for one second per network and preserv
   expect(fetch).toHaveBeenCalledTimes(1)
   expect(checkBotId).toHaveBeenCalledTimes(4)
 
-  await request(blockNumberRequest(1), 'base')
+  await request(blockNumberRequest(1), 'bsc')
   expect(fetch).toHaveBeenCalledTimes(2)
 
   vi.advanceTimersByTime(1)
@@ -235,7 +291,7 @@ it.each([
   expect(fetch).toHaveBeenCalledTimes(2)
   expect(cache.get).toHaveBeenCalledTimes(1)
   expect(fetch).toHaveBeenLastCalledWith(
-    'https://lb.drpc.live/ethereum',
+    'https://lb.drpc.live/base',
     expect.objectContaining({ body: new TextEncoder().encode(body).buffer }),
   )
 })
