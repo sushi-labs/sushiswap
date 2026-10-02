@@ -128,6 +128,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     ticks,
     ticksAtLimit,
     pool,
+    poolForPosition,
     noLiquidity,
     isLoading,
     leftBoundInput,
@@ -212,14 +213,14 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   const setSingleSided = useCallback(
     (side: 'left' | 'right') => {
-      if (!token0 || !token1 || !price || !feeAmount || !pool) return
+      if (!token0 || !token1 || !price || !feeAmount || !poolForPosition) return
 
       getSetFullRange()
 
       switch (side) {
         case 'left': {
           const current =
-            Math.floor(pool.tickCurrent / TICK_SPACINGS[feeAmount]) *
+            Math.floor(poolForPosition.tickCurrent / TICK_SPACINGS[feeAmount]) *
             TICK_SPACINGS[feeAmount]
 
           const newRightPrice = tickToPrice(
@@ -232,7 +233,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
         }
         case 'right': {
           const current =
-            Math.ceil(pool.tickCurrent / TICK_SPACINGS[feeAmount]) *
+            Math.ceil(poolForPosition.tickCurrent / TICK_SPACINGS[feeAmount]) *
             TICK_SPACINGS[feeAmount]
 
           const newLeftPrice = tickToPrice(
@@ -250,7 +251,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       token1,
       price,
       feeAmount,
-      pool,
+      poolForPosition,
       getSetFullRange,
       invertPrice,
       onRightRangeInput,

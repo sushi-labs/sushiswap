@@ -177,6 +177,7 @@ export function useConcentratedDerivedMintInfo({
   existingPosition?: Position
 }): {
   pool?: SushiSwapV3Pool | null
+  poolForPosition?: SushiSwapV3Pool
   ticks: { [_bound in Bound]?: number | undefined }
   price?: Price<EvmToken, EvmToken>
   pricesAtTicks: {
@@ -681,6 +682,7 @@ export function useConcentratedDerivedMintInfo({
       dependentField,
       currencies,
       pool,
+      poolForPosition,
       parsedAmounts,
       leftBoundInput,
       rightBoundInput,
@@ -714,6 +716,7 @@ export function useConcentratedDerivedMintInfo({
       outOfRange,
       parsedAmounts,
       pool,
+      poolForPosition,
       position,
       price,
       pricesAtLimit,
