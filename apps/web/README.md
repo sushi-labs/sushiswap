@@ -6,7 +6,7 @@ For basic setup instructions, please refer to [the repo's README](../../README.m
 
 ## RPC proxy
 
-Browser RPC requests use `POST /api/rpc/<drpc-network>` (for example, `/api/rpc/ethereum`, `/api/rpc/solana`, or `/api/rpc/stellar`). BotID Basic verifies each request before its unchanged body is forwarded to DRPC. Method restrictions and CU limits are configured on DRPC. Server clients call DRPC directly.
+Browser RPC requests use `POST /api/rpc/<drpc-network>` (for example, `/api/rpc/ethereum`, `/api/rpc/solana`, or `/api/rpc/stellar`). BotID Basic verifies every request. Successful individual `eth_blockNumber` results are cached per network for one second in [Vercel Runtime Cache](https://vercel.com/docs/caching/runtime-cache), shared across serverless instances within each region, with hard expiry and no in-flight deduplication. Cache hits preserve the caller's JSON-RPC ID; all other requests, including batches, are forwarded unchanged to DRPC. Cache failures fall back to DRPC. Method restrictions and CU limits are configured on DRPC. Server clients call DRPC directly.
 
 ## Testing
 
