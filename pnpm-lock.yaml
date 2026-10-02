@@ -443,8 +443,8 @@ importers:
         specifier: 1.2.0
         version: 1.2.0(@opentelemetry/api@1.9.0)
       '@vercel/functions':
-        specifier: 1.5.2
-        version: 1.5.2(@aws-sdk/credential-provider-web-identity@3.972.5)
+        specifier: 3.9.9
+        version: 3.9.9(@aws-sdk/credential-provider-web-identity@3.972.5)(ws@8.21.0(bufferutil@4.0.8)(utf-8-validate@6.0.3))
       '@vercel/otel':
         specifier: 1.13.0
         version: 1.13.0(@opentelemetry/api-logs@0.205.0)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.205.0(@opentelemetry/api@1.9.0))(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-logs@0.205.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-metrics@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))
@@ -8872,6 +8872,13 @@ packages:
       react:
         optional: true
 
+  '@vercel/cli-config@0.3.0':
+    resolution: {integrity: sha512-kQLt5Pm8wKd7/imzDY9/9u0tf8OuRkAuXI+s7j057FSUrXapAmumJSKwDqnR4ZZqdWoUcNLlFAgVIAdiwcGTcw==}
+
+  '@vercel/cli-exec@1.0.1':
+    resolution: {integrity: sha512-g9XerViJ/paZujufXYcu5XYI2vU2rtB4sgdpjUHde5RnOkdmpu0ngH46LCFGHoPXO/C+qDPSczIHIRN+8Q2YKQ==}
+    engines: {node: '>= 18'}
+
   '@vercel/edge-config-fs@0.1.0':
     resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
 
@@ -8884,14 +8891,21 @@ packages:
       '@opentelemetry/api':
         optional: true
 
-  '@vercel/functions@1.5.2':
-    resolution: {integrity: sha512-9XuynFoM/J1X+LSahgjhuAZCbZ96vm9mpXapCkSS1MX890U7zLh7n2RW/2KLNuxsXt8u8h2dOCw+Njtg+7pXgQ==}
-    engines: {node: '>= 16'}
+  '@vercel/functions@3.9.9':
+    resolution: {integrity: sha512-ocN/BNsIswReoyqfU1huilNyBM9tvY9kFXgYj0LlyPRATC1dt35gj2jN5hs9+Nag/CRyVQOX58L2FEhvL+0sSA==}
+    engines: {node: '>= 20'}
     peerDependencies:
       '@aws-sdk/credential-provider-web-identity': '*'
+      ws: '>=8'
     peerDependenciesMeta:
       '@aws-sdk/credential-provider-web-identity':
         optional: true
+      ws:
+        optional: true
+
+  '@vercel/oidc@3.8.9':
+    resolution: {integrity: sha512-TcbdH3YtGS2KU98T99dN4sbf+E4vbJZsJTRN97wKQ7QWQ0BR7U02QX3KN4+5GHxBtKTj1c5CnvTTitc2ZRad0A==}
+    engines: {node: '>= 20'}
 
   '@vercel/otel@1.13.0':
     resolution: {integrity: sha512-esRkt470Y2jRK1B1g7S1vkt4Csu44gp83Zpu8rIyPoqy2BKgk4z7ik1uSMswzi45UogLHFl6yR5TauDurBQi4Q==}
@@ -13835,6 +13849,10 @@ packages:
     resolution: {integrity: sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==}
     engines: {node: '>=10'}
 
+  os-paths@4.4.0:
+    resolution: {integrity: sha512-wrAwOeXp1RRMFfQY8Sy7VaGVmPocaLwSFOYCGKSyo8qmJ+/yaafCl5BCA1IQZWqFSRBrKDYFeR9d/VyQzfH/jg==}
+    engines: {node: '>= 6.0'}
+
   own-keys@1.0.1:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
     engines: {node: '>= 0.4'}
@@ -16562,6 +16580,14 @@ packages:
 
   x402@0.7.3:
     resolution: {integrity: sha512-8CIZsdMTOn52PjMH/ErVke9ebeZ7ErwiZ5FL3tN3Wny7Ynxs3LkuB/0q7IoccRLdVXA7f2lueYBJ2iDrElhXnA==}
+
+  xdg-app-paths@5.5.1:
+    resolution: {integrity: sha512-hI3flOB4PLZIy5prbtTpirobtPE2ZtZ52szO+2mM9Efp6ErM398La+C1lIpNWDfNoQk+6Lsi6nMcCwVB7pxeMQ==}
+    engines: {node: '>= 6.0'}
+
+  xdg-portable@7.3.0:
+    resolution: {integrity: sha512-sqMMuL1rc0FmMBOzCpd0yuy9trqF2yTTVe+E9ogwCSWQCdDEtQUwrZPT6AxqtsFGRNxycgncbP/xmOOSPw5ZUw==}
+    engines: {node: '>= 6.0'}
 
   xml-name-validator@4.0.0:
     resolution: {integrity: sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==}
@@ -27018,6 +27044,15 @@ snapshots:
       next: 16.2.9(@babel/core@7.29.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.61.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
+  '@vercel/cli-config@0.3.0':
+    dependencies:
+      xdg-app-paths: 5.5.1
+      zod: 4.1.11
+
+  '@vercel/cli-exec@1.0.1':
+    dependencies:
+      execa: 5.1.1
+
   '@vercel/edge-config-fs@0.1.0': {}
 
   '@vercel/edge-config@1.2.0(@opentelemetry/api@1.9.0)':
@@ -27026,9 +27061,18 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
 
-  '@vercel/functions@1.5.2(@aws-sdk/credential-provider-web-identity@3.972.5)':
+  '@vercel/functions@3.9.9(@aws-sdk/credential-provider-web-identity@3.972.5)(ws@8.21.0(bufferutil@4.0.8)(utf-8-validate@6.0.3))':
+    dependencies:
+      '@vercel/oidc': 3.8.9
     optionalDependencies:
       '@aws-sdk/credential-provider-web-identity': 3.972.5
+      ws: 8.21.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+
+  '@vercel/oidc@3.8.9':
+    dependencies:
+      '@vercel/cli-config': 0.3.0
+      '@vercel/cli-exec': 1.0.1
+      jose: 5.9.6
 
   '@vercel/otel@1.13.0(@opentelemetry/api-logs@0.205.0)(@opentelemetry/api@1.9.0)(@opentelemetry/instrumentation@0.205.0(@opentelemetry/api@1.9.0))(@opentelemetry/resources@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-logs@0.205.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-metrics@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))':
     dependencies:
@@ -34623,6 +34667,8 @@ snapshots:
       strip-ansi: 6.0.1
       wcwidth: 1.0.1
 
+  os-paths@4.4.0: {}
+
   own-keys@1.0.1:
     dependencies:
       get-intrinsic: 1.2.7
@@ -37991,6 +38037,15 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
+
+  xdg-app-paths@5.5.1:
+    dependencies:
+      os-paths: 4.4.0
+      xdg-portable: 7.3.0
+
+  xdg-portable@7.3.0:
+    dependencies:
+      os-paths: 4.4.0
 
   xml-name-validator@4.0.0:
     optional: true
