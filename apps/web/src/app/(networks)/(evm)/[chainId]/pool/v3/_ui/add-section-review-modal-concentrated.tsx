@@ -40,6 +40,7 @@ import {
   getDefaultTTL,
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
+import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
@@ -492,23 +493,25 @@ export const AddSectionReviewModalConcentrated: FC<
                 </List>
               </div>
               <DialogFooter>
-                <Button
-                  size="xl"
-                  fullWidth
-                  loading={!send || isWritePending}
-                  onClick={() => send?.(confirm)}
-                  disabled={isSimulationError}
-                  testId="confirm-add-liquidity"
-                  type="button"
-                >
-                  {isSimulationError ? (
-                    'Shoot! Something went wrong :('
-                  ) : isWritePending ? (
-                    <Dots>Confirm Add</Dots>
-                  ) : (
-                    'Add Liquidity'
-                  )}
-                </Button>
+                <Checker.Connect namespace="evm" fullWidth>
+                  <Button
+                    size="xl"
+                    fullWidth
+                    loading={!send || isWritePending}
+                    onClick={() => send?.(confirm)}
+                    disabled={isSimulationError}
+                    testId="confirm-add-liquidity"
+                    type="button"
+                  >
+                    {isSimulationError ? (
+                      'Shoot! Something went wrong :('
+                    ) : isWritePending ? (
+                      <Dots>Confirm Add</Dots>
+                    ) : (
+                      'Add Liquidity'
+                    )}
+                  </Button>
+                </Checker.Connect>
               </DialogFooter>
             </DialogContent>
           </>
