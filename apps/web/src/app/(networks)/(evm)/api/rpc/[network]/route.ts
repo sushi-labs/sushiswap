@@ -22,6 +22,12 @@ const cachedBlockNumber = blockNumberResponse.pick({ result: true }).extend({
   expiresAt: z.number(),
 })
 const blockNumbers = getCache({ namespace: 'rpc-block-number-v1' })
+const blockNumberCacheNetworks = new Set([
+  'base',
+  'bsc',
+  'avalanche',
+  'robinhood',
+])
 
 export async function POST(
   request: Request,
@@ -58,7 +64,9 @@ export async function POST(
     const rpcRequest = blockNumberRequest.safeParse(
       await new Response(body).json().catch(() => null),
     )
-    if (rpcRequest.success) {
+    const cacheable =
+      blockNumberCacheNetworks.has(network) && rpcRequest.success
+    if (cacheable) {
       const cached = cachedBlockNumber.safeParse(
         await blockNumbers.get(network).catch(() => null),
       )
@@ -84,7 +92,7 @@ export async function POST(
       signal: request.signal,
     })
 
-    if (rpcRequest.success && response.ok) {
+    if (cacheable && response.ok) {
       const rpcResponse = blockNumberResponse.safeParse(
         await response
           .clone()
