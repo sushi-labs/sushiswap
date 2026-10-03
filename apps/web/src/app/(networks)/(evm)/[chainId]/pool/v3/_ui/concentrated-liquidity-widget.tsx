@@ -347,7 +347,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
       />
 
       <Checker.StockTokenRegion token0={token0} token1={token1}>
-        <Checker.Connect fullWidth>
+        <Checker.Connect namespace="evm" fullWidth>
           <Checker.Network fullWidth chainId={chainId}>
             <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
               <Checker.Slippage
@@ -606,7 +606,7 @@ const ZapWidgetContent = withCheckerRoot(
         />
         <Checker.StockTokenRegion token0={pool?.token0} token1={pool?.token1}>
           <Checker.StockTokenRegion token0={inputCurrency}>
-            <Checker.Connect fullWidth>
+            <Checker.Connect namespace="evm" fullWidth>
               <Checker.Network fullWidth chainId={chainId}>
                 <Checker.Amounts
                   fullWidth

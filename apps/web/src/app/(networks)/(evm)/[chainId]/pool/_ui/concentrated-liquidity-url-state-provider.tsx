@@ -26,6 +26,7 @@ import {
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import * as z from 'zod'
+import { isFeeTierEnabled } from './fee-tier-config'
 
 export const queryParamsSchema = z.object({
   fromCurrency: z.nullable(z.string()).transform((value) => value ?? 'NATIVE'),
@@ -114,17 +115,24 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     [pathname],
   )
 
-  const { fromCurrency, toCurrency, feeAmount, tokenId } =
-    queryParamsSchema.parse({
-      fromCurrency: searchParams.get('fromCurrency'),
-      toCurrency: searchParams.get('toCurrency'),
-      feeAmount: searchParams.get('feeAmount'),
-      tokenId: searchParams.get('tokenId'),
-    })
+  const {
+    fromCurrency,
+    toCurrency,
+    feeAmount: requestedFeeAmount,
+    tokenId,
+  } = queryParamsSchema.parse({
+    fromCurrency: searchParams.get('fromCurrency'),
+    toCurrency: searchParams.get('toCurrency'),
+    feeAmount: searchParams.get('feeAmount'),
+    tokenId: searchParams.get('tokenId'),
+  })
 
   const _chainId = supportedNetworks?.includes(chainId)
     ? chainId
     : EvmChainId.ETHEREUM
+  const feeAmount = isFeeTierEnabled(_chainId, requestedFeeAmount)
+    ? requestedFeeAmount
+    : SushiSwapV3FeeAmount.MEDIUM
 
   const { data: tokenFrom, isInitialLoading: isTokenFromLoading } =
     useTokenWithCache({
