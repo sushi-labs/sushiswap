@@ -49,6 +49,7 @@ import {
 import type { NearIntentsQuoteResponse } from '~evm/api/cross-chain/near-intents/schemas'
 import { getStellarAddressLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { StepState } from '../lifi/confirmation-dialog'
+import { useXSwapRoutingLock } from '../xswap-routing-context'
 import {
   NearIntentsConfirmationDialogContent,
   NearIntentsConfirmationDialogFooter,
@@ -108,6 +109,11 @@ function NearIntentsTradeReviewDialogContent({
   })
   const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
     DialogType.Confirm,
+  )
+  const { open: reviewOpen } = useDialog(DialogType.Review)
+  useXSwapRoutingLock(
+    'near-intents',
+    reviewOpen || confirmDialogOpen || submitSourceTransaction.isPending,
   )
 
   const outputAmount =

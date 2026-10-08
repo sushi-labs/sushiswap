@@ -1,7 +1,7 @@
 'use client'
 
 import { Message } from '@sushiswap/ui'
-import { LAYERZERO_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/layerzero/config'
+import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { Amount } from 'sushi'
 import { StellarChainId } from 'sushi/stellar'
 import { useNearIntentsXSwap } from '../near-intents/xswap-provider'
@@ -14,7 +14,14 @@ import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroCrossChainSwapWidget() {
   const {
-    state: { chainId0, chainId1, token0, token1, swapAmountString },
+    state: {
+      chainId0,
+      chainId1,
+      token0,
+      token1,
+      swapAmountString,
+      // isUnsupportedPair,
+    },
     mutate: {
       setChainId0,
       setChainId1,
@@ -23,12 +30,14 @@ export function LayerZeroCrossChainSwapWidget() {
       setSwapAmount,
     },
     previewQuote,
+    catalog,
   } = useLayerZeroXSwap()
   const { currenciesByChain } = useNearIntentsXSwap()
   const stellarCurrencies = currenciesByChain[StellarChainId.STELLAR]
-  const amountOut = previewQuote.data
-    ? new Amount(token1, previewQuote.data.amountOut).toSignificant(6)
-    : ''
+  const amountOut =
+    previewQuote.data && token1
+      ? new Amount(token1, previewQuote.data.amountOut).toSignificant(6)
+      : ''
 
   return (
     <XSwapWidgetFrame>
@@ -39,8 +48,8 @@ export function LayerZeroCrossChainSwapWidget() {
         currency={token0}
         currencies={
           chainId0 === StellarChainId.STELLAR
-            ? stellarCurrencies
-            : { [token0.address]: token0 }
+            ? { ...stellarCurrencies, ...catalog.currenciesByChain[chainId0] }
+            : undefined
         }
         onSelect={(currency) =>
           setToken0Param(
@@ -49,9 +58,9 @@ export function LayerZeroCrossChainSwapWidget() {
         }
         value={swapAmountString}
         onChange={setSwapAmount}
-        allowNative={false}
+        allowNative
         label="Sell"
-        networks={LAYERZERO_SUPPORTED_CHAIN_IDS}
+        networks={VALUE_TRANSFER_SUPPORTED_CHAIN_IDS}
         selectedNetwork={chainId0}
         onNetworkChange={setChainId0}
       />
@@ -65,8 +74,8 @@ export function LayerZeroCrossChainSwapWidget() {
           currency={token1}
           currencies={
             chainId1 === StellarChainId.STELLAR
-              ? stellarCurrencies
-              : { [token1.address]: token1 }
+              ? { ...stellarCurrencies, ...catalog.currenciesByChain[chainId1] }
+              : undefined
           }
           onSelect={(currency) =>
             setToken1Param(
@@ -77,9 +86,9 @@ export function LayerZeroCrossChainSwapWidget() {
           loading={previewQuote.isLoading}
           fetching={previewQuote.isFetching}
           disableMaxButton
-          allowNative={false}
+          allowNative
           label="Buy"
-          networks={LAYERZERO_SUPPORTED_CHAIN_IDS}
+          networks={VALUE_TRANSFER_SUPPORTED_CHAIN_IDS}
           selectedNetwork={chainId1}
           onNetworkChange={setChainId1}
         />
@@ -87,11 +96,6 @@ export function LayerZeroCrossChainSwapWidget() {
         <div className="mt-2">
           <LayerZeroTradeStats />
         </div>
-        {previewQuote.error ? (
-          <Message variant="warning" size="sm" className="mt-2">
-            {previewQuote.error.message}
-          </Message>
-        ) : null}
       </div>
     </XSwapWidgetFrame>
   )

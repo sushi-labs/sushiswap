@@ -1,22 +1,19 @@
 'use client'
 
 import { useCallback, useMemo } from 'react'
-import {
-  isLayerZeroChainId,
-  isLayerZeroTokenParam,
-} from 'src/lib/swap/layerzero/config'
 import type {
   NearIntentsCurrencyEntry,
   NearIntentsSupportedChainId,
   NearIntentsToken,
 } from 'src/lib/swap/near-intents'
+import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import {
   getCurrencyEntryKey,
   getCurrencyParam,
   getDefaultTokenForChain,
   mapNearIntentsTokensToCurrencyEntries,
 } from 'src/lib/swap/near-intents/tokens'
-import { STELLAR_USDT0, StellarChainId } from 'sushi/stellar'
+import { useValueTransferCatalog } from '../../layerzero/hooks/use-value-transfer-catalog'
 
 interface NearIntentsDefaultTokenParams {
   token0Param: string | undefined
@@ -35,36 +32,37 @@ function getCurrencyEntryByTokenAssetId(
 }
 
 export function getNearIntentsSelectableCurrencies(
-  chainId: NearIntentsSupportedChainId,
-  otherChainId: NearIntentsSupportedChainId,
+  _chainId: NearIntentsSupportedChainId,
+  _otherChainId: NearIntentsSupportedChainId,
   currencies:
     | Record<string, CurrencyFor<NearIntentsSupportedChainId>>
     | undefined,
 ): Record<string, CurrencyFor<NearIntentsSupportedChainId>> | undefined {
-  if (chainId !== StellarChainId.STELLAR || isLayerZeroChainId(otherChainId)) {
-    return currencies
-  }
-
-  return Object.fromEntries(
-    Object.entries(currencies ?? {}).filter(
-      ([address]) => !isLayerZeroTokenParam(StellarChainId.STELLAR, address),
-    ),
-  )
+  return currencies
 }
 
 export function useNearIntentsCurrencyCatalog(
   tokens: readonly NearIntentsToken[] | undefined,
 ) {
+  const catalog = useValueTransferCatalog()
   const nearIntentsTokens = tokens ?? EMPTY_TOKENS
   const currencyEntries = useMemo(() => {
     const entries = mapNearIntentsTokensToCurrencyEntries(nearIntentsTokens)
-    // Make the USDT0 route discoverable without assigning it a NEAR asset ID.
-    const currency = STELLAR_USDT0[StellarChainId.STELLAR]
-    if (!entries.some((entry) => entry.currency.id === currency.id)) {
-      entries.push({ assetId: '', currency, priceUSD: '1', priceUpdatedAt: '' })
+    for (const { currency, token } of catalog.entries) {
+      if (
+        !isNearIntentsChainId(currency.chainId) ||
+        entries.some((entry) => entry.currency.id === currency.id)
+      )
+        continue
+      entries.push({
+        assetId: '',
+        currency: currency as CurrencyFor<NearIntentsSupportedChainId>,
+        priceUSD: token.price?.usd === undefined ? '' : String(token.price.usd),
+        priceUpdatedAt: '',
+      })
     }
     return entries
-  }, [nearIntentsTokens])
+  }, [nearIntentsTokens, catalog.entries])
 
   const currencyEntryByKey = useMemo(() => {
     const entries = new Map<string, NearIntentsCurrencyEntry>()

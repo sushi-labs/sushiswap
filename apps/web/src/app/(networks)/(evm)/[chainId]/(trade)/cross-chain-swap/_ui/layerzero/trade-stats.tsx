@@ -18,7 +18,7 @@ import {
 } from '@sushiswap/ui'
 import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
 import { type ReactNode, useEffect, useId, useMemo, useState } from 'react'
-import { Price, getChainById, shortenAddress } from 'sushi'
+import { Price, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
 import { SourceNetworkFee } from './source-network-fee'
@@ -26,7 +26,7 @@ import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroTradeStats(): ReactNode {
   const {
-    state: { chainId0, chainId1, swapAmount },
+    state: { chainId0, chainId1, swapAmount, isUnsupportedPair },
     previewQuote,
     sourceNetworkFee,
   } = useLayerZeroXSwap()
@@ -40,7 +40,12 @@ export function LayerZeroTradeStats(): ReactNode {
   } = useDetailsInteractionTracker()
   const [invert, setInvert] = useState(false)
   const detailsId = useId()
-  const hasValidQuote = Boolean(swapAmount?.gt(0n) && !previewQuote.error)
+  const hasValidQuote = Boolean(
+    swapAmount?.gt(0n) &&
+      !previewQuote.error &&
+      !isUnsupportedPair &&
+      previewQuote.data !== null,
+  )
   const amounts = useMemo(
     () =>
       previewQuote.data
@@ -157,17 +162,18 @@ export function LayerZeroTradeStats(): ReactNode {
             {amounts.minimumAmountOut.toSignificant(6)}{' '}
             {amounts.minimumAmountOut.currency.symbol}
           </Stat>
-          <Stat title="Protocol fee">
-            {amounts.protocolFee.toSignificant(6)}{' '}
-            {amounts.protocolFee.currency.symbol}
+          <Stat title="Protocol fees">
+            {previewQuote.data
+              ? formatUSD(Number(previewQuote.data.quote.feeUsd))
+              : 'N/A'}
           </Stat>
           <Stat
             title={
               <>
-                LayerZero fee{' '}
+                Source native fee{' '}
                 <Explainer>
-                  Includes a 10% buffer. Unused messaging fees are refunded to
-                  your source wallet.
+                  Included in the total protocol fees above. Source network gas
+                  is additional.
                 </Explainer>
               </>
             }

@@ -24,6 +24,7 @@ import { getChainById } from 'sushi'
 import { CrossChainSwapConfirmationDialog } from '../cross-chain-swap-confirmation-dialog'
 import { CrossChainSwapConfirmationContent } from '../lifi/confirmation-dialog'
 import { DialogBody } from '../lifi/trade-review-dialog/dialog-body'
+import { useXSwapRoutingLock } from '../xswap-routing-context'
 import { getLayerZeroExecutionStepStates } from './execution-step-states'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
 import { useLayerZeroExecute } from './hooks/use-layerzero-execute'
@@ -52,7 +53,14 @@ function LayerZeroTradeReviewDialogContent({
   } = useLayerZeroXSwap()
   const execute = useLayerZeroExecute()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
-  const { setOpen: setConfirmationOpen } = useDialog(DialogType.Confirm)
+  const { open: confirmationOpen, setOpen: setConfirmationOpen } = useDialog(
+    DialogType.Confirm,
+  )
+  const { open: reviewOpen } = useDialog(DialogType.Review)
+  useXSwapRoutingLock(
+    'layerzero',
+    reviewOpen || confirmationOpen || isSubmitting,
+  )
   const [executionId, setExecutionId] = useState<string>()
   const execution = executions.find((item) => item.id === executionId)
   const submittedQuote = execution?.quote ?? execute.variables?.quote
@@ -65,14 +73,16 @@ function LayerZeroTradeReviewDialogContent({
       : execution.error
     : execute.error?.message
   const stepStates = getLayerZeroExecutionStepStates(execution, Boolean(error))
-  const bridgeUrl = execution?.txHash
-    ? `https://layerzeroscan.com/tx/${encodeURIComponent(execution.txHash)}`
-    : undefined
+  const bridgeUrl =
+    execution?.delivery?.explorerUrl ??
+    (execution?.txHash
+      ? `https://layerzeroscan.com/tx/${encodeURIComponent(execution.txHash)}`
+      : undefined)
   const quote = previewQuote.data
   const amounts = quote ? getLayerZeroTradeAmounts(quote) : undefined
   const pending = executions.filter(
     (item) =>
-      item.txHash &&
+      (item.txHash || item.submitted) &&
       item.sourceStatus !== 'FAILED' &&
       item.delivery?.status !== 'SUCCESS',
   )
@@ -82,14 +92,14 @@ function LayerZeroTradeReviewDialogContent({
       <DialogReview>
         {({ confirm }) => (
           <>
-            <div className="mt-4">{children}</div>
+            {children}
             <DialogContent className="max-h-[80vh]">
               <DialogHeader className="!text-left">
                 <DialogTitle>
-                  Receive {amounts?.amountOut.toSignificant(6)} {token1.symbol}
+                  Receive {amounts?.amountOut.toSignificant(6)} {token1?.symbol}
                 </DialogTitle>
                 <DialogDescription>
-                  Swap {amounts?.amountIn.toSignificant(6)} {token0.symbol}
+                  Swap {amounts?.amountIn.toSignificant(6)} {token0?.symbol}
                 </DialogDescription>
               </DialogHeader>
               <DialogBody>
@@ -125,7 +135,7 @@ function LayerZeroTradeReviewDialogContent({
                     <Dots>Confirm Swap</Dots>
                   ) : (
                     <>
-                      Swap {token0.symbol} for {token1.symbol}
+                      Swap {token0?.symbol} for {token1?.symbol}
                     </>
                   )}
                 </Button>
@@ -154,10 +164,12 @@ function LayerZeroTradeReviewDialogContent({
       ) : null}
       <CrossChainSwapConfirmationDialog
         stepStates={stepStates}
-        closeDisabled={isSubmitting && !execution?.txHash}
+        closeDisabled={
+          isSubmitting && !execution?.txHash && !execution?.submitted
+        }
         description={
           execution?.delivery?.status === 'ACTION_REQUIRED' ? (
-            'This transfer needs attention. Open LayerZero Scan for recovery details.'
+            'This transfer needs attention. Open the transfer explorer for recovery details.'
           ) : submittedQuote ? (
             <CrossChainSwapConfirmationContent
               chainId0={submittedQuote.fromChainId}
@@ -179,7 +191,8 @@ function LayerZeroTradeReviewDialogContent({
       >
         {error ? (
           <Message variant="warning" size="sm">
-            {execution?.txHash && execution.sourceStatus !== 'FAILED'
+            {(execution?.txHash || execution?.submitted) &&
+            execution?.sourceStatus !== 'FAILED'
               ? 'Confirmation could not be completed. Do not resend this transfer; track the existing transaction below.'
               : error}
           </Message>
@@ -191,7 +204,7 @@ function LayerZeroTradeReviewDialogContent({
             rel="noreferrer"
             className="text-blue text-sm text-center"
           >
-            Track on LayerZero Scan ↗
+            Track transfer ↗
           </a>
         ) : null}
       </CrossChainSwapConfirmationDialog>

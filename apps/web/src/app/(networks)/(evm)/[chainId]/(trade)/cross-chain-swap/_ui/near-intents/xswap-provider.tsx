@@ -9,13 +9,12 @@ import {
   useMemo,
   useRef,
 } from 'react'
+import { isLifiXSwapSupportedChainId } from 'src/config'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
-  getLayerZeroTokenAddress,
-  isLayerZeroChainId,
-  isLayerZeroTokenParam,
-  isLayerZeroUsdt0Route,
-} from 'src/lib/swap/layerzero/config'
+  NoCrossChainRouteError,
+  type RouteAvailability,
+} from 'src/lib/swap/cross-chain/route-availability'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { getCurrencyParam } from 'src/lib/swap/near-intents/tokens'
 import type {
@@ -82,6 +81,7 @@ interface NearIntentsXSwapContextValue {
     >
   >
   isLoadingTokens: boolean
+  routeAvailability: RouteAvailability
   previewQuote: {
     data: NearIntentsQuoteResponse | undefined
     executionDuration: string | undefined
@@ -103,6 +103,7 @@ const NearIntentsXSwapContext = createContext<
 
 export interface NearIntentsXSwapProviderProps {
   children: ReactNode
+  enabled?: boolean
 }
 
 function getOppositeDefaultChainId(
@@ -120,6 +121,7 @@ function getOppositeDefaultChainId(
 
 export function NearIntentsXSwapProvider({
   children,
+  enabled = true,
 }: NearIntentsXSwapProviderProps): ReactNode {
   const form = useXSwapForm<
     NearIntentsSupportedChainId,
@@ -129,8 +131,11 @@ export function NearIntentsXSwapProvider({
   const [slippagePercent] = useSlippageTolerance()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const refreshedDestinationExecutionRef = useRef<string | undefined>(undefined)
-  const { data: tokensResponse, isLoading: isLoadingTokens } =
-    useNearIntentsTokens()
+  const {
+    data: tokensResponse,
+    isLoading: isLoadingTokens,
+    error: tokensError,
+  } = useNearIntentsTokens()
   const {
     currencyEntries,
     currenciesByChain,
@@ -138,16 +143,25 @@ export function NearIntentsXSwapProvider({
     getDefaultTokenParams,
   } = useNearIntentsCurrencyCatalog(tokensResponse?.tokens)
 
-  const { chainId0, token0Param, token1Param, swapAmountString } = form
+  const { token0Param, token1Param, swapAmountString } = form
+  const chainId0 = isNearIntentsChainId(form.chainId0)
+    ? form.chainId0
+    : EvmChainId.ETHEREUM
 
   const chainId1: NearIntentsSupportedChainId =
     form.chainId1 && isNearIntentsChainId(form.chainId1)
       ? form.chainId1
       : getOppositeDefaultChainId(chainId0)
   const isNearIntentsPair =
-    (chainId0 === StellarChainId.STELLAR ||
-      chainId1 === StellarChainId.STELLAR) &&
-    !isLayerZeroUsdt0Route(chainId0, chainId1, token0Param, token1Param)
+    isNearIntentsChainId(form.chainId0) &&
+    (!form.chainId1 || isNearIntentsChainId(form.chainId1))
+  // LI.FI owns defaults for its pairs; fallback providers must not rewrite them.
+  const fillsDefaults =
+    isNearIntentsPair &&
+    !(
+      isLifiXSwapSupportedChainId(form.chainId0) &&
+      (!form.chainId1 || isLifiXSwapSupportedChainId(form.chainId1))
+    )
 
   const token0Entry = getCurrencyEntry(chainId0, token0Param)
   const token1Entry = getCurrencyEntry(chainId1, token1Param)
@@ -172,16 +186,16 @@ export function NearIntentsXSwapProvider({
 
   // Persist the synchronously-resolved default chainId1 back to the URL.
   useEffect(() => {
-    if (!isNearIntentsPair) return
+    if (!fillsDefaults) return
 
     if (!form.chainId1 || !isNearIntentsChainId(form.chainId1)) {
       form.setChainId1(getOppositeDefaultChainId(chainId0))
     }
-  }, [form.chainId1, form.setChainId1, chainId0, isNearIntentsPair])
+  }, [form.chainId1, form.setChainId1, chainId0, fillsDefaults])
 
   // Fill default tokens from the catalog once it loads.
   useEffect(() => {
-    if (!isNearIntentsPair) return
+    if (!fillsDefaults) return
     if (currencyEntries.length === 0) return
     if (!form.chainId1 || !isNearIntentsChainId(form.chainId1)) return
     if (token0Param && token1Param) return
@@ -200,7 +214,7 @@ export function NearIntentsXSwapProvider({
     token1Param,
     form.setTokenParams,
     getDefaultTokenParams,
-    isNearIntentsPair,
+    fillsDefaults,
   ])
 
   // Any change to the swap inputs invalidates an in-flight deposit.
@@ -217,44 +231,15 @@ export function NearIntentsXSwapProvider({
 
   const setToken0 = useCallback(
     (currency: CurrencyFor<NearIntentsSupportedChainId>) => {
-      if (
-        currency.chainId === StellarChainId.STELLAR &&
-        isLayerZeroTokenParam(
-          StellarChainId.STELLAR,
-          getCurrencyParam(currency),
-        ) &&
-        isLayerZeroChainId(chainId1)
-      ) {
-        form.setTokenParams(
-          getCurrencyParam(currency),
-          getLayerZeroTokenAddress(chainId1),
-        )
-        return
-      }
       form.setToken0Param(getCurrencyParam(currency))
     },
-    [chainId1, form.setToken0Param, form.setTokenParams],
+    [form.setToken0Param],
   )
-
   const setToken1 = useCallback(
     (currency: CurrencyFor<NearIntentsSupportedChainId>) => {
-      if (
-        currency.chainId === StellarChainId.STELLAR &&
-        isLayerZeroTokenParam(
-          StellarChainId.STELLAR,
-          getCurrencyParam(currency),
-        ) &&
-        isLayerZeroChainId(chainId0)
-      ) {
-        form.setTokenParams(
-          getLayerZeroTokenAddress(chainId0),
-          getCurrencyParam(currency),
-        )
-        return
-      }
       form.setToken1Param(getCurrencyParam(currency))
     },
-    [chainId0, form.setToken1Param, form.setTokenParams],
+    [form.setToken1Param],
   )
 
   const slippageBps = useMemo(
@@ -268,8 +253,30 @@ export function NearIntentsXSwapProvider({
     destinationAsset: token1NearAssetId,
     amount: swapAmount,
     slippageBps,
-    enabled: isNearIntentsPair,
+    enabled: enabled && isNearIntentsPair,
   })
+
+  const routeAvailability: RouteAvailability = !isNearIntentsPair
+    ? 'unsupported'
+    : tokensError
+      ? 'error'
+      : isLoadingTokens
+        ? 'loading'
+        : !token0Param || !token1Param
+          ? 'idle'
+          : !token0NearAssetId || !token1NearAssetId
+            ? 'unsupported'
+            : !swapAmount?.gt(0n)
+              ? 'idle'
+              : previewQuoteQuery.error instanceof NoCrossChainRouteError
+                ? 'empty'
+                : previewQuoteQuery.isError
+                  ? 'error'
+                  : previewQuoteQuery.isSuccess
+                    ? BigInt(previewQuoteQuery.data.quote.amountOut) > 0n
+                      ? 'available'
+                      : 'empty'
+                    : 'loading'
 
   const executionDuration = useMemo(() => {
     const executionDurationSeconds = previewQuoteQuery.data?.quote.timeEstimate
@@ -330,6 +337,7 @@ export function NearIntentsXSwapProvider({
       currencyEntries,
       currenciesByChain,
       isLoadingTokens,
+      routeAvailability,
       previewQuote: {
         data: previewQuoteQuery.data,
         executionDuration,
@@ -368,6 +376,7 @@ export function NearIntentsXSwapProvider({
       currenciesByChain,
       executionDuration,
       isLoadingTokens,
+      routeAvailability,
       previewQuoteQuery,
       executionStatusQuery,
     ],

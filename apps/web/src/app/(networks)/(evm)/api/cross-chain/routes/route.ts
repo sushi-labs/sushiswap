@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server'
 import { EVM_UI_FEE_DECIMAL, type LifiXSwapSupportedChainId } from 'src/config'
+import { isLifiNoRouteResponse } from 'src/lib/swap/cross-chain/route-availability'
 import { isEvmChainId } from 'sushi/evm'
 import * as z from 'zod'
 import {
@@ -135,6 +136,12 @@ export async function GET(request: NextRequest) {
 
   const response = await fetch(url, options)
   const json = await response.json()
+
+  // LI.FI uses NoQuoteError for pairs/amounts without a route. Preserve other
+  // HTTP failures so an outage or rate limit cannot silently change providers.
+  if (isLifiNoRouteResponse(response.status, json)) {
+    return Response.json({ routes: [] })
+  }
 
   const parsed = routesOutputSchema(
     parsedParams.fromChainId,

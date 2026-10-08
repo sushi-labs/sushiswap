@@ -2,9 +2,11 @@
 
 import { type ComponentProps, type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import { getLayerZeroCurrency } from 'src/lib/swap/layerzero/tokens'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import type { ValueTransferTrade as LayerZeroQuote } from 'src/lib/swap/value-transfer/trade'
+import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
 import { Amount } from 'sushi'
+import { USDT } from 'sushi/evm'
+import { STELLAR_USDT0 } from 'sushi/stellar'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DetailsInteractionTrackerProvider } from '../../../_ui/details-interaction-tracker-provider'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
@@ -12,15 +14,11 @@ import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-net
 import { LayerZeroTradeDetails } from './trade-details'
 import { LayerZeroTradeStats } from './trade-stats'
 
-const { useXswap, useCurrencyPrice, useArrivalEstimate } = vi.hoisted(() => ({
+const { useXswap, useCurrencyPrice } = vi.hoisted(() => ({
   useXswap: vi.fn(),
   useCurrencyPrice: vi.fn(),
-  useArrivalEstimate: vi.fn(),
 }))
 vi.mock('./xswap-provider', () => ({ useLayerZeroXSwap: useXswap }))
-vi.mock('./hooks/use-layerzero-arrival-estimate', () => ({
-  useLayerZeroArrivalEstimate: useArrivalEstimate,
-}))
 vi.mock(
   'src/app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-currency-price',
   () => ({ useCurrencyPrice }),
@@ -80,27 +78,21 @@ vi.mock('@sushiswap/ui', () => {
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
-const quote: LayerZeroQuote = {
+const quote = valueTransferTestTrade({
+  token0: USDT[1],
+  token1: STELLAR_USDT0[-4],
   fromChainId: 1,
   toChainId: -4,
   sourceAddress: '0x000000000000000000000000000000000000dEaD',
   recipient: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
   amountIn: 1_000_000n,
-  amountSent: 1_000_000n,
   amountOut: 9_000_000n,
   minAmountOut: 8_955_000n,
-  nativeFee: 1_000_000_000_000_000n,
+  protocolFee: 100_000n,
+  nativeFee: 1_100_000_000_000_000n,
   maxNativeFee: 1_100_000_000_000_000n,
-  sendParam: {
-    dstEid: 30600,
-    to: '0x',
-    amountLD: 1_000_000n,
-    minAmountLD: 895_500n,
-    extraOptions: '0x',
-    composeMsg: '0x',
-    oftCmd: '0x',
-  },
-}
+  estimatedSeconds: 1020,
+})
 
 describe('LayerZero trade UI', () => {
   let container: HTMLDivElement
@@ -123,7 +115,7 @@ describe('LayerZero trade UI', () => {
       state: {
         chainId0: 1,
         chainId1: -4,
-        swapAmount: new Amount(getLayerZeroCurrency(1), amount),
+        swapAmount: new Amount(USDT[1], amount),
       },
       previewQuote: { data, error, isLoading },
       sourceNetworkFee,
@@ -149,11 +141,6 @@ describe('LayerZero trade UI', () => {
   }
 
   beforeEach(() => {
-    useArrivalEstimate.mockReturnValue({
-      data: { estimatedSeconds: 1_020 },
-      isLoading: false,
-      isError: false,
-    })
     useCurrencyPrice.mockReturnValue({
       data: 3_000,
       isLoading: false,
@@ -179,9 +166,9 @@ describe('LayerZero trade UI', () => {
     click('Toggle Swap Details')
     expect(container.textContent).toContain('Est. received0.9 USDT0')
     expect(container.textContent).toContain('Min. received0.8955 USDT0')
-    expect(container.textContent).toContain('Protocol fee0.1 USDT')
+    expect(container.textContent).toContain('Protocol fees$0.10')
     expect(container.textContent).toContain('Network fee$1.50')
-    expect(container.textContent).toContain('LayerZero fee 0.0011 ETH')
+    expect(container.textContent).toContain('Source native fee 0.0011 ETH')
     expect(container.textContent).not.toMatch(/up to/i)
     expect(container.querySelector('a')?.href).toContain(quote.recipient)
     click('Toggle Swap Details')
@@ -213,7 +200,7 @@ describe('LayerZero trade UI', () => {
   })
 
   it('shows the existing loading treatment without an actionable dropdown', () => {
-    setQuote({ data: null, isLoading: true })
+    setQuote({ isLoading: true })
     renderStats()
     expect(
       container.querySelector('[aria-label="Loading swap details"]'),
@@ -234,9 +221,8 @@ describe('LayerZero trade UI', () => {
         />,
       ),
     )
-    expect(container.textContent).toContain('LayerZero fee: 0.0011 ETH')
+    expect(container.textContent).toContain('Protocol fees: $0.10')
     expect(container.textContent).toContain('Estimated arrival: ~17 minutes')
-    expect(useArrivalEstimate).toHaveBeenCalledWith(1, -4)
     expect(container.textContent).toContain('Send 1 USDT')
     expect(container.textContent).toContain('Receive 0.9 USDT0')
     expect(container.textContent).toContain('ETHEREUM')
@@ -249,9 +235,9 @@ describe('LayerZero trade UI', () => {
     )
     expect(container.textContent).not.toMatch(/up to/i)
     expect(container.textContent).toContain(
-      'Min. received after slippage (0.5%): 0.8955 USDT0',
+      'Min. received after slippage: 0.8955 USDT0',
     )
-    expect(container.textContent).toContain('Protocol fee: 0.1 USDT')
+    expect(container.textContent).toContain('Source native fee: 0.0011 ETH')
     expect(container.querySelector('a')?.href).toContain(quote.recipient)
   })
 
@@ -269,27 +255,9 @@ describe('LayerZero trade UI', () => {
     expect(container.querySelector('a')).toBeNull()
   })
 
-  it('uses sent amounts, not Stellar dust, for protocol fees and route labels', () => {
-    const amounts = getLayerZeroTradeAmounts({
-      ...quote,
-      fromChainId: -4,
-      toChainId: 1,
-      amountIn: 10_000_009n,
-      amountSent: 10_000_000n,
-      amountOut: 1_000_000n,
-      minAmountOut: 995_000n,
-      maxNativeFee: 1_100_000n,
-    })
-    expect(amounts.amountIn.toString()).toBe('1')
-    expect(amounts.amountOut.toString()).toBe('1')
-    expect(amounts.protocolFee.amount).toBe(0n)
-    expect(amounts.messagingFee.toString()).toBe('0.11')
-    expect(amounts.messagingFee.currency.symbol).toBe('XLM')
-  })
-
   it.each([
     ['connect-wallet', 'Connect wallets to estimate'],
-    ['approval-required', 'Available after USDT approval'],
+    ['approval-required', 'Available after token approval'],
     ['unavailable', 'Estimate unavailable'],
   ] as const)(
     'shows the %s gas state without inventing a fee',
@@ -324,10 +292,11 @@ describe('LayerZero trade UI', () => {
       ...quote,
       fromChainId: -4,
       toChainId: 1,
+      token0: STELLAR_USDT0[-4],
+      token1: USDT[1],
       sourceAddress: quote.recipient,
       recipient: quote.sourceAddress,
       amountIn: 10_000_000n,
-      amountSent: 10_000_000n,
       amountOut: 1_000_000n,
       minAmountOut: 995_000n,
       maxNativeFee: 1_100_000n,
@@ -342,8 +311,7 @@ describe('LayerZero trade UI', () => {
       ),
     )
     click('Toggle review details')
-    expect(container.textContent).toContain('LayerZero fee: 0.11 XLM')
-    expect(useArrivalEstimate).toHaveBeenCalledWith(-4, 1)
+    expect(container.textContent).toContain('Source native fee: 0.11 XLM')
     expect(container.textContent).toContain('Network fee: 0.01 XLM ($0.003)')
   })
 
@@ -397,92 +365,22 @@ describe('LayerZero trade UI', () => {
   })
 
   it.each([
-    [
-      { data: { estimatedSeconds: null }, isError: false, isLoading: false },
-      '~30 minutes',
-    ],
-    [
-      { data: { estimatedSeconds: 1_020 }, isError: true, isLoading: false },
-      '~30 minutes',
-    ],
-    [
-      { data: { estimatedSeconds: 1_081 }, isError: false, isLoading: false },
-      '~19 minutes',
-    ],
-    [
-      { data: { estimatedSeconds: 45 }, isError: false, isLoading: false },
-      '~1 minute',
-    ],
-  ])(
-    'handles approximate and unavailable arrival times (%s)',
-    (estimate, expected) => {
-      useArrivalEstimate.mockReturnValue(estimate)
+    [undefined, 'Estimate unavailable'],
+    [1081, '~19 minutes'],
+    [45, '~1 minute'],
+  ] as const)(
+    'uses the route arrival estimate without inventing a fallback (%s)',
+    (estimatedSeconds, expected) => {
       act(() =>
         root.render(
           <LayerZeroTradeDetails
-            quote={quote}
+            quote={{ ...quote, estimatedSeconds }}
             amounts={getLayerZeroTradeAmounts(quote)}
             sourceNetworkFee={{ status: 'connect-wallet' }}
           />,
         ),
       )
       expect(container.textContent).toContain(`Estimated arrival: ${expected}`)
-    },
-  )
-
-  it('shows a skeleton while the arrival estimate loads', () => {
-    useArrivalEstimate.mockReturnValue({
-      data: undefined,
-      isError: false,
-      isLoading: true,
-    })
-    act(() =>
-      root.render(
-        <LayerZeroTradeDetails
-          quote={quote}
-          amounts={getLayerZeroTradeAmounts(quote)}
-          sourceNetworkFee={{ status: 'connect-wallet' }}
-        />,
-      ),
-    )
-    expect(
-      container.querySelector('[aria-label="Loading arrival estimate"]'),
-    ).not.toBeNull()
-    expect(container.textContent).not.toContain('~30 minutes')
-  })
-
-  it.each([
-    [{ data: { estimatedSeconds: null }, isError: false }, '~30 minutes'],
-    [{ data: undefined, isError: true }, '~30 minutes'],
-    [{ data: { estimatedSeconds: 1_020 }, isError: true }, '~30 minutes'],
-    [{ data: { estimatedSeconds: 1_885 }, isError: false }, '~32 minutes'],
-  ])(
-    'uses an approximate Stellar fallback only when timing is unavailable (%s)',
-    (estimate, expected) => {
-      useArrivalEstimate.mockReturnValue({ ...estimate, isLoading: false })
-      const stellarQuote: LayerZeroQuote = {
-        ...quote,
-        fromChainId: -4,
-        toChainId: 10,
-        sourceAddress: quote.recipient,
-        recipient: quote.sourceAddress,
-        amountIn: 10_000_000n,
-        amountSent: 10_000_000n,
-        amountOut: 1_000_000n,
-        minAmountOut: 995_000n,
-        maxNativeFee: 1_100_000n,
-      }
-      act(() =>
-        root.render(
-          <LayerZeroTradeDetails
-            quote={stellarQuote}
-            amounts={getLayerZeroTradeAmounts(stellarQuote)}
-            sourceNetworkFee={{ status: 'connect-wallet' }}
-          />,
-        ),
-      )
-      expect(container.textContent).toContain(`Estimated arrival: ${expected}`)
-      expect(container.textContent).not.toContain('Unavailable')
     },
   )
 })

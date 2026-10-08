@@ -7,7 +7,8 @@ import {
 } from '@tanstack/react-query'
 import { act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import { makeExecutionTrade } from 'src/lib/swap/value-transfer/execution-test-fixtures'
+import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   type LayerZeroExecutionState,
@@ -24,27 +25,7 @@ vi.mock(
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
-const quote: LayerZeroQuote = {
-  fromChainId: 1,
-  toChainId: -4,
-  sourceAddress: '0x000000000000000000000000000000000000dEaD',
-  recipient: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-  amountIn: 1_000_000n,
-  amountSent: 1_000_000n,
-  amountOut: 10_000_000n,
-  minAmountOut: 9_950_000n,
-  nativeFee: 1_000n,
-  maxNativeFee: 1_100n,
-  sendParam: {
-    dstEid: 30600,
-    to: '0x',
-    amountLD: 1_000_000n,
-    minAmountLD: 995_000n,
-    extraOptions: '0x',
-    composeMsg: '0x',
-    oftCmd: '0x',
-  },
-}
+const quote = makeExecutionTrade()
 
 describe('LayerZero concurrent execution tracking', () => {
   let root: Root
@@ -118,7 +99,11 @@ describe('LayerZero concurrent execution tracking', () => {
   })
 
   it('updates older transactions by id without replacing the newest trade snapshot', () => {
-    const secondQuote = { ...quote, amountIn: 2_000_000n }
+    const secondQuote = {
+      ...quote,
+      amountIn: 2_000_000n,
+      quote: { ...quote.quote, id: 'second-quote' },
+    }
     act(() => {
       state.mutate.beginExecution('first', quote)
       state.mutate.updateExecution('first', {
@@ -174,10 +159,13 @@ describe('LayerZero concurrent execution tracking', () => {
   })
 
   it('polls each submitted route and refreshes destination balances once per delivery', async () => {
-    const reverseQuote: LayerZeroQuote = {
+    const reverseQuote: ValueTransferTrade = {
       ...quote,
-      fromChainId: -4,
-      toChainId: 1,
+      fromChainId: 42161,
+      toChainId: 8453,
+      srcChain: quote.dstChain,
+      dstChain: quote.srcChain,
+      quote: { ...quote.quote, id: 'second-quote' },
     }
     act(() => {
       state.mutate.beginExecution('first', quote)
@@ -202,27 +190,33 @@ describe('LayerZero concurrent execution tracking', () => {
     })
     expect(fetchStatus.mock.calls.map(([url]) => String(url))).toEqual(
       expect.arrayContaining([
-        '/api/cross-chain/layerzero/status?txHash=0xfirst&fromChainId=1&toChainId=-4',
-        '/api/cross-chain/layerzero/status?txHash=second&fromChainId=-4&toChainId=1',
+        `/api/cross-chain/value-transfer/status?quoteId=${quote.quote.id}&txHash=0xfirst`,
+        '/api/cross-chain/value-transfer/status?quoteId=second-quote&txHash=second',
       ]),
     )
     expect(refetchChain).not.toHaveBeenCalled()
     act(() =>
-      client.setQueryData(['layerzero-status', -4, 1, 'second', 'second'], {
-        status: 'SUCCESS',
-        destinationTxHash: '0xdest',
-      }),
+      client.setQueryData(
+        ['value-transfer-status', 'second-quote', 'second', 'second'],
+        {
+          status: 'SUCCESS',
+          destinationTxHash: '0xdest',
+        },
+      ),
     )
-    await vi.waitFor(() => expect(refetchChain).toHaveBeenCalledWith(1))
+    await vi.waitFor(() => expect(refetchChain).toHaveBeenCalledWith(8453))
     expect(state.executions[0]?.delivery?.status).toBe('PENDING')
     expect(state.executions[1]?.delivery?.destinationTxHash).toBe('0xdest')
     act(() =>
-      client.setQueryData(['layerzero-status', 1, -4, '0xfirst', 'first'], {
-        status: 'SUCCESS',
-      }),
+      client.setQueryData(
+        ['value-transfer-status', quote.quote.id, '0xfirst', 'first'],
+        {
+          status: 'SUCCESS',
+        },
+      ),
     )
     await vi.waitFor(() => expect(refetchChain).toHaveBeenCalledTimes(2))
-    expect(refetchChain).toHaveBeenLastCalledWith(-4)
+    expect(refetchChain).toHaveBeenLastCalledWith(42161)
     act(() =>
       state.mutate.updateExecution('first', { sourceStatus: 'SUCCESS' }),
     )
@@ -248,5 +242,24 @@ describe('LayerZero concurrent execution tracking', () => {
       })
     })
     expect(state.isSubmitting).toBe(false)
+  })
+  it('polls signature submissions without a transaction hash and prevents resubmitting that quote', async () => {
+    act(() => {
+      state.mutate.beginExecution('signature', quote)
+      state.mutate.updateExecution('signature', {
+        submitted: true,
+        sourceStatus: 'PENDING',
+      })
+      state.mutate.failExecution('signature', 'Submission response timed out')
+      state.mutate.finishSubmission('signature')
+      expect(state.mutate.beginExecution('duplicate', quote)).toBe(false)
+    })
+    await vi.waitFor(() =>
+      expect(fetchStatus).toHaveBeenCalledWith(
+        `/api/cross-chain/value-transfer/status?quoteId=${quote.quote.id}`,
+        expect.anything(),
+      ),
+    )
+    expect(state.executions[0]?.sourceStatus).toBe('PENDING')
   })
 })

@@ -15,27 +15,41 @@ import {
   isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
+import { useCrossChainPriceImpact } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-price-impact'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import type {
   CrossChainRoute,
   CrossChainRouteOrder,
 } from 'src/lib/swap/cross-chain'
+import { isLifiNativeToken } from 'src/lib/swap/cross-chain/is-lifi-native-token'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { Amount, Percent, getNativeAddress } from 'sushi'
+import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import { StellarChainId } from 'sushi/stellar'
 import type { SvmAddress } from 'sushi/svm'
 import {
   getDefaultCurrency,
   getQuoteCurrency,
   getTokenAsString,
 } from '../../../_ui/derivedstate-swap-helpers'
+import { useValueTransferCatalog } from '../layerzero/hooks/use-value-transfer-catalog'
 import {
   type XSwapFormMutators,
   type XSwapFormStateValues,
   useXSwapForm,
 } from '../xswap-form-provider'
+
+function getLifiCatalogCurrency(
+  currency:
+    | CurrencyFor<LifiXSwapSupportedChainId | typeof StellarChainId.STELLAR>
+    | undefined,
+): CurrencyFor<LifiXSwapSupportedChainId> | undefined {
+  return currency && currency.chainId !== StellarChainId.STELLAR
+    ? currency
+    : undefined
+}
 
 type NewTokenInput = Parameters<typeof newToken>[0]
 
@@ -91,7 +105,14 @@ const defaultChainId1For = (
 const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
   const form = useXSwapForm()
 
-  const chainId0 = form.chainId0 as LifiXSwapSupportedChainId
+  const supportedSource = isLifiXSwapSupportedChainId(form.chainId0)
+  const fillsDefaults =
+    supportedSource &&
+    (!form.chainId1 || isLifiXSwapSupportedChainId(form.chainId1))
+  const chainId0 = isLifiXSwapSupportedChainId(form.chainId0)
+    ? form.chainId0
+    : EvmChainId.ETHEREUM
+  const catalog = useValueTransferCatalog()
   const chainId1: LifiXSwapSupportedChainId =
     form.chainId1 && isLifiXSwapSupportedChainId(form.chainId1)
       ? form.chainId1
@@ -103,26 +124,27 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
   // Persist the synchronously-resolved defaults back to the URL so the URL
   // stays consistent with what consumers see.
   useEffect(() => {
-    if (!form.chainId1) {
+    if (fillsDefaults && !form.chainId1) {
       form.setChainId1(defaultChainId1For(chainId0))
     }
-  }, [form.chainId1, form.setChainId1, chainId0])
+  }, [form.chainId1, form.setChainId1, chainId0, fillsDefaults])
 
   useEffect(() => {
-    if (form.token0Param === undefined) {
+    if (fillsDefaults && form.token0Param === undefined) {
       form.setToken0Param(getDefaultCurrency(chainId0))
     }
-  }, [form.token0Param, form.setToken0Param, chainId0])
+  }, [form.token0Param, form.setToken0Param, chainId0, fillsDefaults])
 
   useEffect(() => {
     if (
+      fillsDefaults &&
       form.token1Param === undefined &&
       form.chainId1 &&
       isLifiXSwapSupportedChainId(form.chainId1)
     ) {
       form.setToken1Param(getQuoteCurrency(form.chainId1))
     }
-  }, [form.token1Param, form.chainId1, form.setToken1Param])
+  }, [form.token1Param, form.chainId1, form.setToken1Param, fillsDefaults])
 
   const setToken0 = useCallback(
     (token: CurrencyFor<LifiXSwapSupportedChainId> | string) => {
@@ -180,10 +202,16 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
 
   const [_token0, _token1] = useMemo(
     () => [
-      token0Param === 'NATIVE' ? nativeFromChainId(chainId0) : token0,
-      token1Param === 'NATIVE' ? nativeFromChainId(chainId1) : token1,
+      token0Param === 'NATIVE'
+        ? nativeFromChainId(chainId0)
+        : (token0 ??
+          getLifiCatalogCurrency(catalog.getCurrency(chainId0, token0Param))),
+      token1Param === 'NATIVE'
+        ? nativeFromChainId(chainId1)
+        : (token1 ??
+          getLifiCatalogCurrency(catalog.getCurrency(chainId1, token1Param))),
     ],
-    [token0Param, token1Param, chainId0, chainId1, token0, token1],
+    [token0Param, token1Param, chainId0, chainId1, token0, token1, catalog],
   )
 
   const swapAmount = useMemo(
@@ -280,7 +308,8 @@ function useLifiXSwap<
 function useLifiXSwapTradeRoutes<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
->() {
+>(options: { enabled?: boolean } = {}) {
+  const form = useXSwapForm()
   const {
     state: {
       chainId0,
@@ -303,6 +332,10 @@ function useLifiXSwapTradeRoutes<
     fromAddress: address,
     order: routeOrder,
     toAddress: recipient,
+    enabled:
+      options.enabled !== false &&
+      isLifiXSwapSupportedChainId(form.chainId0) &&
+      Boolean(form.chainId1 && isLifiXSwapSupportedChainId(form.chainId1)),
   })
 
   useEffect(() => {
@@ -345,13 +378,13 @@ function useLifiXSwapSelectedTradeRoute<
     if (!route) return undefined
 
     const tokenIn = (
-      getNativeAddress(route.fromToken.chainId) === route.fromToken.address
+      isLifiNativeToken(route.fromToken)
         ? nativeFromChainId(route.fromToken.chainId)
         : newToken(route.fromToken as NewTokenInput)
     ) as CurrencyFor<TChainId0>
 
     const tokenOut = (
-      getNativeAddress(route.toToken.chainId) === route.toToken.address
+      isLifiNativeToken(route.toToken)
         ? nativeFromChainId(route.toToken.chainId)
         : newToken(route.toToken as NewTokenInput)
     ) as CurrencyFor<TChainId1>
@@ -360,19 +393,6 @@ function useLifiXSwapSelectedTradeRoute<
     const amountOut = new Amount(tokenOut, route.toAmount)
     const amountOutMin = new Amount(tokenOut, route.toAmountMin)
 
-    const fromAmountUSD =
-      (Number(route.fromToken.priceUSD) * Number(amountIn.amount)) /
-      10 ** tokenIn.decimals
-
-    const toAmountUSD =
-      (Number(route.toToken.priceUSD) * Number(amountOut.amount)) /
-      10 ** tokenOut.decimals
-
-    const priceImpact = new Percent({
-      numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-      denominator: 10_000,
-    })
-
     return {
       ...route,
       tokenIn,
@@ -380,16 +400,20 @@ function useLifiXSwapSelectedTradeRoute<
       amountIn,
       amountOut,
       amountOutMin,
-      priceImpact,
     }
   }, [routesQuery.data, selectedBridge])
+
+  const priceImpact = useCrossChainPriceImpact({
+    amountIn: route?.amountIn,
+    amountOut: route?.amountOut,
+  })
 
   return useMemo(
     () => ({
       ...routesQuery,
-      data: route,
+      data: route ? { ...route, priceImpact } : undefined,
     }),
-    [routesQuery, route],
+    [routesQuery, route, priceImpact],
   )
 }
 

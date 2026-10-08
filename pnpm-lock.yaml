@@ -241,9 +241,6 @@ importers:
       '@hookform/resolvers':
         specifier: 3.3.1
         version: 3.3.1(react-hook-form@7.54.2(react@19.2.7))
-      '@layerzerolabs/scan-client':
-        specifier: 0.0.6
-        version: 0.0.6(axios@1.16.1)
       '@martianwallet/aptos-wallet-adapter':
         specifier: 0.0.5
         version: 0.0.5
@@ -3555,11 +3552,6 @@ packages:
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
-
-  '@layerzerolabs/scan-client@0.0.6':
-    resolution: {integrity: sha512-K6Dpktj8bsPK/bE4DjgPclWn/mOZm/zm6lwRaaZvPkfPhmLQx43j5voBod9hqT2hSh26lC7ZkFAb+8aVUpPISQ==}
-    peerDependencies:
-      axios: '*'
 
   '@ledgerhq/devices@8.6.1':
     resolution: {integrity: sha512-PQR2fyWz7P/wMFHY9ZLz17WgFdxC/Im0RVDcWXpp24+iRQRyxhQeX2iG4mBKUzfaAW6pOIEiWt+vmJh88QP9rQ==}
@@ -19879,10 +19871,6 @@ snapshots:
       '@pedrouid/environment': 1.0.1
 
   '@juggle/resize-observer@3.4.0': {}
-
-  '@layerzerolabs/scan-client@0.0.6(axios@1.16.1)':
-    dependencies:
-      axios: 1.16.1
 
   '@ledgerhq/devices@8.6.1':
     dependencies:

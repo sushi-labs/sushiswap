@@ -103,13 +103,13 @@ function TradeSummaryList<
           <>
             <List.KeyValue
               title="Price impact"
-              subtitle="The impact your trade has on the market price of this pool."
+              subtitle="The difference between the input and estimated output values, including fees deducted from the output. Source network fees are separate."
             >
-              {!step?.priceImpact ? (
+              {!step ? (
                 <span className="w-24">
                   <SkeletonText align="right" fontSize="sm" />
                 </span>
-              ) : (
+              ) : step.priceImpact ? (
                 `${
                   step.priceImpact.lt(ZERO)
                     ? '+'
@@ -117,6 +117,8 @@ function TradeSummaryList<
                       ? '-'
                       : ''
                 }${Math.abs(Number((step.priceImpact.toNumber() * 100).toFixed(2)))}%`
+              ) : (
+                'Unavailable'
               )}
             </List.KeyValue>
 

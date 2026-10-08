@@ -3,10 +3,13 @@
 import { type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import {
-  LAYERZERO_SUPPORTED_CHAIN_IDS,
-  type LayerZeroChainId,
-} from 'src/lib/swap/layerzero/config'
-import { getLayerZeroCurrency } from 'src/lib/swap/layerzero/tokens'
+  type ValueTransferChainId as LayerZeroChainId,
+  VALUE_TRANSFER_SUPPORTED_CHAIN_IDS,
+} from 'src/lib/swap/value-transfer/types'
+import { USDT } from 'sushi/evm'
+function getLayerZeroCurrency(chainId: LayerZeroChainId) {
+  return chainId === -4 ? STELLAR_USDT0[-4] : USDT[1]
+}
 import { getCurrencyParam } from 'src/lib/swap/near-intents/tokens'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
 import type { CurrencyInputProps } from 'src/lib/wagmi/components/web3-input/currency'
@@ -90,6 +93,7 @@ describe('LayerZero cross-chain selectors', () => {
       },
       mutate,
       previewQuote: {},
+      catalog: { currenciesByChain: {}, error: null },
     })
     act(() => root.render(<LayerZeroCrossChainSwapWidget />))
   }
@@ -137,15 +141,10 @@ describe('LayerZero cross-chain selectors', () => {
             container.querySelectorAll(`#${id} [data-network]`),
             (button) => Number(button.getAttribute('data-network')),
           ),
-        ).toEqual([...LAYERZERO_SUPPORTED_CHAIN_IDS])
-        expect(
-          container.querySelector(
-            `#${id} [data-token="${getLayerZeroCurrency(chainId).address}"]`,
-          ),
-        ).not.toBeNull()
+        ).toEqual([...VALUE_TRANSFER_SUPPORTED_CHAIN_IDS])
         expect(
           container.querySelector(`#${id}`)?.getAttribute('data-allow-native'),
-        ).toBe('false')
+        ).toBe('true')
         if (chainId === -4) {
           expect(container.querySelector(`#${id}`)?.textContent).toContain(
             'USDC',
@@ -171,20 +170,16 @@ describe('LayerZero cross-chain selectors', () => {
     expect(mutate.setChainId0).toHaveBeenCalledWith(10)
   })
 
-  it('does not show networks outside the LayerZero integration', () => {
+  it('keeps other provider networks available when viewing a LayerZero route', () => {
     render(-4, 1)
-    expect(container.querySelector('[data-network="146"]')).toBeNull()
-    expect(container.querySelector('[data-network="59144"]')).toBeNull()
+    expect(container.querySelector('[data-network="146"]')).not.toBeNull()
+    expect(container.querySelector('[data-network="59144"]')).not.toBeNull()
   })
 
   it('allows another Stellar token while keeping EVM selection on the OFT', () => {
     render(-4, 1)
     click(`#swap-from [data-token="${STELLAR_USDC[-4].address}"]`)
     expect(mutate.setToken0Param).toHaveBeenCalledWith(STELLAR_USDC[-4].address)
-    click(`#swap-to [data-token="${getLayerZeroCurrency(1).address}"]`)
-    expect(mutate.setToken1Param).toHaveBeenCalledWith(
-      getLayerZeroCurrency(1).address,
-    )
     render(1, -4)
     click(`#swap-to [data-token="${STELLAR_USDC[-4].address}"]`)
     expect(mutate.setToken1Param).toHaveBeenCalledWith(STELLAR_USDC[-4].address)

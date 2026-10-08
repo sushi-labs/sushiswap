@@ -1,5 +1,9 @@
 'use client'
 
+import {
+  getBase64EncodedWireTransaction,
+  getTransactionDecoder,
+} from '@solana/kit'
 import { TransactionBuilder } from '@stellar/stellar-sdk'
 import {
   createFailedToast,
@@ -8,6 +12,7 @@ import {
 } from '@sushiswap/notifications'
 import { type UseMutationResult, useMutation } from '@tanstack/react-query'
 import ms from 'ms'
+import { useRef } from 'react'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
 import { SorobanClient } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client'
 import {
@@ -15,42 +20,56 @@ import {
   waitForTransaction,
 } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/transaction-helpers'
 import { APPROVE_TAG_XSWAP, TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
-import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
+import { useSvmSignTransaction } from 'src/lib/svm/hooks/use-svm-sign-transaction'
+import { getSvmRpc } from 'src/lib/svm/rpc'
 import {
-  type LayerZeroEvmChainId,
-  isLayerZeroEvmChainId,
-} from 'src/lib/swap/layerzero/config'
-import { getLayerZeroEvmSendContractParameters } from 'src/lib/swap/layerzero/evm-send'
+  SvmTransactionFailedError,
+  waitForSvmSignature,
+} from 'src/lib/svm/wait-for-svm-signature'
 import {
-  assertLayerZeroQuoteIsSafe,
-  fetchLayerZeroQuote,
-} from 'src/lib/swap/layerzero/quote'
+  assertValueTransferQuoteIsCurrent,
+  assertValueTransferSolanaSignature,
+  buildValueTransferStellarTransaction,
+  isValueTransferApproval,
+  validateValueTransferSolanaTransaction,
+  validateValueTransferUserSteps,
+} from 'src/lib/swap/value-transfer/execution'
 import {
-  assertStellarUsdt0Recipient,
-  buildStellarOftSend,
-} from 'src/lib/swap/layerzero/stellar'
-import type {
-  LayerZeroQuote,
-  LayerZeroSendParam,
-} from 'src/lib/swap/layerzero/types'
+  valueTransferBuildUserStepsResponseSchema,
+  valueTransferMetadataResponseSchema,
+  valueTransferSubmitSignatureResponseSchema,
+} from 'src/lib/swap/value-transfer/schemas'
+import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
-import { type EvmAddress, isEvmAddress } from 'sushi/evm'
-import { StellarChainId, isStellarAccountAddress } from 'sushi/stellar'
-import type { PublicClient } from 'viem'
-import { usePublicClient, useWriteContract } from 'wagmi'
+import { isEvmChainId } from 'sushi/evm'
+import { isStellarAccountAddress } from 'sushi/stellar'
+import type { Hex, PublicClient } from 'viem'
+import { usePublicClient, useSendTransaction, useSignTypedData } from 'wagmi'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 import { useLayerZeroXSwap } from '../xswap-provider'
 import { useIsLayerZeroXSwapMaintenance } from './use-is-layerzero-xswap-maintenance'
 
+async function post(path: string, body: unknown): Promise<unknown> {
+  const response = await fetch(`/api/cross-chain/value-transfer/${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!response.ok) throw new Error(`LayerZero ${path} request failed`)
+  return response.json()
+}
+
 export function useLayerZeroExecute(): UseMutationResult<
   string,
   Error,
-  { id: string; quote: LayerZeroQuote }
+  { id: string; quote: ValueTransferTrade }
 > {
   const {
-    state: { chainId0, chainId1, swapAmount },
+    state: { chainId0, chainId1, swapAmount, token0, token1 },
     mutate: {
       beginExecution,
       updateExecution,
@@ -61,141 +80,44 @@ export function useLayerZeroExecute(): UseMutationResult<
   } = useLayerZeroXSwap()
   const sourceAddress = useAccount(chainId0)
   const recipient = useAccount(chainId1)
+  const wallets = {
+    evm: useAccount('evm'),
+    svm: useAccount('svm'),
+    stellar: useAccount('stellar'),
+  }
+  const currentWallets = useRef(wallets)
+  currentWallets.current = wallets
   const publicClient = usePublicClient({
-    chainId: isLayerZeroEvmChainId(chainId0) ? chainId0 : undefined,
-  })
-  const { writeContractAsync } = useWriteContract()
-  const [slippagePercent] = useSlippageTolerance()
+    chainId: isEvmChainId(chainId0) ? chainId0 : undefined,
+  }) as
+    | Pick<PublicClient, 'estimateGas' | 'waitForTransactionReceipt'>
+    | undefined
+  const { sendTransactionAsync } = useSendTransaction()
+  const { signTypedDataAsync } = useSignTypedData()
+  const { signTransaction } = useSvmSignTransaction()
   const { refetchChain } = useRefetchBalances()
   const { data: maintenance } = useIsLayerZeroXSwapMaintenance()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
 
-  async function executeEvmSource(
-    id: string,
-    reviewed: LayerZeroQuote,
-    sendParam: LayerZeroSendParam,
-    evmSource: {
-      chainId: LayerZeroEvmChainId
-      account: EvmAddress
-      publicClient: Pick<
-        PublicClient,
-        'simulateContract' | 'waitForTransactionReceipt'
-      >
-    },
-  ): Promise<string> {
-    const request = getLayerZeroEvmSendContractParameters({
-      chainId: evmSource.chainId,
-      account: evmSource.account,
-      sendParam,
-      maxNativeFee: reviewed.maxNativeFee,
-    })
-    await evmSource.publicClient.simulateContract(request)
-    const txHash = await writeContractAsync({
-      ...request,
-      chainId: evmSource.chainId,
-    })
-    updateExecution(id, { txHash, sourceStatus: 'PENDING' })
-    clearSwapAmountIfUnchanged(reviewed)
-    let replacementReason: 'repriced' | 'replaced' | 'cancelled' | undefined
-    const receipt = await evmSource.publicClient.waitForTransactionReceipt({
-      hash: txHash,
-      onReplaced: ({ reason, transactionReceipt }) => {
-        replacementReason = reason
-        updateExecution(id, {
-          txHash: transactionReceipt.transactionHash,
-        })
-      },
-    })
-    if (receipt.status !== 'success' || replacementReason === 'cancelled') {
-      updateExecution(id, {
-        txHash: receipt.transactionHash,
-        sourceStatus: 'FAILED',
-      })
-      throw new Error('The source transaction reverted or was cancelled')
-    }
-    if (replacementReason === 'replaced')
-      throw new Error(
-        'The source transaction was replaced. Check the existing transaction before sending again.',
-      )
-    updateExecution(id, {
-      txHash: receipt.transactionHash,
-      sourceStatus: 'SUCCESS',
-    })
-    return receipt.transactionHash
-  }
-
-  async function executeStellarSource(
-    id: string,
-    reviewed: LayerZeroQuote,
-    sendParam: LayerZeroSendParam,
-  ): Promise<string> {
-    if (!sourceAddress || !isStellarAccountAddress(sourceAddress))
-      throw new Error('Connect the source Stellar wallet')
-    const transaction = await buildStellarOftSend({
-      from: sourceAddress,
-      sendParam,
-      nativeFee: reviewed.maxNativeFee,
-    })
-    if (!transaction.built)
-      throw new Error('Stellar transaction was not prepared')
-    const kit = await getStellarWalletKit()
-    const { signedTxXdr } = await kit.signTransaction(transaction.toXDR(), {
-      address: sourceAddress,
-      networkPassphrase: NETWORK_PASSPHRASE,
-    })
-    const signed = TransactionBuilder.fromXDR(signedTxXdr, NETWORK_PASSPHRASE)
+  function assertWallets(reviewed: ValueTransferTrade): void {
     if (
-      !signed.hash().equals(transaction.built.hash()) ||
-      signed.signatures.length === 0
+      currentWallets.current[getNamespaceForChainId(reviewed.fromChainId)] !==
+        reviewed.sourceAddress ||
+      currentWallets.current[getNamespaceForChainId(reviewed.toChainId)] !==
+        reviewed.recipient
     ) {
-      throw new Error(
-        'The signed Stellar transaction does not match the reviewed transfer',
-      )
+      throw new Error('The connected wallets changed. Review a new quote.')
     }
-    // Record the deterministic hash before submission: an RPC timeout can happen
-    // after broadcast and must not encourage a second transfer.
-    const txHash = signed.hash().toString('hex')
-    updateExecution(id, { txHash, sourceStatus: 'PENDING' })
-    clearSwapAmountIfUnchanged(reviewed)
-    const { result } = await submitTransaction(signedTxXdr)
-    if (result.status === 'ERROR') {
-      updateExecution(id, { txHash, sourceStatus: 'FAILED' })
-      const reason = result.errorResult?.result().switch().name
-      throw new Error(
-        `Stellar rejected the LayerZero transaction${reason ? `: ${reason}` : ''}`,
-      )
-    }
-    if (result.status !== 'PENDING' && result.status !== 'DUPLICATE') {
-      throw new Error(
-        'Stellar submission is unconfirmed. Track the existing transaction before retrying.',
-      )
-    }
-    try {
-      await waitForTransaction(txHash, ms('60s'))
-    } catch (error) {
-      const confirmed = await SorobanClient.getTransaction(txHash).catch(
-        () => undefined,
-      )
-      if (confirmed?.status === 'FAILED') {
-        updateExecution(id, { txHash, sourceStatus: 'FAILED' })
-      }
-      throw error
-    }
-    updateExecution(id, { txHash, sourceStatus: 'SUCCESS' })
-    return txHash
+    assertValueTransferQuoteIsCurrent(reviewed)
   }
 
   return useMutation({
-    mutationKey: ['layerzero-execute', chainId0, chainId1],
-    mutationFn: async ({
-      id,
-      quote: reviewed,
-    }: { id: string; quote: LayerZeroQuote }) => {
+    mutationKey: ['value-transfer-execute', chainId0, chainId1],
+    mutationFn: async ({ id, quote: reviewed }) => {
       if (maintenance)
         throw new Error('LayerZero swaps are undergoing maintenance')
-      if (!sourceAddress || !recipient || !swapAmount?.gt(0n)) {
+      if (!sourceAddress || !recipient || !swapAmount?.gt(0n))
         throw new Error('Connect both wallets and enter an amount')
-      }
       if (!approved)
         throw new Error('Complete the swap checks before continuing')
       if (
@@ -203,57 +125,238 @@ export function useLayerZeroExecute(): UseMutationResult<
         reviewed.toChainId !== chainId1 ||
         reviewed.sourceAddress !== sourceAddress ||
         reviewed.recipient !== recipient ||
-        reviewed.amountIn !== swapAmount.amount
+        reviewed.amountIn !== swapAmount.amount ||
+        reviewed.token0.id !== token0?.id ||
+        reviewed.token1.id !== token1?.id
       ) {
         throw new Error('Swap inputs changed. Review a new quote.')
       }
+      assertWallets(reviewed)
       if (!beginExecution(id, reviewed))
-        throw new Error('A source transaction is still being submitted')
-
-      const evmSource =
-        isLayerZeroEvmChainId(chainId0) &&
-        publicClient &&
-        isEvmAddress(sourceAddress)
-          ? { chainId: chainId0, account: sourceAddress, publicClient }
-          : undefined
-      if (isLayerZeroEvmChainId(chainId0) && !evmSource)
-        throw new Error('Connect the source EVM wallet')
-
-      const executable = await fetchLayerZeroQuote({
-        fromChainId: chainId0,
-        toChainId: chainId1,
-        amount: swapAmount.amount,
-        slippageBps: Math.round(slippagePercent.toNumber() * 10_000),
-        sourceAddress,
-        recipient,
-        publicClient,
-      })
-      assertLayerZeroQuoteIsSafe(reviewed, executable)
-      // Preserve the minimum and maximum fee explicitly reviewed by the user.
-      const sendParam = {
-        ...executable.sendParam,
-        minAmountLD: reviewed.sendParam.minAmountLD,
+        throw new Error(
+          'This transfer has already been submitted or another submission is in progress',
+        )
+      const built = valueTransferBuildUserStepsResponseSchema.parse(
+        await post('build-user-steps', { quoteId: reviewed.quote.id }),
+      )
+      const metadata =
+        reviewed.srcChain.chainType === 'EVM'
+          ? await fetch('/api/cross-chain/value-transfer/metadata').then(
+              async (response) => {
+                if (!response.ok)
+                  throw new Error('LayerZero contract metadata unavailable')
+                return valueTransferMetadataResponseSchema.parse(
+                  await response.json(),
+                )
+              },
+            )
+          : {}
+      validateValueTransferUserSteps(reviewed, built.userSteps, metadata)
+      let txHash: string | undefined
+      const signatures: Hex[] = []
+      const signatureCount = built.userSteps.filter(
+        (step) => step.type === 'SIGNATURE',
+      ).length
+      for (const step of built.userSteps) {
+        assertWallets(reviewed)
+        if (step.type === 'SIGNATURE') {
+          const typedData = step.signature.typedData
+          const signature = await signTypedDataAsync({
+            ...typedData,
+            domain: {
+              ...typedData.domain,
+              chainId:
+                typedData.domain.chainId === undefined
+                  ? undefined
+                  : Number(typedData.domain.chainId),
+            },
+            account: step.signerAddress,
+          })
+          signatures.push(signature)
+          if (signatures.length === signatureCount) {
+            assertWallets(reviewed)
+            // Submission can be accepted even if its HTTP response times out.
+            updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
+            clearSwapAmountIfUnchanged(reviewed)
+            valueTransferSubmitSignatureResponseSchema.parse(
+              await post('submit-signature', {
+                quoteId: reviewed.quote.id,
+                signatures,
+              }),
+            )
+          }
+          continue
+        }
+        const approval = isValueTransferApproval(step)
+        if (step.chainType === 'EVM') {
+          if (!publicClient || !isEvmChainId(reviewed.fromChainId))
+            throw new Error('Connect the source EVM wallet')
+          const encoded = step.transaction.encoded
+          const request = {
+            account: step.signerAddress,
+            to: encoded.to,
+            data: encoded.data,
+            value: BigInt(encoded.value ?? '0'),
+          }
+          // Estimate the exact API calldata against current state, after each prior approval confirms.
+          const gas = await publicClient.estimateGas(request)
+          assertWallets(reviewed)
+          if (!approval)
+            updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
+          let hash: Hex
+          try {
+            hash = await sendTransactionAsync({
+              ...request,
+              gas,
+              chainId: reviewed.fromChainId,
+            } as Parameters<typeof sendTransactionAsync>[0])
+          } catch (error) {
+            if (!approval && isUserRejectedError(error))
+              updateExecution(id, { submitted: false, sourceStatus: 'FAILED' })
+            throw error
+          }
+          if (!approval) {
+            txHash = hash
+            updateExecution(id, {
+              txHash,
+              submitted: true,
+              sourceStatus: 'PENDING',
+            })
+            clearSwapAmountIfUnchanged(reviewed)
+          }
+          let replacementReason:
+            | 'repriced'
+            | 'replaced'
+            | 'cancelled'
+            | undefined
+          const receipt = await publicClient.waitForTransactionReceipt({
+            hash,
+            onReplaced: ({ reason, transactionReceipt }) => {
+              replacementReason = reason
+              if (!approval)
+                updateExecution(id, {
+                  txHash: transactionReceipt.transactionHash,
+                })
+            },
+          })
+          if (
+            receipt.status !== 'success' ||
+            replacementReason === 'cancelled'
+          ) {
+            if (!approval) updateExecution(id, { sourceStatus: 'FAILED' })
+            throw new Error('The source transaction reverted or was cancelled')
+          }
+          if (replacementReason === 'replaced')
+            throw new Error(
+              'The source transaction was replaced. Check the existing transaction before sending again.',
+            )
+          if (!approval) txHash = receipt.transactionHash
+        } else if (step.chainType === 'SOLANA') {
+          const data = step.transaction.encoded.data
+          validateValueTransferSolanaTransaction(data, step.signerAddress)
+          const signed = await signTransaction(
+            new Uint8Array(Buffer.from(data, 'base64')),
+          )
+          assertValueTransferSolanaSignature(
+            data,
+            signed.base64SignedTx,
+            step.signerAddress,
+          )
+          assertWallets(reviewed)
+          txHash = signed.base58TxSig
+          updateExecution(id, {
+            txHash,
+            submitted: true,
+            sourceStatus: 'PENDING',
+          })
+          clearSwapAmountIfUnchanged(reviewed)
+          await getSvmRpc()
+            .sendTransaction(
+              getBase64EncodedWireTransaction(
+                getTransactionDecoder().decode(
+                  Buffer.from(signed.base64SignedTx, 'base64'),
+                ),
+              ),
+              { encoding: 'base64', preflightCommitment: 'confirmed' },
+            )
+            .send()
+          try {
+            await waitForSvmSignature(txHash)
+          } catch (error) {
+            if (error instanceof SvmTransactionFailedError)
+              updateExecution(id, { sourceStatus: 'FAILED' })
+            throw error
+          }
+        } else {
+          if (!isStellarAccountAddress(step.signerAddress))
+            throw new Error('Invalid source Stellar wallet')
+          const transaction = await buildValueTransferStellarTransaction({
+            ...step.transaction.encoded,
+            sourceAddress: step.signerAddress,
+          })
+          assertWallets(reviewed)
+          const kit = await getStellarWalletKit()
+          const { signedTxXdr } = await kit.signTransaction(
+            transaction.toXDR(),
+            {
+              address: step.signerAddress,
+              networkPassphrase: NETWORK_PASSPHRASE,
+            },
+          )
+          const signed = TransactionBuilder.fromXDR(
+            signedTxXdr,
+            NETWORK_PASSPHRASE,
+          )
+          if (
+            !signed.hash().equals(transaction.hash()) ||
+            signed.signatures.length === 0
+          )
+            throw new Error(
+              'The signed Stellar transaction does not match the reviewed transfer',
+            )
+          assertWallets(reviewed)
+          txHash = signed.hash().toString('hex')
+          updateExecution(id, {
+            txHash,
+            submitted: true,
+            sourceStatus: 'PENDING',
+          })
+          clearSwapAmountIfUnchanged(reviewed)
+          const { result } = await submitTransaction(signedTxXdr)
+          if (result.status === 'ERROR') {
+            updateExecution(id, { sourceStatus: 'FAILED' })
+            const reason = result.errorResult?.result().switch().name
+            throw new Error(
+              `Stellar rejected the LayerZero transaction${reason ? `: ${reason}` : ''}`,
+            )
+          }
+          if (result.status !== 'PENDING' && result.status !== 'DUPLICATE')
+            throw new Error(
+              'Stellar submission is unconfirmed. Track the existing transaction before retrying.',
+            )
+          try {
+            await waitForTransaction(txHash, ms('60s'))
+          } catch (error) {
+            const confirmed = await SorobanClient.getTransaction(txHash).catch(
+              () => undefined,
+            )
+            if (confirmed?.status === 'FAILED')
+              updateExecution(id, { sourceStatus: 'FAILED' })
+            throw error
+          }
+        }
       }
-      if (chainId1 === StellarChainId.STELLAR) {
-        if (!isStellarAccountAddress(recipient))
-          throw new Error('Invalid Stellar recipient')
-        await assertStellarUsdt0Recipient(recipient, executable.amountOut)
-      }
-
-      if (evmSource) {
-        return executeEvmSource(id, reviewed, sendParam, evmSource)
-      }
-      return executeStellarSource(id, reviewed, sendParam)
+      updateExecution(id, { txHash, submitted: true, sourceStatus: 'SUCCESS' })
+      return txHash ?? reviewed.quote.id
     },
-    onSuccess: (txHash, { quote }) => {
+    onSuccess: (_result, { quote }) => {
       refetchChain(quote.fromChainId)
       createSuccessToast({
-        summary: 'USDT0 sent to LayerZero. Waiting for destination delivery.',
+        summary:
+          'Transfer submitted to LayerZero. Waiting for destination delivery.',
         type: 'swap',
         account: quote.sourceAddress,
         chainId: quote.fromChainId,
-        txHash,
-        href: `https://layerzeroscan.com/tx/${encodeURIComponent(txHash)}`,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,
@@ -262,7 +365,8 @@ export function useLayerZeroExecute(): UseMutationResult<
     onError: (error, { id, quote }) => {
       const execution = failExecution(id, error.message)
       const unconfirmed =
-        execution?.txHash && execution.sourceStatus !== 'FAILED'
+        (execution?.txHash || execution?.submitted) &&
+        execution.sourceStatus !== 'FAILED'
       const notify = unconfirmed ? createInfoToast : createFailedToast
       notify({
         summary: unconfirmed
@@ -272,9 +376,6 @@ export function useLayerZeroExecute(): UseMutationResult<
         account: quote.sourceAddress,
         chainId: quote.fromChainId,
         txHash: execution?.txHash,
-        href: execution?.txHash
-          ? `https://layerzeroscan.com/tx/${encodeURIComponent(execution.txHash)}`
-          : undefined,
         groupTimestamp: Date.now(),
         timestamp: Date.now(),
         autoClose: TOAST_AUTOCLOSE_TIME,

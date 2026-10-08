@@ -7,15 +7,15 @@ import {
   act,
 } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import { LAYERZERO_USDT0_EVM_DEPLOYMENTS } from 'src/lib/swap/layerzero/config'
-import { getLayerZeroCurrency } from 'src/lib/swap/layerzero/tokens'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import type { ValueTransferTrade as LayerZeroQuote } from 'src/lib/swap/value-transfer/trade'
+import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
 import { Amount } from 'sushi'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { StepState } from '../lifi/confirmation-dialog'
 import { getLayerZeroExecutionStepStates } from './execution-step-states'
 import type { LayerZeroTrackedExecution } from './hooks/use-layerzero-executions'
 import { LayerZeroTradeButton } from './trade-button'
+import { LayerZeroTradeReviewDialog } from './trade-review-dialog'
 
 const { useXswap, approve, useApproved, mutate, setOpen, confirm } = vi.hoisted(
   () => ({
@@ -134,33 +134,13 @@ vi.mock('@sushiswap/ui', () => {
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
-const quote: LayerZeroQuote = {
-  fromChainId: 1,
-  toChainId: -4,
-  sourceAddress: '0x000000000000000000000000000000000000dEaD',
-  recipient: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-  amountIn: 2_000_000n,
-  amountSent: 2_000_000n,
-  amountOut: 20_000_000n,
-  minAmountOut: 19_900_000n,
-  nativeFee: 1_000n,
-  maxNativeFee: 1_100n,
-  sendParam: {
-    dstEid: 30600,
-    to: '0x',
-    amountLD: 2_000_000n,
-    minAmountLD: 1_990_000n,
-    extraOptions: '0x',
-    composeMsg: '0x',
-    oftCmd: '0x',
-  },
-}
+const quote = valueTransferTestTrade()
 const earlier: LayerZeroTrackedExecution = {
   id: 'earlier',
-  quote: { ...quote, amountIn: 1_000_000n, amountOut: 10_000_000n },
+  quote: { ...quote, amountIn: 1_000_000n, amountOut: 1_000_000n },
   txHash: '0xearlier',
   sourceStatus: 'SUCCESS',
-  delivery: { status: 'PENDING' },
+  delivery: { status: 'PENDING', terminal: false },
   statusError: false,
 }
 
@@ -181,19 +161,22 @@ describe('LayerZero approval and review flow', () => {
       state: {
         chainId0: currentQuote.fromChainId,
         chainId1: currentQuote.toChainId,
-        token0: getLayerZeroCurrency(currentQuote.fromChainId),
-        token1: getLayerZeroCurrency(currentQuote.toChainId),
-        swapAmount: new Amount(
-          getLayerZeroCurrency(currentQuote.fromChainId),
-          currentQuote.amountIn,
-        ),
+        token0: currentQuote.token0,
+        token1: currentQuote.token1,
+        swapAmount: new Amount(currentQuote.token0, currentQuote.amountIn),
         executions,
         isSubmitting,
       },
       previewQuote: { data: currentQuote },
       sourceNetworkFee: { status: 'loading' },
     })
-    act(() => root.render(<LayerZeroTradeButton />))
+    act(() =>
+      root.render(
+        <LayerZeroTradeReviewDialog>
+          <LayerZeroTradeButton />
+        </LayerZeroTradeReviewDialog>,
+      ),
+    )
   }
 
   function button(testId: string) {
@@ -225,39 +208,11 @@ describe('LayerZero approval and review flow', () => {
     container.remove()
   })
 
-  it('uses the shared approval checker with Ethereum USDT and the OFT spender', () => {
+  it('leaves route-specific approvals to the returned user steps', () => {
     render()
-    const props = approve.mock.lastCall?.[0]
-    expect(props).toMatchObject({
-      enabled: true,
-      id: 'approve-erc20',
-      contract: LAYERZERO_USDT0_EVM_DEPLOYMENTS[1].oftAddress,
-    })
-    expect(props.amount.amount).toBe(quote.amountIn)
-    expect(props.amount.currency.address).toBe(
-      LAYERZERO_USDT0_EVM_DEPLOYMENTS[1].tokenAddress.toLowerCase(),
-    )
+    expect(approve).not.toHaveBeenCalled()
+    expect(button('swap').disabled).toBe(false)
   })
-
-  it.each([-4, 42161] as const)(
-    'does not request ERC20 approval on source chain %s',
-    (fromChainId) => {
-      render({
-        currentQuote: {
-          ...quote,
-          fromChainId,
-          toChainId: fromChainId === -4 ? 1 : -4,
-        },
-      })
-      expect(approve.mock.lastCall?.[0]).toMatchObject({
-        enabled: false,
-        contract: undefined,
-      })
-      if (fromChainId === -4)
-        expect(approve.mock.lastCall?.[0].amount).toBeUndefined()
-      expect(button('swap').disabled).toBe(false)
-    },
-  )
 
   it('blocks confirming an unapproved trade', () => {
     useApproved.mockReturnValue({ approved: false })
@@ -302,12 +257,13 @@ describe('LayerZero approval and review flow', () => {
           ...earlier,
           delivery: {
             status: 'SUCCESS',
+            terminal: true,
             destinationTxHash: 'destination-hash',
           },
         },
       ],
     })
-    expect(container.textContent).toContain('Sent 1 USDT0')
+    expect(container.textContent).toContain('Sent 1 USDC')
     expect(container.textContent).toContain('Review amount: 2000000')
     expect(container.textContent).toContain('Make another swap')
     expect(
@@ -335,22 +291,48 @@ describe('LayerZero approval and review flow', () => {
           error: 'RPC timeout',
           delivery: {
             status: 'SUCCESS',
+            terminal: true,
             destinationTxHash: 'destination-hash',
           },
         },
       ],
     })
-    expect(container.textContent).toContain('Sent 1 USDT0')
+    expect(container.textContent).toContain('Sent 1 USDC')
     expect(container.textContent).not.toContain('Do not resend this transfer')
+  })
+
+  it('tracks a submitted signature even before it has an on-chain hash', () => {
+    render({
+      executions: [
+        {
+          ...earlier,
+          txHash: undefined,
+          submitted: true,
+          sourceStatus: 'PENDING',
+        },
+      ],
+    })
+    track()
+    expect(setOpen).toHaveBeenCalledWith(true)
+    expect(
+      getLayerZeroExecutionStepStates({
+        ...earlier,
+        txHash: undefined,
+        submitted: true,
+        sourceStatus: 'PENDING',
+      }).source,
+    ).toBe(StepState.Pending)
   })
 
   it('shows bridge recovery separately from source failure', () => {
     render({
-      executions: [{ ...earlier, delivery: { status: 'ACTION_REQUIRED' } }],
+      executions: [
+        { ...earlier, delivery: { status: 'ACTION_REQUIRED', terminal: true } },
+      ],
     })
     track()
     expect(container.textContent).toContain(
-      'Open LayerZero Scan for recovery details',
+      'Open the transfer explorer for recovery details',
     )
     expect(container.querySelector('#swap-dialog-close')?.textContent).toBe(
       'Close',
