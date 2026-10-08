@@ -165,7 +165,6 @@ export function CreateLaunchBuyStep({
           selected={selectedQuoteToken}
           currencies={quoteTokenMap}
           includeNative={false}
-          hideSearch
           theme="perps"
           onSelect={(currency) => onQuoteTokenSelect(currency.wrap().address)}
         >
