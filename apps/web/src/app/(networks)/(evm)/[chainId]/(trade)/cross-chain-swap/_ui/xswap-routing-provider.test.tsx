@@ -10,6 +10,8 @@ import { XSwapRoutingProvider } from './xswap-routing-provider'
 const fixture = vi.hoisted(() => ({
   chainId0: 1,
   chainId1: 42161,
+  token0Param: 'NATIVE',
+  token1Param: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
   positiveAmount: true,
   tokensLoading: false,
   lifiSuccess: true,
@@ -25,12 +27,14 @@ const fixture = vi.hoisted(() => ({
 
 vi.mock('src/config', () => ({
   isLifiXSwapSupportedChainId: (chainId: number) =>
-    chainId === 1 || chainId === 42161,
+    [1, 42161, 999, 4663].includes(chainId),
 }))
 vi.mock('./xswap-form-provider', () => ({
   useXSwapForm: () => ({
     chainId0: fixture.chainId0,
     chainId1: fixture.chainId1,
+    token0Param: fixture.token0Param,
+    token1Param: fixture.token1Param,
   }),
 }))
 vi.mock('./lifi/xswap-provider', () => ({
@@ -73,6 +77,28 @@ vi.mock('./layerzero/xswap-provider', () => ({
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
+const hypeDeployments = [
+  { chainId: 999, tokenParam: 'NATIVE' },
+  {
+    chainId: 4663,
+    tokenParam: '0xd6AdcE5eac5F40d29e2101436C38cF1ceE8F4856',
+  },
+  {
+    chainId: 42161,
+    tokenParam: '0x0e867974275Cd31C25015C2753C9d75F9f355379',
+  },
+] as const
+const hypePairs = hypeDeployments.flatMap((source) =>
+  hypeDeployments
+    .filter((destination) => source.chainId !== destination.chainId)
+    .map((destination) => ({
+      chainId0: source.chainId,
+      token0Param: source.tokenParam,
+      chainId1: destination.chainId,
+      token1Param: destination.tokenParam,
+    })),
+)
+
 function ProviderDialog({
   provider,
 }: { provider: ReturnType<typeof useXSwapRouting> }): ReactNode {
@@ -103,6 +129,8 @@ describe('cross-chain routing provider', () => {
     Object.assign(fixture, {
       chainId0: 1,
       chainId1: 42161,
+      token0Param: 'NATIVE',
+      token1Param: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
       positiveAmount: true,
       tokensLoading: false,
       lifiSuccess: true,
@@ -195,5 +223,89 @@ describe('cross-chain routing provider', () => {
     fixture.reviewOpen = false
     render()
     expect(container.textContent).toBe('layerzero')
+  })
+
+  it.each(hypePairs)(
+    'selects VT immediately for HYPE $chainId0 → $chainId1 without upstream quotes',
+    (pair) => {
+      Object.assign(fixture, pair)
+      for (const availability of ['available', 'loading', 'error'] as const) {
+        fixture.lifiSuccess = availability === 'available'
+        fixture.lifiError = availability === 'error'
+        fixture.lifiRoutes = availability === 'available' ? [{}] : []
+        fixture.nearAvailability = availability
+        render()
+
+        expect(container.textContent).toBe('layerzero')
+        expect(fixture.valueTransferEnabled).toBe(true)
+        expect(fixture.lifiEnabled).toBe(false)
+        expect(fixture.nearEnabled).toBe(false)
+      }
+    },
+  )
+
+  it('keeps the HYPE provider selected before an amount is entered', () => {
+    Object.assign(fixture, hypePairs[0], {
+      positiveAmount: false,
+      tokensLoading: true,
+      lifiSuccess: false,
+    })
+    render()
+
+    expect(container.textContent).toBe('layerzero')
+    expect(fixture.lifiEnabled).toBe(false)
+    expect(fixture.nearEnabled).toBe(false)
+    expect(fixture.valueTransferEnabled).toBe(true)
+  })
+
+  it('restores normal provider priority when a HYPE pair changes to unrelated tokens', () => {
+    Object.assign(fixture, hypePairs[0])
+    fixture.lifiRoutes = [{}]
+    render()
+    expect(container.textContent).toBe('layerzero')
+
+    fixture.token1Param = '0x1111111111111111111111111111111111111111'
+    render()
+    expect(container.textContent).toBe('lifi')
+    expect(fixture.lifiEnabled).toBe(true)
+    expect(fixture.nearEnabled).toBe(false)
+    expect(fixture.valueTransferEnabled).toBe(false)
+
+    fixture.lifiRoutes = []
+    render()
+    expect(container.textContent).toBe('near-intents')
+    expect(fixture.nearEnabled).toBe(true)
+    expect(fixture.valueTransferEnabled).toBe(false)
+
+    fixture.nearAvailability = 'empty'
+    render()
+    expect(container.textContent).toBe('layerzero')
+    expect(fixture.valueTransferEnabled).toBe(true)
+  })
+
+  it('preserves the VT review and confirmation lock until the dialog closes', () => {
+    Object.assign(fixture, hypePairs[0])
+    fixture.lifiRoutes = [{}]
+    render()
+    fixture.reviewOpen = true
+    render()
+    expect(container.textContent).toBe('layerzero')
+
+    fixture.token1Param = '0x1111111111111111111111111111111111111111'
+    render()
+    expect(container.textContent).toBe('layerzero')
+    expect(fixture.valueTransferEnabled).toBe(true)
+
+    fixture.positiveAmount = false
+    fixture.reviewOpen = false
+    fixture.confirmOpen = true
+    render()
+    expect(container.textContent).toBe('layerzero')
+    expect(fixture.valueTransferEnabled).toBe(true)
+
+    fixture.confirmOpen = false
+    render()
+    expect(container.textContent).toBe('lifi')
+    expect(fixture.valueTransferEnabled).toBe(false)
   })
 })

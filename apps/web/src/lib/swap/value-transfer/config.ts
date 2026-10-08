@@ -9,8 +9,8 @@ export const VALUE_TRANSFER_REQUEST_TIMEOUT_MS = 30_000
 // there is no documented per-quote fee recipient or commission parameter.
 
 // TODO: Confirm these Sushi HYPE deployments are indexed by Value Transfer.
-// This registry records deployment identity only; it does not make a token
-// selectable or a route executable before the API reports support.
+// This registry identifies HYPE pairs that prefer Value Transfer. It does not
+// make a token selectable or a route executable before the API reports support.
 export const VALUE_TRANSFER_PENDING_HYPE_DEPLOYMENTS = {
   [EvmChainId.HYPEREVM]: {
     contractAddress: '0x0e867974275Cd31C25015C2753C9d75F9f355379',
