@@ -6,13 +6,19 @@ import { useQuery } from '@tanstack/react-query'
 import { getSvmRpc } from 'src/lib/svm/rpc'
 import {
   buildValueTransferStellarTransaction,
+  isValueTransferApproval,
   validateValueTransferSolanaTransaction,
 } from 'src/lib/swap/value-transfer/execution'
 import { valueTransferBuildUserStepsResponseSchema } from 'src/lib/swap/value-transfer/schemas'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { EvmChainId, isEvmAddress } from 'sushi/evm'
 import { isStellarAccountAddress } from 'sushi/stellar'
-import type { Client, PublicClient } from 'viem'
+import {
+  type Client,
+  type PublicClient,
+  decodeFunctionData,
+  erc20Abi,
+} from 'viem'
 import { estimateTotalFee } from 'viem/op-stack'
 
 export type LayerZeroSourceNetworkFee =
@@ -21,7 +27,8 @@ export type LayerZeroSourceNetworkFee =
       status: 'connect-wallet' | 'loading' | 'unavailable' | 'approval-required'
     }
 
-type FeeClient = Client & Pick<PublicClient, 'estimateGas' | 'getGasPrice'>
+type FeeClient = Client &
+  Pick<PublicClient, 'estimateGas' | 'getGasPrice' | 'readContract'>
 
 export async function estimateValueTransferSourceNetworkFee(
   quote: ValueTransferTrade,
@@ -44,6 +51,9 @@ export async function estimateValueTransferSourceNetworkFee(
       await response.json(),
     ).userSteps
   }
+  if (!steps.some((step) => !isValueTransferApproval(step))) {
+    return { status: 'unavailable' }
+  }
   let amount = 0n
   for (const step of steps) {
     const sameSigner =
@@ -53,8 +63,6 @@ export async function estimateValueTransferSourceNetworkFee(
     if (step.chainKey !== quote.srcChain.chainKey || !sameSigner)
       throw new Error('Invalid source transaction')
     if (step.type === 'SIGNATURE') continue
-    if (step.description.toLowerCase().includes('approve'))
-      return { status: 'approval-required' }
     const encoded = step.transaction.encoded
     if (step.chainType === 'EVM' && 'to' in encoded) {
       if (
@@ -64,6 +72,25 @@ export async function estimateValueTransferSourceNetworkFee(
         encoded.chainId !== quote.fromChainId
       )
         throw new Error('Source network unavailable')
+      if (isValueTransferApproval(step)) {
+        const approval = decodeFunctionData({
+          abi: erc20Abi,
+          data: encoded.data,
+        })
+        if (approval.functionName !== 'approve')
+          throw new Error('Invalid token approval')
+        const [spender] = approval.args
+        const allowance = await publicClient.readContract({
+          address: encoded.to,
+          abi: erc20Abi,
+          functionName: 'allowance',
+          args: [quote.sourceAddress, spender],
+        })
+        if (allowance < quote.amountIn) return { status: 'approval-required' }
+        // A cached quote can retain satisfied approvals. Approval gas is
+        // separate from the transfer's network fee.
+        continue
+      }
       const request = {
         account: quote.sourceAddress,
         to: encoded.to,
@@ -116,22 +143,30 @@ export function useLayerZeroSourceNetworkFee({
   publicClient: FeeClient | undefined
 }): LayerZeroSourceNetworkFee {
   const connected = Boolean(quote?.sourceAddress && quote.recipient)
+  const sourceClientReady =
+    quote?.srcChain.chainType !== 'EVM' ||
+    publicClient?.chain?.id === quote.fromChainId
   const query = useQuery({
     queryKey: [
       'value-transfer-source-network-fee',
       quote?.quote.id,
       quote?.sourceAddress,
       quote?.recipient,
+      quote?.fromChainId,
+      publicClient?.chain?.id,
     ],
     queryFn: () => {
       if (!quote) throw new Error('No LayerZero quote')
       return estimateValueTransferSourceNetworkFee(quote, publicClient)
     },
-    enabled: enabled && connected,
+    enabled: enabled && connected && sourceClientReady,
     staleTime: 20_000,
+    refetchInterval: (query) =>
+      query.state.data?.status === 'approval-required' ? 5_000 : false,
     retry: false,
   })
   if (!connected) return { status: 'connect-wallet' }
-  if (!enabled || query.isError) return { status: 'unavailable' }
+  if (!enabled || !sourceClientReady || query.isError)
+    return { status: 'unavailable' }
   return query.data ?? { status: 'loading' }
 }

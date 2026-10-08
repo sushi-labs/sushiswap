@@ -5,12 +5,13 @@ import { type Root, createRoot } from 'react-dom/client'
 import type { ValueTransferTrade as LayerZeroQuote } from 'src/lib/swap/value-transfer/trade'
 import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
 import { Amount } from 'sushi'
-import { USDT } from 'sushi/evm'
+import { EvmChainId, EvmNative, USDT } from 'sushi/evm'
 import { STELLAR_USDT0 } from 'sushi/stellar'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DetailsInteractionTrackerProvider } from '../../../_ui/details-interaction-tracker-provider'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
+import { SourceNetworkFee } from './source-network-fee'
 import { LayerZeroTradeDetails } from './trade-details'
 import { LayerZeroTradeStats } from './trade-stats'
 
@@ -320,14 +321,35 @@ describe('LayerZero trade UI', () => {
     { data: 3_000, isLoading: false, isError: true },
     { data: 0, isLoading: false, isError: false },
   ])(
-    'does not show a zero or stale USD fee without a valid price (%s)',
+    'keeps the native network fee in stats without a valid USD price (%s)',
     (price) => {
       useCurrencyPrice.mockReturnValue(price)
       renderStats()
-      expect(container.textContent).toContain('N/A')
+      expect(container.textContent).toContain('0.0005 ETH')
+      expect(container.textContent).not.toContain('N/A')
       expect(container.textContent).not.toMatch(/\$|up to/i)
+      click('Toggle Swap Details')
+      expect(container.textContent).toContain('Network fee0.0005 ETH')
     },
   )
+
+  it('shows an estimated HYPE network fee when its USD price is unavailable', () => {
+    useCurrencyPrice.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+    })
+    act(() =>
+      root.render(
+        <SourceNetworkFee
+          fee={{ status: 'estimated', amount: 500_000_000_000_000n }}
+          currency={EvmNative.fromChainId(EvmChainId.HYPEREVM)}
+          display="usd"
+        />,
+      ),
+    )
+    expect(container.textContent).toBe('0.0005 HYPE')
+  })
 
   it('keeps the native fee in the review when its USD price is unavailable', () => {
     useCurrencyPrice.mockReturnValue({

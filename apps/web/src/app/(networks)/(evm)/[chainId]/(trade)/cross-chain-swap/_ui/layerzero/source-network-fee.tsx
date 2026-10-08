@@ -39,11 +39,12 @@ export function SourceNetworkFee({
         ) : (
           'N/A'
         )
-      if (display === 'usd') return usd
+      const nativeFee = `${formatNumber(amount.toString())} ${currency.symbol}`
+      if (display === 'usd')
+        return amountUSD !== undefined || price.isLoading ? usd : nativeFee
       return (
         <span>
-          {formatNumber(amount.toString())} {currency.symbol}{' '}
-          <span className="text-muted-foreground">({usd})</span>
+          {nativeFee} <span className="text-muted-foreground">({usd})</span>
         </span>
       )
     }

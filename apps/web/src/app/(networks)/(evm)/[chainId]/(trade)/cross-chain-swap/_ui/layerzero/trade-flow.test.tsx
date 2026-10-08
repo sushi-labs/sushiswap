@@ -1,5 +1,6 @@
 /** @vitest-environment jsdom */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   type ComponentProps,
   type PropsWithChildren,
@@ -10,27 +11,43 @@ import { type Root, createRoot } from 'react-dom/client'
 import type { ValueTransferTrade as LayerZeroQuote } from 'src/lib/swap/value-transfer/trade'
 import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
 import { Amount } from 'sushi'
+import { EvmNative, USDC } from 'sushi/evm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { StepState } from '../lifi/confirmation-dialog'
 import { getLayerZeroExecutionStepStates } from './execution-step-states'
 import type { LayerZeroTrackedExecution } from './hooks/use-layerzero-executions'
+import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 import { LayerZeroTradeButton } from './trade-button'
 import { LayerZeroTradeReviewDialog } from './trade-review-dialog'
 
-const { useXswap, approve, useApproved, mutate, setOpen, confirm } = vi.hoisted(
-  () => ({
-    useXswap: vi.fn(),
-    approve: vi.fn(),
-    useApproved: vi.fn(),
-    mutate: vi.fn(),
-    setOpen: vi.fn(),
-    confirm: vi.fn(),
-  }),
-)
+const {
+  useXswap,
+  approve,
+  approvalReady,
+  prepareApprovals,
+  success,
+  useApproved,
+  mutate,
+  setOpen,
+  confirm,
+} = vi.hoisted(() => ({
+  useXswap: vi.fn(),
+  approve: vi.fn(),
+  approvalReady: { value: true },
+  prepareApprovals: vi.fn(),
+  success: vi.fn(),
+  useApproved: vi.fn(),
+  mutate: vi.fn(),
+  setOpen: vi.fn(),
+  confirm: vi.fn(),
+}))
 vi.mock('./xswap-provider', () => ({ useLayerZeroXSwap: useXswap }))
 vi.mock('../lifi/xswap-provider', () => ({
   useLifiXSwap: vi.fn(),
   useLifiXSwapSelectedTradeRoute: vi.fn(),
+}))
+vi.mock('./hooks/use-value-transfer-approvals', () => ({
+  useValueTransferApprovals: prepareApprovals,
 }))
 vi.mock('./hooks/use-layerzero-execute', () => ({
   useLayerZeroExecute: () => ({ mutate }),
@@ -47,7 +64,13 @@ vi.mock('src/lib/wagmi/systems/checker/provider', () => ({ useApproved }))
 vi.mock('src/lib/wagmi/systems/checker/approve-erc20', () => ({
   ApproveERC20: (props: PropsWithChildren<{ enabled: boolean }>) => {
     approve(props)
-    return props.children
+    return approvalReady.value ? (
+      props.children
+    ) : (
+      <button type="button" data-testid="approve-token">
+        Approve USDC
+      </button>
+    )
   },
 }))
 vi.mock('src/lib/wagmi/systems/checker/amounts', () => ({
@@ -63,7 +86,10 @@ vi.mock('src/lib/wagmi/systems/checker/network', () => ({
   Network: ({ children }: PropsWithChildren) => children,
 }))
 vi.mock('src/lib/wagmi/systems/checker/success', () => ({
-  Success: ({ children }: PropsWithChildren) => children,
+  Success: ({ children }: PropsWithChildren) => {
+    success()
+    return children
+  },
 }))
 vi.mock('~stellar/_common/ui/checker', () => ({
   Checker: { Trustline: ({ children }: PropsWithChildren) => children },
@@ -147,15 +173,20 @@ const earlier: LayerZeroTrackedExecution = {
 describe('LayerZero approval and review flow', () => {
   let root: Root
   let container: HTMLDivElement
+  let queryClient: QueryClient
 
   function render({
     currentQuote = quote,
     executions = [],
     isSubmitting = false,
+    sourceNetworkFee = { status: 'estimated', amount: 1_000n },
+    missingQuote = false,
   }: {
     currentQuote?: LayerZeroQuote
     executions?: LayerZeroTrackedExecution[]
     isSubmitting?: boolean
+    sourceNetworkFee?: LayerZeroSourceNetworkFee
+    missingQuote?: boolean
   } = {}) {
     useXswap.mockReturnValue({
       state: {
@@ -167,14 +198,16 @@ describe('LayerZero approval and review flow', () => {
         executions,
         isSubmitting,
       },
-      previewQuote: { data: currentQuote },
-      sourceNetworkFee: { status: 'loading' },
+      previewQuote: { data: missingQuote ? null : currentQuote },
+      sourceNetworkFee,
     })
     act(() =>
       root.render(
-        <LayerZeroTradeReviewDialog>
-          <LayerZeroTradeButton />
-        </LayerZeroTradeReviewDialog>,
+        <QueryClientProvider client={queryClient}>
+          <LayerZeroTradeReviewDialog>
+            <LayerZeroTradeButton />
+          </LayerZeroTradeReviewDialog>
+        </QueryClientProvider>,
       ),
     )
   }
@@ -197,6 +230,18 @@ describe('LayerZero approval and review flow', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    approvalReady.value = true
+    prepareApprovals.mockReturnValue({
+      data: [
+        {
+          amount: new Amount(USDC[1], quote.amountIn),
+          contract: '0x0000000000000000000000000000000000000001',
+        },
+      ],
+    })
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
     useApproved.mockReturnValue({ approved: true })
     container = document.createElement('div')
     document.body.append(container)
@@ -206,10 +251,77 @@ describe('LayerZero approval and review flow', () => {
   afterEach(() => {
     act(() => root.unmount())
     container.remove()
+    queryClient.clear()
   })
 
-  it('leaves route-specific approvals to the returned user steps', () => {
+  it('requires the validated VT allowance before mounting review checks', () => {
+    approvalReady.value = false
+    render({ sourceNetworkFee: { status: 'approval-required' } })
+    expect(approve).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amount: expect.objectContaining({ amount: quote.amountIn }),
+        contract: '0x0000000000000000000000000000000000000001',
+      }),
+    )
+    expect(button('approve-token').textContent).toBe('Approve USDC')
+    expect(container.querySelector('[data-testid="swap"]')).toBeNull()
+    expect(success).not.toHaveBeenCalled()
+  })
+
+  it('refreshes gas after approval and waits for the stale approval status to clear', () => {
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+    approvalReady.value = false
+    render({ sourceNetworkFee: { status: 'approval-required' } })
+    expect(invalidate).not.toHaveBeenCalled()
+    approvalReady.value = true
+    render({ sourceNetworkFee: { status: 'approval-required' } })
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ['value-transfer-source-network-fee', quote.quote.id],
+    })
+    expect(container.textContent).toContain('Estimating network fee')
+    expect(success).not.toHaveBeenCalled()
     render()
+    expect(button('swap').disabled).toBe(false)
+    expect(success).toHaveBeenCalled()
+  })
+
+  it('does not allow review while approval validation is loading or failed', () => {
+    prepareApprovals.mockReturnValue({ isPending: true })
+    render()
+    expect(container.textContent).toContain('Checking token approval')
+    expect(approve).not.toHaveBeenCalled()
+    expect(success).not.toHaveBeenCalled()
+    prepareApprovals.mockReturnValue({ isError: true })
+    render()
+    expect(container.textContent).toContain('Token approval unavailable')
+    expect(approve).not.toHaveBeenCalled()
+    expect(success).not.toHaveBeenCalled()
+  })
+
+  it('keeps genuine fee estimation failures from blocking an approved swap', () => {
+    render({ sourceNetworkFee: { status: 'unavailable' } })
+    expect(button('swap').disabled).toBe(false)
+    expect(success).toHaveBeenCalled()
+  })
+
+  it('does not mount approval checks without a quote', () => {
+    render({ missingQuote: true })
+    expect(button('swap').disabled).toBe(true)
+    expect(approve).not.toHaveBeenCalled()
+    expect(success).not.toHaveBeenCalled()
+  })
+
+  it('allows ERC20 routes with no returned approval step after their fee is ready', () => {
+    prepareApprovals.mockReturnValue({ data: [] })
+    approvalReady.value = false
+    render()
+    expect(approve).not.toHaveBeenCalled()
+    expect(button('swap').disabled).toBe(false)
+    expect(success).toHaveBeenCalled()
+  })
+
+  it('does not require ERC20 approval for native source currency', () => {
+    render({ currentQuote: { ...quote, token0: EvmNative.fromChainId(1) } })
     expect(approve).not.toHaveBeenCalled()
     expect(button('swap').disabled).toBe(false)
   })

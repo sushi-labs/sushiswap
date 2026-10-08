@@ -14,7 +14,7 @@ import {
 } from 'src/lib/swap/value-transfer/execution-test-fixtures'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { Amount } from 'sushi'
-import type { Hex } from 'viem'
+import { type Hex, encodeFunctionData, erc20Abi } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useLayerZeroExecute } from './use-layerzero-execute'
 import {
@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => ({
   useApproved: vi.fn(),
   send: vi.fn(),
   estimate: vi.fn(),
+  allowance: vi.fn(),
   wait: vi.fn(),
   sign: vi.fn(),
   clear: vi.fn(),
@@ -56,6 +57,7 @@ vi.mock(
 vi.mock('wagmi', () => ({
   usePublicClient: () => ({
     estimateGas: mocks.estimate,
+    readContract: mocks.allowance,
     waitForTransactionReceipt: mocks.wait,
   }),
   useSendTransaction: () => ({ sendTransactionAsync: mocks.send }),
@@ -123,6 +125,7 @@ describe('Value Transfer sequential execution', () => {
     currentQuote = makeExecutionTrade()
     mocks.useApproved.mockReturnValue({ approved: true })
     mocks.estimate.mockResolvedValue(100_000n)
+    mocks.allowance.mockResolvedValue(currentQuote.amountIn)
     mocks.send.mockResolvedValue(txHash)
     mocks.wait.mockResolvedValue({ status: 'success', transactionHash: txHash })
     mocks.sign.mockResolvedValue('0x1234')
@@ -164,7 +167,7 @@ describe('Value Transfer sequential execution', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('rebuilds the reviewed quote and confirms approval before sending the bridge', async () => {
+  it('rechecks pre-review approval and skips cached approval steps before sending the bridge', async () => {
     await act(async () => {
       await execute.mutateAsync({ id: 'first', quote: currentQuote })
     })
@@ -174,9 +177,9 @@ describe('Value Transfer sequential execution', () => {
         body: JSON.stringify({ quoteId: currentQuote.quote.id }),
       }),
     )
-    expect(mocks.send).toHaveBeenCalledTimes(2)
-    expect(mocks.wait.mock.invocationCallOrder[0]).toBeLessThan(
-      mocks.send.mock.invocationCallOrder[1],
+    expect(mocks.send).toHaveBeenCalledTimes(1)
+    expect(mocks.allowance.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.send.mock.invocationCallOrder[0],
     )
     expect(mocks.send).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -194,19 +197,57 @@ describe('Value Transfer sequential execution', () => {
     expect(executions.isSubmitting).toBe(false)
   })
 
-  it('does not send a bridge after approval failure', async () => {
-    mocks.wait.mockResolvedValueOnce({
-      status: 'reverted',
-      transactionHash: txHash,
-    })
+  it('requires a new review if allowance is no longer sufficient', async () => {
+    mocks.allowance.mockResolvedValue(currentQuote.amountIn - 1n)
     await act(async () => {
       await expect(
         execute.mutateAsync({ id: 'first', quote: currentQuote }),
-      ).rejects.toThrow('reverted')
+      ).rejects.toThrow('Token approval is required. Review the swap again.')
     })
-    expect(mocks.send).toHaveBeenCalledTimes(1)
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
     expect(executions.executions[0]).toMatchObject({ sourceStatus: 'FAILED' })
     expect(executions.executions[0]?.txHash).toBeUndefined()
+  })
+
+  it('skips an obsolete allowance reset as well as the satisfied approval', async () => {
+    const steps = currentQuote.quote.userSteps ?? []
+    const approval = steps[0]
+    if (approval?.type !== 'TRANSACTION' || approval.chainType !== 'EVM')
+      throw new Error('Expected EVM approval fixture')
+    currentQuote.quote.userSteps = [
+      {
+        ...approval,
+        transaction: {
+          encoded: {
+            ...approval.transaction.encoded,
+            data: encodeFunctionData({
+              abi: erc20Abi,
+              functionName: 'approve',
+              args: [metadata.base.deployments.transferDelegate.address, 0n],
+            }),
+          },
+        },
+      },
+      ...steps,
+    ]
+    await act(async () => {
+      await execute.mutateAsync({ id: 'first', quote: currentQuote })
+    })
+    expect(mocks.allowance).toHaveBeenCalledTimes(2)
+    expect(mocks.send).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not send or sign when the approval recheck fails', async () => {
+    mocks.allowance.mockRejectedValue(new Error('RPC unavailable'))
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('RPC unavailable')
+    })
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
+    expect(executions.isSubmitting).toBe(false)
   })
 
   it('does not send when current-state simulation fails', async () => {
@@ -221,9 +262,7 @@ describe('Value Transfer sequential execution', () => {
   })
 
   it('retains a broadcast hash and uncertainty when source confirmation times out', async () => {
-    mocks.wait
-      .mockResolvedValueOnce({ status: 'success', transactionHash: txHash })
-      .mockRejectedValueOnce(new Error('RPC timeout'))
+    mocks.wait.mockRejectedValueOnce(new Error('RPC timeout'))
     await act(async () => {
       await expect(
         execute.mutateAsync({ id: 'first', quote: currentQuote }),
@@ -244,9 +283,10 @@ describe('Value Transfer sequential execution', () => {
   })
 
   it('tracks confirmed bridge reverts as failed', async () => {
-    mocks.wait
-      .mockResolvedValueOnce({ status: 'success', transactionHash: txHash })
-      .mockResolvedValueOnce({ status: 'reverted', transactionHash: txHash })
+    mocks.wait.mockResolvedValueOnce({
+      status: 'reverted',
+      transactionHash: txHash,
+    })
     await act(async () => {
       await expect(
         execute.mutateAsync({ id: 'first', quote: currentQuote }),
@@ -259,13 +299,13 @@ describe('Value Transfer sequential execution', () => {
     expect(mocks.failed).toHaveBeenCalledOnce()
   })
 
-  it('submits Aori signatures after approval and tracks by quote ID without using the approval hash', async () => {
+  it('submits Aori signatures with existing approval and tracks by quote ID', async () => {
     currentQuote = makeExecutionTrade(true)
     render()
     await act(async () => {
       await execute.mutateAsync({ id: 'first', quote: currentQuote })
     })
-    expect(mocks.send).toHaveBeenCalledTimes(1)
+    expect(mocks.send).not.toHaveBeenCalled()
     expect(mocks.sign).toHaveBeenCalledWith(
       expect.objectContaining({ primaryType: 'Order', account: sender }),
     )

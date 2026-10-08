@@ -47,7 +47,7 @@ import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { isEvmChainId } from 'sushi/evm'
 import { isStellarAccountAddress } from 'sushi/stellar'
-import type { Hex, PublicClient } from 'viem'
+import { type Hex, type PublicClient, decodeFunctionData, erc20Abi } from 'viem'
 import { usePublicClient, useSendTransaction, useSignTypedData } from 'wagmi'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 import { useLayerZeroXSwap } from '../xswap-provider'
@@ -90,7 +90,10 @@ export function useLayerZeroExecute(): UseMutationResult<
   const publicClient = usePublicClient({
     chainId: isEvmChainId(chainId0) ? chainId0 : undefined,
   }) as
-    | Pick<PublicClient, 'estimateGas' | 'waitForTransactionReceipt'>
+    | Pick<
+        PublicClient,
+        'estimateGas' | 'waitForTransactionReceipt' | 'readContract'
+      >
     | undefined
   const { sendTransactionAsync } = useSendTransaction()
   const { signTypedDataAsync } = useSignTypedData()
@@ -192,17 +195,38 @@ export function useLayerZeroExecute(): UseMutationResult<
           if (!publicClient || !isEvmChainId(reviewed.fromChainId))
             throw new Error('Connect the source EVM wallet')
           const encoded = step.transaction.encoded
+          if (approval) {
+            const decoded = decodeFunctionData({
+              abi: erc20Abi,
+              data: encoded.data,
+            })
+            if (decoded.functionName !== 'approve')
+              throw new Error('Invalid token approval')
+            const [spender] = decoded.args
+            const allowance = await publicClient.readContract({
+              address: encoded.to,
+              abi: erc20Abi,
+              functionName: 'allowance',
+              args: [step.signerAddress, spender],
+            })
+            if (allowance < reviewed.amountIn)
+              throw new Error(
+                'Token approval is required. Review the swap again.',
+              )
+            // Approval is completed before review. Rebuilt steps can retain
+            // the approval or its zero reset, so never send it a second time.
+            continue
+          }
           const request = {
             account: step.signerAddress,
             to: encoded.to,
             data: encoded.data,
             value: BigInt(encoded.value ?? '0'),
           }
-          // Estimate the exact API calldata against current state, after each prior approval confirms.
+          // Estimate the exact API calldata against the approved current state.
           const gas = await publicClient.estimateGas(request)
           assertWallets(reviewed)
-          if (!approval)
-            updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
+          updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
           let hash: Hex
           try {
             hash = await sendTransactionAsync({
@@ -211,19 +235,17 @@ export function useLayerZeroExecute(): UseMutationResult<
               chainId: reviewed.fromChainId,
             } as Parameters<typeof sendTransactionAsync>[0])
           } catch (error) {
-            if (!approval && isUserRejectedError(error))
+            if (isUserRejectedError(error))
               updateExecution(id, { submitted: false, sourceStatus: 'FAILED' })
             throw error
           }
-          if (!approval) {
-            txHash = hash
-            updateExecution(id, {
-              txHash,
-              submitted: true,
-              sourceStatus: 'PENDING',
-            })
-            clearSwapAmountIfUnchanged(reviewed)
-          }
+          txHash = hash
+          updateExecution(id, {
+            txHash,
+            submitted: true,
+            sourceStatus: 'PENDING',
+          })
+          clearSwapAmountIfUnchanged(reviewed)
           let replacementReason:
             | 'repriced'
             | 'replaced'
@@ -233,24 +255,23 @@ export function useLayerZeroExecute(): UseMutationResult<
             hash,
             onReplaced: ({ reason, transactionReceipt }) => {
               replacementReason = reason
-              if (!approval)
-                updateExecution(id, {
-                  txHash: transactionReceipt.transactionHash,
-                })
+              updateExecution(id, {
+                txHash: transactionReceipt.transactionHash,
+              })
             },
           })
           if (
             receipt.status !== 'success' ||
             replacementReason === 'cancelled'
           ) {
-            if (!approval) updateExecution(id, { sourceStatus: 'FAILED' })
+            updateExecution(id, { sourceStatus: 'FAILED' })
             throw new Error('The source transaction reverted or was cancelled')
           }
           if (replacementReason === 'replaced')
             throw new Error(
               'The source transaction was replaced. Check the existing transaction before sending again.',
             )
-          if (!approval) txHash = receipt.transactionHash
+          txHash = receipt.transactionHash
         } else if (step.chainType === 'SOLANA') {
           const data = step.transaction.encoded.data
           validateValueTransferSolanaTransaction(data, step.signerAddress)

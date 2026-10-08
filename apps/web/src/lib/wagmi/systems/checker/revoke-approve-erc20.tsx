@@ -28,6 +28,7 @@ interface RevokeApproveERC20Props extends ButtonProps {
   amount: Amount<EvmCurrency> | undefined
   contract: EvmAddress | undefined
   enabled?: boolean
+  requiresReset?: boolean
 }
 
 // Tokens that require resetting allowance to zero before setting a new amount
@@ -52,12 +53,13 @@ function RevokeApproveERC20({
   fullWidth = true,
   size = 'xl',
   enabled = true,
+  requiresReset = false,
   ...props
 }: RevokeApproveERC20Props) {
   const allowanceEnabled =
     enabled &&
     amount?.currency?.chainId &&
-    isResetApprovalToken(amount.currency.wrap())
+    (requiresReset || isResetApprovalToken(amount.currency.wrap()))
 
   const { address } = useConnection()
 

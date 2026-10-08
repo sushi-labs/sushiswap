@@ -14,6 +14,7 @@ import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-
 import { StellarToken } from 'sushi/stellar'
 import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useIsLayerZeroXSwapMaintenance } from './hooks/use-is-layerzero-xswap-maintenance'
+import { LayerZeroTradeApproval } from './trade-approval'
 import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroTradeButton(): ReactNode {
@@ -28,15 +29,15 @@ export function LayerZeroTradeButton(): ReactNode {
       isUnsupportedPair,
     },
     previewQuote,
+    sourceNetworkFee,
   } = useLayerZeroXSwap()
   const sourceAccount = useAccount(chainId0)
   const destinationAccount = useAccount(chainId1)
   const { data: maintenance } = useIsLayerZeroXSwapMaintenance()
   const isLoading = previewQuote.isLoading || previewQuote.isFetching
-  const ready =
+  const checksReady =
     !maintenance &&
     !isSubmitting &&
-    !isLoading &&
     Boolean(
       sourceAccount &&
         destinationAccount &&
@@ -44,6 +45,28 @@ export function LayerZeroTradeButton(): ReactNode {
         previewQuote.data &&
         !previewQuote.error,
     )
+
+  const ready = checksReady && !isLoading
+
+  const swapButton = (
+    <DialogTrigger asChild>
+      <Button fullWidth size="xl" disabled={!ready} testId="swap">
+        {isSubmitting ? (
+          <Dots>Submitting swap</Dots>
+        ) : !swapAmount?.gt(0n) ? (
+          'Enter amount'
+        ) : isLoading ? (
+          <Dots>Loading quote</Dots>
+        ) : isUnsupportedPair || previewQuote.data === null ? (
+          'No route found'
+        ) : previewQuote.error ? (
+          'Quote unavailable'
+        ) : (
+          'Swap'
+        )}
+      </Button>
+    </DialogTrigger>
+  )
 
   return (
     <div className="mt-4">
@@ -56,31 +79,14 @@ export function LayerZeroTradeButton(): ReactNode {
                   <StellarChecker.Trustline
                     token={token1 instanceof StellarToken ? token1 : undefined}
                   >
-                    <Success tag={APPROVE_TAG_XSWAP}>
-                      <DialogTrigger asChild>
-                        <Button
-                          fullWidth
-                          size="xl"
-                          disabled={!ready}
-                          testId="swap"
-                        >
-                          {isSubmitting ? (
-                            <Dots>Submitting swap</Dots>
-                          ) : !swapAmount?.gt(0n) ? (
-                            'Enter amount'
-                          ) : isLoading ? (
-                            <Dots>Loading quote</Dots>
-                          ) : isUnsupportedPair ||
-                            previewQuote.data === null ? (
-                            'No route found'
-                          ) : previewQuote.error ? (
-                            'Quote unavailable'
-                          ) : (
-                            'Swap'
-                          )}
-                        </Button>
-                      </DialogTrigger>
-                    </Success>
+                    <LayerZeroTradeApproval
+                      quote={previewQuote.data}
+                      sourceNetworkFee={sourceNetworkFee}
+                      enabled={checksReady}
+                      fallback={swapButton}
+                    >
+                      <Success tag={APPROVE_TAG_XSWAP}>{swapButton}</Success>
+                    </LayerZeroTradeApproval>
                   </StellarChecker.Trustline>
                 </Amounts>
               </StockTokenRegion>

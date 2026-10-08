@@ -36,6 +36,7 @@ interface ApproveERC20Props<TChainId extends EvmChainId | SvmChainId>
   amount: Amount<CurrencyFor<TChainId>> | undefined
   contract: AddressFor<TChainId> | undefined
   enabled?: boolean
+  requiresReset?: boolean
 }
 
 function ApproveERC20<TChainId extends EvmChainId | SvmChainId>(
@@ -46,10 +47,15 @@ function ApproveERC20<TChainId extends EvmChainId | SvmChainId>(
   }
 
   const _props = props as ApproveERC20Props<EvmChainId>
+  const { requiresReset, ...approveProps } = _props
 
   return (
-    <RevokeApproveERC20 {..._props} id={`revoke-${_props.id}`}>
-      <_ApproveERC20 {..._props} />
+    <RevokeApproveERC20
+      {...approveProps}
+      requiresReset={requiresReset}
+      id={`revoke-${_props.id}`}
+    >
+      <_ApproveERC20 {...approveProps} />
     </RevokeApproveERC20>
   )
 }
