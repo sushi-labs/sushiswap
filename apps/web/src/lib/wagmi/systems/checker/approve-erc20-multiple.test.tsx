@@ -101,7 +101,7 @@ describe('ERC20 approval reset requirements', () => {
   let root: Root
   let container: HTMLDivElement
 
-  function render(requiresReset?: boolean, token = USDC[42161]): void {
+  function render(token = USDC[42161]): void {
     act(() => {
       root.render(
         <ApproveERC20Multiple
@@ -110,7 +110,6 @@ describe('ERC20 approval reset requirements', () => {
             {
               amount: new Amount(token, 10n),
               contract: '0x0000000000000000000000000000000000000002',
-              requiresReset,
             },
           ]}
         >
@@ -133,8 +132,8 @@ describe('ERC20 approval reset requirements', () => {
     container.remove()
   })
 
-  it('resets an API-required allowance outside the known token list before approving', () => {
-    render(true)
+  it('preserves the existing known-token reset behavior', () => {
+    render(USDT[1])
     expect(useAllowance).toHaveBeenLastCalledWith(
       expect.objectContaining({ enabled: true }),
     )
@@ -145,21 +144,22 @@ describe('ERC20 approval reset requirements', () => {
       '[data-testid="revoke-approval-0"]',
     )
     expect(reset).not.toBeNull()
-    expect(reset?.hasAttribute('requiresreset')).toBe(false)
     act(() => reset?.click())
     expect(revoke).toHaveBeenCalledOnce()
     expect(approve).not.toHaveBeenCalled()
     allowance.amount = 0n
-    render(true)
+    render(USDT[1])
     expect(container.querySelector('[data-testid="approval-0"]')).not.toBeNull()
-    expect(container.querySelector('[requiresreset]')).toBeNull()
+    expect(
+      container.querySelector('[data-testid="revoke-approval-0"]'),
+    ).toBeNull()
   })
 
   it.each([10n, 11n])(
     'does not revoke a sufficient allowance of %s',
     (amount) => {
       allowance.amount = amount
-      render(true)
+      render(USDT[1])
       expect(useRevoke).toHaveBeenLastCalledWith(
         expect.objectContaining({ enabled: false }),
       )
@@ -167,21 +167,11 @@ describe('ERC20 approval reset requirements', () => {
     },
   )
 
-  it('preserves ordinary approval when no reset requirement is supplied', () => {
+  it('preserves ordinary approval for tokens outside the known reset list', () => {
     render()
     expect(useAllowance).toHaveBeenLastCalledWith(
       expect.objectContaining({ enabled: false }),
     )
     expect(container.querySelector('[data-testid="approval-0"]')).not.toBeNull()
-  })
-
-  it('preserves the existing known-token reset behavior', () => {
-    render(undefined, USDT[1])
-    expect(useRevoke).toHaveBeenLastCalledWith(
-      expect.objectContaining({ enabled: true }),
-    )
-    expect(
-      container.querySelector('[data-testid="revoke-approval-0"]'),
-    ).not.toBeNull()
   })
 })

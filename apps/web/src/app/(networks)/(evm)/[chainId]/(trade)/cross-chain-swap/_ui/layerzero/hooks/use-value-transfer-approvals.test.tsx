@@ -130,7 +130,6 @@ describe('Value Transfer approval preparation', () => {
     expect(approvals[0].amount.amount).toBe(quote.amountIn)
     expect(approvals[0].amount.currency).toBe(quote.token0)
     expect(approvals[0].contract.toLowerCase()).toBe(delegate.toLowerCase())
-    expect(approvals[0].requiresReset).toBeUndefined()
   })
 
   it('deduplicates reset and approval steps without approving zero', () => {
@@ -151,7 +150,6 @@ describe('Value Transfer approval preparation', () => {
     )
     expect(approvals).toHaveLength(1)
     expect(approvals[0].amount.amount).toBe(quote.amountIn)
-    expect(approvals[0].requiresReset).toBe(true)
   })
 
   it.each([

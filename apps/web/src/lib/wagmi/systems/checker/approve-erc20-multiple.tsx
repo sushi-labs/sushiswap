@@ -13,7 +13,6 @@ interface ApproveERC20MultipleProps<TChainId extends EvmChainId | SvmChainId>
   amounts: {
     amount: Amount<CurrencyFor<TChainId>>
     contract: AddressFor<TChainId>
-    requiresReset?: boolean
   }[]
   enabled?: boolean
   index?: number
@@ -43,7 +42,6 @@ function ApproveERC20Multiple<TChainId extends EvmChainId | SvmChainId>({
       id={`${id}-${_index}`}
       amount={amounts[_index].amount}
       contract={amounts[_index].contract}
-      requiresReset={amounts[_index].requiresReset}
     >
       <ApproveERC20Multiple
         {...props}

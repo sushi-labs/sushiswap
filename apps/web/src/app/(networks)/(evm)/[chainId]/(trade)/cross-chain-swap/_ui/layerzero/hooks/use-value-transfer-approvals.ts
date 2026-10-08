@@ -21,7 +21,6 @@ import { decodeFunctionData, erc20Abi } from 'viem'
 export interface ValueTransferApproval {
   amount: Amount<EvmToken>
   contract: EvmAddress
-  requiresReset?: boolean
 }
 
 export function getValueTransferApprovals(
@@ -52,16 +51,11 @@ export function getValueTransferApprovals(
     })
     if (decoded.functionName !== 'approve')
       throw new Error('Invalid token approval')
-    const [spender, approvedAmount] = decoded.args
-    const requiresReset =
-      approvedAmount === 0n ||
-      approvals.get(spender.toLowerCase())?.requiresReset
-    // Reset and approve steps share one allowance requirement. The existing
-    // ERC20 checker handles the reset when the token requires it.
+    const [spender] = decoded.args
+    // Reuse Sushi's allowance checks once per spender for the full input amount.
     approvals.set(spender.toLowerCase(), {
       amount: new Amount(quote.token0, quote.amountIn),
       contract: spender,
-      ...(requiresReset ? { requiresReset: true } : {}),
     })
   }
   return [...approvals.values()]
