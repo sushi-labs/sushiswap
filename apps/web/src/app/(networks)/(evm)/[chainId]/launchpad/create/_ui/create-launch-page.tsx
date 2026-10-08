@@ -266,7 +266,7 @@ export function SushiV2CreateLaunchPage({
       x: '',
       telegram: '',
       initialBuyAmount: '0',
-      liquidityMode: 'MOON',
+      liquidityMode: 'STANDARD',
       feeDisposition: 'BUYBACK_AND_BURN',
     },
   })
