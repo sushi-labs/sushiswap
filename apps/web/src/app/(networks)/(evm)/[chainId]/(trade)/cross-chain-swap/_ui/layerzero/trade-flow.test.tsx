@@ -390,10 +390,18 @@ describe('LayerZero approval and review flow', () => {
       ],
     })
     track()
-    expect(container.textContent).toContain('Do not resend this transfer')
+    expect(container.textContent).toContain(
+      'Waiting for your transaction to be confirmed on Ethereum',
+    )
+    expect(
+      container.querySelector(
+        'a[href="https://layerzeroscan.com/tx/0xearlier"]',
+      ),
+    ).not.toBeNull()
     expect(container.querySelector('#swap-dialog-close')?.textContent).toBe(
       'Close',
     )
+    expect(mutate).not.toHaveBeenCalled()
     expect(button('swap').disabled).toBe(false)
     render({
       executions: [
@@ -410,7 +418,7 @@ describe('LayerZero approval and review flow', () => {
       ],
     })
     expect(container.textContent).toContain('Sent 1 USDC')
-    expect(container.textContent).not.toContain('Do not resend this transfer')
+    expect(container.textContent).not.toContain('Waiting for your transaction')
   })
 
   it('tracks a submitted signature even before it has an on-chain hash', () => {

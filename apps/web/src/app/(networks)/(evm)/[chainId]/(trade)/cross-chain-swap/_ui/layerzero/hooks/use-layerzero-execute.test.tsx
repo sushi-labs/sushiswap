@@ -350,7 +350,8 @@ describe('Value Transfer sequential execution', () => {
       expect(executions.isSubmitting).toBe(false)
       expect(review.open).toBe(false)
       expect(confirmation.open).toBe(true)
-      expect(mocks.clear).toHaveBeenCalledExactlyOnceWith(currentQuote)
+      expect(mocks.clear).toHaveBeenCalledOnce()
+      expect(mocks.clear).toHaveBeenCalledWith(currentQuote)
       expect(mocks.success).toHaveBeenCalledOnce()
       expect(mocks.failed).not.toHaveBeenCalled()
       expect(mocks.info).not.toHaveBeenCalled()
@@ -371,6 +372,8 @@ describe('Value Transfer sequential execution', () => {
     })
     expect(mocks.info).toHaveBeenCalledOnce()
     expect(mocks.failed).not.toHaveBeenCalled()
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
     act(() => {
       expect(executions.mutate.beginExecution('duplicate', currentQuote)).toBe(
         false,
