@@ -4,7 +4,6 @@ import type { IconComponent } from '../../../types'
 import { ApeNaked } from './ape-naked'
 import { AptosNaked } from './aptos-naked'
 import { ArbitrumNaked } from './arbitrum-naked'
-import { ArbitrumNovaNaked } from './arbitrum-nova-naked'
 import { ArcNaked } from './arc-naked'
 import { AvalancheNaked } from './avalanche-naked'
 import { BaseNaked } from './base-naked'
@@ -47,7 +46,6 @@ import { SolanaNaked } from './solana-naked'
 import { SonicNaked } from './sonic-naked'
 import { StellarNaked } from './stellar-naked'
 import { TaikoNaked } from './taiko-naked'
-import { ThunderCoreNaked } from './thunder-core-naked'
 import { XLayerNaked } from './x-layer-naked'
 import { ZetaChainNaked } from './zeta-chain-naked'
 import { ZKLinkNaked } from './zk-link-naked'
@@ -56,7 +54,6 @@ import { ZKSyncNaked } from './zk-sync-naked'
 export * from './ape-naked'
 export * from './aptos-naked'
 export * from './arbitrum-naked'
-export * from './arbitrum-nova-naked'
 export * from './arc-naked'
 export * from './avalanche-naked'
 export * from './base-naked'
@@ -126,12 +123,10 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.OPTIMISM]: OptimismNaked,
   [ChainId.KAVA]: KavaNaked,
   [ChainId.METIS]: MetisNaked,
-  [ChainId.ARBITRUM_NOVA]: ArbitrumNovaNaked,
   [ChainId.BOBA]: BobaNaked,
   [ChainId.BOBA_BNB]: BobaBNBNaked,
   [ChainId.BTTC]: BttcNaked,
   [ChainId.POLYGON_ZKEVM]: PolygonZKNaked,
-  [ChainId.THUNDERCORE]: ThunderCoreNaked,
   [ChainId.HAQQ]: HaqqNaked,
   [ChainId.CORE]: CoreNaked,
   [ChainId.ZKSYNC_ERA]: ZKSyncNaked,
