@@ -4,7 +4,6 @@ import type { IconComponent } from '../../../types'
 import { ApeCircle } from './ape-circle'
 import { AptosCircle } from './aptos-circle'
 import { ArbitrumCircle } from './arbitrum-circle'
-import { ArbitrumNovaCircle } from './arbitrum-nova-circle'
 import { ArcCircle } from './arc-circle'
 import { AvalancheCircle } from './avalanche-circle'
 import { BaseCircle } from './base-circle'
@@ -46,7 +45,6 @@ import { SolanaCircle } from './solana-circle'
 import { SonicCircle } from './sonic-circle'
 import { StellarCircle } from './stellar-circle'
 import { TaikoCircle } from './taiko-circle'
-import { ThunderCoreCircle } from './thunder-core-circle'
 import { XLayerCircle } from './x-layer-circle'
 import { ZetaChainCircle } from './zeta-chain-circle'
 import { ZKLinkCircle } from './zk-link-circle'
@@ -55,7 +53,6 @@ import { ZKSyncCircle } from './zk-sync-circle'
 export * from './ape-circle'
 export * from './aptos-circle'
 export * from './arbitrum-circle'
-export * from './arbitrum-nova-circle'
 export * from './arc-circle'
 export * from './avalanche-circle'
 export * from './base-circle'
@@ -126,12 +123,10 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.OPTIMISM]: OptimismCircle,
   [ChainId.METIS]: MetisCircle,
   [ChainId.KAVA]: KavaCircle,
-  [ChainId.ARBITRUM_NOVA]: ArbitrumNovaCircle,
   [ChainId.BOBA]: BobaCircle,
   [ChainId.BOBA_BNB]: BobaBNBCircle,
   [ChainId.BTTC]: BttcCircle,
   [ChainId.POLYGON_ZKEVM]: PolygonZKCircle,
-  [ChainId.THUNDERCORE]: ThunderCoreCircle,
   [ChainId.HAQQ]: HaqqCircle,
   [ChainId.CORE]: CoreCircle,
   [ChainId.ZKSYNC_ERA]: ZKSyncCircle,
