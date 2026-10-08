@@ -1,7 +1,7 @@
 import { SkeletonText } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { useCurrencyPrice } from 'src/app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-currency-price'
-import type { LayerZeroChainId } from 'src/lib/swap/layerzero/config'
+import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
 import { Amount, formatNumber, formatUSD } from 'sushi'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 
@@ -11,7 +11,7 @@ export function SourceNetworkFee({
   display = 'native',
 }: {
   fee: LayerZeroSourceNetworkFee
-  currency: CurrencyFor<LayerZeroChainId>
+  currency: CurrencyFor<ValueTransferChainId>
   display?: 'native' | 'usd'
 }): ReactNode {
   const price = useCurrencyPrice({
@@ -39,11 +39,12 @@ export function SourceNetworkFee({
         ) : (
           'N/A'
         )
-      if (display === 'usd') return usd
+      const nativeFee = `${formatNumber(amount.toString())} ${currency.symbol}`
+      if (display === 'usd')
+        return amountUSD !== undefined || price.isLoading ? usd : nativeFee
       return (
         <span>
-          {formatNumber(amount.toString())} {currency.symbol}{' '}
-          <span className="text-muted-foreground">({usd})</span>
+          {nativeFee} <span className="text-muted-foreground">({usd})</span>
         </span>
       )
     }
@@ -58,7 +59,7 @@ export function SourceNetworkFee({
     case 'unavailable': {
       const message = {
         'connect-wallet': 'Connect wallets to estimate',
-        'approval-required': 'Available after USDT approval',
+        'approval-required': 'Available after token approval',
         unavailable: 'Estimate unavailable',
       }[fee.status]
       return display === 'usd' ? <span title={message}>N/A</span> : message

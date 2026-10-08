@@ -15,6 +15,7 @@ export interface UseCrossChainTradeRoutesParms<
   toAddress?: AddressFor<TChainId1>
   slippage: Percent
   order?: 'CHEAPEST' | 'FASTEST'
+  enabled?: boolean
 }
 
 export function useCrossChainTradeRoutes<
@@ -70,6 +71,8 @@ export function useCrossChainTradeRoutes<
       return routes
     },
     refetchInterval: ms('20s'),
-    enabled: Boolean(params.toToken && params.fromAmount?.gt(0n)),
+    enabled: Boolean(
+      params.enabled !== false && params.toToken && params.fromAmount?.gt(0n),
+    ),
   })
 }

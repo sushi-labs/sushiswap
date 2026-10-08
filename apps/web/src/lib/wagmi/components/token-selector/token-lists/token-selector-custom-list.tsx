@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import type { WalletAddressFor } from 'src/lib/wallet'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import type { TokenSelectorChainId } from '../config'
+import { matchesCurrencySearch } from '../hooks/additional-search-tokens'
 import { useMyTokens } from '../hooks/use-my-tokens'
 import { useTokenSelectorTheme } from '../token-selector-theme'
 import { TokenSelectorCurrencyList } from './common/token-selector-currency-list'
@@ -47,18 +48,9 @@ export function TokenSelectorCustomList<TChainId extends TokenSelectorChainId>({
   })
 
   const filteredCurrencies = useMemo(() => {
-    if (!search) return currencies
-
-    const searchLower = search.toLowerCase()
-
-    const matchingCurrencies = currencies.filter((currency) => {
-      if (currency.symbol?.toLowerCase().includes(searchLower)) return true
-      if (currency.name?.toLowerCase().includes(searchLower)) return true
-
-      return false
-    })
-
-    return matchingCurrencies
+    return currencies.filter((currency) =>
+      matchesCurrencySearch(currency, search),
+    )
   }, [currencies, search])
 
   return (

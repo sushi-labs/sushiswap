@@ -2,19 +2,18 @@
 
 import { type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import { getLayerZeroTokenAddress } from 'src/lib/swap/layerzero/config'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CrossChainSwapWidget } from './cross-chain-swap-widget'
 import { XSwapMaintenanceMessage } from './xswap-maintenance-message'
 
 const {
-  useForm,
+  useRouting,
   searchParams,
   lifiMaintenance,
   nearMaintenance,
   layerZeroMaintenance,
 } = vi.hoisted(() => ({
-  useForm: vi.fn(),
+  useRouting: vi.fn(),
   searchParams: vi.fn(),
   lifiMaintenance: vi.fn(),
   nearMaintenance: vi.fn(),
@@ -25,12 +24,15 @@ vi.mock('next/navigation', () => ({
   useParams: () => ({ chainId: '1' }),
   useSearchParams: searchParams,
 }))
-vi.mock('./xswap-form-provider', () => ({ useXSwapForm: useForm }))
+vi.mock('./xswap-routing-context', () => ({ useXSwapRouting: useRouting }))
 vi.mock('@sushiswap/ui', () => ({
   Message: ({ children }: PropsWithChildren) => <div>{children}</div>,
 }))
 vi.mock('./layerzero/cross-chain-swap-widget', () => ({
   LayerZeroCrossChainSwapWidget: () => <div>LayerZero</div>,
+}))
+vi.mock('./layerzero/trade-review-dialog', () => ({
+  LayerZeroTradeReviewDialog: ({ children }: PropsWithChildren) => children,
 }))
 vi.mock('./near-intents/cross-chain-swap-widget', () => ({
   NearIntentsCrossChainSwapWidget: () => <div>NEAR Intents</div>,
@@ -70,19 +72,6 @@ describe('cross-chain widget provider consistency', () => {
   let root: Root
   let container: HTMLDivElement
 
-  function setForm(
-    chainId0: number,
-    chainId1: number,
-    token0Param?: string,
-    token1Param?: string,
-  ) {
-    useForm.mockReturnValue({ chainId0, chainId1, token0Param, token1Param })
-    const params = new URLSearchParams({ chainId1: String(chainId1) })
-    if (token0Param) params.set('token0', token0Param)
-    if (token1Param) params.set('token1', token1Param)
-    searchParams.mockReturnValue(params)
-  }
-
   beforeEach(() => {
     vi.resetAllMocks()
     lifiMaintenance.mockReturnValue({ data: false })
@@ -98,45 +87,28 @@ describe('cross-chain widget provider consistency', () => {
     container.remove()
   })
 
-  it('uses the same source chain as the quote providers after a native-history network change', () => {
-    setForm(
-      42161,
-      -4,
-      getLayerZeroTokenAddress(42161),
-      getLayerZeroTokenAddress(-4),
-    )
-    act(() => root.render(<CrossChainSwapWidget />))
-    expect(container.textContent).toBe('LayerZero')
+  it('renders the selected provider without adding a provider selector', () => {
+    for (const [mode, text] of [
+      ['lifi', 'LiFi'],
+      ['near-intents', 'NEAR Intents'],
+      ['layerzero', 'LayerZero'],
+    ]) {
+      useRouting.mockReturnValue(mode)
+      act(() => root.render(<CrossChainSwapWidget />))
+      expect(container.textContent).toBe(text)
+    }
   })
 
-  it('uses the Stellar source from the form instead of a stale route parameter', () => {
-    setForm(-4, 1, getLayerZeroTokenAddress(-4), getLayerZeroTokenAddress(1))
-    act(() => root.render(<CrossChainSwapWidget />))
-    expect(container.textContent).toBe('LayerZero')
-  })
-
-  it('selects the maintenance flag for the active form provider', () => {
-    setForm(
-      42161,
-      -4,
-      getLayerZeroTokenAddress(42161),
-      getLayerZeroTokenAddress(-4),
-    )
-    layerZeroMaintenance.mockReturnValue({ data: true })
-    act(() => root.render(<XSwapMaintenanceMessage />))
-    expect(container.textContent).toContain('undergoing maintenance')
-    layerZeroMaintenance.mockReturnValue({ data: false })
+  it('uses the maintenance flag of the selected fallback provider', () => {
+    useRouting.mockReturnValue('layerzero')
     nearMaintenance.mockReturnValue({ data: true })
     act(() => root.render(<XSwapMaintenanceMessage />))
     expect(container.textContent).toBe('')
-  })
-
-  it('keeps other Stellar tokens on NEAR Intents and EVM-only swaps on LiFi', () => {
-    setForm(-4, 1, 'NATIVE')
-    act(() => root.render(<CrossChainSwapWidget />))
-    expect(container.textContent).toBe('NEAR Intents')
-    setForm(42161, 1)
-    act(() => root.render(<CrossChainSwapWidget />))
-    expect(container.textContent).toBe('LiFi')
+    layerZeroMaintenance.mockReturnValue({ data: true })
+    act(() => root.render(<XSwapMaintenanceMessage />))
+    expect(container.textContent).toContain('undergoing maintenance')
+    useRouting.mockReturnValue('lifi')
+    act(() => root.render(<XSwapMaintenanceMessage />))
+    expect(container.textContent).toBe('')
   })
 })

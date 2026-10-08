@@ -127,7 +127,7 @@ export function CrossChainSwapTradeStats<
                 'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
               )}
             >
-              {isLoading || !trade?.priceImpact ? (
+              {isLoading ? (
                 <SkeletonBox className="h-4 py-0.5 w-[40px]" />
               ) : trade?.priceImpact ? (
                 `${
@@ -137,7 +137,9 @@ export function CrossChainSwapTradeStats<
                       ? '-'
                       : ''
                 }${Math.abs(Number((trade?.priceImpact?.toNumber() * 100).toFixed(2)))}%`
-              ) : null}
+              ) : (
+                'Unavailable'
+              )}
             </span>
           </div>
 

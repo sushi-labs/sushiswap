@@ -1,32 +1,25 @@
 'use client'
 
-import {
-  LIFI_XSWAP_SUPPORTED_CHAIN_IDS,
-  type LifiXSwapSupportedChainId,
-  getSortedChainIds,
-} from 'src/config'
-import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
+import type { LifiXSwapSupportedChainId } from 'src/config'
+import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { isWNativeSupported } from 'sushi'
-import { StellarChainId } from 'sushi/stellar'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
+import { useXSwapForm } from '../xswap-form-provider'
 import { useLifiXSwap } from './xswap-provider'
 
-const lifiNetworks = getSortedChainIds(LIFI_XSWAP_SUPPORTED_CHAIN_IDS)
+const networks = VALUE_TRANSFER_SUPPORTED_CHAIN_IDS
 
 export function CrossChainSwapToken0Input<
   TChainId0 extends LifiXSwapSupportedChainId,
   TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
-    state: { swapAmountString, chainId0, chainId1, token0 },
-    mutate: { setSwapAmount, setToken0, setChainId0 },
+    state: { swapAmountString, chainId0, token0 },
+    mutate: { setSwapAmount, setToken0 },
     isToken0Loading: isLoading,
   } = useLifiXSwap<TChainId0, TChainId1>()
 
-  const networks = isNearIntentsChainId(chainId1)
-    ? [...lifiNetworks, StellarChainId.STELLAR]
-    : lifiNetworks
-
+  const form = useXSwapForm()
   return (
     <XSwapCurrencyInput
       id="swap-from"
@@ -42,7 +35,7 @@ export function CrossChainSwapToken0Input<
       label="Sell"
       networks={networks}
       selectedNetwork={chainId0}
-      onNetworkChange={(network) => setChainId0(network as TChainId0)}
+      onNetworkChange={form.setChainId0}
     />
   )
 }

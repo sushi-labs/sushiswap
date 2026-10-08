@@ -22,6 +22,7 @@ export function getLayerZeroExecutionStepStates(
     return { ...idle, source: StepState.Success, bridge: StepState.Failed }
   if (execution?.sourceStatus === 'SUCCESS')
     return { ...idle, source: StepState.Success, bridge: StepState.Pending }
-  if (execution?.txHash) return { ...idle, source: StepState.Pending }
+  if (execution?.txHash || execution?.submitted)
+    return { ...idle, source: StepState.Pending }
   return idle
 }

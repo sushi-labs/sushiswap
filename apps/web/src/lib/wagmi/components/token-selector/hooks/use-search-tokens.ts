@@ -5,10 +5,9 @@ import {
 import { useCustomTokens } from '@sushiswap/hooks'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import {
-  type TokenListTokenMetadata,
-  createTokenListToken,
-} from './token-list-token'
+import { useAdditionalCurrencies } from '../additional-currencies-provider'
+import { mergeAdditionalSearchTokens } from './additional-search-tokens'
+import { createTokenListToken } from './token-list-token'
 
 type TokenSearchApprovalStatus = 'APPROVED' | 'PERMISSIONLESS'
 
@@ -28,11 +27,6 @@ type UseSearchTokens<TChainId extends TokenListChainId> = {
   }
 }
 
-type UseSearchTokensDataReturn<TChainId extends TokenListChainId> = TokenFor<
-  TChainId,
-  TokenListTokenMetadata
->[]
-
 export function useSearchTokens<TChainId extends TokenListChainId>({
   chainId,
   search,
@@ -40,6 +34,7 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
   pagination: _pagination,
 }: UseSearchTokens<TChainId>) {
   const pagination = _pagination || { pageSize: 50, initialPage: 0 }
+  const additionalCurrencies = useAdditionalCurrencies()
 
   const { data: _customTokens } = useCustomTokens({ chainId })
   const customTokens = useMemo(() => {
@@ -83,17 +78,25 @@ export function useSearchTokens<TChainId extends TokenListChainId>({
   })
 
   const data = useMemo(() => {
-    if (!query.data || !chainId) return undefined
-
-    return query.data.pages
+    if (!chainId) return undefined
+    const listedTokens = (query.data?.pages ?? [])
       .flat()
       .map((token) => createTokenListToken(chainId, token))
-  }, [chainId, query.data]) as UseSearchTokensDataReturn<TChainId> | undefined
+    const tokens = mergeAdditionalSearchTokens(
+      chainId,
+      listedTokens,
+      additionalCurrencies,
+      search,
+    )
+    return !query.data && !tokens.length ? undefined : tokens
+  }, [chainId, query.data, additionalCurrencies, search])
 
   return useMemo(
     () => ({
       ...query,
       data,
+      isLoading: query.isLoading && !data?.length,
+      isError: query.isError && !data?.length,
       hasMore:
         query.data?.pages[query.data.pages.length - 1].length ===
         pagination.pageSize,

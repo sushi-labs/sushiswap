@@ -1,18 +1,19 @@
 'use client'
 
-import { NEAR_INTENTS_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/near-intents/types'
+import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { Amount } from 'sushi'
 import { isStellarChainId } from 'sushi/stellar'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
+import { useXSwapForm } from '../xswap-form-provider'
 import { getNearIntentsSelectableCurrencies } from './hooks/use-near-intents-currency-catalog'
 import { useNearIntentsXSwap } from './xswap-provider'
 
-const networks = NEAR_INTENTS_SUPPORTED_CHAIN_IDS
+const networks = VALUE_TRANSFER_SUPPORTED_CHAIN_IDS
 
 export function NearIntentsCrossChainSwapToken1Input() {
   const {
     state: { chainId0, chainId1, token1 },
-    mutate: { setChainId1, setToken1 },
+    mutate: { setToken1 },
     currenciesByChain,
     isLoadingTokens,
     previewQuote,
@@ -27,6 +28,7 @@ export function NearIntentsCrossChainSwapToken1Input() {
     token1 && previewQuote.data?.quote.amountOut
       ? new Amount(token1, previewQuote.data.quote.amountOut).toSignificant()
       : ''
+  const form = useXSwapForm()
   return (
     <XSwapCurrencyInput
       id="swap-to"
@@ -45,7 +47,7 @@ export function NearIntentsCrossChainSwapToken1Input() {
       currencies={currencies}
       networks={networks}
       selectedNetwork={chainId1}
-      onNetworkChange={(network) => setChainId1(network)}
+      onNetworkChange={form.setChainId1}
     />
   )
 }

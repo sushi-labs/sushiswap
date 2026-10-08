@@ -1,24 +1,32 @@
 /** @vitest-environment jsdom */
 
 import {
-  Account,
-  Contract,
-  Networks,
-  Transaction,
-  TransactionBuilder,
-  xdr,
-} from '@stellar/stellar-sdk'
-import {
   QueryClient,
   QueryClientProvider,
   notifyManager,
 } from '@tanstack/react-query'
 import { act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import { getLayerZeroCurrency } from 'src/lib/swap/layerzero/tokens'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import {
+  makeExecutionTrade,
+  metadata,
+  sender,
+} from 'src/lib/swap/value-transfer/execution-test-fixtures'
+import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import {
+  DialogProvider,
+  DialogType,
+  type UseDialog,
+  useDialog,
+} from 'src/lib/transaction-dialog/dialog-provider'
 import { Amount } from 'sushi'
-import type { Hex } from 'viem'
+import {
+  type Hex,
+  TransactionExecutionError,
+  UserRejectedRequestError,
+  encodeFunctionData,
+  erc20Abi,
+} from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useLayerZeroExecute } from './use-layerzero-execute'
 import {
@@ -26,88 +34,58 @@ import {
   useLayerZeroExecutions,
 } from './use-layerzero-executions'
 
-const {
-  useXswap,
-  useApproved,
-  writeContract,
-  readContract,
-  simulateContract,
-  waitForReceipt,
-  fetchQuote,
-  checkRecipient,
-  buildStellarSend,
-  signStellarTransaction,
-  submitStellarTransaction,
-  clearAmount,
-  successToast,
-  failedToast,
-  infoToast,
-  refetchChain,
-} = vi.hoisted(() => ({
+const mocks = vi.hoisted(() => ({
   useXswap: vi.fn(),
   useApproved: vi.fn(),
-  writeContract: vi.fn(),
-  readContract: vi.fn(),
-  simulateContract: vi.fn(),
-  waitForReceipt: vi.fn(),
-  fetchQuote: vi.fn(),
-  checkRecipient: vi.fn(),
-  buildStellarSend: vi.fn(),
-  signStellarTransaction: vi.fn(),
-  submitStellarTransaction: vi.fn(),
-  clearAmount: vi.fn(),
-  successToast: vi.fn(),
-  failedToast: vi.fn(),
-  infoToast: vi.fn(),
-  refetchChain: vi.fn(),
+  send: vi.fn(),
+  estimate: vi.fn(),
+  allowance: vi.fn(),
+  wait: vi.fn(),
+  sign: vi.fn(),
+  clear: vi.fn(),
+  success: vi.fn(),
+  failed: vi.fn(),
+  info: vi.fn(),
+  refetch: vi.fn(),
 }))
-vi.mock('../xswap-provider', () => ({ useLayerZeroXSwap: useXswap }))
+vi.mock('../xswap-provider', () => ({ useLayerZeroXSwap: mocks.useXswap }))
 vi.mock('src/lib/constants', () => ({
   APPROVE_TAG_XSWAP: 'xswap',
   TOAST_AUTOCLOSE_TIME: 5000,
 }))
-vi.mock('src/lib/wagmi/systems/checker/provider', () => ({ useApproved }))
-vi.mock('src/lib/wallet/hooks/use-account', () => ({
-  useAccount: (chainId: number) =>
-    chainId === -4
-      ? 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
-      : '0x000000000000000000000000000000000000dEaD',
+vi.mock('src/lib/wagmi/systems/checker/provider', () => ({
+  useApproved: mocks.useApproved,
 }))
-vi.mock('src/lib/hooks/use-slippage-tolerance', () => ({
-  useSlippageTolerance: () => [{ toNumber: () => 0.005 }],
+vi.mock('src/lib/wallet/hooks/use-account', () => ({
+  useAccount: () => '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
 }))
 vi.mock('./use-is-layerzero-xswap-maintenance', () => ({
   useIsLayerZeroXSwapMaintenance: () => ({ data: false }),
 }))
 vi.mock(
   '../../../../../../_common/ui/balance-provider/use-refetch-balances',
-  () => ({ useRefetchBalances: () => ({ refetchChain }) }),
+  () => ({ useRefetchBalances: () => ({ refetchChain: mocks.refetch }) }),
 )
 vi.mock('wagmi', () => ({
   usePublicClient: () => ({
-    readContract,
-    simulateContract,
-    waitForTransactionReceipt: waitForReceipt,
+    estimateGas: mocks.estimate,
+    readContract: mocks.allowance,
+    waitForTransactionReceipt: mocks.wait,
   }),
-  useWriteContract: () => ({ writeContractAsync: writeContract }),
+  useSendTransaction: () => ({ sendTransactionAsync: mocks.send }),
+  useSignTypedData: () => ({ signTypedDataAsync: mocks.sign }),
 }))
 vi.mock('@sushiswap/notifications', () => ({
-  createSuccessToast: successToast,
-  createFailedToast: failedToast,
-  createInfoToast: infoToast,
+  createSuccessToast: mocks.success,
+  createFailedToast: mocks.failed,
+  createInfoToast: mocks.info,
 }))
-vi.mock('src/lib/swap/layerzero/quote', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('src/lib/swap/layerzero/quote')>()),
-  fetchLayerZeroQuote: fetchQuote,
+vi.mock('src/lib/svm/hooks/use-svm-sign-transaction', () => ({
+  useSvmSignTransaction: () => ({ signTransaction: vi.fn() }),
 }))
-vi.mock('src/lib/swap/layerzero/stellar', () => ({
-  assertStellarUsdt0Recipient: checkRecipient,
-  buildStellarOftSend: buildStellarSend,
-}))
+vi.mock('src/lib/svm/rpc', () => ({ getSvmRpc: vi.fn() }))
 vi.mock('src/lib/wallet/namespaces/stellar/config', () => ({
-  getStellarWalletKit: async () => ({
-    signTransaction: signStellarTransaction,
-  }),
+  getStellarWalletKit: vi.fn(),
 }))
 vi.mock(
   'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client',
@@ -115,87 +93,68 @@ vi.mock(
 )
 vi.mock(
   'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/transaction-helpers',
-  () => ({
-    submitTransaction: submitStellarTransaction,
-    waitForTransaction: vi.fn(),
-  }),
+  () => ({ submitTransaction: vi.fn(), waitForTransaction: vi.fn() }),
 )
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
-
 const txHash: Hex = `0x${'1'.repeat(64)}`
-const quote: LayerZeroQuote = {
-  fromChainId: 1,
-  toChainId: -4,
-  sourceAddress: '0x000000000000000000000000000000000000dEaD',
-  recipient: 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-  amountIn: 1_000_000n,
-  amountSent: 1_000_000n,
-  amountOut: 10_000_000n,
-  minAmountOut: 9_950_000n,
-  nativeFee: 1_000n,
-  maxNativeFee: 1_100n,
-  sendParam: {
-    dstEid: 30600,
-    to: '0x',
-    amountLD: 1_000_000n,
-    minAmountLD: 995_000n,
-    extraOptions: '0x',
-    composeMsg: '0x',
-    oftCmd: '0x',
-  },
-}
+const fetchMock = vi.fn<typeof fetch>()
 
-describe('LayerZero execution approval and submission safety', () => {
+describe('Value Transfer sequential execution', () => {
   let root: Root
   let container: HTMLDivElement
   let client: QueryClient
   let executions: LayerZeroExecutionState
   let execute: ReturnType<typeof useLayerZeroExecute>
-  let currentQuote: LayerZeroQuote
+  let currentQuote: ValueTransferTrade
+  let review: UseDialog<DialogType.Review>
+  let confirmation: UseDialog<DialogType.Confirm>
 
   function Harness() {
+    review = useDialog(DialogType.Review)
+    confirmation = useDialog(DialogType.Confirm)
     executions = useLayerZeroExecutions()
-    useXswap.mockReturnValue({
+    mocks.useXswap.mockReturnValue({
       state: {
         chainId0: currentQuote.fromChainId,
         chainId1: currentQuote.toChainId,
-        swapAmount: new Amount(
-          getLayerZeroCurrency(currentQuote.fromChainId),
-          currentQuote.amountIn,
-        ),
+        swapAmount: new Amount(currentQuote.token0, currentQuote.amountIn),
+        token0: currentQuote.token0,
+        token1: currentQuote.token1,
       },
-      mutate: { ...executions.mutate, clearSwapAmountIfUnchanged: clearAmount },
+      mutate: { ...executions.mutate, clearSwapAmountIfUnchanged: mocks.clear },
     })
     execute = useLayerZeroExecute()
     return null
   }
-
   function render() {
     act(() =>
       root.render(
         <QueryClientProvider client={client}>
-          <Harness />
+          <DialogProvider>
+            <Harness />
+          </DialogProvider>
         </QueryClientProvider>,
       ),
     )
   }
-
   beforeEach(() => {
     vi.resetAllMocks()
-    currentQuote = quote
-    useApproved.mockReturnValue({ approved: true })
-    readContract.mockResolvedValue(quote.amountIn)
-    fetchQuote.mockResolvedValue(quote)
-    writeContract.mockResolvedValue(txHash)
-    waitForReceipt.mockResolvedValue({
-      status: 'success',
-      transactionHash: txHash,
+    currentQuote = makeExecutionTrade()
+    mocks.useApproved.mockReturnValue({ approved: true })
+    mocks.estimate.mockResolvedValue(100_000n)
+    mocks.allowance.mockResolvedValue(currentQuote.amountIn)
+    mocks.send.mockResolvedValue(txHash)
+    mocks.wait.mockResolvedValue({ status: 'success', transactionHash: txHash })
+    mocks.sign.mockResolvedValue('0x1234')
+    fetchMock.mockImplementation(async (url) => {
+      if (String(url).endsWith('/build-user-steps'))
+        return Response.json({ userSteps: currentQuote.quote.userSteps })
+      if (String(url).endsWith('/metadata')) return Response.json(metadata)
+      if (String(url).endsWith('/submit-signature')) return Response.json({})
+      return Response.json({ status: 'PENDING' })
     })
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => Response.json({ status: 'PENDING' })),
-    )
+    vi.stubGlobal('fetch', fetchMock)
     notifyManager.setNotifyFunction((callback) => act(callback))
     client = new QueryClient({
       defaultOptions: { queries: { retry: false, gcTime: 0 } },
@@ -204,8 +163,8 @@ describe('LayerZero execution approval and submission safety', () => {
     document.body.append(container)
     root = createRoot(container)
     render()
+    act(() => review.setOpen(true))
   })
-
   afterEach(() => {
     act(() => root.unmount())
     client.clear()
@@ -215,251 +174,275 @@ describe('LayerZero execution approval and submission safety', () => {
     notifyManager.setNotifyFunction((callback) => callback())
   })
 
-  it('requires the checker to pass before submitting', async () => {
-    useApproved.mockReturnValue({ approved: false })
+  it('requires the existing checker before requesting execution', async () => {
+    mocks.useApproved.mockReturnValue({ approved: false })
     render()
     await act(async () => {
-      await expect(execute.mutateAsync({ id: 'first', quote })).rejects.toThrow(
-        'Complete the swap checks',
-      )
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('Complete the swap checks')
     })
     expect(executions.executions).toHaveLength(0)
-    expect(writeContract).not.toHaveBeenCalled()
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('does not submit when simulation fails after the checker passes', async () => {
-    simulateContract.mockRejectedValue(new Error('Insufficient allowance'))
-    await act(async () => {
-      await expect(execute.mutateAsync({ id: 'first', quote })).rejects.toThrow(
-        'Insufficient allowance',
-      )
-    })
-    expect(readContract).not.toHaveBeenCalled()
-    expect(writeContract).not.toHaveBeenCalled()
-    expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
-    expect(executions.isSubmitting).toBe(false)
-  })
-
-  it('sends once with the reviewed fee cap and minimum, then releases the source lock', async () => {
-    fetchQuote.mockResolvedValue({
-      ...quote,
-      nativeFee: 900n,
-      maxNativeFee: 990n,
-      sendParam: { ...quote.sendParam, minAmountLD: 990_000n },
-    })
-    await act(async () => {
-      await execute.mutateAsync({ id: 'first', quote })
-    })
-    expect(writeContract).toHaveBeenCalledTimes(1)
-    expect(writeContract).toHaveBeenCalledWith(
-      expect.objectContaining({
-        functionName: 'send',
-        value: quote.maxNativeFee,
-        args: [
-          quote.sendParam,
-          { nativeFee: quote.maxNativeFee, lzTokenFee: 0n },
-          quote.sourceAddress,
-        ],
-      }),
-    )
-    expect(simulateContract).toHaveBeenCalledOnce()
-    expect(readContract).not.toHaveBeenCalled()
-    expect(checkRecipient).toHaveBeenCalledWith(
-      quote.recipient,
-      quote.amountOut,
-    )
-    expect(clearAmount).toHaveBeenCalledWith(quote)
-    expect(executions.executions[0]).toMatchObject({
-      id: 'first',
-      txHash,
-      sourceStatus: 'SUCCESS',
-      quote,
-    })
-    expect(executions.isSubmitting).toBe(false)
-    expect(successToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        chainId: quote.fromChainId,
-        account: quote.sourceAddress,
-        href: `https://layerzeroscan.com/tx/${txHash}`,
-      }),
-    )
-  })
-
-  it('skips allowance reads for native OFTs that do not require approval', async () => {
-    currentQuote = { ...quote, fromChainId: 42161 }
-    fetchQuote.mockResolvedValue(currentQuote)
-    render()
+  it('rechecks pre-review approval and skips cached approval steps before sending the bridge', async () => {
     await act(async () => {
       await execute.mutateAsync({ id: 'first', quote: currentQuote })
     })
-    expect(readContract).not.toHaveBeenCalled()
-    expect(writeContract.mock.lastCall?.[0].functionName).toBe('send')
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/cross-chain/value-transfer/build-user-steps',
+      expect.objectContaining({
+        body: JSON.stringify({ quoteId: currentQuote.quote.id }),
+      }),
+    )
+    expect(mocks.send).toHaveBeenCalledTimes(1)
+    expect(mocks.allowance.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.send.mock.invocationCallOrder[0],
+    )
+    expect(mocks.send).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        chainId: 8453,
+        value: currentQuote.maxNativeFee,
+        account: sender,
+      }),
+    )
+    expect(executions.executions[0]).toMatchObject({
+      txHash,
+      sourceStatus: 'SUCCESS',
+      submitted: true,
+      quote: currentQuote,
+    })
+    expect(executions.isSubmitting).toBe(false)
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
   })
 
-  it('dispatches Stellar sources to the Stellar builder and releases the lock on failure', async () => {
-    currentQuote = {
-      ...quote,
-      fromChainId: -4,
-      toChainId: 1,
-      sourceAddress: quote.recipient,
-      recipient: quote.sourceAddress,
-    }
-    fetchQuote.mockResolvedValue(currentQuote)
-    buildStellarSend.mockRejectedValue(new Error('Stellar simulation failed'))
-    render()
+  it('requires a new review if allowance is no longer sufficient', async () => {
+    mocks.allowance.mockResolvedValue(currentQuote.amountIn - 1n)
     await act(async () => {
       await expect(
         execute.mutateAsync({ id: 'first', quote: currentQuote }),
-      ).rejects.toThrow('Stellar simulation failed')
+      ).rejects.toThrow('Token approval is required. Review the swap again.')
     })
-    expect(buildStellarSend).toHaveBeenCalledWith({
-      from: currentQuote.sourceAddress,
-      sendParam: currentQuote.sendParam,
-      nativeFee: currentQuote.maxNativeFee,
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
+    expect(executions.executions[0]).toMatchObject({ sourceStatus: 'FAILED' })
+    expect(executions.executions[0]?.txHash).toBeUndefined()
+  })
+
+  it('skips an obsolete allowance reset as well as the satisfied approval', async () => {
+    const steps = currentQuote.quote.userSteps ?? []
+    const approval = steps[0]
+    if (approval?.type !== 'TRANSACTION' || approval.chainType !== 'EVM')
+      throw new Error('Expected EVM approval fixture')
+    currentQuote.quote.userSteps = [
+      {
+        ...approval,
+        transaction: {
+          encoded: {
+            ...approval.transaction.encoded,
+            data: encodeFunctionData({
+              abi: erc20Abi,
+              functionName: 'approve',
+              args: [metadata.base.deployments.transferDelegate.address, 0n],
+            }),
+          },
+        },
+      },
+      ...steps,
+    ]
+    await act(async () => {
+      await execute.mutateAsync({ id: 'first', quote: currentQuote })
     })
-    expect(simulateContract).not.toHaveBeenCalled()
-    expect(writeContract).not.toHaveBeenCalled()
-    expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
+    expect(mocks.allowance).toHaveBeenCalledTimes(2)
+    expect(mocks.send).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not send or sign when the approval recheck fails', async () => {
+    mocks.allowance.mockRejectedValue(new Error('RPC unavailable'))
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('RPC unavailable')
+    })
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
     expect(executions.isSubmitting).toBe(false)
   })
 
-  it('preserves a broadcast hash and avoids a failure notification when confirmation times out', async () => {
-    waitForReceipt.mockRejectedValue(new Error('RPC timeout'))
+  it('does not send when current-state simulation fails', async () => {
+    mocks.estimate.mockRejectedValue(new Error('Insufficient balance'))
     await act(async () => {
-      await expect(execute.mutateAsync({ id: 'first', quote })).rejects.toThrow(
-        'RPC timeout',
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('Insufficient balance')
+    })
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(executions.isSubmitting).toBe(false)
+    expect(mocks.failed).toHaveBeenCalledOnce()
+    expect(mocks.info).not.toHaveBeenCalled()
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
+  })
+
+  it.each([
+    {
+      name: 'transaction',
+      signature: false,
+      error: new UserRejectedRequestError(new Error('User denied request')),
+    },
+    {
+      name: 'wrapped transaction',
+      signature: false,
+      error: new TransactionExecutionError(
+        new UserRejectedRequestError(new Error('User denied request')),
+        { account: null },
+      ),
+    },
+    {
+      name: 'typed data signature',
+      signature: true,
+      error: new UserRejectedRequestError(new Error('User denied request')),
+    },
+  ])(
+    'silently cancels a rejected $name and allows retrying the reviewed quote',
+    async ({ signature, error }) => {
+      currentQuote = makeExecutionTrade(signature)
+      const walletRequest = signature ? mocks.sign : mocks.send
+      walletRequest.mockRejectedValueOnce(error)
+      render()
+
+      await act(async () => {
+        await expect(
+          execute.mutateAsync({ id: 'first', quote: currentQuote }),
+        ).rejects.toBe(error)
+      })
+
+      expect(executions.executions).toHaveLength(1)
+      expect(executions.executions[0]?.txHash).toBeUndefined()
+      expect(executions.executions[0]?.submitted).not.toBe(true)
+      expect(executions.isSubmitting).toBe(false)
+      expect(review.open).toBe(true)
+      expect(confirmation.open).toBe(false)
+      expect(mocks.clear).not.toHaveBeenCalled()
+      expect(mocks.failed).not.toHaveBeenCalled()
+      expect(mocks.info).not.toHaveBeenCalled()
+      expect(mocks.success).not.toHaveBeenCalled()
+      expect(mocks.wait).not.toHaveBeenCalled()
+      expect(fetchMock).not.toHaveBeenCalledWith(
+        '/api/cross-chain/value-transfer/submit-signature',
+        expect.anything(),
       )
+
+      await act(async () => {
+        await execute.mutateAsync({ id: 'retry', quote: currentQuote })
+      })
+
+      expect(walletRequest).toHaveBeenCalledTimes(2)
+      expect(executions.executions).toHaveLength(2)
+      expect(executions.executions[1]).toMatchObject({
+        id: 'retry',
+        quote: currentQuote,
+        submitted: true,
+        sourceStatus: 'SUCCESS',
+      })
+      expect(executions.isSubmitting).toBe(false)
+      expect(review.open).toBe(false)
+      expect(confirmation.open).toBe(true)
+      expect(mocks.clear).toHaveBeenCalledOnce()
+      expect(mocks.clear).toHaveBeenCalledWith(currentQuote)
+      expect(mocks.success).toHaveBeenCalledOnce()
+      expect(mocks.failed).not.toHaveBeenCalled()
+      expect(mocks.info).not.toHaveBeenCalled()
+    },
+  )
+
+  it('retains a broadcast hash and uncertainty when source confirmation times out', async () => {
+    mocks.wait.mockRejectedValueOnce(new Error('RPC timeout'))
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('RPC timeout')
     })
     expect(executions.executions[0]).toMatchObject({
       txHash,
+      submitted: true,
       sourceStatus: 'PENDING',
-      error: 'RPC timeout',
     })
-    expect(executions.isSubmitting).toBe(false)
-    expect(failedToast).not.toHaveBeenCalled()
-    expect(infoToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        txHash,
-        href: `https://layerzeroscan.com/tx/${txHash}`,
-      }),
-    )
-  })
-
-  it('preserves the Stellar rejection code in the failed execution and notification', async () => {
-    // Avoid Node Buffer / jsdom Uint8Array realm checks in the SDK's hashing.
-    vi.spyOn(Transaction.prototype, 'hash').mockReturnValue(Buffer.alloc(32, 1))
-    currentQuote = {
-      ...quote,
-      fromChainId: -4,
-      toChainId: 1,
-      sourceAddress: quote.recipient,
-      recipient: quote.sourceAddress,
-    }
-    fetchQuote.mockResolvedValue(currentQuote)
-    const built = new TransactionBuilder(
-      new Account(
-        'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
-        '100',
-      ),
-      {
-        fee: '100',
-        networkPassphrase: Networks.PUBLIC,
-      },
-    )
-      .addOperation(
-        new Contract(
-          'CBOWOLFSDM5PZXNFIVDMP5NZ7U2GSIHED6H6R446QOHF266XINKUMMF6',
-        ).call('send'),
+    expect(mocks.info).toHaveBeenCalledOnce()
+    expect(mocks.failed).not.toHaveBeenCalled()
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
+    act(() => {
+      expect(executions.mutate.beginExecution('duplicate', currentQuote)).toBe(
+        false,
       )
-      .setTimeout(180)
-      .build()
-    const signed = TransactionBuilder.fromXDR(built.toXDR(), Networks.PUBLIC)
-    signed.signatures.push(
-      new xdr.DecoratedSignature({
-        hint: Buffer.alloc(4),
-        signature: Buffer.alloc(64),
-      }),
-    )
-    buildStellarSend.mockResolvedValue({ built, toXDR: () => built.toXDR() })
-    signStellarTransaction.mockResolvedValue({ signedTxXdr: signed.toXDR() })
-    submitStellarTransaction.mockResolvedValue({
-      result: {
-        status: 'ERROR',
-        errorResult: new xdr.TransactionResult({
-          feeCharged: new xdr.Int64(0),
-          result: xdr.TransactionResultResult.txInsufficientFee(),
-          ext: new xdr.TransactionResultExt(0),
-        }),
-      },
     })
-    render()
-
-    await act(async () => {
-      await expect(
-        execute.mutateAsync({ id: 'first', quote: currentQuote }),
-      ).rejects.toThrow('txInsufficientFee')
-    })
-
-    expect(submitStellarTransaction).toHaveBeenCalledWith(signed.toXDR())
-    expect(executions.executions[0]).toMatchObject({
-      txHash: built.hash().toString('hex'),
-      sourceStatus: 'FAILED',
-      error: 'Stellar rejected the LayerZero transaction: txInsufficientFee',
-    })
-    expect(failedToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        summary:
-          'Stellar rejected the LayerZero transaction: txInsufficientFee',
-      }),
-    )
-    expect(executions.isSubmitting).toBe(false)
   })
 
-  it('marks a confirmed source revert as failed while retaining its explorer hash', async () => {
-    waitForReceipt.mockResolvedValue({
+  it('tracks confirmed bridge reverts as failed', async () => {
+    mocks.wait.mockResolvedValueOnce({
       status: 'reverted',
       transactionHash: txHash,
     })
     await act(async () => {
-      await expect(execute.mutateAsync({ id: 'first', quote })).rejects.toThrow(
-        'reverted or was cancelled',
-      )
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('reverted')
     })
     expect(executions.executions[0]).toMatchObject({
       txHash,
       sourceStatus: 'FAILED',
     })
-    expect(infoToast).not.toHaveBeenCalled()
-    expect(failedToast).toHaveBeenCalledWith(
-      expect.objectContaining({ txHash }),
-    )
+    expect(mocks.failed).toHaveBeenCalledOnce()
   })
 
-  it('keeps source confirmation tied to the submitted quote if the form changes', async () => {
-    let finish:
-      | ((receipt: { status: string; transactionHash: Hex }) => void)
-      | undefined
-    waitForReceipt.mockImplementation(
-      () =>
-        new Promise((resolve) => {
-          finish = resolve
-        }),
-    )
-    let completion: Promise<string> | undefined
-    await act(async () => {
-      completion = execute.mutateAsync({ id: 'first', quote })
-      await vi.waitFor(() => expect(waitForReceipt).toHaveBeenCalled())
-    })
-    currentQuote = { ...quote, fromChainId: 42161, amountIn: 2_000_000n }
+  it('submits Aori signatures with existing approval and tracks by quote ID', async () => {
+    currentQuote = makeExecutionTrade(true)
     render()
     await act(async () => {
-      finish?.({ status: 'success', transactionHash: txHash })
-      await completion
+      await execute.mutateAsync({ id: 'first', quote: currentQuote })
     })
-    expect(executions.executions[0]?.quote).toEqual(quote)
-    expect(refetchChain).toHaveBeenCalledWith(1)
-    expect(successToast).toHaveBeenCalledWith(
-      expect.objectContaining({ chainId: 1, account: quote.sourceAddress }),
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(mocks.sign).toHaveBeenCalledWith(
+      expect.objectContaining({ primaryType: 'Order', account: sender }),
     )
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/cross-chain/value-transfer/submit-signature',
+      expect.objectContaining({
+        body: JSON.stringify({
+          quoteId: currentQuote.quote.id,
+          signatures: ['0x1234'],
+        }),
+      }),
+    )
+    expect(executions.executions[0]).toMatchObject({
+      submitted: true,
+      sourceStatus: 'SUCCESS',
+    })
+    expect(executions.executions[0]?.txHash).toBeUndefined()
+  })
+
+  it('retains signature submission uncertainty if its response is lost', async () => {
+    currentQuote = makeExecutionTrade(true)
+    const baseFetch = fetchMock.getMockImplementation()
+    fetchMock.mockImplementation(async (...args) => {
+      if (String(args[0]).endsWith('/submit-signature'))
+        throw new Error('HTTP timeout')
+      if (!baseFetch) throw new Error('Missing mock')
+      return baseFetch(...args)
+    })
+    render()
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('HTTP timeout')
+    })
+    expect(executions.executions[0]).toMatchObject({
+      submitted: true,
+      sourceStatus: 'PENDING',
+    })
+    expect(mocks.info).toHaveBeenCalledOnce()
   })
 })

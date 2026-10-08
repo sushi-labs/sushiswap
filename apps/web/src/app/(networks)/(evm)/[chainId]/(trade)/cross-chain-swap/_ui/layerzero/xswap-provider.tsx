@@ -1,32 +1,23 @@
 'use client'
 
-import { type UseQueryResult, useQuery } from '@tanstack/react-query'
-import ms from 'ms'
+import type { UseQueryResult } from '@tanstack/react-query'
 import {
   type ReactNode,
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
 } from 'react'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import {
-  type LayerZeroChainId,
-  getLayerZeroTokenAddress,
-  isLayerZeroChainId,
-  isLayerZeroEvmChainId,
-  isLayerZeroUsdt0Route,
-} from 'src/lib/swap/layerzero/config'
-import { fetchLayerZeroQuote } from 'src/lib/swap/layerzero/quote'
-import { getLayerZeroCurrency } from 'src/lib/swap/layerzero/tokens'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
+import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount } from 'sushi'
-import { EvmChainId } from 'sushi/evm'
-import { StellarChainId } from 'sushi/stellar'
+import { EvmChainId, isEvmChainId } from 'sushi/evm'
 import { usePublicClient } from 'wagmi'
+import { useLifiXSwap } from '../lifi/xswap-provider'
+import { useNearIntentsXSwap } from '../near-intents/xswap-provider'
 import { type XSwapFormMutators, useXSwapForm } from '../xswap-form-provider'
 import {
   type LayerZeroExecutionState,
@@ -36,24 +27,28 @@ import {
   type LayerZeroSourceNetworkFee,
   useLayerZeroSourceNetworkFee,
 } from './hooks/use-layerzero-source-network-fee'
+import { useValueTransferCatalog } from './hooks/use-value-transfer-catalog'
+import { useValueTransferQuote } from './hooks/use-value-transfer-quote'
 
 interface LayerZeroXSwapContextValue {
   state: {
-    chainId0: LayerZeroChainId
-    chainId1: LayerZeroChainId
-    token0: TokenFor<LayerZeroChainId>
-    token1: TokenFor<LayerZeroChainId>
+    chainId0: ValueTransferChainId
+    chainId1: ValueTransferChainId
+    token0: CurrencyFor<ValueTransferChainId> | undefined
+    token1: CurrencyFor<ValueTransferChainId> | undefined
     swapAmountString: string
-    swapAmount: Amount<TokenFor<LayerZeroChainId>> | undefined
+    swapAmount: Amount<CurrencyFor<ValueTransferChainId>> | undefined
     executions: LayerZeroExecutionState['executions']
     isSubmitting: boolean
+    isUnsupportedPair: boolean
   }
-  mutate: XSwapFormMutators<LayerZeroChainId, LayerZeroChainId> &
+  mutate: XSwapFormMutators<ValueTransferChainId, ValueTransferChainId> &
     LayerZeroExecutionState['mutate'] & {
-      clearSwapAmountIfUnchanged(quote: LayerZeroQuote): void
+      clearSwapAmountIfUnchanged(quote: ValueTransferTrade): void
     }
-  previewQuote: UseQueryResult<LayerZeroQuote, Error>
+  previewQuote: UseQueryResult<ValueTransferTrade | null, Error>
   sourceNetworkFee: LayerZeroSourceNetworkFee
+  catalog: ReturnType<typeof useValueTransferCatalog>
 }
 
 const LayerZeroXSwapContext = createContext<
@@ -62,124 +57,101 @@ const LayerZeroXSwapContext = createContext<
 
 export function LayerZeroXSwapProvider({
   children,
-}: { children: ReactNode }): ReactNode {
-  const form = useXSwapForm<LayerZeroChainId, LayerZeroChainId>()
-  const chainId0 = isLayerZeroChainId(form.chainId0)
-    ? form.chainId0
-    : EvmChainId.ETHEREUM
+  enabled = true,
+}: { children: ReactNode; enabled?: boolean }): ReactNode {
+  const form = useXSwapForm<ValueTransferChainId, ValueTransferChainId>()
+  const chainId0 = form.chainId0
   const chainId1 =
-    form.chainId1 && isLayerZeroChainId(form.chainId1)
-      ? form.chainId1
-      : chainId0 === StellarChainId.STELLAR
-        ? EvmChainId.ETHEREUM
-        : StellarChainId.STELLAR
-  const enabled = isLayerZeroUsdt0Route(
-    form.chainId0,
-    form.chainId1 ?? chainId1,
-    form.token0Param,
-    form.token1Param,
-  )
-  const token0 = useMemo(() => getLayerZeroCurrency(chainId0), [chainId0])
-  const token1 = useMemo(() => getLayerZeroCurrency(chainId1), [chainId1])
+    form.chainId1 ??
+    (chainId0 === EvmChainId.ARBITRUM
+      ? EvmChainId.ETHEREUM
+      : EvmChainId.ARBITRUM)
+  const catalog = useValueTransferCatalog()
+  const { state: lifi } = useLifiXSwap()
+  const { state: near } = useNearIntentsXSwap()
+  const token0 =
+    catalog.getCurrency(chainId0, form.token0Param) ??
+    (lifi.token0?.chainId === chainId0
+      ? lifi.token0
+      : near.token0?.chainId === chainId0
+        ? near.token0
+        : undefined)
+  const token1 =
+    catalog.getCurrency(chainId1, form.token1Param) ??
+    (lifi.token1?.chainId === chainId1
+      ? lifi.token1
+      : near.token1?.chainId === chainId1
+        ? near.token1
+        : undefined)
+  const srcToken = catalog.getToken(chainId0, form.token0Param)
+  const dstToken = catalog.getToken(chainId1, form.token1Param)
+  const isUnsupportedPair =
+    !catalog.isLoading &&
+    !catalog.error &&
+    Boolean(form.token0Param && form.token1Param) &&
+    (!srcToken || !dstToken)
   const swapAmount = useMemo(
-    () => Amount.tryFromHuman(token0, form.swapAmountString),
+    () =>
+      token0 ? Amount.tryFromHuman(token0, form.swapAmountString) : undefined,
     [token0, form.swapAmountString],
   )
   const sourceAddress = useAccount(chainId0)
   const recipient = useAccount(chainId1)
   const publicClient = usePublicClient({
-    chainId: isLayerZeroEvmChainId(chainId0) ? chainId0 : undefined,
+    chainId: isEvmChainId(chainId0) ? chainId0 : undefined,
   })
   const [slippagePercent] = useSlippageTolerance()
-  const slippageBps = Math.round(slippagePercent.toNumber() * 10_000)
   const executionState = useLayerZeroExecutions()
   const inputs = useRef({
     enabled,
     chainId0,
     chainId1,
     amount: swapAmount?.amount,
+    token0,
+    token1,
   })
-  inputs.current = { enabled, chainId0, chainId1, amount: swapAmount?.amount }
+  inputs.current = {
+    enabled,
+    chainId0,
+    chainId1,
+    amount: swapAmount?.amount,
+    token0,
+    token1,
+  }
   const clearSwapAmountIfUnchanged = useCallback(
-    (quote: LayerZeroQuote): void => {
+    (quote: ValueTransferTrade): void => {
       const current = inputs.current
       if (
         current.enabled &&
         current.chainId0 === quote.fromChainId &&
         current.chainId1 === quote.toChainId &&
-        current.amount === quote.amountIn
+        current.amount === quote.amountIn &&
+        current.token0?.id === quote.token0.id &&
+        current.token1?.id === quote.token1.id
       )
         form.setSwapAmount('')
     },
     [form.setSwapAmount],
   )
-
-  useEffect(() => {
-    if (!enabled) return
-    if (!form.chainId1) {
-      form.setChainId1(chainId1)
-      return
-    }
-    // EvmToken and the existing currency catalog use lowercase address keys.
-    if (
-      form.token0Param !== getLayerZeroTokenAddress(chainId0) ||
-      form.token1Param !== getLayerZeroTokenAddress(chainId1)
-    ) {
-      form.setTokenParams(
-        getLayerZeroTokenAddress(chainId0),
-        getLayerZeroTokenAddress(chainId1),
-      )
-    }
-  }, [
+  const previewQuote = useValueTransferQuote({
+    token0,
+    token1,
+    srcToken,
+    dstToken,
+    srcChain: catalog.getChain(chainId0),
+    dstChain: catalog.getChain(chainId1),
+    amount: swapAmount?.amount,
+    sourceAddress,
+    recipient,
+    slippageBps: Math.round(slippagePercent.toNumber() * 10_000),
     enabled,
-    chainId0,
-    chainId1,
-    form.chainId1,
-    form.token0Param,
-    form.token1Param,
-    form.setChainId1,
-    form.setTokenParams,
-  ])
-
-  const previewQuote = useQuery({
-    queryKey: [
-      'layerzero-quote',
-      chainId0,
-      chainId1,
-      swapAmount?.amount.toString(),
-      slippageBps,
-      sourceAddress,
-      recipient,
-    ],
-    queryFn: () => {
-      if (!swapAmount?.gt(0n)) throw new Error('Enter an amount')
-      return fetchLayerZeroQuote({
-        fromChainId: chainId0,
-        toChainId: chainId1,
-        amount: swapAmount.amount,
-        slippageBps,
-        sourceAddress,
-        recipient,
-        publicClient,
-      })
-    },
-    enabled:
-      enabled &&
-      Boolean(swapAmount?.gt(0n)) &&
-      (chainId0 === StellarChainId.STELLAR || Boolean(publicClient)),
-    staleTime: ms('30s'),
-    refetchInterval: ms('30s'),
-    // Quotes are read-only: recover transient RPC/spec-loading failures without
-    // requiring an amount edit or waiting for the next 30-second refresh.
-    retry: 2,
+    order: lifi.routeOrder,
   })
-
   const sourceNetworkFee = useLayerZeroSourceNetworkFee({
-    quote: previewQuote.data,
+    quote: previewQuote.data ?? undefined,
     enabled: enabled && Boolean(swapAmount?.gt(0n)) && !previewQuote.isError,
     publicClient,
   })
-
   return (
     <LayerZeroXSwapContext.Provider
       value={{
@@ -192,6 +164,7 @@ export function LayerZeroXSwapProvider({
           swapAmountString: form.swapAmountString,
           executions: executionState.executions,
           isSubmitting: executionState.isSubmitting,
+          isUnsupportedPair,
         },
         mutate: {
           ...form,
@@ -200,6 +173,7 @@ export function LayerZeroXSwapProvider({
         },
         previewQuote,
         sourceNetworkFee,
+        catalog,
       }}
     >
       {children}

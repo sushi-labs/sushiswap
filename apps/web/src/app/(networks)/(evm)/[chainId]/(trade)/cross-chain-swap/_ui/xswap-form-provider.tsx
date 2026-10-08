@@ -1,7 +1,7 @@
 'use client'
 
 import { nanoid } from 'nanoid'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
   type Dispatch,
   type FC,
@@ -9,6 +9,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
@@ -27,14 +28,6 @@ type XSwapChainId = LifiXSwapSupportedChainId | NearIntentsSupportedChainId
 
 const isXSwapChainId = (chainId: number): chainId is XSwapChainId =>
   isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
-
-// Two chains share a `providers.tsx` branch when both their LiFi and Near
-// support flags match. Crossing branches (e.g. EVM-only ↔ Stellar) requires a
-// real Next navigation so the server-rendered Providers re-mounts the right
-// domain provider.
-const sameXSwapBranch = (a: XSwapChainId, b: XSwapChainId) =>
-  isLifiXSwapSupportedChainId(a) === isLifiXSwapSupportedChainId(b) &&
-  isNearIntentsChainId(a) === isNearIntentsChainId(b)
 
 interface XSwapFormStateValues<
   TChainId0 extends XSwapChainId = XSwapChainId,
@@ -87,12 +80,13 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
   children,
   defaultChainId,
 }) => {
-  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
   const [chainId0State, setChainId0State] =
     useState<XSwapChainId>(defaultChainId)
+
+  useEffect(() => setChainId0State(defaultChainId), [defaultChainId])
 
   const chainId0 = isXSwapChainId(chainId0State)
     ? chainId0State
@@ -140,13 +134,9 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
       { name: 'chainId1', value: chainId0.toString() },
     ])}`
 
-    if (sameXSwapBranch(chainId0, chainId1)) {
-      history.pushState(null, '', url)
-      setChainId0State(chainId1)
-    } else {
-      router.push(url, { scroll: false })
-    }
-  }, [chainId0, chainId1, pathname, searchParams, createQueryString, router])
+    history.pushState(null, '', url)
+    setChainId0State(chainId1)
+  }, [chainId0, chainId1, pathname, searchParams, createQueryString])
 
   const setChainId0 = useCallback(
     (newChainId: XSwapChainId) => {
@@ -162,14 +152,10 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
         ],
       )}`
 
-      if (sameXSwapBranch(chainId0, newChainId)) {
-        history.pushState(null, '', url)
-        setChainId0State(newChainId)
-      } else {
-        router.push(url, { scroll: false })
-      }
+      history.pushState(null, '', url)
+      setChainId0State(newChainId)
     },
-    [chainId0, chainId1, pathname, createQueryString, router, switchTokens],
+    [chainId1, pathname, createQueryString, switchTokens],
   )
 
   const setChainId1 = useCallback(

@@ -18,6 +18,7 @@ import {
   DialogType,
   useDialog,
 } from 'src/lib/transaction-dialog'
+import { useXSwapRoutingLock } from '../xswap-routing-context'
 import {
   ConfirmationDialogContent,
   Divider,
@@ -88,6 +89,8 @@ function CrossChainSwapTradeReviewDialogContent<
   const { open: confirmDialogOpen, setOpen: setConfirmOpen } = useDialog(
     DialogType.Confirm,
   )
+  const { open: reviewOpen } = useDialog(DialogType.Review)
+  useXSwapRoutingLock('lifi', reviewOpen || confirmDialogOpen || isWritePending)
   useEffect(() => {
     if (!confirmDialogOpen) {
       setStepStates({

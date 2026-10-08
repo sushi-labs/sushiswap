@@ -38,7 +38,6 @@
     "@heroicons/react": "2.0.13",
     "@heroicons/react-v1": "npm:@heroicons/react@1.0.6",
     "@hookform/resolvers": "3.3.1",
-    "@layerzerolabs/scan-client": "0.0.6",
     "@martianwallet/aptos-wallet-adapter": "0.0.5",
     "@metamask/sdk": "0.33.1",
     "@msafe/aptos-wallet-adapter": "1.1.3",

@@ -3,12 +3,7 @@
 import { Button, DialogTrigger, Dots } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
-import {
-  LAYERZERO_USDT0_EVM_DEPLOYMENTS,
-  isLayerZeroEvmChainId,
-} from 'src/lib/swap/layerzero/config'
 import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
-import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
 import { Guard } from 'src/lib/wagmi/systems/checker/guard'
 import { Network } from 'src/lib/wagmi/systems/checker/network'
@@ -16,27 +11,33 @@ import { StockTokenRegion } from 'src/lib/wagmi/systems/checker/stock-token-regi
 import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
-import { Amount } from 'sushi'
-import { EvmToken } from 'sushi/evm'
-import { STELLAR_USDT0, StellarChainId } from 'sushi/stellar'
+import { StellarToken } from 'sushi/stellar'
 import { Checker as StellarChecker } from '~stellar/_common/ui/checker'
 import { useIsLayerZeroXSwapMaintenance } from './hooks/use-is-layerzero-xswap-maintenance'
-import { LayerZeroTradeReviewDialog } from './trade-review-dialog'
+import { LayerZeroTradeApproval } from './trade-approval'
 import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroTradeButton(): ReactNode {
   const {
-    state: { chainId0, chainId1, swapAmount, isSubmitting, token0, token1 },
+    state: {
+      chainId0,
+      chainId1,
+      swapAmount,
+      isSubmitting,
+      token0,
+      token1,
+      isUnsupportedPair,
+    },
     previewQuote,
+    sourceNetworkFee,
   } = useLayerZeroXSwap()
   const sourceAccount = useAccount(chainId0)
   const destinationAccount = useAccount(chainId1)
   const { data: maintenance } = useIsLayerZeroXSwapMaintenance()
-  const isLoading = previewQuote.isPending || previewQuote.isFetching
-  const ready =
+  const isLoading = previewQuote.isLoading || previewQuote.isFetching
+  const checksReady =
     !maintenance &&
     !isSubmitting &&
-    !isLoading &&
     Boolean(
       sourceAccount &&
         destinationAccount &&
@@ -44,16 +45,31 @@ export function LayerZeroTradeButton(): ReactNode {
         previewQuote.data &&
         !previewQuote.error,
     )
-  const deployment = isLayerZeroEvmChainId(chainId0)
-    ? LAYERZERO_USDT0_EVM_DEPLOYMENTS[chainId0]
-    : undefined
-  const approvalAmount =
-    swapAmount?.currency instanceof EvmToken
-      ? new Amount(swapAmount.currency, swapAmount.amount)
-      : undefined
+
+  const ready = checksReady && !isLoading
+
+  const swapButton = (
+    <DialogTrigger asChild>
+      <Button fullWidth size="xl" disabled={!ready} testId="swap">
+        {isSubmitting ? (
+          <Dots>Submitting swap</Dots>
+        ) : !swapAmount?.gt(0n) ? (
+          'Enter amount'
+        ) : isLoading ? (
+          <Dots>Loading quote</Dots>
+        ) : isUnsupportedPair || previewQuote.data === null ? (
+          'No route found'
+        ) : previewQuote.error ? (
+          'Quote unavailable'
+        ) : (
+          'Swap'
+        )}
+      </Button>
+    </DialogTrigger>
+  )
 
   return (
-    <LayerZeroTradeReviewDialog>
+    <div className="mt-4">
       <Guard guardWhen={maintenance} guardText="Maintenance in progress">
         <Connect fullWidth namespace={getNamespaceForChainId(chainId0)}>
           <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
@@ -61,46 +77,16 @@ export function LayerZeroTradeButton(): ReactNode {
               <StockTokenRegion token0={token0} token1={token1}>
                 <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
                   <StellarChecker.Trustline
-                    token={
-                      chainId1 === StellarChainId.STELLAR
-                        ? STELLAR_USDT0[StellarChainId.STELLAR]
-                        : undefined
-                    }
+                    token={token1 instanceof StellarToken ? token1 : undefined}
                   >
-                    <ApproveERC20
-                      id="approve-erc20"
-                      fullWidth
-                      amount={approvalAmount}
-                      contract={
-                        deployment?.approvalRequired
-                          ? deployment.oftAddress
-                          : undefined
-                      }
-                      enabled={ready && Boolean(deployment?.approvalRequired)}
+                    <LayerZeroTradeApproval
+                      quote={previewQuote.data}
+                      sourceNetworkFee={sourceNetworkFee}
+                      enabled={checksReady}
+                      fallback={swapButton}
                     >
-                      <Success tag={APPROVE_TAG_XSWAP}>
-                        <DialogTrigger asChild>
-                          <Button
-                            fullWidth
-                            size="xl"
-                            disabled={!ready}
-                            testId="swap"
-                          >
-                            {isSubmitting ? (
-                              <Dots>Submitting swap</Dots>
-                            ) : !swapAmount?.gt(0n) ? (
-                              'Enter amount'
-                            ) : isLoading ? (
-                              <Dots>Loading quote</Dots>
-                            ) : previewQuote.error ? (
-                              'Quote unavailable'
-                            ) : (
-                              'Swap'
-                            )}
-                          </Button>
-                        </DialogTrigger>
-                      </Success>
-                    </ApproveERC20>
+                      <Success tag={APPROVE_TAG_XSWAP}>{swapButton}</Success>
+                    </LayerZeroTradeApproval>
                   </StellarChecker.Trustline>
                 </Amounts>
               </StockTokenRegion>
@@ -108,6 +94,6 @@ export function LayerZeroTradeButton(): ReactNode {
           </Connect>
         </Connect>
       </Guard>
-    </LayerZeroTradeReviewDialog>
+    </div>
   )
 }

@@ -1,14 +1,11 @@
 'use client'
 
-import { Button, List, SelectIcon, SkeletonText } from '@sushiswap/ui'
+import { Button, List, SelectIcon } from '@sushiswap/ui'
 import { type ReactNode, useId, useState } from 'react'
-import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import type { LayerZeroQuote } from 'src/lib/swap/layerzero/types'
-import { getChainById, shortenAddress } from 'sushi'
-import { StellarChainId } from 'sushi/stellar'
+import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import { formatUSD, getChainById, shortenAddress } from 'sushi'
 import { SendAction, VerticalDivider } from '../lifi/route-view'
 import type { LayerZeroTradeAmounts } from './get-trade-amounts'
-import { useLayerZeroArrivalEstimate } from './hooks/use-layerzero-arrival-estimate'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 import { SourceNetworkFee } from './source-network-fee'
 
@@ -17,25 +14,15 @@ export function LayerZeroTradeDetails({
   amounts,
   sourceNetworkFee,
 }: {
-  quote: LayerZeroQuote
+  quote: ValueTransferTrade
   amounts: LayerZeroTradeAmounts
   sourceNetworkFee: LayerZeroSourceNetworkFee
 }): ReactNode {
   const [showMore, setShowMore] = useState(false)
-  const [slippagePercent] = useSlippageTolerance()
   const detailsId = useId()
-  const arrivalEstimate = useLayerZeroArrivalEstimate(
-    quote.fromChainId,
-    quote.toChainId,
-  )
-  const estimatedSeconds = arrivalEstimate.isError
-    ? undefined
-    : arrivalEstimate.data?.estimatedSeconds
-  const estimatedMinutes = estimatedSeconds
-    ? Math.ceil(estimatedSeconds / 60)
+  const estimatedMinutes = quote.estimatedSeconds
+    ? Math.max(1, Math.ceil(quote.estimatedSeconds / 60))
     : undefined
-  const isFallbackEstimate =
-    !estimatedSeconds && quote.fromChainId === StellarChainId.STELLAR
 
   return (
     <>
@@ -43,36 +30,17 @@ export function LayerZeroTradeDetails({
         <List.Control>
           <List.KeyValue
             title="Estimated arrival"
-            subtitle={
-              isFallbackEstimate
-                ? 'Approximate time after sending from Stellar. Actual arrival time may vary.'
-                : 'Typical time after sending, based on recent transfers on these networks.'
-            }
+            subtitle="Estimated time after sending. Actual arrival time may vary."
           >
-            {arrivalEstimate.isLoading ? (
-              <span aria-label="Loading arrival estimate">
-                <SkeletonText
-                  align="right"
-                  fontSize="sm"
-                  className="min-w-24"
-                />
-              </span>
-            ) : estimatedMinutes ? (
-              `~${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}`
-            ) : (
-              <span>~30 minutes</span>
-            )}
+            {estimatedMinutes
+              ? `~${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}`
+              : 'Estimate unavailable'}
           </List.KeyValue>
           <List.KeyValue
-            title="LayerZero fee"
-            subtitle={
-              showMore
-                ? 'Includes a 10% buffer. Unused messaging fees are refunded.'
-                : 'Source network gas is additional.'
-            }
+            title="Protocol fees"
+            subtitle="Total route fees, including native messaging fees. Source network gas is additional."
           >
-            {amounts.messagingFee.toSignificant(6)}{' '}
-            {amounts.messagingFee.currency.symbol}
+            {formatUSD(Number(quote.quote.feeUsd))}
           </List.KeyValue>
           <List.KeyValue
             title="Est. received"
@@ -95,14 +63,14 @@ export function LayerZeroTradeDetails({
                 />
               </List.KeyValue>
               <List.KeyValue
-                title="Protocol fee"
-                subtitle="The token fee charged by the bridge provider."
+                title="Source native fee"
+                subtitle="Included in the protocol fees above, paid in the source network's native currency."
               >
-                {amounts.protocolFee.toSignificant(6)}{' '}
-                {amounts.protocolFee.currency.symbol}
+                {amounts.messagingFee.toSignificant(6)}{' '}
+                {amounts.messagingFee.currency.symbol}
               </List.KeyValue>
               <List.KeyValue
-                title={`Min. received after slippage (${slippagePercent.toPercentString()})`}
+                title="Min. received after slippage"
                 subtitle="The minimum output enforced by this transfer."
               >
                 <span className="text-sm font-medium">

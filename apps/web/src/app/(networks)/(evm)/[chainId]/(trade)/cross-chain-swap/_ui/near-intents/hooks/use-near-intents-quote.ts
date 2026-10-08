@@ -2,6 +2,10 @@
 
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import {
+  NoCrossChainRouteError,
+  isNoRouteResponse,
+} from 'src/lib/swap/cross-chain/route-availability'
 import type { NearIntentsSupportedChainId } from 'src/lib/swap/near-intents/types'
 import type { Amount } from 'sushi'
 import type {
@@ -32,6 +36,8 @@ export async function fetchNearIntentsQuote(
     const error = (await response.json().catch(() => null)) as {
       message?: string
     } | null
+    if (isNoRouteResponse(response.status, error))
+      throw new NoCrossChainRouteError(error?.message)
     throw new Error(error?.message || `Quote API error: ${response.status}`)
   }
 
@@ -77,5 +83,7 @@ export function useNearIntentsQuote({
     ),
     staleTime: ms('30s'),
     refetchInterval: ms('30s'),
+    retry: (failureCount, error) =>
+      !(error instanceof NoCrossChainRouteError) && failureCount < 2,
   })
 }

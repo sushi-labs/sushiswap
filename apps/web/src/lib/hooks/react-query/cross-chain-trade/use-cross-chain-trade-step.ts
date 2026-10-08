@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
+import { useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
-import { Amount, Percent, getNativeAddress } from 'sushi'
+import { isLifiNativeToken } from 'src/lib/swap/cross-chain/is-lifi-native-token'
+import { Amount } from 'sushi'
 import { stringify } from 'viem/utils'
 import type { Step } from '~evm/api/cross-chain/schemas'
 import type { CrossChainStepResponse } from '~evm/api/cross-chain/step/route'
+import { useCrossChainPriceImpact } from './use-cross-chain-price-impact'
 
 type NewTokenInput = Parameters<typeof newToken>[0]
 
@@ -33,7 +36,7 @@ export function useCrossChainTradeStep<
   step,
   enabled = true,
 }: UseCrossChainTradeStepParams<TChainId0, TChainId1>) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['cross-chain/step', step],
     queryFn: async () => {
       if (!step) throw new Error()
@@ -59,15 +62,13 @@ export function useCrossChainTradeStep<
       const parsedStep = json as CrossChainStepResponse<TChainId0, TChainId1>
 
       const tokenIn = (
-        getNativeAddress(parsedStep.action.fromToken.chainId) ===
-        parsedStep.action.fromToken.address
+        isLifiNativeToken(parsedStep.action.fromToken)
           ? nativeFromChainId(parsedStep.action.fromToken.chainId)
           : newToken(parsedStep.action.fromToken as NewTokenInput)
       ) as CurrencyFor<TChainId0>
 
       const tokenOut = (
-        getNativeAddress(parsedStep.action.toToken.chainId) ===
-        parsedStep.action.toToken.address
+        isLifiNativeToken(parsedStep.action.toToken)
           ? nativeFromChainId(parsedStep.action.toToken.chainId)
           : newToken(parsedStep.action.toToken as NewTokenInput)
       ) as CurrencyFor<TChainId1>
@@ -76,21 +77,6 @@ export function useCrossChainTradeStep<
       const amountOut = new Amount(tokenOut, parsedStep.estimate.toAmount)
       const amountOutMin = new Amount(tokenOut, parsedStep.estimate.toAmountMin)
 
-      const fromAmountUSD =
-        (Number(parsedStep.action.fromToken.priceUSD) *
-          Number(amountIn.amount)) /
-        10 ** tokenIn.decimals
-
-      const toAmountUSD =
-        (Number(parsedStep.action.toToken.priceUSD) *
-          Number(amountOut.amount)) /
-        10 ** tokenOut.decimals
-
-      const priceImpact = new Percent({
-        numerator: Math.floor((fromAmountUSD / toAmountUSD - 1) * 10_000),
-        denominator: 10_000,
-      })
-
       return {
         ...parsedStep,
         tokenIn,
@@ -98,11 +84,23 @@ export function useCrossChainTradeStep<
         amountIn,
         amountOut,
         amountOutMin,
-        priceImpact,
       }
     },
     refetchInterval: ms('10s'),
     enabled: Boolean(enabled && step),
     queryKeyHashFn: stringify,
   })
+
+  const priceImpact = useCrossChainPriceImpact({
+    amountIn: query.data?.amountIn,
+    amountOut: query.data?.amountOut,
+  })
+
+  return useMemo(
+    () => ({
+      ...query,
+      data: query.data ? { ...query.data, priceImpact } : undefined,
+    }),
+    [query, priceImpact],
+  )
 }
