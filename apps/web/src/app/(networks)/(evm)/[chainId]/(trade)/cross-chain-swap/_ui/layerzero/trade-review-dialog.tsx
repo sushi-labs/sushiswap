@@ -90,7 +90,7 @@ function LayerZeroTradeReviewDialogContent({
   return (
     <>
       <DialogReview>
-        {({ confirm }) => (
+        {() => (
           <>
             {children}
             <DialogContent className="max-h-[80vh]">
@@ -127,7 +127,6 @@ function LayerZeroTradeReviewDialogContent({
                     if (!quote || isSubmitting || !approved) return
                     const id = nanoid()
                     setExecutionId(id)
-                    confirm()
                     execute.mutate({ id, quote })
                   }}
                 >
@@ -189,14 +188,6 @@ function LayerZeroTradeReviewDialogContent({
           )
         }
       >
-        {error ? (
-          <Message variant="warning" size="sm">
-            {(execution?.txHash || execution?.submitted) &&
-            execution?.sourceStatus !== 'FAILED'
-              ? 'Confirmation could not be completed. Do not resend this transfer; track the existing transaction below.'
-              : error}
-          </Message>
-        ) : null}
         {bridgeUrl ? (
           <a
             href={bridgeUrl}

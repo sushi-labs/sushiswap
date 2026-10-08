@@ -340,7 +340,7 @@ describe('LayerZero approval and review flow', () => {
     expect(button('swap').disabled).toBe(false)
     expect(button('confirm-swap').disabled).toBe(false)
     act(() => button('confirm-swap').click())
-    expect(confirm).toHaveBeenCalledOnce()
+    expect(confirm).not.toHaveBeenCalled()
     expect(mutate).toHaveBeenCalledWith({ id: expect.any(String), quote })
     expect(mutate.mock.lastCall?.[0].id).not.toBe(earlier.id)
   })

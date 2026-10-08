@@ -13,8 +13,20 @@ import {
   sender,
 } from 'src/lib/swap/value-transfer/execution-test-fixtures'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import {
+  DialogProvider,
+  DialogType,
+  type UseDialog,
+  useDialog,
+} from 'src/lib/transaction-dialog/dialog-provider'
 import { Amount } from 'sushi'
-import { type Hex, encodeFunctionData, erc20Abi } from 'viem'
+import {
+  type Hex,
+  TransactionExecutionError,
+  UserRejectedRequestError,
+  encodeFunctionData,
+  erc20Abi,
+} from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useLayerZeroExecute } from './use-layerzero-execute'
 import {
@@ -95,8 +107,12 @@ describe('Value Transfer sequential execution', () => {
   let executions: LayerZeroExecutionState
   let execute: ReturnType<typeof useLayerZeroExecute>
   let currentQuote: ValueTransferTrade
+  let review: UseDialog<DialogType.Review>
+  let confirmation: UseDialog<DialogType.Confirm>
 
   function Harness() {
+    review = useDialog(DialogType.Review)
+    confirmation = useDialog(DialogType.Confirm)
     executions = useLayerZeroExecutions()
     mocks.useXswap.mockReturnValue({
       state: {
@@ -115,7 +131,9 @@ describe('Value Transfer sequential execution', () => {
     act(() =>
       root.render(
         <QueryClientProvider client={client}>
-          <Harness />
+          <DialogProvider>
+            <Harness />
+          </DialogProvider>
         </QueryClientProvider>,
       ),
     )
@@ -145,6 +163,7 @@ describe('Value Transfer sequential execution', () => {
     document.body.append(container)
     root = createRoot(container)
     render()
+    act(() => review.setOpen(true))
   })
   afterEach(() => {
     act(() => root.unmount())
@@ -195,6 +214,8 @@ describe('Value Transfer sequential execution', () => {
       quote: currentQuote,
     })
     expect(executions.isSubmitting).toBe(false)
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
   })
 
   it('requires a new review if allowance is no longer sufficient', async () => {
@@ -259,7 +280,82 @@ describe('Value Transfer sequential execution', () => {
     })
     expect(mocks.send).not.toHaveBeenCalled()
     expect(executions.isSubmitting).toBe(false)
+    expect(mocks.failed).toHaveBeenCalledOnce()
+    expect(mocks.info).not.toHaveBeenCalled()
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
   })
+
+  it.each([
+    {
+      name: 'transaction',
+      signature: false,
+      error: new UserRejectedRequestError(new Error('User denied request')),
+    },
+    {
+      name: 'wrapped transaction',
+      signature: false,
+      error: new TransactionExecutionError(
+        new UserRejectedRequestError(new Error('User denied request')),
+        { account: null },
+      ),
+    },
+    {
+      name: 'typed data signature',
+      signature: true,
+      error: new UserRejectedRequestError(new Error('User denied request')),
+    },
+  ])(
+    'silently cancels a rejected $name and allows retrying the reviewed quote',
+    async ({ signature, error }) => {
+      currentQuote = makeExecutionTrade(signature)
+      const walletRequest = signature ? mocks.sign : mocks.send
+      walletRequest.mockRejectedValueOnce(error)
+      render()
+
+      await act(async () => {
+        await expect(
+          execute.mutateAsync({ id: 'first', quote: currentQuote }),
+        ).rejects.toBe(error)
+      })
+
+      expect(executions.executions).toHaveLength(1)
+      expect(executions.executions[0]?.txHash).toBeUndefined()
+      expect(executions.executions[0]?.submitted).not.toBe(true)
+      expect(executions.isSubmitting).toBe(false)
+      expect(review.open).toBe(true)
+      expect(confirmation.open).toBe(false)
+      expect(mocks.clear).not.toHaveBeenCalled()
+      expect(mocks.failed).not.toHaveBeenCalled()
+      expect(mocks.info).not.toHaveBeenCalled()
+      expect(mocks.success).not.toHaveBeenCalled()
+      expect(mocks.wait).not.toHaveBeenCalled()
+      expect(fetchMock).not.toHaveBeenCalledWith(
+        '/api/cross-chain/value-transfer/submit-signature',
+        expect.anything(),
+      )
+
+      await act(async () => {
+        await execute.mutateAsync({ id: 'retry', quote: currentQuote })
+      })
+
+      expect(walletRequest).toHaveBeenCalledTimes(2)
+      expect(executions.executions).toHaveLength(2)
+      expect(executions.executions[1]).toMatchObject({
+        id: 'retry',
+        quote: currentQuote,
+        submitted: true,
+        sourceStatus: 'SUCCESS',
+      })
+      expect(executions.isSubmitting).toBe(false)
+      expect(review.open).toBe(false)
+      expect(confirmation.open).toBe(true)
+      expect(mocks.clear).toHaveBeenCalledExactlyOnceWith(currentQuote)
+      expect(mocks.success).toHaveBeenCalledOnce()
+      expect(mocks.failed).not.toHaveBeenCalled()
+      expect(mocks.info).not.toHaveBeenCalled()
+    },
+  )
 
   it('retains a broadcast hash and uncertainty when source confirmation times out', async () => {
     mocks.wait.mockRejectedValueOnce(new Error('RPC timeout'))

@@ -40,6 +40,7 @@ import {
   valueTransferSubmitSignatureResponseSchema,
 } from 'src/lib/swap/value-transfer/schemas'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
@@ -101,6 +102,7 @@ export function useLayerZeroExecute(): UseMutationResult<
   const { refetchChain } = useRefetchBalances()
   const { data: maintenance } = useIsLayerZeroXSwapMaintenance()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
+  const { confirm } = useDialog(DialogType.Review)
 
   function assertWallets(reviewed: ValueTransferTrade): void {
     if (
@@ -371,6 +373,7 @@ export function useLayerZeroExecute(): UseMutationResult<
       return txHash ?? reviewed.quote.id
     },
     onSuccess: (_result, { quote }) => {
+      confirm()
       refetchChain(quote.fromChainId)
       createSuccessToast({
         summary:
@@ -385,6 +388,13 @@ export function useLayerZeroExecute(): UseMutationResult<
     },
     onError: (error, { id, quote }) => {
       const execution = failExecution(id, error.message)
+      if (
+        isUserRejectedError(error) &&
+        !execution?.txHash &&
+        !execution?.submitted
+      )
+        return
+      confirm()
       const unconfirmed =
         (execution?.txHash || execution?.submitted) &&
         execution.sourceStatus !== 'FAILED'
