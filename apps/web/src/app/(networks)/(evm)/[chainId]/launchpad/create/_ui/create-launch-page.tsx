@@ -11,14 +11,19 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { type FieldError, type Resolver, useForm } from 'react-hook-form'
 import { TOAST_AUTOCLOSE_TIME } from 'src/lib/constants'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
+import { VALUE_TRANSFER_PENDING_HYPE_DEPLOYMENTS } from 'src/lib/swap/value-transfer/config'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Amount, Percent, formatUSD } from 'sushi'
 import {
   type EvmAddress,
+  EvmChainId,
   EvmNative,
   type EvmToken,
   type LaunchpadV2ChainId,
   SUSHI,
+  USDG,
+  WETH9,
   WNATIVE,
   getEvmChainById,
   isEvmWNativeSupported,
@@ -32,6 +37,7 @@ import {
   useWriteContract,
 } from 'wagmi'
 import * as z from 'zod'
+import { useAmountBalances } from '~evm/_common/ui/balance-provider/use-balances'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
 import { formatRawAmount } from '../../_lib/format'
 import type { PreparedLaunchpadLogoFile } from '../../_lib/launchpad-logo'
@@ -172,6 +178,25 @@ const DETAIL_FIELDS: Array<keyof z.infer<typeof createLaunchDetailsSchema>> = [
 const INDEXING_ATTEMPTS = 10
 const INDEXING_RETRY_DELAY = ms('1.5s')
 
+function getQuoteTokenPriority(
+  chainId: LaunchpadV2ChainId,
+  address: EvmAddress,
+): number {
+  if (chainId !== EvmChainId.ROBINHOOD) return 0
+  if (isAddressEqual(address, SUSHI[chainId].address)) return 2
+  if (
+    isAddressEqual(address, WETH9[chainId].address) ||
+    isAddressEqual(
+      address,
+      VALUE_TRANSFER_PENDING_HYPE_DEPLOYMENTS[chainId].contractAddress,
+    ) ||
+    isAddressEqual(address, USDG[chainId].address)
+  ) {
+    return 1
+  }
+  return 0
+}
+
 function formatBps(bps: number): string {
   const percent = new Percent({ numerator: bps, denominator: 10_000 })
   return `${Number(percent.toString({ fixed: 2 }))}%`
@@ -229,13 +254,29 @@ export function SushiV2CreateLaunchPage({
     isPending: isQuoteTokenListPending,
   } = useLaunchpadQuoteTokens(chainId)
 
-  const quoteTokenMap = useMemo(
-    () =>
-      Object.fromEntries(
-        quoteTokens.map((quoteToken) => [quoteToken.id, quoteToken]),
-      ),
-    [quoteTokens],
-  )
+  const { data: quoteBalances } = useAmountBalances(chainId, quoteTokens)
+  const quoteBalanceUsd = useTokenAmountDollarValues({
+    chainId,
+    amounts: quoteTokens.map((token) => quoteBalances?.get(token.id)),
+  })
+  const quoteTokenMap = useMemo(() => {
+    const sortedTokens = quoteTokens
+      .map((token, index) => ({
+        token,
+        balanceUsd: quoteBalanceUsd[index],
+        priority: getQuoteTokenPriority(chainId, token.address),
+      }))
+      .sort(
+        (a, b) =>
+          b.balanceUsd - a.balanceUsd ||
+          b.priority - a.priority ||
+          a.token.symbol.localeCompare(b.token.symbol),
+      )
+
+    return Object.fromEntries(
+      sortedTokens.map(({ token }) => [token.id, token]),
+    )
+  }, [chainId, quoteTokens, quoteBalanceUsd])
   const sushi = Object.values(SUSHI).find((token) => token.chainId === chainId)
   const defaultQuoteToken =
     quoteTokens.find(
