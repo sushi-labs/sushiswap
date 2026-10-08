@@ -9,7 +9,6 @@ function drpc(network: string): ReturnType<typeof http> {
 }
 
 export const publicTransports = {
-  [EvmChainId.ARBITRUM_NOVA]: drpc('arbitrum-nova'),
   [EvmChainId.ARBITRUM]: drpc('arbitrum'),
   [EvmChainId.AVALANCHE]: drpc('avalanche'),
   [EvmChainId.BOBA]: drpc('boba-eth'),
@@ -26,7 +25,6 @@ export const publicTransports = {
   [EvmChainId.OPTIMISM]: drpc('optimism'),
   [EvmChainId.POLYGON]: drpc('polygon'),
   [EvmChainId.POLYGON_ZKEVM]: drpc('polygon-zkevm'),
-  [EvmChainId.THUNDERCORE]: drpc('thundercore'),
   [EvmChainId.HAQQ]: drpc('haqq'),
   [EvmChainId.CORE]: drpc('core'),
   [EvmChainId.ZKSYNC_ERA]: drpc('zksync'),

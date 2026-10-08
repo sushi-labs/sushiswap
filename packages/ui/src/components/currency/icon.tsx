@@ -22,7 +22,6 @@ const KavaLogo = 'kava.svg'
 const MetisLogo = 'metis.svg'
 const BobaLogo = 'boba.svg'
 const BttcLogo = 'bttc.svg'
-const ThundercoreLogo = 'thundercore.svg'
 const CoreLogo = 'core.svg'
 const IslmLogo = 'islm.svg'
 const FilecoinLogo = 'filecoin.svg'
@@ -63,14 +62,12 @@ const LOGO: Record<number, string> = {
   // [ChainId.PALM]: PalmLogo,
   [ChainId.OPTIMISM]: EthereumLogo,
   [ChainId.KAVA]: KavaLogo,
-  [ChainId.ARBITRUM_NOVA]: EthereumLogo,
   [ChainId.METIS]: MetisLogo,
   [ChainId.BOBA]: EthereumLogo,
   // [ChainId.BOBA_AVAX]: BobaLogo,
   [ChainId.BOBA_BNB]: BobaLogo,
   [ChainId.BTTC]: BttcLogo,
   [ChainId.POLYGON_ZKEVM]: EthereumLogo,
-  [ChainId.THUNDERCORE]: ThundercoreLogo,
   [ChainId.CORE]: CoreLogo,
   [ChainId.HAQQ]: IslmLogo,
   [ChainId.ZKSYNC_ERA]: EthereumLogo,
