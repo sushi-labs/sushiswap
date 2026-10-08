@@ -22,6 +22,7 @@ import {
   type EvmToken,
   type LaunchpadV2ChainId,
   SUSHI,
+  USDG,
   WETH9,
   WNATIVE,
   getEvmChainById,
@@ -188,7 +189,8 @@ function getQuoteTokenPriority(
     isAddressEqual(
       address,
       VALUE_TRANSFER_PENDING_HYPE_DEPLOYMENTS[chainId].contractAddress,
-    )
+    ) ||
+    isAddressEqual(address, USDG[chainId].address)
   ) {
     return 1
   }
