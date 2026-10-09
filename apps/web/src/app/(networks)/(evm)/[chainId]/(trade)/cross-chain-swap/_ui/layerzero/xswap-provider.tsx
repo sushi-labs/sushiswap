@@ -71,18 +71,10 @@ export function LayerZeroXSwapProvider({
   const { state: near } = useNearIntentsXSwap()
   const token0 =
     catalog.getCurrency(chainId0, form.token0Param) ??
-    (lifi.token0?.chainId === chainId0
-      ? lifi.token0
-      : near.token0?.chainId === chainId0
-        ? near.token0
-        : undefined)
+    [lifi.token0, near.token0].find((token) => token?.chainId === chainId0)
   const token1 =
     catalog.getCurrency(chainId1, form.token1Param) ??
-    (lifi.token1?.chainId === chainId1
-      ? lifi.token1
-      : near.token1?.chainId === chainId1
-        ? near.token1
-        : undefined)
+    [lifi.token1, near.token1].find((token) => token?.chainId === chainId1)
   const srcToken = catalog.getToken(chainId0, form.token0Param)
   const dstToken = catalog.getToken(chainId1, form.token1Param)
   const isUnsupportedPair =

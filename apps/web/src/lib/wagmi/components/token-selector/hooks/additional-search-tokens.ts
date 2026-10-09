@@ -4,10 +4,6 @@ import { isEvmChainId } from 'sushi/evm'
 import type { TokenSelectorChainId } from '../config'
 import type { TokenListTokenMetadata } from './token-list-token'
 
-function tokenKey(chainId: TokenSelectorChainId, address: string): string {
-  return `${chainId}:${isEvmChainId(chainId) ? address.toLowerCase() : address}`
-}
-
 export function matchesCurrencySearch(
   currency: CurrencyFor<TokenSelectorChainId>,
   search: string | undefined,
@@ -19,8 +15,9 @@ export function matchesCurrencySearch(
     currency.symbol.toLowerCase().includes(text) ||
     currency.name.toLowerCase().includes(text) ||
     (currency.type === 'token' &&
-      tokenKey(currency.chainId, currency.address) ===
-        tokenKey(currency.chainId, query))
+      (isEvmChainId(currency.chainId)
+        ? currency.address.toLowerCase() === text
+        : currency.address === query))
   )
 }
 
@@ -31,9 +28,7 @@ export function mergeAdditionalSearchTokens<TChainId extends TokenListChainId>(
   search?: string,
 ): TokenFor<TChainId, TokenListTokenMetadata>[] {
   const tokens = [...listedTokens]
-  const existing = new Set(
-    listedTokens.map((token) => tokenKey(token.chainId, token.address)),
-  )
+  const existing = new Set(listedTokens.map((token) => token.id))
   for (const currency of additionalCurrencies) {
     if (
       currency.chainId !== chainId ||
@@ -41,9 +36,8 @@ export function mergeAdditionalSearchTokens<TChainId extends TokenListChainId>(
       !matchesCurrencySearch(currency, search)
     )
       continue
-    const key = tokenKey(chainId, currency.address)
-    if (existing.has(key)) continue
-    existing.add(key)
+    if (existing.has(currency.id)) continue
+    existing.add(currency.id)
     // The exact chain and token-kind checks above establish this constructor's
     // address type. Provider discovery never establishes token-list approval.
     tokens.push(

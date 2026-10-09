@@ -2,15 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import ms from 'ms'
 import { useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
-import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
-import { isLifiNativeToken } from 'src/lib/swap/cross-chain/is-lifi-native-token'
+import { getLifiCurrency } from 'src/lib/swap/cross-chain/get-lifi-currency'
 import { Amount } from 'sushi'
 import { stringify } from 'viem/utils'
 import type { Step } from '~evm/api/cross-chain/schemas'
 import type { CrossChainStepResponse } from '~evm/api/cross-chain/step/route'
 import { useCrossChainPriceImpact } from './use-cross-chain-price-impact'
-
-type NewTokenInput = Parameters<typeof newToken>[0]
 
 export type UseCrossChainTradeStepReturn<
   TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
@@ -18,8 +15,6 @@ export type UseCrossChainTradeStepReturn<
 > = NonNullable<
   ReturnType<typeof useCrossChainTradeStep<TChainId0, TChainId1>>['data']
 >
-
-// export type
 
 export interface UseCrossChainTradeStepParams<
   TChainId0 extends LifiXSwapSupportedChainId,
@@ -61,16 +56,11 @@ export function useCrossChainTradeStep<
 
       const parsedStep = json as CrossChainStepResponse<TChainId0, TChainId1>
 
-      const tokenIn = (
-        isLifiNativeToken(parsedStep.action.fromToken)
-          ? nativeFromChainId(parsedStep.action.fromToken.chainId)
-          : newToken(parsedStep.action.fromToken as NewTokenInput)
+      const tokenIn = getLifiCurrency(
+        parsedStep.action.fromToken,
       ) as CurrencyFor<TChainId0>
-
-      const tokenOut = (
-        isLifiNativeToken(parsedStep.action.toToken)
-          ? nativeFromChainId(parsedStep.action.toToken.chainId)
-          : newToken(parsedStep.action.toToken as NewTokenInput)
+      const tokenOut = getLifiCurrency(
+        parsedStep.action.toToken,
       ) as CurrencyFor<TChainId1>
 
       const amountIn = new Amount(tokenIn, parsedStep.action.fromAmount)

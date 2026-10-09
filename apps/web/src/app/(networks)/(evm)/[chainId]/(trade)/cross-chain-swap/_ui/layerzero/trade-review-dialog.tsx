@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
   Dots,
-  Message,
 } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import { type ReactNode, useState } from 'react'

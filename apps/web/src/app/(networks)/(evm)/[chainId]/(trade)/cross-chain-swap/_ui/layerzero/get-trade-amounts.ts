@@ -10,7 +10,6 @@ export interface LayerZeroTradeAmounts {
   amountOut: Amount<CurrencyFor<ValueTransferChainId>>
   minimumAmountOut: Amount<CurrencyFor<ValueTransferChainId>>
   messagingFee: Amount<CurrencyFor<ValueTransferChainId>>
-  protocolFee: Amount<CurrencyFor<ValueTransferChainId>>
 }
 
 export function getLayerZeroTradeAmounts(
@@ -22,8 +21,7 @@ export function getLayerZeroTradeAmounts(
     minimumAmountOut: new Amount(quote.token1, quote.minAmountOut),
     messagingFee: new Amount(
       getValueTransferNativeCurrency(quote.fromChainId),
-      quote.maxNativeFee,
+      quote.nativeFee,
     ),
-    protocolFee: new Amount(quote.token0, quote.protocolFee),
   }
 }

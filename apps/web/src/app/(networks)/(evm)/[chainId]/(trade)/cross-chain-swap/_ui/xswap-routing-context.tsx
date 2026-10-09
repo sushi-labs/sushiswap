@@ -1,7 +1,9 @@
 'use client'
 
 import { createContext, useContext, useEffect } from 'react'
-type WidgetMode = 'lifi' | 'near-intents' | 'layerzero' | 'unsupported'
+import type { CrossChainProvider } from 'src/lib/swap/cross-chain/route-availability'
+
+export type WidgetMode = CrossChainProvider | 'unsupported'
 
 export const XSwapRoutingContext = createContext<WidgetMode>('unsupported')
 export const XSwapRoutingLockContext = createContext<

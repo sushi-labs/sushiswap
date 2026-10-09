@@ -1,6 +1,6 @@
 'use client'
 
-import { Message } from '@sushiswap/ui'
+import { getValueTransferCurrencyParam } from 'src/lib/swap/value-transfer/tokens'
 import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { Amount } from 'sushi'
 import { StellarChainId } from 'sushi/stellar'
@@ -14,14 +14,7 @@ import { useLayerZeroXSwap } from './xswap-provider'
 
 export function LayerZeroCrossChainSwapWidget() {
   const {
-    state: {
-      chainId0,
-      chainId1,
-      token0,
-      token1,
-      swapAmountString,
-      // isUnsupportedPair,
-    },
+    state: { chainId0, chainId1, token0, token1, swapAmountString },
     mutate: {
       setChainId0,
       setChainId1,
@@ -52,9 +45,7 @@ export function LayerZeroCrossChainSwapWidget() {
             : undefined
         }
         onSelect={(currency) =>
-          setToken0Param(
-            currency.type === 'native' ? 'NATIVE' : currency.address,
-          )
+          setToken0Param(getValueTransferCurrencyParam(currency))
         }
         value={swapAmountString}
         onChange={setSwapAmount}
@@ -78,9 +69,7 @@ export function LayerZeroCrossChainSwapWidget() {
               : undefined
           }
           onSelect={(currency) =>
-            setToken1Param(
-              currency.type === 'native' ? 'NATIVE' : currency.address,
-            )
+            setToken1Param(getValueTransferCurrencyParam(currency))
           }
           value={amountOut}
           loading={previewQuote.isLoading}

@@ -4,19 +4,20 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import {
-  isValueTransferApproval,
+  fetchValueTransferMetadata,
+  fetchValueTransferUserSteps,
+} from 'src/lib/swap/value-transfer/api'
+import {
+  getValueTransferApproval,
   validateValueTransferUserSteps,
 } from 'src/lib/swap/value-transfer/execution'
-import {
-  type ValueTransferMetadataResponse,
-  type ValueTransferUserStep,
-  valueTransferBuildUserStepsResponseSchema,
-  valueTransferMetadataResponseSchema,
+import type {
+  ValueTransferMetadataResponse,
+  ValueTransferUserStep,
 } from 'src/lib/swap/value-transfer/schemas'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmToken } from 'sushi/evm'
-import { decodeFunctionData, erc20Abi } from 'viem'
 
 export interface ValueTransferApproval {
   amount: Amount<EvmToken>
@@ -39,19 +40,9 @@ export function getValueTransferApprovals(
   validateValueTransferUserSteps(quote, steps, metadata)
   const approvals = new Map<string, ValueTransferApproval>()
   for (const step of steps) {
-    if (
-      step.type !== 'TRANSACTION' ||
-      step.chainType !== 'EVM' ||
-      !isValueTransferApproval(step)
-    )
-      continue
-    const decoded = decodeFunctionData({
-      abi: erc20Abi,
-      data: step.transaction.encoded.data,
-    })
-    if (decoded.functionName !== 'approve')
-      throw new Error('Invalid token approval')
-    const [spender] = decoded.args
+    const approval = getValueTransferApproval(step)
+    if (!approval) continue
+    const { spender } = approval
     // Reuse Sushi's allowance checks once per spender for the full input amount.
     approvals.set(spender.toLowerCase(), {
       amount: new Amount(quote.token0, quote.amountIn),
@@ -102,36 +93,15 @@ export function useValueTransferApprovals({
       queryClient.getQueryState(['value-transfer-metadata'])?.dataUpdatedAt,
     queryFn: async ({ signal }) => {
       if (!quote) throw new Error('No LayerZero quote')
-      let steps = quote.quote.userSteps
-      if (!steps?.length) {
-        const response = await fetch(
-          '/api/cross-chain/value-transfer/build-user-steps',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quoteId: quote.quote.id }),
+      const steps = quote.quote.userSteps?.length
+        ? quote.quote.userSteps
+        : await fetchValueTransferUserSteps({
+            quoteId: quote.quote.id,
             signal,
-          },
-        )
-        if (!response.ok)
-          throw new Error('LayerZero approval steps unavailable')
-        steps = valueTransferBuildUserStepsResponseSchema.parse(
-          await response.json(),
-        ).userSteps
-      }
+          })
       const metadata = await queryClient.fetchQuery({
         queryKey: ['value-transfer-metadata'],
-        queryFn: async ({ signal }) => {
-          const response = await fetch(
-            '/api/cross-chain/value-transfer/metadata',
-            { signal },
-          )
-          if (!response.ok)
-            throw new Error('LayerZero contract metadata unavailable')
-          return valueTransferMetadataResponseSchema.parse(
-            await response.json(),
-          )
-        },
+        queryFn: ({ signal }) => fetchValueTransferMetadata(signal),
         staleTime: 60_000,
       })
       return getValueTransferApprovals(quote, steps, metadata)

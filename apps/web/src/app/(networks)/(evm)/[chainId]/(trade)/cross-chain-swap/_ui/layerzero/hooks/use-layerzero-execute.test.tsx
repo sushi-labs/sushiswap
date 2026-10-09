@@ -203,7 +203,7 @@ describe('Value Transfer sequential execution', () => {
     expect(mocks.send).toHaveBeenLastCalledWith(
       expect.objectContaining({
         chainId: 8453,
-        value: currentQuote.maxNativeFee,
+        value: currentQuote.nativeFee,
         account: sender,
       }),
     )
@@ -216,6 +216,25 @@ describe('Value Transfer sequential execution', () => {
     expect(executions.isSubmitting).toBe(false)
     expect(review.open).toBe(false)
     expect(confirmation.open).toBe(true)
+  })
+
+  it('rejects malformed approval calldata before requesting a signature or transaction', async () => {
+    const approval = currentQuote.quote.userSteps?.[0]
+    if (approval?.type !== 'TRANSACTION' || approval.chainType !== 'EVM')
+      throw new Error('Expected EVM approval fixture')
+    approval.transaction.encoded.data = '0x095ea7b3'
+
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow()
+    })
+
+    expect(mocks.allowance).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(executions.executions[0]).toMatchObject({ sourceStatus: 'FAILED' })
+    expect(executions.isSubmitting).toBe(false)
   })
 
   it('requires a new review if allowance is no longer sufficient', async () => {

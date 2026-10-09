@@ -27,16 +27,19 @@ import {
   waitForSvmSignature,
 } from 'src/lib/svm/wait-for-svm-signature'
 import {
+  fetchValueTransferMetadata,
+  fetchValueTransferUserSteps,
+} from 'src/lib/swap/value-transfer/api'
+import {
   assertValueTransferQuoteIsCurrent,
   assertValueTransferSolanaSignature,
   buildValueTransferStellarTransaction,
-  isValueTransferApproval,
+  getValueTransferApproval,
   validateValueTransferSolanaTransaction,
   validateValueTransferUserSteps,
 } from 'src/lib/swap/value-transfer/execution'
 import {
-  valueTransferBuildUserStepsResponseSchema,
-  valueTransferMetadataResponseSchema,
+  type ValueTransferSubmitSignatureRequest,
   valueTransferSubmitSignatureResponseSchema,
 } from 'src/lib/swap/value-transfer/schemas'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
@@ -47,21 +50,25 @@ import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
 import { isEvmChainId } from 'sushi/evm'
-import { isStellarAccountAddress } from 'sushi/stellar'
-import { type Hex, type PublicClient, decodeFunctionData, erc20Abi } from 'viem'
+import { type Hex, type PublicClient, erc20Abi } from 'viem'
 import { usePublicClient, useSendTransaction, useSignTypedData } from 'wagmi'
 import { useRefetchBalances } from '../../../../../../_common/ui/balance-provider/use-refetch-balances'
 import { useLayerZeroXSwap } from '../xswap-provider'
 import { useIsLayerZeroXSwapMaintenance } from './use-is-layerzero-xswap-maintenance'
 
-async function post(path: string, body: unknown): Promise<unknown> {
-  const response = await fetch(`/api/cross-chain/value-transfer/${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-  if (!response.ok) throw new Error(`LayerZero ${path} request failed`)
-  return response.json()
+async function submitSignatures(
+  body: ValueTransferSubmitSignatureRequest,
+): Promise<void> {
+  const response = await fetch(
+    '/api/cross-chain/value-transfer/submit-signature',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    },
+  )
+  if (!response.ok) throw new Error('LayerZero submit-signature request failed')
+  valueTransferSubmitSignatureResponseSchema.parse(await response.json())
 }
 
 export function useLayerZeroExecute(): UseMutationResult<
@@ -90,12 +97,7 @@ export function useLayerZeroExecute(): UseMutationResult<
   currentWallets.current = wallets
   const publicClient = usePublicClient({
     chainId: isEvmChainId(chainId0) ? chainId0 : undefined,
-  }) as
-    | Pick<
-        PublicClient,
-        'estimateGas' | 'waitForTransactionReceipt' | 'readContract'
-      >
-    | undefined
+  })
   const { sendTransactionAsync } = useSendTransaction()
   const { signTypedDataAsync } = useSignTypedData()
   const { signTransaction } = useSvmSignTransaction()
@@ -141,28 +143,20 @@ export function useLayerZeroExecute(): UseMutationResult<
         throw new Error(
           'This transfer has already been submitted or another submission is in progress',
         )
-      const built = valueTransferBuildUserStepsResponseSchema.parse(
-        await post('build-user-steps', { quoteId: reviewed.quote.id }),
-      )
+      const steps = await fetchValueTransferUserSteps({
+        quoteId: reviewed.quote.id,
+      })
       const metadata =
         reviewed.srcChain.chainType === 'EVM'
-          ? await fetch('/api/cross-chain/value-transfer/metadata').then(
-              async (response) => {
-                if (!response.ok)
-                  throw new Error('LayerZero contract metadata unavailable')
-                return valueTransferMetadataResponseSchema.parse(
-                  await response.json(),
-                )
-              },
-            )
+          ? await fetchValueTransferMetadata()
           : {}
-      validateValueTransferUserSteps(reviewed, built.userSteps, metadata)
+      validateValueTransferUserSteps(reviewed, steps, metadata)
       let txHash: string | undefined
       const signatures: Hex[] = []
-      const signatureCount = built.userSteps.filter(
+      const signatureCount = steps.filter(
         (step) => step.type === 'SIGNATURE',
       ).length
-      for (const step of built.userSteps) {
+      for (const step of steps) {
         assertWallets(reviewed)
         if (step.type === 'SIGNATURE') {
           const typedData = step.signature.typedData
@@ -183,33 +177,21 @@ export function useLayerZeroExecute(): UseMutationResult<
             // Submission can be accepted even if its HTTP response times out.
             updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
             clearSwapAmountIfUnchanged(reviewed)
-            valueTransferSubmitSignatureResponseSchema.parse(
-              await post('submit-signature', {
-                quoteId: reviewed.quote.id,
-                signatures,
-              }),
-            )
+            await submitSignatures({ quoteId: reviewed.quote.id, signatures })
           }
           continue
         }
-        const approval = isValueTransferApproval(step)
         if (step.chainType === 'EVM') {
           if (!publicClient || !isEvmChainId(reviewed.fromChainId))
             throw new Error('Connect the source EVM wallet')
           const encoded = step.transaction.encoded
+          const approval = getValueTransferApproval(step)
           if (approval) {
-            const decoded = decodeFunctionData({
-              abi: erc20Abi,
-              data: encoded.data,
-            })
-            if (decoded.functionName !== 'approve')
-              throw new Error('Invalid token approval')
-            const [spender] = decoded.args
             const allowance = await publicClient.readContract({
               address: encoded.to,
               abi: erc20Abi,
               functionName: 'allowance',
-              args: [step.signerAddress, spender],
+              args: [step.signerAddress, approval.spender],
             })
             if (allowance < reviewed.amountIn)
               throw new Error(
@@ -226,7 +208,9 @@ export function useLayerZeroExecute(): UseMutationResult<
             value: BigInt(encoded.value ?? '0'),
           }
           // Estimate the exact API calldata against the approved current state.
-          const gas = await publicClient.estimateGas(request)
+          const estimateGas: PublicClient['estimateGas'] =
+            publicClient.estimateGas
+          const gas = await estimateGas(request)
           assertWallets(reviewed)
           updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
           let hash: Hex
@@ -311,8 +295,6 @@ export function useLayerZeroExecute(): UseMutationResult<
             throw error
           }
         } else {
-          if (!isStellarAccountAddress(step.signerAddress))
-            throw new Error('Invalid source Stellar wallet')
           const transaction = await buildValueTransferStellarTransaction({
             ...step.transaction.encoded,
             sourceAddress: step.signerAddress,

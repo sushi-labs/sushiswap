@@ -3,6 +3,8 @@ import {
   valueTransferBuildUserStepsResponseSchema,
   valueTransferQuoteRequestSchema,
   valueTransferQuoteResponseSchema,
+  valueTransferSolanaTransactionStepSchema,
+  valueTransferStellarTransactionStepSchema,
   valueTransferUserStepSchema,
 } from './schemas'
 
@@ -128,6 +130,37 @@ describe('Value Transfer schemas', () => {
       valueTransferBuildUserStepsResponseSchema.parse({ userSteps }),
     ).toEqual({ userSteps })
   })
+
+  it.each([
+    {
+      schema: valueTransferSolanaTransactionStepSchema,
+      chainType: 'SOLANA',
+      chainKey: 'solana',
+      transaction: { encoded: { encoding: 'base64', data: 'AQAAAA==' } },
+    },
+    {
+      schema: valueTransferStellarTransactionStepSchema,
+      chainType: 'STELLAR',
+      chainKey: 'stellar',
+      transaction: {
+        encoded: { operationsXDR: ['AAAAAA=='], inclusionFee: '200' },
+      },
+    },
+  ])(
+    'rejects an EVM signer for a $chainType transaction',
+    ({ schema, chainType, chainKey, transaction }) => {
+      expect(
+        schema.safeParse({
+          type: 'TRANSACTION',
+          chainType,
+          chainKey,
+          description: 'bridge',
+          signerAddress: address,
+          transaction,
+        }).success,
+      ).toBe(false)
+    },
+  )
 
   it('fails closed for unsupported or malformed execution instructions', () => {
     expect(

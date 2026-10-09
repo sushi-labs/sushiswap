@@ -61,7 +61,7 @@ describe('Value Transfer execution bounds', () => {
       (trade: ReturnType<typeof makeExecutionTrade>) => {
         const step = trade.quote.userSteps?.[1]
         if (step?.type === 'TRANSACTION' && step.chainType === 'EVM')
-          step.transaction.encoded.value = String(trade.maxNativeFee + 1n)
+          step.transaction.encoded.value = String(trade.nativeFee + 1n)
       },
     ]) {
       const trade = makeExecutionTrade()

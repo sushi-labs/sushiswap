@@ -16,6 +16,7 @@ import {
 } from './near-intents/xswap-provider'
 import { useXSwapForm } from './xswap-form-provider'
 import {
+  type WidgetMode,
   XSwapRoutingContext,
   XSwapRoutingLockContext,
 } from './xswap-routing-context'
@@ -35,19 +36,18 @@ export function XSwapRoutingProvider({
   const routes = useLifiXSwapTradeRoutes({
     enabled: supported && !preferValueTransfer,
   })
-  const lifi: RouteAvailability = !supported
-    ? 'unsupported'
-    : !swapAmount?.gt(0n) || !token0 || !token1
-      ? isLoading
-        ? 'loading'
-        : 'idle'
-      : routes.isError
-        ? 'error'
-        : routes.isSuccess
-          ? routes.data.length > 0
-            ? 'available'
-            : 'empty'
-          : 'loading'
+  let lifi: RouteAvailability
+  if (!supported) {
+    lifi = 'unsupported'
+  } else if (!swapAmount?.gt(0n) || !token0 || !token1) {
+    lifi = isLoading ? 'loading' : 'idle'
+  } else if (routes.isError) {
+    lifi = 'error'
+  } else if (routes.isSuccess) {
+    lifi = routes.data.length > 0 ? 'available' : 'empty'
+  } else {
+    lifi = 'loading'
+  }
 
   return (
     <NearIntentsXSwapProvider
@@ -73,9 +73,7 @@ function ValueTransferFallback({
   preferValueTransfer: boolean
 }): ReactNode {
   const { routeAvailability } = useNearIntentsXSwap()
-  const [lockedProvider, setLockedProvider] = useState<
-    'lifi' | 'near-intents' | 'layerzero' | 'unsupported'
-  >()
+  const [lockedProvider, setLockedProvider] = useState<WidgetMode>()
   const mode =
     lockedProvider ??
     (preferValueTransfer

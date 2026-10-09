@@ -256,27 +256,31 @@ export function NearIntentsXSwapProvider({
     enabled: enabled && isNearIntentsPair,
   })
 
-  const routeAvailability: RouteAvailability = !isNearIntentsPair
-    ? 'unsupported'
-    : tokensError
-      ? 'error'
-      : isLoadingTokens
-        ? 'loading'
-        : !token0Param || !token1Param
-          ? 'idle'
-          : !token0NearAssetId || !token1NearAssetId
-            ? 'unsupported'
-            : !swapAmount?.gt(0n)
-              ? 'idle'
-              : previewQuoteQuery.error instanceof NoCrossChainRouteError
-                ? 'empty'
-                : previewQuoteQuery.isError
-                  ? 'error'
-                  : previewQuoteQuery.isSuccess
-                    ? BigInt(previewQuoteQuery.data.quote.amountOut) > 0n
-                      ? 'available'
-                      : 'empty'
-                    : 'loading'
+  let routeAvailability: RouteAvailability
+  if (!isNearIntentsPair) {
+    routeAvailability = 'unsupported'
+  } else if (tokensError) {
+    routeAvailability = 'error'
+  } else if (isLoadingTokens) {
+    routeAvailability = 'loading'
+  } else if (!token0Param || !token1Param) {
+    routeAvailability = 'idle'
+  } else if (!token0NearAssetId || !token1NearAssetId) {
+    routeAvailability = 'unsupported'
+  } else if (!swapAmount?.gt(0n)) {
+    routeAvailability = 'idle'
+  } else if (previewQuoteQuery.error instanceof NoCrossChainRouteError) {
+    routeAvailability = 'empty'
+  } else if (previewQuoteQuery.isError) {
+    routeAvailability = 'error'
+  } else if (previewQuoteQuery.isSuccess) {
+    routeAvailability =
+      BigInt(previewQuoteQuery.data.quote.amountOut) > 0n
+        ? 'available'
+        : 'empty'
+  } else {
+    routeAvailability = 'loading'
+  }
 
   const executionDuration = useMemo(() => {
     const executionDurationSeconds = previewQuoteQuery.data?.quote.timeEstimate
