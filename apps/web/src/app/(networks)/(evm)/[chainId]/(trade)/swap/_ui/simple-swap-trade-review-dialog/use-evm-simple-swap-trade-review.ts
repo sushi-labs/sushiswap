@@ -21,6 +21,7 @@ import { logger } from 'src/lib/logger'
 import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
+import { getRobinhoodTransactionFees } from 'src/lib/wagmi/transactions/get-robinhood-transaction-fees'
 import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,
@@ -92,6 +93,10 @@ function useEvmSimpleSwapTradeReviewForState({
   } = useDetailsInteractionTracker()
 
   const { address, chainId: activeChainId } = useConnection()
+  const currentConnection = useRef({ address, chainId: activeChainId })
+  currentConnection.current = { address, chainId: activeChainId }
+  const submitting = useRef(false)
+  const [isPreparing, setIsPreparing] = useState(false)
 
   const client = usePublicClient({ chainId })
 
@@ -331,13 +336,13 @@ function useEvmSimpleSwapTradeReviewForState({
   } = useSendTransaction({
     mutation: {
       onSuccess: onSwapSuccess,
-      onError: onSwapError,
     },
   })
 
   const executeTrade = useCallback(
     async (trade: UseEvmTradeReturn, confirm: () => void) => {
       if (
+        submitting.current ||
         !trade.tx ||
         activeChainId !== chainId ||
         address?.toLowerCase() !== trade.tx.from.toLowerCase()
@@ -347,20 +352,48 @@ function useEvmSimpleSwapTradeReviewForState({
       tradeRef.current = trade
       const { to, gas, data, value } = trade.tx
 
+      submitting.current = true
+      setIsPreparing(true)
       try {
+        const fees = await getRobinhoodTransactionFees(chainId, client)
+        if (
+          currentConnection.current.chainId !== chainId ||
+          currentConnection.current.address?.toLowerCase() !==
+            trade.tx.from.toLowerCase()
+        ) {
+          throw new Error(
+            'The connected wallet changed. Review the swap again.',
+          )
+        }
         await sendTransactionAsync({
           chainId,
+          account: address,
           to,
           data,
           value,
           gas: gas
             ? addGasMargin(BigInt(gas), EVM_TRADE_GAS_MARGIN_PERCENT)
             : undefined,
+          ...fees,
         })
         confirm()
-      } catch {}
+      } catch (error) {
+        onSwapError(
+          error instanceof Error ? error : new Error('Failed to submit swap'),
+        )
+      } finally {
+        submitting.current = false
+        setIsPreparing(false)
+      }
     },
-    [activeChainId, address, chainId, sendTransactionAsync],
+    [
+      activeChainId,
+      address,
+      chainId,
+      client,
+      onSwapError,
+      sendTransactionAsync,
+    ],
   )
 
   const write = useMemo(() => {
@@ -378,7 +411,7 @@ function useEvmSimpleSwapTradeReviewForState({
     trade,
     tradeRef: tradeRef,
     write,
-    isWritePending,
+    isWritePending: isPreparing || isWritePending,
     txHash,
     status,
     slippagePercent,

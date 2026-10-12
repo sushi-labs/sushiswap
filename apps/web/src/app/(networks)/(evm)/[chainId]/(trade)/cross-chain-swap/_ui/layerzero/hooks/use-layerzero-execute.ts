@@ -46,6 +46,7 @@ import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
+import { getRobinhoodTransactionFees } from 'src/lib/wagmi/transactions/get-robinhood-transaction-fees'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getNamespaceForChainId } from 'src/lib/wallet/namespaces/namespace-for-chain-id'
 import { getStellarWalletKit } from 'src/lib/wallet/namespaces/stellar/config'
@@ -212,6 +213,10 @@ export function useLayerZeroExecute(): UseMutationResult<
           const estimateGas: PublicClient['estimateGas'] =
             publicClient.estimateGas
           const gas = await estimateGas(request)
+          const fees = await getRobinhoodTransactionFees(
+            reviewed.fromChainId,
+            publicClient,
+          )
           assertWallets(reviewed)
           updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
           let hash: Hex
@@ -220,6 +225,7 @@ export function useLayerZeroExecute(): UseMutationResult<
               ...request,
               gas,
               chainId: reviewed.fromChainId,
+              ...fees,
             } as Parameters<typeof sendTransactionAsync>[0])
           } catch (error) {
             if (isUserRejectedError(error))

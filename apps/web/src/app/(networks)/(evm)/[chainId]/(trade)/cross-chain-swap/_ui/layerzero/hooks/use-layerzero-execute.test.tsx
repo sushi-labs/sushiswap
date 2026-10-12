@@ -41,6 +41,7 @@ const mocks = vi.hoisted(() => ({
   useApproved: vi.fn(),
   send: vi.fn(),
   estimate: vi.fn(),
+  fees: vi.fn(),
   allowance: vi.fn(),
   wait: vi.fn(),
   sign: vi.fn(),
@@ -57,6 +58,9 @@ vi.mock('src/lib/constants', () => ({
 }))
 vi.mock('src/lib/wagmi/systems/checker/provider', () => ({
   useApproved: mocks.useApproved,
+}))
+vi.mock('src/lib/wagmi/transactions/get-robinhood-transaction-fees', () => ({
+  getRobinhoodTransactionFees: mocks.fees,
 }))
 vi.mock('src/lib/wallet/hooks/use-account', () => ({
   useAccount: () => '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
@@ -368,6 +372,49 @@ describe('Value Transfer sequential execution', () => {
     expect(mocks.info).not.toHaveBeenCalled()
     expect(review.open).toBe(false)
     expect(confirmation.open).toBe(true)
+  })
+
+  it('refreshes transaction fees after gas estimation and before sending', async () => {
+    const fees = {
+      type: 'eip1559',
+      gasPrice: undefined,
+      maxFeePerGas: 44_000_000n,
+      maxPriorityFeePerGas: 1_000_000n,
+    }
+    mocks.fees.mockResolvedValue(fees)
+
+    await act(async () => {
+      await execute.mutateAsync({ id: 'first', quote: currentQuote })
+    })
+
+    expect(mocks.fees).toHaveBeenCalledWith(
+      currentQuote.fromChainId,
+      expect.objectContaining({ estimateGas: mocks.estimate }),
+    )
+    expect(mocks.estimate.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.fees.mock.invocationCallOrder[0],
+    )
+    expect(mocks.fees.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.send.mock.invocationCallOrder[0],
+    )
+    expect(mocks.send).toHaveBeenCalledWith(expect.objectContaining(fees))
+  })
+
+  it('reports a fee estimation failure without sending or marking the transfer submitted', async () => {
+    mocks.fees.mockRejectedValue(new Error('Fee RPC unavailable'))
+
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('Fee RPC unavailable')
+    })
+
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(executions.executions[0]?.submitted).not.toBe(true)
+    expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
+    expect(executions.isSubmitting).toBe(false)
+    expect(mocks.failed).toHaveBeenCalledOnce()
+    expect(mocks.info).not.toHaveBeenCalled()
   })
 
   it.each([
