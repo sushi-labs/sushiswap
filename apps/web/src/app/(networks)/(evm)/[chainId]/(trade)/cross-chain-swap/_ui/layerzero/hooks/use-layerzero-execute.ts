@@ -176,6 +176,7 @@ export function useLayerZeroExecute(): UseMutationResult<
             assertWallets(reviewed)
             // Submission can be accepted even if its HTTP response times out.
             updateExecution(id, { submitted: true, sourceStatus: 'PENDING' })
+            confirm()
             clearSwapAmountIfUnchanged(reviewed)
             await submitSignatures({ quoteId: reviewed.quote.id, signatures })
           }
@@ -231,6 +232,7 @@ export function useLayerZeroExecute(): UseMutationResult<
             submitted: true,
             sourceStatus: 'PENDING',
           })
+          confirm()
           clearSwapAmountIfUnchanged(reviewed)
           let replacementReason:
             | 'repriced'
@@ -276,6 +278,7 @@ export function useLayerZeroExecute(): UseMutationResult<
             submitted: true,
             sourceStatus: 'PENDING',
           })
+          confirm()
           clearSwapAmountIfUnchanged(reviewed)
           await getSvmRpc()
             .sendTransaction(
@@ -326,6 +329,7 @@ export function useLayerZeroExecute(): UseMutationResult<
             submitted: true,
             sourceStatus: 'PENDING',
           })
+          confirm()
           clearSwapAmountIfUnchanged(reviewed)
           const { result } = await submitTransaction(signedTxXdr)
           if (result.status === 'ERROR') {
@@ -355,7 +359,6 @@ export function useLayerZeroExecute(): UseMutationResult<
       return txHash ?? reviewed.quote.id
     },
     onSuccess: (_result, { quote }) => {
-      confirm()
       refetchChain(quote.fromChainId)
       createSuccessToast({
         summary:
