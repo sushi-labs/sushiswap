@@ -13,6 +13,7 @@ import type { UseCrossChainTradeStepReturn } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
 import { SvmTransactionFailedError } from 'src/lib/svm/wait-for-svm-signature'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
+import { DialogType, useDialog } from 'src/lib/transaction-dialog'
 import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,
@@ -70,6 +71,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
   } = useDetailsInteractionTracker()
 
   const address = useAccount(chainId0)
+  const { confirm } = useDialog(DialogType.Review)
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const { data: prices } = usePrices({ chainId: chainId0 })
@@ -88,6 +90,8 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
         bridge: StepState.NotStarted,
         dest: StepState.NotStarted,
       })
+      // Show progress before clearing the quote and waiting for its receipt.
+      confirm()
 
       setSwapAmount('')
 
@@ -248,6 +252,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
     [
       trace,
       setStepStates,
+      confirm,
       setSwapAmount,
       chainId0,
       chainId1,

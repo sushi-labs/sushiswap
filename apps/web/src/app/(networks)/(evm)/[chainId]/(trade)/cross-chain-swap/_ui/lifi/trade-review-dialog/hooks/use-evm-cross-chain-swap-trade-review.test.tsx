@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   send: vi.fn(),
   onWriteError: vi.fn(),
   onWriteSuccess: vi.fn(),
+  confirm: vi.fn(),
   setStepStates: vi.fn(),
   client: { chain: { id: 4663 }, estimateFeesPerGas: vi.fn() },
 }))
@@ -24,7 +25,7 @@ vi.mock('src/lib/logger', () => ({ logger: { error: vi.fn() } }))
 vi.mock('src/lib/constants', () => ({ APPROVE_TAG_XSWAP: 'xswap' }))
 vi.mock('src/lib/transaction-dialog', () => ({
   DialogType: { Confirm: 'confirm', Review: 'review' },
-  useDialog: () => ({ open: true }),
+  useDialog: () => ({ open: true, confirm: mocks.confirm }),
 }))
 vi.mock('src/lib/wagmi/systems/checker/provider', () => ({
   useApproved: () => ({ approved: true }),
@@ -76,8 +77,20 @@ vi.mock('wagmi', () => ({
   }),
   usePublicClient: () => mocks.client,
   useEstimateGas: () => ({ data: 505_470n, isError: false, error: null }),
-  useSendTransaction: () => ({
-    mutateAsync: mocks.send,
+  useSendTransaction: ({
+    mutation,
+  }: {
+    mutation: {
+      onMutate: () => void
+      onSuccess: (hash: TxHashFor<4663>) => Promise<void>
+    }
+  }) => ({
+    mutateAsync: async (variables: unknown) => {
+      mutation.onMutate()
+      const hash = await mocks.send(variables)
+      await mutation.onSuccess(hash)
+      return hash
+    },
     isPending: false,
     reset: vi.fn(),
   }),
@@ -89,7 +102,7 @@ describe('LI.FI transaction fees', () => {
   let root: Root
   let container: HTMLDivElement
   let review: ReturnType<typeof useEvmCrossChainSwapTradeReview>
-  const confirm = vi.fn()
+  const confirm = mocks.confirm
   const fees = {
     type: 'eip1559',
     gasPrice: undefined,
@@ -108,6 +121,7 @@ describe('LI.FI transaction fees', () => {
     mocks.address = '0x0000000000000000000000000000000000000002'
     mocks.fees.mockResolvedValue(fees)
     mocks.send.mockResolvedValue('0x1234')
+    mocks.onWriteSuccess.mockImplementation(async () => confirm())
     container = document.createElement('div')
     document.body.append(container)
     root = createRoot(container)
@@ -150,6 +164,26 @@ describe('LI.FI transaction fees', () => {
     expect(mocks.send).toHaveBeenCalledWith(
       expect.objectContaining({ chainId: 1, gasPrice: 21_452_000n }),
     )
+  })
+
+  it('does not reopen confirmation after the source receipt arrives', async () => {
+    const receipt = Promise.withResolvers<void>()
+    mocks.onWriteSuccess.mockImplementation(async () => {
+      confirm()
+      await receipt.promise
+    })
+    let write: Promise<void> | undefined
+
+    await act(async () => {
+      write = review.write?.(confirm)
+    })
+    expect(confirm).toHaveBeenCalledOnce()
+
+    await act(async () => {
+      receipt.resolve()
+      await write
+    })
+    expect(confirm).toHaveBeenCalledOnce()
   })
 
   it('keeps submission pending and prevents duplicate sends while refreshing fees', async () => {

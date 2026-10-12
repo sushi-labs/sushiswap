@@ -147,7 +147,7 @@ export function useEvmCrossChainSwapTradeReview<
   const write = useMemo(() => {
     if (!preparedTx) return undefined
 
-    return async (confirm: () => void) => {
+    return async () => {
       if (isSubmitting.current) return
       isSubmitting.current = true
       setIsPreparingFees(true)
@@ -175,7 +175,6 @@ export function useEvmCrossChainSwapTradeReview<
           account: preparedTx.from,
           ...fees,
         } as Parameters<typeof sendTransactionAsync>[0])
-        confirm()
       } catch (error) {
         onWriteError(error instanceof Error ? error : new Error(String(error)))
       } finally {

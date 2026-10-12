@@ -101,12 +101,15 @@ export function useSvmCrossChainSwapTradeReview<
     },
     onSuccess: onWriteSuccess,
     onError: onWriteError,
+    onMutate: () => {
+      if (selectedRoute) pre.routeRef.current = selectedRoute
+    },
   })
 
   const write = useMemo(() => {
     if (!preparedTx) return undefined
 
-    return async (confirm: () => void) => {
+    return async () => {
       pre.setStepStates({
         source: StepState.Sign,
         bridge: StepState.NotStarted,
@@ -115,7 +118,6 @@ export function useSvmCrossChainSwapTradeReview<
 
       try {
         await sendTransactionAsync(preparedTx.data as string)
-        confirm()
       } catch (e) {
         console.log(e)
       }
