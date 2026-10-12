@@ -46,13 +46,16 @@ export async function checkTrustlineRequired(
   if (executable !== 'contractExecutableStellarAsset')
     throw new Error('Unable to identify the token contract')
   let issuer = assetIssuer
+  let _code: string
+  _code = assetCode
   if (!issuer) {
     const { result: name } = await getTokenContractClient({
       contractId: contractAddress,
     }).name()
     const [code, resolvedIssuer] = name.split(':')
+    _code = code
     if (
-      code !== assetCode ||
+      code.toLowerCase() !== assetCode.toLowerCase() ||
       !resolvedIssuer ||
       !isStellarAccountAddress(resolvedIssuer)
     ) {
@@ -61,7 +64,7 @@ export async function checkTrustlineRequired(
     issuer = resolvedIssuer
   }
   if (
-    new StellarSdk.Asset(assetCode, issuer).contractId(NETWORK_PASSPHRASE) !==
+    new StellarSdk.Asset(_code, issuer).contractId(NETWORK_PASSPHRASE) !==
     contractAddress
   ) {
     throw new Error('Asset metadata does not match the token contract')
