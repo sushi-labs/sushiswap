@@ -81,6 +81,7 @@
     "@solana/transaction-messages": "6.0.1",
     "@solana/transactions": "6.0.1",
     "@stellar/stellar-sdk": "16.0.1",
+    "@sushiswap/batch-distribute": "workspace:*",
     "@sushiswap/graph-client": "workspace:*",
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/notifications": "workspace:*",

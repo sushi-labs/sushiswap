@@ -1,0 +1,46 @@
+{
+  "name": "@sushiswap/batch-distribute",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Spraay Protocol batch token distribution bindings",
+  "keywords": ["sushi", "spraay", "batch", "distribution"],
+  "homepage": "https://www.sushi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/sushiswap.git",
+    "directory": "packages/batch-distribute"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["src/*", "src/*/index"]
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --pretty --noEmit",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc --watch",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "sushi": "catalog:web3",
+    "viem": "catalog:web3"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "catalog:tsconfig",
+    "@tsconfig/strictest": "catalog:tsconfig",
+    "typescript": "catalog:",
+    "vitest": "2.1.9"
+  }
+}

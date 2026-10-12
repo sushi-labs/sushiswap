@@ -370,6 +370,9 @@ importers:
       '@stellar/stellar-sdk':
         specifier: 16.0.1
         version: 16.0.1
+      '@sushiswap/batch-distribute':
+        specifier: workspace:*
+        version: link:../../packages/batch-distribute
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../../packages/graph-client
@@ -762,6 +765,28 @@ importers:
         version: 5.9.3
 
   config/typescript: {}
+
+  packages/batch-distribute:
+    dependencies:
+      sushi:
+        specifier: catalog:web3
+        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+      viem:
+        specifier: 2.56.7
+        version: 2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
+    devDependencies:
+      '@tsconfig/node24':
+        specifier: catalog:tsconfig
+        version: 24.0.4
+      '@tsconfig/strictest':
+        specifier: catalog:tsconfig
+        version: 2.0.2
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.9
+        version: 2.1.9(@edge-runtime/vm@3.2.0)(@types/node@24.13.3)(jsdom@20.0.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(less@4.2.0)(terser@5.37.0)
 
   packages/graph-client:
     dependencies:
