@@ -49,9 +49,9 @@ export function Trustlines({
         Checking trustlines
       </Button>
     )
-  const needed = results.flatMap((result, index) =>
-    result.needsTrustline && result.issuer
-      ? [{ code: definedTokens[index].symbol, issuer: result.issuer }]
+  const needed = results.flatMap((result) =>
+    result.needsTrustline && result.issuer && result.assetCode
+      ? [{ code: result.assetCode, issuer: result.issuer }]
       : [],
   )
   if (needed.length)

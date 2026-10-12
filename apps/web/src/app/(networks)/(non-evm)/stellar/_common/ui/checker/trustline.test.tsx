@@ -7,6 +7,7 @@ import {
   STELLAR_XLM,
   type StellarAccountAddress,
   StellarChainId,
+  StellarToken,
 } from 'sushi/stellar'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { Trustline, Trustlines } from './trustline'
@@ -32,7 +33,7 @@ vi.mock('~stellar/_common/ui/trustline/create-trustline-button', () => ({
 
 const xlm = STELLAR_XLM[StellarChainId.STELLAR]
 const usdc = STELLAR_USDC[StellarChainId.STELLAR]
-const ready = { needsTrustline: false, issuer: null }
+const ready = { needsTrustline: false, assetCode: null, issuer: null }
 let container: HTMLDivElement
 let root: Root
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
@@ -52,6 +53,7 @@ it('blocks submission through loading, failure, and missing trustlines, then per
   function render(
     results: {
       needsTrustline: boolean
+      assetCode: string | null
       issuer: StellarAccountAddress | null
     }[],
     isLoading = false,
@@ -85,7 +87,14 @@ it('blocks submission through loading, failure, and missing trustlines, then per
   click()
   expect(mocks.retry).toHaveBeenCalledOnce()
   expect(mocks.submit).not.toHaveBeenCalled()
-  render([ready, { needsTrustline: true, issuer: usdc.issuer ?? null }])
+  render([
+    ready,
+    {
+      needsTrustline: true,
+      assetCode: usdc.symbol,
+      issuer: usdc.issuer ?? null,
+    },
+  ])
   click()
   expect(mocks.create).toHaveBeenCalledWith([
     { code: usdc.symbol, issuer: usdc.issuer },
@@ -112,4 +121,32 @@ it('uses the same check for a single swap output token', () => {
   )
   expect(mocks.query).toHaveBeenLastCalledWith([usdc])
   expect(container.textContent).toBe('Swap')
+})
+
+it('creates a trustline for the canonical asset code instead of the display symbol', () => {
+  const issuer = 'GDJ5BNU5NN6NQ54D7OX6NQTUYNBZ42CAT33QGM5BIQ2QIYADAC5ICH47'
+  const token = new StellarToken({
+    chainId: StellarChainId.STELLAR,
+    address: 'CCNOV6XVI2O5BSTA3232GIRUQULDEBV7IWGKM6QKI6II5OIIQTU24JJN',
+    decimals: 7,
+    symbol: 'USDe',
+    name: 'USDe',
+  })
+  mocks.query.mockReturnValue({
+    results: [{ needsTrustline: true, assetCode: 'USDE', issuer }],
+    isLoading: false,
+    isError: false,
+  })
+  act(() =>
+    root.render(
+      <Trustline token={token}>
+        <button type="button" onClick={mocks.submit}>
+          Swap
+        </button>
+      </Trustline>,
+    ),
+  )
+  act(() => container.querySelector('button')?.click())
+  expect(mocks.create).toHaveBeenCalledWith([{ code: 'USDE', issuer }])
+  expect(mocks.submit).not.toHaveBeenCalled()
 })
