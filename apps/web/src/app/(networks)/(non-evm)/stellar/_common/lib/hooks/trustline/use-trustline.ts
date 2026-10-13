@@ -37,11 +37,13 @@ type TrustlineParams = {
 
 type TrustlineResult = {
   needsTrustline: boolean
+  assetCode: string | null
   issuer: StellarAccountAddress | null
 }
 
 const NO_TRUSTLINE_NEEDED: TrustlineResult = {
   needsTrustline: false,
+  assetCode: null,
   issuer: null,
 }
 
@@ -52,26 +54,21 @@ async function checkTokenTrustline(
   contract: StellarContractAddress,
   issuer: StellarAccountAddress | '',
 ): Promise<TrustlineResult> {
-  const { required, issuer: resolvedIssuer } = await checkTrustlineRequired(
-    contract,
-    code,
-    issuer,
-  )
+  const requirement = await checkTrustlineRequired(contract, code, issuer)
 
-  if (!required || connectedAddress === resolvedIssuer) {
+  if (!requirement.required || connectedAddress === requirement.issuer) {
     return NO_TRUSTLINE_NEEDED
   }
 
-  if (!resolvedIssuer) throw new Error('Trustline issuer unavailable')
-
   const hasTrustlineData = await hasTrustline(
     connectedAddress,
-    code,
-    resolvedIssuer,
+    requirement.assetCode,
+    requirement.issuer,
   )
   return {
     needsTrustline: !hasTrustlineData,
-    issuer: resolvedIssuer,
+    assetCode: requirement.assetCode,
+    issuer: requirement.issuer,
   }
 }
 

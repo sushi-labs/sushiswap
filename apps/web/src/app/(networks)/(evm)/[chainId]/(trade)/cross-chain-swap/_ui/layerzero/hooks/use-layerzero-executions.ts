@@ -14,6 +14,10 @@ export interface LayerZeroExecution {
   error?: string
 }
 
+type LayerZeroExecutionUpdate = Partial<
+  Pick<LayerZeroExecution, 'txHash' | 'sourceStatus' | 'submitted'>
+>
+
 export interface LayerZeroTrackedExecution extends LayerZeroExecution {
   delivery?: LayerZeroDeliveryStatus
   statusError: boolean
@@ -24,12 +28,7 @@ export interface LayerZeroExecutionState {
   isSubmitting: boolean
   mutate: {
     beginExecution(id: string, quote: ValueTransferTrade): boolean
-    updateExecution(
-      id: string,
-      update: Partial<
-        Pick<LayerZeroExecution, 'txHash' | 'sourceStatus' | 'submitted'>
-      >,
-    ): void
+    updateExecution(id: string, update: LayerZeroExecutionUpdate): void
     failExecution(id: string, error: string): LayerZeroExecution | undefined
     finishSubmission(id: string): void
   }
@@ -78,12 +77,7 @@ export function useLayerZeroExecutions(): LayerZeroExecutionState {
   )
 
   const updateExecution = useCallback(
-    (
-      id: string,
-      update: Partial<
-        Pick<LayerZeroExecution, 'txHash' | 'sourceStatus' | 'submitted'>
-      >,
-    ): void => {
+    (id: string, update: LayerZeroExecutionUpdate): void => {
       records.current = records.current.map((execution) =>
         execution.id === id ? { ...execution, ...update } : execution,
       )

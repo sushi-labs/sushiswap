@@ -89,9 +89,7 @@ const quote = valueTransferTestTrade({
   amountIn: 1_000_000n,
   amountOut: 9_000_000n,
   minAmountOut: 8_955_000n,
-  protocolFee: 100_000n,
   nativeFee: 1_100_000_000_000_000n,
-  maxNativeFee: 1_100_000_000_000_000n,
   estimatedSeconds: 1020,
 })
 
@@ -300,7 +298,7 @@ describe('LayerZero trade UI', () => {
       amountIn: 10_000_000n,
       amountOut: 1_000_000n,
       minAmountOut: 995_000n,
-      maxNativeFee: 1_100_000n,
+      nativeFee: 1_100_000n,
     }
     act(() =>
       root.render(

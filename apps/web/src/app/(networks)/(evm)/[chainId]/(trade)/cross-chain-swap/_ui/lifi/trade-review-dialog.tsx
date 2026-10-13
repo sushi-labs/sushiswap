@@ -150,7 +150,7 @@ function CrossChainSwapTradeReviewDialogContent<
                 <ConfirmationDialogContent
                   dialogState={stepStates}
                   bridgeUrl={lifiData?.lifiExplorerLink}
-                  txHash={hash}
+                  txHash={hash ?? lifiData?.sending?.txHash}
                   dstTxHash={lifiData?.receiving?.txHash}
                   routeRef={
                     routeRef as RefObject<UseLifiXSwapSelectedTradeRouteReturn<

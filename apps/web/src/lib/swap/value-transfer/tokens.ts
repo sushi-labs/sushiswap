@@ -1,4 +1,5 @@
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
+import { isAddressEqual } from 'sushi'
 import { EvmToken, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
   STELLAR_USDT0,
@@ -98,10 +99,8 @@ export function mapValueTransferToken(
   if (!isEvmAddress(token.address)) return undefined
   return {
     token,
-    currency:
-      token.address.toLowerCase() ===
-      chain.nativeCurrency?.address.toLowerCase()
-        ? nativeFromChainId(chainId)
-        : new EvmToken({ ...token, chainId, address: token.address, metadata }),
+    currency: isAddressEqual(token.address, chain.nativeCurrency.address)
+      ? nativeFromChainId(chainId)
+      : new EvmToken({ ...token, chainId, address: token.address, metadata }),
   }
 }

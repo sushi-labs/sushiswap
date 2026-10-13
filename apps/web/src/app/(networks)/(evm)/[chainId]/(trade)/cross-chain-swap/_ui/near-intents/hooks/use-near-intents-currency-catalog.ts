@@ -13,6 +13,7 @@ import {
   getDefaultTokenForChain,
   mapNearIntentsTokensToCurrencyEntries,
 } from 'src/lib/swap/near-intents/tokens'
+import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
 import { useValueTransferCatalog } from '../../layerzero/hooks/use-value-transfer-catalog'
 
 interface NearIntentsDefaultTokenParams {
@@ -31,14 +32,10 @@ function getCurrencyEntryByTokenAssetId(
   return entries.find((entry) => entry.assetId === token.assetId)
 }
 
-export function getNearIntentsSelectableCurrencies(
-  _chainId: NearIntentsSupportedChainId,
-  _otherChainId: NearIntentsSupportedChainId,
-  currencies:
-    | Record<string, CurrencyFor<NearIntentsSupportedChainId>>
-    | undefined,
-): Record<string, CurrencyFor<NearIntentsSupportedChainId>> | undefined {
-  return currencies
+function isNearIntentsCurrency(
+  currency: CurrencyFor<ValueTransferChainId>,
+): currency is CurrencyFor<NearIntentsSupportedChainId> {
+  return isNearIntentsChainId(currency.chainId)
 }
 
 export function useNearIntentsCurrencyCatalog(
@@ -48,15 +45,15 @@ export function useNearIntentsCurrencyCatalog(
   const nearIntentsTokens = tokens ?? EMPTY_TOKENS
   const currencyEntries = useMemo(() => {
     const entries = mapNearIntentsTokensToCurrencyEntries(nearIntentsTokens)
+    const currencyIds = new Set(entries.map(({ currency }) => currency.id))
     for (const { currency, token } of catalog.entries) {
-      if (
-        !isNearIntentsChainId(currency.chainId) ||
-        entries.some((entry) => entry.currency.id === currency.id)
-      )
+      if (!isNearIntentsCurrency(currency) || currencyIds.has(currency.id))
         continue
+      currencyIds.add(currency.id)
       entries.push({
+        // Catalog-only currencies remain selectable but have no NEAR route.
         assetId: '',
-        currency: currency as CurrencyFor<NearIntentsSupportedChainId>,
+        currency,
         priceUSD: token.price?.usd === undefined ? '' : String(token.price.usd),
         priceUpdatedAt: '',
       })

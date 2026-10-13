@@ -1,7 +1,11 @@
 import { type EvmAddress, isEvmAddress } from 'sushi/evm'
-import { isStellarAccountAddress } from 'sushi/stellar'
+import {
+  type StellarAccountAddress,
+  isStellarAccountAddress,
+} from 'sushi/stellar'
 import { type SvmAddress, isSvmAddress } from 'sushi/svm'
 import * as z from 'zod'
+import { getValueTransferQuoteExpiry } from './quote-expiry'
 
 const chainKeySchema = z
   .string()
@@ -31,11 +35,23 @@ const svmAddressSchema = z.custom<SvmAddress>(
   (value) => typeof value === 'string' && isSvmAddress(value),
   'Invalid Solana address',
 )
+const stellarAccountAddressSchema = z.custom<StellarAccountAddress>(
+  (value) => typeof value === 'string' && isStellarAccountAddress(value),
+  'Invalid Stellar account address',
+)
 const base64Schema = z
   .string()
   .min(1)
   .max(200_000)
   .regex(/^[A-Za-z0-9+/]+={0,2}$/)
+
+function isSupportedWalletAddress(address: string): boolean {
+  return (
+    isEvmAddress(address) ||
+    isSvmAddress(address) ||
+    isStellarAccountAddress(address)
+  )
+}
 
 export const valueTransferTokenSchema = z.object({
   chainKey: chainKeySchema,
@@ -100,17 +116,11 @@ export const valueTransferQuoteRequestSchema = z
     srcTokenAddress: addressSchema,
     dstTokenAddress: addressSchema,
     srcWalletAddress: addressSchema.refine(
-      (address) =>
-        isEvmAddress(address) ||
-        isSvmAddress(address) ||
-        isStellarAccountAddress(address),
+      isSupportedWalletAddress,
       'Unsupported sender address',
     ),
     dstWalletAddress: addressSchema.refine(
-      (address) =>
-        isEvmAddress(address) ||
-        isSvmAddress(address) ||
-        isStellarAccountAddress(address),
+      isSupportedWalletAddress,
       'Unsupported recipient address',
     ),
     amount: unsignedIntegerSchema.refine(
@@ -137,7 +147,6 @@ export const valueTransferQuoteRequestSchema = z
 const userStepFields = {
   description: z.string(),
   chainKey: chainKeySchema,
-  signerAddress: addressSchema,
 }
 export const valueTransferEvmTransactionStepSchema = z.object({
   ...userStepFields,
@@ -159,7 +168,7 @@ export const valueTransferSolanaTransactionStepSchema = z.object({
   ...userStepFields,
   type: z.literal('TRANSACTION'),
   chainType: z.literal('SOLANA'),
-  signerAddress: addressSchema.refine(isSvmAddress),
+  signerAddress: svmAddressSchema,
   transaction: z.object({
     encoded: z.object({ encoding: z.literal('base64'), data: base64Schema }),
   }),
@@ -168,7 +177,7 @@ export const valueTransferStellarTransactionStepSchema = z.object({
   ...userStepFields,
   type: z.literal('TRANSACTION'),
   chainType: z.literal('STELLAR'),
-  signerAddress: addressSchema.refine(isStellarAccountAddress),
+  signerAddress: stellarAccountAddressSchema,
   transaction: z.object({
     encoded: z.object({
       operationsXDR: z.array(base64Schema).min(1).max(100),
@@ -237,15 +246,10 @@ export const valueTransferQuoteSchema = z
       )
       .min(1),
     userSteps: z.array(valueTransferUserStepSchema).optional(),
-    // Live responses use millisecond epoch strings; other routes may use ISO.
     expiresAt: z
       .string()
       .min(1)
-      .refine((value) =>
-        /^\d+$/.test(value)
-          ? Number.isFinite(Number(value))
-          : Number.isFinite(Date.parse(value)),
-      )
+      .refine((value) => Number.isFinite(getValueTransferQuoteExpiry(value)))
       .optional(),
     options: z
       .object({ dstNativeDropAmount: unsignedIntegerSchema })

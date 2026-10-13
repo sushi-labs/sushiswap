@@ -51,17 +51,21 @@ export function CrossChainSwapTokenNotFoundDialog<
   const {
     state: { chainId0, chainId1, token0, token1 },
     mutate: { setToken0, setToken1, setTokens },
+    isLoading,
   } = useLifiXSwap<TChainId0, TChainId1>()
 
   const { mutate: customTokensMutate, hasToken } = useCustomTokens()
 
+  // Catalog fallbacks are unverified until the token lookups finish.
   const token0NotInList = Boolean(
-    token0?.metadata.approved === false &&
+    !isLoading &&
+      token0?.metadata.approved === false &&
       token0.type === 'token' &&
       !hasToken(token0),
   )
   const token1NotInList = Boolean(
-    token1?.metadata.approved === false &&
+    !isLoading &&
+      token1?.metadata.approved === false &&
       token1.type === 'token' &&
       !hasToken(token1),
   )

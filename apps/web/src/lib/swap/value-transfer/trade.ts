@@ -1,4 +1,5 @@
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
+import { isAddressEqual } from 'sushi'
 import { STELLAR_XLM, StellarChainId } from 'sushi/stellar'
 import type {
   ValueTransferChain,
@@ -21,8 +22,6 @@ export interface ValueTransferTrade {
   amountOut: bigint
   minAmountOut: bigint
   nativeFee: bigint
-  maxNativeFee: bigint
-  protocolFee: bigint
   estimatedSeconds: number | undefined
   quote: ValueTransferQuote
   quoteRequest: ValueTransferQuoteRequest
@@ -34,16 +33,6 @@ export function getValueTransferNativeCurrency(
   return chainId === StellarChainId.STELLAR
     ? STELLAR_XLM[StellarChainId.STELLAR]
     : nativeFromChainId(chainId)
-}
-
-function sameTokenAddress(
-  chain: ValueTransferChain,
-  a: string,
-  b: string,
-): boolean {
-  return chain.chainType === 'EVM'
-    ? a.toLowerCase() === b.toLowerCase()
-    : a === b
 }
 
 export function normalizeValueTransferTrade({
@@ -94,23 +83,13 @@ export function normalizeValueTransferTrade({
     throw new Error('Invalid Value Transfer quote amounts')
   }
   const nativeAddress = srcChain.nativeCurrency?.address
-  const inputAddress = token0.type === 'native' ? nativeAddress : token0.address
   let nativeFee = 0n
-  let protocolFee = 0n
   for (const fee of quote.fees) {
     if (fee.chainKey !== srcChain.chainKey) continue
     const amount = BigInt(fee.amount)
     if (amount < 0n) throw new Error('Invalid Value Transfer fee')
-    if (
-      nativeAddress &&
-      sameTokenAddress(srcChain, fee.address, nativeAddress)
-    ) {
+    if (nativeAddress && isAddressEqual(fee.address, nativeAddress)) {
       nativeFee += amount
-    } else if (
-      inputAddress &&
-      sameTokenAddress(srcChain, fee.address, inputAddress)
-    ) {
-      protocolFee += amount
     }
   }
   const estimatedMilliseconds = Number(quote.duration.estimated)
@@ -127,8 +106,6 @@ export function normalizeValueTransferTrade({
     amountOut,
     minAmountOut,
     nativeFee,
-    maxNativeFee: nativeFee,
-    protocolFee,
     estimatedSeconds:
       Number.isFinite(estimatedMilliseconds) && estimatedMilliseconds > 0
         ? estimatedMilliseconds / 1000

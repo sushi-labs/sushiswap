@@ -3,20 +3,18 @@ import { normalizeValueTransferTrade } from './trade'
 import { valueTransferTestTrade } from './trade-test-fixtures'
 
 describe('Value Transfer quote normalization', () => {
-  it('keeps token protocol fees separate from native messaging fees without a synthetic buffer', () => {
+  it('sums native messaging fees without token protocol fees or a synthetic buffer', () => {
     const trade = valueTransferTestTrade()
     expect(trade.nativeFee).toBe(1000n)
-    expect(trade.maxNativeFee).toBe(1000n)
-    expect(trade.protocolFee).toBe(100000n)
     expect(trade.estimatedSeconds).toBe(120)
   })
-  it('does not derive protocol fees from differently denominated output tokens', () => {
+  it('does not derive native fees from differently denominated output tokens', () => {
     const trade = valueTransferTestTrade()
     expect(
       normalizeValueTransferTrade({
         ...trade,
         quote: { ...trade.quote, dstAmount: '100000000000000000000', fees: [] },
-      }).protocolFee,
+      }).nativeFee,
     ).toBe(0n)
   })
   it('rejects a quote for a changed input amount or chain', () => {

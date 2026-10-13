@@ -1,4 +1,4 @@
-import { createToast } from '@sushiswap/notifications'
+import { createErrorToast, createToast } from '@sushiswap/notifications'
 import {
   Button,
   Currency,
@@ -18,8 +18,10 @@ import { useEvmTrade } from 'src/lib/hooks/react-query/trade/use-evm-trade'
 import { useEvmTradeQuote } from 'src/lib/hooks/react-query/trade/use-evm-trade-quote'
 import { useLiFiStatus } from 'src/lib/swap/cross-chain'
 import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-my-tokens'
+import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
+import { getRobinhoodTransactionFees } from 'src/lib/wagmi/transactions/get-robinhood-transaction-fees'
 import { useAccount } from 'src/lib/wallet'
 import {
   Amount,
@@ -642,6 +644,10 @@ const AnyTokenAnyChainDeposit = ({
     TxHashFor<typeof EvmChainId.ARBITRUM> | undefined
   >(undefined)
   const address = useAccount('evm')
+  const currentAddress = useRef(address)
+  currentAddress.current = address
+  const swapPendingRef = useRef(false)
+  const [isSwapSubmitting, setIsSwapSubmitting] = useState(false)
   const client = usePublicClient({ chainId: depositOption.chainId })
   const destinationClient = usePublicClient({
     chainId: ANY_CHAIN_DEPOSIT_CHAIN_ID,
@@ -875,6 +881,7 @@ const AnyTokenAnyChainDeposit = ({
 
   const crossChainSwap = useCallback(async () => {
     if (
+      swapPendingRef.current ||
       !preparedTx ||
       !selectedRoute ||
       !crossChainStep?.transactionRequest?.from ||
@@ -884,11 +891,22 @@ const AnyTokenAnyChainDeposit = ({
       return undefined
     }
 
+    swapPendingRef.current = true
+    setIsSwapSubmitting(true)
     try {
-      routeRef.current = selectedRoute
-      const hash = await sendTransactionAsync(
-        preparedTx as Parameters<typeof sendTransactionAsync>[0],
+      const fees = await getRobinhoodTransactionFees(
+        depositOption.chainId,
+        client,
       )
+      if (currentAddress.current?.toLowerCase() !== address?.toLowerCase()) {
+        throw new Error('The connected wallet changed. Review the swap again.')
+      }
+      routeRef.current = selectedRoute
+      const hash = await sendTransactionAsync({
+        ...preparedTx,
+        account: address,
+        ...fees,
+      } as Parameters<typeof sendTransactionAsync>[0])
       const typedHash = hash as TxHashFor<typeof EvmChainId.ROBINHOOD>
       setSourceTxHash(typedHash)
       setCrossChainTradeId(typedHash)
@@ -929,7 +947,16 @@ const AnyTokenAnyChainDeposit = ({
       }
     } catch (e) {
       console.error(e)
+      if (!isUserRejectedError(e)) {
+        createErrorToast(
+          e instanceof Error ? e.message : 'Unable to submit the swap.',
+          false,
+          'perps',
+        )
+      }
     } finally {
+      swapPendingRef.current = false
+      setIsSwapSubmitting(false)
       refetchBalances(depositOption.chainId)
     }
   }, [
@@ -1226,6 +1253,7 @@ const AnyTokenAnyChainDeposit = ({
                         className="w-full"
                         onClick={crossChainSwap}
                         loading={
+                          isSwapSubmitting ||
                           isSwapPending ||
                           isBridgePending ||
                           isLoadingCrossChainStep ||

@@ -42,6 +42,8 @@ export default defineConfig({
       NEXT_PUBLIC_APP_ENV: 'test',
       NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID ?? '137',
       NEXT_TELEMETRY_DISABLED: '1',
+      // Disable optional server-side telemetry in fork tests.
+      GRAFANA_LOKI_API_URL: '',
     },
   },
 })

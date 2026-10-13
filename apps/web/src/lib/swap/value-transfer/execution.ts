@@ -11,8 +11,10 @@ import {
 } from '@stellar/stellar-sdk'
 import { NETWORK_PASSPHRASE } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/constants'
 import { SorobanClient } from 'src/app/(networks)/(non-evm)/stellar/_common/lib/soroban/client'
+import type { EvmAddress } from 'sushi/evm'
 import type { StellarAccountAddress } from 'sushi/stellar'
 import { decodeFunctionData, erc20Abi, isAddressEqual } from 'viem'
+import { getValueTransferQuoteExpiry } from './quote-expiry'
 import type {
   ValueTransferMetadataResponse,
   ValueTransferSignatureStep,
@@ -38,9 +40,7 @@ export function assertValueTransferQuoteIsCurrent(
     throw new Error('The transfer no longer matches the reviewed quote')
   }
   if (quote.expiresAt) {
-    const expiresAt = /^\d+$/.test(quote.expiresAt)
-      ? Number(quote.expiresAt)
-      : Date.parse(quote.expiresAt)
+    const expiresAt = getValueTransferQuoteExpiry(quote.expiresAt)
     if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
       throw new Error('The transfer quote expired. Review a new quote.')
     }
@@ -53,6 +53,25 @@ export function isValueTransferApproval(step: ValueTransferUserStep): boolean {
     step.chainType === 'EVM' &&
     step.transaction.encoded.data.toLowerCase().startsWith('0x095ea7b3')
   )
+}
+
+export function getValueTransferApproval(
+  step: ValueTransferUserStep,
+): { spender: EvmAddress; amount: bigint } | undefined {
+  if (
+    step.type !== 'TRANSACTION' ||
+    step.chainType !== 'EVM' ||
+    !isValueTransferApproval(step)
+  )
+    return undefined
+  const decoded = decodeFunctionData({
+    abi: erc20Abi,
+    data: step.transaction.encoded.data,
+  })
+  if (decoded.functionName !== 'approve')
+    throw new Error('Invalid token approval')
+  const [spender, amount] = decoded.args
+  return { spender, amount }
 }
 
 function canonicalValue(value: unknown): unknown {
@@ -137,8 +156,12 @@ function assertOrderMatchesTrade(
       Number(domain.chainId) !== trade.fromChainId)
   )
     throw new Error('The transfer contains an unsupported signature request')
-  const matches = (value: unknown, expected: string): boolean =>
-    typeof value === 'string' && value.toLowerCase() === expected.toLowerCase()
+  function matches(value: unknown, expected: string): boolean {
+    return (
+      typeof value === 'string' &&
+      value.toLowerCase() === expected.toLowerCase()
+    )
+  }
   if (
     !matches(message.offerer, trade.quoteRequest.srcWalletAddress) ||
     !matches(message.recipient, trade.quoteRequest.dstWalletAddress) ||
@@ -178,10 +201,11 @@ export function validateValueTransferUserSteps(
   if (steps.length === 0 || steps.every(isValueTransferApproval)) {
     throw new Error('The transfer has no executable bridge step')
   }
-  const sameAddress = (a: string, b: string): boolean =>
-    trade.srcChain.chainType === 'EVM'
+  function sameAddress(a: string, b: string): boolean {
+    return trade.srcChain.chainType === 'EVM'
       ? a.toLowerCase() === b.toLowerCase()
       : a === b
+  }
   let nativeValue = 0n
   const aoriSpenders = steps.flatMap((step) => {
     if (step.type !== 'SIGNATURE') return []
@@ -216,14 +240,9 @@ export function validateValueTransferUserSteps(
       )
     }
     nativeValue += BigInt(transaction.value ?? '0')
-    if (!isValueTransferApproval(step)) continue
-    const decoded = decodeFunctionData({
-      abi: erc20Abi,
-      data: transaction.data,
-    })
-    if (decoded.functionName !== 'approve')
-      throw new Error('Invalid token approval')
-    const [spender, amount] = decoded.args
+    const approval = getValueTransferApproval(step)
+    if (!approval) continue
+    const { spender, amount } = approval
     const deployments = metadata[step.chainKey]?.deployments
     const delegate = deployments?.transferDelegate?.address
     const allowed =
@@ -246,7 +265,7 @@ export function validateValueTransferUserSteps(
   )
     ? trade.amountIn
     : 0n
-  if (nativeValue > nativeInput + trade.maxNativeFee) {
+  if (nativeValue > nativeInput + trade.nativeFee) {
     throw new Error('The transfer fee increased. Review a new quote.')
   }
 }

@@ -1,5 +1,5 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { Button, Dots, Loader, classNames } from '@sushiswap/ui'
+import { Button, Dots, Loader } from '@sushiswap/ui'
 import { CheckMarkIcon } from '@sushiswap/ui/icons/check-mark-icon'
 import { FailedMarkIcon } from '@sushiswap/ui/icons/failed-mark-icon'
 import { type FC, type ReactNode, type RefObject, useMemo } from 'react'
@@ -177,18 +177,31 @@ export function CrossChainSwapConfirmationContent({
   }
 
   if (dialogState.bridge === StepState.Pending) {
+    const href =
+      bridgeUrl ?? (txHash ? chain0.getTransactionUrl(txHash) : undefined)
+
+    if (!href) {
+      return (
+        <>
+          Bridging <Dots>to the destination chain</Dots>
+        </>
+      )
+    }
+
     return (
       <>
         Bridging{' '}
         <Button asChild size="sm" variant="link">
           <a
             target="_blank"
-            rel="noreferrer noopener noreferer"
-            href={bridgeUrl}
-            className={classNames(
-              !bridgeUrl ? 'cursor-wait' : '',
-              'flex items-center gap-1',
-            )}
+            rel="noreferrer noopener"
+            href={href}
+            aria-label={
+              bridgeUrl
+                ? 'View bridge transaction'
+                : `View source transaction on ${chain0.name}`
+            }
+            className="flex items-center gap-1"
           >
             <Dots>to the destination chain</Dots>
             <ArrowTopRightOnSquareIcon width={16} height={16} />

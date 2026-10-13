@@ -2,6 +2,7 @@
 
 import { type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
+import { SvmChainId } from 'sushi/svm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@sushiswap/ui', () => ({
@@ -32,7 +33,11 @@ vi.mock('./xswap-provider', () => ({
   useLifiXSwapSelectedTradeRoute: () => ({ data: undefined }),
 }))
 
-import { ConfirmationDialogContent, StepState } from './confirmation-dialog'
+import {
+  ConfirmationDialogContent,
+  CrossChainSwapConfirmationContent,
+  StepState,
+} from './confirmation-dialog'
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
@@ -41,7 +46,7 @@ const txHash =
 
 const routeRef = { current: null }
 
-describe('LiFi source transaction failure', () => {
+describe('LiFi confirmation', () => {
   let container: HTMLDivElement
   let root: Root
 
@@ -94,5 +99,94 @@ describe('LiFi source transaction failure', () => {
 
     expect(container.querySelector('a')).toBeNull()
     expect(container.textContent).toContain('Your transaction failed')
+  })
+
+  it.each([
+    { chainId: 1 as const, hash: txHash, explorer: 'https://etherscan.io' },
+    {
+      chainId: SvmChainId.SOLANA,
+      hash: '5'.repeat(88) as TxHashFor<typeof SvmChainId.SOLANA>,
+      explorer: 'https://solscan.io',
+    },
+  ])(
+    'links the source transaction on $explorer while bridge tracking loads',
+    ({ chainId, hash, explorer }) => {
+      act(() => {
+        root.render(
+          <CrossChainSwapConfirmationContent
+            chainId0={chainId}
+            chainId1={42161}
+            txHash={hash}
+            dialogState={{
+              source: StepState.Success,
+              bridge: StepState.Pending,
+              dest: StepState.NotStarted,
+            }}
+          />,
+        )
+      })
+
+      const link = container.querySelector<HTMLAnchorElement>('a')
+      expect(link?.href).toBe(`${explorer}/tx/${hash}`)
+      expect(container.textContent).toContain(
+        'Bridging to the destination chain',
+      )
+    },
+  )
+
+  it('switches to the bridge tracker when its URL becomes available', () => {
+    const dialogState = {
+      source: StepState.Success,
+      bridge: StepState.Pending,
+      dest: StepState.NotStarted,
+    }
+
+    act(() => {
+      root.render(
+        <ConfirmationDialogContent
+          txHash={txHash}
+          dialogState={dialogState}
+          routeRef={routeRef}
+        />,
+      )
+    })
+
+    expect(container.querySelector<HTMLAnchorElement>('a')?.href).toBe(
+      `https://etherscan.io/tx/${txHash}`,
+    )
+
+    const bridgeUrl = `https://scan.li.fi/tx/${txHash}`
+    act(() => {
+      root.render(
+        <ConfirmationDialogContent
+          txHash={txHash}
+          bridgeUrl={bridgeUrl}
+          dialogState={dialogState}
+          routeRef={routeRef}
+        />,
+      )
+    })
+
+    expect(container.querySelector<HTMLAnchorElement>('a')?.href).toBe(
+      bridgeUrl,
+    )
+  })
+
+  it('shows plain pending bridge text when no explorer URL is available', () => {
+    act(() => {
+      root.render(
+        <ConfirmationDialogContent
+          dialogState={{
+            source: StepState.Success,
+            bridge: StepState.Pending,
+            dest: StepState.NotStarted,
+          }}
+          routeRef={routeRef}
+        />,
+      )
+    })
+
+    expect(container.querySelector('a')).toBeNull()
+    expect(container.textContent).toContain('Bridging to the destination chain')
   })
 })

@@ -237,18 +237,15 @@ export async function readValueTransferRequest<T>(
 }
 
 export function createValueTransferErrorResponse(error: unknown): Response {
-  const status =
-    error instanceof ValueTransferApiError
-      ? error.status
-      : error instanceof ZodError || error instanceof SyntaxError
-        ? 400
-        : 500
-  const message =
-    error instanceof ValueTransferApiError
-      ? error.message
-      : status === 400
-        ? 'Invalid Value Transfer request'
-        : 'Value Transfer request failed'
+  let status = 500
+  let message = 'Value Transfer request failed'
+  if (error instanceof ValueTransferApiError) {
+    status = error.status
+    message = error.message
+  } else if (error instanceof ZodError || error instanceof SyntaxError) {
+    status = 400
+    message = 'Invalid Value Transfer request'
+  }
   return Response.json(
     { message },
     { status, headers: { 'Cache-Control': 'no-store' } },

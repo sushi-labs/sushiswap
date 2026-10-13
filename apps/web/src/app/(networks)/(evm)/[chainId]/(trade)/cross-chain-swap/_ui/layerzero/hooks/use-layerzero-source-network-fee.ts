@@ -4,21 +4,17 @@ import {
 } from '@solana/kit'
 import { useQuery } from '@tanstack/react-query'
 import { getSvmRpc } from 'src/lib/svm/rpc'
+import { fetchValueTransferUserSteps } from 'src/lib/swap/value-transfer/api'
 import {
   buildValueTransferStellarTransaction,
+  getValueTransferApproval,
   isValueTransferApproval,
   validateValueTransferSolanaTransaction,
 } from 'src/lib/swap/value-transfer/execution'
-import { valueTransferBuildUserStepsResponseSchema } from 'src/lib/swap/value-transfer/schemas'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
 import { EvmChainId, isEvmAddress } from 'sushi/evm'
 import { isStellarAccountAddress } from 'sushi/stellar'
-import {
-  type Client,
-  type PublicClient,
-  decodeFunctionData,
-  erc20Abi,
-} from 'viem'
+import { type Client, type PublicClient, erc20Abi } from 'viem'
 import { estimateTotalFee } from 'viem/op-stack'
 
 export type LayerZeroSourceNetworkFee =
@@ -36,21 +32,11 @@ export async function estimateValueTransferSourceNetworkFee(
 ): Promise<LayerZeroSourceNetworkFee> {
   if (!quote.sourceAddress || !quote.recipient)
     return { status: 'connect-wallet' }
-  let steps = quote.quote.userSteps
-  if (!steps?.length) {
-    const response = await fetch(
-      '/api/cross-chain/value-transfer/build-user-steps',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quoteId: quote.quote.id }),
-      },
-    )
-    if (!response.ok) throw new Error('Transaction fee unavailable')
-    steps = valueTransferBuildUserStepsResponseSchema.parse(
-      await response.json(),
-    ).userSteps
-  }
+  const steps = quote.quote.userSteps?.length
+    ? quote.quote.userSteps
+    : await fetchValueTransferUserSteps({
+        quoteId: quote.quote.id,
+      })
   if (!steps.some((step) => !isValueTransferApproval(step))) {
     return { status: 'unavailable' }
   }
@@ -63,8 +49,8 @@ export async function estimateValueTransferSourceNetworkFee(
     if (step.chainKey !== quote.srcChain.chainKey || !sameSigner)
       throw new Error('Invalid source transaction')
     if (step.type === 'SIGNATURE') continue
-    const encoded = step.transaction.encoded
-    if (step.chainType === 'EVM' && 'to' in encoded) {
+    if (step.chainType === 'EVM') {
+      const encoded = step.transaction.encoded
       if (
         !publicClient ||
         publicClient.chain?.id !== quote.fromChainId ||
@@ -72,19 +58,13 @@ export async function estimateValueTransferSourceNetworkFee(
         encoded.chainId !== quote.fromChainId
       )
         throw new Error('Source network unavailable')
-      if (isValueTransferApproval(step)) {
-        const approval = decodeFunctionData({
-          abi: erc20Abi,
-          data: encoded.data,
-        })
-        if (approval.functionName !== 'approve')
-          throw new Error('Invalid token approval')
-        const [spender] = approval.args
+      const approval = getValueTransferApproval(step)
+      if (approval) {
         const allowance = await publicClient.readContract({
           address: encoded.to,
           abi: erc20Abi,
           functionName: 'allowance',
-          args: [quote.sourceAddress, spender],
+          args: [quote.sourceAddress, approval.spender],
         })
         if (allowance < quote.amountIn) return { status: 'approval-required' }
         // A cached quote can retain satisfied approvals. Approval gas is
@@ -109,17 +89,17 @@ export async function estimateValueTransferSourceNetworkFee(
         ])
         amount += gas * gasPrice
       }
-    } else if (step.chainType === 'STELLAR' && 'operationsXDR' in encoded) {
+    } else if (step.chainType === 'STELLAR') {
       if (!isStellarAccountAddress(quote.sourceAddress))
         throw new Error('Invalid Stellar source wallet')
       const transaction = await buildValueTransferStellarTransaction({
-        ...encoded,
+        ...step.transaction.encoded,
         sourceAddress: quote.sourceAddress,
       })
       amount += BigInt(transaction.fee)
-    } else if (step.chainType === 'SOLANA' && 'encoding' in encoded) {
+    } else if (step.chainType === 'SOLANA') {
       const transaction = validateValueTransferSolanaTransaction(
-        encoded.data,
+        step.transaction.encoded.data,
         quote.sourceAddress,
       )
       const message = getBase64Decoder().decode(

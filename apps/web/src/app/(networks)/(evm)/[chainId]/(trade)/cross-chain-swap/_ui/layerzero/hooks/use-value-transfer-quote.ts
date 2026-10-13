@@ -3,6 +3,7 @@ import {
   NEAR_INTENTS_PREVIEW_EVM_ADDRESS_PLACEHOLDER,
   NEAR_INTENTS_PREVIEW_STELLAR_ADDRESS_PLACEHOLDER,
 } from 'src/lib/swap/near-intents/placeholders'
+import { getValueTransferQuoteExpiry } from 'src/lib/swap/value-transfer/quote-expiry'
 import {
   type ValueTransferChain,
   type ValueTransferQuoteRequest,
@@ -14,6 +15,7 @@ import {
   normalizeValueTransferTrade,
 } from 'src/lib/swap/value-transfer/trade'
 import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
+import { isAddressEqual } from 'sushi'
 
 interface ValueTransferQuoteParams {
   token0?: CurrencyFor<ValueTransferChainId>
@@ -51,6 +53,8 @@ export async function fetchValueTransferQuote(
     amount,
     sourceAddress,
     recipient,
+    slippageBps,
+    order,
   } = params
   if (
     !token0 ||
@@ -64,6 +68,13 @@ export async function fetchValueTransferQuote(
   ) {
     throw new Error('Select supported tokens and enter an amount')
   }
+  if (
+    !Number.isInteger(slippageBps) ||
+    slippageBps < 0 ||
+    slippageBps >= 10_000
+  ) {
+    throw new Error('Invalid slippage tolerance')
+  }
   const quoteRequest: ValueTransferQuoteRequest = {
     srcChainKey: srcChain.chainKey,
     dstChainKey: dstChain.chainKey,
@@ -75,15 +86,9 @@ export async function fetchValueTransferQuote(
     // The API describes this as fee variance tolerance. Independently enforce
     // the returned output minimum against the user's slippage below.
     options: {
-      feeTolerance: { type: 'PERCENT', amount: params.slippageBps / 100 },
+      feeTolerance: { type: 'PERCENT', amount: slippageBps / 100 },
     },
   }
-  if (
-    !Number.isInteger(params.slippageBps) ||
-    params.slippageBps < 0 ||
-    params.slippageBps >= 10_000
-  )
-    throw new Error('Invalid slippage tolerance')
   const response = await fetch('/api/cross-chain/value-transfer/quote', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -97,18 +102,14 @@ export async function fetchValueTransferQuote(
   const eligibleQuotes = quotes.filter(
     (candidate) =>
       BigInt(candidate.dstAmountMin) >=
-      (BigInt(candidate.dstAmount) * BigInt(10_000 - params.slippageBps)) /
-        10_000n,
+      (BigInt(candidate.dstAmount) * BigInt(10_000 - slippageBps)) / 10_000n,
   )
   if (quotes.length && !eligibleQuotes.length)
     throw new Error('No LayerZero route meets your slippage tolerance')
   const nativeToken = tokens.find(
     (token) =>
       token.chainKey === srcChain.chainKey &&
-      (srcChain.chainType === 'EVM'
-        ? token.address.toLowerCase() ===
-          srcChain.nativeCurrency.address.toLowerCase()
-        : token.address === srcChain.nativeCurrency.address),
+      isAddressEqual(token.address, srcChain.nativeCurrency.address),
   )
   const nativePrice =
     nativeToken?.price?.usd ?? srcChain.nativeCurrency.price?.usd
@@ -124,9 +125,7 @@ export async function fetchValueTransferQuote(
   }
   return eligibleQuotes.reduce<ValueTransferTrade | null>((best, candidate) => {
     const expiration = candidate.expiresAt
-      ? /^\d+$/.test(candidate.expiresAt)
-        ? Number(candidate.expiresAt)
-        : Date.parse(candidate.expiresAt)
+      ? getValueTransferQuoteExpiry(candidate.expiresAt)
       : undefined
     if (expiration !== undefined && expiration <= Date.now()) return best
     const trade = normalizeValueTransferTrade({
@@ -141,7 +140,7 @@ export async function fetchValueTransferQuote(
     })
     if (!best) return trade
     if (
-      params.order === 'FASTEST' &&
+      order === 'FASTEST' &&
       trade.estimatedSeconds !== best.estimatedSeconds
     ) {
       return (trade.estimatedSeconds ?? Number.POSITIVE_INFINITY) <

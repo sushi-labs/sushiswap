@@ -1,6 +1,6 @@
 import type { TokenListChainId } from '@sushiswap/graph-client/data-api'
 import { List, classNames } from '@sushiswap/ui'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { useMyTokens } from '../hooks/use-my-tokens'
@@ -9,6 +9,7 @@ import {
   TokenSelectorCurrencyList,
   TokenSelectorCurrencyListLoading,
 } from './common/token-selector-currency-list'
+import { getTokenGroups } from './token-groups'
 
 interface TokenSelectorMyTokens<TChainId extends TokenListChainId> {
   chainId: TChainId
@@ -18,7 +19,9 @@ interface TokenSelectorMyTokens<TChainId extends TokenListChainId> {
   includeNative?: boolean
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+export function TokenSelectorMyTokensShell({
+  children,
+}: { children: React.ReactNode }): React.JSX.Element {
   const theme = useTokenSelectorTheme()
 
   return (
@@ -60,45 +63,55 @@ export function TokenSelectorMyTokens<TChainId extends TokenListChainId>({
     chainId,
   })
 
+  const { myCurrencies } = useMemo(
+    () =>
+      getTokenGroups({
+        currencies: data.tokens,
+        balancesMap: data.balanceMap,
+        pricesMap,
+      }),
+    [data.tokens, data.balanceMap, pricesMap],
+  )
+
   if (isLoading)
     return (
-      <Shell>
+      <TokenSelectorMyTokensShell>
         <TokenSelectorCurrencyListLoading count={10} />
-      </Shell>
+      </TokenSelectorMyTokensShell>
     )
 
   if (isError)
     return (
-      <Shell>
+      <TokenSelectorMyTokensShell>
         <div className="flex w-full justify-center py-3">
           An error has occurred.
         </div>
-      </Shell>
+      </TokenSelectorMyTokensShell>
     )
 
-  if (!data.balanceMap?.size)
+  if (!myCurrencies.length)
     return (
-      <Shell>
+      <TokenSelectorMyTokensShell>
         <div className="flex w-full justify-center py-3">
           No balances found.
         </div>
-      </Shell>
+      </TokenSelectorMyTokensShell>
     )
 
   return (
-    <Shell>
+    <TokenSelectorMyTokensShell>
       <TokenSelectorCurrencyList
         id="trending"
         selected={selected}
         onSelect={onSelect}
         onShowInfo={onShowInfo}
         // pin={{}}
-        currencies={data.tokens}
+        currencies={myCurrencies}
         chainId={chainId}
         balancesMap={data.balanceMap}
         pricesMap={pricesMap}
         isBalanceLoading={!data.balanceMap}
       />
-    </Shell>
+    </TokenSelectorMyTokensShell>
   )
 }

@@ -2,6 +2,7 @@ import { type EvmAddress, EvmChainId } from 'sushi/evm'
 
 export const VALUE_TRANSFER_API_URL = 'https://transfer.layerzero-api.com/v1'
 export const VALUE_TRANSFER_DISCOVERY_CACHE_SECONDS = 60
+export const VALUE_TRANSFER_DISCOVERY_CACHE_CONTROL = `s-maxage=${VALUE_TRANSFER_DISCOVERY_CACHE_SECONDS}, stale-while-revalidate=60`
 export const VALUE_TRANSFER_REQUEST_TIMEOUT_MS = 30_000
 
 // TODO: Configure the 35 bps Sushi partner commission with LayerZero for

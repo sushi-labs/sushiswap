@@ -100,6 +100,31 @@ describe('Value Transfer API routes', () => {
   })
 
   it.each([
+    { body: '{', status: 400, message: 'Invalid Value Transfer request' },
+    {
+      body: ' '.repeat(32_769),
+      status: 413,
+      message: 'Value Transfer request is too large',
+    },
+  ])(
+    'returns an uncached $status for an invalid request body',
+    async ({ body, status, message }) => {
+      const fetchMock = vi.fn()
+      vi.stubGlobal('fetch', fetchMock)
+      const result = await quote(
+        new Request('http://localhost/api/cross-chain/value-transfer/quote', {
+          method: 'POST',
+          body,
+        }),
+      )
+      expect(result.status).toBe(status)
+      expect(result.headers.get('Cache-Control')).toBe('no-store')
+      expect(await result.json()).toEqual({ message })
+      expect(fetchMock).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each([
     Response.json({ quotes: [{ id: 'bad' }], tokens: [] }),
     Response.json({
       error: { message: 'test-secret' },

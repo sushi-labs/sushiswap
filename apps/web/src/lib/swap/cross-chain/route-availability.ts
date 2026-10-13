@@ -6,6 +6,8 @@ export type RouteAvailability =
   | 'empty'
   | 'error'
 
+export type CrossChainProvider = 'lifi' | 'near-intents' | 'layerzero'
+
 export class NoCrossChainRouteError extends Error {
   constructor(message = 'No route found') {
     super(message)
@@ -42,7 +44,7 @@ export function canTryNextProvider(availability: RouteAvailability): boolean {
 export function getPreferredProvider(
   lifi: RouteAvailability,
   near: RouteAvailability,
-): 'lifi' | 'near-intents' | 'layerzero' {
+): CrossChainProvider {
   if (!canTryNextProvider(lifi)) return 'lifi'
   if (!canTryNextProvider(near)) return 'near-intents'
   return 'layerzero'

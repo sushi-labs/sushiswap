@@ -25,7 +25,7 @@ interface CatalogResponse {
   tokens: ValueTransferToken[]
 }
 
-interface ValueTransferCatalog extends CatalogResponse {
+interface ValueTransferCatalog {
   entries: ValueTransferCurrencyEntry[]
   currenciesByChain: Partial<
     Record<
@@ -33,7 +33,6 @@ interface ValueTransferCatalog extends CatalogResponse {
       Record<string, CurrencyFor<ValueTransferChainId>>
     >
   >
-  networkIds: ValueTransferChainId[]
   getChain(chainId: ValueTransferChainId): ValueTransferChain | undefined
   getToken(
     chainId: ValueTransferChainId,
@@ -106,11 +105,8 @@ export function useValueTransferCatalog(): ValueTransferCatalog {
         : undefined
     }
     return {
-      chains,
-      tokens,
       entries,
       currenciesByChain,
-      networkIds: [...chainById.keys()],
       getChain: (chainId: ValueTransferChainId) => chainById.get(chainId),
       getToken: (chainId: ValueTransferChainId, param: string | undefined) =>
         getEntry(chainId, param)?.token,

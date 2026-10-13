@@ -11,18 +11,14 @@ import {
 } from 'react'
 import {
   type LifiXSwapSupportedChainId,
-  type SupportedChainId,
   isLifiXSwapSupportedChainId,
 } from 'src/config'
-import { nativeFromChainId, newToken } from 'src/lib/currency-from-chain-id'
+import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
 import { useCrossChainPriceImpact } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-price-impact'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
-import type {
-  CrossChainRoute,
-  CrossChainRouteOrder,
-} from 'src/lib/swap/cross-chain'
-import { isLifiNativeToken } from 'src/lib/swap/cross-chain/is-lifi-native-token'
+import type { CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
+import { getLifiCurrency } from 'src/lib/swap/cross-chain/get-lifi-currency'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount } from 'sushi'
@@ -50,8 +46,6 @@ function getLifiCatalogCurrency(
     ? currency
     : undefined
 }
-
-type NewTokenInput = Parameters<typeof newToken>[0]
 
 interface State<
   TChainId0 extends LifiXSwapSupportedChainId = LifiXSwapSupportedChainId,
@@ -377,17 +371,8 @@ function useLifiXSwapSelectedTradeRoute<
 
     if (!route) return undefined
 
-    const tokenIn = (
-      isLifiNativeToken(route.fromToken)
-        ? nativeFromChainId(route.fromToken.chainId)
-        : newToken(route.fromToken as NewTokenInput)
-    ) as CurrencyFor<TChainId0>
-
-    const tokenOut = (
-      isLifiNativeToken(route.toToken)
-        ? nativeFromChainId(route.toToken.chainId)
-        : newToken(route.toToken as NewTokenInput)
-    ) as CurrencyFor<TChainId1>
+    const tokenIn = getLifiCurrency(route.fromToken) as CurrencyFor<TChainId0>
+    const tokenOut = getLifiCurrency(route.toToken) as CurrencyFor<TChainId1>
 
     const amountIn = new Amount(tokenIn, route.fromAmount)
     const amountOut = new Amount(tokenOut, route.toAmount)

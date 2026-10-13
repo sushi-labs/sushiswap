@@ -28,6 +28,8 @@ import {
   erc20Abi,
 } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { StepState } from '../../lifi/confirmation-dialog'
+import { getLayerZeroExecutionStepStates } from '../execution-step-states'
 import { useLayerZeroExecute } from './use-layerzero-execute'
 import {
   type LayerZeroExecutionState,
@@ -39,6 +41,7 @@ const mocks = vi.hoisted(() => ({
   useApproved: vi.fn(),
   send: vi.fn(),
   estimate: vi.fn(),
+  fees: vi.fn(),
   allowance: vi.fn(),
   wait: vi.fn(),
   sign: vi.fn(),
@@ -55,6 +58,9 @@ vi.mock('src/lib/constants', () => ({
 }))
 vi.mock('src/lib/wagmi/systems/checker/provider', () => ({
   useApproved: mocks.useApproved,
+}))
+vi.mock('src/lib/wagmi/transactions/get-robinhood-transaction-fees', () => ({
+  getRobinhoodTransactionFees: mocks.fees,
 }))
 vi.mock('src/lib/wallet/hooks/use-account', () => ({
   useAccount: () => '0xFF64C2d5e23e9c48e8b42a23dc70055EEC9ea098',
@@ -203,7 +209,7 @@ describe('Value Transfer sequential execution', () => {
     expect(mocks.send).toHaveBeenLastCalledWith(
       expect.objectContaining({
         chainId: 8453,
-        value: currentQuote.maxNativeFee,
+        value: currentQuote.nativeFee,
         account: sender,
       }),
     )
@@ -216,6 +222,88 @@ describe('Value Transfer sequential execution', () => {
     expect(executions.isSubmitting).toBe(false)
     expect(review.open).toBe(false)
     expect(confirmation.open).toBe(true)
+  })
+
+  it.each([false, true])(
+    'shows source confirmation progress before the receipt and preserves dismissal: %s',
+    async (dismiss) => {
+      const walletRequest = Promise.withResolvers<Hex>()
+      const receipt = Promise.withResolvers<{
+        status: 'success'
+        transactionHash: Hex
+      }>()
+      mocks.send.mockReturnValueOnce(walletRequest.promise)
+      mocks.wait.mockReturnValueOnce(receipt.promise)
+
+      await act(async () => {
+        execute.mutate({ id: 'first', quote: currentQuote })
+        await vi.waitFor(() => expect(mocks.send).toHaveBeenCalledOnce())
+      })
+
+      expect(review.open).toBe(true)
+      expect(confirmation.open).toBe(false)
+      expect(mocks.clear).not.toHaveBeenCalled()
+
+      await act(async () => {
+        walletRequest.resolve(txHash)
+        await vi.waitFor(() => expect(mocks.wait).toHaveBeenCalledOnce())
+      })
+
+      expect(review.open).toBe(false)
+      expect(confirmation.open).toBe(true)
+      expect(executions.isSubmitting).toBe(true)
+      expect(executions.executions[0]).toMatchObject({
+        txHash,
+        submitted: true,
+        sourceStatus: 'PENDING',
+      })
+      expect(getLayerZeroExecutionStepStates(executions.executions[0])).toEqual(
+        {
+          source: StepState.Pending,
+          bridge: StepState.NotStarted,
+          dest: StepState.NotStarted,
+        },
+      )
+      expect(mocks.clear).toHaveBeenCalledOnce()
+      expect(mocks.success).not.toHaveBeenCalled()
+
+      if (dismiss) act(() => confirmation.setOpen(false))
+
+      await act(async () => {
+        receipt.resolve({ status: 'success', transactionHash: txHash })
+        await vi.waitFor(() => expect(mocks.success).toHaveBeenCalledOnce())
+      })
+
+      expect(executions.isSubmitting).toBe(false)
+      expect(getLayerZeroExecutionStepStates(executions.executions[0])).toEqual(
+        {
+          source: StepState.Success,
+          bridge: StepState.Pending,
+          dest: StepState.NotStarted,
+        },
+      )
+      expect(review.open).toBe(false)
+      expect(confirmation.open).toBe(!dismiss)
+    },
+  )
+
+  it('rejects malformed approval calldata before requesting a signature or transaction', async () => {
+    const approval = currentQuote.quote.userSteps?.[0]
+    if (approval?.type !== 'TRANSACTION' || approval.chainType !== 'EVM')
+      throw new Error('Expected EVM approval fixture')
+    approval.transaction.encoded.data = '0x095ea7b3'
+
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow()
+    })
+
+    expect(mocks.allowance).not.toHaveBeenCalled()
+    expect(mocks.sign).not.toHaveBeenCalled()
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(executions.executions[0]).toMatchObject({ sourceStatus: 'FAILED' })
+    expect(executions.isSubmitting).toBe(false)
   })
 
   it('requires a new review if allowance is no longer sufficient', async () => {
@@ -284,6 +372,49 @@ describe('Value Transfer sequential execution', () => {
     expect(mocks.info).not.toHaveBeenCalled()
     expect(review.open).toBe(false)
     expect(confirmation.open).toBe(true)
+  })
+
+  it('refreshes transaction fees after gas estimation and before sending', async () => {
+    const fees = {
+      type: 'eip1559',
+      gasPrice: undefined,
+      maxFeePerGas: 44_000_000n,
+      maxPriorityFeePerGas: 1_000_000n,
+    }
+    mocks.fees.mockResolvedValue(fees)
+
+    await act(async () => {
+      await execute.mutateAsync({ id: 'first', quote: currentQuote })
+    })
+
+    expect(mocks.fees).toHaveBeenCalledWith(
+      currentQuote.fromChainId,
+      expect.objectContaining({ estimateGas: mocks.estimate }),
+    )
+    expect(mocks.estimate.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.fees.mock.invocationCallOrder[0],
+    )
+    expect(mocks.fees.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.send.mock.invocationCallOrder[0],
+    )
+    expect(mocks.send).toHaveBeenCalledWith(expect.objectContaining(fees))
+  })
+
+  it('reports a fee estimation failure without sending or marking the transfer submitted', async () => {
+    mocks.fees.mockRejectedValue(new Error('Fee RPC unavailable'))
+
+    await act(async () => {
+      await expect(
+        execute.mutateAsync({ id: 'first', quote: currentQuote }),
+      ).rejects.toThrow('Fee RPC unavailable')
+    })
+
+    expect(mocks.send).not.toHaveBeenCalled()
+    expect(executions.executions[0]?.submitted).not.toBe(true)
+    expect(executions.executions[0]?.sourceStatus).toBe('FAILED')
+    expect(executions.isSubmitting).toBe(false)
+    expect(mocks.failed).toHaveBeenCalledOnce()
+    expect(mocks.info).not.toHaveBeenCalled()
   })
 
   it.each([
@@ -422,6 +553,45 @@ describe('Value Transfer sequential execution', () => {
       sourceStatus: 'SUCCESS',
     })
     expect(executions.executions[0]?.txHash).toBeUndefined()
+  })
+
+  it('shows source progress while the signature submission response is pending', async () => {
+    currentQuote = makeExecutionTrade(true)
+    const submission = Promise.withResolvers<Response>()
+    const baseFetch = fetchMock.getMockImplementation()
+    fetchMock.mockImplementation(async (...args) => {
+      if (String(args[0]).endsWith('/submit-signature'))
+        return submission.promise
+      if (!baseFetch) throw new Error('Missing mock')
+      return baseFetch(...args)
+    })
+    render()
+
+    await act(async () => {
+      execute.mutate({ id: 'first', quote: currentQuote })
+      await vi.waitFor(() =>
+        expect(fetchMock).toHaveBeenCalledWith(
+          '/api/cross-chain/value-transfer/submit-signature',
+          expect.anything(),
+        ),
+      )
+    })
+
+    expect(review.open).toBe(false)
+    expect(confirmation.open).toBe(true)
+    expect(executions.isSubmitting).toBe(true)
+    expect(executions.executions[0]?.txHash).toBeUndefined()
+    expect(
+      getLayerZeroExecutionStepStates(executions.executions[0]).source,
+    ).toBe(StepState.Pending)
+    expect(mocks.success).not.toHaveBeenCalled()
+
+    await act(async () => {
+      submission.resolve(Response.json({}))
+      await vi.waitFor(() => expect(mocks.success).toHaveBeenCalledOnce())
+    })
+    expect(executions.isSubmitting).toBe(false)
+    expect(executions.executions[0]?.sourceStatus).toBe('SUCCESS')
   })
 
   it('retains signature submission uncertainty if its response is lost', async () => {

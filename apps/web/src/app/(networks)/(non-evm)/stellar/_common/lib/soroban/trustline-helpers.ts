@@ -10,24 +10,26 @@ import { SorobanClient, getTokenContractClient } from './client'
 
 const horizonServer = new Horizon.Server(HORIZON_URL)
 
-const assetIssuerCache = new Map<string, StellarAccountAddress | null>()
+type TrustlineRequirement =
+  | { required: true; assetCode: string; issuer: StellarAccountAddress }
+  | { required: false; assetCode: null; issuer: null }
+
+const trustlineRequirementCache = new Map<string, TrustlineRequirement>()
 
 /** Resolve trustlines from the contract itself; indexer absence is not proof of a custom token. */
 export async function checkTrustlineRequired(
   contractAddress: StellarContractAddress,
   assetCode: string,
   assetIssuer?: StellarAccountAddress | '',
-): Promise<{ required: boolean; issuer: StellarAccountAddress | null }> {
+): Promise<TrustlineRequirement> {
   if (
     contractAddress === StellarSdk.Asset.native().contractId(NETWORK_PASSPHRASE)
   ) {
-    return { required: false, issuer: null }
+    return { required: false, assetCode: null, issuer: null }
   }
-  const cacheKey = `${contractAddress}:${assetCode}`
-  if (assetIssuerCache.has(cacheKey)) {
-    const issuer = assetIssuerCache.get(cacheKey) ?? null
-    return { required: issuer !== null, issuer }
-  }
+  const cacheKey = `${contractAddress}:${assetCode}:${assetIssuer ?? ''}`
+  const cached = trustlineRequirementCache.get(cacheKey)
+  if (cached) return cached
   // https://developers.stellar.org/docs/tokens/stellar-asset-contract
   const entry = await SorobanClient.getContractData(
     contractAddress,
@@ -40,34 +42,53 @@ export async function checkTrustlineRequired(
     .executable()
     .switch().name
   if (executable === 'contractExecutableWasm') {
-    assetIssuerCache.set(cacheKey, null)
-    return { required: false, issuer: null }
+    const result: TrustlineRequirement = {
+      required: false,
+      assetCode: null,
+      issuer: null,
+    }
+    trustlineRequirementCache.set(cacheKey, result)
+    return result
   }
   if (executable !== 'contractExecutableStellarAsset')
     throw new Error('Unable to identify the token contract')
   let issuer = assetIssuer
-  if (!issuer) {
+  let resolvedCode = assetCode
+  if (
+    !issuer ||
+    new StellarSdk.Asset(assetCode, issuer).contractId(NETWORK_PASSPHRASE) !==
+      contractAddress
+  ) {
     const { result: name } = await getTokenContractClient({
       contractId: contractAddress,
     }).name()
     const [code, resolvedIssuer] = name.split(':')
+    resolvedCode = code
     if (
-      code !== assetCode ||
+      code.toLowerCase() !== assetCode.toLowerCase() ||
       !resolvedIssuer ||
-      !isStellarAccountAddress(resolvedIssuer)
+      !isStellarAccountAddress(resolvedIssuer) ||
+      (issuer && issuer !== resolvedIssuer)
     ) {
       throw new Error('Unable to resolve the asset issuer')
     }
     issuer = resolvedIssuer
   }
   if (
-    new StellarSdk.Asset(assetCode, issuer).contractId(NETWORK_PASSPHRASE) !==
-    contractAddress
+    new StellarSdk.Asset(resolvedCode, issuer).contractId(
+      NETWORK_PASSPHRASE,
+    ) !== contractAddress
   ) {
     throw new Error('Asset metadata does not match the token contract')
   }
-  assetIssuerCache.set(cacheKey, issuer)
-  return { required: true, issuer }
+  // Display symbols may differ in case; trustlines must use the exact asset code.
+  const result: TrustlineRequirement = {
+    required: true,
+    assetCode: resolvedCode,
+    issuer,
+  }
+  trustlineRequirementCache.set(cacheKey, result)
+  return result
 }
 
 /**
