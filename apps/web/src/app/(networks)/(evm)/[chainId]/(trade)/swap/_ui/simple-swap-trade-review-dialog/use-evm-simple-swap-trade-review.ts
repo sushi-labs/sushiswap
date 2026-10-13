@@ -237,7 +237,7 @@ function useEvmSimpleSwapTradeReviewForState({
               detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
               wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
             }
-            await sendDrilldownLog({
+            void sendDrilldownLog({
               dataForLog: swapDetails,
               extraFields: {
                 detailsCollapsedState: swapDetails.detailsCollapsedState,
@@ -247,6 +247,8 @@ function useEvmSimpleSwapTradeReviewForState({
                 recipient: swapDetails.recipient,
               },
               logLevel: 'info',
+            }).catch((error) => {
+              console.warn('Failed to record successful swap telemetry', error)
             })
           }
         } catch (error) {
@@ -333,11 +335,7 @@ function useEvmSimpleSwapTradeReviewForState({
     mutateAsync: sendTransactionAsync,
     isPending: isWritePending,
     data: txHash,
-  } = useSendTransaction({
-    mutation: {
-      onSuccess: onSwapSuccess,
-    },
-  })
+  } = useSendTransaction()
 
   const executeTrade = useCallback(
     async (trade: UseEvmTradeReturn, confirm: () => void) => {
@@ -365,7 +363,7 @@ function useEvmSimpleSwapTradeReviewForState({
             'The connected wallet changed. Review the swap again.',
           )
         }
-        await sendTransactionAsync({
+        const hash = await sendTransactionAsync({
           chainId,
           account: address,
           to,
@@ -377,6 +375,7 @@ function useEvmSimpleSwapTradeReviewForState({
           ...fees,
         })
         confirm()
+        await onSwapSuccess(hash)
       } catch (error) {
         onSwapError(
           error instanceof Error ? error : new Error('Failed to submit swap'),
@@ -392,6 +391,7 @@ function useEvmSimpleSwapTradeReviewForState({
       chainId,
       client,
       onSwapError,
+      onSwapSuccess,
       sendTransactionAsync,
     ],
   )
