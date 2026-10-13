@@ -21,7 +21,12 @@ import {
   TraceEvent,
 } from '@sushiswap/telemetry'
 import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
-import { EVM_UI_FEE_PERCENT, type LifiXSwapSupportedChainId } from 'src/config'
+import {
+  EVM_UI_FEE_PERCENT,
+  type LifiXSwapSupportedChainId,
+  SVM_UI_FEE_PERCENT,
+  XSWAP_STABLE_UI_FEE_PERCENT,
+} from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import {
   warningSeverity,
@@ -29,6 +34,7 @@ import {
 } from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
+import { isSvmChainId } from 'sushi/svm'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './fees-hover-card'
 import { CrossChainSwapTokenRate } from './token-rate'
@@ -39,7 +45,13 @@ export function CrossChainSwapTradeStats<
   TChainId1 extends LifiXSwapSupportedChainId,
 >() {
   const {
-    state: { chainId0, chainId1, swapAmountString, recipient },
+    state: {
+      chainId0,
+      chainId1,
+      isStableToStable,
+      swapAmountString,
+      recipient,
+    },
   } = useLifiXSwap<TChainId0, TChainId1>()
   const { isLoading, data: trade, isError } = useLifiXSwapSelectedTradeRoute()
   const {
@@ -175,7 +187,13 @@ export function CrossChainSwapTradeStats<
 
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee ({EVM_UI_FEE_PERCENT}%)
+              Fee (
+              {isStableToStable
+                ? XSWAP_STABLE_UI_FEE_PERCENT
+                : isSvmChainId(chainId0)
+                  ? SVM_UI_FEE_PERCENT
+                  : EVM_UI_FEE_PERCENT}
+              %)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
               {isLoading || !feeData ? (

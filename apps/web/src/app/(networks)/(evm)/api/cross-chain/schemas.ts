@@ -2,8 +2,16 @@ import {
   type LifiXSwapSupportedChainId,
   isLifiXSwapSupportedChainId,
 } from 'src/config'
-import { type EvmChainId, isEvmAddress, isEvmChainId } from 'sushi/evm'
 import {
+  type EvmAddress,
+  type EvmChainId,
+  STABLES,
+  isEvmAddress,
+  isEvmChainId,
+} from 'sushi/evm'
+import {
+  SVM_STABLES,
+  type SvmAddress,
   SvmChainId,
   type SvmChainId as SvmChainIdType,
   isSvmAddress,
@@ -75,6 +83,38 @@ export function lifiToSushiChainId<TChainId extends LifiChainId>(
     return chainId
   }
   throw new Error('chainId not supported in LifiXSwapSupportedChainId')
+}
+
+export function isStableToStable({
+  fromTokenAddress,
+  fromTokenChainId,
+  toTokenAddress,
+  toTokenChainId,
+}: {
+  fromTokenAddress: EvmAddress | SvmAddress
+  fromTokenChainId: LifiChainId
+  toTokenAddress: EvmAddress | SvmAddress
+  toTokenChainId: LifiChainId
+}): boolean {
+  const _fromChainId = lifiToSushiChainId(fromTokenChainId)
+  const _toChainId = lifiToSushiChainId(toTokenChainId)
+
+  const fromStables = isEvmChainId(_fromChainId)
+    ? STABLES[_fromChainId]
+    : SVM_STABLES[_fromChainId]
+  const toStables = isEvmChainId(_toChainId)
+    ? STABLES[_toChainId]
+    : SVM_STABLES[_toChainId]
+
+  return (
+    fromStables.some(
+      (stable) =>
+        stable.address.toLowerCase() === fromTokenAddress.toLowerCase(),
+    ) &&
+    toStables.some(
+      (stable) => stable.address.toLowerCase() === toTokenAddress.toLowerCase(),
+    )
+  )
 }
 
 function isLifiChainId(chainId: number): chainId is LifiChainId {
