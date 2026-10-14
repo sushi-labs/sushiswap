@@ -2,11 +2,9 @@ import type { NextRequest } from 'next/server'
 import {
   EVM_UI_FEE_DECIMAL,
   type LifiXSwapSupportedChainId,
-  SVM_UI_FEE_DECIMAL,
   XSWAP_STABLE_UI_FEE_DECIMAL,
 } from 'src/config'
 import { isLifiNoRouteResponse } from 'src/lib/swap/cross-chain/route-availability'
-import { isEvmChainId } from 'sushi/evm'
 import * as z from 'zod'
 import {
   type LifiChainId,
@@ -138,9 +136,7 @@ export async function GET(request: NextRequest) {
           toTokenChainId: parsedParams.toChainId,
         })
           ? XSWAP_STABLE_UI_FEE_DECIMAL
-          : isEvmChainId(parsedParams.fromChainId)
-            ? EVM_UI_FEE_DECIMAL
-            : SVM_UI_FEE_DECIMAL,
+          : EVM_UI_FEE_DECIMAL,
       },
     }),
   }

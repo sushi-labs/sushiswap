@@ -9,7 +9,7 @@ import {
   SkeletonText,
   classNames,
 } from '@sushiswap/ui'
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { ZERO, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { isAddress } from 'viem'
 
@@ -24,7 +24,6 @@ import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
 import {
   EVM_UI_FEE_PERCENT,
   type LifiXSwapSupportedChainId,
-  SVM_UI_FEE_PERCENT,
   XSWAP_STABLE_UI_FEE_PERCENT,
 } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
@@ -34,7 +33,6 @@ import {
 } from 'src/lib/swap/warning-severity'
 import { AddressToEnsResolver } from 'src/lib/wagmi/components/account/address-to-ens-resolver'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { isSvmChainId } from 'sushi/svm'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
 import { CrossChainSwapFeesHoverCard } from './fees-hover-card'
 import { CrossChainSwapTokenRate } from './token-rate'
@@ -190,9 +188,7 @@ export function CrossChainSwapTradeStats<
               Fee (
               {isStableToStable
                 ? XSWAP_STABLE_UI_FEE_PERCENT
-                : isSvmChainId(chainId0)
-                  ? SVM_UI_FEE_PERCENT
-                  : EVM_UI_FEE_PERCENT}
+                : EVM_UI_FEE_PERCENT}
               %)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
