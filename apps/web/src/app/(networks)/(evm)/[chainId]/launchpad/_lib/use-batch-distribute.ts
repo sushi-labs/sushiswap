@@ -8,7 +8,7 @@ import {
   type SpraayRecipient,
   getSpraayDistributionAmount,
   validateSpraayRecipients,
-} from '@sushiswap/batch-distribute'
+} from '@spraay/dex-adapters/sushiswap'
 import { createToast } from '@sushiswap/notifications'
 import { useState } from 'react'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
