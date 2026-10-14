@@ -1,18 +1,21 @@
 import type { NextRequest } from 'next/server'
-import { EVM_UI_FEE_DECIMAL, type LifiXSwapSupportedChainId } from 'src/config'
+import {
+  EVM_UI_FEE_DECIMAL,
+  type LifiXSwapSupportedChainId,
+  XSWAP_STABLE_UI_FEE_DECIMAL,
+} from 'src/config'
 import { isLifiNoRouteResponse } from 'src/lib/swap/cross-chain/route-availability'
-import { isEvmChainId } from 'sushi/evm'
 import * as z from 'zod'
 import {
   type LifiChainId,
   getAddressSchema,
+  isStableToStable,
   lifiChainIdSchema,
   lifiToSushiChainId,
   stepSchema,
   sushiChainIdSchema,
   sushiToLifiChainId,
   tokenSchema,
-  transactionRequestSchema,
 } from '../schemas'
 
 const routesBaseInputSchema = z.object({
@@ -126,10 +129,14 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        //need to setup sol fee in lifi portol
-        fee: isEvmChainId(parsedParams.fromChainId)
-          ? EVM_UI_FEE_DECIMAL
-          : undefined, // e.g. 0.0035 (0.35%)
+        fee: isStableToStable({
+          fromTokenAddress: parsedParams.fromTokenAddress,
+          fromTokenChainId: parsedParams.fromChainId,
+          toTokenAddress: parsedParams.toTokenAddress,
+          toTokenChainId: parsedParams.toChainId,
+        })
+          ? XSWAP_STABLE_UI_FEE_DECIMAL
+          : EVM_UI_FEE_DECIMAL,
       },
     }),
   }

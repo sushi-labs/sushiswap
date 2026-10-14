@@ -200,7 +200,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
             detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
             wasDetailsTouched: wasDetailsTouched ? 'yes' : 'no',
           }
-          await sendDrilldownLog({
+          void sendDrilldownLog({
             dataForLog: swapDetails,
             extraFields: {
               detailsCollapsedState: swapDetails.detailsCollapsedState,
@@ -210,6 +210,8 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
               recipient: swapDetails.recipient,
             },
             logLevel: 'info',
+          }).catch((error) => {
+            console.warn('Failed to record successful swap telemetry', error)
           })
         }
 

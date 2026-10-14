@@ -21,10 +21,20 @@ import type { CrossChainRouteOrder } from 'src/lib/swap/cross-chain'
 import { getLifiCurrency } from 'src/lib/swap/cross-chain/get-lifi-currency'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { Amount } from 'sushi'
-import { type EvmAddress, EvmChainId } from 'sushi/evm'
+import { Amount, type CurrencyMetadata } from 'sushi'
+import {
+  type EvmAddress,
+  EvmChainId,
+  type EvmCurrency,
+  isStable,
+} from 'sushi/evm'
 import { StellarChainId } from 'sushi/stellar'
-import type { SvmAddress } from 'sushi/svm'
+import {
+  type SvmAddress,
+  type SvmCurrency,
+  isSvmChainId,
+  isSvmStable,
+} from 'sushi/svm'
 import {
   getDefaultCurrency,
   getQuoteCurrency,
@@ -36,6 +46,20 @@ import {
   type XSwapFormStateValues,
   useXSwapForm,
 } from '../xswap-form-provider'
+
+const isCurrencyStable = (
+  currency:
+    | EvmCurrency<CurrencyMetadata>
+    | SvmCurrency<CurrencyMetadata>
+    | undefined,
+) => {
+  if (!currency) return false
+  if (currency.isNative) return false
+  if (isSvmChainId(currency.chainId)) {
+    return isSvmStable(currency as SvmCurrency<CurrencyMetadata>)
+  }
+  return isStable(currency as EvmCurrency<CurrencyMetadata>)
+}
 
 function getLifiCatalogCurrency(
   currency:
@@ -75,6 +99,7 @@ interface State<
     recipient: AddressFor<TChainId1> | undefined
     selectedBridge: string | undefined
     routeOrder: CrossChainRouteOrder
+    isStableToStable: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -216,6 +241,12 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
 
   const recipient = useAccount(chainId1)
 
+  const isStableToStable = useMemo(() => {
+    if (!_token0 || !_token1) return false
+
+    return isCurrencyStable(_token0) && isCurrencyStable(_token1)
+  }, [_token0, _token1])
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setSelectedBridge(undefined)
@@ -248,6 +279,7 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
             token1: _token1,
             selectedBridge,
             routeOrder,
+            isStableToStable,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -274,6 +306,7 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
         selectedBridge,
         routeOrder,
         recipient,
+        isStableToStable,
       ])}
     >
       {children}
