@@ -367,6 +367,9 @@ importers:
       '@solana/transactions':
         specifier: 6.0.1
         version: 6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
+      '@spraay/dex-adapters':
+        specifier: ^0.2.0
+        version: 0.2.0(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))
       '@stellar/stellar-sdk':
         specifier: 16.0.1
         version: 16.0.1
@@ -7831,6 +7834,12 @@ packages:
     engines: {node: '>=20.18.0'}
     peerDependencies:
       typescript: 5.9.3
+
+  '@spraay/dex-adapters@0.2.0':
+    resolution: {integrity: sha512-TDd3CXTP0qSAOjJ5NqTeMpM6z/o5uxlwsBI0zhIGet8CBfSAntTPMN2i2bJhNLs3knlnO6/RoKvW8VakJiMH/w==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      viem: 2.56.7
 
   '@stellar/freighter-api@6.0.0':
     resolution: {integrity: sha512-8CTQcKQmTq/wL715ZUzn1x1POpR0eYhYPKEiaeA7AT0WYBOauOGTxfWPFtSidX3ohAlJZP5HFXy1kG29cVjqxw==}
@@ -25704,6 +25713,10 @@ snapshots:
     dependencies:
       '@noble/ed25519': 3.0.0
       typescript: 5.9.3
+
+  '@spraay/dex-adapters@0.2.0(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))':
+    dependencies:
+      viem: 2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
 
   '@stellar/freighter-api@6.0.0':
     dependencies:
