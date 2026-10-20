@@ -25,6 +25,7 @@ import {
   EVM_UI_FEE_PERCENT,
   type LifiXSwapSupportedChainId,
   XSWAP_STABLE_UI_FEE_PERCENT,
+  XSWAP_SUSHI_UI_FEE_PERCENT,
 } from 'src/config'
 import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import {
@@ -49,6 +50,7 @@ export function CrossChainSwapTradeStats<
       isStableToStable,
       swapAmountString,
       recipient,
+      isSushiToSushi,
     },
   } = useLifiXSwap<TChainId0, TChainId1>()
   const { isLoading, data: trade, isError } = useLifiXSwapSelectedTradeRoute()
@@ -186,9 +188,11 @@ export function CrossChainSwapTradeStats<
           <div className="flex justify-between items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-slate-400">
               Fee (
-              {isStableToStable
-                ? XSWAP_STABLE_UI_FEE_PERCENT
-                : EVM_UI_FEE_PERCENT}
+              {isSushiToSushi
+                ? XSWAP_SUSHI_UI_FEE_PERCENT
+                : isStableToStable
+                  ? XSWAP_STABLE_UI_FEE_PERCENT
+                  : EVM_UI_FEE_PERCENT}
               %)
             </span>
             <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">

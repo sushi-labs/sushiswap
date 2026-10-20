@@ -57,6 +57,10 @@ export const XSWAP_STABLE_UI_FEE_BIPS = 2
 export const XSWAP_STABLE_UI_FEE_PERCENT = XSWAP_STABLE_UI_FEE_BIPS / 100
 export const XSWAP_STABLE_UI_FEE_DECIMAL = XSWAP_STABLE_UI_FEE_BIPS / 10_000
 
+export const XSWAP_SUSHI_UI_FEE_BIPS = 0
+export const XSWAP_SUSHI_UI_FEE_PERCENT = XSWAP_SUSHI_UI_FEE_BIPS / 100
+export const XSWAP_SUSHI_UI_FEE_DECIMAL = XSWAP_SUSHI_UI_FEE_BIPS / 10_000
+
 export function getUiFeePercent(chainId: EvmChainId | SvmChainId) {
   if (isSvmChainId(chainId)) {
     return SVM_UI_FEE_PERCENT
