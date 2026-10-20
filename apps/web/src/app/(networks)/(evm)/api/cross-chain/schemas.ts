@@ -2,10 +2,12 @@ import {
   type LifiXSwapSupportedChainId,
   isLifiXSwapSupportedChainId,
 } from 'src/config'
+import { isSushiTokenChainId } from 'src/lib/functions'
 import {
   type EvmAddress,
   type EvmChainId,
   STABLES,
+  SUSHI,
   isEvmAddress,
   isEvmChainId,
 } from 'sushi/evm'
@@ -114,6 +116,32 @@ export function isStableToStable({
     toStables.some(
       (stable) => stable.address.toLowerCase() === toTokenAddress.toLowerCase(),
     )
+  )
+}
+
+export function isSushiToSushi({
+  fromTokenChainId,
+  fromTokenAddress,
+  toTokenChainId,
+  toTokenAddress,
+}: {
+  fromTokenChainId: LifiChainId
+  fromTokenAddress: EvmAddress | SvmAddress
+  toTokenChainId: LifiChainId
+  toTokenAddress: EvmAddress | SvmAddress
+}): boolean {
+  const _fromChainId = lifiToSushiChainId(fromTokenChainId)
+  const _toChainId = lifiToSushiChainId(toTokenChainId)
+
+  if (!isSushiTokenChainId(_fromChainId) || !isSushiTokenChainId(_toChainId)) {
+    return false
+  }
+  const fromSushi = SUSHI?.[_fromChainId]
+  const toSushi = SUSHI?.[_toChainId]
+
+  return (
+    fromSushi?.address.toLowerCase() === fromTokenAddress.toLowerCase() &&
+    toSushi?.address.toLowerCase() === toTokenAddress.toLowerCase()
   )
 }
 

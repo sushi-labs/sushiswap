@@ -1,4 +1,4 @@
-import { Amount, Price } from 'sushi'
+import { Amount, type ChainId, type Currency, Price } from 'sushi'
 import {
   DAI,
   type EvmChainId,
@@ -6,6 +6,7 @@ import {
   EvmToken,
   type Incentive,
   type Position,
+  SUSHI,
   SushiSwapV2Pool,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
@@ -21,6 +22,29 @@ import {
 import { Bound } from './constants'
 import type { useTicks } from './hooks'
 import type { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
+
+export type SushiTokenChainId = keyof typeof SUSHI
+
+export function isSushiTokenChainId(
+  chainId: ChainId,
+): chainId is SushiTokenChainId {
+  return Object.hasOwn(SUSHI, chainId)
+}
+
+export function isSushiToken(currency: Currency | undefined): boolean {
+  if (
+    !currency ||
+    currency.type === 'native' ||
+    !isSushiTokenChainId(currency.chainId)
+  ) {
+    return false
+  }
+
+  return (
+    SUSHI[currency.chainId].address.toLowerCase() ===
+    currency.address.toLowerCase()
+  )
+}
 
 export const isSushiSwapV2Pool = (
   pool: SushiSwapV2Pool | null,

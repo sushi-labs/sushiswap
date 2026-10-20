@@ -14,6 +14,7 @@ import {
   isLifiXSwapSupportedChainId,
 } from 'src/config'
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
+import { isSushiToken } from 'src/lib/functions'
 import { useCrossChainPriceImpact } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-price-impact'
 import { useCrossChainTradeRoutes as _useCrossChainTradeRoutes } from 'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
@@ -100,6 +101,7 @@ interface State<
     selectedBridge: string | undefined
     routeOrder: CrossChainRouteOrder
     isStableToStable: boolean
+    isSushiToSushi: boolean
   }
   isLoading: boolean
   isToken0Loading: boolean
@@ -247,6 +249,12 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
     return isCurrencyStable(_token0) && isCurrencyStable(_token1)
   }, [_token0, _token1])
 
+  const isSushiToSushi = useMemo(() => {
+    if (!_token0 || !_token1) return false
+
+    return isSushiToken(_token0) && isSushiToken(_token1)
+  }, [_token0, _token1])
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setSelectedBridge(undefined)
@@ -280,6 +288,7 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
             selectedBridge,
             routeOrder,
             isStableToStable,
+            isSushiToSushi,
           },
           isLoading: token0Loading || token1Loading,
           isToken0Loading: token0Loading,
@@ -307,6 +316,7 @@ const LifiXSwapProvider: FC<LifiXSwapProviderProps> = ({ children }) => {
         routeOrder,
         recipient,
         isStableToStable,
+        isSushiToSushi,
       ])}
     >
       {children}

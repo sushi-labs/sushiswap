@@ -3,6 +3,7 @@ import {
   EVM_UI_FEE_DECIMAL,
   type LifiXSwapSupportedChainId,
   XSWAP_STABLE_UI_FEE_DECIMAL,
+  XSWAP_SUSHI_UI_FEE_DECIMAL,
 } from 'src/config'
 import { isLifiNoRouteResponse } from 'src/lib/swap/cross-chain/route-availability'
 import * as z from 'zod'
@@ -10,6 +11,7 @@ import {
   type LifiChainId,
   getAddressSchema,
   isStableToStable,
+  isSushiToSushi,
   lifiChainIdSchema,
   lifiToSushiChainId,
   stepSchema,
@@ -129,14 +131,21 @@ export async function GET(request: NextRequest) {
         exchanges: { allow: ['sushiswap'] },
         allowSwitchChain: false,
         allowDestinationCall: true,
-        fee: isStableToStable({
+        fee: isSushiToSushi({
           fromTokenAddress: parsedParams.fromTokenAddress,
           fromTokenChainId: parsedParams.fromChainId,
           toTokenAddress: parsedParams.toTokenAddress,
           toTokenChainId: parsedParams.toChainId,
         })
-          ? XSWAP_STABLE_UI_FEE_DECIMAL
-          : EVM_UI_FEE_DECIMAL,
+          ? XSWAP_SUSHI_UI_FEE_DECIMAL
+          : isStableToStable({
+                fromTokenAddress: parsedParams.fromTokenAddress,
+                fromTokenChainId: parsedParams.fromChainId,
+                toTokenAddress: parsedParams.toTokenAddress,
+                toTokenChainId: parsedParams.toChainId,
+              })
+            ? XSWAP_STABLE_UI_FEE_DECIMAL
+            : EVM_UI_FEE_DECIMAL,
       },
     }),
   }
