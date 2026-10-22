@@ -9,7 +9,7 @@ inputs:
   node-version:
     description: "Node.js version"
     required: false
-    default: "24"
+    default: "24.22.1"
 
 runs:
   using: "composite"
