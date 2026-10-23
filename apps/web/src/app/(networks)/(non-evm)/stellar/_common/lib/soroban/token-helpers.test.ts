@@ -1,4 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest'
+import { contractAddresses } from './contracts'
 import { getTokenBalance } from './token-helpers'
 
 const balance = vi.hoisted(() => vi.fn())
@@ -7,10 +8,31 @@ const account = 'GCOBBPEQOWGFBGHOXJBAH2XENGVSLM72S32S5YARQ5OIES5O6FGEYARQ'
 const token = 'CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL'
 afterEach(() => vi.restoreAllMocks())
 
-it('does not cache an RPC failure as a real zero token balance', async () => {
-  const error = new Error('RPC temporarily unavailable')
+it.each([token, contractAddresses.TOKENS.XLM])(
+  'does not cache an RPC failure as a real zero token balance for %s',
+  async (tokenAddress) => {
+    const error = new Error('RPC temporarily unavailable')
+    balance.mockRejectedValueOnce(error)
+    await expect(getTokenBalance(account, tokenAddress)).rejects.toBe(error)
+  },
+)
+
+it('returns zero XLM for an unfunded account with no classic account entry', async () => {
+  balance.mockRejectedValueOnce(
+    new Error('Transaction simulation failed: account entry is missing'),
+  )
+
+  await expect(
+    getTokenBalance(account, contractAddresses.TOKENS.XLM),
+  ).resolves.toBe(0n)
+})
+
+it('does not treat missing accounts from other token contracts as zero balances', async () => {
+  const error = new Error(
+    'Transaction simulation failed: account entry is missing',
+  )
   balance.mockRejectedValueOnce(error)
-  vi.spyOn(console, 'error').mockImplementation(() => {})
+
   await expect(getTokenBalance(account, token)).rejects.toBe(error)
 })
 
