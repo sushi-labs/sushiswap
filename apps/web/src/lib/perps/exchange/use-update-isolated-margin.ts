@@ -18,6 +18,7 @@ import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 export const useUpdateIsolatedMargin = () => {
   const { agentAccount } = useAgent()
@@ -76,8 +77,7 @@ export const useUpdateIsolatedMargin = () => {
         },
         { asset: assetId, isBuy: side === 'long', ntli: amountToAddOrRemove },
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

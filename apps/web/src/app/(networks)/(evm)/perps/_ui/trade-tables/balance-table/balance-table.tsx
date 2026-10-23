@@ -26,11 +26,11 @@ type BalanceAction = 'send' | 'transfer' | 'evm-core-transfer' | 'share-pnl'
 const getBalanceColumns = ({
   openModal,
   isMobile,
-  isVaultAccount,
+  canManageFunds,
 }: {
   openModal: (action: BalanceAction, balance: BalanceItemType) => void
   isMobile: boolean
-  isVaultAccount: boolean
+  canManageFunds: boolean
 }): ColumnDef<BalanceItemType, unknown>[] => {
   if (isMobile) {
     return [
@@ -39,8 +39,8 @@ const getBalanceColumns = ({
       AVAILABLE_BALANCE_COLUMN,
       USDC_VALUE_COLUMN,
       PNL_COLUMN(openModal),
-      ...(isVaultAccount ? [] : [SEND_COLUMN(openModal)]),
-      ...(isVaultAccount ? [] : [TRANSFER_COLUMN(openModal)]),
+      ...(canManageFunds ? [SEND_COLUMN(openModal)] : []),
+      TRANSFER_COLUMN(openModal),
       CONTRACT_COLUMN,
     ]
   }
@@ -50,8 +50,8 @@ const getBalanceColumns = ({
     TOTAL_BALANCE_COLUMN,
     AVAILABLE_BALANCE_COLUMN,
     PNL_COLUMN(openModal),
-    ...(isVaultAccount ? [] : [SEND_COLUMN(openModal)]),
-    ...(isVaultAccount ? [] : [TRANSFER_COLUMN(openModal)]),
+    ...(canManageFunds ? [SEND_COLUMN(openModal)] : []),
+    TRANSFER_COLUMN(openModal),
     CONTRACT_COLUMN,
   ]
 }
@@ -98,7 +98,7 @@ export const BalanceTable = () => {
     return getBalanceColumns({
       openModal,
       isMobile: !isLg,
-      isVaultAccount: activeAccount?.type === 'vault',
+      canManageFunds: activeAccount?.type === 'master',
     })
   }, [openModal, isLg, activeAccount?.type])
 

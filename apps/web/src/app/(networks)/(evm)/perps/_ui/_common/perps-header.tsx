@@ -28,7 +28,7 @@ export const PerpsHeader: FC<HeaderProps> = ({
       <div className="fixed w-full flex z-20">
         <div
           className={classNames(
-            'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 !bg-perps-background',
+            'hidden md:flex justify-between items-center px-1 h-14 flex-shrink-0 !bg-perps-background',
           )}
         >
           <LinkInternal

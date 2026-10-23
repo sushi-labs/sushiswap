@@ -31,6 +31,7 @@ import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken, USDC } from 'sushi/evm'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { ValueInput } from '../_common'
 import { useAssetListState } from '../asset-selector'
@@ -55,6 +56,9 @@ export const PerpSpotTransferDialog = ({
   balanceItem?: BalanceItemType
   defaultDex?: string
 }) => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const [dst, setDst] = useState<'perp' | 'spot'>(defaultDst ?? 'spot')
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
@@ -156,10 +160,13 @@ export const PerpSpotTransferDialog = ({
       {
         amount: _amount.toString(),
         decimals: 2,
-        destination: address,
+        destination:
+          activeAccount?.type === 'sub' ? activeAccount?.address : address,
         token: assetToSend,
         sourceDex: dst === 'perp' ? 'spot' : _dexName,
         destinationDex: dst === 'perp' ? _dexName : 'spot',
+        fromSubAccount:
+          activeAccount?.type === 'sub' ? activeAccount?.address : undefined,
       },
       {
         onSuccess: () => {
@@ -176,6 +183,7 @@ export const PerpSpotTransferDialog = ({
     sendAsset,
     handleOpenChange,
     assetToSend,
+    activeAccount,
   ])
 
   const handleDstToggle = useCallback(() => {
@@ -333,10 +341,10 @@ export const PerpSpotTransferDialog = ({
               >
                 <Checker.Custom
                   size="default"
-                  showChildren={Boolean(amount)}
+                  showChildren={Boolean(amount) && Number(amount) > 0}
                   buttonText={'Enter Amount'}
                   onClick={() => {}}
-                  disabled={!amount}
+                  disabled={!amount || Number(amount) <= 0}
                   variant="perps-tertiary"
                 >
                   <Checker.Custom

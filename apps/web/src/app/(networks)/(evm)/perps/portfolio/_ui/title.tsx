@@ -14,6 +14,11 @@ export const Title = () => {
           Vault:{' '}
           <span className="text-perps-muted-50">{activeAccount.name}</span>
         </p>
+      ) : activeAccount?.type === 'sub' ? (
+        <p className="text-sm">
+          Sub Account:{' '}
+          <span className="text-perps-muted-50">{activeAccount.name}</span>
+        </p>
       ) : null}
     </div>
   )

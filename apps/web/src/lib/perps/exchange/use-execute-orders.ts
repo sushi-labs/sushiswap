@@ -18,6 +18,7 @@ import {
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 export type TimeInForceType = 'Gtc' | 'Ioc' | 'Alo' | 'FrontendMarket'
 
@@ -129,8 +130,7 @@ export const useExecuteOrders = () => {
         { wallet: agentAccount, transport: hlHttpTransport },
         _orderData,
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

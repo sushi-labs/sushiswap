@@ -17,6 +17,7 @@ import {
 } from '~evm/perps/_ui/account-management'
 import { SwapStablesDialog } from '~evm/perps/_ui/account-management/swap-stables-dialog'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
+import { SubAccountTransferDialog } from '~evm/perps/sub-accounts/_ui/sub-account-transfer-dialog'
 
 type DialogAction =
   | 'send'
@@ -55,6 +56,25 @@ export const DialogRow = () => {
   if (activeAccount?.type === 'vault') {
     return null
   }
+
+  if (activeAccount?.type === 'sub') {
+    return (
+      <div className="flex items-center gap-2 flex-wrap">
+        <SubAccountTransferDialog
+          key={`${activeAccount.walletAddress}:${activeAccount.address}`}
+          masterAddress={activeAccount.walletAddress}
+          subAccount={{
+            subAccountUser: activeAccount.address,
+            name: activeAccount.name,
+          }}
+          trigger={
+            <Button variant="perps-secondary">Sub-Account Transfer</Button>
+          }
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <Button

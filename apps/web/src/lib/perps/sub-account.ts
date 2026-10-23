@@ -1,0 +1,1 @@
+export const MAX_SUB_ACCOUNT_NAME_LENGTH = 16

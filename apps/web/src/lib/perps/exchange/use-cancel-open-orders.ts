@@ -15,6 +15,7 @@ import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 type CancelData = { asset: string; orderId: number }
 
@@ -66,8 +67,7 @@ export const useCancelOpenOrders = () => {
         },
         { cancels },
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

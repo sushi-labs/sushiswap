@@ -1,9 +1,9 @@
 'use client'
 import { useLocalStorage } from '@sushiswap/hooks'
 import {
+  AccountTypeTradingMessage,
   AssetSelectorAndStats,
   GeoBlockedMessage,
-  VaultTradingMessage,
 } from '../_common'
 import { AccountManagement } from '../account-management'
 import { Chart } from '../chart'
@@ -23,7 +23,7 @@ export const MobileLayout = () => {
   return (
     <div className="pb-[75px] w-full h-full min-h-[calc(100vh-96px)] overflow-x-hidden px-1">
       <GeoBlockedMessage />
-      <VaultTradingMessage />
+      <AccountTypeTradingMessage />
       <div className="flex flex-col gap-1">
         {view === 'order' ? (
           <>

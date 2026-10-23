@@ -15,6 +15,7 @@ import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 type CancelData = { asset: string; twapId: number }
 
@@ -60,8 +61,7 @@ export const useCancelTwap = () => {
         },
         { a: assetId, t: cancelData.twapId },
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

@@ -101,8 +101,8 @@ export type NavigationElementShow =
   | 'perps-desktop'
 
 export const navigationElementShowMap: Record<NavigationElementShow, string> = {
-  'perps-mobile': 'lg:hidden block',
-  'perps-desktop': 'lg:block hidden',
+  'perps-mobile': 'md:hidden block',
+  'perps-desktop': 'md:block hidden',
   mobile: 'md:hidden block',
   desktop: 'md:block hidden',
   everywhere: '',

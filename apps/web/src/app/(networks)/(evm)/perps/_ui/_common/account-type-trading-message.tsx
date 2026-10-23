@@ -2,14 +2,16 @@
 import { Message, classNames } from '@sushiswap/ui'
 import { useActiveAccountState } from '../../active-account-provider'
 
-export const VaultTradingMessage = () => {
+export const AccountTypeTradingMessage = () => {
   const {
     state: { activeAccount },
   } = useActiveAccountState()
 
   return (
     <div
-      data-vault-trading={activeAccount?.type === 'vault'}
+      data-vault-trading={
+        activeAccount?.type === 'vault' || activeAccount?.type === 'sub'
+      }
       className={classNames(
         'hidden top-[56px] data-[vault-trading=true]:block data-[vault-trading=true]:animate-slide w-screen z-[11] items-center justify-center bg-perps-background',
       )}
@@ -18,8 +20,9 @@ export const VaultTradingMessage = () => {
         variant="info"
         className="!p-3 !text-xs !rounded-md !text-blue-100 border border-blue/50 mx-1"
       >
-        IMPORTANT: You are trading on behalf of your vault {activeAccount?.name}
-        .
+        IMPORTANT: You are trading on behalf of your{' '}
+        {activeAccount?.type === 'vault' ? 'vault' : 'sub-account'}{' '}
+        {activeAccount?.name}.
       </Message>
     </div>
   )

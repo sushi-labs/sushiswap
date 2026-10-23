@@ -84,8 +84,10 @@ export function getSpotAssetMetadata(
   universeEntry: SpotUniverseEntry,
 ): SpotAssetMetadata {
   const [baseTokenIndex, quoteTokenIndex] = universeEntry.tokens
-  const baseToken = meta.tokens[baseTokenIndex]
-  const quoteToken = meta.tokens[quoteTokenIndex]
+  const baseToken = meta.tokens.find((token) => token.index === baseTokenIndex)
+  const quoteToken = meta.tokens.find(
+    (token) => token.index === quoteTokenIndex,
+  )
 
   return {
     isCanonical: universeEntry.isCanonical,
