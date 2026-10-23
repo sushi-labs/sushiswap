@@ -18,7 +18,7 @@ export function getSlippageToleranceBasisPoints(
   const basisPoints =
     BigInt(whole || '0') * 100n + BigInt(fraction.padEnd(2, '0'))
 
-  if (basisPoints <= 0n || basisPoints > BigInt(MAX_SLIPPAGE_BASIS_POINTS)) {
+  if (basisPoints > BigInt(MAX_SLIPPAGE_BASIS_POINTS)) {
     return undefined
   }
 

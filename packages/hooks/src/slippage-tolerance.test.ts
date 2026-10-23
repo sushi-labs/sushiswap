@@ -7,6 +7,10 @@ import {
 
 describe('slippage tolerance', () => {
   it.each([
+    [0, 0],
+    ['0', 0],
+    ['0.00', 0],
+    ['.00', 0],
     ['0.01', 1],
     ['0.5', 50],
     ['.5', 50],
@@ -27,9 +31,7 @@ describe('slippage tolerance', () => {
   it.each([
     '',
     '.',
-    0,
-    '0',
-    '0.00',
+    '-0.01',
     '-1',
     '0.001',
     '1e1',
@@ -45,6 +47,9 @@ describe('slippage tolerance', () => {
 
   it('preserves automatic slippage and normalized valid inputs', () => {
     expect(normalizeSlippageTolerance('AUTO')).toBe('AUTO')
+    expect(normalizeSlippageTolerance(0)).toBe('0')
+    expect(normalizeSlippageTolerance('0')).toBe('0')
+    expect(normalizeSlippageTolerance('0.00')).toBe('0.00')
     expect(normalizeSlippageTolerance('0.5')).toBe('0.5')
     expect(normalizeSlippageTolerance('1.00')).toBe('1.00')
     expect(normalizeSlippageTolerance('.')).toBeUndefined()
