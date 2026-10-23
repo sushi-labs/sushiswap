@@ -8,7 +8,7 @@ const account = 'GCOBBPEQOWGFBGHOXJBAH2XENGVSLM72S32S5YARQ5OIES5O6FGEYARQ'
 const token = 'CC64WBDGS6QQP22QTTIACYIXT3WF7BBQEYOQPLTP7GTKYY7PZ74QYGSL'
 afterEach(() => vi.restoreAllMocks())
 
-it.each([token, contractAddresses.TOKENS.XLM])(
+it.each([token, contractAddresses.TOKENS.XLM] as const)(
   'does not cache an RPC failure as a real zero token balance for %s',
   async (tokenAddress) => {
     const error = new Error('RPC temporarily unavailable')
