@@ -232,14 +232,14 @@ export const SimpleSwapExecuteButton = () => {
     <>
       <div className="pt-4">
         <Connect namespace="stellar" fullWidth size="xl">
-          <Trustline token={token1} fullWidth size="xl">
-            <Amounts
-              chainId={StellarChainId.STELLAR}
-              amounts={checkerAmount}
-              disabled={isDisabled}
-              fullWidth
-              size="xl"
-            >
+          <Amounts
+            chainId={StellarChainId.STELLAR}
+            amounts={checkerAmount}
+            disabled={isDisabled}
+            fullWidth
+            size="xl"
+          >
+            <Trustline token={token1} fullWidth size="xl">
               <Button
                 fullWidth
                 size="xl"
@@ -252,8 +252,8 @@ export const SimpleSwapExecuteButton = () => {
               >
                 {buttonText}
               </Button>
-            </Amounts>
-          </Trustline>
+            </Trustline>
+          </Amounts>
         </Connect>
       </div>
       {showSlippageWarning && <SlippageWarning className="mt-4" />}

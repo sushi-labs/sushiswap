@@ -11,6 +11,7 @@ import {
 import { formatAddress } from '../utils/format'
 import { getTokenContractClient } from './client'
 import { DEFAULT_TIMEOUT } from './constants'
+import { contractAddresses } from './contracts'
 
 const tokenListLookupCache = new Map<
   StellarContractAddress,
@@ -113,8 +114,16 @@ export async function getTokenBalance(
     )
     return result
   } catch (error) {
-    // A missing classic trustline means zero; transport or contract failures do not.
-    if (String(error).includes('trustline entry is missing')) return 0n
+    const message = String(error)
+    // Unfunded accounts have no XLM account entry; absent classic trustlines
+    // likewise mean zero. Other transport or contract failures remain errors.
+    if (
+      message.includes('trustline entry is missing') ||
+      (tokenAddress === contractAddresses.TOKENS.XLM &&
+        message.includes('account entry is missing'))
+    ) {
+      return 0n
+    }
     throw error
   }
 }
