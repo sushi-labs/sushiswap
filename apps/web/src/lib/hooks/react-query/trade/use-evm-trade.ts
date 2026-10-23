@@ -7,7 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { EVM_UI_FEE_DECIMAL } from 'src/config'
 import { API_BASE_URL } from 'src/lib/swap/api-base-url'
-import { getFeeString, isAddressFeeWhitelisted } from 'src/lib/swap/fee'
+import {
+  getEvmSwapFee,
+  getFeeString,
+  isAddressFeeWhitelisted,
+} from 'src/lib/swap/fee'
 import { Amount, Fraction, Percent, Price, ZERO, subtractSlippage } from 'sushi'
 import {
   type EvmCurrency,
@@ -160,8 +164,8 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
     // carbonOffset,
     gasPrice,
     tokenTax,
-    fee = EVM_UI_FEE_DECIMAL,
   } = variables
+  const fee = getEvmSwapFee({ fromToken, toToken, fee: variables.fee })
   const { data: prices } = usePrices({
     chainId,
   })
@@ -305,5 +309,5 @@ export const useEvmTrade = (variables: UseEvmTradeParams) => {
     ],
   )
 
-  return useEvmTradeQuery(variables, select)
+  return useEvmTradeQuery({ ...variables, fee }, select)
 }
