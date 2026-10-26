@@ -38,7 +38,7 @@ export function MobileNetworkSelector<
   return (
     <>
       <div className="flex flex-wrap gap-3">
-        {networks.slice(0, 10).map((network) => (
+        {networks.slice(0, 4).map((network) => (
           <Button
             key={network}
             className={classNames(
@@ -70,7 +70,7 @@ export function MobileNetworkSelector<
           variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
           onClick={() => setOpen(true)}
         >
-          +{networks.length - 10}
+          +{networks.length - 4}
         </Button>
       </div>
       {open ? (
