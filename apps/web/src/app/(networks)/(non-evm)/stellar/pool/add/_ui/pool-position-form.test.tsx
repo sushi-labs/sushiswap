@@ -10,6 +10,7 @@ import {
   STELLAR_XLM,
   StellarChainId,
   type StellarContractAddress,
+  StellarToken,
 } from 'sushi/stellar'
 import { parseUnits } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -32,12 +33,23 @@ const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   add: vi.fn(),
   busy: vi.fn(),
+  country: vi.fn(),
 }))
 const token0 = STELLAR_XLM[StellarChainId.STELLAR]
 const token1 = STELLAR_USDC[StellarChainId.STELLAR]
+const restrictedToken = new StellarToken({
+  chainId: StellarChainId.STELLAR,
+  address: 'CCRTH4IJKVIBU6VQLRHFKDQYWXBEBJJXKDFNWVETLKUJJ7U62HBAZOIH',
+  decimals: 7,
+  symbol: 'deHYB',
+  name: 'HYB deRWA',
+})
 const poolAddress = token1.address
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
+vi.mock('src/lib/hooks/use-country-code', () => ({
+  useCountryCode: mocks.country,
+}))
 vi.mock('~stellar/_common/lib/hooks/factory/use-get-pool', () => ({
   useGetPool: () => mocks.pool,
 }))
@@ -129,12 +141,12 @@ vi.mock('src/lib/wagmi/components/web3-input/currency', () => ({
 
 let root: Root
 let container: HTMLDivElement
-function render(fee = 3000): void {
+function render(fee = 3000, tokens = { token0, token1 }): void {
   act(() =>
     root.render(
       <PoolPositionForm
-        token0={token0}
-        token1={token1}
+        token0={tokens.token0}
+        token1={tokens.token1}
         fee={fee}
         onBusyChange={mocks.busy}
       />,
@@ -185,6 +197,12 @@ function prepare(): void {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.stubEnv('NEXT_PUBLIC_APP_ENV', 'production')
+  mocks.country.mockReturnValue({
+    data: 'US',
+    isPending: false,
+    isError: false,
+  })
   mocks.pool = {
     data: null,
     isPending: false,
@@ -203,9 +221,46 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount())
   container.remove()
+  vi.unstubAllEnvs()
 })
 
 describe('Stellar pool creation flow', () => {
+  it.each([
+    { initialized: false, side: 'token0' },
+    { initialized: false, side: 'token1' },
+    { initialized: true, side: 'token0' },
+    { initialized: true, side: 'token1' },
+  ] as const)(
+    'blocks restricted $side before pool creation or liquidity submission (initialized=$initialized)',
+    async ({ initialized, side }) => {
+      mocks.pool.data = initialized ? poolAddress : null
+      mocks.initialized = initialized
+      render(3000, { token0, token1, [side]: restrictedToken })
+      if (!initialized) fill('Starting price', '1')
+      fill('stellar-add-liquidity-token0', '10')
+
+      expect(button('deHYB unavailable in your region').disabled).toBe(true)
+      await click('deHYB unavailable in your region')
+      expect(mocks.create).not.toHaveBeenCalled()
+      expect(mocks.add).not.toHaveBeenCalled()
+    },
+  )
+
+  it('allows pool creation and liquidity for the restricted token outside the US', async () => {
+    mocks.country.mockReturnValue({
+      data: 'DE',
+      isPending: false,
+      isError: false,
+    })
+    render(3000, { token0, token1: restrictedToken })
+    fill('Starting price', '1')
+    fill('stellar-add-liquidity-token0', '10')
+    await click('Create pool & add liquidity')
+
+    expect(mocks.create).toHaveBeenCalledOnce()
+    expect(mocks.add).toHaveBeenCalledOnce()
+  })
+
   it('blocks an invalid on-chain square-root price without crashing the range selector', () => {
     mocks.pool.data = poolAddress
     mocks.initialized = true

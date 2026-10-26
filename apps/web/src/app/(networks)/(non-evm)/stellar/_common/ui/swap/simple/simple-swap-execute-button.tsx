@@ -20,6 +20,7 @@ import { parseSlippageTolerance } from '~stellar/_common/lib/utils/error-helpers
 import { requiresPriceImpactConfirmation } from '~stellar/_common/lib/utils/warning-severity'
 import { Trustline } from '~stellar/_common/ui/checker/trustline'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
+import { GeoBlockedTokens } from '../../checker/geo-blocked-tokens'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
@@ -239,20 +240,31 @@ export const SimpleSwapExecuteButton = () => {
             fullWidth
             size="xl"
           >
-            <Trustline token={token1} fullWidth size="xl">
-              <Button
-                fullWidth
-                size="xl"
-                onClick={handleSwap}
-                disabled={isDisabled}
-                loading={executeSwap.isPending || executeMultiHopSwap.isPending}
-                variant={
-                  showPriceImpactWarning && !checked ? 'destructive' : 'default'
-                }
-              >
-                {buttonText}
-              </Button>
-            </Trustline>
+            <GeoBlockedTokens
+              token0={token0}
+              token1={token1}
+              fullWidth
+              size="xl"
+            >
+              <Trustline token={token1} fullWidth size="xl">
+                <Button
+                  fullWidth
+                  size="xl"
+                  onClick={handleSwap}
+                  disabled={isDisabled}
+                  loading={
+                    executeSwap.isPending || executeMultiHopSwap.isPending
+                  }
+                  variant={
+                    showPriceImpactWarning && !checked
+                      ? 'destructive'
+                      : 'default'
+                  }
+                >
+                  {buttonText}
+                </Button>
+              </Trustline>
+            </GeoBlockedTokens>
           </Amounts>
         </Connect>
       </div>

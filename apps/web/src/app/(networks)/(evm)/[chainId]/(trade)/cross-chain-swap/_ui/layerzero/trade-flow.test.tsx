@@ -92,7 +92,10 @@ vi.mock('src/lib/wagmi/systems/checker/success', () => ({
   },
 }))
 vi.mock('~stellar/_common/ui/checker', () => ({
-  Checker: { Trustline: ({ children }: PropsWithChildren) => children },
+  Checker: {
+    GeoBlockedTokens: ({ children }: PropsWithChildren) => children,
+    Trustline: ({ children }: PropsWithChildren) => children,
+  },
 }))
 vi.mock('src/lib/wallet/hooks/use-account', () => ({
   useAccount: () => 'connected',
