@@ -35,6 +35,7 @@ import type { PoolInfo } from '~stellar/_common/lib/types/pool.type'
 import { alignTick, isTickAligned } from '~stellar/_common/lib/utils/ticks'
 import { useStellarWallet } from '~stellar/providers'
 import { useBestRoute } from '~stellar/swap/lib/hooks/use-best-route'
+import { GeoBlockedTokens } from '../checker/geo-blocked-tokens'
 import { Trustlines } from '../checker/trustline'
 import { TickRangeSelector } from '../tick-range-selector/tick-range-selector'
 import { LiquidityDepthWidget } from './liquidity-depth-widget'
@@ -455,98 +456,108 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           </p>
                         </div>
                       )}
-                      <Trustlines tokens={[pool.token0, pool.token1]} size="lg">
-                        <Button
-                          className="w-full"
+                      <GeoBlockedTokens
+                        token0={pool.token0}
+                        token1={pool.token1}
+                        tokens={[zapTokenIn ?? undefined]}
+                        size="lg"
+                      >
+                        <Trustlines
+                          tokens={[pool.token0, pool.token1]}
                           size="lg"
-                          disabled={
-                            !zapTokenIn ||
-                            !zapAmountIn ||
-                            Number.parseFloat(zapAmountIn) <= 0 ||
-                            !isTickRangeValid ||
-                            zapMutation.isPending ||
-                            (isPendingRouteToken0 &&
-                              zapTokenIn.address !== pool.token0.address) ||
-                            (isPendingRouteToken1 &&
-                              zapTokenIn.address !== pool.token1.address)
-                          }
-                          onClick={async () => {
-                            if (
-                              !connectedAddress ||
-                              !zapTokenIn ||
-                              !zapAmountIn
-                            )
-                              return
-
-                            const alignedLower = alignTick(
-                              tickLower,
-                              tickSpacing,
-                            )
-                            const alignedUpper = alignTick(
-                              tickUpper,
-                              tickSpacing,
-                            )
-
-                            if (!isTickAligned(alignedLower, tickSpacing)) {
-                              console.error(
-                                `Tick lower must be a multiple of ${tickSpacing}`,
-                              )
-                              setTickLower(alignedLower)
-                              return
-                            }
-
-                            if (!isTickAligned(alignedUpper, tickSpacing)) {
-                              console.error(
-                                `Tick upper must be a multiple of ${tickSpacing}`,
-                              )
-                              setTickUpper(alignedUpper)
-                              return
-                            }
-
-                            if (alignedLower >= alignedUpper) {
-                              console.error(
-                                'Tick lower must be less than tick upper',
-                              )
-                              return
-                            }
-
-                            setTickLower(alignedLower)
-                            setTickUpper(alignedUpper)
-
-                            zapMutation.mutate(
-                              {
-                                userAddress: connectedAddress,
-                                poolAddress: pool.address,
-                                tokenIn: zapTokenIn,
-                                amountIn: zapAmountIn,
-                                tokenInDecimals: zapTokenIn.decimals,
-                                token0: pool.token0,
-                                token1: pool.token1,
-                                tickLower: alignedLower,
-                                tickUpper: alignedUpper,
-                                signTransaction,
-                                signAuthEntry,
-                                routeToken0: routeToken0 ?? null,
-                                routeToken1: routeToken1 ?? null,
-                              },
-                              {
-                                onSuccess: () => {
-                                  setZapAmountIn('')
-                                },
-                                onError: (error) => {
-                                  console.error('Failed to zap:', error)
-                                },
-                              },
-                            )
-                          }}
                         >
-                          {zapMutation.isPending
-                            ? 'Zapping & Adding Liquidity...'
-                            : !isTickRangeValid
-                              ? 'Adjust Tick Range'
-                              : 'Zap & Add Liquidity'}
-                        </Button>
-                      </Trustlines>
+                          <Button
+                            className="w-full"
+                            size="lg"
+                            disabled={
+                              !zapTokenIn ||
+                              !zapAmountIn ||
+                              Number.parseFloat(zapAmountIn) <= 0 ||
+                              !isTickRangeValid ||
+                              zapMutation.isPending ||
+                              (isPendingRouteToken0 &&
+                                zapTokenIn.address !== pool.token0.address) ||
+                              (isPendingRouteToken1 &&
+                                zapTokenIn.address !== pool.token1.address)
+                            }
+                            onClick={async () => {
+                              if (
+                                !connectedAddress ||
+                                !zapTokenIn ||
+                                !zapAmountIn
+                              )
+                                return
+
+                              const alignedLower = alignTick(
+                                tickLower,
+                                tickSpacing,
+                              )
+                              const alignedUpper = alignTick(
+                                tickUpper,
+                                tickSpacing,
+                              )
+
+                              if (!isTickAligned(alignedLower, tickSpacing)) {
+                                console.error(
+                                  `Tick lower must be a multiple of ${tickSpacing}`,
+                                )
+                                setTickLower(alignedLower)
+                                return
+                              }
+
+                              if (!isTickAligned(alignedUpper, tickSpacing)) {
+                                console.error(
+                                  `Tick upper must be a multiple of ${tickSpacing}`,
+                                )
+                                setTickUpper(alignedUpper)
+                                return
+                              }
+
+                              if (alignedLower >= alignedUpper) {
+                                console.error(
+                                  'Tick lower must be less than tick upper',
+                                )
+                                return
+                              }
+
+                              setTickLower(alignedLower)
+                              setTickUpper(alignedUpper)
+
+                              zapMutation.mutate(
+                                {
+                                  userAddress: connectedAddress,
+                                  poolAddress: pool.address,
+                                  tokenIn: zapTokenIn,
+                                  amountIn: zapAmountIn,
+                                  tokenInDecimals: zapTokenIn.decimals,
+                                  token0: pool.token0,
+                                  token1: pool.token1,
+                                  tickLower: alignedLower,
+                                  tickUpper: alignedUpper,
+                                  signTransaction,
+                                  signAuthEntry,
+                                  routeToken0: routeToken0 ?? null,
+                                  routeToken1: routeToken1 ?? null,
+                                },
+                                {
+                                  onSuccess: () => {
+                                    setZapAmountIn('')
+                                  },
+                                  onError: (error) => {
+                                    console.error('Failed to zap:', error)
+                                  },
+                                },
+                              )
+                            }}
+                          >
+                            {zapMutation.isPending
+                              ? 'Zapping & Adding Liquidity...'
+                              : !isTickRangeValid
+                                ? 'Adjust Tick Range'
+                                : 'Zap & Add Liquidity'}
+                          </Button>
+                        </Trustlines>
+                      </GeoBlockedTokens>
                     </>
                   ) : (
                     // Normal Mode: Two token input with dependent amount calculation
@@ -615,27 +626,35 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                         pool={pool}
                         tickRangeSelectorState={tickRangeSelectorState}
                       />
-
-                      <Trustlines tokens={[pool.token0, pool.token1]} size="lg">
-                        <Button
-                          className="w-full"
+                      <GeoBlockedTokens
+                        token0={pool.token0}
+                        token1={pool.token1}
+                        size="lg"
+                      >
+                        <Trustlines
+                          tokens={[pool.token0, pool.token1]}
                           size="lg"
-                          disabled={
-                            !canAddLiquidity || addLiquidityMutation.isPending
-                          }
-                          onClick={handleAddLiquidity}
                         >
-                          {addLiquidityMutation.isPending
-                            ? 'Adding Liquidity...'
-                            : isDependentAmountError
-                              ? 'Price Range Error'
-                              : !isTickRangeValid
-                                ? 'Adjust Tick Range'
-                                : canAddLiquidity
-                                  ? 'Add Liquidity'
-                                  : 'Enter Amount'}
-                        </Button>
-                      </Trustlines>
+                          <Button
+                            className="w-full"
+                            size="lg"
+                            disabled={
+                              !canAddLiquidity || addLiquidityMutation.isPending
+                            }
+                            onClick={handleAddLiquidity}
+                          >
+                            {addLiquidityMutation.isPending
+                              ? 'Adding Liquidity...'
+                              : isDependentAmountError
+                                ? 'Price Range Error'
+                                : !isTickRangeValid
+                                  ? 'Adjust Tick Range'
+                                  : canAddLiquidity
+                                    ? 'Add Liquidity'
+                                    : 'Enter Amount'}
+                          </Button>
+                        </Trustlines>
+                      </GeoBlockedTokens>
                     </>
                   )}
                 </>
@@ -819,22 +838,28 @@ export const ManageLiquidityCard: React.FC<ManageLiquidityCardProps> = ({
                           </p>
                         </div>
 
-                        <Button
-                          className="w-full"
+                        <GeoBlockedTokens
+                          token0={pool.token0}
+                          token1={pool.token1}
                           size="lg"
-                          disabled={
-                            !hasRemoveAmount ||
-                            removeLiquidityMutation.isPending ||
-                            !selectedPosition
-                          }
-                          onClick={handleRemoveLiquidity}
                         >
-                          {removeLiquidityMutation.isPending
-                            ? 'Removing and Collecting Liquidity...'
-                            : hasRemoveAmount
-                              ? 'Remove Liquidity'
-                              : 'Select Percentage'}
-                        </Button>
+                          <Button
+                            className="w-full"
+                            size="lg"
+                            disabled={
+                              !hasRemoveAmount ||
+                              removeLiquidityMutation.isPending ||
+                              !selectedPosition
+                            }
+                            onClick={handleRemoveLiquidity}
+                          >
+                            {removeLiquidityMutation.isPending
+                              ? 'Removing and Collecting Liquidity...'
+                              : hasRemoveAmount
+                                ? 'Remove Liquidity'
+                                : 'Select Percentage'}
+                          </Button>
+                        </GeoBlockedTokens>
                       </div>
                     ) : null}
                   </>

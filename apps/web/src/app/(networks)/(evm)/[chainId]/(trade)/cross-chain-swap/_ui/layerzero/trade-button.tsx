@@ -75,20 +75,27 @@ export function LayerZeroTradeButton(): ReactNode {
           <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
             <Network fullWidth chainId={chainId0}>
               <StockTokenRegion token0={token0} token1={token1}>
-                <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
-                  <StellarChecker.Trustline
-                    token={token1 instanceof StellarToken ? token1 : undefined}
-                  >
-                    <LayerZeroTradeApproval
-                      quote={previewQuote.data}
-                      sourceNetworkFee={sourceNetworkFee}
-                      enabled={checksReady}
-                      fallback={swapButton}
+                <StellarChecker.GeoBlockedTokens
+                  token0={token0}
+                  token1={token1}
+                >
+                  <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                    <StellarChecker.Trustline
+                      token={
+                        token1 instanceof StellarToken ? token1 : undefined
+                      }
                     >
-                      <Success tag={APPROVE_TAG_XSWAP}>{swapButton}</Success>
-                    </LayerZeroTradeApproval>
-                  </StellarChecker.Trustline>
-                </Amounts>
+                      <LayerZeroTradeApproval
+                        quote={previewQuote.data}
+                        sourceNetworkFee={sourceNetworkFee}
+                        enabled={checksReady}
+                        fallback={swapButton}
+                      >
+                        <Success tag={APPROVE_TAG_XSWAP}>{swapButton}</Success>
+                      </LayerZeroTradeApproval>
+                    </StellarChecker.Trustline>
+                  </Amounts>
+                </StellarChecker.GeoBlockedTokens>
               </StockTokenRegion>
             </Network>
           </Connect>

@@ -13,6 +13,7 @@ import {
 import { usePoolInitialized } from '~stellar/_common/lib/hooks/pool/use-pool-initialized'
 import type { PositionSummary } from '~stellar/_common/lib/hooks/position/use-my-position'
 import { getPoolInfo } from '~stellar/_common/lib/soroban'
+import { GeoBlockedTokens } from '~stellar/_common/ui/checker/geo-blocked-tokens'
 import type { IPositionRowData } from '~stellar/_common/ui/pools/positions-table/positions-table'
 import { useStellarWallet } from '~stellar/providers'
 import type { PendingMigration } from '../types'
@@ -140,9 +141,11 @@ export const LegacyPositionMigrateCell = ({
 
   return (
     <div className="flex flex-col gap-1">
-      <Button size="sm" onClick={handleMigrate} disabled={isMigrating}>
-        {isMigrating ? 'Migrating...' : 'Migrate'}
-      </Button>
+      <GeoBlockedTokens token0={token0} token1={token1} size="sm">
+        <Button size="sm" onClick={handleMigrate} disabled={isMigrating}>
+          {isMigrating ? 'Migrating...' : 'Migrate'}
+        </Button>
+      </GeoBlockedTokens>
     </div>
   )
 }
