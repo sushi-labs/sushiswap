@@ -1,4 +1,9 @@
-import type { ReactNode } from 'react'
+import {
+  type ComponentProps,
+  type ReactElement,
+  type ReactNode,
+  cloneElement,
+} from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
@@ -6,8 +11,10 @@ import type { ActiveAccount } from '~evm/perps/active-account-state'
 import { DepositDialog } from './deposit-dialog'
 
 vi.mock('@sushiswap/ui', () => ({
-  Button: ({ children }: { children: ReactNode }) => (
-    <button type="button">{children}</button>
+  Button: ({ children, disabled }: ComponentProps<'button'>) => (
+    <button type="button" disabled={disabled}>
+      {children}
+    </button>
   ),
   Currency: { Icon: () => null },
   PerpsDialog: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -16,9 +23,13 @@ vi.mock('@sushiswap/ui', () => ({
   PerpsDialogHeader: () => null,
   PerpsDialogInnerContent: () => null,
   PerpsDialogTitle: () => null,
-  PerpsDialogTrigger: ({ children }: { children: ReactNode }) => (
-    <>{children}</>
-  ),
+  PerpsDialogTrigger: ({
+    children,
+    disabled,
+  }: {
+    children: ReactElement<ComponentProps<'button'>>
+    disabled?: boolean
+  }) => cloneElement(children, { disabled }),
   Select: () => null,
   SelectContent: () => null,
   SelectItem: () => null,
@@ -61,26 +72,27 @@ describe('DepositDialog account scope', () => {
     vi.clearAllMocks()
   })
 
-  it('hides master funding for subaccounts, including controlled dialogs with custom triggers', () => {
+  it('disables the default and custom deposit triggers for subaccounts', () => {
     selectAccount('sub')
 
-    expect(renderToStaticMarkup(<DepositDialog />)).toBe('')
+    const markup = renderToStaticMarkup(<DepositDialog />)
+    expect(markup).toContain('Deposit')
+    expect(markup).toContain('disabled=""')
     expect(
       renderToStaticMarkup(
-        <DepositDialog
-          isOpen
-          trigger={<button type="button">Fund account</button>}
-        />,
+        <DepositDialog trigger={<button type="button">Fund account</button>} />,
       ),
-    ).toBe('')
+    ).toBe('<button type="button" disabled="">Fund account</button>')
   })
 
   it.each(['master', 'vault'] as const)(
-    'preserves the existing deposit trigger for %s accounts',
+    'preserves an enabled deposit trigger for %s accounts',
     (type) => {
       selectAccount(type)
 
-      expect(renderToStaticMarkup(<DepositDialog />)).toContain('Deposit')
+      const markup = renderToStaticMarkup(<DepositDialog />)
+      expect(markup).toContain('Deposit')
+      expect(markup).not.toContain('disabled')
     },
   )
 })

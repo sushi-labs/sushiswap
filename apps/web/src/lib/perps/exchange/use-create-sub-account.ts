@@ -14,7 +14,6 @@ import {
 } from '@tanstack/react-query'
 import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
-import { useWalletClient } from 'wagmi'
 import { useAgent } from '../agent'
 import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'

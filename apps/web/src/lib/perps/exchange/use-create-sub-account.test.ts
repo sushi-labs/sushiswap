@@ -4,7 +4,7 @@ import { useCreateSubAccount } from './use-create-sub-account'
 const mocks = vi.hoisted(() => ({
   createSubAccount: vi.fn(),
   useAccount: vi.fn(),
-  useWalletClient: vi.fn(),
+  useAgent: vi.fn(),
   useLegalCheck: vi.fn(),
   invalidateQueries: vi.fn(),
   createInfoToast: vi.fn(),
@@ -53,7 +53,7 @@ vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({ invalidateQueries: mocks.invalidateQueries }),
 }))
 vi.mock('src/lib/wallet', () => ({ useAccount: mocks.useAccount }))
-vi.mock('wagmi', () => ({ useWalletClient: mocks.useWalletClient }))
+vi.mock('../agent', () => ({ useAgent: mocks.useAgent }))
 vi.mock('../info/use-legal-check', () => ({
   useLegalCheck: mocks.useLegalCheck,
 }))
@@ -63,7 +63,7 @@ vi.mock('../transports', () => ({ hlHttpTransport: {} }))
 const masterAddress = '0x0000000000000000000000000000000000000001'
 const subAccountUser = '0x0000000000000000000000000000000000000002'
 const otherAddress = '0x0000000000000000000000000000000000000003'
-const walletClient = { account: { address: masterAddress } }
+const agentAccount = { address: '0x0000000000000000000000000000000000000004' }
 const variables = { masterAddress, name: 'New account' } as const
 const response = {
   status: 'ok',
@@ -74,7 +74,7 @@ describe('useCreateSubAccount', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.useAccount.mockReturnValue(masterAddress)
-    mocks.useWalletClient.mockReturnValue({ data: walletClient })
+    mocks.useAgent.mockReturnValue({ agentAccount })
     mocks.useLegalCheck.mockReturnValue({
       data: { ipAllowed: true, userAllowed: true },
     })
@@ -82,7 +82,7 @@ describe('useCreateSubAccount', () => {
     mocks.invalidateQueries.mockResolvedValue(undefined)
   })
 
-  it('creates with the master wallet, trims the name, and refreshes its accounts', async () => {
+  it('creates with the agent account, trims the name, and refreshes the master accounts', async () => {
     await expect(
       useCreateSubAccount().createSubAccountAsync({
         ...variables,
@@ -92,7 +92,7 @@ describe('useCreateSubAccount', () => {
 
     expect(mocks.createSubAccount).toHaveBeenCalledOnce()
     expect(mocks.createSubAccount).toHaveBeenCalledWith(
-      { wallet: walletClient, transport: {} },
+      { wallet: agentAccount, transport: {} },
       { name: 'New account' },
     )
     expect(mocks.invalidateQueries).toHaveBeenCalledOnce()
@@ -108,15 +108,13 @@ describe('useCreateSubAccount', () => {
     expect(mocks.createFailedToast).not.toHaveBeenCalled()
   })
 
-  it.each(['account', 'wallet client', 'wallet account'])(
-    'requires a connected %s',
+  it.each(['master account', 'agent account'])(
+    'requires a %s',
     async (source) => {
-      if (source === 'account') {
+      if (source === 'master account') {
         mocks.useAccount.mockReturnValue(undefined)
       } else {
-        mocks.useWalletClient.mockReturnValue({
-          data: source === 'wallet client' ? undefined : {},
-        })
+        mocks.useAgent.mockReturnValue({ agentAccount: undefined })
       }
       await expect(
         useCreateSubAccount().createSubAccountAsync(variables),
@@ -126,23 +124,14 @@ describe('useCreateSubAccount', () => {
     },
   )
 
-  it.each(['account', 'wallet client'])(
-    'rejects a changed %s',
-    async (source) => {
-      if (source === 'account') {
-        mocks.useAccount.mockReturnValue(otherAddress)
-      } else {
-        mocks.useWalletClient.mockReturnValue({
-          data: { account: { address: otherAddress } },
-        })
-      }
-      await expect(
-        useCreateSubAccount().createSubAccountAsync(variables),
-      ).rejects.toThrow('Connect the master account wallet')
-      expect(mocks.createSubAccount).not.toHaveBeenCalled()
-      expect(mocks.invalidateQueries).not.toHaveBeenCalled()
-    },
-  )
+  it('rejects a changed master account', async () => {
+    mocks.useAccount.mockReturnValue(otherAddress)
+    await expect(
+      useCreateSubAccount().createSubAccountAsync(variables),
+    ).rejects.toThrow('Connect the master account wallet')
+    expect(mocks.createSubAccount).not.toHaveBeenCalled()
+    expect(mocks.invalidateQueries).not.toHaveBeenCalled()
+  })
 
   it.each(['', '   ', 'a'.repeat(17)])(
     'rejects an invalid name: %j',
@@ -162,7 +151,7 @@ describe('useCreateSubAccount', () => {
       name: ` ${name} `,
     })
     expect(mocks.createSubAccount).toHaveBeenCalledWith(
-      { wallet: walletClient, transport: {} },
+      { wallet: agentAccount, transport: {} },
       { name },
     )
   })

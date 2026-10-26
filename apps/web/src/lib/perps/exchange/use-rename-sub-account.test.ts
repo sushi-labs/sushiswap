@@ -4,7 +4,7 @@ import { useRenameSubAccount } from './use-rename-sub-account'
 const mocks = vi.hoisted(() => ({
   subAccountModify: vi.fn(),
   useAccount: vi.fn(),
-  useWalletClient: vi.fn(),
+  useAgent: vi.fn(),
   useLegalCheck: vi.fn(),
   useSubAccounts: vi.fn(),
   useActiveAccountState: vi.fn(),
@@ -47,7 +47,7 @@ vi.mock('@tanstack/react-query', () => ({
   }),
 }))
 vi.mock('src/lib/wallet', () => ({ useAccount: mocks.useAccount }))
-vi.mock('wagmi', () => ({ useWalletClient: mocks.useWalletClient }))
+vi.mock('../agent', () => ({ useAgent: mocks.useAgent }))
 vi.mock('../info/use-legal-check', () => ({
   useLegalCheck: mocks.useLegalCheck,
 }))
@@ -63,7 +63,7 @@ vi.mock('../transports', () => ({ hlHttpTransport: {} }))
 const masterAddress = '0x0000000000000000000000000000000000000001'
 const subAccountUser = '0x0000000000000000000000000000000000000002'
 const otherAddress = '0x0000000000000000000000000000000000000003'
-const walletClient = { account: { address: masterAddress } }
+const agentAccount = { address: '0x0000000000000000000000000000000000000004' }
 const subAccount = { subAccountUser, master: masterAddress, name: 'Old name' }
 const variables = { masterAddress, subAccountUser, name: 'New name' } as const
 
@@ -71,7 +71,7 @@ describe('useRenameSubAccount', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mocks.useAccount.mockReturnValue(masterAddress)
-    mocks.useWalletClient.mockReturnValue({ data: walletClient })
+    mocks.useAgent.mockReturnValue({ agentAccount })
     mocks.useLegalCheck.mockReturnValue({
       data: { ipAllowed: true, userAllowed: true },
     })
@@ -93,7 +93,7 @@ describe('useRenameSubAccount', () => {
     })
   })
 
-  it('renames with the master wallet and trims the submitted name', async () => {
+  it('renames with the agent account and trims the submitted name', async () => {
     await useRenameSubAccount().renameSubAccountAsync({
       ...variables,
       name: '  New name  ',
@@ -101,7 +101,7 @@ describe('useRenameSubAccount', () => {
 
     expect(mocks.subAccountModify).toHaveBeenCalledOnce()
     expect(mocks.subAccountModify).toHaveBeenCalledWith(
-      { wallet: walletClient, transport: {} },
+      { wallet: agentAccount, transport: {} },
       { subAccountUser, name: 'New name' },
     )
     expect(mocks.invalidateQueries).toHaveBeenCalledWith({
@@ -118,30 +118,28 @@ describe('useRenameSubAccount', () => {
     )
   })
 
-  it('requires a connected wallet', async () => {
-    mocks.useWalletClient.mockReturnValue({ data: undefined })
-    await expect(
-      useRenameSubAccount().renameSubAccountAsync(variables),
-    ).rejects.toThrow('Connect your master account wallet')
-    expect(mocks.subAccountModify).not.toHaveBeenCalled()
-  })
-
-  it.each(['account', 'wallet client'])(
-    'rejects a changed %s',
+  it.each(['master account', 'agent account'])(
+    'requires a %s',
     async (source) => {
-      if (source === 'account') {
-        mocks.useAccount.mockReturnValue(otherAddress)
+      if (source === 'master account') {
+        mocks.useAccount.mockReturnValue(undefined)
       } else {
-        mocks.useWalletClient.mockReturnValue({
-          data: { account: { address: otherAddress } },
-        })
+        mocks.useAgent.mockReturnValue({ agentAccount: undefined })
       }
       await expect(
         useRenameSubAccount().renameSubAccountAsync(variables),
-      ).rejects.toThrow('Connect the master account wallet')
+      ).rejects.toThrow('Connect your master account wallet')
       expect(mocks.subAccountModify).not.toHaveBeenCalled()
     },
   )
+
+  it('rejects a changed master account', async () => {
+    mocks.useAccount.mockReturnValue(otherAddress)
+    await expect(
+      useRenameSubAccount().renameSubAccountAsync(variables),
+    ).rejects.toThrow('Connect the master account wallet')
+    expect(mocks.subAccountModify).not.toHaveBeenCalled()
+  })
 
   it.each([undefined, [], [{ ...subAccount, master: otherAddress }]])(
     'rejects a sub-account whose ownership cannot be verified: %j',

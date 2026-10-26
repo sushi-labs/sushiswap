@@ -30,6 +30,17 @@ const mocks = vi.hoisted(() => ({
 vi.mock('src/lib/wallet', () => ({
   useAccount: () => (mocks.connected ? mocks.master : undefined),
 }))
+vi.mock('src/lib/wagmi/components/connect-button', () => {
+  function ConnectButton({ namespace }: { namespace: string }) {
+    return (
+      <button type="button" data-connect-namespace={namespace}>
+        Connect Wallet
+      </button>
+    )
+  }
+
+  return { ConnectButton }
+})
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mocks.push }) }))
 vi.mock('@sushiswap/hooks', () => ({
   useCopyClipboard: () => [false, mocks.copy],
@@ -357,6 +368,9 @@ describe('SubAccountsTable', () => {
     mocks.connected = false
     render()
     expect(container.textContent).toContain('Connect your wallet')
+    expect(
+      container.querySelector('button')?.getAttribute('data-connect-namespace'),
+    ).toBe('evm')
     expect(container.querySelector('table')).toBeNull()
     mocks.connected = true
     mocks.loading = true

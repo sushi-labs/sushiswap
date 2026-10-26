@@ -15,7 +15,7 @@ import { RenameSubAccountDialog } from './rename-sub-account-dialog'
 
 const mocks = vi.hoisted(() => ({
   useRenameSubAccount: vi.fn(),
-  renameSubAccount: vi.fn(),
+  renameSubAccountAsync: vi.fn(),
   reset: vi.fn(),
 }))
 
@@ -23,11 +23,18 @@ vi.mock('src/lib/perps/exchange/use-rename-sub-account', () => ({
   MAX_SUB_ACCOUNT_NAME_LENGTH: 16,
   useRenameSubAccount: mocks.useRenameSubAccount,
 }))
-vi.mock('~evm/perps/_ui/perps-checker', () => ({
-  PerpsChecker: {
-    Legal: ({ children }: PropsWithChildren) => <>{children}</>,
-  },
-}))
+vi.mock('~evm/perps/_ui/perps-checker', () => {
+  function Wrapper({ children }: PropsWithChildren) {
+    return <>{children}</>
+  }
+
+  return {
+    PerpsChecker: {
+      EnableTrading: Wrapper,
+      Legal: Wrapper,
+    },
+  }
+})
 vi.mock('@sushiswap/ui', () => {
   const DialogContext = createContext({
     open: false,
@@ -139,9 +146,9 @@ describe('RenameSubAccountDialog', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mocks.renameSubAccount.mockReset()
+    mocks.renameSubAccountAsync.mockReset().mockResolvedValue(undefined)
     mocks.useRenameSubAccount.mockReturnValue({
-      renameSubAccount: mocks.renameSubAccount,
+      renameSubAccountAsync: mocks.renameSubAccountAsync,
       isPending: false,
       error: null,
       reset: mocks.reset,
@@ -170,15 +177,15 @@ describe('RenameSubAccountDialog', () => {
     expect(button('Confirm').disabled).toBe(false)
   })
 
-  it('submits the selected sub-account and closes after success', () => {
-    mocks.renameSubAccount.mockImplementation(
-      (_variables: unknown, options: { onSuccess: () => void }) =>
+  it('submits the selected sub-account and closes after success', async () => {
+    mocks.renameSubAccountAsync.mockImplementation(
+      async (_variables: unknown, options: { onSuccess: () => void }) =>
         options.onSuccess(),
     )
     changeName('  Updated name  ')
-    act(() => button('Confirm').click())
+    await act(async () => button('Confirm').click())
 
-    expect(mocks.renameSubAccount).toHaveBeenCalledWith(
+    expect(mocks.renameSubAccountAsync).toHaveBeenCalledWith(
       {
         masterAddress,
         subAccountUser: subAccount.subAccountUser,
@@ -193,18 +200,17 @@ describe('RenameSubAccountDialog', () => {
     changeName('Unsaved name')
     act(() => button('Cancel').click())
     expect(container.querySelector('[role="dialog"]')).toBeNull()
-    expect(mocks.renameSubAccount).not.toHaveBeenCalled()
+    expect(mocks.renameSubAccountAsync).not.toHaveBeenCalled()
 
     act(() => button('Rename My account').click())
     expect(container.querySelector('input')?.value).toBe('My account')
   })
 
-  it('keeps the form open and displays rejected requests', () => {
-    mocks.renameSubAccount.mockImplementation(() => {})
+  it('keeps the form open and displays rejected requests', async () => {
     changeName('Updated name')
-    act(() => button('Confirm').click())
+    await act(async () => button('Confirm').click())
     mocks.useRenameSubAccount.mockReturnValue({
-      renameSubAccount: mocks.renameSubAccount,
+      renameSubAccountAsync: mocks.renameSubAccountAsync,
       isPending: false,
       error: new Error('User rejected request'),
       reset: mocks.reset,

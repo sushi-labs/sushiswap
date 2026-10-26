@@ -166,7 +166,7 @@ describe('Deposit account gating', () => {
   )
 
   it.each(['perp', 'spot'])(
-    'requires external funding for an unfunded subaccount trading %s',
+    'shows the deposit dialog for an unfunded subaccount trading %s',
     (marketType) => {
       mocks.useAssetState.mockReturnValue({
         state: {
@@ -176,13 +176,10 @@ describe('Deposit account gating', () => {
       })
       render()
 
-      const button = container.querySelector('button')
-      expect(button?.textContent).toBe(
-        'Fund this subaccount on Hyperliquid to trade',
-      )
-      expect(button?.disabled).toBe(true)
+      expect(container.querySelector('[data-dialog="deposit"]')).not.toBeNull()
       expect(container.textContent).not.toContain('Place order')
-      expectNoFundingDialogs()
+      expect(mocks.PerpSpotTransferDialog).not.toHaveBeenCalled()
+      expect(mocks.SwapStablesDialog).not.toHaveBeenCalled()
     },
   )
 
@@ -195,15 +192,18 @@ describe('Deposit account gating', () => {
     expect(mocks.SwapStablesDialog).not.toHaveBeenCalled()
   })
 
-  it('retains the transfer dialog for a master account with sendable funds', () => {
-    selectAccount('master')
-    mocks.getClearinghouseStateForDex.mockReturnValue({ withdrawable: '100' })
-    render()
+  it.each(['master', 'sub'] as const)(
+    'retains the transfer dialog for a %s account with sendable funds',
+    (type) => {
+      selectAccount(type)
+      mocks.getClearinghouseStateForDex.mockReturnValue({ withdrawable: '100' })
+      render()
 
-    expect(container.querySelector('[data-dialog="transfer"]')).not.toBeNull()
-    expect(mocks.DepositDialog).not.toHaveBeenCalled()
-    expect(mocks.SwapStablesDialog).not.toHaveBeenCalled()
-  })
+      expect(container.querySelector('[data-dialog="transfer"]')).not.toBeNull()
+      expect(mocks.DepositDialog).not.toHaveBeenCalled()
+      expect(mocks.SwapStablesDialog).not.toHaveBeenCalled()
+    },
+  )
 
   it('retains the stable swap dialog for a master account without the quote asset', () => {
     selectAccount('master')
