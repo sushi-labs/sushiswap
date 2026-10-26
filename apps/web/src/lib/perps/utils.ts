@@ -1,8 +1,10 @@
 import type {
   AllPerpMetasResponse,
+  ClearinghouseStateResponse,
   SpotClearinghouseStateResponse,
   SpotMetaResponse,
   SubAccounts2Response,
+  UserAbstractionResponse,
 } from '@nktkas/hyperliquid'
 import {
   formatPrice as formatPriceHl,
@@ -223,25 +225,35 @@ export function isTokenBalance(balance: Balance): balance is TokenBalance {
 }
 
 export type SubAccountTransferAsset = {
+  id: string
   token: string
   symbol: string
   decimals: number
   balance: string
+  sourceDex: string
 }
 
 export type SubAccountTransferDirection = 'to-sub-account' | 'to-master'
 
 function getDecimalPlaces(value: string): number {
   if (!/^-?\d+(?:\.\d+)?$/.test(value)) {
-    throw new Error('Unable to read the available spot balance.')
+    throw new Error('Unable to read the available balance.')
   }
   return value.split('.')[1]?.length ?? 0
 }
 
-export const getSubAccountTransferAssets = (
+export function getSubAccountTransferAssets(
   state: SpotClearinghouseStateResponse,
   meta: SpotMetaResponse,
-): SubAccountTransferAsset[] => {
+  sourceState?: {
+    clearinghouseStates: readonly (readonly [
+      string,
+      Pick<ClearinghouseStateResponse, 'withdrawable'>,
+    ])[]
+    perpMetas: AllPerpMetasResponse
+    abstraction: UserAbstractionResponse
+  },
+): SubAccountTransferAsset[] {
   const tokens = new Map(meta.tokens.map((token) => [token.index, token]))
   const maintenanceLimits = new Map(state.tokenToAvailableAfterMaintenance)
   const assets: SubAccountTransferAsset[] = []
@@ -269,22 +281,66 @@ export const getSubAccountTransferAssets = (
     const availableWei = available / 10n ** BigInt(decimals - token.weiDecimals)
     if (availableWei <= 0n) continue
 
+    const tokenIdentifier = `${token.name}:${token.tokenId}`
     assets.push({
-      token: `${token.name}:${token.tokenId}`,
+      id: JSON.stringify(['spot', tokenIdentifier]),
+      token: tokenIdentifier,
       symbol: token.name,
       decimals: token.weiDecimals,
       balance: formatUnits(availableWei, token.weiDecimals),
+      sourceDex: 'spot',
     })
+  }
+
+  if (
+    sourceState &&
+    sourceState.abstraction !== 'unifiedAccount' &&
+    sourceState.abstraction !== 'portfolioMargin'
+  ) {
+    for (const [
+      sourceDex,
+      { withdrawable },
+    ] of sourceState.clearinghouseStates) {
+      const balanceDecimals = Math.max(6, getDecimalPlaces(withdrawable))
+      const available = parseUnits(withdrawable, balanceDecimals)
+      if (available / 10n ** BigInt(balanceDecimals - 6) <= 0n) continue
+
+      const collateralIndex = getCollateralTokenForDex(
+        sourceState.perpMetas,
+        sourceDex,
+      )
+      const token =
+        collateralIndex === undefined ? undefined : tokens.get(collateralIndex)
+      if (!token) {
+        throw new Error(
+          `Unable to identify collateral for ${sourceDex || 'native'} perps.`,
+        )
+      }
+
+      const decimals = Math.min(6, token.weiDecimals)
+      const availableWei = available / 10n ** BigInt(balanceDecimals - decimals)
+      if (availableWei <= 0n) continue
+      const tokenIdentifier =
+        collateralIndex === 0 ? 'USDC' : `${token.name}:${token.tokenId}`
+      assets.push({
+        id: JSON.stringify([sourceDex, tokenIdentifier]),
+        token: tokenIdentifier,
+        symbol: token.name,
+        decimals,
+        balance: formatUnits(availableWei, decimals),
+        sourceDex,
+      })
+    }
   }
 
   return assets.sort((a, b) => a.symbol.localeCompare(b.symbol))
 }
 
-export const getSubAccountTransferAmountError = (
+export function getSubAccountTransferAmountError(
   amount: string,
   asset: SubAccountTransferAsset | undefined,
-): string | undefined => {
-  if (!asset) return 'Select an available spot asset.'
+): string | undefined {
+  if (!asset) return 'Select an available asset.'
   if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(amount)) {
     return 'Enter an amount greater than zero.'
   }
@@ -300,28 +356,30 @@ export const getSubAccountTransferAmountError = (
   return undefined
 }
 
-export const getSubAccountTransferRoute = ({
+export function getSubAccountTransferRoute({
   masterAddress,
   subAccountAddress,
   direction,
+  sourceDex = 'spot',
 }: {
   masterAddress: EvmAddress
   subAccountAddress: EvmAddress
   direction: SubAccountTransferDirection
+  sourceDex?: SubAccountTransferAsset['sourceDex']
 }): {
   sourceAddress: EvmAddress
   destination: EvmAddress
-  sourceDex: 'spot'
-  destinationDex: 'spot'
+  sourceDex: SubAccountTransferAsset['sourceDex']
+  destinationDex: SubAccountTransferAsset['sourceDex']
   fromSubAccount?: EvmAddress
-} => {
+} {
   return {
     sourceAddress:
       direction === 'to-sub-account' ? masterAddress : subAccountAddress,
     destination:
       direction === 'to-sub-account' ? subAccountAddress : masterAddress,
-    sourceDex: 'spot',
-    destinationDex: 'spot',
+    sourceDex,
+    destinationDex: sourceDex,
     fromSubAccount: direction === 'to-master' ? subAccountAddress : undefined,
   }
 }

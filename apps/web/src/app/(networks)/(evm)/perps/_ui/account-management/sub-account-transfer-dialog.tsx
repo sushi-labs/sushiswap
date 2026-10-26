@@ -27,9 +27,14 @@ import {
   useState,
 } from 'react'
 import { useSendAsset } from 'src/lib/perps/exchange/use-send-asset'
+import { useAllPerpMetas } from 'src/lib/perps/info/use-all-perp-metas'
+import { useClearinghouseState } from 'src/lib/perps/info/use-clearinghouse-state'
 import { useSpotClearinghouseState } from 'src/lib/perps/info/use-spot-clearinghouse-state'
 import { useSpotMeta } from 'src/lib/perps/info/use-spot-meta'
+import { useUserAbstraction } from 'src/lib/perps/info/use-user-abstraction'
+import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
 import {
+  type SubAccountTransferAsset,
   type SubAccountTransferDirection,
   getSubAccountTransferAmountError,
   getSubAccountTransferAssets,
@@ -39,6 +44,16 @@ import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useAccount } from 'src/lib/wallet'
 import type { EvmAddress } from 'sushi/evm'
 import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
+
+function getAssetLabel(asset: SubAccountTransferAsset): string {
+  const market =
+    asset.sourceDex === 'spot'
+      ? 'Spot'
+      : asset.sourceDex
+        ? `${asset.sourceDex} Perps`
+        : 'Perps'
+  return `${asset.symbol} (${market})`
+}
 
 export function SubAccountTransferDialog({
   masterAddress,
@@ -52,7 +67,7 @@ export function SubAccountTransferDialog({
   const [open, setOpen] = useState(false)
   const [direction, setDirection] =
     useState<SubAccountTransferDirection>('to-sub-account')
-  const [selectedToken, setSelectedToken] = useState<string>()
+  const [selectedAssetId, setSelectedAssetId] = useState<string>()
   const [amount, setAmount] = useState('')
   const [error, setError] = useState<string>()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -61,20 +76,36 @@ export function SubAccountTransferDialog({
   const address = useAccount('evm')
   const queryClient = useQueryClient()
   const { sendAssetAsync, isPending } = useSendAsset()
-  const route = getSubAccountTransferRoute({
-    masterAddress,
-    subAccountAddress: subAccount.subAccountUser,
-    direction,
-  })
+  const sourceAddress =
+    direction === 'to-sub-account' ? masterAddress : subAccount.subAccountUser
   const spotQuery = useSpotClearinghouseState({
-    address: open ? route.sourceAddress : undefined,
+    address: open ? sourceAddress : undefined,
+  })
+  const allPerpsQuery = useAllDexClearinghouseState({
+    address: open ? sourceAddress : undefined,
+  })
+  const abstractionQuery = useUserAbstraction({
+    address: open ? sourceAddress : undefined,
   })
   const metaQuery = useSpotMeta()
+  const perpMetaQuery = useAllPerpMetas()
   const assetResult = useMemo(() => {
-    if (!spotQuery.data || !metaQuery.data) return { assets: [] }
+    if (
+      !spotQuery.data ||
+      !allPerpsQuery.data ||
+      !abstractionQuery.data ||
+      !metaQuery.data ||
+      !perpMetaQuery.data
+    ) {
+      return { assets: [] }
+    }
     try {
       return {
-        assets: getSubAccountTransferAssets(spotQuery.data, metaQuery.data),
+        assets: getSubAccountTransferAssets(spotQuery.data, metaQuery.data, {
+          clearinghouseStates: allPerpsQuery.data.clearinghouseStates,
+          perpMetas: perpMetaQuery.data,
+          abstraction: abstractionQuery.data,
+        }),
       }
     } catch (error) {
       return {
@@ -83,15 +114,43 @@ export function SubAccountTransferDialog({
           error instanceof Error ? error.message : 'Unable to read balances.',
       }
     }
-  }, [spotQuery.data, metaQuery.data])
-  const asset = selectedToken
-    ? assetResult.assets.find((asset) => asset.token === selectedToken)
+  }, [
+    spotQuery.data,
+    allPerpsQuery.data,
+    abstractionQuery.data,
+    metaQuery.data,
+    perpMetaQuery.data,
+  ])
+  const asset = selectedAssetId
+    ? assetResult.assets.find((asset) => asset.id === selectedAssetId)
     : assetResult.assets[0]
+  const perpQuery = useClearinghouseState({
+    address:
+      open && asset && asset.sourceDex !== 'spot' ? sourceAddress : undefined,
+    dex: asset?.sourceDex,
+  })
   const amountError = getSubAccountTransferAmountError(amount, asset)
-  const isLoading = spotQuery.isLoading || metaQuery.isLoading
+  const route = getSubAccountTransferRoute({
+    masterAddress,
+    subAccountAddress: subAccount.subAccountUser,
+    direction,
+    sourceDex: asset?.sourceDex,
+  })
+  const isLoading =
+    spotQuery.isLoading ||
+    allPerpsQuery.isLoading ||
+    perpQuery.isLoading ||
+    abstractionQuery.isLoading ||
+    metaQuery.isLoading ||
+    perpMetaQuery.isLoading
   const dataError =
-    spotQuery.isError || metaQuery.isError
-      ? 'Unable to load available spot assets. Please retry.'
+    spotQuery.isError ||
+    allPerpsQuery.isError ||
+    perpQuery.isError ||
+    abstractionQuery.isError ||
+    metaQuery.isError ||
+    perpMetaQuery.isError
+      ? 'Unable to load available assets. Please retry.'
       : assetResult.error
   const isBusy = isSubmitting || isPending
   const isMasterWallet = address?.toLowerCase() === masterAddress.toLowerCase()
@@ -104,7 +163,7 @@ export function SubAccountTransferDialog({
     if (submitting.current || isPending) return
     if (nextOpen) {
       setDirection('to-sub-account')
-      setSelectedToken(undefined)
+      setSelectedAssetId(undefined)
       setAmount('')
       setError(undefined)
     }
@@ -115,13 +174,22 @@ export function SubAccountTransferDialog({
     setDirection(
       direction === 'to-sub-account' ? 'to-master' : 'to-sub-account',
     )
-    setSelectedToken(undefined)
+    setSelectedAssetId(undefined)
     setAmount('')
     setError(undefined)
   }
 
   async function transfer(): Promise<void> {
-    if (submitting.current || isPending || !asset || amountError) return
+    if (
+      submitting.current ||
+      isPending ||
+      isLoading ||
+      dataError ||
+      !asset ||
+      amountError
+    ) {
+      return
+    }
     if (!isMasterWallet) {
       setError('Connect the master account wallet to transfer assets.')
       return
@@ -131,16 +199,36 @@ export function SubAccountTransferDialog({
     setError(undefined)
     try {
       // Recheck the source balance immediately before requesting a signature.
-      const latest = await spotQuery.refetch()
-      if (latest.isError || !latest.data || !metaQuery.data) {
+      const [latestSpot, latestPerp, latestAbstraction] = await Promise.all([
+        spotQuery.refetch(),
+        asset.sourceDex === 'spot' ? undefined : perpQuery.refetch(),
+        abstractionQuery.refetch(),
+      ])
+      if (
+        latestSpot.isError ||
+        latestAbstraction.isError ||
+        !latestSpot.data ||
+        !latestAbstraction.data ||
+        !metaQuery.data ||
+        !perpMetaQuery.data ||
+        (asset.sourceDex !== 'spot' &&
+          (latestPerp?.isError || !latestPerp?.data))
+      ) {
         throw new Error(
           'Unable to refresh the source account balance. Please retry.',
         )
       }
       const latestAsset = getSubAccountTransferAssets(
-        latest.data,
+        latestSpot.data,
         metaQuery.data,
-      ).find((entry) => entry.token === asset.token)
+        {
+          clearinghouseStates: latestPerp?.data
+            ? [[asset.sourceDex, latestPerp.data]]
+            : [],
+          perpMetas: perpMetaQuery.data,
+          abstraction: latestAbstraction.data,
+        },
+      ).find((entry) => entry.id === asset.id)
       const validationError = getSubAccountTransferAmountError(
         amount,
         latestAsset,
@@ -161,10 +249,15 @@ export function SubAccountTransferDialog({
         queryClient.invalidateQueries({
           queryKey: ['useSubAccounts', masterAddress],
         }),
-        ...[masterAddress, subAccount.subAccountUser].map((accountAddress) =>
-          queryClient.invalidateQueries({
-            queryKey: ['useSpotClearinghouseState', accountAddress],
-          }),
+        ...[masterAddress, subAccount.subAccountUser].flatMap(
+          (accountAddress) => [
+            queryClient.invalidateQueries({
+              queryKey: ['useSpotClearinghouseState', accountAddress],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ['useClearinghouseState', accountAddress],
+            }),
+          ],
         ),
       ])
       setAmount('')
@@ -192,8 +285,7 @@ export function SubAccountTransferDialog({
         <PerpsDialogHeader>
           <PerpsDialogTitle>Transfer Assets</PerpsDialogTitle>
           <PerpsDialogDescription>
-            Transfer spot assets between your master account and{' '}
-            {subAccount.name}.
+            Transfer assets between your master account and {subAccount.name}.
           </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
@@ -229,31 +321,33 @@ export function SubAccountTransferDialog({
                 </div>
               </div>
               <Select
-                value={asset?.token ?? ''}
+                value={asset?.id ?? ''}
                 disabled={
                   isBusy ||
                   isLoading ||
                   Boolean(dataError) ||
                   !assetResult.assets.length
                 }
-                onValueChange={(token) => {
-                  setSelectedToken(token)
+                onValueChange={(id) => {
+                  setSelectedAssetId(id)
                   setAmount('')
                   setError(undefined)
                 }}
               >
                 <SelectTrigger
-                  aria-label="Spot asset"
+                  aria-label="Asset"
                   className="w-full !border-[#FFFFFF1A] !border bg-transparent"
                 >
                   {isLoading
                     ? 'Loading assets...'
-                    : (asset?.symbol ?? 'No available spot assets')}
+                    : asset
+                      ? getAssetLabel(asset)
+                      : 'No available assets'}
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="!bg-black/10">
                   {assetResult.assets.map((asset) => (
-                    <SelectItem key={asset.token} value={asset.token}>
-                      {asset.symbol} — {asset.balance}
+                    <SelectItem key={asset.id} value={asset.id}>
+                      {getAssetLabel(asset)} — {asset.balance}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -314,7 +408,12 @@ export function SubAccountTransferDialog({
                   variant="perps-secondary"
                   onClick={() => {
                     void spotQuery.refetch()
+                    if (asset && asset.sourceDex !== 'spot') {
+                      void perpQuery.refetch()
+                    }
+                    void abstractionQuery.refetch()
                     void metaQuery.refetch()
+                    void perpMetaQuery.refetch()
                   }}
                 >
                   Retry

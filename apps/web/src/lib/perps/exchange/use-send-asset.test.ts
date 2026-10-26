@@ -84,6 +84,30 @@ describe('useSendAsset', () => {
     )
   })
 
+  it.each(['', 'xyz'])(
+    'transfers perps USDC from a sub-account on DEX %j at six-decimal precision',
+    async (dex) => {
+      await useSendAsset().sendAssetAsync({
+        ...transfer,
+        destination: masterAddress,
+        fromSubAccount: subAccountAddress,
+        sourceDex: dex,
+        destinationDex: dex,
+        token: 'USDC',
+        decimals: 6,
+        amount: '12.123456',
+      })
+      expect(mocks.sendAsset).toHaveBeenCalledWith(expect.anything(), {
+        destination: masterAddress,
+        fromSubAccount: subAccountAddress,
+        sourceDex: dex,
+        destinationDex: dex,
+        token: 'USDC',
+        amount: '12.123456',
+      })
+    },
+  )
+
   it('rejects a missing wallet instead of treating it as success', async () => {
     mocks.useWalletClient.mockReturnValue({ data: undefined })
     await expect(useSendAsset().sendAssetAsync(transfer)).rejects.toThrow(
