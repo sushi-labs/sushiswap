@@ -5,10 +5,7 @@ import type {
 } from '@nktkas/hyperliquid'
 import type { SpotAssetCtxsEvent } from '@nktkas/hyperliquid/api/subscription'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  getSpotAccountEquity,
-  getSpotTokenPrices,
-} from '../../../app/(networks)/(evm)/perps/sub-accounts/_ui/sub-account-equity'
+import { getSpotAccountEquity, getSpotTokenPrices } from '../utils'
 import { getSpotAssetMetadata } from './spot-asset-metadata'
 import { formatPerpCtxs, formatSpotCtxs } from './use-asset-list'
 

@@ -10,7 +10,7 @@ import {
 } from '@nktkas/hyperliquid/utils'
 import type { EvmAddress } from 'sushi/evm'
 import { formatUnits, parseUnits } from 'viem'
-import { getCollateralTokenForDex } from './info'
+import { getCollateralTokenForDex } from './info/perp-meta'
 import type { PerpOrSpotAsset } from './subscription/use-asset-list'
 
 type Balance = SpotClearinghouseStateResponse['balances'][number]
@@ -238,16 +238,16 @@ function getDecimalPlaces(value: string): number {
   return value.split('.')[1]?.length ?? 0
 }
 
-export function getSubAccountTransferAssets(
+export const getSubAccountTransferAssets = (
   state: SpotClearinghouseStateResponse,
   meta: SpotMetaResponse,
-): SubAccountTransferAsset[] {
+): SubAccountTransferAsset[] => {
   const tokens = new Map(meta.tokens.map((token) => [token.index, token]))
   const maintenanceLimits = new Map(state.tokenToAvailableAfterMaintenance)
   const assets: SubAccountTransferAsset[] = []
 
   for (const balance of state.balances) {
-    if (!('token' in balance)) continue
+    if (!isTokenBalance(balance)) continue
     const token = tokens.get(balance.token)
     if (!token) continue
 
@@ -280,10 +280,10 @@ export function getSubAccountTransferAssets(
   return assets.sort((a, b) => a.symbol.localeCompare(b.symbol))
 }
 
-export function getSubAccountTransferAmountError(
+export const getSubAccountTransferAmountError = (
   amount: string,
   asset: SubAccountTransferAsset | undefined,
-): string | undefined {
+): string | undefined => {
   if (!asset) return 'Select an available spot asset.'
   if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(amount)) {
     return 'Enter an amount greater than zero.'
@@ -300,7 +300,7 @@ export function getSubAccountTransferAmountError(
   return undefined
 }
 
-export function getSubAccountTransferRoute({
+export const getSubAccountTransferRoute = ({
   masterAddress,
   subAccountAddress,
   direction,
@@ -314,7 +314,7 @@ export function getSubAccountTransferRoute({
   sourceDex: 'spot'
   destinationDex: 'spot'
   fromSubAccount?: EvmAddress
-} {
+} => {
   return {
     sourceAddress:
       direction === 'to-sub-account' ? masterAddress : subAccountAddress,
@@ -332,9 +332,9 @@ function parseFiniteNumber(value: string | null | undefined): number | null {
   return Number.isFinite(number) ? number : null
 }
 
-export function getSpotTokenPrices(
+export const getSpotTokenPrices = (
   assetList: ReadonlyMap<string, PerpOrSpotAsset> | undefined,
-): Map<number, number> {
+): Map<number, number> => {
   const prices = new Map([[0, 1]])
   const markets = Array.from(assetList?.values() ?? []).filter(
     (asset) => asset.marketType === 'spot',
@@ -367,10 +367,10 @@ export function getSpotTokenPrices(
   return prices
 }
 
-export function getSpotAccountEquity(
+export const getSpotAccountEquity = (
   spotState: SpotClearinghouseStateResponse | undefined,
   tokenPrices: ReadonlyMap<number, number>,
-): number | null {
+): number | null => {
   if (!spotState) return null
 
   let equity = 0
@@ -378,7 +378,7 @@ export function getSpotAccountEquity(
     const total = parseFiniteNumber(balance.total)
     if (total === null) return null
     if (total === 0) continue
-    if (!('token' in balance)) return null
+    if (!isTokenBalance(balance)) return null
     const price = tokenPrices.get(balance.token)
     if (price === undefined || !Number.isFinite(price) || price <= 0) {
       return null
@@ -390,13 +390,13 @@ export function getSpotAccountEquity(
   return Number.isFinite(equity) ? equity : null
 }
 
-export function getPerpsAccountEquity(
+export const getPerpsAccountEquity = (
   clearinghouseStates:
     | NonNullable<SubAccounts2Response>[number]['dexToClearinghouseState']
     | undefined,
   allPerpMetas: AllPerpMetasResponse | undefined,
   tokenPrices: ReadonlyMap<number, number>,
-): number | null {
+): number | null => {
   if (!clearinghouseStates) return null
 
   let equity = 0

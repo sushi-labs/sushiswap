@@ -149,7 +149,7 @@ vi.mock('./rename-sub-account-dialog', () => ({
     </button>
   ),
 }))
-vi.mock('./sub-account-transfer-dialog', () => ({
+vi.mock('../../_ui/account-management/sub-account-transfer-dialog', () => ({
   SubAccountTransferDialog: ({
     subAccount,
     masterAddress,
