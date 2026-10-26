@@ -201,7 +201,6 @@ const nextConfig = bundleAnalyzer({
       },
     ]
   },
-  allowedDevOrigins: ['192.168.1.89'],
 })
 
 export default withBotId(nextConfig)
