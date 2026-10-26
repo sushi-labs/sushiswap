@@ -228,7 +228,7 @@ export function TokenSelector<
         {theme === 'perps' ? (
           <PerpsDialogContent
             className={classNames(
-              'h-[80vh] !w-full !p-0 md:!w-fit',
+              'h-[calc(100dvh-56px)] md:h-[80vh] !w-full !p-0 md:!w-fit',
               networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
             )}
             wrapperClassName="!flex h-full min-h-0 !flex-col overflow-hidden md:!flex-row"
@@ -238,7 +238,7 @@ export function TokenSelector<
         ) : (
           <DialogContent
             className={classNames(
-              'h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
+              'h-[calc(100dvh-56px)] md:h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
               networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
             )}
           >

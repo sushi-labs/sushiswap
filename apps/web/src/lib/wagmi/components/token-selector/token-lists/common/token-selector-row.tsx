@@ -121,10 +121,10 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
             onClick={onClick}
             className={classNames(
               className,
-              `flex items-center justify-between flex-grow gap-2 h-full rounded-lg pl-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring token-${currency?.symbol}`,
+              `flex min-w-0 items-center justify-between flex-1 gap-2 h-full rounded-lg pl-2 md:pl-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring token-${currency?.symbol}`,
             )}
           >
-            <div className="flex flex-row items-center flex-grow gap-4">
+            <div className="shrink-0">
               {selected ? (
                 <Badge
                   position="bottom-right"
@@ -167,11 +167,13 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                   />
                 </div>
               )}
-              <div className="flex flex-col items-start">
-                <div className="flex gap-1">
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col ml-2">
+              <div className="flex justify-between items-start w-full gap-1">
+                <div className="flex min-w-0 gap-1">
                   <span
                     className={classNames(
-                      'font-semibold',
+                      'font-semibold truncate max-w-[120px]',
                       isPerps ? 'text-perps-muted' : 'text-primary',
                     )}
                   >
@@ -184,7 +186,7 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                           <ExclamationCircleIcon
                             width={20}
                             height={20}
-                            className="text-yellow"
+                            className="shrink-0 text-yellow"
                           />
                         </TooltipTrigger>
                         <TooltipContent>
@@ -194,12 +196,37 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                     </TooltipProvider>
                   ) : null}
                 </div>
+                <div className="min-w-0 max-w-[50%] shrink-0">
+                  {isBalanceLoading ? (
+                    <div className="min-w-[60px]">
+                      <SkeletonText align="right" />
+                    </div>
+                  ) : (
+                    balance?.gt(ZERO) && (
+                      <div className="flex max-w-[140px]">
+                        <span
+                          className={classNames(
+                            selected ? 'font-semibold' : 'font-medium',
+                            'truncate text-right',
+                            isPerps
+                              ? 'text-perps-muted'
+                              : 'text-gray-900 dark:text-slate-50 black:text-slate-50',
+                          )}
+                        >
+                          {balance?.toSignificant(6)}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-between items-start w-full gap-1">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span
+                      <div
                         className={classNames(
-                          'text-sm hover:underline',
+                          'text-sm hover:underline truncate max-w-[180px] md:max-w-full',
                           isPerps
                             ? 'text-perps-muted-50'
                             : 'text-muted-foreground',
@@ -207,7 +234,7 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                       >
                         {currency.name ?? currency.symbol}
                         {domain ? ` - ${domain}` : ''}
-                      </span>
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent
                       side="bottom"
@@ -228,47 +255,34 @@ function TokenSelectorRowBase<TChainId extends TokenSelectorChainId>({
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+                <div className="min-w-0 max-w-[50%] shrink-0">
+                  {isBalanceLoading ? (
+                    <div className="min-w-[60px]">
+                      <SkeletonText fontSize="sm" align="right" />
+                    </div>
+                  ) : (
+                    balance?.gt(ZERO) && (
+                      <div className="max-w-[140px]">
+                        <span
+                          className={classNames(
+                            'block truncate text-right text-sm font-medium',
+                            isPerps
+                              ? 'text-perps-muted-50'
+                              : 'text-gray-500 dark:text-slate-400',
+                          )}
+                        >
+                          {price
+                            ? `$${balance?.mul(price).toString({ fixed: 2 })}`
+                            : '-'}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-4">
-              {isBalanceLoading ? (
-                <div className="flex flex-col min-w-[60px]">
-                  <SkeletonText align="right" />
-                  <SkeletonText fontSize="sm" align="right" />
-                </div>
-              ) : (
-                balance?.gt(ZERO) && (
-                  <div className="flex flex-col max-w-[140px]">
-                    <span
-                      className={classNames(
-                        selected ? 'font-semibold' : 'font-medium',
-                        'truncate text-right',
-                        isPerps
-                          ? 'text-perps-muted'
-                          : 'text-gray-900 dark:text-slate-50 black:text-slate-50',
-                      )}
-                    >
-                      {balance?.toSignificant(6)}
-                    </span>
-                    <span
-                      className={classNames(
-                        'text-right text-sm font-medium',
-                        isPerps
-                          ? 'text-perps-muted-50'
-                          : 'text-gray-500 dark:text-slate-400',
-                      )}
-                    >
-                      {price
-                        ? `$${balance?.mul(price).toString({ fixed: 2 })}`
-                        : '-'}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
           </button>
-          <div className="flex items-center gap-1 pr-3">
+          <div className="flex shrink-0 items-center gap-1 pr-0.5 md:pr-3">
             {pin && (
               <IconButton
                 size="xs"
@@ -312,21 +326,31 @@ export const TokenSelectorRow = memo(
 
 export function TokenSelectorRowLoading() {
   return (
-    <div className="block flex-1 py-0.5 h-[64px]">
-      <div className="flex items-center w-full h-full px-3 rounded-lg">
-        <div className="flex items-center justify-between flex-grow gap-2 rounded">
-          <div className="flex flex-row items-center flex-grow gap-4">
-            <SkeletonCircle radius={40} />
-            <div className="flex flex-col items-start">
-              <SkeletonText className="w-full" />
-              <SkeletonText fontSize="sm" className="w-full" />
+    <div className="relative py-0.5 h-[64px]">
+      <div className="flex items-center w-full h-full rounded-lg">
+        <div className="flex min-w-0 flex-1 items-center gap-2 pl-2 md:pl-3">
+          <SkeletonCircle radius={40} className="shrink-0" />
+          <div className="flex min-w-0 flex-1 flex-col ml-2">
+            <div className="flex justify-between items-start w-full gap-1">
+              <div className="min-w-0 flex-1 max-w-[120px]">
+                <SkeletonText />
+              </div>
+              <div className="w-[60px] max-w-[50%] shrink-0">
+                <SkeletonText align="right" />
+              </div>
+            </div>
+            <div className="flex justify-between items-start w-full gap-1">
+              <div className="min-w-0 flex-1 max-w-[180px] md:max-w-full">
+                <SkeletonText fontSize="sm" />
+              </div>
+              <div className="w-[60px] max-w-[50%] shrink-0">
+                <SkeletonText fontSize="sm" align="right" />
+              </div>
             </div>
           </div>
-
-          <div className="flex flex-col w-full">
-            <SkeletonText />
-            <SkeletonText fontSize="sm" align="right" />
-          </div>
+        </div>
+        <div aria-hidden="true" className="shrink-0 pr-0.5 md:pr-3">
+          <div className="w-[26px]" />
         </div>
       </div>
     </div>
