@@ -34,6 +34,7 @@ export const PoolsQuery = graphql(
         isSmartPool
         isIncentivized
         wasIncentivized
+        isDynamicFee
         incentives {
           id
           chainId

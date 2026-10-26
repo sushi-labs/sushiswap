@@ -1358,7 +1358,12 @@ type Pool {
   chainId: Int!
   name: String!
   address: String!
+
+  """
+  The fixed fee rate, or a dynamic pool's effective rate over the last day.
+  """
   swapFee: Float!
+  isDynamicFee: Boolean!
   protocol: Protocol!
   token0Address: String!
   token1Address: String!

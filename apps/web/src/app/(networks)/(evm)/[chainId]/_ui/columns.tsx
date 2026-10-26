@@ -85,7 +85,9 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                    {formatNumber(props.row.original.swapFee * 100)}%
+                    {props.row.original.isDynamicFee
+                      ? 'Dynamic'
+                      : `${formatNumber(props.row.original.swapFee * 100)}%`}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
