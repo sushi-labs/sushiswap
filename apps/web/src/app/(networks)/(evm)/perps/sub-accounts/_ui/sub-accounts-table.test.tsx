@@ -51,24 +51,24 @@ vi.mock('@sushiswap/ui', () => ({
       {children}
     </button>
   ),
-  DataTableVirtual: <T,>(props: TestAccountTableProps<T>) => (
-    <TestAccountTable {...props} label="desktop" />
-  ),
+  DataTableVirtual: <T,>(
+    props: TestAccountTableProps<T> & { loading: boolean },
+  ) => <TestAccountTable {...props} label="desktop" />,
   useBreakpoint: () => ({ isLg: mocks.isLg }),
   SkeletonText: () => <span>Loading...</span>,
   classNames: (...classes: (string | undefined)[]) =>
     classes.filter(Boolean).join(' '),
 }))
 vi.mock('../../_ui/trade-tables/_common', () => ({
-  MobileTable: <T,>(props: TestAccountTableProps<T>) => (
-    <TestAccountTable {...props} label="mobile" />
-  ),
+  MobileTable: <T,>(
+    props: TestAccountTableProps<T> & { isLoading: boolean },
+  ) => <TestAccountTable {...props} loading={props.isLoading} label="mobile" />,
   tableRowClassName: '',
 }))
 vi.mock('../../_ui/trade-tables/_common/mobile-table', () => ({
-  MobileTable: <T,>(props: TestAccountTableProps<T>) => (
-    <TestAccountTable {...props} label="mobile" />
-  ),
+  MobileTable: <T,>(
+    props: TestAccountTableProps<T> & { isLoading: boolean },
+  ) => <TestAccountTable {...props} loading={props.isLoading} label="mobile" />,
 }))
 vi.mock('../../_ui/_common/perps-card', () => ({
   PerpsCard: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -186,14 +186,15 @@ function TestAccountTable<T>({
   data,
   columns,
   label,
-}: TestAccountTableProps<T> & { label: string }): ReactNode {
+  loading,
+}: TestAccountTableProps<T> & { label: string; loading: boolean }): ReactNode {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <table data-table-component={label}>
+    <table data-table-component={label} data-loading={loading}>
       <thead>
         {table.getHeaderGroups().map((group) => (
           <tr key={group.id}>
@@ -364,7 +365,28 @@ describe('SubAccountsTable', () => {
     expect(mocks.copy).toHaveBeenCalledWith(mocks.sub)
   })
 
-  it('handles disconnected, loading and failed account lists explicitly', () => {
+  it.each([
+    ['desktop', true],
+    ['mobile', false],
+  ] as const)('delegates loading to the %s table', (label, isLg) => {
+    mocks.isLg = isLg
+    mocks.loading = true
+    render()
+    expect(
+      container
+        .querySelector(`[data-table-component="${label}"]`)
+        ?.getAttribute('data-loading'),
+    ).toBe('true')
+    mocks.loading = false
+    render()
+    expect(
+      container
+        .querySelector(`[data-table-component="${label}"]`)
+        ?.getAttribute('data-loading'),
+    ).toBe('false')
+  })
+
+  it('handles disconnected and failed account lists explicitly', () => {
     mocks.connected = false
     render()
     expect(container.textContent).toContain('Connect your wallet')
@@ -373,12 +395,6 @@ describe('SubAccountsTable', () => {
     ).toBe('evm')
     expect(container.querySelector('table')).toBeNull()
     mocks.connected = true
-    mocks.loading = true
-    render()
-    expect(container.querySelector('[role="status"]')?.textContent).toContain(
-      'Loading sub-accounts',
-    )
-    mocks.loading = false
     mocks.failed = true
     render()
     expect(container.querySelector('[role="alert"]')?.textContent).toContain(
