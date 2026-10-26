@@ -4,7 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { Amount } from 'sushi'
-import { STELLAR_USDC, STELLAR_XLM, StellarChainId } from 'sushi/stellar'
+import {
+  STELLAR_USDC,
+  STELLAR_XLM,
+  StellarChainId,
+  StellarToken,
+} from 'sushi/stellar'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { SimpleSwapExecuteButton } from './simple-swap-execute-button'
 
@@ -14,6 +19,10 @@ const mocks = vi.hoisted(() => ({
   checkTrustlineRequired: vi.fn(),
   hasTrustline: vi.fn(),
   execute: vi.fn(),
+  country: vi.fn(),
+}))
+vi.mock('src/lib/hooks/use-country-code', () => ({
+  useCountryCode: mocks.country,
 }))
 vi.mock('src/lib/wallet/hooks/use-account', () => ({
   useAccount: () => 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF',
@@ -72,6 +81,13 @@ vi.mock('./simple-swap-provider/simple-swap-provider', () => ({
 
 const xlm = STELLAR_XLM[StellarChainId.STELLAR]
 const usdc = STELLAR_USDC[StellarChainId.STELLAR]
+const restrictedToken = new StellarToken({
+  chainId: StellarChainId.STELLAR,
+  address: 'CCRTH4IJKVIBU6VQLRHFKDQYWXBEBJJXKDFNWVETLKUJJ7U62HBAZOIH',
+  decimals: 7,
+  symbol: 'deHYB',
+  name: 'HYB deRWA',
+})
 let container: HTMLDivElement
 let root: Root
 let client: QueryClient
@@ -80,6 +96,12 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 beforeEach(() => {
   vi.resetAllMocks()
   vi.useFakeTimers()
+  vi.stubEnv('NEXT_PUBLIC_APP_ENV', 'production')
+  mocks.country.mockReturnValue({
+    data: 'US',
+    isPending: false,
+    isError: false,
+  })
   client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
@@ -100,13 +122,18 @@ afterEach(() => {
   act(() => root.unmount())
   client.clear()
   vi.useRealTimers()
+  vi.unstubAllEnvs()
 })
 
-async function render(amount: string | null): Promise<void> {
+async function render(
+  amount: string | null,
+  token0 = xlm,
+  token1 = usdc,
+): Promise<void> {
   mocks.state.mockReturnValue({
     amount,
-    token0: xlm,
-    token1: usdc,
+    token0,
+    token1,
     outputAmount: 10_000_000n,
     priceImpact: null,
   })
@@ -173,4 +200,38 @@ it('checks trustlines for a funded positive amount and hides a failed check when
   expect(container.textContent).toBe('Enter Amount')
   expect(mocks.checkTrustlineRequired).toHaveBeenCalledOnce()
   expect(mocks.hasTrustline).toHaveBeenCalledOnce()
+})
+
+it.each(['input', 'output'] as const)(
+  'blocks a restricted %s token in the US before trustlines or swap execution',
+  async (side) => {
+    const token0 = side === 'input' ? restrictedToken : xlm
+    const token1 = side === 'output' ? restrictedToken : usdc
+    mocks.balances.mockReturnValue({
+      data: new Map([[token0.id, new Amount(token0, 100_000_000n)]]),
+      isError: false,
+    })
+    await render('1', token0, token1)
+
+    expect(container.textContent).toBe('deHYB unavailable in your region')
+    const button = container.querySelector('button')
+    expect(button?.disabled).toBe(true)
+    act(() => button?.click())
+    expect(mocks.checkTrustlineRequired).not.toHaveBeenCalled()
+    expect(mocks.execute).not.toHaveBeenCalled()
+  },
+)
+
+it('allows a restricted token swap outside the US', async () => {
+  mocks.country.mockReturnValue({
+    data: 'DE',
+    isPending: false,
+    isError: false,
+  })
+  mocks.checkTrustlineRequired.mockResolvedValue({ required: false })
+  await render('1', xlm, restrictedToken)
+
+  expect(container.textContent).toBe('Swap')
+  await act(async () => container.querySelector('button')?.click())
+  expect(mocks.execute).toHaveBeenCalledOnce()
 })

@@ -23,6 +23,7 @@ import {
 import { useCreateAndInitializePool } from '~stellar/_common/lib/hooks/factory/use-create-and-initialize-pool'
 import { useAddLiquidity } from '~stellar/_common/lib/hooks/liquidity/use-add-liquidity'
 import { getStellarTxnLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
+import { GeoBlockedTokens } from '~stellar/_common/ui/checker/geo-blocked-tokens'
 import { Trustlines } from '~stellar/_common/ui/checker/trustline'
 import { useStellarWallet } from '~stellar/providers'
 
@@ -170,25 +171,27 @@ export function PoolSubmit({
             {pending ?? disabledReason}
           </Button>
         ) : (
-          <Trustlines tokens={[token0, token1]} fullWidth size="xl">
-            <Amounts
-              chainId={StellarChainId.STELLAR}
-              amounts={amounts}
-              fullWidth
-              size="xl"
-            >
-              <Button
+          <GeoBlockedTokens token0={token0} token1={token1} fullWidth size="xl">
+            <Trustlines tokens={[token0, token1]} fullWidth size="xl">
+              <Amounts
+                chainId={StellarChainId.STELLAR}
+                amounts={amounts}
                 fullWidth
                 size="xl"
-                type="button"
-                onClick={() => void submit()}
               >
-                {needsInitialization
-                  ? 'Create pool & add liquidity'
-                  : 'Add liquidity'}
-              </Button>
-            </Amounts>
-          </Trustlines>
+                <Button
+                  fullWidth
+                  size="xl"
+                  type="button"
+                  onClick={() => void submit()}
+                >
+                  {needsInitialization
+                    ? 'Create pool & add liquidity'
+                    : 'Add liquidity'}
+                </Button>
+              </Amounts>
+            </Trustlines>
+          </GeoBlockedTokens>
         )}
       </Connect>
       <Dialog

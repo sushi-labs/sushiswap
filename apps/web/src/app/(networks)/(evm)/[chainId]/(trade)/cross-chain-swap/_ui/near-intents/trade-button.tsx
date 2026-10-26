@@ -86,20 +86,25 @@ export function NearIntentsCrossChainSwapTradeButton() {
           <Connect fullWidth namespace={getNamespaceForChainId(chainId1)}>
             <Network fullWidth chainId={chainId0}>
               <StockTokenRegion token0={token0} token1={token1}>
-                <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
-                  <StellarChecker.Trustline token={token1Stellar}>
-                    <DialogTrigger asChild>
-                      <Button
-                        size="xl"
-                        disabled={isDisabled}
-                        fullWidth
-                        testId="swap"
-                      >
-                        {getButtonText()}
-                      </Button>
-                    </DialogTrigger>
-                  </StellarChecker.Trustline>
-                </Amounts>
+                <StellarChecker.GeoBlockedTokens
+                  token0={token0}
+                  token1={token1}
+                >
+                  <Amounts fullWidth chainId={chainId0} amount={swapAmount}>
+                    <StellarChecker.Trustline token={token1Stellar}>
+                      <DialogTrigger asChild>
+                        <Button
+                          size="xl"
+                          disabled={isDisabled}
+                          fullWidth
+                          testId="swap"
+                        >
+                          {getButtonText()}
+                        </Button>
+                      </DialogTrigger>
+                    </StellarChecker.Trustline>
+                  </Amounts>
+                </StellarChecker.GeoBlockedTokens>
               </StockTokenRegion>
             </Network>
           </Connect>
