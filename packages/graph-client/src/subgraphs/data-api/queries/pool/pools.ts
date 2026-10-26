@@ -113,3 +113,4 @@ export async function getPools(variables: GetPools, options?: RequestOptions) {
 export type PoolsResponse = Awaited<ReturnType<typeof getPools>>
 export type Pools = PoolsResponse['data']
 export type Pool = Pools[number]
+export type PoolProtocol = Pool['protocol']

@@ -1,13 +1,12 @@
 'use client'
 
-import { SkeletonBox } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import type { SushiSwapV3ChainId } from 'sushi/evm'
 import type { Address } from 'viem'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
 import { useDensityChartData } from '~evm/[chainId]/_ui/liquidity-chart-range-input/hooks'
-import { DepthChart } from './depth-chart'
+import { LiquidityDepthChart } from '~evm/[chainId]/pool/_ui/liquidity-depth-chart'
 
 interface LiquidityDepthWidget {
   address: Address
@@ -56,26 +55,13 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
     isPoolStatsLoading ||
     (Boolean(poolStats) && (isMintInfoLoading || isDensityDataLoading))
 
-  if (isLoading) {
-    return <SkeletonBox className="h-[380px] w-full" />
-  }
-
-  if (noLiquidity || !poolStats || !data || !current) {
-    return (
-      <div className="flex h-[380px] items-center justify-center text-sm text-muted-foreground">
-        Liquidity depth is unavailable for this pool.
-      </div>
-    )
-  }
-
   return (
-    <DepthChart
-      series={data}
+    <LiquidityDepthChart
+      isLoading={isLoading}
+      series={noLiquidity ? undefined : data}
       currentPrice={current}
-      baseSymbol={poolStats.token0.symbol ?? 'Token 0'}
-      quoteSymbol={poolStats.token1.symbol ?? 'Token 1'}
-      token0Decimals={poolStats.token0.decimals}
-      token1Decimals={poolStats.token1.decimals}
+      token0={poolStats?.token0}
+      token1={poolStats?.token1}
     />
   )
 }

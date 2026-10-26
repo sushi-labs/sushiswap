@@ -27,11 +27,14 @@ import { PROTOCOL_MAP, type SushiSwapCmsProtocol } from 'src/lib/constants'
 import { SushiSwapProtocol } from 'sushi/evm'
 
 export const POOL_TYPES = [
+  SushiSwapProtocol.SUSHISWAP_V4,
   SushiSwapProtocol.SUSHISWAP_V3,
   SushiSwapProtocol.SUSHISWAP_V2,
 ]
 
 const POOL_DESCRIPTIONS = {
+  [SushiSwapProtocol.SUSHISWAP_V4]:
+    'Concentrated liquidity pools held in a single shared vault. Like V3, liquidity is provided within a price range, and pools can hold native tokens directly without wrapping.',
   [SushiSwapProtocol.SUSHISWAP_V3]:
     'A pool type known as concentrated liquidity, which maximizes capital efficiency by providing the liquidity in a pre-defined range around the current price of the pair. If a user’s position moves out of range, it will not be capturing fees and will need to adjust their range or wait for the price to return to it.',
   [SushiSwapProtocol.SUSHISWAP_V2]:

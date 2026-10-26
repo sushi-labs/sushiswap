@@ -13,7 +13,6 @@ import {
   type PoolWithAprs,
   type PoolWithIncentives,
   type RewarderType,
-  type SerializedEvmToken,
   SushiSwapProtocol,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
@@ -21,6 +20,7 @@ import type { Address } from 'viem'
 import { SUSHI_DATA_API_GRAPHQL_URL } from '../../data-api-host.js'
 import { graphql } from '../../graphql.js'
 import { SUSHI_REQUEST_HEADERS } from '../../request-headers.js'
+import { toRawPoolToken } from './pool-token.js'
 
 export const V3PoolQuery = graphql(
   `
@@ -139,20 +139,8 @@ export async function getV3Pool(
         volumeUSD: pool.volumeUSD,
         feesUSD: pool.volumeUSD * pool.swapFee,
 
-        token0: {
-          address: pool.token0.address as Address,
-          chainId,
-          decimals: pool.token0.decimals,
-          name: pool.token0.name,
-          symbol: pool.token0.symbol,
-        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
-        token1: {
-          address: pool.token1.address as Address,
-          chainId,
-          decimals: pool.token1.decimals,
-          name: pool.token1.name,
-          symbol: pool.token1.symbol,
-        } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
+        token0: toRawPoolToken(pool.token0, chainId),
+        token1: toRawPoolToken(pool.token1, chainId),
         token0Price: pool.token0Price,
         token1Price: pool.token1Price,
         txCount: pool.txCount1d,
@@ -178,13 +166,7 @@ export async function getV3Pool(
           chainId: incentive.chainId,
           chefType: incentive.chefType as ChefType,
           apr: incentive.apr,
-          rewardToken: {
-            address: incentive.rewardToken.address as Address,
-            chainId,
-            decimals: incentive.rewardToken.decimals,
-            name: incentive.rewardToken.name,
-            symbol: incentive.rewardToken.symbol,
-          } satisfies Omit<SerializedEvmToken, 'type' | 'metadata'>,
+          rewardToken: toRawPoolToken(incentive.rewardToken, chainId),
           rewardPerDay: incentive.rewardPerDay,
           poolAddress: incentive.poolAddress,
           pid: incentive.pid,

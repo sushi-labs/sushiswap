@@ -4,8 +4,10 @@ import type {
   BladePool,
   RawV2Pool,
   RawV3Pool,
+  RawV4Pool,
   V2Pool,
   V3Pool,
+  V4Pool,
 } from '@sushiswap/graph-client/data-api'
 import {
   CardContent,
@@ -39,7 +41,7 @@ import { PoolChartType } from './pool-chart-types'
 interface PoolChartProps {
   chart: PoolChartType.Volume | PoolChartType.Fees | PoolChartType.TVL
   period: PoolChartPeriod
-  pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool | BladePool
+  pool: RawV2Pool | V2Pool | RawV3Pool | V3Pool | RawV4Pool | V4Pool | BladePool
   protocol: SushiSwapProtocol
   height?: number
 }

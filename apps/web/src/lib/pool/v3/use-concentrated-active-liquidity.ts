@@ -22,6 +22,69 @@ export interface TickProcessed {
   price0: string
 }
 
+/**
+ * Active liquidity at every initialized tick, walking outwards from the
+ * active tick. `ticks` must be sorted by `tickIdx` ascending.
+ */
+export function processActiveLiquidity({
+  token0,
+  token1,
+  activeTick,
+  liquidity,
+  ticks,
+}: {
+  token0: EvmCurrency
+  token1: EvmCurrency
+  activeTick: number
+  liquidity: bigint
+  ticks: { tickIdx: number; liquidityNet: bigint }[]
+}): TickProcessed[] | undefined {
+  const _token0 = token0.wrap()
+  const _token1 = token1.wrap()
+
+  // find where the active tick would be to partition the array
+  // if the active tick is initialized, the pivot will be an element
+  // if not, take the previous tick as pivot
+  const pivot = ticks.findIndex(({ tickIdx }) => tickIdx > activeTick) - 1
+
+  if (pivot < 0) {
+    // consider setting a local error
+    console.error('TickData pivot not found')
+    return undefined
+  }
+
+  const activeTickProcessed: TickProcessed = {
+    liquidityActive: liquidity,
+    tick: activeTick,
+    liquidityNet:
+      Number(ticks[pivot].tickIdx) === activeTick
+        ? ticks[pivot].liquidityNet
+        : 0n,
+    price0: tickToPrice(_token0, _token1, activeTick).toString({
+      fixed: PRICE_FIXED_DIGITS,
+    }),
+  }
+
+  const subsequentTicks = computeSurroundingTicks(
+    _token0,
+    _token1,
+    activeTickProcessed,
+    ticks,
+    pivot,
+    true,
+  )
+  const previousTicks = computeSurroundingTicks(
+    _token0,
+    _token1,
+    activeTickProcessed,
+    ticks,
+    pivot,
+    false,
+  )
+
+  return previousTicks.concat(activeTickProcessed).concat(subsequentTicks)
+}
+
 const getActiveTick = (
   tickCurrent: number | undefined,
   feeAmount: SushiSwapV3FeeAmount | undefined,
@@ -98,17 +161,15 @@ export const useConcentratedActiveLiquidity = ({
       }
     }
 
-    const _token0 = token0.wrap()
-    const _token1 = token1.wrap()
+    const ticksProcessed = processActiveLiquidity({
+      token0,
+      token1,
+      activeTick,
+      liquidity: BigInt(pool.liquidity.toString()),
+      ticks,
+    })
 
-    // find where the active tick would be to partition the array
-    // if the active tick is initialized, the pivot will be an element
-    // if not, take the previous tick as pivot
-    const pivot = ticks.findIndex(({ tickIdx }) => tickIdx > activeTick) - 1
-
-    if (pivot < 0) {
-      // consider setting a local error
-      console.error('TickData pivot not found')
+    if (!ticksProcessed) {
       return {
         isLoading,
         error,
@@ -116,38 +177,6 @@ export const useConcentratedActiveLiquidity = ({
         data: undefined,
       }
     }
-
-    const activeTickProcessed: TickProcessed = {
-      liquidityActive: BigInt(pool?.liquidity.toString()) ?? 0n,
-      tick: activeTick,
-      liquidityNet:
-        Number(ticks[pivot].tickIdx) === activeTick
-          ? ticks[pivot].liquidityNet
-          : 0n,
-      price0: tickToPrice(_token0, _token1, activeTick).toString({
-        fixed: PRICE_FIXED_DIGITS,
-      }),
-    }
-
-    const subsequentTicks = computeSurroundingTicks(
-      _token0,
-      _token1,
-      activeTickProcessed,
-      ticks,
-      pivot,
-      true,
-    )
-    const previousTicks = computeSurroundingTicks(
-      _token0,
-      _token1,
-      activeTickProcessed,
-      ticks,
-      pivot,
-      false,
-    )
-    const ticksProcessed = previousTicks
-      .concat(activeTickProcessed)
-      .concat(subsequentTicks)
 
     return {
       isLoading,
