@@ -1,5 +1,8 @@
 'use client'
-import { isPoolChainId } from '@sushiswap/graph-client/data-api'
+import {
+  isPoolChainId,
+  isSushiSwapV4ChainId,
+} from '@sushiswap/graph-client/data-api'
 import { type FC, Suspense } from 'react'
 import { useAnalyticsDayBuckets } from 'src/lib/hooks/react-query/explore/use-analytics-day-buckets'
 import { type EvmChainId, isBladeChainId } from 'sushi/evm'
@@ -22,6 +25,7 @@ const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   })
 
   const showBlade = isBladeChainId(chainId)
+  const showV4 = isSushiSwapV4ChainId(chainId)
 
   if (isLoading || !dayBuckets) {
     return <GlobalStatsLoading chainId={chainId} />
@@ -29,8 +33,18 @@ const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
-      <TVLChart chainId={chainId} data={dayBuckets} showBlade={showBlade} />
-      <VolumeChart chainId={chainId} data={dayBuckets} showBlade={showBlade} />
+      <TVLChart
+        chainId={chainId}
+        data={dayBuckets}
+        showBlade={showBlade}
+        showV4={showV4}
+      />
+      <VolumeChart
+        chainId={chainId}
+        data={dayBuckets}
+        showBlade={showBlade}
+        showV4={showV4}
+      />
     </div>
   )
 }

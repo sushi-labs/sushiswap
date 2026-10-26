@@ -18,6 +18,7 @@ type Bucket {
 type SushiDayBuckets {
   v2: [Bucket!]!
   v3: [Bucket!]!
+  v4: [Bucket!]!
   blade: [Bucket!]!
 }
 
