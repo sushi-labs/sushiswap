@@ -28,7 +28,7 @@
     "@base-org/account": "2.4.2",
     "@cloudinary/url-gen": "1.11.2",
     "@coinbase/wallet-sdk": "4.3.7",
-    "@creit.tech/stellar-wallets-kit": "2.5.0",
+    "@creit.tech/stellar-wallets-kit": "2.7.0",
     "@defuse-protocol/one-click-sdk-typescript": "0.1.17",
     "@gemini-wallet/core": "0.3.2",
     "@grafana/faro-react": "1.19.0",

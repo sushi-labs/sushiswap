@@ -6,7 +6,12 @@ import { createRoot } from 'react-dom/client'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
 import { Amount } from 'sushi'
-import { STELLAR_USDC, StellarChainId, StellarToken } from 'sushi/stellar'
+import {
+  STELLAR_USDC,
+  STELLAR_XLM,
+  StellarChainId,
+  StellarToken,
+} from 'sushi/stellar'
 import { expect, it, vi } from 'vitest'
 import { useAmountBalance } from './use-balance'
 import { useAmountBalances } from './use-balances'
@@ -47,6 +52,47 @@ const dejAAA = new StellarToken({
   name: 'deJAAA',
 })
 const currencies = [STELLAR_USDC[chainId], dejAAA]
+
+it('shows zero XLM in an empty swap input for an unfunded account', async () => {
+  await import('./fetch-stellar-balances')
+  vi.useFakeTimers()
+  state.fetch.mockRejectedValue(
+    new Error('Transaction simulation failed: account entry is missing'),
+  )
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const container = document.createElement('div')
+  const root = createRoot(container)
+  try {
+    await act(async () => {
+      root.render(
+        <QueryClientProvider client={client}>
+          <CurrencyInput
+            chainId={chainId}
+            currency={STELLAR_XLM[chainId]}
+            type="INPUT"
+            value=""
+          />
+        </QueryClientProvider>,
+      )
+      await vi.advanceTimersByTimeAsync(20)
+    })
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(20)
+    })
+
+    expect(container.textContent).not.toContain('Balance unavailable')
+    expect(
+      container.querySelector('button[aria-label="Use maximum XLM"]')
+        ?.textContent,
+    ).toBe('0.00')
+  } finally {
+    act(() => root.unmount())
+    client.clear()
+    vi.useRealTimers()
+  }
+})
 
 it('uses the same deJAAA balance for the currency input and paired submit guard', async () => {
   await import('./fetch-stellar-balances')
