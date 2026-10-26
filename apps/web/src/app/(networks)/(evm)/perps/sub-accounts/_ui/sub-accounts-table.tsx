@@ -139,13 +139,11 @@ export function SubAccountsTable(): ReactElement {
           scrollMode="window"
         />
       )}
-      {subAccounts.isLoading && (
-        <p role="status" className="pt-4 text-sm text-perps-muted-50">
-          Loading sub-accounts...
-        </p>
-      )}
-      {subAccounts.isError && (
-        <div role="alert" className="flex items-center gap-3 pt-4 text-sm">
+      {subAccounts.isError ? (
+        <div
+          role="alert"
+          className="flex justify-center items-center gap-3 pt-4 text-sm"
+        >
           <span>Unable to load sub-accounts.</span>
           <Button
             size="xs"
@@ -155,10 +153,12 @@ export function SubAccountsTable(): ReactElement {
             Retry
           </Button>
         </div>
-      )}
-      {subAccounts.isSuccess && !subAccounts.data?.length && (
-        <p className="pt-4 text-sm text-perps-muted-50">No sub-accounts yet.</p>
-      )}
+      ) : null}
+      {subAccounts.isSuccess && !subAccounts.data?.length ? (
+        <p className="pt-4 text-sm text-center text-perps-muted-50">
+          No sub-accounts yet.
+        </p>
+      ) : null}
     </PerpsCard>
   )
 }

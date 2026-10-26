@@ -154,7 +154,7 @@ export const ActiveAccountSelector = () => {
     [setActiveAccount],
   )
 
-  if (!address) {
+  if (!address || accountOptions.length <= 1) {
     return null
   }
   return (
