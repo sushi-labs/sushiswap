@@ -15,9 +15,9 @@ import {
   WithdrawDialog,
   useUserSettingsState,
 } from '~evm/perps/_ui/account-management'
+import { SubAccountTransferDialog } from '~evm/perps/_ui/account-management/sub-account-transfer-dialog'
 import { SwapStablesDialog } from '~evm/perps/_ui/account-management/swap-stables-dialog'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
-import { SubAccountTransferDialog } from '~evm/perps/sub-accounts/_ui/sub-account-transfer-dialog'
 
 type DialogAction =
   | 'send'

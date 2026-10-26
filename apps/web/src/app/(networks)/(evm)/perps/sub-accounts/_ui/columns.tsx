@@ -9,12 +9,23 @@ import type { ReactElement } from 'react'
 import { useUserAbstraction } from 'src/lib/perps/info/use-user-abstraction'
 import { currencyFormatter } from 'src/lib/perps/utils'
 import { truncateString } from 'sushi'
+import type { EvmAddress } from 'sushi/evm'
 import { TableButton } from '../../_ui/_common/table-button'
+import { SubAccountTransferDialog } from '../../_ui/account-management/sub-account-transfer-dialog'
 import { columnBodyMeta } from '../../_ui/trade-tables/_common/column-meta'
 import { useActiveAccountState } from '../../active-account-provider'
 import { RenameSubAccountDialog } from './rename-sub-account-dialog'
-import type { SubAccountTableRow } from './sub-account-table-row'
-import { SubAccountTransferDialog } from './sub-account-transfer-dialog'
+
+export type SubAccountTableRow = {
+  address: EvmAddress
+  masterAddress: EvmAddress
+  name: string
+  type: 'master' | 'sub'
+  perpsEquity: number | null
+  spotEquity: number | null
+  isLoadingPerps: boolean
+  isLoadingSpot: boolean
+}
 
 export const NAME_COLUMN: ColumnDef<SubAccountTableRow, unknown> = {
   id: 'name',
@@ -150,13 +161,13 @@ export const ACTIONS_COLUMN: ColumnDef<SubAccountTableRow, unknown> = {
 
     return (
       <div className="flex items-center gap-4 lg:whitespace-nowrap lg:justify-end lg:pr-3">
-        {account.type === 'sub' && (
+        {account.type === 'sub' ? (
           <SubAccountTransferDialog
             masterAddress={account.masterAddress}
             subAccount={{ subAccountUser: account.address, name: account.name }}
             trigger={<TableButton>Transfer</TableButton>}
           />
-        )}
+        ) : null}
         <TableButton onClick={trade}>Trade</TableButton>
       </div>
     )

@@ -29,16 +29,16 @@ import {
 import { useSendAsset } from 'src/lib/perps/exchange/use-send-asset'
 import { useSpotClearinghouseState } from 'src/lib/perps/info/use-spot-clearinghouse-state'
 import { useSpotMeta } from 'src/lib/perps/info/use-spot-meta'
-import { Checker } from 'src/lib/wagmi/systems/checker'
-import { useAccount } from 'src/lib/wallet'
-import type { EvmAddress } from 'sushi/evm'
-import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 import {
   type SubAccountTransferDirection,
   getSubAccountTransferAmountError,
   getSubAccountTransferAssets,
   getSubAccountTransferRoute,
-} from './sub-account-transfer'
+} from 'src/lib/perps/utils'
+import { Checker } from 'src/lib/wagmi/systems/checker'
+import { useAccount } from 'src/lib/wallet'
+import type { EvmAddress } from 'sushi/evm'
+import { PerpsChecker } from '~evm/perps/_ui/perps-checker'
 
 export function SubAccountTransferDialog({
   masterAddress,

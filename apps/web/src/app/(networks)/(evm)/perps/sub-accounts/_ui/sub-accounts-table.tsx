@@ -7,6 +7,11 @@ import { useAllPerpMetas } from 'src/lib/perps/info/use-all-perp-metas'
 import { useSpotClearinghouseState } from 'src/lib/perps/info/use-spot-clearinghouse-state'
 import { useSubAccounts } from 'src/lib/perps/info/use-sub-accounts'
 import { useAllDexClearinghouseState } from 'src/lib/perps/subscription/use-all-dex-clearinghouse-state'
+import {
+  getPerpsAccountEquity,
+  getSpotAccountEquity,
+  getSpotTokenPrices,
+} from 'src/lib/perps/utils'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '../../_ui/_common/perps-card'
@@ -19,13 +24,8 @@ import {
   NAME_COLUMN,
   PERPS_EQUITY_COLUMN,
   SPOT_EQUITY_COLUMN,
+  type SubAccountTableRow,
 } from './columns'
-import {
-  getPerpsAccountEquity,
-  getSpotAccountEquity,
-  getSpotTokenPrices,
-} from './sub-account-equity'
-import type { SubAccountTableRow } from './sub-account-table-row'
 
 const COLUMNS = [
   NAME_COLUMN,
@@ -48,7 +48,7 @@ export function SubAccountsTable(): ReactElement {
     },
   } = useAssetListState()
   const tokenPrices = useMemo(() => getSpotTokenPrices(assetList), [assetList])
-  const tableData = useMemo((): SubAccountTableRow[] => {
+  const tableData = useMemo<SubAccountTableRow[]>(() => {
     if (!address) return []
     return [
       {
