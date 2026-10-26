@@ -1,8 +1,5 @@
 import {
   Button,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
   type NavigationElement,
   type NavigationElementDropdown,
   NavigationElementType,
@@ -11,6 +8,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuPrimitive,
+  NavigationMenuTrigger,
   classNames,
   navigationElementShowMap,
   navigationMenuTriggerStyle,
@@ -47,14 +45,19 @@ export const EXPLORE_NAVIGATION_LINKS =
         description: 'Track your points.',
       },
       {
+        title: 'Leaderboard',
+        href: `/perps/leaderboard`,
+        description: 'View the leaderboard and track top traders.',
+      },
+      {
         title: 'Vaults',
         href: `/perps/vaults`,
         description: 'View and manage your vault positions.',
       },
       {
-        title: 'Leaderboard',
-        href: `/perps/leaderboard`,
-        description: 'View the leaderboard and track top traders.',
+        title: 'Sub-Accounts',
+        href: `/perps/sub-accounts`,
+        description: 'Manage your sub accounts.',
       },
     ]
   }
@@ -154,7 +157,10 @@ export const headerElements = (): NavigationElement[] => {
       item: (
         <NavigationMenuItem
           key={`points:custom`}
-          className={navigationElementShowMap['perps-desktop']}
+          className={classNames(
+            navigationElementShowMap['perps-desktop'],
+            'md:hidden lg:flex',
+          )}
         >
           <NavigationMenuLink
             href={'/perps/points'}
@@ -173,28 +179,11 @@ export const headerElements = (): NavigationElement[] => {
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem
-          key={`vaults:custom`}
-          className={navigationElementShowMap['perps-desktop']}
-        >
-          <NavigationMenuLink
-            href={'/perps/vaults'}
-            className={classNames(
-              navigationMenuTriggerStyle,
-              'focus:bg-transparent hover:!bg-secondary',
-            )}
-          >
-            Vaults
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-      ),
-    },
-    {
-      show: 'perps-desktop',
-      type: NavigationElementType.Custom,
-      item: (
-        <NavigationMenuItem
           key={`leaderboard:custom`}
-          className={navigationElementShowMap['perps-desktop']}
+          className={classNames(
+            navigationElementShowMap['perps-desktop'],
+            'md:hidden lg:hidden xl:flex',
+          )}
         >
           <NavigationMenuLink
             href={'/perps/leaderboard'}
@@ -205,6 +194,42 @@ export const headerElements = (): NavigationElement[] => {
           >
             Leaderboard
           </NavigationMenuLink>
+        </NavigationMenuItem>
+      ),
+    },
+    {
+      show: 'perps-desktop',
+      type: NavigationElementType.Custom,
+      item: (
+        <NavigationMenuItem className={NavigationElementType.Custom}>
+          <NavigationMenuTrigger>More</NavigationMenuTrigger>
+          <NavigationMenuContent className="!bg-black/10">
+            <ul className="w-[400px] gap-3 p-4">
+              <NavigationListItem
+                className="block lg:hidden"
+                title={'Points'}
+                href={`/perps/points`}
+              >
+                View your points.
+              </NavigationListItem>
+              <NavigationListItem
+                className="block xl:hidden"
+                title={'Leaderboard'}
+                href={`/perps/leaderboard`}
+              >
+                View the leaderboard.
+              </NavigationListItem>
+              <NavigationListItem title={'Vaults'} href={`/perps/vaults`}>
+                Manage your vaults and positions.
+              </NavigationListItem>
+              <NavigationListItem
+                title={'Sub-Accounts'}
+                href={`/perps/sub-accounts`}
+              >
+                Manage your sub accounts.
+              </NavigationListItem>
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
       ),
     },

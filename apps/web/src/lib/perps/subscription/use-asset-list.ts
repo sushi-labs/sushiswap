@@ -50,18 +50,21 @@ export type PerpOrSpotAsset = {
   formatParseDecimals: number
 }
 
-const formatSpotCtxs = (
+export function formatSpotCtxs(
   meta: SpotMetaResponse,
   spotAssetCtxsEvent: SpotAssetCtxsEvent,
-) => {
+): Map<string, PerpOrSpotAsset> {
   const universe = meta?.universe ?? []
-  const _tokens = meta?.tokens ?? []
+  const tokensByIndex = new Map(
+    meta.tokens.map((token) => [token.index, token]),
+  )
   const ctxs = spotAssetCtxsEvent
   return universe.reduce((acc, u) => {
     const ctx = ctxs[u.index] ?? {}
-    const tokens = u.tokens.map((tokenIndex) => _tokens[tokenIndex])
-    //if u.token index is missing, skip
-    if (tokens.some((t) => !t)) return acc
+    const baseToken = tokensByIndex.get(u.tokens[0])
+    const quoteToken = tokensByIndex.get(u.tokens[1])
+    if (!baseToken || !quoteToken) return acc
+    const tokens = [baseToken, quoteToken]
     const metadata = getSpotAssetMetadata(meta, u)
     const markPrice = Number.parseFloat(ctx.markPx)
     const last = ctx.midPx ? Number.parseFloat(ctx.midPx) : markPrice
@@ -121,6 +124,9 @@ export const formatPerpCtxs = (
   meta: AllPerpMetasResponse,
   allDexsAssetCtxsEvent: AllDexsAssetCtxsEvent,
 ) => {
+  const tokensByIndex = new Map(
+    spotMeta.tokens.map((token) => [token.index, token]),
+  )
   return allDexsAssetCtxsEvent.ctxs.reduce((acc, [dexNameRaw, ctxs]) => {
     const dexName = dexNameRaw ?? ''
 
@@ -136,7 +142,7 @@ export const formatPerpCtxs = (
     if (!metaForDex) return acc
 
     const collateralTokenIndex = metaForDex.collateralToken
-    const collateralToken = spotMeta.tokens[collateralTokenIndex ?? -1] ?? null
+    const collateralToken = tokensByIndex.get(collateralTokenIndex ?? -1)
 
     for (let i = 0; i < (metaForDex.universe?.length ?? 0); i++) {
       const u = metaForDex.universe![i]

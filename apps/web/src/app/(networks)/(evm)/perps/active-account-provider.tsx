@@ -48,7 +48,7 @@ const ActiveAccountProvider: FC<ActiveAccountProviderProps> = ({
     () => getViewAllRouteFromPathname(pathname),
     [pathname],
   )
-  // select between master account and vault accounts for trading, default to master account
+  // Select the master account, a vault, or a subaccount for trading.
   const [activeAccount, _setActiveAccount] =
     useLocalStorage<ActiveAccount | null>('sushi.perps.active-account', null)
   const activeAddress = viewAllRoute?.address ?? activeAccount?.address

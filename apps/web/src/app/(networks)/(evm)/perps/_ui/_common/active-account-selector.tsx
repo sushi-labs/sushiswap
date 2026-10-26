@@ -15,6 +15,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { SafeIcon } from '@sushiswap/ui/icons/safe-icon'
+import { Wallet2Icon } from 'lucide-react'
 import {
   type ReactNode,
   useCallback,
@@ -23,13 +24,14 @@ import {
   useState,
 } from 'react'
 import { useLeadingVaults } from 'src/lib/perps/info/use-leading-vaults'
+import { useSubAccounts } from 'src/lib/perps/info/use-sub-accounts'
 import { useAccount } from 'src/lib/wallet'
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 import { useActiveAccountState } from '../../active-account-provider'
 import {
   type AccountType,
-  reconcileActiveAccountWithLeaderVaults,
+  reconcileActiveAccountWithAccounts,
 } from '../../active-account-state'
 
 type AccountOption = {
@@ -45,9 +47,13 @@ export const ActiveAccountSelector = () => {
   const {
     data: vaultData,
     isFetching,
-    isLoading,
     isSuccess,
   } = useLeadingVaults({ address })
+  const {
+    data: subAccounts,
+    isFetching: isFetchingSubAccounts,
+    isSuccess: isSuccessSubAccounts,
+  } = useSubAccounts({ address })
   const [isOpen, setIsOpen] = useState(false)
   const {
     state: { activeAccount },
@@ -77,31 +83,48 @@ export const ActiveAccountSelector = () => {
         })
       })
     }
+    if (subAccounts) {
+      subAccounts.forEach((subAccount) => {
+        accountOptions.push({
+          label: 'Sub-Account',
+          name: subAccount.name,
+          address: subAccount.subAccountUser,
+          icon: <Wallet2Icon className="w-4 h-4 text-perps-muted" />,
+          type: 'sub',
+        })
+      })
+    }
     return accountOptions
-  }, [vaultData, address])
+  }, [vaultData, address, subAccounts])
 
   const activeOption = useMemo(() => {
     return accountOptions.find(
       (option) =>
+        option.type === activeAccount?.type &&
         option.address.toLowerCase() === activeAccount?.address?.toLowerCase(),
     )
   }, [accountOptions, activeAccount])
 
   useEffect(() => {
-    if (
-      !address ||
-      !activeAccount ||
-      activeAccount.type !== 'vault' ||
-      !isSuccess ||
-      isFetching
-    ) {
+    if (!address || !activeAccount || activeAccount.type === 'master') {
       return
     }
 
-    const nextActiveAccount = reconcileActiveAccountWithLeaderVaults(
+    // Only reconcile against the selected account's successfully loaded list.
+    // Pending or failed requests must not reset a persisted selection.
+    const isAccountListReady =
+      activeAccount.type === 'vault'
+        ? isSuccess && !isFetching
+        : isSuccessSubAccounts && !isFetchingSubAccounts
+
+    if (!isAccountListReady) {
+      return
+    }
+
+    const nextActiveAccount = reconcileActiveAccountWithAccounts(
       activeAccount,
       address,
-      vaultData,
+      accountOptions,
     )
 
     if (nextActiveAccount !== activeAccount) {
@@ -114,10 +137,12 @@ export const ActiveAccountSelector = () => {
   }, [
     address,
     activeAccount,
+    accountOptions,
     isFetching,
+    isFetchingSubAccounts,
     isSuccess,
+    isSuccessSubAccounts,
     setActiveAccount,
-    vaultData,
   ])
 
   const handleSelectAccount = useCallback(
@@ -129,7 +154,7 @@ export const ActiveAccountSelector = () => {
     [setActiveAccount],
   )
 
-  if (!address || isLoading || !vaultData || vaultData.length === 0) {
+  if (!address || accountOptions.length <= 1) {
     return null
   }
   return (
@@ -154,10 +179,7 @@ export const ActiveAccountSelector = () => {
               type="button"
               className={classNames(
                 'flex w-full !items-start gap-1 !text-xs cursor-pointer justify-between',
-                option.address.toLowerCase() ===
-                  activeAccount?.address?.toLowerCase()
-                  ? 'bg-perps-muted/10'
-                  : '',
+                option === activeOption ? 'bg-perps-muted/10' : '',
               )}
               onClick={(e) => handleSelectAccount(e, option)}
             >

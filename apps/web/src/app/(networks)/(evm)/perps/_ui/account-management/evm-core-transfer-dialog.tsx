@@ -39,6 +39,7 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { type EvmAddress, EvmChainId, EvmToken } from 'sushi/evm'
 import { useBalances } from '~evm/_common/ui/balance-provider/use-balances'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { ValueInput } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 
@@ -53,6 +54,9 @@ export const EvmCoreTransferDialog = ({
   onOpenChange?: (open: boolean) => void
   balanceItem?: BalanceItemType
 }) => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const [open, setOpen] = useState<boolean>(false)
   const [dst, setDst] = useState<'evm' | 'spot'>('evm')
   const [amount, setAmount] = useState<string>('')
@@ -241,6 +245,8 @@ export const EvmCoreTransferDialog = ({
 
     return balance.lt(amountToSend)
   }, [address, assetToSend, amountToSend])
+
+  if (activeAccount?.type === 'sub') return null
 
   return (
     <PerpsDialog

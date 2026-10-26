@@ -119,7 +119,8 @@ export const SettingsDialog = () => {
               onChange={setShowPnlCardOnMarketClose}
               label="Show Share PnL on Market Close"
             />
-            {activeAccount?.type === 'vault' ? null : (
+            {activeAccount?.type === 'vault' ||
+            activeAccount?.type === 'sub' ? null : (
               <CheckboxSetting
                 value={optOutOfSpotDustCollection}
                 onChange={setOptOutOfSpotDustCollection}

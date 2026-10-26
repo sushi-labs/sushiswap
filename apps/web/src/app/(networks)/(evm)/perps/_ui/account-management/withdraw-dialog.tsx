@@ -27,6 +27,7 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, USDC } from 'sushi/evm'
 import { useWalletClient } from 'wagmi'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { useUserState } from '~evm/perps/user-provider'
 import { InputWithKeyboard } from '../_common'
 import { PerpsChecker } from '../perps-checker'
@@ -46,6 +47,9 @@ export const WithdrawDialog = ({
   isOpen?: boolean
   onOpenChange?: (open: boolean) => void
 }) => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const _amount = Amount.tryFromHuman(currency, amount)
@@ -164,7 +168,7 @@ export const WithdrawDialog = ({
 
   return (
     <PerpsDialog open={resolvedOpen} onOpenChange={handleOpenChange}>
-      <PerpsDialogTrigger asChild>
+      <PerpsDialogTrigger asChild disabled={activeAccount?.type === 'sub'}>
         {trigger ? (
           trigger
         ) : (

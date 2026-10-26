@@ -27,7 +27,11 @@ export const HyperReferral: FC<ButtonProps> = ({
     }
   }, [setHyperReferrerCodeAsync])
 
-  if (IS_PERPS_TESTNET || activeAccount?.type === 'vault') {
+  if (
+    IS_PERPS_TESTNET ||
+    activeAccount?.type === 'vault' ||
+    activeAccount?.type === 'sub'
+  ) {
     return <>{children}</>
   }
 
