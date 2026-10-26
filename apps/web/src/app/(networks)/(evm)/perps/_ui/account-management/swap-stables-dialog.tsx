@@ -41,6 +41,7 @@ import { useAccount } from 'src/lib/wallet'
 import { Amount } from 'sushi'
 import { EvmChainId, EvmToken } from 'sushi/evm'
 import { formatUnits, parseUnits } from 'viem'
+import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { StatItem, ValueInput } from '../_common'
 import { PerpsChecker } from '../perps-checker'
 
@@ -65,6 +66,9 @@ export const SwapStablesDialog = ({
     assetSymbolToBuy: string
   }
 }) => {
+  const {
+    state: { activeAccount },
+  } = useActiveAccountState()
   const [open, setOpen] = useState<boolean>(false)
   const [amount, setAmount] = useState<string>('')
   const { data: sendableAssets } = useSendableAssets('stable')
@@ -296,6 +300,8 @@ export const SwapStablesDialog = ({
     },
     [assetsToSelect],
   )
+
+  if (activeAccount?.type === 'sub') return null
 
   return (
     <PerpsDialog

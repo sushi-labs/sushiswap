@@ -21,6 +21,7 @@ import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import type { UserOpenOrdersItemType } from '../user/use-user-open-orders'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 import type { OrderType, TimeInForceType } from './use-execute-orders'
 
 type ModifyOrderData = {
@@ -93,8 +94,7 @@ export const useModifyOrder = () => {
           order,
         },
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

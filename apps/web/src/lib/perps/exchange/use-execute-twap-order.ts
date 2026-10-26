@@ -16,6 +16,7 @@ import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 export type TwapOrder = {
   asset: string
@@ -75,8 +76,7 @@ export const useExecuteTwapOrder = () => {
         { wallet: agentAccount, transport: hlHttpTransport },
         twapOrderData,
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

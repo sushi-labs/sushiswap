@@ -20,6 +20,7 @@ import {
   perpsNumberFormatter,
 } from 'src/lib/perps'
 import { truncateString } from 'sushi'
+import { useActiveAccountState } from '../../../active-account-provider'
 import { TableButton } from '../../_common'
 import { useUserSettingsState } from '../../account-management'
 import { useAssetState } from '../../trade-widget'
@@ -277,6 +278,10 @@ export const TRANSFER_COLUMN = (
       state: { isUnifiedAccountModeEnabled },
     } = useUserSettingsState()
 
+    const {
+      state: { activeAccount },
+    } = useActiveAccountState()
+
     if (isUnifiedAccountModeEnabled && balance.coin === 'USDC') {
       return (
         <HoverCard openDelay={0} closeDelay={0}>
@@ -309,7 +314,7 @@ export const TRANSFER_COLUMN = (
           <TableButton onClick={() => openModal('transfer', balance)}>
             Transfer to {isSpotUSDC ? 'Perps' : 'Spot'}
           </TableButton>
-        ) : (
+        ) : activeAccount?.type === 'sub' ? null : (
           <TableButton onClick={() => openModal('evm-core-transfer', balance)}>
             Transfer to/from EVM
           </TableButton>

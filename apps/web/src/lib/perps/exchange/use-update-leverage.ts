@@ -17,6 +17,7 @@ import { TOAST_AUTOCLOSE_TIME } from '../config'
 import { useLegalCheck } from '../info/use-legal-check'
 import { hlHttpTransport } from '../transports'
 import { getAssetIdForConverter } from '../utils'
+import { getVaultAddress } from './get-vault-address'
 
 export const useUpdateLeverage = () => {
   const { agentAccount } = useAgent()
@@ -66,8 +67,7 @@ export const useUpdateLeverage = () => {
         },
         { asset: assetId, isCross, leverage: newLeverage },
         {
-          vaultAddress:
-            activeAccount?.type === 'vault' ? activeAccount.address : undefined,
+          vaultAddress: getVaultAddress(activeAccount),
         },
       )
     },

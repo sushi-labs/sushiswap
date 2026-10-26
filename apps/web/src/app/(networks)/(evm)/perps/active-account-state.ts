@@ -1,7 +1,7 @@
 import { truncateString } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
 
-export type AccountType = 'vault' | 'master'
+export type AccountType = 'vault' | 'master' | 'sub'
 
 export type ActiveAccount = {
   address: EvmAddress
@@ -41,7 +41,9 @@ export function reconcileActiveAccountWithWallet(
   if (
     !activeAccount ||
     !areAddressesEqual(activeAccount.walletAddress, walletAddress) ||
-    (activeAccount.type !== 'master' && activeAccount.type !== 'vault') ||
+    (activeAccount.type !== 'master' &&
+      activeAccount.type !== 'vault' &&
+      activeAccount.type !== 'sub') ||
     (activeAccount.type === 'master' &&
       !areAddressesEqual(activeAccount.address, walletAddress))
   ) {
@@ -49,6 +51,26 @@ export function reconcileActiveAccountWithWallet(
   }
 
   return activeAccount
+}
+
+export function reconcileActiveAccountWithAccounts(
+  activeAccount: ActiveAccount | null,
+  walletAddress: EvmAddress | undefined,
+  accounts: readonly Pick<ActiveAccount, 'address' | 'type'>[],
+): ActiveAccount | null {
+  const account = reconcileActiveAccountWithWallet(activeAccount, walletAddress)
+
+  if (!walletAddress || !account || account.type === 'master') {
+    return account
+  }
+
+  const isAvailableAccount = accounts.some(
+    (option) =>
+      option.type === account.type &&
+      areAddressesEqual(option.address, account.address),
+  )
+
+  return isAvailableAccount ? account : getMasterAccount(walletAddress)
 }
 
 export function reconcileActiveAccountWithLeaderVaults(
@@ -64,9 +86,9 @@ export function reconcileActiveAccountWithLeaderVaults(
     return activeAccount
   }
 
-  const isLeaderVault = leaderVaults.some((vault) =>
-    areAddressesEqual(vault.address, activeAccount.address),
+  return reconcileActiveAccountWithAccounts(
+    activeAccount,
+    walletAddress,
+    leaderVaults.map((vault) => ({ address: vault.address, type: 'vault' })),
   )
-
-  return isLeaderVault ? activeAccount : getMasterAccount(walletAddress)
 }
