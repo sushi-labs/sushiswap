@@ -12,8 +12,16 @@ import {
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
+import { useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
-import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { logger } from 'src/lib/logger'
 import {
@@ -27,7 +35,7 @@ import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Amount, Fraction } from 'sushi'
 import {
-  type EvmChainId,
+  EvmChainId,
   type EvmCurrency,
   EvmNative,
   NonfungiblePositionManager,
@@ -77,8 +85,15 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   const { open: isOpen } = useDialog(DialogType.Review)
   const { chain } = useConnection()
   const client = usePublicClient()
+  const queryClient = useQueryClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const [receiveWrapped, setReceiveWrapped] = useState(false)
+
+  useEffect(() => {
+    if (chainId === EvmChainId.ARC) {
+      setReceiveWrapped(true)
+    }
+  }, [chainId])
 
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
 
@@ -184,8 +199,13 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
       const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
+      receipt.then(({ status }) => {
         refetchBalances(chainId)
+        if (status === 'success') {
+          void queryClient.invalidateQueries({
+            queryKey: ['useConcentratedLiquidityPositions', { account }],
+          })
+        }
       })
 
       const ts = new Date().getTime()
@@ -204,7 +224,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
         groupTimestamp: ts,
       })
     },
-    [account, chainId, client, refetchBalances],
+    [account, chainId, client, refetchBalances, queryClient],
   )
 
   const onError = useCallback((e: Error) => {
@@ -310,7 +330,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                     ))}
                   </div>
                 </div>
-                {hasNativeToken && (
+                {hasNativeToken && chainId !== EvmChainId.ARC && (
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-gray-500 dark:text-slate-400 text-sm">
                       Receive {nativeToken?.wrap().symbol} instead of{' '}

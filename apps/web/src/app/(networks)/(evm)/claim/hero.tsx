@@ -5,9 +5,13 @@ import { type FC, useMemo } from 'react'
 import { useClaimableRewards } from 'src/lib/hooks/react-query/rewards/use-claimable-rewards'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
 import { formatUSD } from 'sushi'
-import { SushiSwapV3ChainIds } from 'sushi/evm'
+import { SushiSwapV3ChainIds, isEvmTestnetChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
+
+const CLAIM_SUPPORTED_CHAIN_IDS = SushiSwapV3ChainIds.filter(
+  (chainId) => !isEvmTestnetChainId(chainId),
+)
 
 export const Hero: FC = () => {
   const { address, isConnected } = useConnection()
@@ -18,7 +22,7 @@ export const Hero: FC = () => {
     isInitialLoading: isPositonsLoading,
   } = useConcentratedLiquidityPositions({
     account: address,
-    chainIds: SushiSwapV3ChainIds,
+    chainIds: CLAIM_SUPPORTED_CHAIN_IDS,
   })
   const totalFeesUSD = useMemo(() => {
     if (!isConnected || isPositionsError) return 0
