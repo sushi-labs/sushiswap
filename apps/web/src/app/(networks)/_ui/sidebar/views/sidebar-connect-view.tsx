@@ -106,7 +106,7 @@ export const SidebarConnectView = () => {
         />
       </div>
       {subview.type === 'select-namespace' ? (
-        <div className="overflow-y-auto h-[calc(100vh-127px)] sm:h-[calc(100vh-203px)]">
+        <div className="overflow-y-auto h-[calc(100dvh-127px)] sm:h-[calc(100dvh-203px)]">
           <Suspense fallback={<WalletConnectorsListSkeleton />}>
             <WalletConnectorsList
               variant="namespace"
@@ -116,7 +116,7 @@ export const SidebarConnectView = () => {
           </Suspense>
         </div>
       ) : namespace ? (
-        <div className="overflow-y-auto h-[calc(100vh-127px)] sm:h-[calc(100vh-203px)]">
+        <div className="overflow-y-auto h-[calc(100dvh-127px)] sm:h-[calc(100dvh-203px)]">
           <Suspense fallback={<WalletConnectorsListSkeleton />}>
             <WalletConnectorsList
               namespace={namespace}
