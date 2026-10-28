@@ -34,15 +34,11 @@ import Link from 'next/link'
 import React, { type FC, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { formatPercent, formatUSD } from 'sushi'
-import {
-  EvmToken,
-  SushiSwapProtocol,
-  getEvmChainById,
-  unwrapEvmToken,
-} from 'sushi/evm'
+import { EvmToken, SushiSwapProtocol, unwrapEvmToken } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 import { ProtocolBadge } from '~evm/[chainId]/_ui/protocol-badge'
 import { useSmartPools } from '../hooks'
+import { getSteerVaultHref } from '../utils/get-steer-vault-href'
 
 const COLUMNS = [
   {
@@ -274,9 +270,7 @@ const COLUMNS = [
         onClick={(e) => e.stopPropagation()}
         shallow={true}
         className="flex items-center"
-        href={`/${getEvmChainById(row.original.chainId).key}/pool/${row.original.protocol === 'SUSHISWAP_V3' ? 'v3' : 'v2'}/${
-          row.original.poolAddress
-        }/smart/${row.original.address}`}
+        href={getSteerVaultHref(row.original)}
       >
         <Button variant="outline" icon={PlusIcon} iconPosition="end">
           Deposit
@@ -377,11 +371,7 @@ export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
         onPaginationChange={setPagination}
         pagination={false}
         state={state}
-        linkFormatter={(row) =>
-          `/${getEvmChainById(row.chainId).key}/pool/v3/${row.poolAddress}/smart/${
-            row.address
-          }`
-        }
+        linkFormatter={getSteerVaultHref}
         onSortingChange={setSorting}
         loading={isLoading}
         columns={COLUMNS}

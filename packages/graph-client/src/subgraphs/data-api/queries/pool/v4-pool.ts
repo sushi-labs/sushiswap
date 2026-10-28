@@ -48,6 +48,8 @@ export const V4PoolQuery = graphql(
       incentiveApr
       isIncentivized
       wasIncentivized
+      hadSmartPool
+      hasSmartPool
     }
   }
 `,
@@ -112,6 +114,8 @@ export async function getV4Pool(
         incentiveApr: pool.incentiveApr,
         isIncentivized: pool.isIncentivized,
         wasIncentivized: pool.wasIncentivized,
+        hasEnabledSteerVault: pool.hasSmartPool,
+        hadEnabledSteerVault: pool.hadSmartPool,
       }
     }
   } catch (error) {

@@ -8,6 +8,7 @@ import { SushiSwapProtocol } from 'sushi/evm'
 import { PoolLiquidityCard } from '~evm/[chainId]/pool/_ui/pool-liquidity-card'
 import { PoolStatisticsCharts } from '~evm/[chainId]/pool/_ui/pool-statistics-charts'
 import { PoolStatsCard } from '~evm/[chainId]/pool/_ui/pool-stats-card'
+import { SmartVaultBanner } from '~evm/[chainId]/pool/_ui/smart/smart-vault-banner'
 import { LiquidityDepthWidgetV4 } from './liquidity-depth-widget-v4'
 import { PoolTransactionsV4 } from './pool-transactions-v4'
 
@@ -27,6 +28,9 @@ export const PoolPageV4: FC<{ pool: RawV4Pool }> = ({ pool: rawPool }) => {
 
   return (
     <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+      {pool.hasEnabledSteerVault && (
+        <SmartVaultBanner chainId={pool.chainId} poolAddress={pool.address} />
+      )}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <PoolStatisticsCharts
           pool={pool}

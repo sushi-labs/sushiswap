@@ -21,8 +21,9 @@ import {
 import type { Dispatch, SetStateAction } from 'react'
 import { useV3Pool } from 'src/lib/hooks/api/use-v3-pool'
 import { formatPercent, formatUSD } from 'sushi'
-import { type EvmAddress, EvmToken, getEvmChainById } from 'sushi/evm'
+import { type EvmAddress, EvmToken } from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
+import { getSteerVaultHref } from '../utils/get-steer-vault-href'
 
 interface SelectSmartPoolStrategyWidgetProps {
   chainId: SmartPoolChainId
@@ -65,9 +66,7 @@ export const SelectSmartPoolStrategyWidget = ({
                       <CardTitle className="flex gap-1 items-start">
                         <span>{vault.strategy}</span>
                         <LinkExternal
-                          href={`/${getEvmChainById(vault.chainId).key}/pool/v3/${
-                            vault.poolAddress
-                          }/smart/${vault.address}`}
+                          href={getSteerVaultHref(vault)}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ArrowUpRightIcon className="w-4 h-4" />

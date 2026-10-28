@@ -1546,6 +1546,11 @@ type V4Pool {
   txCount1dChange: Float!
   liquidityUSD1dChange: Float!
   incentiveApr: Float!
+  hadSmartPool: Boolean!
+  hasSmartPool: Boolean!
+
+  """The pool's strategy vault addresses."""
+  vaults: [String!]!
   isIncentivized: Boolean!
   wasIncentivized: Boolean!
   incentives: [Incentive!]!

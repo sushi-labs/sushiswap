@@ -16,11 +16,13 @@ import type {
   PoolWithIncentiveApr,
 } from 'sushi/evm'
 
-type RequiredPool = PoolIfIncentivized<PoolWithIncentiveApr<PoolWithFeeAprs>>
+export type APRHoverCardPool = PoolIfIncentivized<
+  PoolWithIncentiveApr<PoolWithFeeAprs>
+>
 
 interface APRHoverCardProps {
   children: ReactNode
-  pool: RequiredPool
+  pool: APRHoverCardPool
   showEmissions?: boolean
   smartPoolAPR?: number
 }
