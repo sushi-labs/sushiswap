@@ -2,6 +2,7 @@ import { Amount, type ChainId, type Currency, Price } from 'sushi'
 import {
   DAI,
   type EvmChainId,
+  type EvmCurrency,
   EvmNative,
   EvmToken,
   type Incentive,
@@ -199,12 +200,49 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 }
 
+function getCurrencySortKey(currency: EvmCurrency): bigint {
+  return currency.type === 'native' ? 0n : BigInt(currency.address)
+}
+
+const Q192 = 2n ** 192n
+
+/**
+ * Like `tickToPrice`, but orders the pair as a V4 pool does: a native currency
+ * is `0x0` and sorts first, rather than being replaced by its wrapped token.
+ * For wrapped tokens the result matches `tickToPrice`.
+ */
+export function tickToPoolPrice<
+  TBase extends EvmCurrency,
+  TQuote extends EvmCurrency,
+>(
+  baseCurrency: TBase,
+  quoteCurrency: TQuote,
+  tick: number,
+): Price<TBase, TQuote> {
+  const sqrtRatioX96 = TickMath.getSqrtRatioAtTick(tick)
+  const ratioX192 = sqrtRatioX96 * sqrtRatioX96
+
+  return getCurrencySortKey(baseCurrency) < getCurrencySortKey(quoteCurrency)
+    ? new Price({
+        base: baseCurrency,
+        quote: quoteCurrency,
+        numerator: ratioX192,
+        denominator: Q192,
+      })
+    : new Price({
+        base: baseCurrency,
+        quote: quoteCurrency,
+        numerator: Q192,
+        denominator: ratioX192,
+      })
+}
+
 const PRICE_FIXED_DIGITS = 8
 
 // Computes the numSurroundingTicks above or below the active tick.
 export default function computeSurroundingTicks(
-  token0: EvmToken,
-  token1: EvmToken,
+  token0: EvmCurrency,
+  token1: EvmCurrency,
   activeTickProcessed: TickProcessed,
   sortedTickData: NonNullable<ReturnType<typeof useTicks>['data']>,
   pivot: number,
@@ -216,7 +254,9 @@ export default function computeSurroundingTicks(
   // Iterate outwards (either up or down depending on direction) from the active tick,
   // building active liquidity for every tick.
   let processedTicks: TickProcessed[] = []
+  // The pivot is -1 when the active tick sits below every initialized tick
   const pivotIsActiveTick =
+    pivot >= 0 &&
     Number(sortedTickData[pivot].tickIdx) === activeTickProcessed.tick
   const startIndex = ascending ? pivot + 1 : pivot - (pivotIsActiveTick ? 1 : 0)
 
@@ -230,7 +270,7 @@ export default function computeSurroundingTicks(
       liquidityActive: previousTickProcessed.liquidityActive,
       tick,
       liquidityNet: sortedTickData[i].liquidityNet,
-      price0: tickToPrice(token0, token1, tick).toString({
+      price0: tickToPoolPrice(token0, token1, tick).toString({
         fixed: PRICE_FIXED_DIGITS,
       }),
     }

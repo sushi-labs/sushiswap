@@ -1,12 +1,9 @@
 'use client'
 
 import { useMemo } from 'react'
+import { tickToPoolPrice } from 'src/lib/functions'
 import { processActiveLiquidity } from 'src/lib/pool/v3'
-import {
-  type EvmCurrency,
-  type SushiSwapV4ChainId,
-  tickToPrice,
-} from 'sushi/evm'
+import type { EvmCurrency, SushiSwapV4ChainId } from 'sushi/evm'
 import type { Hex } from 'viem'
 import { getDensityChartData } from '~evm/[chainId]/_ui/liquidity-chart-range-input/hooks'
 import { useV4PoolSlot0, useV4PoolTicks } from './use-v4-pool-state'
@@ -54,9 +51,7 @@ export function useV4PoolDensityChartData({
     if (!slot0.data) return null
 
     return Number.parseFloat(
-      tickToPrice(token0.wrap(), token1.wrap(), slot0.data.tick).toSignificant(
-        8,
-      ),
+      tickToPoolPrice(token0, token1, slot0.data.tick).toSignificant(8),
     )
   }, [slot0.data, token0, token1])
 

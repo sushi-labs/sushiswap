@@ -6,11 +6,10 @@ import {
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
   TICK_SPACINGS,
-  tickToPrice,
 } from 'sushi/evm'
 
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
-import computeSurroundingTicks from '../../functions'
+import computeSurroundingTicks, { tickToPoolPrice } from '../../functions'
 import { useTicks } from './use-ticks'
 
 const PRICE_FIXED_DIGITS = 8
@@ -24,7 +23,8 @@ export interface TickProcessed {
 
 /**
  * Active liquidity at every initialized tick, walking outwards from the
- * active tick. `ticks` must be sorted by `tickIdx` ascending.
+ * active tick. `ticks` must be sorted by `tickIdx` ascending. Pass the
+ * currencies as the pool holds them: wrapped for V3, native as-is for V4.
  */
 export function processActiveLiquidity({
   token0,
@@ -39,43 +39,38 @@ export function processActiveLiquidity({
   liquidity: bigint
   ticks: { tickIdx: number; liquidityNet: bigint }[]
 }): TickProcessed[] | undefined {
-  const _token0 = token0.wrap()
-  const _token1 = token1.wrap()
+  if (ticks.length === 0) return undefined
 
   // find where the active tick would be to partition the array
   // if the active tick is initialized, the pivot will be an element
-  // if not, take the previous tick as pivot
-  const pivot = ticks.findIndex(({ tickIdx }) => tickIdx > activeTick) - 1
-
-  if (pivot < 0) {
-    // consider setting a local error
-    console.error('TickData pivot not found')
-    return undefined
-  }
+  // if not, take the previous tick as pivot (-1 below the first tick,
+  // the last tick when above every initialized tick)
+  const nextTickIndex = ticks.findIndex(({ tickIdx }) => tickIdx > activeTick)
+  const pivot = (nextTickIndex === -1 ? ticks.length : nextTickIndex) - 1
 
   const activeTickProcessed: TickProcessed = {
     liquidityActive: liquidity,
     tick: activeTick,
     liquidityNet:
-      Number(ticks[pivot].tickIdx) === activeTick
+      pivot >= 0 && Number(ticks[pivot].tickIdx) === activeTick
         ? ticks[pivot].liquidityNet
         : 0n,
-    price0: tickToPrice(_token0, _token1, activeTick).toString({
+    price0: tickToPoolPrice(token0, token1, activeTick).toString({
       fixed: PRICE_FIXED_DIGITS,
     }),
   }
 
   const subsequentTicks = computeSurroundingTicks(
-    _token0,
-    _token1,
+    token0,
+    token1,
     activeTickProcessed,
     ticks,
     pivot,
     true,
   )
   const previousTicks = computeSurroundingTicks(
-    _token0,
-    _token1,
+    token0,
+    token1,
     activeTickProcessed,
     ticks,
     pivot,
@@ -162,8 +157,8 @@ export const useConcentratedActiveLiquidity = ({
     }
 
     const ticksProcessed = processActiveLiquidity({
-      token0,
-      token1,
+      token0: token0.wrap(),
+      token1: token1.wrap(),
       activeTick,
       liquidity: BigInt(pool.liquidity.toString()),
       ticks,

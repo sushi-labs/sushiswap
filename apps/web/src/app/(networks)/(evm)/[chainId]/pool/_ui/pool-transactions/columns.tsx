@@ -10,8 +10,9 @@ const SKELETON_META = {
   },
 }
 
-function getSwapLegs(row: PoolTransaction) {
-  return row.amount0 < 0
+/** Swap amounts are signed from the pool's side: positive in, negative out. */
+export function getSwapLegs(row: PoolTransaction) {
+  return row.amount0 > 0
     ? {
         amounts: [row.amount0, row.amount1],
         tokens: [row.pool.token0, row.pool.token1],
