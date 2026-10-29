@@ -1,12 +1,13 @@
 VERSION = "2.7.0"
 ACCOUNTS = ["GC37GLWOPSIOXNHYGH5ZS3TTU7EAFMN6OPX5Q2NWWXRKCIVY37JXJFZE"]
 
+[DOCUMENTATION]
+ORG_NAME = "Sushi Holdings Limited"
+ORG_URL = "https://www.sushi.com"
+
 [[CURRENCIES]]
 code = "SUSHI"
 issuer = "GC37GLWOPSIOXNHYGH5ZS3TTU7EAFMN6OPX5Q2NWWXRKCIVY37JXJFZE"
 name = "SushiToken"
 display_decimals = 7
-# No fixed local supply cap; administrators retain mint-role and upgrade authority.
-# Routine OFT issuance follows the Ethereum escrow. This field does not change bridge policy.
 is_unlimited = true
-conditions = "Normal OFT transfers mint and burn SUSHI against canonical SUSHI held by the Ethereum adapter. The classic issuer must be locked before bridge activation. The SAC manager and OFT remain upgradeable and administrator controlled; this token has no fixed local supply cap."

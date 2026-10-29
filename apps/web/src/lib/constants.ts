@@ -16,6 +16,7 @@ export const SushiSwapCmsProtocols = [
 export type SushiSwapCmsProtocol = (typeof SushiSwapCmsProtocols)[number]
 
 export const PROTOCOL_MAP: Record<SushiSwapProtocol, string> = {
+  SUSHISWAP_V4: 'SushiSwap V4',
   SUSHISWAP_V3: 'SushiSwap V3',
   SUSHISWAP_V2: 'SushiSwap V2',
   BLADE: 'Blade',

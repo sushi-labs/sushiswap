@@ -34,8 +34,8 @@ catalogs:
       specifier: 3.2.2
       version: 3.2.2
     sushi:
-      specifier: 7.5.1
-      version: 7.5.1
+      specifier: 7.6.1
+      version: 7.6.1
     wagmi:
       specifier: 3.3.2
       version: 3.3.2
@@ -134,7 +134,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 10.6.0
@@ -591,7 +591,7 @@ importers:
         version: 2.3.3
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -782,7 +782,7 @@ importers:
         version: 1.0.0
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       viem:
         specifier: 2.56.7
         version: 2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -847,7 +847,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.4.19(tsx@4.23.0)(yaml@2.9.0)
@@ -896,7 +896,7 @@ importers:
         version: 19.2.3(@types/react@19.2.17)
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -953,7 +953,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -969,7 +969,7 @@ importers:
         version: 6.0.3
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
     devDependencies:
       typescript:
         specifier: 5.9.3
@@ -1238,7 +1238,7 @@ importers:
         version: 19.2.7(react@19.2.7)
       sushi:
         specifier: catalog:web3
-        version: 7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
+        version: 7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11)
       tailwindcss:
         specifier: catalog:ui
         version: 3.4.19(tsx@4.23.0)(yaml@2.9.0)
@@ -14957,8 +14957,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  sushi@7.5.1:
-    resolution: {integrity: sha512-8cmAJCkigzyldM+mipKaOlFEYzA8m8ZDVFhi/j6qS1u/5CKdnqj0XqD4ZRSqntPIkm4o8uuof8LNP1E70XG7Ag==}
+  sushi@7.6.1:
+    resolution: {integrity: sha512-BFGdky38fMrlYIhJtDcrK26SkMq9t/L8uw337LzhZ8Xuofgc9DOAYI94IZU94974Dy15zMHnfL9u7v/cQOqK9g==}
     peerDependencies:
       typescript: 5.9.3
       viem: 2.56.7
@@ -31822,7 +31822,7 @@ snapshots:
       decimal.js: 10.6.0
       domexception: 4.0.0
       escodegen: 2.1.0
-      form-data: 4.0.5
+      form-data: 4.0.6
       html-encoding-sniffer: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
@@ -35195,7 +35195,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  sushi@7.5.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
+  sushi@7.6.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))(zod@4.1.11):
     dependencies:
       '@solana/addresses': 6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       tiny-invariant: 1.3.3
