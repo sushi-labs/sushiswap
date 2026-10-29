@@ -1,21 +1,17 @@
 'use client'
 
-import {
-  type RawV3Pool,
-  type VaultV1,
-  hydrateV3Pool,
-} from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { Carousel, SkeletonBox } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo } from 'react'
 import { SteerPoolCard } from './steer-pool-card'
+import type { SteerVaultPool } from './steer-strategies'
 
 interface SteerCarousel {
-  pool: RawV3Pool
+  pool: SteerVaultPool
   vaults: VaultV1[]
 }
 
-export const SteerCarousel: FC<SteerCarousel> = ({ pool: rawPool, vaults }) => {
-  const pool = useMemo(() => hydrateV3Pool(rawPool), [rawPool])
+export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
   const enabledVaults = useMemo(
     () => vaults.filter((vault) => vault.isEnabled),
     [vaults],

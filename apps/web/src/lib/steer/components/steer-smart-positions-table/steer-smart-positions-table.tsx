@@ -4,12 +4,12 @@ import type { SmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Card, CardHeader, CardTitle, DataTable } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import React, { type FC, useMemo, useState } from 'react'
-import { getEvmChainById } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import {
   type SteerAccountPositionExtended,
   useSteerAccountPositionsExtended,
 } from '../../hooks'
+import { getSteerVaultHref } from '../../utils/get-steer-vault-href'
 import {
   STEER_APR_COLUMN,
   STEER_NAME_COLUMN,
@@ -54,11 +54,7 @@ export const SteerSmartPositionsTable: FC<{ chainId: SmartPoolChainId }> = ({
       </CardHeader>
       <DataTable
         loading={isLoading}
-        linkFormatter={(row) =>
-          `/${getEvmChainById(row.chainId).key}/pool/v3/${row.vault.poolAddress}/smart/${
-            row.address
-          }`
-        }
+        linkFormatter={(row) => getSteerVaultHref(row.vault)}
         columns={COLUMNS}
         data={_positions}
         pagination={true}

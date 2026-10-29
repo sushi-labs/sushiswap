@@ -1,7 +1,7 @@
 'use client'
 
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import type { RawV3Pool, VaultV1 } from '@sushiswap/graph-client/data-api'
+import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -27,7 +27,10 @@ import {
 import { FormattedNumber } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
-import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
+import {
+  APRHoverCard,
+  type APRHoverCardPool,
+} from '~evm/[chainId]/_ui/apr-hover-card'
 import { SteerLiquidityInRangeChip } from '../steer-liquidity-distribution-widget/steer-liquidity-in-range-chip'
 import {
   SteerPositionAdd,
@@ -57,8 +60,14 @@ export interface SteerStrategyGeneric {
   }[]
 }
 
+/** The V3 or V4 pool a vault provides liquidity to. */
+export type SteerVaultPool = APRHoverCardPool & {
+  swapFee: number
+  isDynamicFee?: boolean
+}
+
 export type SteerStrategyComponent = FC<{
-  pool: RawV3Pool
+  pool: SteerVaultPool
   vault: VaultV1
   generic: SteerStrategyGeneric
 }>
@@ -208,7 +217,9 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
             </Stat>
             <Stat className="px-6 py-3">
               <StatLabel size="sm">Liquidity pool fee</StatLabel>
-              <StatValue size="sm">{formatPercent(pool.swapFee)}</StatValue>
+              <StatValue size="sm">
+                {pool.isDynamicFee ? 'Dynamic' : formatPercent(pool.swapFee)}
+              </StatValue>
             </Stat>
             {/* <Stat className="px-6 py-3">
               <StatLabel size="sm">Time frame</StatLabel>
@@ -228,7 +239,7 @@ export const SteerBaseStrategy: SteerStrategyComponent = ({
           </CardHeader>
           <div className="px-6 h-[200px] w-full">
             <SteerStrategyLiquidityDistribution
-              pool={pool}
+              vault={vault}
               positions={positions}
             />
           </div>

@@ -12,84 +12,85 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { alignDayBuckets } from './align-day-buckets'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
   chainId: EvmChainId
   showBlade: boolean
+  showV4: boolean
 }
 
 echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
+export const VolumeChart: FC<VolumeChart> = ({
+  data,
+  chainId,
+  showBlade,
+  showV4,
+}) => {
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, blade, totalVolume] = useMemo(() => {
-    const xData = (
-      data.v2.length || data.v3.length
-        ? data.v2.length > data.v3.length
-          ? data.v2
-          : data.v3
-        : data.blade
-    )
-      .slice(0, 30)
-      .map((data) => data.date * 1000)
-
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.volumeUSD ?? 0])
-      .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.volumeUSD ?? 0])
-      .reverse()
-    const blade = xData
-      .map((xData, i) => [xData, data.blade[i]?.volumeUSD ?? 0])
-      .reverse()
-    const totalVolume = xData.reduce(
-      (sum, _, i) => sum + v2[i][1] + v3[i][1] + blade[i][1],
+  const [v2, v3, v4, blade, totalVolume] = useMemo(() => {
+    const { v2, v3, v4, blade } = alignDayBuckets(data, 'volumeUSD', 30)
+    const totalVolume = [...v2, ...v3, ...v4, ...blade].reduce(
+      (sum, [_, value]) => sum + value,
       0,
     )
 
-    return [v2, v3, blade, totalVolume]
+    return [v2, v3, v4, blade, totalVolume]
   }, [data])
 
-  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
-    if (!params[0].data || !params[1].data) return ''
+  const onMouseOver = useCallback(
+    (params: { data?: number[]; seriesName?: string }[]) => {
+      if (!params[0]?.data || !params[1]?.data) return ''
 
-    const volumeNode = document.getElementById('hoveredVolume')
-    const v2VolumeNode = document.getElementById('hoveredV2Volume')
-    const v3VolumeNode = document.getElementById('hoveredV3Volume')
-    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
-    const dateNode = document.getElementById('hoveredVolumeDate')
+      const v4Data = params.find((param) => param.seriesName === 'v4')?.data
+      const bladeData = params.find(
+        (param) => param.seriesName === 'blade',
+      )?.data
 
-    if (volumeNode)
-      volumeNode.innerHTML = formatUSD(
-        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] || 0),
-      )
-    if (dateNode)
-      dateNode.innerHTML = format(
-        new Date(params[0].data[0]),
-        "dd MMM yyyy'<br>'hh:mm aa",
-      )
-    if (v2VolumeNode)
-      v2VolumeNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
-    if (v3VolumeNode)
-      v3VolumeNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
-    if (bladeVolumeNode)
-      bladeVolumeNode.innerHTML = params[2]?.data?.[1]
-        ? formatUSD(params[2].data[1])
-        : ''
+      const volumeNode = document.getElementById('hoveredVolume')
+      const v2VolumeNode = document.getElementById('hoveredV2Volume')
+      const v3VolumeNode = document.getElementById('hoveredV3Volume')
+      const v4VolumeNode = document.getElementById('hoveredV4Volume')
+      const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
+      const dateNode = document.getElementById('hoveredVolumeDate')
 
-    return ''
-  }, [])
+      if (volumeNode)
+        volumeNode.innerHTML = formatUSD(
+          params.reduce((sum, param) => sum + (param.data?.[1] ?? 0), 0),
+        )
+      if (dateNode)
+        dateNode.innerHTML = format(
+          new Date(params[0].data[0]),
+          "dd MMM yyyy'<br>'hh:mm aa",
+        )
+      if (v2VolumeNode)
+        v2VolumeNode.innerHTML = params[0].data[1]
+          ? formatUSD(params[0].data[1])
+          : ''
+      if (v3VolumeNode)
+        v3VolumeNode.innerHTML = params[1].data[1]
+          ? formatUSD(params[1].data[1])
+          : ''
+      if (v4VolumeNode)
+        v4VolumeNode.innerHTML = v4Data?.[1] ? formatUSD(v4Data[1]) : ''
+      if (bladeVolumeNode)
+        bladeVolumeNode.innerHTML = bladeData?.[1]
+          ? formatUSD(bladeData[1])
+          : ''
+
+      return ''
+    },
+    [],
+  )
 
   const onMouseLeave = useCallback(() => {
     const volumeNode = document.getElementById('hoveredVolume')
     const v2VolumeNode = document.getElementById('hoveredV2Volume')
     const v3VolumeNode = document.getElementById('hoveredV3Volume')
+    const v4VolumeNode = document.getElementById('hoveredV4Volume')
     const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
@@ -97,6 +98,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     if (dateNode) dateNode.innerHTML = 'Past month'
     if (v2VolumeNode) v2VolumeNode.innerHTML = ''
     if (v3VolumeNode) v3VolumeNode.innerHTML = ''
+    if (v4VolumeNode) v4VolumeNode.innerHTML = ''
     if (bladeVolumeNode) bladeVolumeNode.innerHTML = ''
   }, [totalVolume])
 
@@ -177,6 +179,17 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
           data: v3,
           itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
         },
+        ...(showV4
+          ? [
+              {
+                name: 'v4',
+                type: 'bar',
+                stack: 'a',
+                data: v4,
+                itemStyle: { color: '#22C55E', barBorderRadius: [2, 2, 0, 0] },
+              },
+            ]
+          : []),
         ...(showBlade
           ? [
               {
@@ -190,7 +203,7 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
           : []),
       ],
     }),
-    [onMouseOver, resolvedTheme, v2, v3, blade, showBlade],
+    [onMouseOver, resolvedTheme, v2, v3, v4, blade, showBlade, showV4],
   )
 
   return (
@@ -228,6 +241,15 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
+            {showV4 && (
+              <div className="flex justify-between items-center gap-2 text-sm">
+                <span id="hoveredV4Volume" />
+                <span className="flex gap-1 items-center">
+                  <span className="font-medium">v4</span>
+                  <span className="bg-[#22C55E] rounded-[4px] w-3 h-3" />
+                </span>
+              </div>
+            )}
             {showBlade && (
               <div className="flex justify-between items-center gap-2 text-sm">
                 <span id="hoveredBladeVolume" />

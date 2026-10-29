@@ -18,6 +18,7 @@ type Bucket {
 type SushiDayBuckets {
   v2: [Bucket!]!
   v3: [Bucket!]!
+  v4: [Bucket!]!
   blade: [Bucket!]!
 }
 
@@ -76,6 +77,17 @@ type Query {
   v3Mints(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Mint!]!
   v3Collects(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Collect!]!
   v3Transactions(address: Bytes!, chainId: SushiSwapV3ChainId!): [V3Transaction!]!
+  v4Pool(poolId: Bytes!, chainId: SushiSwapV4ChainId!): V4Pool!
+  v4PoolBuckets(poolId: Bytes!, chainId: SushiSwapV4ChainId!): PoolBuckets!
+
+  """The latest 100 swaps, newest first."""
+  v4Swaps(poolId: Bytes!, chainId: SushiSwapV4ChainId!): [V4Swap!]!
+
+  """The latest 100 liquidity adds, newest first."""
+  v4Mints(poolId: Bytes!, chainId: SushiSwapV4ChainId!): [V4LiquidityChange!]!
+
+  """The latest 100 liquidity removes, newest first."""
+  v4Burns(poolId: Bytes!, chainId: SushiSwapV4ChainId!): [V4LiquidityChange!]!
   portfolioWallet(evmAddress: EvmAddress, svmAddress: SvmAddress, stellarAddress: StellarAccountAddress, chainIds: [PortfolioChainId!], customTokens: [PortfolioTokenId!]): PortfolioWallet!
   portfolioLiquidityPositions(id: ID!): PortfolioPositions!
   portfolioClaimables(id: ID!): PortfolioClaimables!
@@ -327,6 +339,7 @@ enum ChainIdFeature {
   SushiSwapChainId
   SushiSwapV2ChainId
   SushiSwapV3ChainId
+  SushiSwapV4ChainId
   PoolChainId
   BladeChainId
   SmartPoolChainId
@@ -1164,6 +1177,7 @@ enum OrderDirection {
 enum Protocol {
   SUSHISWAP_V2
   SUSHISWAP_V3
+  SUSHISWAP_V4
 }
 
 type Token {
@@ -1182,7 +1196,7 @@ type V2Pool {
   address: Bytes!
   createdAt: String!
   swapFee: Float!
-  protocol: String!
+  protocol: Protocol!
   token0: Token!
   token1: Token!
   source: DataSource!
@@ -1215,7 +1229,7 @@ type V3Pool {
   address: Bytes!
   createdAt: String!
   swapFee: Float!
-  protocol: String!
+  protocol: Protocol!
   token0: Token!
   token1: Token!
   source: DataSource!
@@ -1250,7 +1264,7 @@ type V3BasePool {
   id: ID!
   address: Bytes!
   chainId: SushiSwapV3ChainId!
-  protocol: String!
+  protocol: Protocol!
   isProtocolFeeEnabled: Boolean!
   name: String!
   createdAt: String!
@@ -1345,8 +1359,13 @@ type Pool {
   chainId: Int!
   name: String!
   address: String!
+
+  """
+  The fixed fee rate, or a dynamic pool's effective rate over the last day.
+  """
   swapFee: Float!
-  protocol: String!
+  isDynamicFee: Boolean!
+  protocol: Protocol!
   token0Address: String!
   token1Address: String!
   liquidityUSD: Float!
@@ -1484,6 +1503,97 @@ type V3Transaction {
   swaps: [V3Swap!]
   burns: [V3Burn!]
   mints: [V3Mint!]
+}
+
+"""
+A Sushi V4 pool's page figures, from Terminal: TVL counts every open
+position's tokens, capped like the pool list's for untrusted tokens.
+"""
+type V4Pool {
+  id: ID!
+  chainId: SushiSwapV4ChainId!
+  name: String!
+
+  """The pool ID."""
+  address: Bytes!
+  protocol: Protocol!
+
+  """
+  The fixed fee rate, or a dynamic pool's effective rate over the last day.
+  """
+  swapFee: Float!
+  isDynamicFee: Boolean!
+  token0: Token!
+  token1: Token!
+
+  """Every open position's token0, in range or not, in raw units."""
+  reserve0: String!
+
+  """Every open position's token1, in raw units."""
+  reserve1: String!
+  reserve0USD: Float!
+  reserve1USD: Float!
+  token0PriceUSD: Float!
+  token1PriceUSD: Float!
+  liquidityUSD: Float!
+  volumeUSD1d: Float!
+  feeUSD1d: Float!
+  txCount1d: Int!
+  feeApr1d: Float!
+  totalApr1d: Float!
+  volumeUSD1dChange: Float!
+  feeUSD1dChange: Float!
+  txCount1dChange: Float!
+  liquidityUSD1dChange: Float!
+  incentiveApr: Float!
+  hadSmartPool: Boolean!
+  hasSmartPool: Boolean!
+
+  """The pool's strategy vault addresses."""
+  vaults: [String!]!
+  isIncentivized: Boolean!
+  wasIncentivized: Boolean!
+  incentives: [Incentive!]!
+}
+
+type V4Transaction {
+  id: Bytes!
+  blockNumber: BigInt!
+  timestamp: Int!
+}
+
+type V4Swap {
+  id: ID!
+  logIndex: Int!
+
+  """
+  Signed token0 pool balance change, in tokens: positive in, negative out.
+  """
+  amount0: String!
+
+  """Signed token1 pool balance change, in tokens."""
+  amount1: String!
+  amountUSD: Float
+
+  """The transaction's sender, the maker; null where not observed."""
+  origin: Bytes
+
+  """The address that called the pool manager."""
+  sender: Bytes!
+  transaction: V4Transaction!
+}
+
+"""A liquidity add or remove, by the tokens it moved, unsigned."""
+type V4LiquidityChange {
+  id: ID!
+  logIndex: Int!
+  amount0: String!
+  amount1: String!
+  amountUSD: Float
+
+  """The transaction's sender, the maker; null where not observed."""
+  origin: Bytes
+  transaction: V4Transaction!
 }
 
 type SimpleToken {
@@ -1774,24 +1884,55 @@ scalar TerminalPoolKey
 
 type TerminalQueries {
   """
-  Active pools. Address breaks sort ties; reuse the same ordering on subsequent pages.
+  Active pools. Pool key breaks sort ties; reuse the same ordering on subsequent pages.
   """
-  pools(chainId: TerminalChainId!, after: EvmAddress, first: Int = 50, orderBy: TerminalPoolOrderBy = CREATED_BLOCK, orderDirection: TerminalOrderDirection = DESC): TerminalPoolConnection!
-  trades(pool: TerminalPoolKey!, first: Int = 50, after: String): TerminalTradeConnection!
+  pools(chainId: TerminalChainId!, after: TerminalPoolKey, first: Int = 50, orderBy: TerminalPoolOrderBy = CREATED_BLOCK, orderDirection: TerminalOrderDirection = DESC): TerminalPoolConnection!
+
+  """
+  The pool's trades with block timestamps in [from, to), newest first by
+  (timestamp, block, log). Pages and streamCursor follow TerminalPage.
+  """
+  trades(input: TerminalTradesInput!): TerminalTradeConnection!
+
+  """
+  OHLC buckets whose start lies in [from, to), newest first. Only buckets
+  with a price in the denomination appear; paging back seeks occupied
+  buckets, never empty time. Pages and streamCursor follow TerminalPage.
+  """
   candles(input: TerminalCandlesInput!): TerminalCandleConnection!
+
+  """
+  A pool's TVL and volume over time, newest first: the token amounts of every
+  open position at each point, in range or not and excluding fees, valued in
+  the denomination at the pool's own last price. Buckets starting in
+  [from, to) each get a point, an empty one carrying the level forward;
+  buckets starting after now, or ending at or before the pool's creation, are
+  omitted, so the oldest holds the creation. Empty buckets count toward
+  first. EVENT returns one point per trade or liquidity change in [from, to),
+  newest first by (timestamp, block, log). Pages over unverified history may
+  shift between requests when repairs remove or insert events. Pages and
+  streamCursor follow TerminalPage; on a live stream a quiet bucket boundary
+  sends nothing, so carry the newest level forward into new buckets.
+  """
+  poolSeries(input: TerminalPoolSeriesInput!): TerminalSeriesConnection!
+
+  """
+  The pool's liquidity changes with block timestamps in [from, to), newest
+  first by (timestamp, block, log), optionally only adds or removes. Pages
+  follow TerminalPage, without a stream.
+  """
+  liquidityChanges(input: TerminalLiquidityChangesInput!): TerminalLiquidityChangeConnection!
   market(pool: TerminalPoolKey!): TerminalMarket!
   metrics(input: TerminalMetricsInput!): TerminalMetrics!
   marketStats(input: TerminalMetricsInput!): TerminalMarketStats!
   supply(chainId: TerminalChainId!, token: EvmAddress!): TerminalSupply
 
-  """
-  Verification targets ordered by key ascending; after is a target key, not a pool address.
-  """
+  """Verification scopes ordered by key ascending; after is a scope key."""
   coverage(chainId: TerminalChainId!, after: ID, first: Int = 100): TerminalCoverageConnection!
 }
 
 enum TerminalPoolOrderBy {
-  ADDRESS
+  KEY
   CREATED_BLOCK
   FEE
 }
@@ -1804,7 +1945,7 @@ enum TerminalOrderDirection {
 type TerminalPoolConnection {
   nodes: [TerminalPool!]!
   hasNextPage: Boolean!
-  endCursor: EvmAddress
+  endCursor: TerminalPoolKey
 }
 
 type TerminalCoverageConnection {
@@ -1813,26 +1954,85 @@ type TerminalCoverageConnection {
   endCursor: ID
 }
 
-type TerminalPool {
+interface TerminalPool {
   key: TerminalPoolKey!
   chainId: TerminalChainId!
-  address: EvmAddress!
   deployment: String!
   dex: String
-  details: TerminalPoolDetails!
   token0: EvmAddress!
   token1: EvmAddress!
   quoteToken: EvmAddress!
   usdAnchorToken: EvmAddress
-  fee: Int!
+  fee: TerminalPoolFee!
   createdBlock: BigInt!
 }
 
-union TerminalPoolDetails = TerminalV3PoolDetails
+"""A pool's LP fee: a fixed rate, or one a hook sets for each swap."""
+union TerminalPoolFee = TerminalStaticFee | TerminalDynamicFee
 
-type TerminalV3PoolDetails {
-  family: String!
+type TerminalStaticFee {
+  """Fee in millionths."""
+  rate: Int!
+}
+
+"""The pool's hook sets the LP fee."""
+type TerminalDynamicFee {
+  """
+  Base fee in millionths, as last set by the hook; 0 until set. The hook may
+  override it for individual swaps. Null when the manager does not emit base
+  fee updates, as for Uniswap V4.
+  """
+  baseRate: Int
+}
+
+type TerminalUniswapV3Pool implements TerminalPool {
+  key: TerminalPoolKey!
+  chainId: TerminalChainId!
+  deployment: String!
+  dex: String
+  token0: EvmAddress!
+  token1: EvmAddress!
+  quoteToken: EvmAddress!
+  usdAnchorToken: EvmAddress
+  fee: TerminalStaticFee!
+  createdBlock: BigInt!
+  address: EvmAddress!
   tickSpacing: Int!
+}
+
+type TerminalPancakeSwapInfinityPool implements TerminalPool {
+  key: TerminalPoolKey!
+  chainId: TerminalChainId!
+  deployment: String!
+  dex: String
+  token0: EvmAddress!
+  token1: EvmAddress!
+  quoteToken: EvmAddress!
+  usdAnchorToken: EvmAddress
+  fee: TerminalPoolFee!
+  createdBlock: BigInt!
+  manager: EvmAddress!
+  protocolPoolId: Bytes!
+  tickSpacing: Int!
+  hooks: EvmAddress!
+  parameters: Bytes!
+}
+
+type TerminalUniswapV4Pool implements TerminalPool {
+  key: TerminalPoolKey!
+  chainId: TerminalChainId!
+  deployment: String!
+  dex: String
+  token0: EvmAddress!
+  token1: EvmAddress!
+  quoteToken: EvmAddress!
+  usdAnchorToken: EvmAddress
+  fee: TerminalPoolFee!
+  createdBlock: BigInt!
+  manager: EvmAddress!
+  protocolPoolId: Bytes!
+  tickSpacing: Int!
+  hooks: EvmAddress!
 }
 
 type TerminalTrade {
@@ -1840,7 +2040,15 @@ type TerminalTrade {
   logIndex: Int!
   blockNumber: BigInt!
   timestamp: Int!
+
+  """
+  Signed token0 pool balance change in raw units: positive in, negative out.
+  """
   amount0: BigInt!
+
+  """
+  Signed token1 pool balance change in raw units: positive in, negative out.
+  """
   amount1: BigInt!
 
   """Token1 per token0, independent of the managed quote and USD anchor."""
@@ -1851,20 +2059,101 @@ type TerminalTrade {
   price0Usd: Float
   price1Usd: Float
   amountUsd: Float
-  protocolSender: EvmAddress
-  recipient: EvmAddress
+  protocolSender: EvmAddress!
   transactionSender: EvmAddress
-  attributedTrader: EvmAddress
-  attributionSource: String
 }
 
-type TerminalTradeConnection {
-  nodes: [TerminalTrade!]!
-  totalCount: Int!
-  hasNextPage: Boolean!
+enum TerminalLiquidityDirection {
+  ADD
+  REMOVE
+}
+
+input TerminalLiquidityChangesInput {
+  pool: TerminalPoolKey!
+  direction: TerminalLiquidityDirection
+  from: Int
+  to: Int
+  first: Int = 50
+  after: String
+}
+
+type TerminalLiquidityChangeConnection {
+  nodes: [TerminalLiquidityChange!]!
   endCursor: String
-  marketRevision: BigInt!
-  streamCursor: BigInt!
+  hasMore: Boolean!
+}
+
+"""
+A mint, burn or ModifyLiquidity, by the principal it moved: every open
+position's amounts at the pool's price before it, excluding fees.
+"""
+type TerminalLiquidityChange {
+  transactionHash: Bytes!
+  logIndex: Int!
+  blockNumber: BigInt!
+  timestamp: Int!
+  direction: TerminalLiquidityDirection!
+
+  """Signed token0 principal moved in raw units: positive in, negative out."""
+  amount0: BigInt!
+
+  """Signed token1 principal moved in raw units."""
+  amount1: BigInt!
+
+  """
+  Both amounts in USD at the pool's prices strictly before the change, as
+  metrics price the pool; null when a moved side has no price.
+  """
+  amountUsd: Float
+
+  """The transaction's sender; null where it was not observed."""
+  transactionSender: EvmAddress
+}
+
+"""
+A newest-first page of a pool's history over the half-open window
+[from, to) of item time, a bucket's being its start. from defaults to 0 and
+to to now, captured at the first page and kept by its cursors; without to,
+trades, candles and EVENT series instead run through the first page's
+snapshot, as their streamCursor does. first
+defaults to 50, at most 2,000. Pass endCursor as after, with the same
+arguments, for strictly older items; a cursor from another query is
+rejected.
+"""
+interface TerminalPage {
+  """Resumes after the page's oldest item; null for an empty page."""
+  endCursor: String
+
+  """Whether older items in the window follow."""
+  hasMore: Boolean!
+
+  """
+  Opaque resume token for this source's SSE stream, captured with the first
+  page and repeated by every page of its walk, so an older page never
+  advances a live view past changes the client has not seen.
+  """
+  streamCursor: String!
+}
+
+input TerminalTradesInput {
+  pool: TerminalPoolKey!
+  from: Int
+  to: Int
+  first: Int = 50
+  after: String
+}
+
+type TerminalTradeConnection implements TerminalPage {
+  nodes: [TerminalTrade!]!
+  endCursor: String
+  hasMore: Boolean!
+
+  """
+  Exact count of all of the pool's trades, whatever the window, from the same
+  snapshot as the page.
+  """
+  totalCount: Int!
+  streamCursor: String!
 }
 
 enum TerminalDenomination {
@@ -1888,22 +2177,18 @@ input TerminalCandlesInput {
   pool: TerminalPoolKey!
   denomination: TerminalDenomination = USD
   interval: TerminalCandleInterval!
-  from: Int!
-  to: Int!
-  countBack: Int
-  fresh: Boolean = false
+  from: Int
+  to: Int
+  first: Int = 50
+  after: String
 }
 
-type TerminalCandleConnection {
+type TerminalCandleConnection implements TerminalPage {
   context: TerminalPriceContext!
   nodes: [TerminalCandle!]!
-  hasMoreBefore: Boolean!
-  marketRevision: BigInt!
-  repairGeneration: BigInt!
-  streamCursor: BigInt!
-
-  """Resume token for candle SSE, independent of the general event cursor."""
-  candleCursor: String!
+  endCursor: String
+  hasMore: Boolean!
+  streamCursor: String!
 }
 
 type TerminalCandle {
@@ -1925,6 +2210,120 @@ type TerminalCandle {
   tradeCount: Int!
 }
 
+"""
+Series units: QUOTE resolves to TOKEN0 or TOKEN1 like candles. TOKEN0 values
+the pool in token0 and TOKEN1 in token1. USD is no denomination: bucket
+points carry separate USD fields whatever the denomination.
+"""
+enum TerminalSeriesDenomination {
+  QUOTE
+  TOKEN0
+  TOKEN1
+}
+
+"""
+Bucket starts follow the UTC calendar: weeks start on Monday 00:00 and months
+on their first day. EVENT has no buckets: it is the finest interval, one
+point per event, paged like trades.
+"""
+enum TerminalSeriesInterval {
+  EVENT
+  ONE_HOUR
+  ONE_DAY
+  ONE_WEEK
+  ONE_MONTH
+}
+
+input TerminalPoolSeriesInput {
+  pool: TerminalPoolKey!
+  denomination: TerminalSeriesDenomination = QUOTE
+  interval: TerminalSeriesInterval!
+  from: Int
+  to: Int
+  first: Int = 50
+  after: String
+}
+
+type TerminalSeriesConnection implements TerminalPage {
+  context: TerminalPriceContext!
+  nodes: [TerminalSeriesPoint!]!
+  endCursor: String
+  hasMore: Boolean!
+  streamCursor: String!
+}
+
+type TerminalSeriesPoint {
+  """The bucket's start, or the event's block timestamp."""
+  timestamp: Int!
+
+  """
+  Open positions' token0 at the close, in raw units. Swaps round in the
+  pool's favor, so it can exceed the positions' exact amount by dust.
+  """
+  amount0: BigInt!
+
+  """Open positions' token1 at the close, in raw units."""
+  amount1: BigInt!
+
+  """
+  Both amounts in the denomination's token at the pool's last raw price by
+  the close, a decimal string rounded half up to that token's decimals;
+  null while the pool has no price. A pool holds no principal before its
+  initialization, so points before it are zero.
+  """
+  value: String
+
+  """
+  Token0's amount in USD at the close: the pool's price at the close and its
+  USD anchor's price just before it, as metrics value TVL. Null for EVENT
+  points and stream updates, without a price or USD anchor, or with
+  incomplete history.
+  """
+  value0Usd: Float
+
+  """Token1's amount in USD at the close, like value0Usd."""
+  value1Usd: Float
+
+  """value0Usd + value1Usd, when both are known."""
+  valueUsd: Float
+
+  """Sum of absolute raw token0 trade amounts."""
+  volume0: BigInt!
+
+  """Sum of absolute raw token1 trade amounts."""
+  volume1: BigInt!
+
+  """
+  USD value of the bucket's trades, each at its stored price; trades without
+  one count nothing. Null for EVENT points and stream updates.
+  """
+  volumeUsd: Float
+
+  """LP fees the bucket's trades paid in USD, like volumeUsd."""
+  feesUsd: Float
+  tradeCount: Int!
+
+  """
+  The event's identity, null for buckets: its transaction, block and log.
+  (blockNumber, logIndex) keys EVENT points, including stream upserts.
+  """
+  transactionHash: Bytes
+  blockNumber: BigInt
+  logIndex: Int
+
+  """Whether the event is a trade or a liquidity change; null for buckets."""
+  kind: TerminalSeriesEventKind
+}
+
+"""
+A series event: a trade, or a liquidity change (a mint, burn or
+ModifyLiquidity, by the principal it moved).
+"""
+enum TerminalSeriesEventKind {
+  TRADE
+  LIQUIDITY
+}
+
 type TerminalWindow {
   interval: TerminalMarketInterval!
   volumeUsd: Float!
@@ -1941,23 +2340,36 @@ type TerminalMarket {
   price1Quote: Float
   price0Usd: Float
   price1Usd: Float
+
+  """
+  Principal of every open position, in range or not, valued in USD:
+  `value0Usd + value1Usd`.
+  """
   tvlUsd: Float
 
   """
-  TVL using Launchpad's quote-side cap: quote value plus at most twice that
-  value from the other token.
+  Token0's principal valued in USD; consumers apply their own trust caps.
   """
-  limitedTvlUsd: Float
+  value0Usd: Float
+
+  """
+  Token1's principal valued in USD; consumers apply their own trust caps.
+  """
+  value1Usd: Float
   fdv0Usd: Float
   fdv1Usd: Float
   marketCap0Usd: Float
   marketCap1Usd: Float
   asOf: Int!
   isStale: Boolean!
+
+  """
+  Whether verification and projection cover the market state block. False can
+  mean the state is newer than chain finality, not that ingestion is behind.
+  """
   canonicalComplete: Boolean!
   pricingComplete: Boolean!
   verifiedThrough: BigInt
-  projectionThrough: BigInt
   marketRevision: BigInt!
   streamCursor: BigInt!
 }
@@ -1972,19 +2384,12 @@ type TerminalSupply {
 
 type TerminalCoverage {
   key: ID!
-  kind: TerminalCoverageKind!
+  family: String!
   fromBlock: BigInt!
   verifiedBlock: BigInt
   verifiedHash: Bytes
-  projectionBlock: BigInt
   failures: Int!
   error: String
-}
-
-enum TerminalCoverageKind {
-  FACTORY
-  POOL
-  TOKEN
 }
 
 enum TerminalMarketInterval {
@@ -2015,11 +2420,39 @@ type TerminalMetrics {
   marketCapitalizationUsd: Float
   fullyDilutedValuationUsd: Float
   currentTvlUsd: Float
+
+  """
+  Known USD volume of observed trades per window, including unfinalized trades.
+  Zero for no trades; null when trades exist but none are priced. Partial sums
+  remain available; inspect volumeCoverage for missing USD valuations.
+  """
   volumeUsd: TerminalNullableWindowValues!
+
+  """
+  Pricing counts for the same observed trades as volumeUsd, not verification coverage.
+  """
+  volumeCoverage: TerminalVolumeCoverage!
   tvlChangePercent: TerminalNullableWindowValues!
   asOf: String!
   source: String!
+
+  """
+  Whether the market snapshot is missing or older than two minutes.
+  Independent of finality, verification progress and USD pricing coverage.
+  """
   isStale: Boolean!
+}
+
+type TerminalVolumeCoverage {
+  h1: TerminalPricingCoverage!
+  h6: TerminalPricingCoverage!
+  h12: TerminalPricingCoverage!
+  h24: TerminalPricingCoverage!
+}
+
+type TerminalPricingCoverage {
+  pricedCount: Int!
+  unpricedCount: Int!
 }
 
 type TerminalNullableWindowValues {
@@ -2258,6 +2691,9 @@ scalar SushiSwapV2ChainId
 
 """A field whose value is a sushi swap v3 chain ID"""
 scalar SushiSwapV3ChainId
+
+"""A field whose value is a sushi swap v4 chain ID"""
+scalar SushiSwapV4ChainId
 
 """A field whose value is a pool chain ID"""
 scalar PoolChainId

@@ -24,6 +24,10 @@ import { steerPeripheryAbi } from 'src/lib/steer/abi/steer-periphery'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
 import { useSteerAccountPosition } from 'src/lib/steer/hooks/use-steer-account-position'
 import {
+  getSteerDepositErrorMessage,
+  steerDepositErrorsAbi,
+} from 'src/lib/steer/utils/get-steer-deposit-error'
+import {
   DialogConfirm,
   DialogProvider,
   DialogReview,
@@ -161,7 +165,7 @@ export const SteerPositionAddReviewModal: FC<
 
     return {
       address: STEER_PERIPHERY_ADDRESS[vault.chainId],
-      abi: steerPeripheryAbi,
+      abi: [...steerPeripheryAbi, ...steerDepositErrorsAbi],
       chainId: vault.chainId,
       functionName: 'deposit',
       args: [
@@ -184,7 +188,11 @@ export const SteerPositionAddReviewModal: FC<
     vault.address,
   ])
 
-  const { data: simulation, isError } = useSimulateContract({
+  const {
+    data: simulation,
+    isError,
+    error: simulationError,
+  } = useSimulateContract({
     ...prepare,
     query: {
       enabled: Boolean(approved && vault.chainId === chain?.id),
@@ -292,13 +300,15 @@ export const SteerPositionAddReviewModal: FC<
                 <Button
                   size="xl"
                   fullWidth
-                  loading={!write || isWritePending}
+                  loading={(!write && !isError) || isWritePending}
+                  disabled={!write}
                   onClick={() => write?.(confirm)}
                   testId="confirm-add-liquidity"
                   type="button"
                 >
                   {isError ? (
-                    'Shoot! Something went wrong :('
+                    (getSteerDepositErrorMessage(simulationError) ??
+                    'Shoot! Something went wrong :(')
                   ) : isWritePending ? (
                     <Dots>Confirm Add</Dots>
                   ) : (

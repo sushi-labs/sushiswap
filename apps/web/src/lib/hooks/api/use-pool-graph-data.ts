@@ -1,9 +1,12 @@
 'use client'
 
 import {
+  type SushiSwapV4ChainId,
   getBladePoolBuckets,
   getV2PoolBuckets,
   getV3PoolBuckets,
+  getV4PoolBuckets,
+  isSushiSwapV4ChainId,
 } from '@sushiswap/graph-client/data-api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ms from 'ms'
@@ -17,18 +20,26 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
+import type { Hex } from 'viem'
+
+type PoolGraphChainId =
+  | SushiSwapV2ChainId
+  | SushiSwapV3ChainId
+  | SushiSwapV4ChainId
+  | BladeChainId
 
 interface UsePoolGraphDataParams {
-  poolAddress: EvmAddress
-  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId
+  /** The pool address, or the pool ID for V4 pools */
+  poolAddress: EvmAddress | Hex
+  chainId: PoolGraphChainId
   protocol: SushiSwapProtocol
   enabled?: boolean
 }
 
 const getPoolBuckets = async (
   protocol: SushiSwapProtocol,
-  chainId: SushiSwapV2ChainId | SushiSwapV3ChainId | BladeChainId,
-  poolAddress: EvmAddress,
+  chainId: PoolGraphChainId,
+  poolAddress: EvmAddress | Hex,
 ) => {
   if (
     protocol === SushiSwapProtocol.SUSHISWAP_V2 &&
@@ -47,6 +58,16 @@ const getPoolBuckets = async (
     return getV3PoolBuckets({
       chainId,
       address: poolAddress,
+    })
+  }
+
+  if (
+    protocol === SushiSwapProtocol.SUSHISWAP_V4 &&
+    isSushiSwapV4ChainId(chainId)
+  ) {
+    return getV4PoolBuckets({
+      chainId,
+      poolId: poolAddress,
     })
   }
 

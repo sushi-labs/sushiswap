@@ -1,3 +1,5 @@
 export * from './get-account-position'
 export * from './get-token-ratios'
 export * from './get-total-supply'
+export * from './get-steer-vault-href'
+export * from './get-steer-deposit-error'

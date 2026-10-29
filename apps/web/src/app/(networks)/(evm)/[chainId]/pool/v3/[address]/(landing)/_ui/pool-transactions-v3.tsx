@@ -6,45 +6,20 @@ import {
   getSushiV3Mints,
   getSushiV3Swaps,
 } from '@sushiswap/graph-client/data-api'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  DataTable,
-  Toggle,
-} from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
+import { type SushiSwapV3ChainId, isSushiSwapV3ChainId } from 'sushi/evm'
+import type { Address } from 'viem'
 import {
-  type SushiSwapV3ChainId,
-  getEvmChainById,
-  isSushiSwapV3ChainId,
-} from 'sushi/evm'
-import type { Address, Hex } from 'viem'
-import {
-  TX_AMOUNT_IN_V3_COLUMN,
-  TX_AMOUNT_OUT_V3_COLUMN,
-  TX_AMOUNT_USD_V3_COLUMN,
-  TX_ORIGIN_V3_COLUMN,
-  TX_TIME_V3_COLUMN,
-} from './columns'
-
-export enum TransactionTypeV3 {
-  Mint = 'Mint',
-  Burn = 'Burn',
-  Swap = 'Swap',
-  Collect = 'Collect',
-}
+  PoolTransactionType,
+  PoolTransactionsCard,
+} from '~evm/[chainId]/pool/_ui/pool-transactions'
 
 interface UseTransactionsV3Opts {
-  type?: TransactionTypeV3 | 'All'
+  type?: PoolTransactionType | 'All'
   refetchInterval?: number
-  first: number
-  skip?: number
 }
 
 const fetchMints = async (address: Address, chainId: SushiSwapV3ChainId) => {
@@ -122,16 +97,16 @@ function useTransactionsV3(
       let transactions = []
 
       switch (opts.type) {
-        case TransactionTypeV3.Mint:
+        case PoolTransactionType.Mint:
           transactions = await fetchMints(poolAddress, pool.chainId)
           break
-        case TransactionTypeV3.Burn:
+        case PoolTransactionType.Burn:
           transactions = await fetchBurns(poolAddress, pool.chainId)
           break
-        case TransactionTypeV3.Swap:
+        case PoolTransactionType.Swap:
           transactions = await fetchSwaps(poolAddress, pool.chainId)
           break
-        case TransactionTypeV3.Collect:
+        case PoolTransactionType.Collect:
           transactions = await fetchCollects(poolAddress, pool.chainId)
           break
         default:
@@ -148,7 +123,7 @@ function useTransactionsV3(
           owner: String(mint.owner),
           sender: String(mint.sender),
           origin: String(mint.origin),
-          type: TransactionTypeV3.Mint as const,
+          type: PoolTransactionType.Mint as const,
         }))
 
         const burns = (
@@ -157,7 +132,7 @@ function useTransactionsV3(
           ...burn,
           owner: String(burn.owner),
           origin: String(burn.origin),
-          type: TransactionTypeV3.Burn as const,
+          type: PoolTransactionType.Burn as const,
         }))
 
         const swaps = (
@@ -167,7 +142,7 @@ function useTransactionsV3(
           sender: String(swap.sender),
           recipient: String(swap.recipient),
           origin: String(swap.origin),
-          type: TransactionTypeV3.Swap as const,
+          type: PoolTransactionType.Swap as const,
         }))
 
         const collects = (
@@ -177,7 +152,7 @@ function useTransactionsV3(
         ).map((collect) => ({
           ...collect,
           origin: String(collect.owner),
-          type: TransactionTypeV3.Collect as const,
+          type: PoolTransactionType.Collect as const,
         }))
 
         return [...mints, ...burns, ...swaps, ...collects]
@@ -212,95 +187,24 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   pool,
   poolAddress,
 }) => {
-  const [type, setType] = useState<
-    Parameters<typeof useTransactionsV3>['2']['type']
-  >(TransactionTypeV3.Swap)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
-
-  const COLUMNS = useMemo(() => {
-    return [
-      TX_ORIGIN_V3_COLUMN,
-      TX_AMOUNT_IN_V3_COLUMN(type),
-      TX_AMOUNT_OUT_V3_COLUMN(type),
-      TX_AMOUNT_USD_V3_COLUMN,
-      TX_TIME_V3_COLUMN,
-    ]
-  }, [type])
+  const [type, setType] = useState<PoolTransactionType>(
+    PoolTransactionType.Swap,
+  )
 
   const opts = useMemo(
-    () =>
-      ({
-        refetchInterval: 60_000,
-        first:
-          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
-        type,
-      }) as const,
-    [paginationState.pageIndex, paginationState.pageSize, type],
+    () => ({ refetchInterval: 60_000, type }) as const,
+    [type],
   )
 
   const { data, isLoading } = useTransactionsV3(pool, poolAddress, opts)
 
-  const _data = useMemo(() => {
-    return data ?? []
-  }, [data])
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
-            Transactions
-            <div className="flex items-center gap-1">
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Swap}
-                onClick={() => setType(TransactionTypeV3.Swap)}
-              >
-                Swaps
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Mint}
-                onClick={() => setType(TransactionTypeV3.Mint)}
-              >
-                Add
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Burn}
-                onClick={() => setType(TransactionTypeV3.Burn)}
-              >
-                Remove
-              </Toggle>
-            </div>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="!px-0">
-        <DataTable
-          linkFormatter={(row) =>
-            getEvmChainById(row.pool.chainId).getTransactionUrl(
-              row.transaction.id as Hex,
-            ) ?? ''
-          }
-          loading={isLoading}
-          columns={COLUMNS}
-          data={_data}
-          pagination={true}
-          externalLink={true}
-          onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
-        />
-      </CardContent>
-    </Card>
+    <PoolTransactionsCard
+      type={type}
+      onTypeChange={setType}
+      data={data}
+      isLoading={isLoading}
+    />
   )
 }
 

@@ -13,47 +13,36 @@ import { useTheme } from 'next-themes'
 import { type FC, useCallback, useMemo } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { alignDayBuckets } from './align-day-buckets'
 
 interface TVLChart {
   data: AnalyticsDayBuckets
   chainId: EvmChainId
   showBlade: boolean
+  showV4: boolean
 }
 
 echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
-export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
+export const TVLChart: FC<TVLChart> = ({
+  data,
+  chainId,
+  showBlade,
+  showV4,
+}) => {
   const isMounted = useIsMounted()
 
   const { resolvedTheme } = useTheme()
 
-  const [v2, v3, blade, combinedTVL, currentDate] = useMemo(() => {
-    const xData = (
-      data.v2.length || data.v3.length
-        ? data.v2.length > data.v3.length
-          ? data.v2
-          : data.v3
-        : data.blade
-    ).map((data) => data.date * 1000)
+  const [v2, v3, v4, blade, combinedTVL, currentDate] = useMemo(() => {
+    const { v2, v3, v4, blade } = alignDayBuckets(data, 'liquidityUSD')
+    const combinedTVL = Object.values(data).reduce(
+      (sum, buckets) => sum + (buckets[0]?.liquidityUSD ?? 0),
+      0,
+    )
+    const currentDate = v2[v2.length - 1]?.[0]
 
-    const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.liquidityUSD ?? 0])
-      .reverse()
-    const blade = xData
-      .map((xData, i) => [xData, data.blade[i]?.liquidityUSD ?? 0])
-      .reverse()
-
-    const v2TVL = v2[v2.length - 1]?.[1] ?? 0
-    const v3TVL = v3[v3.length - 1]?.[1] ?? 0
-    const bladeTVL = blade[blade.length - 1]?.[1] ?? 0
-    const combinedTVL = v2TVL + v3TVL + bladeTVL
-
-    const currentDate = xData[0]
-
-    return [v2, v3, blade, combinedTVL, currentDate]
+    return [v2, v3, v4, blade, combinedTVL, currentDate]
   }, [data])
 
   const zIndex = useMemo(() => {
@@ -67,55 +56,65 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     }
   }, [v2, v3])
 
-  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
-    if (!params[0].data || !params[1].data) return ''
+  const onMouseOver = useCallback(
+    (params: { data?: number[]; seriesName?: string }[]) => {
+      if (!params[0]?.data || !params[1]?.data) return ''
 
-    const tvlNode = document.getElementById('hoveredTVL')
-    const v2TVLNode = document.getElementById('hoveredV2TVL')
-    const v3TVLNode = document.getElementById('hoveredV3TVL')
-    const bladeTVLNode = document.getElementById('hoveredBladeTVL')
-    const dateNode = document.getElementById('hoveredTVLDate')
+      const v4Data = params.find((param) => param.seriesName === 'v4')?.data
+      const bladeData = params.find(
+        (param) => param.seriesName === 'blade',
+      )?.data
 
-    if (tvlNode)
-      tvlNode.innerHTML = formatUSD(
-        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0),
-      )
-    if (dateNode)
-      dateNode.innerHTML = format(
-        new Date(params[0].data[0]),
-        "dd MMM yyyy'<br>'hh:mm aa",
-      )
-    if (v2TVLNode)
-      v2TVLNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
-    if (v3TVLNode)
-      v3TVLNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
-    if (bladeTVLNode)
-      bladeTVLNode.innerHTML = params[2]?.data?.[1]
-        ? formatUSD(params[2].data[1])
-        : ''
+      const tvlNode = document.getElementById('hoveredTVL')
+      const v2TVLNode = document.getElementById('hoveredV2TVL')
+      const v3TVLNode = document.getElementById('hoveredV3TVL')
+      const v4TVLNode = document.getElementById('hoveredV4TVL')
+      const bladeTVLNode = document.getElementById('hoveredBladeTVL')
+      const dateNode = document.getElementById('hoveredTVLDate')
 
-    return ''
-  }, [])
+      if (tvlNode)
+        tvlNode.innerHTML = formatUSD(
+          params.reduce((sum, param) => sum + (param.data?.[1] ?? 0), 0),
+        )
+      if (dateNode)
+        dateNode.innerHTML = format(
+          new Date(params[0].data[0]),
+          "dd MMM yyyy'<br>'hh:mm aa",
+        )
+      if (v2TVLNode)
+        v2TVLNode.innerHTML = params[0].data[1]
+          ? formatUSD(params[0].data[1])
+          : ''
+      if (v3TVLNode)
+        v3TVLNode.innerHTML = params[1].data[1]
+          ? formatUSD(params[1].data[1])
+          : ''
+      if (v4TVLNode)
+        v4TVLNode.innerHTML = v4Data?.[1] ? formatUSD(v4Data[1]) : ''
+      if (bladeTVLNode)
+        bladeTVLNode.innerHTML = bladeData?.[1] ? formatUSD(bladeData[1]) : ''
+
+      return ''
+    },
+    [],
+  )
 
   const onMouseLeave = useCallback(() => {
     const tvlNode = document.getElementById('hoveredTVL')
     const v2TVLNode = document.getElementById('hoveredV2TVL')
     const v3TVLNode = document.getElementById('hoveredV3TVL')
+    const v4TVLNode = document.getElementById('hoveredV4TVL')
     const bladeTVLNode = document.getElementById('hoveredBladeTVL')
     const dateNode = document.getElementById('hoveredTVLDate')
 
     if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
     if (dateNode)
-      dateNode.innerHTML = format(
-        new Date(currentDate),
-        "dd MMM yyyy'<br>'hh:mm aa",
-      )
+      dateNode.innerHTML = currentDate
+        ? format(new Date(currentDate), "dd MMM yyyy'<br>'hh:mm aa")
+        : ''
     if (v2TVLNode) v2TVLNode.innerHTML = ''
     if (v3TVLNode) v3TVLNode.innerHTML = ''
+    if (v4TVLNode) v4TVLNode.innerHTML = ''
     if (bladeTVLNode) bladeTVLNode.innerHTML = ''
   }, [combinedTVL, currentDate])
 
@@ -133,7 +132,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
         formatter: (params) =>
           onMouseOver(Array.isArray(params) ? params : [params]),
       },
-      color: ['#3B7EF6', '#A755DD', '#F23BF6'],
+      color: ['#3B7EF6', '#A755DD', ...(showV4 ? ['#22C55E'] : []), '#F23BF6'],
       grid: {
         top: 0,
         left: 0,
@@ -219,6 +218,26 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
           data: v3,
           z: zIndex.v3,
         },
+        ...(showV4
+          ? [
+              {
+                name: 'v4',
+                type: 'line',
+                stack: 'v4',
+                smooth: true,
+                lineStyle: {
+                  width: 0,
+                },
+                showSymbol: false,
+                areaStyle: {
+                  color: '#22C55E',
+                  opacity: 1,
+                },
+                data: v4,
+                z: 4,
+              },
+            ]
+          : []),
         ...(showBlade
           ? [
               {
@@ -241,7 +260,7 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
           : []),
       ],
     }),
-    [onMouseOver, v2, v3, blade, zIndex, resolvedTheme, showBlade],
+    [onMouseOver, v2, v3, v4, blade, zIndex, resolvedTheme, showBlade, showV4],
   )
 
   return (
@@ -281,6 +300,15 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
                 <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
               </span>
             </div>
+            {showV4 && (
+              <div className="flex justify-between items-center gap-2 text-sm">
+                <span id="hoveredV4TVL" />
+                <span className="flex gap-1 items-center">
+                  <span className="font-medium">v4</span>
+                  <span className="bg-[#22C55E] rounded-[4px] w-3 h-3" />
+                </span>
+              </div>
+            )}
             {showBlade && (
               <div className="flex justify-between items-center gap-2 text-sm">
                 <span id="hoveredBladeTVL" />

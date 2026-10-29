@@ -12,6 +12,11 @@ export const ProtocolBadge: Record<SushiSwapProtocol, JSX.Element> = {
       V3
     </div>
   ),
+  [SushiSwapProtocol.SUSHISWAP_V4]: (
+    <div className="whitespace-nowrap bg-purple-500/20 text-purple-500 text-[10px] px-2 rounded-full">
+      V4
+    </div>
+  ),
   [SushiSwapProtocol.BLADE]: (
     <div className="whitespace-nowrap bg-blue/20 text-blue text-[10px] px-2 rounded-full">
       BLADE

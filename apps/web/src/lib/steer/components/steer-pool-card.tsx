@@ -15,26 +15,19 @@ import {
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
-import {
-  type PoolWithFeeAprs,
-  type PoolWithIncentives,
-  getEvmChainById,
-} from 'sushi/evm'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
+import { getSteerVaultHref } from '../utils/get-steer-vault-href'
 import { SteerLiquidityDistributionWidget } from './steer-liquidity-distribution-widget/steer-liquidity-distribution-widget'
+import type { SteerVaultPool } from './steer-strategies'
 
 interface SteerPoolCardProps {
-  pool: PoolWithIncentives<PoolWithFeeAprs>
+  pool: SteerVaultPool
   vault: VaultV1
 }
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
-    <LinkInternal
-      href={`/${getEvmChainById(vault.chainId).key}/pool/v3/${vault.poolAddress}/smart/${
-        vault.address
-      }`}
-    >
+    <LinkInternal href={getSteerVaultHref(vault)}>
       <Card
         className={classNames(
           'max-w-[400px] hover:border-blue-300 hover:shadow-md',

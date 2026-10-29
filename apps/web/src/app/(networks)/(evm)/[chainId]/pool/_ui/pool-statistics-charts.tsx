@@ -1,21 +1,8 @@
-import type { V3Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
-import React, { type FC, useMemo, useState } from 'react'
-import {
-  type EvmAddress,
-  SushiSwapProtocol,
-  type SushiSwapV3ChainId,
-} from 'sushi/evm'
-import { PoolChartGraph } from '~evm/[chainId]/pool/_ui/pool-chart-graph'
-import {
-  PoolChartPeriod,
-  PoolChartPeriods,
-} from '~evm/[chainId]/pool/_ui/pool-chart-periods'
-import {
-  PoolChartType,
-  PoolChartTypes,
-} from '~evm/[chainId]/pool/_ui/pool-chart-types'
-import { LiquidityDepthWidget } from './liquidity-depth-widget'
+import React, { type FC, type ReactNode, useMemo, useState } from 'react'
+import { PoolChartGraph } from './pool-chart-graph'
+import { PoolChartPeriod, PoolChartPeriods } from './pool-chart-periods'
+import { PoolChartType, PoolChartTypes } from './pool-chart-types'
 
 const statisticsChart = [
   PoolChartType.Volume,
@@ -24,13 +11,18 @@ const statisticsChart = [
   PoolChartType.Depth,
 ]
 
-interface Charts {
-  address: EvmAddress
-  chainId: SushiSwapV3ChainId
-  pool: V3Pool
+interface PoolStatisticsChartsProps {
+  pool: Parameters<typeof PoolChartGraph>[0]['pool']
+  protocol: Parameters<typeof PoolChartGraph>[0]['protocol']
+  /** Rendered when the depth chart is selected */
+  depthChart: ReactNode
 }
 
-export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
+export const PoolStatisticsCharts: FC<PoolStatisticsChartsProps> = ({
+  pool,
+  protocol,
+  depthChart,
+}) => {
   const [chart, setChart] = useState<PoolChartType>(statisticsChart[0])
   const [period, setPeriod] = useState<PoolChartPeriod>(PoolChartPeriod.Month)
 
@@ -61,13 +53,13 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
         />
       </div>
       {chart === PoolChartType.Depth ? (
-        <LiquidityDepthWidget chainId={chainId} address={address} />
+        depthChart
       ) : (
         <PoolChartGraph
           chart={chart}
           period={period}
           pool={pool}
-          protocol={SushiSwapProtocol.SUSHISWAP_V3}
+          protocol={protocol}
           height={260}
         />
       )}

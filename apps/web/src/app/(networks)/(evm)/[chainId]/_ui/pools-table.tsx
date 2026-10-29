@@ -12,6 +12,7 @@ import { Slot } from '@radix-ui/react-slot'
 import type {
   GetPools,
   PoolChainId,
+  PoolProtocol,
   Pools,
 } from '@sushiswap/graph-client/data-api'
 import {
@@ -62,6 +63,12 @@ import {
   VOLUME_1W_COLUMN,
 } from './columns'
 
+const POOL_PATH_SEGMENTS: Record<PoolProtocol, string> = {
+  [SushiSwapProtocol.SUSHISWAP_V2]: 'v2',
+  [SushiSwapProtocol.SUSHISWAP_V3]: 'v3',
+  [SushiSwapProtocol.SUSHISWAP_V4]: 'v4',
+}
+
 const COLUMNS = [
   EXPLORE_NAME_COLUMN_POOL,
   TVL_COLUMN,
@@ -71,8 +78,13 @@ const COLUMNS = [
   APR_WITH_REWARDS_COLUMN,
   {
     id: 'actions',
-    cell: ({ row }) =>
-      row.original.protocol === 'SUSHISWAP_V3' ? (
+    cell: ({ row }) => {
+      // V4 liquidity management is not supported yet
+      if (row.original.protocol === SushiSwapProtocol.SUSHISWAP_V4) {
+        return null
+      }
+
+      return row.original.protocol === 'SUSHISWAP_V3' ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
@@ -249,7 +261,8 @@ const COLUMNS = [
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      ),
+      )
+    },
     size: 80,
     meta: {
       disableLink: true,
@@ -372,7 +385,7 @@ export const PoolsTable: FC<PoolsTableProps> = ({
           loading={isLoading}
           linkFormatter={(row) =>
             `/${getEvmChainById(row.chainId).key}/pool/${
-              row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
+              POOL_PATH_SEGMENTS[row.protocol]
             }/${row.address}`
           }
           rowRenderer={rowRenderer}

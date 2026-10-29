@@ -22,6 +22,12 @@ export const AnalyticsDayBucketsQuery = graphql(
       volumeUSD
       liquidityUSD
     }
+    v4 {
+      id
+      date
+      volumeUSD
+      liquidityUSD
+    }
     blade {
       id
       date
@@ -65,6 +71,9 @@ export async function getAnalyticsDayBuckets(
         v3: result.sushiDayBuckets.v3.filter(
           (bucket) => bucket.date >= sixMonthsAgoTimestamp,
         ),
+        v4: result.sushiDayBuckets.v4.filter(
+          (bucket) => bucket.date >= sixMonthsAgoTimestamp,
+        ),
         blade:
           result.sushiDayBuckets.blade?.filter(
             (bucket) => bucket.date >= sixMonthsAgoTimestamp,
@@ -77,6 +86,7 @@ export async function getAnalyticsDayBuckets(
   return {
     v2: [],
     v3: [],
+    v4: [],
     blade: [],
   }
 }

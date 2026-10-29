@@ -1,4 +1,7 @@
-import type { Pool } from '@sushiswap/graph-client/data-api'
+import {
+  type Pool,
+  hydratePoolCurrency,
+} from '@sushiswap/graph-client/data-api'
 import {
   Badge,
   Currency,
@@ -13,7 +16,6 @@ import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { ColumnDef } from '@tanstack/react-table'
 import React, { useMemo } from 'react'
 import { formatNumber, formatPercent, formatUSD } from 'sushi'
-import { EvmToken, type SushiSwapProtocol } from 'sushi/evm'
 import { APRWithRewardsHoverCard } from './apr-with-rewards-hover-card'
 import { KatanaStakingAPRHoverCard } from './katana-staking-apr-hover-card'
 import { ProtocolBadge } from './protocol-badge'
@@ -24,14 +26,14 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
   cell: (props) => {
     const [token0, token1] = useMemo(
       () => [
-        new EvmToken({
+        hydratePoolCurrency({
           name: '',
           symbol: '',
           chainId: props.row.original.chainId,
           address: props.row.original.token0Address,
           decimals: 0,
         }),
-        new EvmToken({
+        hydratePoolCurrency({
           name: '',
           symbol: '',
           chainId: props.row.original.chainId,
@@ -72,11 +74,7 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {
-                    ProtocolBadge[
-                      props.row.original.protocol as SushiSwapProtocol
-                    ]
-                  }
+                  {ProtocolBadge[props.row.original.protocol]}
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Protocol version</p>
@@ -87,7 +85,9 @@ export const EXPLORE_NAME_COLUMN_POOL: ColumnDef<Pool, unknown> = {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-slate-300 text-[10px] px-2 rounded-full">
-                    {formatNumber(props.row.original.swapFee * 100)}%
+                    {props.row.original.isDynamicFee
+                      ? 'Dynamic'
+                      : `${formatNumber(props.row.original.swapFee * 100)}%`}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
