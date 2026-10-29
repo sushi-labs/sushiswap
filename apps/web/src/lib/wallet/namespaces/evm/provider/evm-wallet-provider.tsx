@@ -44,6 +44,11 @@ import {
   useDisconnect,
 } from 'wagmi'
 import type { WalletNamespaceContext } from '../../types'
+import {
+  OATH_WALLET_ID,
+  connectOathWallet,
+  queueEvmWalletConnection,
+} from '../adapters/oath-wallet'
 import { EVM_WALLETS, EvmAdapterConfig, EvmAdapterId } from '../config'
 import { isEvmWallet } from '../types'
 import {
@@ -107,44 +112,51 @@ function _EvmWalletProvider({ children }: { children: React.ReactNode }) {
       if (!isEvmWallet(wallet)) {
         throw new Error(`Invalid namespace for ${wallet.name}`)
       }
-      const config = getWagmiConfig()
-      // Identity comes from the connector registry: a statically defined
-      // wallet entry has no `uid`, and a connection still being restored
-      // carries the previous page load's `uid`. Leaving either in place would
-      // strand it in Wagmi's connection map, where a later disconnect would
-      // promote it to the active connection.
-      const target = findEvmWalletConnector(config, wallet)
-      for (const connection of getEvmConnections(config)) {
-        if (connection.connector.uid !== target?.uid) {
-          await disconnectConnection(config, connection)
-        }
-      }
-
-      const connectedAccount = getConnectedEvmAccount(config, target)
-      if (connectedAccount) {
-        onSuccess?.(connectedAccount)
-      } else {
-        const privyLoginMethod =
-          wallet.adapterId === EvmAdapterId.Privy
-            ? wallet.loginMethod
-            : undefined
-        if (privyLoginMethod) await preparePrivyEvmReconnect(config)
-
-        try {
-          if (privyLoginMethod) {
-            await authenticatePrivyRuntime(privyLoginMethod, 'ethereum-only')
+      return queueEvmWalletConnection(async () => {
+        const config = getWagmiConfig()
+        // Identity comes from the connector registry: a statically defined
+        // wallet entry has no `uid`, and a connection still being restored
+        // carries the previous page load's `uid`. Leaving either in place would
+        // strand it in Wagmi's connection map, where a later disconnect would
+        // promote it to the active connection.
+        const target = findEvmWalletConnector(config, wallet)
+        for (const connection of getEvmConnections(config)) {
+          if (
+            wallet.id === OATH_WALLET_ID ||
+            connection.connector.uid !== target?.uid
+          ) {
+            await disconnectConnection(config, connection)
           }
-          const { accounts } = await wagmiConnect(config, {
-            connector: await EvmAdapterConfig[wallet.adapterId]({
-              uid: wallet.uid,
-            }),
-          })
-          onSuccess?.(accounts[0])
-        } catch (error) {
-          if (privyLoginMethod) await clearPrivyEvmReconnect(config)
-          throw error
         }
-      }
+
+        const connectedAccount = getConnectedEvmAccount(config, target)
+        if (connectedAccount) {
+          onSuccess?.(connectedAccount)
+        } else {
+          const privyLoginMethod =
+            wallet.adapterId === EvmAdapterId.Privy
+              ? wallet.loginMethod
+              : undefined
+          if (privyLoginMethod) await preparePrivyEvmReconnect(config)
+
+          try {
+            if (privyLoginMethod) {
+              await authenticatePrivyRuntime(privyLoginMethod, 'ethereum-only')
+            }
+            const connector = await EvmAdapterConfig[wallet.adapterId]({
+              uid: wallet.uid,
+            })
+            const { accounts } =
+              wallet.id === OATH_WALLET_ID
+                ? await connectOathWallet(config, connector)
+                : await wagmiConnect(config, { connector })
+            onSuccess?.(accounts[0])
+          } catch (error) {
+            if (privyLoginMethod) await clearPrivyEvmReconnect(config)
+            throw error
+          }
+        }
+      })
     },
     [],
   )
