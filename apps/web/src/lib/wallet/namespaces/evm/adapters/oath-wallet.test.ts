@@ -1,7 +1,10 @@
 import {
+  ApiController,
   ConnectionController,
   CoreHelperUtil,
+  EventsController,
   ModalController,
+  OptionsController,
   RouterController,
 } from '@reown/appkit-controllers'
 import { mock } from '@wagmi/connectors'
@@ -13,7 +16,7 @@ import {
   noopStorage,
 } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   OATH_WALLET,
   connectOathWallet,
@@ -47,6 +50,48 @@ describe('Oath WalletConnect presentation', () => {
     expect(RouterController.state.view).toBe('ConnectingWalletConnectBasic')
     ModalController.state.open = false
   })
+
+  it.each([false, true])(
+    'retains Oath when the real modal reopens (mobile=%s)',
+    async (mobile) => {
+      const manualControl = OptionsController.state.manualWCControl
+      const prefetch = vi.spyOn(ApiController, 'prefetch').mockResolvedValue([])
+      const platform = vi
+        .spyOn(CoreHelperUtil, 'isMobile')
+        .mockReturnValue(mobile)
+      const events = vi
+        .spyOn(EventsController, 'sendEvent')
+        .mockImplementation(() => undefined)
+      OptionsController.setManualWCControl(true)
+      const dispose = presentOathWallet(controllers)
+      try {
+        await ModalController.open()
+        await tick()
+        expect(RouterController.state.view).toBe('ConnectingWalletConnect')
+        expect(RouterController.state.data?.wallet?.id).toBe(OATH_WALLET.id)
+        await ModalController.open()
+        await tick()
+        expect(RouterController.state.view).toBe('ConnectingWalletConnect')
+        expect(RouterController.state.data?.wallet?.id).toBe(OATH_WALLET.id)
+
+        ModalController.close()
+        dispose()
+        await ModalController.open()
+        await tick()
+        expect(RouterController.state.view).toBe(
+          mobile ? 'AllWallets' : 'ConnectingWalletConnectBasic',
+        )
+        expect(RouterController.state.data).toBeUndefined()
+      } finally {
+        ModalController.close()
+        dispose()
+        OptionsController.setManualWCControl(manualControl)
+        prefetch.mockRestore()
+        platform.mockRestore()
+        events.mockRestore()
+      }
+    },
+  )
 
   it('preserves the full pairing URI in the native iOS link', () => {
     const pairing = `wc:${'a'.repeat(64)}@2?relay-protocol=irn&symKey=${'b'.repeat(64)}&expiryTimestamp=2000000000`
