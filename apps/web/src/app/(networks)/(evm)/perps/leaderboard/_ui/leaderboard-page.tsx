@@ -20,7 +20,7 @@ export function LeaderboardPage() {
         </div>
         <SeasonCountdown />
       </div>
-      <div className="flex items-start gap-2 justify-between mt-2">
+      <div className="flex flex-wrap items-start gap-2 justify-between mt-2">
         <LeaderboardSortBy />
         <div className="flex flex-col gap-2">
           <LeaderboardSeasonOptions />

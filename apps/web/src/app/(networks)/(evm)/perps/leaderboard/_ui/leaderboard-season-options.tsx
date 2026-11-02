@@ -1,14 +1,8 @@
 'use client'
 import { Button, classNames } from '@sushiswap/ui'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import { PERPS_POINTS_SEASONS, getSeasonText } from '../season-constants'
 import { useLeaderboardState } from './leaderboard-provider'
-
-const options = ['SEASON_1', 'SEASON_2'] as const
-
-const seasonToLabel = {
-  SEASON_1: 'Season 1',
-  SEASON_2: 'Season 2',
-}
 
 export const LeaderboardSeasonOptions = () => {
   const {
@@ -21,20 +15,21 @@ export const LeaderboardSeasonOptions = () => {
       className="flex items-center gap-1 hide-scrollbar overflow-x-auto p-0.5"
       rounded="full"
     >
-      {options.map((v) => (
+      {PERPS_POINTS_SEASONS.map((season) => (
         <Button
-          key={v}
+          key={season}
           size="xs"
-          variant={v === seasonToView ? 'perps-secondary' : 'ghost'}
-          onClick={() => setSeasonToView(v)}
+          variant={season === seasonToView ? 'perps-secondary' : 'ghost'}
+          aria-pressed={season === seasonToView}
+          onClick={() => setSeasonToView(season)}
           className={classNames(
             'w-full capitalize !text-xs !rounded-full  !border-0',
-            v === seasonToView
+            season === seasonToView
               ? 'text-white bg-accent'
               : 'text-muted-foreground',
           )}
         >
-          {seasonToLabel[v]}
+          {getSeasonText(season)}
         </Button>
       ))}
     </PerpsCard>

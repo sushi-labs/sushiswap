@@ -1,9 +1,13 @@
 import type { PerpsPointsSeason } from '@sushiswap/graph-client/data-api'
-import { SkeletonBox, SkeletonText } from '@sushiswap/ui'
+import { Button, SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { perpsNumberFormatter, useSushiPointsOverview } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import { PerpsCard, SideToggle } from '~evm/perps/_ui/_common'
+import { PerpsCard } from '~evm/perps/_ui/_common'
+import {
+  PERPS_POINTS_SEASONS,
+  getSeasonText,
+} from '~evm/perps/leaderboard/season-constants'
 
 export const Epochs = ({
   season,
@@ -31,19 +35,29 @@ export const Epochs = ({
   return (
     <PerpsCard className="p-3 gap-2 flex flex-col justify-between w-full h-full">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <PerpsCard className="p-1" rounded="full">
             <div className="bg-perps-muted/10 rounded-full px-2 py-0.5 text-xs">
               Epoch 1
             </div>
           </PerpsCard>
-          <SideToggle
-            side={season}
-            setSide={setSeason}
-            options={['SEASON_1', 'SEASON_2']}
-            baseSymbol={'Season 1'}
-            quoteSymbol={'Season 2'}
-          />
+          <PerpsCard className="flex items-center p-0.5" rounded="lg">
+            {PERPS_POINTS_SEASONS.map((option) => (
+              <Button
+                key={option}
+                size="xs"
+                variant={season === option ? 'perps-secondary' : 'ghost'}
+                aria-pressed={season === option}
+                onClick={() => setSeason(option)}
+                className={classNames(
+                  'text-xs !min-h-[18px] !h-[18px] !px-1 !rounded-md  border border-transparent',
+                  season === option ? 'text-perps-muted/40' : '',
+                )}
+              >
+                {getSeasonText(option)}
+              </Button>
+            ))}
+          </PerpsCard>
         </div>
         <div className="text-perps-muted-50 text-xs lg:text-sm">
           Total Epoch Points

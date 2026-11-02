@@ -9,6 +9,8 @@ import {
   PERPS_LEADERBOARD_SEASON_1_END_DATE,
   PERPS_LEADERBOARD_SEASON_2_END_DATE,
   PERPS_LEADERBOARD_SEASON_2_START_DATE,
+  PERPS_LEADERBOARD_SEASON_3_END_DATE,
+  PERPS_LEADERBOARD_SEASON_3_START_DATE,
 } from '../season-constants'
 
 interface Countdown {
@@ -62,8 +64,22 @@ function getCountdown(): Countdown {
     }
   }
 
+  if (nowTime < PERPS_LEADERBOARD_SEASON_3_START_DATE.getTime()) {
+    return {
+      label: 'Season 3 starts in',
+      timeLeft: getTimeLeft(PERPS_LEADERBOARD_SEASON_3_START_DATE, now),
+    }
+  }
+
+  if (nowTime < PERPS_LEADERBOARD_SEASON_3_END_DATE.getTime()) {
+    return {
+      label: 'Season 3 ends in',
+      timeLeft: getTimeLeft(PERPS_LEADERBOARD_SEASON_3_END_DATE, now),
+    }
+  }
+
   return {
-    label: 'Season 2 has ended',
+    label: 'Season 3 has ended',
     timeLeft: '00:00:00:00',
   }
 }

@@ -38,15 +38,13 @@ interface LeaderboardStateProviderProps {
   children: React.ReactNode
 }
 
-const currentSeason = getCurrentSeason()
-
 const LeaderboardStateProvider: FC<LeaderboardStateProviderProps> = ({
   children,
 }) => {
   const [sortBy, setSortBy] = useState<LeaderboardSortType>('points')
   const [timeframe, setTimeframe] = useState<LeaderboardTimeframeType>('season')
   const [seasonToView, setSeasonToView] =
-    useState<PerpsPointsSeason>(currentSeason)
+    useState<PerpsPointsSeason>(getCurrentSeason)
   return (
     <LeaderboardStateContext.Provider
       value={useMemo(() => {

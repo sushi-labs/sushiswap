@@ -12,7 +12,7 @@ export const LeaderboardTimeframe = () => {
   } = useLeaderboardState()
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 w-fit ml-auto">
       {LEADERBOARD_TIMEFRAMES.map((v) => (
         <Button
           key={v}
