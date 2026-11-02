@@ -31,7 +31,7 @@ import {
 import type { SendTransactionReturnType } from 'wagmi/actions'
 
 const CLAIM_CONTRACT_ADDRESS =
-  '0xeabe255649297FFB86F7651Ee81D943ad28452BF' satisfies EvmAddress
+  '0x7Ec38E2D08Ca9F032c0E47512705747648B1E905' satisfies EvmAddress
 
 export const ClaimSushi = () => {
   const [open, setOpen] = useState(false)
@@ -44,7 +44,7 @@ export const ClaimSushi = () => {
     isLoading: isClaimProofLoading,
     error,
   } = usePointClaimProof({
-    season: 'SEASON_1',
+    season: 'SEASON_2',
     address,
   })
   const {
@@ -230,7 +230,7 @@ export const ClaimSushi = () => {
             Claim SUSHI
           </PerpsDialogTitle>
           <PerpsDialogDescription>
-            Claim your SUSHI from points earned in Season 1.
+            Claim your SUSHI from points earned in Season 2.
           </PerpsDialogDescription>
         </PerpsDialogHeader>
         <PerpsDialogInnerContent>
@@ -241,8 +241,7 @@ export const ClaimSushi = () => {
               </div>
             ) : claimEndDate === 0n ? (
               <div className="pb-4 text-sm text-slate-400">
-                Claim window has not opened yet. Claiming will open August 1,
-                2026.
+                Claim window has not opened yet. Claiming will open shortly.
               </div>
             ) : claimEnded ? (
               <div className="pb-4 text-sm text-slate-400">
@@ -272,7 +271,7 @@ export const ClaimSushi = () => {
                     </div>
                   )}
                   <p className="text-xs text-slate-400">
-                    Season 1 claim window ends {endDateString}.
+                    Season 2 claim window ends {endDateString}.
                   </p>
                 </div>
                 <Checker.Root>

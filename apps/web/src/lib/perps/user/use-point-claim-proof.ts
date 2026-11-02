@@ -7,7 +7,7 @@ import type { EvmAddress } from 'sushi/evm'
 import { getAddress } from 'viem'
 
 export const usePointClaimProof = ({
-  season = 'SEASON_1',
+  season = 'SEASON_2',
   address,
 }: {
   season: PerpsPointsSeason

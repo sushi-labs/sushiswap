@@ -7,9 +7,8 @@ import { Epochs } from './epochs'
 import { Multiplier } from './multiplier'
 import { Overview } from './overview'
 
-const current = getCurrentSeason()
 export function PointsSummaryCards() {
-  const [season, setSeason] = useState<PerpsPointsSeason>(current)
+  const [season, setSeason] = useState<PerpsPointsSeason>(getCurrentSeason)
   return (
     <div className="grid w-full gap-2 lg:grid-cols-3">
       <Overview season={season} />

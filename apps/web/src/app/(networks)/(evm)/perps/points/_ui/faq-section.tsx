@@ -8,14 +8,24 @@ import {
 import { DownTriangleIcon } from '@sushiswap/ui/icons/down-triangle-icon'
 import { formatUSD } from 'sushi'
 import { PerpsCard } from '~evm/perps/_ui/_common'
+import {
+  PERPS_LEADERBOARD_SEASON_2_END_DATE,
+  PERPS_LEADERBOARD_SEASON_3_END_DATE,
+  PERPS_LEADERBOARD_SEASON_3_START_DATE,
+} from '~evm/perps/leaderboard/season-constants'
 import { DEFAULT_TIERS } from './overview'
+
+const seasonDateFormatter = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'long',
+  timeZone: 'UTC',
+})
 
 const FAQ_ITEMS = [
   {
     title: 'What are Sushi Points?',
     value: '1',
     content:
-      'Sushi points are earned by trading perps on Sushi during Season 1. At the end of Season 1, points convert into SUSHI tokens through the airdrop. The more you trade and the higher your tier, the bigger your airdrop allocation.',
+      'Sushi points are earned by trading perps on Sushi during each season. At the end of the season, points convert into SUSHI tokens through the airdrop. The more you trade and the higher your tier, the bigger your airdrop allocation.',
   },
   {
     title: 'How do I earn points?',
@@ -30,8 +40,8 @@ const FAQ_ITEMS = [
         <p>
           Tiers are status levels you climb by trading volume. Each tier comes
           with a points multiplier that locks in for the entire season. Once you
-          reach a tier, the multiplier stays with you through the end of Season
-          1.
+          reach a tier, the multiplier stays with you through the end of the
+          season.
         </p>
         <p>The tier ladder:</p>
         {DEFAULT_TIERS.map((tier) => (
@@ -55,12 +65,12 @@ const FAQ_ITEMS = [
       <div className="flex flex-col gap-2">
         <p>
           Your multiplier locks in once you hit a tier and stays locked for all
-          of Season 1. Your points are multiplied by your tier multiplier live
+          of the season. Your points are multiplied by your tier multiplier live
           as you earn them, so climbing tiers early in the season maximizes your
           points growth.
         </p>
         <p>
-          Example: You earn 100,000 points during Season 1 (not including the
+          Example: You earn 100,000 points during the season (not including the
           multiplier) and end the season at Samurai tier (1.6x). Your final
           balance for airdrop calculation is 160,000 points.
         </p>
@@ -99,9 +109,9 @@ const FAQ_ITEMS = [
     content: (
       <div className="flex flex-col gap-2">
         <p>
-          Points convert directly into SUSHI tokens at the end of Season 1 (July
-          31, 2026). The higher your tier, the bigger your multiplier on total
-          points. Traders who climb tiers early have the entire season's accrual
+          Points convert directly into SUSHI tokens at the end of the season.
+          The higher your tier, the bigger your multiplier on total points.
+          Traders who climb tiers early have the entire season's accrual
           multiplied at their locked-in rate.
         </p>
         <p>
@@ -117,10 +127,10 @@ const FAQ_ITEMS = [
     content: (
       <div className="flex flex-col gap-2">
         <p>
-          The airdrop pool scales with Season 1 participation. There's no hard
-          cap on points distribution every dollar of volume contributes to the
-          total pool, and the goal of Season 1 is to grow Sushi Perps as the
-          airdrop scales with it.
+          The airdrop pool scales with season participation. There's no hard cap
+          on points distribution; every dollar of volume contributes to the
+          total pool, and the goal is to grow Sushi Perps as the airdrop scales
+          with it.
         </p>
         <p>
           Final pool size and per-point conversion will be announced before the
@@ -140,17 +150,26 @@ const FAQ_ITEMS = [
     ),
   },
   {
-    title: 'When does Season 1 end?',
+    title: 'When does Season 3 start and end?',
     value: '10',
-    content: <p>Season 1 will end on July 31, 2026.</p>,
+    content: (
+      <p>
+        Season 2 ends on{' '}
+        {seasonDateFormatter.format(PERPS_LEADERBOARD_SEASON_2_END_DATE)}.
+        Season 3 runs from{' '}
+        {seasonDateFormatter.format(PERPS_LEADERBOARD_SEASON_3_START_DATE)} to{' '}
+        {seasonDateFormatter.format(PERPS_LEADERBOARD_SEASON_3_END_DATE)}. All
+        dates are in UTC.
+      </p>
+    ),
   },
   {
     title: 'When and how do I claim my SUSHI?',
     value: '11',
     content: (
       <p>
-        You will be able to claim your SUSHI rewards on July 31st. The claim
-        window will be live for 30 days.
+        You will be able to claim your SUSHI rewards at the end of the season.
+        The claim window will be live for 30 days.
       </p>
     ),
   },
@@ -159,10 +178,9 @@ const FAQ_ITEMS = [
     value: '12',
     content: (
       <p>
-        Points earned in Season 1 are valid for the Season 1 airdrop only. They
-        do not expire before July 31, 2026, but they do not roll over into any
-        future season. If new seasons launch after this one, they start with
-        fresh point balances.
+        Points earned in a season are valid for that season's airdrop only. They
+        do not expire before the end of the season, but they do not roll over
+        into future seasons. Each new season starts with a fresh points balance.
       </p>
     ),
   },
@@ -195,7 +213,7 @@ const FAQ_ITEMS = [
       <p>
         Wash trading, self-trading, and other manipulative activity intended to
         inflate points are prohibited and may result in disqualification from
-        the Season 1 airdrop. Points are designed to reward real trading
+        the season's airdrop. Points are designed to reward real trading
         activity that contributes to platform growth.
       </p>
     ),
