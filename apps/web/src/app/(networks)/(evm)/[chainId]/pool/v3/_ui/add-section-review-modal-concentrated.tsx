@@ -19,6 +19,7 @@ import {
   FormattedNumber,
   IconButton,
   List,
+  Message,
   SettingsModule,
   SettingsOverlay,
 } from '@sushiswap/ui'
@@ -159,6 +160,7 @@ export const AddSectionReviewModalConcentrated: FC<
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const hasExistingPosition = !!existingPosition
+  const hasZeroLiquidity = position?.liquidity === 0n
 
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
@@ -244,6 +246,7 @@ export const AddSectionReviewModalConcentrated: FC<
       !token1 ||
       !isSushiSwapV3ChainId(chainId) ||
       !position ||
+      hasZeroLiquidity ||
       !deadline
     )
       return undefined
@@ -285,6 +288,7 @@ export const AddSectionReviewModalConcentrated: FC<
     chainId,
     deadline,
     hasExistingPosition,
+    hasZeroLiquidity,
     noLiquidity,
     position,
     slippageTolerance,
@@ -365,6 +369,12 @@ export const AddSectionReviewModalConcentrated: FC<
               </div>
               {/* 176px is sum of header, footer, padding, and gap */}
               <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
+                {hasZeroLiquidity && (
+                  <Message size="sm" variant="warning">
+                    This deposit rounds to zero liquidity. Adjust the amount or
+                    price range.
+                  </Message>
+                )}
                 <List className="!pt-0">
                   <List.Control>
                     <List.KeyValue flex title="Network">
@@ -497,9 +507,9 @@ export const AddSectionReviewModalConcentrated: FC<
                   <Button
                     size="xl"
                     fullWidth
-                    loading={!send || isWritePending}
+                    loading={(!send && !hasZeroLiquidity) || isWritePending}
                     onClick={() => send?.(confirm)}
-                    disabled={isSimulationError}
+                    disabled={!send}
                     testId="confirm-add-liquidity"
                     type="button"
                   >
