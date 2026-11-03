@@ -55,15 +55,14 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
         </span>
         <div className="flex flex-col w-full sm:w-[unset] gap-4">
           <div className="flex items-center w-full">
-            <Button
-              asChild
-              size="sm"
-              className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
-            >
-              <LinkInternal href={getAddPositionHref(chainId)}>
+            <LinkInternal href={getAddPositionHref(chainId)}>
+              <Button
+                size="sm"
+                className="flex-1 w-full sm:flex-0 sm:w-[unset] rounded-r-none"
+              >
                 I want to create a position
-              </LinkInternal>
-            </Button>
+              </Button>
+            </LinkInternal>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button asChild size="sm" className="rounded-l-none">

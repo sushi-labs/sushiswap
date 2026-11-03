@@ -98,23 +98,21 @@ export const PoolHeader: FC<PoolHeader> = ({
             </div>
           </div>
           {showAddLiquidityButton ? (
-            <Button asChild>
-              <LinkInternal
-                href={
-                  pool.protocol === 'SUSHISWAP_V2'
-                    ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${
+            <LinkInternal
+              href={
+                pool.protocol === 'SUSHISWAP_V2'
+                  ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${
+                      pool.address
+                    }/add`
+                  : pool.protocol === 'SUSHISWAP_V3'
+                    ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${
                         pool.address
-                      }/add`
-                    : pool.protocol === 'SUSHISWAP_V3'
-                      ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${
-                          pool.address
-                        }/positions`
-                      : ''
-                }
-              >
-                Add Liquidity
-              </LinkInternal>
-            </Button>
+                      }/positions`
+                    : ''
+              }
+            >
+              <Button>Add Liquidity</Button>
+            </LinkInternal>
           ) : null}
         </div>
       </div>
