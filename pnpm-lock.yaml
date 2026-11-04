@@ -322,6 +322,9 @@ importers:
       '@radix-ui/react-visually-hidden':
         specifier: 1.1.1
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@reown/appkit-controllers':
+        specifier: 1.8.1
+        version: 1.8.1(@types/react@19.2.17)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(react@19.2.7)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
       '@rise-wallet/wallet-adapter':
         specifier: 0.1.2
         version: 0.1.2
