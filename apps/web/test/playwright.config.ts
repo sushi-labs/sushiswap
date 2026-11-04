@@ -8,7 +8,12 @@ const port = Number(process.env.PORT ?? 3000)
 
 export default defineConfig({
   testDir: '.',
-  testMatch: ['pool.test.ts', 'simple.test.ts', 'failure.test.ts'],
+  testMatch: [
+    'pool.test.ts',
+    'simple-price-range.test.ts',
+    'simple.test.ts',
+    'failure.test.ts',
+  ],
   timeout: 120_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,

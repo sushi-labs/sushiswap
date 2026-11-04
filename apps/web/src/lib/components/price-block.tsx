@@ -17,6 +17,9 @@ interface PriceBlockProps {
   token0: Currency | undefined
   token1: Currency | undefined
   label: string
+  labelClassName?: string
+  unit?: string
+  unitClassName?: string
   value: string
   decrement(): string | undefined
   increment(): string | undefined
@@ -32,6 +35,9 @@ export function PriceBlock({
   token0,
   token1,
   label,
+  labelClassName,
+  unit,
+  unitClassName,
   value,
   decrement,
   increment,
@@ -50,9 +56,13 @@ export function PriceBlock({
   return (
     <Card className="bg-transparent shadow-none">
       <CardHeader>
-        <CardTitle>{label}</CardTitle>
-        <CardDescription>
-          {token1?.symbol} per {token0?.symbol}
+        <CardTitle className={labelClassName}>{label}</CardTitle>
+        <CardDescription className={unitClassName}>
+          {unit ?? (
+            <>
+              {token1?.symbol} per {token0?.symbol}
+            </>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>

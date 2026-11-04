@@ -76,6 +76,9 @@ export class PoolPage extends BaseActions {
     await feeOptionSelector.click()
     await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
 
+    await this.page
+      .getByRole('radio', { name: 'Advanced', exact: true })
+      .check()
     const startPriceInput = this.page.locator('[testdata-id=start-price-input]')
     await expect(startPriceInput).toBeVisible()
     await expect(startPriceInput).toBeEnabled()
@@ -262,6 +265,9 @@ export class PoolPage extends BaseActions {
       await expect(zap).toHaveAttribute('data-state', 'unchecked')
     }
 
+    await this.page
+      .getByRole('radio', { name: 'Advanced', exact: true })
+      .check()
     // Fill min price
     const minPriceInput = this.page.locator('[testdata-id=min-price-input]')
     await minPriceInput.fill(args.minPrice)

@@ -8,16 +8,20 @@ import {
   CardTitle,
   Separator,
 } from '@sushiswap/ui'
-import React, { type FC, useMemo, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { getChainById } from 'sushi'
 import {
   type EvmAddress,
   type SushiSwapV3ChainId,
   unwrapEvmToken,
 } from 'sushi/evm'
-import { useConnection } from 'wagmi'
-import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
+import {
+  type LiquidityFormMode,
+  LiquidityFormModeToggle,
+} from '~evm/[chainId]/_ui/select-prices-widget/liquidity-form-mode-toggle'
+import { LiquidityPriceRange } from '~evm/[chainId]/_ui/select-prices-widget/liquidity-price-range'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
 
 interface NewPositionProps {
@@ -26,9 +30,10 @@ interface NewPositionProps {
 }
 
 export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
-  const { address: account } = useConnection()
+  const account = useAccount('evm')
 
   const [invertTokens, setInvertTokens] = useState(false)
+  const [formMode, setFormMode] = useState<LiquidityFormMode>('simple')
 
   const { data: poolStats } = useConcentratedLiquidityPoolStats({
     chainId,
@@ -46,17 +51,23 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>New position</CardTitle>
-        <CardDescription>
-          Create a new concentrated liquidity position
-        </CardDescription>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1.5">
+            <CardTitle>New position</CardTitle>
+            <CardDescription>
+              Create a new concentrated liquidity position
+            </CardDescription>
+          </div>
+          <LiquidityFormModeToggle mode={formMode} onModeChange={setFormMode} />
+        </div>
       </CardHeader>
       <div className="px-6">
         <Separator />
       </div>
       <CardContent>
         <>
-          <SelectPricesWidget
+          <LiquidityPriceRange
+            mode={formMode}
             chainId={chainId}
             token0={_token0}
             token1={_token1}

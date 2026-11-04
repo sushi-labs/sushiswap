@@ -11,6 +11,7 @@ import { SelectSmartPoolStrategyWidget } from 'src/lib/steer/components/select-s
 import { SmartPoolLiquidityWidget } from 'src/lib/steer/components/smart-pool-liquidity-widget'
 import { useVaults } from 'src/lib/steer/hooks'
 import { useConcentratedPositionInfo } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-position-info'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import {
   type EvmAddress,
   SUSHISWAP_V3_FACTORY_ADDRESS,
@@ -20,9 +21,13 @@ import {
   getEvmChainById,
   isEvmWNativeSupported,
 } from 'sushi/evm'
-import { useConnection } from 'wagmi'
+
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
-import { SelectPricesWidget } from '~evm/[chainId]/_ui/select-prices-widget'
+import {
+  type LiquidityFormMode,
+  LiquidityFormModeToggle,
+} from '~evm/[chainId]/_ui/select-prices-widget/liquidity-form-mode-toggle'
+import { LiquidityPriceRange } from '~evm/[chainId]/_ui/select-prices-widget/liquidity-price-range'
 import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
@@ -49,7 +54,7 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
 }
 
 const _Add: FC = () => {
-  const { address } = useConnection()
+  const address = useAccount('evm')
   const {
     chainId,
     token0,
@@ -102,6 +107,7 @@ const _Add: FC = () => {
   const [vaultIndex, setVaultIndex] = useState(0)
 
   const [poolType, setPoolType] = useState<V3PoolType>(V3PoolType.MANUAL)
+  const [formMode, setFormMode] = useState<LiquidityFormMode>('simple')
 
   useEffect(() => {
     if (vaults && vaults.length > 0) {
@@ -113,6 +119,11 @@ const _Add: FC = () => {
 
   return (
     <>
+      {poolType === V3PoolType.MANUAL && tokenId === undefined && (
+        <div className="flex justify-end py-4">
+          <LiquidityFormModeToggle mode={formMode} onModeChange={setFormMode} />
+        </div>
+      )}
       <SelectNetworkWidget
         selectedNetwork={chainId}
         onSelect={(chainId) =>
@@ -142,7 +153,8 @@ const _Add: FC = () => {
       />
       {poolType === V3PoolType.MANUAL ? (
         <>
-          <SelectPricesWidget
+          <LiquidityPriceRange
+            mode={formMode}
             chainId={chainId}
             token0={token0}
             token1={token1}
