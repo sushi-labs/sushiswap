@@ -18,27 +18,35 @@ import { useParams, usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
 import { isLifiXSwapSupportedChainId, isSupportedChainId } from 'src/config'
+import { isCowLimitChainId } from 'src/lib/swap/cow/chains'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { isTwapSupportedChainId } from 'src/lib/swap/twap/supported-chain-ids'
 import { type ChainId, getChainById } from 'sushi'
 import { isStellarChainId } from 'sushi/stellar'
 
-const ADVANCED_SEGMENTS = ['limit', 'dca', 'stop-loss', 'take-profit'] as const
+const ADVANCED_SEGMENTS = [
+  'limit',
+  'limit-legacy',
+  'dca',
+  'stop-loss',
+  'take-profit',
+] as const
 
 const ADVANCED_LABELS: Record<(typeof ADVANCED_SEGMENTS)[number], string> = {
   limit: 'Limit',
+  'limit-legacy': 'Limit (Legacy — Orbs)',
   dca: 'DCA',
   'stop-loss': 'Stop Loss',
   'take-profit': 'Take Profit',
 }
 
 function isAdvancedPath(pathname: string): boolean {
-  return ADVANCED_SEGMENTS.some((seg) => pathname.includes(`/${seg}`))
+  return ADVANCED_SEGMENTS.some((seg) => pathname.split('/')[2] === seg)
 }
 
 function getAdvancedTriggerLabel(pathname: string): string {
   for (const seg of ADVANCED_SEGMENTS) {
-    if (pathname.includes(`/${seg}`)) return ADVANCED_LABELS[seg]
+    if (pathname.split('/')[2] === seg) return ADVANCED_LABELS[seg]
   }
   return 'Advanced'
 }
@@ -124,6 +132,8 @@ export const SwapModeButtons = ({
   const supportsCrossChain =
     isLifiXSwapSupportedChainId(chainId) || isNearIntentsChainId(chainId)
   const twapSupported = isTwapSupportedChainId(chainId)
+  const cowSupported = isCowLimitChainId(chainId)
+  const advancedSupported = twapSupported || cowSupported
   const chain = getChainById(chainId)
   const basePath = `/${chain.key}`
 
@@ -145,7 +155,7 @@ export const SwapModeButtons = ({
 
       <HoverCard openDelay={150} closeDelay={100}>
         <HoverCardTrigger asChild>
-          {twapSupported ? (
+          {advancedSupported ? (
             <Button
               size="sm"
               variant={isAdvancedPath(pathname) ? 'secondary' : 'ghost'}
@@ -168,7 +178,7 @@ export const SwapModeButtons = ({
             </span>
           )}
         </HoverCardTrigger>
-        {twapSupported ? (
+        {advancedSupported ? (
           <HoverCardContent
             sideOffset={4}
             className="!p-2 text-left"
@@ -176,7 +186,7 @@ export const SwapModeButtons = ({
           >
             <div className="flex flex-col gap-0.5">
               <SwapModeButton
-                isSupported={twapSupported}
+                isSupported={cowSupported}
                 path={`${basePath}/limit`}
                 active={getActiveState(`${basePath}/limit`)}
                 className="justify-start"
@@ -184,6 +194,16 @@ export const SwapModeButtons = ({
               >
                 Limit
               </SwapModeButton>
+              {twapSupported && (
+                <SwapModeButton
+                  isSupported
+                  path={`${basePath}/limit-legacy`}
+                  active={getActiveState(`${basePath}/limit-legacy`)}
+                  fullWidth
+                >
+                  Limit (Legacy — Orbs)
+                </SwapModeButton>
+              )}
               <SwapModeButton
                 isSupported={twapSupported}
                 path={`${basePath}/dca`}

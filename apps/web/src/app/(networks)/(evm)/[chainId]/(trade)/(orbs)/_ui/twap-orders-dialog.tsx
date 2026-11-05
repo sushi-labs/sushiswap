@@ -122,7 +122,23 @@ const _TwapOrdersDialog: FC<{
     isLoading: isOrdersLoading,
     isRefetching: isOrdersRefetching,
     orders,
+    refetchOrders,
   } = useOrderHistoryPanel()
+  const [historyFailed, setHistoryFailed] = useState(false)
+  useEffect(() => {
+    if (!open) return
+    let active = true
+    void refetchOrders()
+      .then((data) => {
+        if (active) setHistoryFailed(data === undefined)
+      })
+      .catch(() => {
+        if (active) setHistoryFailed(true)
+      })
+    return () => {
+      active = false
+    }
+  }, [open, refetchOrders])
   const [selectedOrderId, setSelectedOrderId] = useState<string>()
   const [selectedOrderFilterValue, setSelectedOrderFilterValue] =
     useState<OrderFilterValue>('all')
@@ -204,6 +220,10 @@ const _TwapOrdersDialog: FC<{
                       <List.Control className="px-4 py-3">
                         <div className="text-sm text-center">Loading...</div>
                       </List.Control>
+                    ) : historyFailed ? (
+                      <div role="alert" className="p-4 text-sm">
+                        Unable to load Orbs orders. Close and reopen to retry.
+                      </div>
                     ) : selectedOrders.length ? (
                       selectedOrders.map((order) => (
                         <button
