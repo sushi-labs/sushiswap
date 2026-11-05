@@ -1,12 +1,12 @@
 'use client'
 
 import { Container } from '@sushiswap/ui'
-import { LimitWidget } from './_ui/limit-widget'
+import { CowLimitWidget } from './_ui/cow-limit-widget'
 
-export default function SwapLimitPage() {
+export default function LimitPage(): React.JSX.Element {
   return (
     <Container maxWidth="lg" className="relative">
-      <LimitWidget />
+      <CowLimitWidget />
     </Container>
   )
 }

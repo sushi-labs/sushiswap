@@ -211,6 +211,12 @@ importers:
       '@coinbase/wallet-sdk':
         specifier: 4.3.7
         version: 4.3.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
+      '@cowprotocol/cow-sdk':
+        specifier: 9.2.17
+        version: 9.2.17(ajv@8.12.0)(cross-fetch@4.0.0(encoding@0.1.13))(encoding@0.1.13)(multiformats@9.9.0)
+      '@cowprotocol/sdk-viem-adapter':
+        specifier: 0.3.33
+        version: 0.3.33(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))
       '@creit.tech/stellar-wallets-kit':
         specifier: 2.7.0
         version: 2.7.0(@types/react@19.2.17)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(immer@9.0.21)(near-api-js@5.1.1(encoding@0.1.13))(react@19.2.7)(tslib@2.8.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(utf-8-validate@6.0.3)(zod@4.1.11)
@@ -2392,6 +2398,47 @@ packages:
     resolution: {integrity: sha512-Usm8jgaaULANJU8vVnhWssSA6nrZ4DJEAbkNtXSoZay2YD5fDyMukCxu8NEhCvFzfHvrhxhcjttvgpyhOM7xAQ==}
     peerDependencies:
       '@bufbuild/protobuf': ^2.2.0
+
+  '@cowprotocol/cow-sdk@9.2.17':
+    resolution: {integrity: sha512-Ip4/cRXfDj5Nm/J0W9imBlBIyeNBEa3TnY5OrUlmq0XOUO2PI+45bCMZ4Nd1WEkliH08EncotX814MTlPKhmKg==}
+    peerDependencies:
+      '@openzeppelin/merkle-tree': ^1.x
+      cross-fetch: ^3.x
+      multiformats: ^9.x
+    peerDependenciesMeta:
+      '@openzeppelin/merkle-tree':
+        optional: true
+      multiformats:
+        optional: true
+
+  '@cowprotocol/sdk-app-data@6.0.8':
+    resolution: {integrity: sha512-6ppi7ZwRyZjiIcC3IGF2NPeG72t7faY2+D9MsmFRiLdoS9HAHVyYDiFdL0lBNGwzDMxsui2OxjG9Zvm71TaFBQ==}
+    peerDependencies:
+      ajv: ^8.x
+      multiformats: ^9.x
+
+  '@cowprotocol/sdk-common@0.14.2':
+    resolution: {integrity: sha512-6+EobxgrvN/HmQrSz0jjtWIYNx7GW9dZt6YoLdzUnhEkFjrIyk7ts/lZ7EcE8cBhEf0Slmk2r0tdkT3B4ltV4g==}
+
+  '@cowprotocol/sdk-config@2.7.2':
+    resolution: {integrity: sha512-YogXyWf21QQQW9ymbpmMplT6Yxji8ZKSAJhuyCGy/1gbByk9xHF+ECR3KjflEIuPOmxIo4yRDmiAOTcvWCqWfg==}
+
+  '@cowprotocol/sdk-contracts-ts@3.7.2':
+    resolution: {integrity: sha512-EEv+a5gZrsQPmm1UI95A23uMrni+vDBj57XLTPwfTeZkXvJJHpaLLaFJtQFvuuM+5BTpTEZvHkpz9Qj3hOwkpA==}
+
+  '@cowprotocol/sdk-order-book@4.3.0':
+    resolution: {integrity: sha512-lt7eodrgP9raOLOwj4NV3a2n4dTlwil4jy7etax1zTUtnHZsrnXhxbX+uIIFidnaKfvaB7LL7cQqbhJdSLwoHw==}
+
+  '@cowprotocol/sdk-order-signing@1.1.16':
+    resolution: {integrity: sha512-0PM5kZbEdjnF/54L6JvmtlGThGj4S3CgIku4XECxim0Ln1dsG51x0fvT+mWEigEPqzNc4CMqicoInPs9moklhg==}
+
+  '@cowprotocol/sdk-trading@2.7.4':
+    resolution: {integrity: sha512-V3gKLA2NV2wlkiIs95Oy4RQo2f+QLkbfd739A1kryt89RWgAaESR0rD3TJdDrVY6MseKs8y9oOo7s73+V0zq9g==}
+
+  '@cowprotocol/sdk-viem-adapter@0.3.33':
+    resolution: {integrity: sha512-f+xPqpGW4sGsOAqb4gCo3xLYuylNTWFaH5bpMF6oFnPCHAM0BmctVHLyKQ07N8vbxgRaPPRiL8C72H7CgiNIiQ==}
+    peerDependencies:
+      viem: 2.56.7
 
   '@creit.tech/stellar-wallets-kit@2.7.0':
     resolution: {integrity: sha512-gH+eCIUKvE7DZx9ZFCFog1JSpi5Jf28wHTLa67CzAXoJFQkcqkoQ9j2LilHrZPla8M43MjW0COQiFvrlS/pLMg==}
@@ -9965,6 +10012,9 @@ packages:
   cross-fetch@3.1.8:
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
 
+  cross-fetch@3.2.0:
+    resolution: {integrity: sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q==}
+
   cross-fetch@4.0.0:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
 
@@ -12373,6 +12423,10 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
+  json-stringify-deterministic@1.0.16:
+    resolution: {integrity: sha512-barjhF/wL0ot1i7AVA3gDDfuBIS1Iz7dlYmO6fZnVDUXtB/EJKjqREA/FUndo+kCGYLI67jH3hXKQMwuTFhbpQ==}
+    engines: {node: '>= 4'}
+
   json-stringify-safe@5.0.1:
     resolution: {integrity: sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==}
 
@@ -12412,6 +12466,9 @@ packages:
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
+
+  just-performance@4.3.0:
+    resolution: {integrity: sha512-L7RjvtJsL0QO8xFs5wEoDDzzJwoiowRw6Rn/GnvldlchS2JQr9wFYPiwZcDfrbbujEKqKN0tvENdbjXdYhDp5Q==}
 
   just-pnpm@1.0.2:
     resolution: {integrity: sha512-a/LtVYjTy1Z1yBl3kFEsic313J8MZ29ZEAFrw1snFOY7/x6Afy1VO2zAgtAlUjIgexOt8TRCRCXo1J+PABIo/Q==}
@@ -12489,6 +12546,12 @@ packages:
   lilconfig@3.1.3:
     resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
     engines: {node: '>=14'}
+
+  limiter@2.1.0:
+    resolution: {integrity: sha512-361TYz6iay6n+9KvUUImqdLuFigK+K79qrUtBsXhJTLdH4rIt/r1y8r1iozwh8KbZNpujbFTSh74mJ7bwbAMOw==}
+
+  limiter@3.0.0:
+    resolution: {integrity: sha512-hev7DuXojsTFl2YwyzUJMDnZ/qBDd3yZQLSH3aD4tdL1cqfc3TMnoecEJtWFaQFdErZsKoFMBTxF/FBSkgDbEg==}
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
@@ -17946,6 +18009,81 @@ snapshots:
   '@connectrpc/connect@2.0.0(@bufbuild/protobuf@2.2.3)':
     dependencies:
       '@bufbuild/protobuf': 2.2.3
+
+  '@cowprotocol/cow-sdk@9.2.17(ajv@8.12.0)(cross-fetch@4.0.0(encoding@0.1.13))(encoding@0.1.13)(multiformats@9.9.0)':
+    dependencies:
+      '@cowprotocol/sdk-app-data': 6.0.8(ajv@8.12.0)(multiformats@9.9.0)
+      '@cowprotocol/sdk-common': 0.14.2
+      '@cowprotocol/sdk-config': 2.7.2
+      '@cowprotocol/sdk-contracts-ts': 3.7.2
+      '@cowprotocol/sdk-order-book': 4.3.0(encoding@0.1.13)
+      '@cowprotocol/sdk-order-signing': 1.1.16(encoding@0.1.13)
+      '@cowprotocol/sdk-trading': 2.7.4(ajv@8.12.0)(encoding@0.1.13)(multiformats@9.9.0)
+      cross-fetch: 4.0.0(encoding@0.1.13)
+    optionalDependencies:
+      multiformats: 9.9.0
+    transitivePeerDependencies:
+      - ajv
+      - encoding
+
+  '@cowprotocol/sdk-app-data@6.0.8(ajv@8.12.0)(multiformats@9.9.0)':
+    dependencies:
+      '@cowprotocol/sdk-common': 0.14.2
+      ajv: 8.12.0
+      json-stringify-deterministic: 1.0.16
+      multiformats: 9.9.0
+
+  '@cowprotocol/sdk-common@0.14.2':
+    dependencies:
+      '@cowprotocol/sdk-config': 2.7.2
+
+  '@cowprotocol/sdk-config@2.7.2':
+    dependencies:
+      exponential-backoff: 3.1.3
+      limiter: 2.1.0
+
+  '@cowprotocol/sdk-contracts-ts@3.7.2':
+    dependencies:
+      '@cowprotocol/sdk-common': 0.14.2
+      '@cowprotocol/sdk-config': 2.7.2
+
+  '@cowprotocol/sdk-order-book@4.3.0(encoding@0.1.13)':
+    dependencies:
+      '@cowprotocol/sdk-common': 0.14.2
+      '@cowprotocol/sdk-config': 2.7.2
+      cross-fetch: 3.2.0(encoding@0.1.13)
+      exponential-backoff: 3.1.3
+      limiter: 3.0.0
+    transitivePeerDependencies:
+      - encoding
+
+  '@cowprotocol/sdk-order-signing@1.1.16(encoding@0.1.13)':
+    dependencies:
+      '@cowprotocol/sdk-common': 0.14.2
+      '@cowprotocol/sdk-config': 2.7.2
+      '@cowprotocol/sdk-contracts-ts': 3.7.2
+      '@cowprotocol/sdk-order-book': 4.3.0(encoding@0.1.13)
+    transitivePeerDependencies:
+      - encoding
+
+  '@cowprotocol/sdk-trading@2.7.4(ajv@8.12.0)(encoding@0.1.13)(multiformats@9.9.0)':
+    dependencies:
+      '@cowprotocol/sdk-app-data': 6.0.8(ajv@8.12.0)(multiformats@9.9.0)
+      '@cowprotocol/sdk-common': 0.14.2
+      '@cowprotocol/sdk-config': 2.7.2
+      '@cowprotocol/sdk-contracts-ts': 3.7.2
+      '@cowprotocol/sdk-order-book': 4.3.0(encoding@0.1.13)
+      '@cowprotocol/sdk-order-signing': 1.1.16(encoding@0.1.13)
+      deepmerge: 4.3.1
+    transitivePeerDependencies:
+      - ajv
+      - encoding
+      - multiformats
+
+  '@cowprotocol/sdk-viem-adapter@0.3.33(viem@2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11))':
+    dependencies:
+      '@cowprotocol/sdk-common': 0.14.2
+      viem: 2.56.7(bufferutil@4.0.8)(typescript@5.9.3)(utf-8-validate@6.0.3)(zod@4.1.11)
 
   '@creit.tech/stellar-wallets-kit@2.7.0(@types/react@19.2.17)(@upstash/redis@1.22.1(encoding@0.1.13))(bufferutil@4.0.8)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(immer@9.0.21)(near-api-js@5.1.1(encoding@0.1.13))(react@19.2.7)(tslib@2.8.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(utf-8-validate@6.0.3)(zod@4.1.11)':
     dependencies:
@@ -28843,6 +28981,12 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  cross-fetch@3.2.0(encoding@0.1.13):
+    dependencies:
+      node-fetch: 2.7.0(encoding@0.1.13)
+    transitivePeerDependencies:
+      - encoding
+
   cross-fetch@4.0.0(encoding@0.1.13):
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
@@ -31885,6 +32029,8 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
+  json-stringify-deterministic@1.0.16: {}
+
   json-stringify-safe@5.0.1: {}
 
   json-to-graphql-query@2.2.5: {}
@@ -31920,6 +32066,8 @@ snapshots:
       array.prototype.flat: 1.3.2
       object.assign: 4.1.7
       object.values: 1.2.1
+
+  just-performance@4.3.0: {}
 
   just-pnpm@1.0.2: {}
 
@@ -32014,6 +32162,12 @@ snapshots:
       - supports-color
 
   lilconfig@3.1.3: {}
+
+  limiter@2.1.0:
+    dependencies:
+      just-performance: 4.3.0
+
+  limiter@3.0.0: {}
 
   lines-and-columns@1.2.4: {}
 
