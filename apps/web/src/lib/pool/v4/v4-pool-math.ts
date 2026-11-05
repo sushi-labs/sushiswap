@@ -1,22 +1,31 @@
-import { SqrtPriceMath, TickMath } from 'sushi/evm'
-import type { Hex } from 'viem'
+import { Amount, type Percent } from 'sushi'
+import {
+  type EvmCurrency,
+  SqrtPriceMath,
+  type SushiSwapV4Position,
+  TickMath,
+} from 'sushi/evm'
+
+/**
+ * The most of each currency minting `position` may pull if the price slips
+ * by up to `slippageTolerance`: what Permit2 must be approved and permitted
+ * for.
+ */
+export function getV4MintMaxAmounts(
+  position: SushiSwapV4Position,
+  slippageTolerance: Percent,
+): [Amount<EvmCurrency>, Amount<EvmCurrency>] {
+  const { amount0, amount1 } =
+    position.mintAmountsWithSlippage(slippageTolerance)
+  return [
+    new Amount(position.pool.currency0, amount0),
+    new Amount(position.pool.currency1, amount1),
+  ]
+}
 
 export interface V4PopulatedTick {
   tick: number
   liquidityNet: bigint
-}
-
-const TICK_SPACING_OFFSET = 16n
-const TICK_SPACING_MASK = 0xffffffn
-
-/** Infinity CL packs the pool's int24 tick spacing into bits 16-39 of `parameters`. */
-export function getV4TickSpacing(parameters: Hex): number {
-  return Number(
-    BigInt.asIntN(
-      24,
-      (BigInt(parameters) >> TICK_SPACING_OFFSET) & TICK_SPACING_MASK,
-    ),
-  )
 }
 
 /** Every tick bitmap word index a pool with `tickSpacing` can have initialized ticks in. */

@@ -56,9 +56,11 @@ export interface LiquidityChartRangeInputProps {
 
   brushLabels: (d: 'w' | 'e', x: number) => string
   brushDomain?: [number, number]
+  /** `moved` says which handles a drag moved; unset, both count as moved. */
   onBrushDomainChange: (
     domain: [number, number],
     mode: string | undefined,
+    moved?: [left: boolean, right: boolean],
   ) => void
 
   getNewRangeWhenBrushing: (

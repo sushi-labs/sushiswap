@@ -29,28 +29,13 @@ import {
   type SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/evm'
-import { isFeeTierEnabled } from './fee-tier-config'
+import { BASE_FEE_TIERS, isFeeTierEnabled } from './fee-tier-config'
 
 const EXTENDED_FEE_TIER_CHAIN_IDS = [EvmChainId.KATANA] as const
 
 export const getFeeOptions = (chainId: SushiSwapV3ChainId) =>
   [
-    {
-      value: SushiSwapV3FeeAmount.LOWEST,
-      subtitle: 'Best for very stable pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.LOW,
-      subtitle: 'Best for less volatile pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.MEDIUM,
-      subtitle: 'Best for most pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.HIGH,
-      subtitle: 'Best for volatile pairs.',
-    },
+    ...BASE_FEE_TIERS,
     ...(EXTENDED_FEE_TIER_CHAIN_IDS.includes(
       chainId as (typeof EXTENDED_FEE_TIER_CHAIN_IDS)[number],
     )

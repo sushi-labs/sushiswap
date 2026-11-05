@@ -1,6 +1,6 @@
 import { EvmChainId, EvmToken } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
-import { processActiveLiquidity } from './use-concentrated-active-liquidity'
+import { processActiveLiquidity } from './active-liquidity'
 
 const token0 = new EvmToken({
   chainId: EvmChainId.ETHEREUM,

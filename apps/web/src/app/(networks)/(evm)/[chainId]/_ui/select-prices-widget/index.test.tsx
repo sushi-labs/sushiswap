@@ -73,7 +73,6 @@ function MintInfo({ inverted }: { inverted: boolean }): null {
     account: undefined,
     token0: inverted ? usdg : fig,
     token1: inverted ? fig : usdg,
-    baseToken: inverted ? usdg : fig,
     feeAmount: feeAmount,
   })
   return null

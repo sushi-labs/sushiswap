@@ -45,7 +45,11 @@ interface BrushProps {
   interactive: boolean
   brushLabelValue: (d: 'w' | 'e', x: number) => string
   brushExtent: [number, number]
-  setBrushExtent: (extent: [number, number], mode: string | undefined) => void
+  setBrushExtent: (
+    extent: [number, number],
+    mode: string | undefined,
+    moved: [left: boolean, right: boolean],
+  ) => void
   innerWidth: number
   innerHeight: number
   westHandleColor: string
@@ -99,15 +103,31 @@ export const Brush: FC<BrushProps> = ({
 
       // avoid infinite render loop by checking for change
       if (type === 'end' && !compare(brushExtent, scaled, xScale)) {
-        const handleType =
-          scaled[0].toFixed(6) !== brushExtent[0].toFixed(6)
-            ? HandleType.e
-            : scaled[1].toFixed(6) !== brushExtent[1].toFixed(6)
-              ? HandleType.w
-              : undefined
+        // Which handles moved, in pixels as drawn
+        const [x0, x1] = selection as [number, number]
+        const moved: [boolean, boolean] = [
+          Math.abs(x0 - xScale(brushExtent[0])) >= 0.5,
+          Math.abs(x1 - xScale(brushExtent[1])) >= 0.5,
+        ]
+        const handleType = moved[0]
+          ? HandleType.e
+          : moved[1]
+            ? HandleType.w
+            : undefined
 
+        // A locked weight moves the other handle too, but only the dragged
+        // price is input, wherever the weighting put it: the form derives the
+        // other bound from it the same way
         const newRange = getNewRangeWhenBrushing(scaled, handleType)
-        setBrushExtent(newRange ?? scaled, mode)
+        const draggedIndex = handleType === HandleType.e ? 0 : 1
+        const dragged = scaled[draggedIndex]
+        // A 0% or 100% weight replaces it with the current price, in its place
+        const input: [boolean, boolean] = newRange
+          ? newRange.includes(dragged)
+            ? [newRange[0] === dragged, newRange[1] === dragged]
+            : [draggedIndex === 0, draggedIndex === 1]
+          : moved
+        setBrushExtent(newRange ?? scaled, mode, input)
       }
 
       setLocalBrushExtent(scaled)

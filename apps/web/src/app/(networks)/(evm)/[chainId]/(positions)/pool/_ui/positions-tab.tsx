@@ -6,7 +6,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Switch,
   Tabs,
   TabsContent,
   TabsList,
@@ -14,8 +13,12 @@ import {
 } from '@sushiswap/ui'
 import type React from 'react'
 import { type FC, useMemo, useState } from 'react'
+import { HideClosedSwitch } from '~evm/[chainId]/pool/_ui/hide-closed-switch'
 
-import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
+import {
+  isSmartPoolChainId,
+  isSushiSwapV4ChainId,
+} from '@sushiswap/graph-client/data-api'
 import { BladeIcon } from '@sushiswap/ui/icons/blade-icon'
 import { useSearchParams } from 'next/navigation'
 import { SteerSmartPositionsTable } from 'src/lib/steer/components/steer-smart-positions-table'
@@ -31,6 +34,7 @@ import {
 import { BladeSunsetNotice } from '~evm/[chainId]/_ui/blade-sunset-notice'
 import { V2MigrationNotice } from '~evm/[chainId]/_ui/v2-migration-notice'
 import { ConcentratedPositionsTable } from '~evm/[chainId]/pool/_ui/concentrated-positions-table/concentrated-positions-table'
+import { V4PositionsTable } from '~evm/[chainId]/pool/_ui/v4-positions-table/v4-positions-table'
 import { BladePositionsTable } from './blade-positions-table'
 import { PositionsTable } from './positions-table'
 
@@ -50,6 +54,24 @@ const createItems = (chainId: SushiSwapChainId | BladeChainId) => {
         </div>
       ),
     },
+    ...(isSushiSwapV4ChainId(chainId)
+      ? [
+          {
+            id: 'sushiswap-v4',
+            value: 'v4',
+            protocol: SushiSwapProtocol.SUSHISWAP_V4,
+            disabled: false, // V4 is only included if indexed, so never disabled
+            children: (
+              <div className="flex items-center gap-2">
+                <span>🍣</span>{' '}
+                <span>
+                  SushiSwap <sup>v4</sup>
+                </span>
+              </div>
+            ),
+          },
+        ]
+      : []),
     {
       id: 'sushiswap-v2',
       value: 'v2',
@@ -164,16 +186,11 @@ export const PositionsTab: FC<{
               </TabsTrigger>
             ))}
           </TabsList>
-          {tab === 'v3' ? (
-            <div className="flex items-center gap-3 whitespace-nowrap">
-              <span className="text-sm font-medium text-gray-600 dark:text-slate-400">
-                Hide closed
-              </span>
-              <Switch
-                checked={hideClosedPositions}
-                onCheckedChange={() => setHideClosedPositions((prev) => !prev)}
-              />
-            </div>
+          {tab === 'v3' || tab === 'v4' ? (
+            <HideClosedSwitch
+              checked={hideClosedPositions}
+              onCheckedChange={setHideClosedPositions}
+            />
           ) : null}
         </div>
         {isSmartPoolChainId(chainId) ? (
@@ -184,6 +201,14 @@ export const PositionsTab: FC<{
         {isBladeChainId(chainId) && (
           <TabsContent value="blade">
             <BladePositionsTable chainId={chainId} />
+          </TabsContent>
+        )}
+        {isSushiSwapV4ChainId(chainId) && (
+          <TabsContent value="v4">
+            <V4PositionsTable
+              chainId={chainId}
+              hideClosedPositions={hideClosedPositions}
+            />
           </TabsContent>
         )}
         <TabsContent value="v3">

@@ -1,30 +1,6 @@
 import { SqrtPriceMath, TickMath } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
-import {
-  getV4PoolReserves,
-  getV4TickBitmapWords,
-  getV4TickSpacing,
-} from './v4-pool-math'
-
-describe('getV4TickSpacing', () => {
-  it('reads the tick spacing from bits 16-39 of the pool parameters', () => {
-    expect(
-      getV4TickSpacing(
-        '0x00000000000000000000000000000000000000000000000000000000000a08c1',
-      ),
-    ).toBe(10)
-    expect(
-      getV4TickSpacing(
-        '0x0000000000000000000000000000000000000000000000000000000000003c00',
-      ),
-    ).toBe(0)
-    expect(
-      getV4TickSpacing(
-        '0x00000000000000000000000000000000000000000000000000000000003c0000',
-      ),
-    ).toBe(60)
-  })
-})
+import { getV4PoolReserves, getV4TickBitmapWords } from './v4-pool-math'
 
 describe('getV4TickBitmapWords', () => {
   it('covers every word between the min and max tick', () => {

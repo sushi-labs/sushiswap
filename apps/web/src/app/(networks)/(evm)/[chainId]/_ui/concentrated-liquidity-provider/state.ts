@@ -1,40 +1,71 @@
 import { Bound, Field } from 'src/lib/constants'
+import type { PriceRange, RangeTick } from 'src/lib/pool/cl'
 
-type FullRange = true
+/** A range, as pool ticks, for the pair whose key is `pair`. */
+interface RangeState {
+  pair: string
+  [Bound.LOWER]: RangeTick | undefined
+  [Bound.UPPER]: RangeTick | undefined
+  /** The bound set last, which a locked weight keeps; unset, the displayed min. */
+  independentBound: Bound | undefined
+  /** A locked weight of currency0 in the position's value, from 0 to 1. */
+  weightLockedCurrency0: number | undefined
+  /** The preset that set the range, at a tick spacing, until anything else changes it. */
+  preset: RangePreset | undefined
+}
+
+interface RangePreset {
+  value: PriceRange
+  tickSpacing: number
+}
 
 interface ConcentratedLiquidityState {
   independentField: Field
-  independentRangeField: Bound
   typedValue: string
   startPriceTypedValue: string
-  leftRangeTypedValue: string | FullRange
-  rightRangeTypedValue: string | FullRange
-  weightLockedCurrencyBase: number | undefined
+  /** The ID of the currency the typed start price is of. */
+  startPriceBase: string | undefined
+  /** Unset, or for another pair, when no range is selected. */
+  range: RangeState | undefined
 }
 
 type ConcentratedLiquidityAction =
   | { type: 'resetMintState' }
-  | { type: 'typeLeftRangeInput'; typedValue: string }
   | {
       type: 'typeInput'
       field: Field
       typedValue: string
-      noLiquidity: boolean
     }
-  | { type: 'typeRightRangeInput'; typedValue: string }
-  | { type: 'setFullRange' }
-  | { type: 'typeStartPriceInput'; typedValue: string }
-  | { type: 'setWeightLockedCurrencyBase'; value: number | undefined }
-  | { type: 'setIndependentRangeField'; value: Bound }
+  | {
+      type: 'typeStartPriceInput'
+      typedValue: string
+      base: string | undefined
+    }
+  | {
+      type: 'setRangeBound'
+      pair: string
+      bound: Bound
+      tick: RangeTick | undefined
+    }
+  | {
+      type: 'setRange'
+      pair: string
+      lower: RangeTick | undefined
+      upper: RangeTick | undefined
+      preset: RangePreset | undefined
+    }
+  | {
+      type: 'setWeightLockedCurrency0'
+      pair: string
+      value: number | undefined
+    }
 
 const initialConcentratedLiquidityState: ConcentratedLiquidityState = {
   independentField: Field.CURRENCY_A,
-  independentRangeField: Bound.LOWER,
   typedValue: '',
   startPriceTypedValue: '',
-  leftRangeTypedValue: '',
-  rightRangeTypedValue: '',
-  weightLockedCurrencyBase: undefined,
+  startPriceBase: undefined,
+  range: undefined,
 }
 
 function concentratedLiquidityReducer(
@@ -44,24 +75,67 @@ function concentratedLiquidityReducer(
   switch (action.type) {
     case 'resetMintState':
       return initialConcentratedLiquidityState
-    case 'setFullRange':
-      return { ...state, leftRangeTypedValue: true, rightRangeTypedValue: true }
     case 'typeStartPriceInput':
-      return { ...state, startPriceTypedValue: action.typedValue }
-    case 'typeLeftRangeInput':
-      return { ...state, leftRangeTypedValue: action.typedValue }
-    case 'typeRightRangeInput':
-      return { ...state, rightRangeTypedValue: action.typedValue }
+      return {
+        ...state,
+        startPriceTypedValue: action.typedValue,
+        startPriceBase: action.base,
+      }
+    case 'setRangeBound': {
+      // A range for another pair doesn't carry over
+      const range =
+        state.range?.pair === action.pair
+          ? state.range
+          : emptyRange(action.pair)
+      return {
+        ...state,
+        range: {
+          ...range,
+          [action.bound]: action.tick,
+          independentBound: action.bound,
+          preset: undefined,
+        },
+      }
+    }
+    case 'setRange':
+      return {
+        ...state,
+        range: {
+          ...emptyRange(action.pair),
+          [Bound.LOWER]: action.lower,
+          [Bound.UPPER]: action.upper,
+          preset: action.preset,
+        },
+      }
+    case 'setWeightLockedCurrency0':
+      // Only a range of the pair can be weighted
+      if (state.range?.pair !== action.pair) return state
+      return {
+        ...state,
+        range: {
+          ...state.range,
+          weightLockedCurrency0: action.value,
+          // A weight reshapes the range
+          preset: action.value === undefined ? state.range.preset : undefined,
+        },
+      }
     case 'typeInput':
       return {
         ...state,
         independentField: action.field,
         typedValue: action.typedValue,
       }
-    case 'setWeightLockedCurrencyBase':
-      return { ...state, weightLockedCurrencyBase: action.value }
-    case 'setIndependentRangeField':
-      return { ...state, independentRangeField: action.value }
+  }
+}
+
+function emptyRange(pair: string): RangeState {
+  return {
+    pair,
+    [Bound.LOWER]: undefined,
+    [Bound.UPPER]: undefined,
+    independentBound: undefined,
+    weightLockedCurrency0: undefined,
+    preset: undefined,
   }
 }
 
@@ -70,4 +144,6 @@ export {
   initialConcentratedLiquidityState,
   type ConcentratedLiquidityAction,
   type ConcentratedLiquidityState,
+  type RangePreset,
+  type RangeState,
 }

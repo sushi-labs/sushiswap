@@ -2,6 +2,7 @@
 
 import { type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
+import { Bound } from 'src/lib/constants'
 import type { WalletNamespace } from 'src/lib/wallet/types'
 import { Percent } from 'sushi'
 import { EvmChainId, WETH9 } from 'sushi/evm'
@@ -96,8 +97,8 @@ async function render(): Promise<void> {
         existingPosition={undefined}
         position={undefined}
         price={undefined}
-        pricesAtTicks={{}}
-        ticksAtLimit={{}}
+        pricesAtTicks={{ [Bound.LOWER]: undefined, [Bound.UPPER]: undefined }}
+        ticksAtLimit={{ [Bound.LOWER]: false, [Bound.UPPER]: false }}
         noLiquidity
         tokenId={undefined}
         onSuccess={vi.fn()}

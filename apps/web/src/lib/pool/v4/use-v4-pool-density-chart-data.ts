@@ -1,9 +1,12 @@
 'use client'
 
 import { useMemo } from 'react'
-import { tickToPoolPrice } from 'src/lib/functions'
-import { processActiveLiquidity } from 'src/lib/pool/v3'
-import type { EvmCurrency, SushiSwapV4ChainId } from 'sushi/evm'
+import { processActiveLiquidity } from 'src/lib/pool/cl'
+import {
+  type EvmCurrency,
+  type SushiSwapV4ChainId,
+  sushiSwapV4TickToPrice,
+} from 'sushi/evm'
 import type { Hex } from 'viem'
 import { getDensityChartData } from '~evm/[chainId]/_ui/liquidity-chart-range-input/hooks'
 import { useV4PoolSlot0, useV4PoolTicks } from './use-v4-pool-state'
@@ -15,13 +18,22 @@ interface UseV4PoolDensityChartDataParams {
   token1: EvmCurrency
 }
 
+interface V4PoolDensityChartData {
+  series: ReturnType<typeof getDensityChartData> | undefined
+  currentPrice: number | null
+  isLoading: boolean
+  error: Error | null
+  /** Whether the pool loaded with no initialized ticks, so no liquidity. */
+  isEmpty: boolean
+}
+
 /** Liquidity density around the current price, plus the current price itself. */
 export function useV4PoolDensityChartData({
   chainId,
   poolId,
   token0,
   token1,
-}: UseV4PoolDensityChartDataParams) {
+}: UseV4PoolDensityChartDataParams): V4PoolDensityChartData {
   const slot0 = useV4PoolSlot0({ chainId, poolId })
   const ticks = useV4PoolTicks({
     chainId,
@@ -51,7 +63,7 @@ export function useV4PoolDensityChartData({
     if (!slot0.data) return null
 
     return Number.parseFloat(
-      tickToPoolPrice(token0, token1, slot0.data.tick).toSignificant(8),
+      sushiSwapV4TickToPrice(token0, token1, slot0.data.tick).toSignificant(8),
     )
   }, [slot0.data, token0, token1])
 
@@ -59,5 +71,9 @@ export function useV4PoolDensityChartData({
     series,
     currentPrice,
     isLoading: slot0.isLoading || ticks.isLoading,
+    // A failed refetch keeps the chart it already has
+    error:
+      slot0.data && ticks.data ? null : (slot0.error ?? ticks.error ?? null),
+    isEmpty: Boolean(slot0.data && ticks.data && !ticks.data.length),
   }
 }

@@ -9,76 +9,8 @@ import {
 } from 'sushi/evm'
 
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
-import computeSurroundingTicks, { tickToPoolPrice } from '../../functions'
+import { processActiveLiquidity } from '../cl'
 import { useTicks } from './use-ticks'
-
-const PRICE_FIXED_DIGITS = 8
-
-export interface TickProcessed {
-  tick: number
-  liquidityActive: bigint
-  liquidityNet: bigint
-  price0: string
-}
-
-/**
- * Active liquidity at every initialized tick, walking outwards from the
- * active tick. `ticks` must be sorted by `tickIdx` ascending. Pass the
- * currencies as the pool holds them: wrapped for V3, native as-is for V4.
- */
-export function processActiveLiquidity({
-  token0,
-  token1,
-  activeTick,
-  liquidity,
-  ticks,
-}: {
-  token0: EvmCurrency
-  token1: EvmCurrency
-  activeTick: number
-  liquidity: bigint
-  ticks: { tickIdx: number; liquidityNet: bigint }[]
-}): TickProcessed[] | undefined {
-  if (ticks.length === 0) return undefined
-
-  // find where the active tick would be to partition the array
-  // if the active tick is initialized, the pivot will be an element
-  // if not, take the previous tick as pivot (-1 below the first tick,
-  // the last tick when above every initialized tick)
-  const nextTickIndex = ticks.findIndex(({ tickIdx }) => tickIdx > activeTick)
-  const pivot = (nextTickIndex === -1 ? ticks.length : nextTickIndex) - 1
-
-  const activeTickProcessed: TickProcessed = {
-    liquidityActive: liquidity,
-    tick: activeTick,
-    liquidityNet:
-      pivot >= 0 && Number(ticks[pivot].tickIdx) === activeTick
-        ? ticks[pivot].liquidityNet
-        : 0n,
-    price0: tickToPoolPrice(token0, token1, activeTick).toString({
-      fixed: PRICE_FIXED_DIGITS,
-    }),
-  }
-
-  const subsequentTicks = computeSurroundingTicks(
-    token0,
-    token1,
-    activeTickProcessed,
-    ticks,
-    pivot,
-    true,
-  )
-  const previousTicks = computeSurroundingTicks(
-    token0,
-    token1,
-    activeTickProcessed,
-    ticks,
-    pivot,
-    false,
-  )
-
-  return previousTicks.concat(activeTickProcessed).concat(subsequentTicks)
-}
 
 const getActiveTick = (
   tickCurrent: number | undefined,

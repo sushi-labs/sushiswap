@@ -1,4 +1,5 @@
 import { GiftIcon } from '@heroicons/react-v1/outline'
+import { isSushiSwapV4ChainId } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Chip,
@@ -109,6 +110,21 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                       </p>
                     </LinkInternal>
                   </DropdownMenuItem>
+                  {isSushiSwapV4ChainId(chainId) ? (
+                    <DropdownMenuItem asChild>
+                      <LinkInternal
+                        href={`/${getEvmChainById(chainId).key}/pool/v4/add`}
+                        className="flex flex-col !items-start gap-1 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-1 font-medium leading-none">
+                          V4 Position
+                        </div>
+                        <p className="text-sm leading-snug text-muted-foreground">
+                          Provide liquidity to a V4 liquidity pool.
+                        </p>
+                      </LinkInternal>
+                    </DropdownMenuItem>
+                  ) : null}
                   {isSushiSwapV2ChainId(chainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal

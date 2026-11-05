@@ -26,21 +26,34 @@ import {
 import type { Hex } from 'viem'
 import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 
-const PROTOCOL_PILLS: Record<
+const PROTOCOLS: Record<
   RawV2Pool['protocol'] | RawV3Pool['protocol'] | RawV4Pool['protocol'],
-  { label: string; className: string }
+  {
+    label: string
+    className: string
+    /** The pool pages' URL segment: `/pool/<path>/<address>`. */
+    path: string
+    /** The add liquidity page under the pool's pages. */
+    addLiquidityPage: string
+  }
 > = {
   [SushiSwapProtocol.SUSHISWAP_V2]: {
     label: 'V2',
     className: 'bg-pink/20 text-pink',
+    path: 'v2',
+    addLiquidityPage: 'add',
   },
   [SushiSwapProtocol.SUSHISWAP_V3]: {
     label: 'V3',
     className: 'bg-blue/20 text-blue',
+    path: 'v3',
+    addLiquidityPage: 'positions',
   },
   [SushiSwapProtocol.SUSHISWAP_V4]: {
     label: 'V4',
     className: 'bg-purple-500/20 text-purple-500',
+    path: 'v4',
+    addLiquidityPage: 'positions',
   },
 }
 
@@ -86,8 +99,18 @@ export const PoolHeader: FC<PoolHeader> = ({
   showAddLiquidityButton = false,
 }) => {
   const [token0, token1] = getPoolCurrencies(pool)
-  const pill = PROTOCOL_PILLS[pool.protocol]
+  const protocol = PROTOCOLS[pool.protocol]
   const isV4 = pool.protocol === SushiSwapProtocol.SUSHISWAP_V4
+  // V4 pool IDs are not accounts, so there is nothing to link to
+  const explorerUrl = isV4
+    ? undefined
+    : getEvmChainById(pool.chainId).getAccountUrl(address)
+  const title = `${token0.symbol}/${token1.symbol}`
+  const titleClassName = typographyVariants({
+    variant: 'h1',
+    className:
+      'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
+  })
 
   return (
     <div className="flex flex-col gap-6">
@@ -104,57 +127,26 @@ export const PoolHeader: FC<PoolHeader> = ({
               <Currency.Icon currency={token0} />
               <Currency.Icon currency={token1} />
             </Currency.IconList>
-            {/* V4 pool IDs are not accounts, so there is nothing to link to */}
-            {isV4 ? (
-              <h1
-                className={typographyVariants({
-                  variant: 'h1',
-                  className:
-                    'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
-                })}
-              >
-                {token0.symbol}/{token1.symbol}
-              </h1>
-            ) : (
-              <Button
-                asChild
-                variant="link"
-                className={typographyVariants({
-                  variant: 'h1',
-                  className:
-                    'sm:!text2-xl sm:!text-4xl !font-bold text-gray-900 dark:text-slate-50 truncate overflow-x-auto',
-                })}
-              >
-                <LinkExternal
-                  href={getEvmChainById(pool.chainId).getAccountUrl(address)}
-                >
-                  {token0.symbol}/{token1.symbol}
-                </LinkExternal>
+            {explorerUrl ? (
+              <Button asChild variant="link" className={titleClassName}>
+                <LinkExternal href={explorerUrl}>{title}</LinkExternal>
               </Button>
+            ) : (
+              <h1 className={titleClassName}>{title}</h1>
             )}
             <div
               className={classNames(
-                pill.className,
+                protocol.className,
                 'text-sm px-2 py-1 font-semibold rounded-full mt-0.5',
               )}
             >
-              {pill.label}
+              {protocol.label}
             </div>
           </div>
           {showAddLiquidityButton ? (
             <Button asChild>
               <LinkInternal
-                href={
-                  pool.protocol === 'SUSHISWAP_V2'
-                    ? `/${getEvmChainById(pool.chainId).key}/pool/v2/${
-                        pool.address
-                      }/add`
-                    : pool.protocol === 'SUSHISWAP_V3'
-                      ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${
-                          pool.address
-                        }/positions`
-                      : ''
-                }
+                href={`/${getEvmChainById(pool.chainId).key}/pool/${protocol.path}/${pool.address}/${protocol.addLiquidityPage}`}
               >
                 Add Liquidity
               </LinkInternal>

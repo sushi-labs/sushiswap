@@ -1,25 +1,25 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { type UseQueryResult, useQuery } from '@tanstack/react-query'
 import { readContracts } from '@wagmi/core'
 import ms from 'ms'
 import {
+  type EvmAddress,
   SUSHISWAP_V4_CL_POOL_MANAGER,
   SUSHISWAP_V4_CL_TICK_LENS,
   type SushiSwapV4ChainId,
+  type SushiSwapV4PoolKey,
+  decodeSushiSwapV4CLPoolParameters,
+  evmNativeAddress,
   sushiSwapV4CLPoolManagerAbi_getLiquidity,
   sushiSwapV4CLPoolManagerAbi_getPoolBitmapInfo,
   sushiSwapV4CLPoolManagerAbi_getSlot0,
   sushiSwapV4CLPoolManagerAbi_poolIdToPoolKey,
   sushiSwapV4CLTickLensAbi_getPopulatedTicksInWord,
 } from 'sushi/evm'
-import type { Hex } from 'viem'
+import { type Hex, zeroAddress } from 'viem'
 import { useConfig } from 'wagmi'
-import {
-  type V4PopulatedTick,
-  getV4TickBitmapWords,
-  getV4TickSpacing,
-} from './v4-pool-math'
+import { type V4PopulatedTick, getV4TickBitmapWords } from './v4-pool-math'
 
 // Calldata bytes per multicall; the bitmap scan reads up to ~7k words for tick spacing 1
 const TICK_SCAN_BATCH_SIZE = 2 ** 15
@@ -30,17 +30,34 @@ interface UseV4PoolStateParams {
   enabled?: boolean
 }
 
-/** The pool's current price, active liquidity and tick spacing. */
+export interface V4PoolSlot0 {
+  sqrtPriceX96: bigint
+  tick: number
+  liquidity: bigint
+  tickSpacing: number
+  /** As the pool manager stores it: native is the zero address. */
+  poolKey: SushiSwapV4PoolKey
+  /** The key's currencies as the app addresses them: native is `evmNativeAddress`. */
+  currencies: [EvmAddress, EvmAddress]
+  /** An uninitialized pool has no stored key and no price. */
+  isInitialized: boolean
+}
+
+function toCurrencyAddress(address: EvmAddress): EvmAddress {
+  return address === zeroAddress ? evmNativeAddress : address
+}
+
+/** The pool's key, current price, active liquidity and tick spacing. */
 export function useV4PoolSlot0({
   chainId,
   poolId,
   enabled = true,
-}: UseV4PoolStateParams) {
+}: UseV4PoolStateParams): UseQueryResult<V4PoolSlot0> {
   const config = useConfig()
 
   return useQuery({
     queryKey: ['useV4PoolSlot0', { chainId, poolId }],
-    queryFn: async () => {
+    queryFn: async (): Promise<V4PoolSlot0> => {
       const manager = SUSHISWAP_V4_CL_POOL_MANAGER[chainId]
 
       const [poolKey, slot0, liquidity] = await readContracts(config, {
@@ -71,13 +88,27 @@ export function useV4PoolSlot0({
       })
 
       const [sqrtPriceX96, tick] = slot0
-      const parameters = poolKey[5]
+      const [currency0, currency1, hooks, poolManager, fee, parameters] =
+        poolKey
 
       return {
         sqrtPriceX96,
         tick,
         liquidity,
-        tickSpacing: getV4TickSpacing(parameters),
+        tickSpacing: decodeSushiSwapV4CLPoolParameters(parameters).tickSpacing,
+        poolKey: {
+          currency0,
+          currency1,
+          hooks,
+          poolManager,
+          fee,
+          parameters,
+        },
+        currencies: [
+          toCurrencyAddress(currency0),
+          toCurrencyAddress(currency1),
+        ],
+        isInitialized: sqrtPriceX96 !== 0n,
       }
     },
     refetchInterval: ms('10s'),
@@ -94,7 +125,9 @@ export function useV4PoolTicks({
   poolId,
   tickSpacing,
   enabled = true,
-}: UseV4PoolStateParams & { tickSpacing: number | undefined }) {
+}: UseV4PoolStateParams & {
+  tickSpacing: number | undefined
+}): UseQueryResult<V4PopulatedTick[]> {
   const config = useConfig()
 
   return useQuery({

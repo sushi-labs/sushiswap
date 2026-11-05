@@ -1,64 +1,50 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
-import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import React, {
+  type FC,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useMemo,
+} from 'react'
 import { Bound } from 'src/lib/constants'
+import { formatTypedPriceNumber } from 'src/lib/pool/cl'
 import type { Price } from 'sushi'
 import {
   type EvmCurrency,
-  type EvmToken,
   type SushiSwapV3ChainId,
-  SushiSwapV3FeeAmount,
+  type SushiSwapV3FeeAmount,
+  TICK_SPACINGS,
   getPriceRangeWithTokenRatio,
 } from 'sushi/evm'
 import colors from 'tailwindcss/colors'
 
 import { Chart } from './chart'
 import { useDensityChartData } from './hooks'
-import type { HandleType, ZoomLevels } from './types'
+import type { ChartEntry, HandleType, ZoomLevels } from './types'
 
 const brushKeyToFieldKey: Record<HandleType, 'LOWER' | 'UPPER'> = {
   e: 'LOWER',
   w: 'UPPER',
 }
 
-const ZOOM_LEVELS: Record<SushiSwapV3FeeAmount, ZoomLevels> = {
-  [SushiSwapV3FeeAmount.LOWEST]: {
-    initialMin: 0.999,
-    initialMax: 1.001,
-    min: 0.00001,
-    max: 1.5,
-  },
-  [SushiSwapV3FeeAmount.LOW]: {
-    initialMin: 0.999,
-    initialMax: 1.001,
-    min: 0.00001,
-    max: 1.5,
-  },
-  [SushiSwapV3FeeAmount.MEDIUM]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-  [SushiSwapV3FeeAmount.HIGH]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-  [SushiSwapV3FeeAmount.HIGHER]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
-  [SushiSwapV3FeeAmount.HIGHEST]: {
-    initialMin: 0.5,
-    initialMax: 2,
-    min: 0.00001,
-    max: 20,
-  },
+const TIGHT_ZOOM: ZoomLevels = {
+  initialMin: 0.999,
+  initialMax: 1.001,
+  min: 0.00001,
+  max: 1.5,
+}
+const WIDE_ZOOM: ZoomLevels = {
+  initialMin: 0.5,
+  initialMax: 2,
+  min: 0.00001,
+  max: 20,
+}
+
+/** Zoom close in for pools with tight ticks (V3's 0.01% and 0.05% tiers). */
+export function getZoomLevels(tickSpacing: number | undefined): ZoomLevels {
+  return tickSpacing !== undefined && tickSpacing <= 10 ? TIGHT_ZOOM : WIDE_ZOOM
 }
 
 interface InfoBoxProps {
@@ -79,11 +65,55 @@ const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
   )
 }
 
+type LiquidityChartRangeInputProps = {
+  currencyA: EvmCurrency | undefined
+  currencyB: EvmCurrency | undefined
+  ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
+  priceRange: number | undefined
+  price: number | undefined
+  priceLower?: Price<EvmCurrency, EvmCurrency>
+  priceUpper?: Price<EvmCurrency, EvmCurrency>
+  weightLockedCurrencyBase: number | undefined
+  onLeftRangeInput: (typedValue: string) => void
+  onRightRangeInput: (typedValue: string) => void
+  interactive: boolean
+  hideBrushes?: boolean
+  tokenToggle?: ReactNode
+}
+
 export function LiquidityChartRangeInput({
   chainId,
+  feeAmount,
+  ...props
+}: LiquidityChartRangeInputProps & {
+  chainId: SushiSwapV3ChainId
+  feeAmount?: SushiSwapV3FeeAmount
+  /** Whether currencyA is the pool's currency0. */
+  isSorted: boolean
+}): ReactElement {
+  const { currencyA, currencyB } = props
+  const densityData = useDensityChartData({
+    chainId,
+    token0: currencyA,
+    token1: currencyB,
+    feeAmount,
+  })
+
+  return (
+    <LiquidityChartRangeInputView
+      {...props}
+      densityData={densityData}
+      zoomLevels={getZoomLevels(
+        feeAmount ? TICK_SPACINGS[feeAmount] : undefined,
+      )}
+    />
+  )
+}
+
+/** The range chart over density data from any concentrated liquidity pool. */
+export function LiquidityChartRangeInputView({
   currencyA,
   currencyB,
-  feeAmount,
   ticksAtLimit,
   priceRange,
   price,
@@ -95,69 +125,19 @@ export function LiquidityChartRangeInput({
   interactive,
   hideBrushes = false,
   tokenToggle,
-}: {
-  chainId: SushiSwapV3ChainId
-  currencyA: EvmCurrency | undefined
-  currencyB: EvmCurrency | undefined
-  feeAmount?: SushiSwapV3FeeAmount
-  ticksAtLimit: { [_bound in Bound]?: boolean | undefined }
-  priceRange: number | undefined
-  price: number | undefined
-  priceLower?: Price<EvmToken, EvmToken>
-  priceUpper?: Price<EvmToken, EvmToken>
-  weightLockedCurrencyBase: number | undefined
-  onLeftRangeInput: (typedValue: string) => void
-  onRightRangeInput: (typedValue: string) => void
-  interactive: boolean
-  hideBrushes?: boolean
-  tokenToggle?: ReactNode
-}) {
-  const isSorted =
-    currencyA && currencyB && currencyA?.wrap().sortsBefore(currencyB?.wrap())
-
-  const { isLoading, error, data } = useDensityChartData({
-    chainId,
-    token0: currencyA,
-    token1: currencyB,
-    feeAmount,
-  })
-
-  const onBrushDomainChangeEnded = useCallback(
-    (domain: [number, number], mode: string | undefined) => {
-      let leftRangeValue = Number(domain[0])
-      const rightRangeValue = Number(domain[1])
-
-      if (leftRangeValue <= 0) {
-        leftRangeValue = 1 / 10 ** 6
-      }
-
-      // simulate user input for auto-formatting and other validations
-      if (
-        (!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ||
-          mode === 'handle' ||
-          mode === 'reset') &&
-        leftRangeValue > 0
-      ) {
-        onLeftRangeInput(leftRangeValue.toFixed(6))
-      }
-
-      if (
-        (!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ||
-          mode === 'reset') &&
-        rightRangeValue > 0
-      ) {
-        // todo: remove this check. Upper bound for large numbers
-        // sometimes fails to parse to tick.
-        if (rightRangeValue < 1e35) {
-          onRightRangeInput(rightRangeValue.toFixed(6))
-        }
-      }
-    },
-    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit],
-  )
-
-  interactive = interactive && Boolean(data?.length)
-
+  densityData: { isLoading, error, data },
+  zoomLevels,
+  isSorted,
+}: LiquidityChartRangeInputProps & {
+  densityData: {
+    isLoading: boolean
+    error: unknown
+    data: ChartEntry[] | undefined
+  }
+  zoomLevels: ZoomLevels
+  /** Whether currencyA is the pool's currency0. */
+  isSorted: boolean
+}): ReactElement {
   const brushDomain: [number, number] | undefined = useMemo(() => {
     const leftPrice = isSorted ? priceLower : priceUpper?.invert()
     const rightPrice = isSorted ? priceUpper : priceLower?.invert()
@@ -169,6 +149,48 @@ export function LiquidityChartRangeInput({
         ]
       : undefined
   }, [isSorted, priceLower, priceUpper])
+
+  const onBrushDomainChangeEnded = useCallback(
+    (
+      domain: [number, number],
+      mode: string | undefined,
+      moved: [left: boolean, right: boolean] = [true, true],
+    ) => {
+      let leftRangeValue = Number(domain[0])
+      const rightRangeValue = Number(domain[1])
+
+      if (leftRangeValue <= 0) {
+        leftRangeValue = 1 / 10 ** 6
+      }
+
+      // Only input a bound the drag moved, so an untouched one isn't replaced
+      // by its rounded price. With no range yet, both are new.
+      const [leftMoved, rightMoved] = brushDomain ? moved : [true, true]
+
+      // simulate user input for auto-formatting and other validations
+      if (
+        leftMoved &&
+        (!ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER] ||
+          mode === 'handle' ||
+          mode === 'reset') &&
+        leftRangeValue > 0
+      ) {
+        onLeftRangeInput(formatTypedPriceNumber(leftRangeValue))
+      }
+
+      if (
+        rightMoved &&
+        (!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ||
+          mode === 'reset') &&
+        rightRangeValue > 0
+      ) {
+        onRightRangeInput(formatTypedPriceNumber(rightRangeValue))
+      }
+    },
+    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit, brushDomain],
+  )
+
+  interactive = interactive && Boolean(data?.length)
 
   const brushLabelValue = useCallback(
     (d: 'w' | 'e', x: number) => {
@@ -192,7 +214,7 @@ export function LiquidityChartRangeInput({
   )
 
   const isUninitialized =
-    !currencyA || !currencyB || (data === undefined && !isLoading)
+    !currencyA || !currencyB || (data === undefined && !isLoading && !error)
 
   /**
    * If user locked a desired token weight, we need to compute a correct price range when user is brushing.
@@ -209,13 +231,18 @@ export function LiquidityChartRangeInput({
         typeof weightLockedCurrencyBase !== 'number'
       )
         return undefined
-      return getPriceRangeWithTokenRatio(
-        price,
-        range[0],
-        range[1],
-        brushKeyToFieldKey[movingHandle],
-        weightLockedCurrencyBase,
-      )
+      try {
+        return getPriceRangeWithTokenRatio(
+          price,
+          range[0],
+          range[1],
+          brushKeyToFieldKey[movingHandle],
+          weightLockedCurrencyBase,
+        )
+      } catch {
+        // No range has the weight with that bound, e.g. one at the price
+        return undefined
+      }
     },
     [price, weightLockedCurrencyBase],
   )
@@ -291,7 +318,7 @@ export function LiquidityChartRangeInput({
             brushDomain={brushDomain}
             onBrushDomainChange={onBrushDomainChangeEnded}
             getNewRangeWhenBrushing={getNewRangeWhenBrushing}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
+            zoomLevels={zoomLevels}
             isPriceRangeSet={priceRange !== undefined}
             hideBrushes={hideBrushes}
             tokenToggle={tokenToggle}

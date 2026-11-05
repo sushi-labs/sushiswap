@@ -111,7 +111,6 @@ const Component: FC<{
     account: address,
     token0,
     token1,
-    baseToken: token0,
     feeAmount: positionDetails?.fee,
     existingPosition: position ?? undefined,
   })

@@ -3,7 +3,6 @@
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { SkeletonBox } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { tickToPoolPrice } from 'src/lib/functions'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useV4PoolDensityChartData } from 'src/lib/pool/v4'
 import {
@@ -13,6 +12,7 @@ import {
   type SushiSwapV3ChainId,
   type SushiSwapV4ChainId,
   TickMath,
+  sushiSwapV4TickToPrice,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
 import { useConcentratedDerivedMintInfo } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
@@ -60,7 +60,6 @@ const SteerStrategyLiquidityDistributionV3: FC<
     chainId,
     token0: poolStats?.token0,
     token1: poolStats?.token1,
-    baseToken: poolStats?.token0,
     feeAmount: poolStats?.feeAmount,
     existingPosition: undefined,
   })
@@ -142,8 +141,12 @@ const SteerStrategyLiquidityDistributionView: FC<{
     }
 
     return {
-      minPrice: Number(tickToPoolPrice(token0, token1, min).toSignificant(12)),
-      maxPrice: Number(tickToPoolPrice(token0, token1, max).toSignificant(12)),
+      minPrice: Number(
+        sushiSwapV4TickToPrice(token0, token1, min).toSignificant(12),
+      ),
+      maxPrice: Number(
+        sushiSwapV4TickToPrice(token0, token1, max).toSignificant(12),
+      ),
     }
   }, [positions, token0, token1])
 

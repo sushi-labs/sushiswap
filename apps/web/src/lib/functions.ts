@@ -1,4 +1,4 @@
-import { Amount, type ChainId, type Currency, Price } from 'sushi'
+import { Amount, type ChainId, type Currency, type Price } from 'sushi'
 import {
   DAI,
   type EvmChainId,
@@ -9,20 +9,11 @@ import {
   type Position,
   SUSHI,
   SushiSwapV2Pool,
-  type SushiSwapV3FeeAmount,
-  TICK_SPACINGS,
-  TickMath,
   USDC,
   USDT,
   WBTC,
-  encodeSqrtRatioX96,
-  nearestUsableTick,
-  priceToClosestTick,
-  tickToPrice,
 } from 'sushi/evm'
 import { Bound } from './constants'
-import type { useTicks } from './hooks'
-import type { TickProcessed } from './pool/v3/use-concentrated-active-liquidity'
 
 export type SushiTokenChainId = keyof typeof SUSHI
 
@@ -64,76 +55,6 @@ export const incentiveRewardToToken = (
     decimals: incentive.rewardToken.decimals,
     name: incentive.rewardToken.name,
   })
-}
-
-export function getTickToPrice(
-  baseToken?: EvmToken,
-  quoteToken?: EvmToken,
-  tick?: number,
-): Price<EvmToken, EvmToken> | undefined {
-  if (!baseToken || !quoteToken || typeof tick !== 'number') {
-    return undefined
-  }
-  return tickToPrice(baseToken, quoteToken, tick)
-}
-
-export function tryParsePrice(
-  baseToken?: EvmToken,
-  quoteToken?: EvmToken,
-  value?: string,
-) {
-  if (!baseToken || !quoteToken || !value) {
-    return undefined
-  }
-
-  if (!value.match(/^\d*\.?\d+$/)) {
-    return undefined
-  }
-
-  const [whole, fraction] = value.split('.')
-
-  const decimals = fraction?.length ?? 0
-  const withoutDecimals = BigInt((whole ?? '') + (fraction ?? ''))
-
-  return new Price({
-    base: baseToken,
-    quote: quoteToken,
-    numerator: withoutDecimals * BigInt(10 ** quoteToken.decimals),
-    denominator: BigInt(10 ** decimals) * BigInt(10 ** baseToken.decimals),
-  })
-}
-
-export function tryParseTick(
-  baseToken?: EvmToken,
-  quoteToken?: EvmToken,
-  feeAmount?: SushiSwapV3FeeAmount,
-  value?: string,
-): number | undefined {
-  if (!baseToken || !quoteToken || !feeAmount || !value) {
-    return undefined
-  }
-
-  const price = tryParsePrice(baseToken, quoteToken, value)
-
-  if (!price) {
-    return undefined
-  }
-
-  let tick: number
-
-  // check price is within min/max bounds, if outside return min/max
-  const sqrtRatioX96 = encodeSqrtRatioX96(price.numerator, price.denominator)
-
-  if (sqrtRatioX96 >= TickMath.MAX_SQRT_RATIO) {
-    tick = TickMath.MAX_TICK
-  } else if (sqrtRatioX96 <= TickMath.MIN_SQRT_RATIO) {
-    tick = TickMath.MIN_TICK
-  } else {
-    // this function is agnostic to the base, will always return the correct tick
-    tick = priceToClosestTick(price)
-  }
-
-  return nearestUsableTick(tick, TICK_SPACINGS[feeAmount])
 }
 
 export function getPriceOrderingFromPositionForUI(position?: Position): {
@@ -200,108 +121,8 @@ export function getPriceOrderingFromPositionForUI(position?: Position): {
   }
 }
 
-function getCurrencySortKey(currency: EvmCurrency): bigint {
-  return currency.type === 'native' ? 0n : BigInt(currency.address)
-}
-
-const Q192 = 2n ** 192n
-
-/**
- * Like `tickToPrice`, but orders the pair as a V4 pool does: a native currency
- * is `0x0` and sorts first, rather than being replaced by its wrapped token.
- * For wrapped tokens the result matches `tickToPrice`.
- */
-export function tickToPoolPrice<
-  TBase extends EvmCurrency,
-  TQuote extends EvmCurrency,
->(
-  baseCurrency: TBase,
-  quoteCurrency: TQuote,
-  tick: number,
-): Price<TBase, TQuote> {
-  const sqrtRatioX96 = TickMath.getSqrtRatioAtTick(tick)
-  const ratioX192 = sqrtRatioX96 * sqrtRatioX96
-
-  return getCurrencySortKey(baseCurrency) < getCurrencySortKey(quoteCurrency)
-    ? new Price({
-        base: baseCurrency,
-        quote: quoteCurrency,
-        numerator: ratioX192,
-        denominator: Q192,
-      })
-    : new Price({
-        base: baseCurrency,
-        quote: quoteCurrency,
-        numerator: Q192,
-        denominator: ratioX192,
-      })
-}
-
-const PRICE_FIXED_DIGITS = 8
-
-// Computes the numSurroundingTicks above or below the active tick.
-export default function computeSurroundingTicks(
-  token0: EvmCurrency,
-  token1: EvmCurrency,
-  activeTickProcessed: TickProcessed,
-  sortedTickData: NonNullable<ReturnType<typeof useTicks>['data']>,
-  pivot: number,
-  ascending: boolean,
-): TickProcessed[] {
-  let previousTickProcessed: TickProcessed = {
-    ...activeTickProcessed,
-  }
-  // Iterate outwards (either up or down depending on direction) from the active tick,
-  // building active liquidity for every tick.
-  let processedTicks: TickProcessed[] = []
-  // The pivot is -1 when the active tick sits below every initialized tick
-  const pivotIsActiveTick =
-    pivot >= 0 &&
-    Number(sortedTickData[pivot].tickIdx) === activeTickProcessed.tick
-  const startIndex = ascending ? pivot + 1 : pivot - (pivotIsActiveTick ? 1 : 0)
-
-  for (
-    let i = startIndex;
-    ascending ? i < sortedTickData.length : i >= 0;
-    ascending ? i++ : i--
-  ) {
-    const tick = Number(sortedTickData[i].tickIdx)
-    const currentTickProcessed: TickProcessed = {
-      liquidityActive: previousTickProcessed.liquidityActive,
-      tick,
-      liquidityNet: sortedTickData[i].liquidityNet,
-      price0: tickToPoolPrice(token0, token1, tick).toString({
-        fixed: PRICE_FIXED_DIGITS,
-      }),
-    }
-
-    // Update the active liquidity.
-    // If we are iterating ascending and we found an initialized tick we immediately apply
-    // it to the current processed tick we are building.
-    // If we are iterating descending, we don't want to apply the net liquidity until the following tick.
-    if (ascending) {
-      currentTickProcessed.liquidityActive =
-        previousTickProcessed.liquidityActive + sortedTickData[i].liquidityNet
-    } else if (!ascending && previousTickProcessed.liquidityNet !== 0n) {
-      // We are iterating descending, so look at the previous tick and apply any net liquidity.
-      currentTickProcessed.liquidityActive =
-        previousTickProcessed.liquidityActive -
-        previousTickProcessed.liquidityNet
-    }
-
-    processedTicks.push(currentTickProcessed)
-    previousTickProcessed = currentTickProcessed
-  }
-
-  if (!ascending) {
-    processedTicks = processedTicks.reverse()
-  }
-
-  return processedTicks
-}
-
 interface FormatTickPriceArgs {
-  price: Price<EvmToken, EvmToken> | undefined
+  price: Price<EvmCurrency, EvmCurrency> | undefined
   atLimit: { [_bound in Bound]?: boolean | undefined }
   direction: Bound
   placeholder?: string

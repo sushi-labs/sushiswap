@@ -17,7 +17,6 @@ import {
   SUSHISWAP_V3_POSITION_MANAGER,
   type SushiSwapV3ChainId,
   type SushiSwapV3FeeAmount,
-  TickMath,
   defaultCurrency,
   isEvmWNativeSupported,
 } from 'sushi/evm'
@@ -60,6 +59,7 @@ import {
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
 } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { ExtremeTickWarning } from '~evm/[chainId]/_ui/extreme-tick-warning'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { ToggleZapCard } from '../../_ui/toggle-zap-card'
 import { AddSectionReviewModalConcentrated } from './add-section-review-modal-concentrated'
@@ -107,23 +107,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
     account,
     token0,
     token1,
-    baseToken: token0,
     feeAmount,
     existingPosition,
   })
-
-  // An arbitrarily picked threshold to show a warning when the current price is close to the min or max tick
-  const extremeTickBound = useMemo(() => {
-    const tickCurrent = derivedMintInfo.pool?.tickCurrent
-    if (!tickCurrent) return undefined
-
-    const closeToMinTick =
-      tickCurrent <= TickMath.MIN_TICK + 1500 ? Bound.LOWER : undefined
-    const closeToMaxTick =
-      tickCurrent >= TickMath.MAX_TICK - 1500 ? Bound.UPPER : undefined
-
-    return closeToMinTick ?? closeToMaxTick ?? undefined
-  }, [derivedMintInfo.pool])
 
   const { outOfRange, invalidRange, pool } = derivedMintInfo
 
@@ -169,15 +155,7 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
         />
       ) : null}
 
-      {extremeTickBound ? (
-        <Message size="sm" variant="warning">
-          The pool's current price is close to the{' '}
-          {extremeTickBound === Bound.LOWER ? 'minimum' : 'maximum'} allowed by
-          the protocol. It might not reflect the true market price and could
-          lead to a loss of funds if liquidity is provided. Please double-check
-          if the price is accurate before proceeding.
-        </Message>
-      ) : null}
+      <ExtremeTickWarning tickCurrent={pool?.tickCurrent} />
 
       {isZapModeEnabled ? (
         <ZapWidgetContent
@@ -282,22 +260,22 @@ const WidgetContent: FC<WidgetContentProps> = ({
 
   const _onFieldAInput = useCallback(
     (val: string) => {
-      onFieldAInput(val, noLiquidity)
+      onFieldAInput(val)
       if (onChange) {
         onChange(val, 'a')
       }
     },
-    [noLiquidity, onChange, onFieldAInput],
+    [onChange, onFieldAInput],
   )
 
   const _onFieldBInput = useCallback(
     (val: string) => {
-      onFieldBInput(val, noLiquidity)
+      onFieldBInput(val)
       if (onChange) {
         onChange(val, 'b')
       }
     },
-    [noLiquidity, onChange, onFieldBInput],
+    [onChange, onFieldBInput],
   )
 
   const amounts = useMemo(() => {
@@ -346,48 +324,50 @@ const WidgetContent: FC<WidgetContentProps> = ({
         allowNative={isEvmWNativeSupported(chainId)}
       />
 
-      <Checker.StockTokenRegion token0={token0} token1={token1}>
-        <Checker.Connect namespace="evm" fullWidth>
-          <Checker.Network fullWidth chainId={chainId}>
-            <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
-              <Checker.Slippage
-                fullWidth
-                slippageTolerance={slippagePercent}
-                text="Continue With High Slippage"
-              >
-                <Checker.ApproveERC20
+      {/* Only the trigger is gated, so the dialog outlives the inputs
+          clearing once the transaction is sent */}
+      <AddSectionReviewModalConcentrated
+        chainId={chainId}
+        feeAmount={feeAmount}
+        token0={token0}
+        token1={token1}
+        input0={parsedAmounts[Field.CURRENCY_A]}
+        input1={parsedAmounts[Field.CURRENCY_B]}
+        position={position}
+        noLiquidity={noLiquidity}
+        price={price}
+        pricesAtTicks={pricesAtTicks}
+        ticksAtLimit={ticksAtLimit}
+        tokenId={tokenId}
+        existingPosition={existingPosition}
+        onSuccess={() => {
+          _onFieldAInput('')
+          _onFieldBInput('')
+        }}
+        successLink={successLink}
+      >
+        <Checker.StockTokenRegion token0={token0} token1={token1}>
+          <Checker.Connect namespace="evm" fullWidth>
+            <Checker.Network fullWidth chainId={chainId}>
+              <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
+                <Checker.Slippage
                   fullWidth
-                  id="approve-erc20-0"
-                  amount={parsedAmounts[Field.CURRENCY_A]}
-                  contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                  enabled={!depositADisabled}
+                  slippageTolerance={slippagePercent}
+                  text="Continue With High Slippage"
                 >
                   <Checker.ApproveERC20
                     fullWidth
-                    id="approve-erc20-1"
-                    amount={parsedAmounts[Field.CURRENCY_B]}
+                    id="approve-erc20-0"
+                    amount={parsedAmounts[Field.CURRENCY_A]}
                     contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
-                    enabled={!depositBDisabled}
+                    enabled={!depositADisabled}
                   >
-                    <AddSectionReviewModalConcentrated
-                      chainId={chainId}
-                      feeAmount={feeAmount}
-                      token0={token0}
-                      token1={token1}
-                      input0={parsedAmounts[Field.CURRENCY_A]}
-                      input1={parsedAmounts[Field.CURRENCY_B]}
-                      position={position}
-                      noLiquidity={noLiquidity}
-                      price={price}
-                      pricesAtTicks={pricesAtTicks}
-                      ticksAtLimit={ticksAtLimit}
-                      tokenId={tokenId}
-                      existingPosition={existingPosition}
-                      onSuccess={() => {
-                        _onFieldAInput('')
-                        _onFieldBInput('')
-                      }}
-                      successLink={successLink}
+                    <Checker.ApproveERC20
+                      fullWidth
+                      id="approve-erc20-1"
+                      amount={parsedAmounts[Field.CURRENCY_B]}
+                      contract={SUSHISWAP_V3_POSITION_MANAGER[chainId]}
+                      enabled={!depositBDisabled}
                     >
                       <DialogTrigger asChild>
                         <Button
@@ -398,14 +378,14 @@ const WidgetContent: FC<WidgetContentProps> = ({
                           Preview
                         </Button>
                       </DialogTrigger>
-                    </AddSectionReviewModalConcentrated>
+                    </Checker.ApproveERC20>
                   </Checker.ApproveERC20>
-                </Checker.ApproveERC20>
-              </Checker.Slippage>
-            </Checker.Amounts>
-          </Checker.Network>
-        </Checker.Connect>
-      </Checker.StockTokenRegion>
+                </Checker.Slippage>
+              </Checker.Amounts>
+            </Checker.Network>
+          </Checker.Connect>
+        </Checker.StockTokenRegion>
+      </AddSectionReviewModalConcentrated>
     </div>
   )
 }

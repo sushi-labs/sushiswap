@@ -1,8 +1,6 @@
 import { useMemo } from 'react'
-import {
-  type TickProcessed,
-  useConcentratedActiveLiquidity,
-} from 'src/lib/pool/v3'
+import type { TickProcessed } from 'src/lib/pool/cl'
+import { useConcentratedActiveLiquidity } from 'src/lib/pool/v3'
 import type {
   EvmCurrency,
   SushiSwapV3ChainId,

@@ -1,6 +1,6 @@
 import { EvmChainId, EvmToken } from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
-import computeSurroundingTicks from './functions'
+import { computeSurroundingTicks } from './active-liquidity'
 
 const token0 = new EvmToken({
   chainId: EvmChainId.ETHEREUM,

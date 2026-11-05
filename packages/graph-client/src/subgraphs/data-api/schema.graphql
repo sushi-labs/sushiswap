@@ -1882,6 +1882,8 @@ scalar TerminalChainId
 
 scalar TerminalPoolKey
 
+scalar TerminalPositionId
+
 type TerminalQueries {
   """
   Active pools. Pool key breaks sort ties; reuse the same ordering on subsequent pages.
@@ -1922,6 +1924,31 @@ type TerminalQueries {
   follow TerminalPage, without a stream.
   """
   liquidityChanges(input: TerminalLiquidityChangesInput!): TerminalLiquidityChangeConnection!
+
+  """
+  The liquidity positions a holder currently holds as position manager tokens
+  on a chain, by position manager and token ID, optionally of some deployments
+  only. Burned tokens are excluded; withdrawn but unburned ones remain, with
+  zero liquidity.
+  """
+  positions(input: TerminalPositionsInput!): TerminalPositionConnection!
+
+  """
+  A singleton pool's open positions, largest liquidity first: position
+  manager tokens with their holders, and positions other contracts, such as
+  hooks, hold themselves. Pages follow current liquidity, so a position whose
+  liquidity changes between pages may be skipped or repeated.
+  """
+  poolPositions(input: TerminalPoolPositionsInput!): TerminalPositionConnection!
+
+  """Any position by its ID, with its uncollected fees."""
+  position(id: TerminalPositionId!): TerminalPosition!
+
+  """
+  A position's liquidity changes and, for a token, its transfers, newest first
+  by (block, log).
+  """
+  positionChanges(input: TerminalPositionChangesInput!): TerminalPositionChangeConnection!
   market(pool: TerminalPoolKey!): TerminalMarket!
   metrics(input: TerminalMetricsInput!): TerminalMetrics!
   marketStats(input: TerminalMetricsInput!): TerminalMarketStats!
@@ -2531,6 +2558,159 @@ type TerminalMarketStatsWindow {
   priceChangePercent: Float
 }
 
+input TerminalPositionsInput {
+  chainId: TerminalChainId!
+  holder: EvmAddress!
+
+  """
+  Only these deployments' tokens, by ID as on TerminalPool; every deployment
+  with positions when unset, none when empty.
+  """
+  deployments: [String!]
+  first: Int = 50
+  after: String
+
+  """Read each position's uncollected fees over RPC."""
+  pendingFees: Boolean = false
+}
+
+input TerminalPoolPositionsInput {
+  pool: TerminalPoolKey!
+  first: Int = 50
+  after: String
+
+  """Read each position's uncollected fees over RPC."""
+  pendingFees: Boolean = false
+}
+
+input TerminalPositionChangesInput {
+  position: TerminalPositionId!
+  first: Int = 50
+  after: String
+}
+
+type TerminalPositionConnection {
+  nodes: [TerminalPosition!]!
+  endCursor: String
+  hasMore: Boolean!
+}
+
+"""
+A concentrated liquidity position in a singleton pool, from canonical events.
+"""
+type TerminalPosition {
+  id: TerminalPositionId!
+  pool: TerminalPool!
+
+  """
+  The pool manager position's owner: the position manager for its tokens.
+  """
+  owner: EvmAddress!
+  tickLower: Int!
+  tickUpper: Int!
+  salt: Bytes!
+
+  """
+  The position manager token this position is; null for a position its owner
+  holds itself.
+  """
+  token: TerminalPositionToken
+  liquidity: BigInt!
+
+  """
+  Tokens the liquidity holds at the pool's latest price, raw units, rounded
+  down; excludes fees.
+  """
+  amount0: BigInt!
+  amount1: BigInt!
+
+  """
+  Both amounts in USD at the pool's current prices; null when a held side has
+  no price.
+  """
+  amountUsd: Float
+
+  """Whether tickLower <= tick < tickUpper at the pool's latest price."""
+  inRange: Boolean!
+  createdBlock: BigInt!
+  createdAt: Int!
+  createdTransactionHash: Bytes!
+
+  """
+  Fees its position manager reported collecting, raw units; null where none
+  are reported, as by Uniswap V4's PositionManager or a self-held position.
+  """
+  feesCollected: TerminalTokenAmounts
+
+  """
+  Uncollected core LP fees at a confirmed block, read over RPC; null when not
+  requested or the read failed. Hook-taken fees are not included.
+  """
+  pendingFees: TerminalPendingFees
+}
+
+"""A position manager's ERC-721 token; the manager owns the position."""
+type TerminalPositionToken {
+  positionManager: EvmAddress!
+  tokenId: BigInt!
+
+  """The current holder; null once burned."""
+  holder: EvmAddress
+}
+
+type TerminalTokenAmounts {
+  amount0: BigInt!
+  amount1: BigInt!
+}
+
+type TerminalPendingFees {
+  amount0: BigInt!
+  amount1: BigInt!
+  blockNumber: BigInt!
+}
+
+enum TerminalPositionChangeKind {
+  MINT
+  TRANSFER
+  BURN
+  INCREASE
+  DECREASE
+
+  """A change of no liquidity, which only collects fees."""
+  COLLECT
+}
+
+type TerminalPositionChangeConnection {
+  nodes: [TerminalPositionChange!]!
+  endCursor: String
+  hasMore: Boolean!
+}
+
+"""
+A token transfer, or a liquidity change, every one of which also collects the
+position's accrued fees.
+"""
+type TerminalPositionChange {
+  kind: TerminalPositionChangeKind!
+  transactionHash: Bytes!
+  blockNumber: BigInt!
+  logIndex: Int!
+  timestamp: Int!
+  from: EvmAddress
+  to: EvmAddress
+  liquidityDelta: BigInt
+
+  """
+  Signed principal moved in raw units, positive into the pool; null without.
+  """
+  amount0: BigInt
+  amount1: BigInt
+
+  """Fees collected, where the position manager reports them."""
+  fees: TerminalTokenAmounts
+  transactionSender: EvmAddress
+}
+
 type StellarTokenMetadata {
   issuer: StellarAccountAddress
   domain: String
@@ -2692,7 +2872,7 @@ scalar SushiSwapV2ChainId
 """A field whose value is a sushi swap v3 chain ID"""
 scalar SushiSwapV3ChainId
 
-"""A field whose value is a sushi swap v4 chain ID"""
+"""A field whose value is a chain ID whose Sushi V4 pools are indexed"""
 scalar SushiSwapV4ChainId
 
 """A field whose value is a pool chain ID"""

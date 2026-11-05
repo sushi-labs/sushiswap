@@ -22,6 +22,7 @@ import {
 import { Guard, type GuardProps } from './guard'
 import { Network } from './network'
 import { PartialRoute, type PartialRouteProps } from './partial-route'
+import { Permit2, type Permit2Props } from './permit2'
 import { type ProviderProps, CheckerProvider as Root } from './provider'
 import {
   RevokeApproveERC20,
@@ -46,6 +47,7 @@ export type CheckerProps<TChainId extends EvmChainId | SvmChainId> = {
   ApproveERC20WithPermit: ComponentType<ApproveERC20WithPermitProps<TChainId>>
   RevokeApproveERC20: ComponentType<RevokeApproveERC20Props>
   Connect: ComponentType<ConnectProps>
+  Permit2: ComponentType<Permit2Props>
   Success: FC<SuccessProps>
   Root: FC<ProviderProps>
   PartialRoute: FC<PartialRouteProps>
@@ -64,6 +66,7 @@ export const Checker: CheckerProps<EvmChainId | SvmChainId> = {
   ApproveERC20Multiple,
   ApproveERC20WithPermit,
   RevokeApproveERC20,
+  Permit2,
   Success,
   Root,
   PartialRoute,

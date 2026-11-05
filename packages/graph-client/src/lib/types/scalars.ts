@@ -50,4 +50,8 @@ export type Scalars = {
   TokenListChainId: TokenListChainId
   TrendingTokensChainId: TrendingTokensChainId
   LaunchpadChainId: LaunchpadV2ChainId
+
+  TerminalChainId: number
+  TerminalPoolKey: string
+  TerminalPositionId: string
 }

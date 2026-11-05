@@ -10,11 +10,8 @@ import {
   CardHeader,
   Explainer,
   FormSection,
-  Label,
   LinkExternal,
   Message,
-  TextField,
-  TextFieldDescription,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -23,25 +20,15 @@ import {
 } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
 import { Toggle } from '@sushiswap/ui'
-import React, {
-  type FC,
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
-import { PriceBlock } from 'src/lib/components/price-block'
+import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { Bound, Field } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
-import {
-  type EvmAddress,
-  type EvmCurrency,
-  type SushiSwapV3ChainId,
-  type SushiSwapV3FeeAmount,
-  TICK_SPACINGS,
-  getCapitalEfficiency,
-  getTokenRatio,
-  tickToPrice,
+import { PRICE_RANGE_MULTIPLIERS, PriceRange } from 'src/lib/pool/cl'
+import type {
+  EvmAddress,
+  EvmCurrency,
+  SushiSwapV3ChainId,
+  SushiSwapV3FeeAmount,
 } from 'sushi/evm'
 
 import { Radio, RadioGroup } from '@headlessui/react'
@@ -49,24 +36,33 @@ import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
-import { Amount, Fraction, formatPercent } from 'sushi'
+import { Amount, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'
 import {
   useConcentratedDerivedMintInfo,
   useConcentratedMintActionHandlers,
   useConcentratedMintState,
-  useRangeHopCallbacks,
 } from '../concentrated-liquidity-provider'
+import {
+  useRangeInput,
+  useStartPriceInput,
+} from '../concentrated-liquidity-provider/use-range-input'
 import { LiquidityChartRangeInput } from '../liquidity-chart-range-input'
+import {
+  RangePresetToggles,
+  RangePriceInputs,
+  RangeStat,
+  RangeTokenToggle,
+  StartPriceInput,
+  useRangeRatio,
+} from './range-controls'
 
-enum PriceRange {
-  FULL_RANGE = 0,
-  BPS_20000 = 1,
-  BPS_12000 = 2,
-  BPS_10100 = 3,
-  LEFT_SIDE = 4,
-  RIGHT_SIDE = 5,
-}
+const PRICE_RANGE_OPTIONS = [
+  { label: 'Full Range', value: PriceRange.FULL_RANGE },
+  ...PRICE_RANGE_MULTIPLIERS,
+  { label: 'Single Sided (Left)', value: PriceRange.LEFT_SIDE },
+  { label: 'Single Sided (Right)', value: PriceRange.RIGHT_SIDE },
+]
 
 enum YieldRatePeriod {
   ANNUALLY = 0,
@@ -118,9 +114,6 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   const [yieldRate, setYieldRate] = useState<YieldRatePeriod>(
     YieldRatePeriod.ANNUALLY,
   )
-  const [priceRange, setPriceRangeSelector] = useState<PriceRange | undefined>(
-    undefined,
-  )
   const {
     price,
     invertPrice,
@@ -131,36 +124,40 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     poolForPosition,
     noLiquidity,
     isLoading,
-    leftBoundInput,
-    rightBoundInput,
     parsedAmounts,
     dependentField,
+    currency0,
+    currency1,
+    tickSpacing,
   } = useConcentratedDerivedMintInfo({
     chainId,
     account: address,
     token0,
     token1,
-    baseToken: token0,
     feeAmount,
     existingPosition: undefined,
   })
 
-  const {
-    onLeftRangeInput,
-    onRightRangeInput,
-    onStartPriceInput,
-    onFieldAInput,
-    onFieldBInput,
-    setWeightLockedCurrencyBase,
-    setIndependentRangeField,
-  } = useConcentratedMintActionHandlers()
-  const {
-    startPriceTypedValue,
-    independentField,
-    independentRangeField,
-    typedValue,
-    weightLockedCurrencyBase,
-  } = useConcentratedMintState()
+  const { onFieldAInput, onFieldBInput, resetMintState } =
+    useConcentratedMintActionHandlers()
+  const range = useRangeInput({
+    currency0,
+    currency1,
+    invertPrice,
+    tickSpacing,
+    tickCurrent: poolForPosition?.tickCurrent,
+    ticks,
+  })
+  const startPrice = useStartPriceInput({
+    currency0,
+    currency1,
+    price,
+    invertPrice,
+  })
+  // Of the displayed base, token0 (currencyA)
+  const { lockedWeight } = range
+
+  const { independentField, typedValue } = useConcentratedMintState()
 
   const { data: existingPosition, isLoading: positionLoading } =
     useConcentratedLiquidityPositionsFromTokenId({
@@ -169,95 +166,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     })
   const hasExistingPosition = !!existingPosition && !positionLoading
 
-  const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
-
-  const {
-    getDecrementLower,
-    getIncrementLower,
-    getDecrementUpper,
-    getIncrementUpper,
-    getSetFullRange,
-    resetMintState,
-  } = useRangeHopCallbacks(
-    token0,
-    token1,
-    feeAmount,
-    tickLower,
-    tickUpper,
-    pool,
-  )
-
-  const setPriceRange = useCallback(
-    (multiplier: Fraction) => {
-      if (!price) return
-      const newPriceLower = price.asFraction.mul(price.scalar).div(multiplier)
-      const newPriceUpper = price.asFraction.mul(price.scalar).mul(multiplier)
-      setWeightLockedCurrencyBase(undefined)
-      if (invertPrice) {
-        onLeftRangeInput(newPriceUpper.invert().toString({ fixed: 6 }))
-        onRightRangeInput(newPriceLower.invert().toString({ fixed: 6 }))
-      } else {
-        onLeftRangeInput(newPriceLower.toString({ fixed: 6 }))
-        onRightRangeInput(newPriceUpper.toString({ fixed: 6 }))
-      }
-    },
-    [
-      onLeftRangeInput,
-      onRightRangeInput,
-      price,
-      invertPrice,
-      setWeightLockedCurrencyBase,
-    ],
-  )
-
-  const setSingleSided = useCallback(
-    (side: 'left' | 'right') => {
-      if (!token0 || !token1 || !price || !feeAmount || !poolForPosition) return
-
-      getSetFullRange()
-
-      switch (side) {
-        case 'left': {
-          const current =
-            Math.floor(poolForPosition.tickCurrent / TICK_SPACINGS[feeAmount]) *
-            TICK_SPACINGS[feeAmount]
-
-          const newRightPrice = tickToPrice(
-            token0.wrap(),
-            token1.wrap(),
-            current + (invertPrice ? 1 : 0) * TICK_SPACINGS[feeAmount],
-          )
-          onRightRangeInput(newRightPrice.toString({ fixed: 18 }))
-          break
-        }
-        case 'right': {
-          const current =
-            Math.ceil(poolForPosition.tickCurrent / TICK_SPACINGS[feeAmount]) *
-            TICK_SPACINGS[feeAmount]
-
-          const newLeftPrice = tickToPrice(
-            token0.wrap(),
-            token1.wrap(),
-            current + (invertPrice ? -1 : 0) * TICK_SPACINGS[feeAmount],
-          )
-          onLeftRangeInput(newLeftPrice.toString({ fixed: 18 }))
-          break
-        }
-      }
-    },
-    [
-      token0,
-      token1,
-      price,
-      feeAmount,
-      poolForPosition,
-      getSetFullRange,
-      invertPrice,
-      onRightRangeInput,
-      onLeftRangeInput,
-    ],
-  )
 
   const formattedAmounts: {
     [_formattedAmountsField in Field]: string
@@ -275,105 +184,22 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     [typedValue, dependentField, independentField, parsedAmounts],
   )
 
+  // The range, start price and locked weight don't depend on which token is
+  // base; the amounts are of a token, so they move with it
   const handleSwitchTokens = useCallback(() => {
     switchTokens?.()
-
-    if (!ticksAtLimit[Bound.LOWER] && !ticksAtLimit[Bound.UPPER]) {
-      // switch price
-      if (typeof weightLockedCurrencyBase === 'number')
-        setWeightLockedCurrencyBase(1 - weightLockedCurrencyBase)
-      setIndependentRangeField(
-        independentRangeField === Bound.LOWER ? Bound.UPPER : Bound.LOWER,
-      )
-      onLeftRangeInput(
-        (invertPrice ? priceLower : priceUpper?.invert())?.toSignificant(6) ??
-          '',
-      )
-      onRightRangeInput(
-        (invertPrice ? priceUpper : priceLower?.invert())?.toSignificant(6) ??
-          '',
-      )
-      if (independentField === Field.CURRENCY_A) {
-        onFieldBInput(formattedAmounts[Field.CURRENCY_A] ?? '', noLiquidity)
-      } else {
-        onFieldAInput(formattedAmounts[Field.CURRENCY_B] ?? '', noLiquidity)
-      }
+    if (independentField === Field.CURRENCY_A) {
+      onFieldBInput(formattedAmounts[Field.CURRENCY_A] ?? '')
+    } else {
+      onFieldAInput(formattedAmounts[Field.CURRENCY_B] ?? '')
     }
   }, [
     switchTokens,
-    ticksAtLimit,
-    setWeightLockedCurrencyBase,
-    setIndependentRangeField,
-    onLeftRangeInput,
-    onRightRangeInput,
-    weightLockedCurrencyBase,
-    invertPrice,
-    priceUpper,
-    priceLower,
-    noLiquidity,
     independentField,
     onFieldAInput,
     onFieldBInput,
     formattedAmounts,
-    independentRangeField,
   ])
-
-  const PRICE_RANGE_OPTIONS = useMemo(
-    () => [
-      {
-        label: 'Full Range',
-        value: PriceRange.FULL_RANGE,
-        onClick: () => {
-          setWeightLockedCurrencyBase(undefined)
-          getSetFullRange()
-        },
-      },
-      {
-        label: '×÷2',
-        value: PriceRange.BPS_20000,
-        onClick: () =>
-          setPriceRange(new Fraction({ numerator: 20000, denominator: 10000 })),
-      },
-      {
-        label: '×÷1.2',
-        value: PriceRange.BPS_12000,
-        onClick: () =>
-          setPriceRange(new Fraction({ numerator: 12000, denominator: 10000 })),
-      },
-      {
-        label: '×÷1.01',
-        value: PriceRange.BPS_10100,
-        onClick: () =>
-          setPriceRange(new Fraction({ numerator: 10100, denominator: 10000 })),
-      },
-      {
-        label: 'Single Sided (Left)',
-        value: PriceRange.LEFT_SIDE,
-        onClick: () => setSingleSided('left'),
-      },
-      {
-        label: 'Single Sided (Right)',
-        value: PriceRange.RIGHT_SIDE,
-        onClick: () => setSingleSided('right'),
-      },
-    ],
-    [
-      getSetFullRange,
-      setPriceRange,
-      setWeightLockedCurrencyBase,
-      setSingleSided,
-    ],
-  )
-
-  const isSorted = token0 && token1 && token0.wrap().sortsBefore(token1.wrap())
-  const leftPrice = useMemo(
-    () => (isSorted ? priceLower : priceUpper?.invert()),
-    [isSorted, priceLower, priceUpper],
-  )
-  const rightPrice = useMemo(
-    () => (isSorted ? priceUpper : priceLower?.invert()),
-    [isSorted, priceLower, priceUpper],
-  )
 
   const fiatAmounts = useMemo(
     () =>
@@ -393,68 +219,40 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
     enabled: Boolean(chainId && poolAddress),
   })
 
-  const [valueRatio, capitalEfficiency, apr, sanitizedCE] = useMemo(() => {
-    if (!price || !priceLower || !priceUpper) return [undefined, undefined]
-
-    const capitalEfficiency = getCapitalEfficiency(
-      price,
-      priceLower,
-      priceUpper,
-    )
-    const _ratio = getTokenRatio(price, priceLower, priceUpper)
-    const ratio: [number, number] = invertPrice
-      ? [_ratio[1], _ratio[0]]
-      : _ratio
-
-    const apr =
-      (poolStats?.feeApr1d ?? 0) /
-      (yieldRate === YieldRatePeriod.MONTHLY
-        ? 12
-        : yieldRate === YieldRatePeriod.DAILY
-          ? 365
-          : 1)
-
-    // make sure capitial efficiency is valid
-    const sanitizedCE =
-      capitalEfficiency != null &&
-      Number.isFinite(capitalEfficiency) &&
-      capitalEfficiency > 0
-        ? capitalEfficiency
-        : undefined
-
-    return [ratio, capitalEfficiency, apr, sanitizedCE]
-  }, [price, priceLower, priceUpper, invertPrice, poolStats, yieldRate])
+  const { valueRatio, capitalEfficiency } = useRangeRatio(
+    price,
+    pricesAtTicks,
+    invertPrice,
+  )
+  const apr =
+    (poolStats?.feeApr1d ?? 0) /
+    (yieldRate === YieldRatePeriod.MONTHLY
+      ? 12
+      : yieldRate === YieldRatePeriod.DAILY
+        ? 365
+        : 1)
 
   const currentWeight0 = valueRatio?.[0]
   const handleToggleWeightLock = useCallback(() => {
-    if (typeof weightLockedCurrencyBase !== 'number') {
-      setWeightLockedCurrencyBase(currentWeight0)
+    if (typeof lockedWeight !== 'number') {
+      range.setLockedWeight(currentWeight0)
     } else {
-      if (typeof leftBoundInput === 'string') onLeftRangeInput(leftBoundInput)
-      if (typeof rightBoundInput === 'string')
-        onRightRangeInput(rightBoundInput)
-      setWeightLockedCurrencyBase(undefined)
+      // Keep the range the weight set, which unlocks it; a bound at the limit
+      // stays one, whatever the tick spacing
+      range.setRange(
+        ticksAtLimit[Bound.LOWER] ? true : ticks[Bound.LOWER],
+        ticksAtLimit[Bound.UPPER] ? true : ticks[Bound.UPPER],
+      )
     }
-  }, [
-    leftBoundInput,
-    rightBoundInput,
-    onLeftRangeInput,
-    onRightRangeInput,
-    currentWeight0,
-    weightLockedCurrencyBase,
-    setWeightLockedCurrencyBase,
-  ])
+  }, [range, ticks, ticksAtLimit, currentWeight0, lockedWeight])
 
   const isTokenWeightUnmatched = useMemo(() => {
-    if (
-      typeof weightLockedCurrencyBase !== 'number' ||
-      typeof currentWeight0 !== 'number'
-    )
+    if (typeof lockedWeight !== 'number' || typeof currentWeight0 !== 'number')
       return false
-    const absDiff = Math.abs(currentWeight0 - weightLockedCurrencyBase)
-    const pctDiff = Math.abs(currentWeight0 / weightLockedCurrencyBase - 1)
+    const absDiff = Math.abs(currentWeight0 - lockedWeight)
+    const pctDiff = Math.abs(currentWeight0 / lockedWeight - 1)
     return absDiff > 0.01 && pctDiff > 0.03 // threshold: 1% abs diff and 3% pct diff
-  }, [weightLockedCurrencyBase, currentWeight0])
+  }, [lockedWeight, currentWeight0])
 
   const poolFish = new URL('https://poolfish.xyz/calculators/sushi')
   poolFish.searchParams.append('network', `${chainId}`)
@@ -462,31 +260,14 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
   if (token1) poolFish.searchParams.append('token1', token1.wrap().address)
   if (feeAmount) poolFish.searchParams.append('feeTier', `${feeAmount}`)
 
-  const tokenToggle = useMemo(
-    () =>
-      switchTokens ? (
-        <div className="flex gap-1">
-          <Toggle
-            variant="outline"
-            onPressedChange={handleSwitchTokens}
-            pressed={isSorted}
-            size="sm"
-          >
-            {isSorted ? token0?.symbol : token1?.symbol}
-          </Toggle>
-          <Toggle
-            variant="outline"
-            onPressedChange={handleSwitchTokens}
-            pressed={!isSorted}
-            size="sm"
-          >
-            {isSorted ? token1?.symbol : token0?.symbol}
-          </Toggle>
-        </div>
-      ) : // <div />
-      undefined,
-    [switchTokens, handleSwitchTokens, isSorted, token0, token1],
-  )
+  const tokenToggle = switchTokens ? (
+    <RangeTokenToggle
+      currencyA={token0}
+      currencyB={token1}
+      invertPrice={invertPrice}
+      onSwitch={handleSwitchTokens}
+    />
+  ) : undefined
 
   return (
     <FormSection
@@ -530,21 +311,12 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           {isMounted && showStartPrice && (
             <div className="flex flex-col gap-3">
               {noLiquidity && (
-                <div className="flex flex-col gap-2">
-                  <Label>Start price</Label>
-                  <TextField
-                    variant="outline"
-                    value={startPriceTypedValue}
-                    onValueChange={onStartPriceInput}
-                    testdata-id="start-price-input"
-                    type="number"
-                    unit={`${token1?.symbol} per ${token0?.symbol}`}
-                  />
-                  <TextFieldDescription>
-                    Your pool needs a starting price somewhere between the min.
-                    and max. price
-                  </TextFieldDescription>
-                </div>
+                <StartPriceInput
+                  currencyA={token0}
+                  currencyB={token1}
+                  value={startPrice.value}
+                  onChange={startPrice.onChange}
+                />
               )}
               {!noLiquidity && (
                 <LiquidityChartRangeInput
@@ -553,7 +325,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   currencyB={token1}
                   feeAmount={feeAmount}
                   ticksAtLimit={ticksAtLimit}
-                  priceRange={priceRange}
+                  priceRange={range.preset}
                   price={
                     price
                       ? Number.parseFloat(
@@ -565,15 +337,10 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                   }
                   priceLower={priceLower}
                   priceUpper={priceUpper}
-                  weightLockedCurrencyBase={weightLockedCurrencyBase}
-                  onLeftRangeInput={(input) => {
-                    setPriceRangeSelector(undefined)
-                    onLeftRangeInput(input)
-                  }}
-                  onRightRangeInput={(input) => {
-                    setPriceRangeSelector(undefined)
-                    onRightRangeInput(input)
-                  }}
+                  weightLockedCurrencyBase={lockedWeight}
+                  onLeftRangeInput={range.setMinPrice}
+                  onRightRangeInput={range.setMaxPrice}
+                  isSorted={!invertPrice}
                   interactive={!hasExistingPosition}
                   tokenToggle={tokenToggle}
                 />
@@ -605,107 +372,76 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               )}
             </div>
             <div className="flex gap-4 justify-between">
-              <RadioGroup
-                value={priceRange || ''}
-                className="gap-2 flex flex-wrap"
-              >
-                {PRICE_RANGE_OPTIONS.map(({ value, label, onClick }) => (
-                  <Radio value={value} key={value}>
-                    <Toggle
-                      disabled={!feeAmount}
-                      size="sm"
-                      variant="outline"
-                      className="whitespace-nowrap"
-                      onClick={
-                        priceRange === value
-                          ? () => {
-                              setPriceRangeSelector(undefined)
-                              resetMintState()
-                            }
-                          : () => {
-                              setPriceRangeSelector(value)
-                              onClick()
-                            }
-                      }
-                      pressed={priceRange === value}
-                    >
-                      {label}
-                    </Toggle>
-                  </Radio>
-                ))}
-              </RadioGroup>
+              <RangePresetToggles
+                options={PRICE_RANGE_OPTIONS}
+                range={range}
+                onDeselect={resetMintState}
+                disabled={!feeAmount}
+              />
             </div>
             <Card>
               <CardHeader>
                 <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
-                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
-                    <span>
-                      <span className="mr-1">{`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}</span>
-                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
-                        This is the ratio of the cash values of the two
-                        underlying tokens in this position.
-                      </Explainer>
-                    </span>
-                    <div className="flex flex-grow gap-1 items-center justify-end">
-                      {valueRatio
-                        ? `${(valueRatio[0] * 100).toFixed(0)}% : ${(
-                            valueRatio[1] * 100
-                          ).toFixed(0)}%`
-                        : '-'}
-                      {typeof weightLockedCurrencyBase === 'number' &&
-                      isTokenWeightUnmatched ? (
-                        <TooltipProvider>
-                          <Tooltip delayDuration={0}>
-                            <TooltipTrigger asChild>
-                              <ExclamationTriangleIcon
-                                width={24}
-                                height={24}
-                                className="dark:text-yellow text-amber-900 p-0.5"
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent className="w-80">
-                              {`We failed to adjust the price range to your wanted
-                            token ratio (${(
-                              weightLockedCurrencyBase * 100
-                            ).toFixed(0)}%:
-                            ${((1 - weightLockedCurrencyBase) * 100).toFixed(0)}%
-                            ). Maybe because the price range
-                            is too narrow or too wide.`}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      ) : null}
+                  <RangeStat
+                    label={`Token Ratio (${token0?.symbol} : ${token1?.symbol})`}
+                    explainer="This is the ratio of the cash values of the two underlying tokens in this position."
+                  >
+                    {valueRatio
+                      ? `${(valueRatio[0] * 100).toFixed(0)}% : ${(
+                          valueRatio[1] * 100
+                        ).toFixed(0)}%`
+                      : '-'}
+                    {typeof lockedWeight === 'number' &&
+                    isTokenWeightUnmatched ? (
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
-                            <Button
-                              size="xs"
-                              variant={
-                                typeof weightLockedCurrencyBase !== 'number'
-                                  ? 'outline'
-                                  : 'destructive'
-                              }
-                              onClick={handleToggleWeightLock}
-                            >
-                              {typeof weightLockedCurrencyBase !== 'number' ? (
-                                <LockOpenIcon width={10} height={10} />
-                              ) : (
-                                <LockClosedIcon width={10} height={10} />
-                              )}
-                            </Button>
+                            <ExclamationTriangleIcon
+                              width={24}
+                              height={24}
+                              className="dark:text-yellow text-amber-900 p-0.5"
+                            />
                           </TooltipTrigger>
                           <TooltipContent className="w-80">
-                            Lock the token ratio such that your price range
-                            automatically adjusts when changing price boundary.
+                            {`We failed to adjust the price range to your wanted
+                            token ratio (${(lockedWeight * 100).toFixed(0)}%:
+                            ${((1 - lockedWeight) * 100).toFixed(0)}%
+                            ). Maybe because the price range
+                            is too narrow or too wide.`}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
-                    <span>
-                      <span className="mr-1">Capital Efficiency</span>
-                      <Explainer iconProps={{ className: 'inline mb-0.5' }}>
+                    ) : null}
+                    <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="xs"
+                            variant={
+                              typeof lockedWeight !== 'number'
+                                ? 'outline'
+                                : 'destructive'
+                            }
+                            onClick={handleToggleWeightLock}
+                          >
+                            {typeof lockedWeight !== 'number' ? (
+                              <LockOpenIcon width={10} height={10} />
+                            ) : (
+                              <LockClosedIcon width={10} height={10} />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="w-80">
+                          Lock the token ratio such that your price range
+                          automatically adjusts when changing price boundary.
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </RangeStat>
+                  <RangeStat
+                    label="Capital Efficiency"
+                    explainer={
+                      <>
                         For example, 2x capital efficiency means one unit of
                         liquidity in a concentrated liquidity position would
                         require a 2x capital in a full range position.
@@ -713,18 +449,13 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                         <br />
                         The narrower the price range, the higher the capital
                         efficiency.
-                      </Explainer>
-                    </span>
-                    <div className="flex flex-grow items-center justify-end">
-                      {capitalEfficiency &&
-                      Number.isFinite(capitalEfficiency) &&
-                      capitalEfficiency >= 0 ? (
-                        <>{capitalEfficiency.toFixed(2)}x</>
-                      ) : (
-                        '-'
-                      )}
-                    </div>
-                  </div>
+                      </>
+                    }
+                  >
+                    {capitalEfficiency
+                      ? `${capitalEfficiency.toFixed(2)}x`
+                      : '-'}
+                  </RangeStat>
                   <div className="flex flex-wrap items-start justify-between gap-1 flex-col  sm:flex-row sm:items-center">
                     <span>
                       <TooltipProvider>
@@ -773,16 +504,17 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       </Explainer>
                     </span>
                     <div className="flex flex-grow items-center justify-end">
-                      {!apr || !sanitizedCE ? (
+                      {!apr || !capitalEfficiency ? (
                         <span className="text-muted-foreground">
                           Not enough data
                         </span>
                       ) : (
                         <span>
                           <span className="text-muted-foreground">
-                            {formatPercent(apr)} * {sanitizedCE.toFixed(2)} =
+                            {formatPercent(apr)} *{' '}
+                            {capitalEfficiency.toFixed(2)} =
                           </span>{' '}
-                          {formatPercent(apr * sanitizedCE)}
+                          {formatPercent(apr * capitalEfficiency)}
                         </span>
                       )}
                     </div>
@@ -791,56 +523,14 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </CardHeader>
             </Card>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <PriceBlock
-              id={'min-price'}
-              token0={token0}
-              token1={token1}
-              label="Min Price"
-              value={
-                ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
-                  ? '0'
-                  : (leftPrice?.toSignificant(5) ?? '')
-              }
-              onUserInput={(input) => {
-                setIndependentRangeField(Bound.LOWER)
-                setPriceRangeSelector(undefined)
-                onLeftRangeInput(input)
-              }}
-              decrement={isSorted ? getDecrementLower : getIncrementUpper}
-              increment={isSorted ? getIncrementLower : getDecrementUpper}
-              decrementDisabled={
-                ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
-              }
-              incrementDisabled={
-                ticksAtLimit[isSorted ? Bound.LOWER : Bound.UPPER]
-              }
-            />
-            <PriceBlock
-              id={'max-price'}
-              token0={token0}
-              token1={token1}
-              label="Max Price"
-              value={
-                ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
-                  ? '∞'
-                  : (rightPrice?.toSignificant(5) ?? '')
-              }
-              onUserInput={(input) => {
-                setIndependentRangeField(Bound.UPPER)
-                setPriceRangeSelector(undefined)
-                onRightRangeInput(input)
-              }}
-              decrement={isSorted ? getDecrementUpper : getIncrementLower}
-              increment={isSorted ? getIncrementUpper : getDecrementLower}
-              incrementDisabled={
-                ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
-              }
-              decrementDisabled={
-                ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER]
-              }
-            />
-          </div>
+          <RangePriceInputs
+            currencyA={token0}
+            currencyB={token1}
+            pricesAtTicks={pricesAtTicks}
+            ticksAtLimit={ticksAtLimit}
+            invertPrice={invertPrice}
+            range={range}
+          />
           <Card>
             <CardHeader>
               <CardDescription>

@@ -31,7 +31,6 @@ export const LiquidityDepthWidget: FC<LiquidityDepthWidget> = ({
     chainId,
     token0: poolStats?.token0,
     token1: poolStats?.token1,
-    baseToken: poolStats?.token0,
     feeAmount: poolStats?.feeAmount,
     existingPosition: undefined,
   })

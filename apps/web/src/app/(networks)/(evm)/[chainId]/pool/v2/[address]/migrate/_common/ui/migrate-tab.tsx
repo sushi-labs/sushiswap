@@ -175,7 +175,6 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
       account: address,
       token0,
       token1,
-      baseToken: token0,
       feeAmount,
       existingPosition: undefined,
     })

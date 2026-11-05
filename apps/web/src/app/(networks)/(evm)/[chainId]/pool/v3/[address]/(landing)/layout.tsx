@@ -1,9 +1,7 @@
-import { Container } from '@sushiswap/ui'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
-import { getEvmChainById, isSushiSwapV3ChainId } from 'sushi/evm'
+import { isSushiSwapV3ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
-import { PoolHeader } from '~evm/[chainId]/pool/_ui/pool-header'
+import { PoolHeaderLayout } from '~evm/[chainId]/pool/_ui/pool-header-layout'
 import { getCachedV3Pool } from '../_lib/get-cached-v3-pool'
 
 export default async function Layout(props: {
@@ -26,28 +24,9 @@ export default async function Layout(props: {
 
   const pool = (await getCachedV3Pool({ chainId, address }))!
 
-  const headersList = await headers()
-  const referer = headersList.get('referer')
   return (
-    <>
-      <Container maxWidth="5xl" className="pt-10 px-4">
-        <PoolHeader
-          backUrl={
-            referer?.includes('/pool')
-              ? referer?.toString()
-              : `/${getEvmChainById(chainId).key}/explore/pools`
-          }
-          address={address}
-          pool={pool}
-          apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
-          showAddLiquidityButton
-        />
-      </Container>
-      <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
-          {children}
-        </div>
-      </section>
-    </>
+    <PoolHeaderLayout address={address} pool={pool} showAddLiquidityButton>
+      {children}
+    </PoolHeaderLayout>
   )
 }
