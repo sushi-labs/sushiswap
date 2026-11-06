@@ -21,6 +21,7 @@ export function LiquidityFormModeToggle({
         { value: 'simple', label: 'Simple' },
         { value: 'advanced', label: 'Advanced' },
       ]}
+      variant="primary"
     />
   )
 }

@@ -333,7 +333,12 @@ export function SimplePriceRange({
             </dt>
             <dd className="flex flex-col gap-1">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <div className="relative w-40 max-w-full shrink-0 text-xl font-semibold leading-7 tabular-nums text-foreground break-all">
+                <div
+                  className={classNames(
+                    'relative max-w-full shrink-0 text-xl font-semibold leading-7 tabular-nums text-foreground break-all',
+                    !currentPrice && 'w-40',
+                  )}
+                >
                   <span aria-hidden={!currentPrice}>
                     {currentPrice
                       ? `${useUsd ? '$' : ''}${currentPrice}`

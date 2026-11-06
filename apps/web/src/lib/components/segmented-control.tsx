@@ -9,6 +9,7 @@ interface SegmentedControlOption<Value extends string> {
   label: string
   disabled?: boolean
   descriptionId?: string
+  variant?: 'default' | 'primary' | 'outline'
 }
 
 interface SegmentedControlProps<Value extends string> {
@@ -17,6 +18,7 @@ interface SegmentedControlProps<Value extends string> {
   onValueChange(value: Value): void
   options: readonly SegmentedControlOption<Value>[]
   className?: string
+  variant?: 'default' | 'primary' | 'outline'
 }
 
 export function SegmentedControl<Value extends string>({
@@ -25,6 +27,7 @@ export function SegmentedControl<Value extends string>({
   onValueChange,
   options,
   className,
+  variant = 'default',
 }: SegmentedControlProps<Value>): ReactElement {
   return (
     <RadioGroup
@@ -50,6 +53,7 @@ export function SegmentedControl<Value extends string>({
             data-state={value === option.value ? 'on' : 'off'}
             className={toggleVariants({
               size: 'sm',
+              variant,
               className: '!h-8 !rounded-md !px-3',
             })}
             // Keep explicit re-selection available to each control's handler.
