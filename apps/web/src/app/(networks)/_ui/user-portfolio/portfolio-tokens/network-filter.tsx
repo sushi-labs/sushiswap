@@ -24,7 +24,7 @@ export function NetworkFilter({
     >
       <SelectTrigger
         aria-label="Filter by network"
-        className="!w-fit shrink-0 !border !border-accent text-sm bg-secondary focus:!border-perps-blue"
+        className="!w-fit shrink-0 !border-0 !rounded-lg text-sm !bg-muted focus:!border-pink"
       >
         {selectedChainId === 'All' ? (
           'All'

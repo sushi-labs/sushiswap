@@ -61,7 +61,7 @@ describe('PricePanel', () => {
     (price) => {
       renderPrice(price)
 
-      expect(container.textContent).toBe('$ —')
+      expect(container.textContent).toBe('$ -')
       expect(
         container.querySelector('[aria-label="USD estimate unavailable"]'),
       ).not.toBeNull()

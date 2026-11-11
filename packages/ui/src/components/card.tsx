@@ -14,7 +14,7 @@ import { SkeletonText } from './skeleton'
 const cardVariants = cva('relative rounded-xl border border-accent', {
   variants: {
     variant: {
-      default: 'shadow-sm bg-white dark:bg-background black:bg-secondary',
+      default: 'bg-white dark:bg-background black:bg-secondary',
       outline: '',
     },
   },

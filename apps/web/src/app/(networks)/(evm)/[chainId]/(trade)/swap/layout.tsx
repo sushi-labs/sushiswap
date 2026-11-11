@@ -32,7 +32,7 @@ export default async function SwapLayout(props: {
   return (
     <>
       <Header chainId={chainId} />
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+      <main className="lg:p-4 mt-8 lg:mt-16 mb-[86px]">{children}</main>
     </>
   )
 }

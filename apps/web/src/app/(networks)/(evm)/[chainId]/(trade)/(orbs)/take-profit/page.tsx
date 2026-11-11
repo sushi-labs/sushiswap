@@ -5,7 +5,7 @@ import { TakeProfitWidget } from './_ui/take-profit-widget'
 
 export default function SwapTakeProfitPage() {
   return (
-    <Container maxWidth="lg" className="relative">
+    <Container maxWidth="xl" className="relative">
       <TakeProfitWidget />
     </Container>
   )

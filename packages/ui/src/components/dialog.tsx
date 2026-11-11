@@ -18,7 +18,7 @@ const dialogVariants = cva(
       variant: {
         default: [
           dialogContentLayout,
-          'bg-gray-100 dark:bg-slate-800 black:bg-secondary shadow-lg',
+          'bg-background black:bg-secondary shadow-lg border border-accent',
         ],
         perps: [
           dialogContentLayout,
@@ -139,10 +139,7 @@ const DialogHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={classNames(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
-      className,
-    )}
+    className={classNames('flex flex-col space-y-1.5 text-left', className)}
     {...props}
   />
 )

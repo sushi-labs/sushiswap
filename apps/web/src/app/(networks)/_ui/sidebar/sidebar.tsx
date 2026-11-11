@@ -6,12 +6,11 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Popover,
   PopoverContent,
-  PopoverPrimitive,
+  classNames,
   useBreakpoint,
 } from '@sushiswap/ui'
-import { type FC, type ReactNode, useMemo } from 'react'
+import { type ReactNode, useMemo, useRef } from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { useSidebar } from './sidebar-provider'
 import { SidebarView } from './types'
@@ -19,51 +18,78 @@ import { SidebarConnectView } from './views/sidebar-connect-view'
 import { SidebarPortfolioView } from './views/sidebar-portfolio-view'
 import { SidebarSettingsView } from './views/sidebar-settings-view'
 
-const ResponsiveSidebarWrapper: FC<{
+function ResponsiveSidebarWrapper({
+  children,
+  isPortfolio,
+}: {
   children: ReactNode
-}> = ({ children }) => {
+  isPortfolio: boolean
+}): ReactNode {
   const isMounted = useIsMounted()
   const { isSm } = useBreakpoint('sm')
-  const { isOpen, open, close } = useSidebar()
+  const { contentId, isOpen, open, close } = useSidebar()
+  const returnFocusRef = useRef<HTMLElement | null>(null)
+  const interactedOutsideRef = useRef(false)
   const onOpenChange = (shouldOpen: boolean) => (shouldOpen ? open() : close())
+
+  function onOpenAutoFocus() {
+    returnFocusRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    interactedOutsideRef.current = false
+  }
+
+  function onCloseAutoFocus(event: Event) {
+    event.preventDefault()
+    if (!interactedOutsideRef.current) {
+      returnFocusRef.current?.focus()
+    }
+  }
 
   if (!isMounted) return null
 
   return isSm ? (
-    <Popover open={isOpen} onOpenChange={onOpenChange}>
-      <PopoverPrimitive.Anchor asChild>
-        <span
-          aria-hidden
-          className="fixed top-16 right-4 w-px h-px pointer-events-none"
-        />
-      </PopoverPrimitive.Anchor>
-      <PopoverContent
-        side="right"
-        align="start"
-        avoidCollisions={false}
-        collisionPadding={0}
-        sideOffset={0}
-        className="!p-0 fixed top-0 right-0 !h-[calc(100dvh-72px)] !w-80 overflow-hidden data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full"
-        onInteractOutside={(e) => {
-          if (
-            e.target instanceof HTMLElement &&
-            e.target.closest('[data-sidebar-trigger]')
-          ) {
-            e.preventDefault()
-          }
-        }}
-      >
-        {children}
-      </PopoverContent>
-    </Popover>
+    <PopoverContent
+      id={contentId}
+      aria-label="Wallet menu"
+      side="bottom"
+      align="end"
+      collisionPadding={8}
+      sideOffset={12}
+      sticky="always"
+      className={classNames(
+        '!p-0 overflow-y-auto overscroll-contain hide-scrollbar origin-[var(--radix-popover-content-transform-origin)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 motion-reduce:!animate-none',
+        '!w-[428px] max-w-[calc(100vw-16px)] !max-h-[min(704px,var(--radix-popover-content-available-height))] !rounded-3xl !bg-background !shadow-none',
+        isPortfolio &&
+          'h-[min(704px,var(--radix-popover-content-available-height))]',
+      )}
+      onOpenAutoFocus={onOpenAutoFocus}
+      onCloseAutoFocus={onCloseAutoFocus}
+      onInteractOutside={(event) => {
+        if (
+          event.target instanceof Element &&
+          event.target.closest('[data-sidebar-trigger]')
+        ) {
+          event.preventDefault()
+        } else {
+          interactedOutsideRef.current = true
+        }
+      }}
+    >
+      {children}
+    </PopoverContent>
   ) : (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
+        id={contentId}
         hideClose
-        className="!p-0 h-[calc(100dvh-16px)] overflow-hidden"
+        className="!block !p-0 h-[calc(100dvh-16px)] overflow-y-auto overscroll-contain hide-scrollbar"
+        onOpenAutoFocus={onOpenAutoFocus}
+        onCloseAutoFocus={onCloseAutoFocus}
       >
         <VisuallyHidden>
-          <DialogTitle>Sidebar</DialogTitle>
+          <DialogTitle>Wallet menu</DialogTitle>
         </VisuallyHidden>
         {children}
       </DialogContent>
@@ -92,5 +118,11 @@ export const Sidebar = () => {
     }
   }, [view, isConnected])
 
-  return <ResponsiveSidebarWrapper>{content}</ResponsiveSidebarWrapper>
+  return (
+    <ResponsiveSidebarWrapper
+      isPortfolio={isConnected && view === SidebarView.Portfolio}
+    >
+      {content}
+    </ResponsiveSidebarWrapper>
+  )
 }

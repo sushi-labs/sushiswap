@@ -88,7 +88,7 @@ function PriceConfigSection({
   error?: boolean
 }) {
   return (
-    <div className="rounded-xl border border-accent p-3 pb-2">
+    <div className="rounded-2xl border border-accent p-3 pb-2">
       <div className="flex flex-col gap-1">
         <div className="flex flex-col gap-2">
           {header}
@@ -267,7 +267,7 @@ export const TwapPriceConfigPanel = ({
   isTriggerPrice?: boolean
 }) => {
   return (
-    <div className="rounded-xl border border-accent bg-white dark:bg-slate-800 p-4 space-y-3">
+    <div className="border border-accent p-4 bg-muted rounded-2xl space-y-3">
       <TwapPriceConfigHeader isTriggerPrice={isTriggerPrice ?? false} />
       {children}
     </div>

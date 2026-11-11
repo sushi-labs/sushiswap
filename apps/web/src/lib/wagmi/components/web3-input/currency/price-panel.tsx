@@ -1,6 +1,6 @@
 import { classNames } from '@sushiswap/ui'
 import { SkeletonText } from '@sushiswap/ui'
-import { type FC, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Amount, ZERO } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import {
@@ -44,21 +44,19 @@ export function PricePanel<TChainId extends BalanceChainId>({
 
   if (loading && !isEmptyValue)
     return (
-      <div className="w-1/5 flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+      <div className="w-16 h-4 shrink-0 flex items-center">
+        <SkeletonText fontSize="xs" className="w-full" />
       </div>
     )
 
   if (error) {
-    return (
-      <p className="font-medium text-lg py-1 select-none text-red">{error}</p>
-    )
+    return <p className="font-medium text-xs select-none text-red">{error}</p>
   }
 
   return (
     <p
       className={classNames(
-        'font-medium text-lg flex items-baseline select-none text-gray-500 dark:text-slate-400',
+        'font-medium text-xs flex items-baseline select-none text-gray-500 dark:text-slate-400',
         className,
       )}
     >
@@ -67,17 +65,17 @@ export function PricePanel<TChainId extends BalanceChainId>({
           aria-label="USD estimate unavailable"
           title="USD estimate unavailable"
         >
-          $ —
+          $ -
         </span>
       ) : (
         <>
-          $ {big}.<span className="text-sm font-semibold">{portion}</span>
+          $ {big}.<span className="text-xs">{portion}</span>
         </>
       )}
       {!isEmptyValue && !isPriceUnavailable && priceImpact && (
         <span
           className={classNames(
-            'text-sm pl-1',
+            'text-xs pl-1',
             warningSeverityClassName(warningSeverity(priceImpact)),
           )}
         >

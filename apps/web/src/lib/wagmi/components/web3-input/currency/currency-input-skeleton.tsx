@@ -1,41 +1,37 @@
 import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
+import type { ReactElement, ReactNode } from 'react'
 import { PricePanel } from './price-panel'
 
 interface CurrencyInputSkeletonProps {
-  label?: string
+  label?: ReactNode
   className?: string
 }
 
 function CurrencyInputSkeleton({
   label,
   className,
-}: CurrencyInputSkeletonProps) {
+}: CurrencyInputSkeletonProps): ReactElement {
   return (
-    <div
-      className={classNames(
-        'relative space-y-2 overflow-hidden pb-2',
-        className,
-      )}
-    >
+    <div className={classNames('relative overflow-hidden', className)}>
       {label ? (
         <span className="text-sm text-muted-foreground">{label}</span>
       ) : null}
-      <div className="relative flex items-center gap-4">
-        <div className="flex gap-4 items-center justify-between flex-grow h-[44px]">
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
+      <div className="relative flex items-center gap-4 py-1">
+        <SkeletonBox className="w-32 h-11 shrink-0 !rounded-full" />
+        <div className="flex flex-col flex-1 min-w-0 items-end">
+          <div className="flex w-full h-10 items-center justify-end">
+            <SkeletonBox className="w-2/3 max-w-32 h-8 rounded-lg" />
+          </div>
+          <PricePanel
+            loading={false}
+            price={undefined}
+            currency={undefined}
+            value=""
+          />
         </div>
       </div>
-      <div className="flex flex-row items-center justify-between h-[36px]">
-        <PricePanel
-          loading={false}
-          price={undefined}
-          currency={undefined}
-          value=""
-        />
-        <div className="w-[60px] flex items-center">
-          <SkeletonText fontSize="lg" className="w-full" />
-        </div>
+      <div className="w-24 h-6 flex items-center">
+        <SkeletonText fontSize="xs" className="w-full" />
       </div>
     </div>
   )

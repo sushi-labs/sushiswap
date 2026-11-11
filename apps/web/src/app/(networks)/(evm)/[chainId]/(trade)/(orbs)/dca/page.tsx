@@ -5,7 +5,7 @@ import { DCAWidget } from './_ui/dca-widget'
 
 export default function SwapDCAPage() {
   return (
-    <Container maxWidth="lg" className="relative">
+    <Container maxWidth="xl" className="relative">
       <DCAWidget />
     </Container>
   )

@@ -10,21 +10,42 @@ import {
   getStellarWalletKit,
 } from '../config'
 
-export function useStellarWallets() {
-  const [wallets, setWallets] = useState<ISupportedWallet[]>([])
+const EMPTY_WALLETS: WalletWithState[] = []
+
+export function useStellarWallets(): WalletWithState[] {
+  return useStellarWalletDiscovery() ?? EMPTY_WALLETS
+}
+
+export function useStellarWalletDiscovery(): WalletWithState[] | undefined {
+  // Keep discovery pending distinct from a completed, empty wallet list.
+  const [wallets, setWallets] = useState<ISupportedWallet[]>()
   const { isRecentWallet } = useRecentWallets()
 
   useEffect(() => {
+    let cancelled = false
+
     async function fetchWallets() {
-      const kit = await getStellarWalletKit()
-      const supportedWallets = await kit.refreshSupportedWallets()
-      setWallets(supportedWallets)
+      try {
+        const kit = await getStellarWalletKit()
+        const supportedWallets = await kit.refreshSupportedWallets()
+        if (!cancelled) setWallets(supportedWallets)
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Failed to load Stellar wallets', error)
+          setWallets([])
+        }
+      }
     }
 
     fetchWallets()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   return useMemo(() => {
+    if (wallets === undefined) return undefined
+
     const map = new Map<string, WalletWithState>()
     for (const wallet of wallets) {
       const walletId = getStellarWalletId(wallet.id)

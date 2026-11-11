@@ -128,12 +128,12 @@ export function TwapForm({
       provider={walletClient?.transport}
       overrides={overrides}
     >
-      <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 p-4 py-6 md:px-12 md:py-8 bg-secondary rounded-3xl border-accent border">
+        <div className="flex items-center justify-between gap-1">
           <SwapModeButtons />
           <SpotSettingsOverlay />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <TwapToken0Input />
             <TwapSwitchTokensButton />

@@ -20,7 +20,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
   positions,
 }) => (
   <AccordionItem value="v3" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger className="px-7 underline-offset-2">
       {`V3 Positions (${positions.length})`}
     </AccordionTrigger>
     <AccordionContent className="cursor-default">
@@ -47,7 +47,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
           }
           leftContent={
             <React.Fragment>
-              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+              <div className="text-base leading-6 font-medium truncate">
                 {position.name}
               </div>
               <div className="flex items-center gap-x-1">
@@ -87,7 +87,7 @@ export const PortfolioV3Positions: FC<PortfolioV3PositionsProps> = ({
           }
           rightContent={
             <React.Fragment>
-              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+              <div className="text-base leading-6 font-medium">
                 {formatUSD(position.amountUSD)}
               </div>
               <div className="text-xs text-muted-foreground flex gap-x-0.5 items-center justify-end overflow-hidden overflow-ellipsis">

@@ -1,7 +1,14 @@
 'use client'
 
 import { InterfaceModalName, Trace, useTrace } from '@sushiswap/telemetry'
-import { DialogContent, DialogFooter } from '@sushiswap/ui'
+import {
+  Currency,
+  DialogContent,
+  DialogFooter,
+  List,
+  SkeletonText,
+  classNames,
+} from '@sushiswap/ui'
 import { type ReactElement, useEffect, useRef } from 'react'
 import {
   DialogConfirm,
@@ -71,12 +78,7 @@ export function SimpleSwapTradeReviewDialogContent({
               <AutoConfirmSwap confirm={confirm} write={write} />
             ) : (
               <DialogContent variant={variant} className="max-h-[80vh]">
-                <TradeHeader
-                  trade={trade}
-                  isWrap={isWrap}
-                  isUnwrap={isUnwrap}
-                  variant={variant}
-                />
+                <TradeHeader variant={variant} />
                 <DialogBody>
                   <TradeWarnings
                     showSlippageWarning={showSlippageWarning}
@@ -90,13 +92,8 @@ export function SimpleSwapTradeReviewDialogContent({
                     isSwap={isSwap}
                     priceImpactSeverity={priceImpactSeverity}
                     isSwapQueryFetching={isSwapQueryFetching}
-                    variant={variant}
                   />
-                  <RecipientSection
-                    chainId={chainId}
-                    recipient={recipient}
-                    variant={variant}
-                  />
+                  <RecipientSection chainId={chainId} recipient={recipient} />
                 </DialogBody>
                 <DialogFooter>
                   <ConfirmSwapButton
@@ -128,11 +125,73 @@ export function SimpleSwapTradeReviewDialogContent({
         testId="make-another-swap"
         buttonText="Make another swap"
         txHash={txHash}
-        successMessage={`You ${
-          isWrap ? 'wrapped' : isUnwrap ? 'unwrapped' : 'sold'
-        } ${tradeRef.current?.amountIn?.toSignificant(6)} ${token0?.symbol} ${
-          isWrap ? 'to' : isUnwrap ? 'to' : 'for'
-        } ${tradeRef.current?.amountOut?.toSignificant(6)} ${token1?.symbol}`}
+        successTitle="Swap Successful"
+        successMessage={
+          <List className="!pt-0 w-full">
+            <List.Control
+              className={classNames(
+                '!bg-transparent !border-transparent !py-2 !px-0',
+              )}
+            >
+              <List.KeyValue
+                title={
+                  <div className="text-muted-foreground text-lg whitespace-nowrap">
+                    Sold
+                  </div>
+                }
+                fontWeight="normal"
+                className="!py-2"
+                flex
+              >
+                <div className="flex items-center gap-1 text-lg">
+                  {isSwapQueryFetching ? (
+                    <SkeletonText align="right" fontSize="lg" />
+                  ) : tradeRef?.current?.amountIn ? (
+                    <div className="flex items-center gap-1">
+                      {tradeRef?.current?.amountIn?.toSignificant(6)}
+                      <Currency.Icon
+                        currency={tradeRef?.current?.amountIn?.currency}
+                        width={16}
+                        height={16}
+                      />
+                      {tradeRef?.current?.amountIn?.currency.symbol}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </div>
+              </List.KeyValue>
+              <List.KeyValue
+                title={
+                  <div className="text-muted-foreground text-lg whitespace-nowrap">
+                    Received
+                  </div>
+                }
+                fontWeight="normal"
+                className="!py-2"
+                flex
+              >
+                <div className="flex items-center gap-1 text-lg">
+                  {isSwapQueryFetching ? (
+                    <SkeletonText align="right" fontSize="lg" />
+                  ) : tradeRef?.current?.amountOut ? (
+                    <div className="flex items-center gap-1">
+                      {tradeRef?.current?.amountOut?.toSignificant(6)}
+                      <Currency.Icon
+                        currency={tradeRef?.current?.amountOut?.currency}
+                        width={16}
+                        height={16}
+                      />
+                      {tradeRef?.current?.amountOut?.currency.symbol}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </div>
+              </List.KeyValue>
+            </List.Control>
+          </List>
+        }
       />
     </Trace>
   )

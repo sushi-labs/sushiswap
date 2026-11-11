@@ -47,8 +47,8 @@ export const SimpleSwapTokenRate = () => {
 
     return price
       ? invert
-        ? price.invert().toString({ fixed: 6 })
-        : price.toString({ fixed: 6 })
+        ? price.invert().toSignificant(6)
+        : price.toSignificant(6)
       : '0.00'
   }, [invert, prices, token0, token1])
 
@@ -58,14 +58,14 @@ export const SimpleSwapTokenRate = () => {
 
   return (
     <Button
-      className="!text-xs !font-medium !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
+      className="!text-xs md:!text-sm !font-medium !text-primary !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
       variant="ghost"
       size="xs"
       onClick={() => setInvert((prev) => !prev)}
     >
       1 {invert ? token0?.symbol : token1?.symbol} = {price}{' '}
       {invert ? token1?.symbol : token0?.symbol}
-      <span className="text-gray-600 dark:text-slate-500 !font-normal">
+      <span className="!font-normal">
         ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
       </span>
     </Button>

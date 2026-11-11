@@ -2,6 +2,7 @@
 
 import { InputErrors, useInputErrors } from '@orbs-network/spot-react'
 import { classNames } from '@sushiswap/ui'
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
 import type { SupportedChainId } from 'src/config'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
@@ -22,7 +23,7 @@ export const TwapToken0Input = () => {
       id="swap-from"
       type="INPUT"
       className={classNames(
-        'border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl',
+        'border border-accent p-4 bg-muted rounded-2xl',
         minTradeSizeError ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
       )}
       chainId={chainId}
@@ -32,7 +33,7 @@ export const TwapToken0Input = () => {
       currency={token0}
       currencyLoading={isLoading}
       allowNative={isEvmWNativeSupported(chainId)}
-      label="You're selling"
+      label={<SwapInputLabel chainId={chainId} type="INPUT" />}
     />
   )
 }

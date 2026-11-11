@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Button, classNames } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import {
   PortfolioHeader,
@@ -30,19 +30,24 @@ export const SidebarPortfolioView = () => {
   }, [tab])
 
   return (
-    <div className="flex min-h-0 flex-col h-full gap-y-3 overflow-hidden">
+    <div className="flex flex-col bg-background pb-4">
       <div className="shrink-0">
         <PortfolioHeader />
       </div>
-      <div className="flex shrink-0 px-5 gap-x-2">
+      <div className="flex shrink-0 px-7 gap-x-8">
         {Object.values(PortfolioTab).map((_tab) => (
           <Button
             key={_tab}
             asChild
             size="xs"
-            variant={_tab === tab ? 'secondary' : 'ghost'}
+            variant="blank"
             onClick={() => setTab(_tab)}
-            className="select-none"
+            className={classNames(
+              'select-none !h-11 !rounded-none !px-0 !text-base !font-medium border-b-2',
+              _tab === tab
+                ? 'border-pink text-primary'
+                : 'border-transparent text-muted-foreground hover:text-primary',
+            )}
           >
             {_tab}
           </Button>

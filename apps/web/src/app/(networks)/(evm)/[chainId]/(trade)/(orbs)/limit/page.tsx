@@ -5,7 +5,7 @@ import { LimitWidget } from './_ui/limit-widget'
 
 export default function SwapLimitPage() {
   return (
-    <Container maxWidth="lg" className="relative">
+    <Container maxWidth="xl" className="relative">
       <LimitWidget />
     </Container>
   )

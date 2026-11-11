@@ -9,11 +9,10 @@ import {
   Popover,
   PopoverContent,
   PopoverPrimitive,
-  classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { usePathname, useRouter } from 'next/navigation'
-import React, { type ReactNode, useCallback, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useState } from 'react'
 import { NEW_CHAIN_IDS, SUPPORTED_NETWORKS } from 'src/config'
 import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
 import { type ChainId, getChainById, isChainKey } from 'sushi'

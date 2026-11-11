@@ -17,7 +17,7 @@ export default async function SwapSimplePage({
   if (!isSupportedChainId(chainId) || !isEvmChainId(chainId)) return notFound()
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <SimpleSwapWidgetFrame>
         <Suspense fallback={<SimpleSwapWidgetSkeleton />}>
           <Providers>

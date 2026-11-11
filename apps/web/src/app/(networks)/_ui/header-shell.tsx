@@ -26,9 +26,8 @@ export function HeaderShell({
     <>
       <div
         className={classNames(
-          'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 border-b',
-          variant === 'default' &&
-            'bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-800',
+          'hidden lg:flex justify-between items-center px-1 h-14 flex-shrink-0 border-b-[0.5px]',
+          variant === 'default' && 'bg-background border-accent',
           variant === 'transparent' && 'border-transparent',
         )}
       >
@@ -38,9 +37,8 @@ export function HeaderShell({
       </div>
       <div
         className={classNames(
-          'flex lg:hidden justify-between items-center pl-4 border-b',
-          variant === 'default' &&
-            'bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-800',
+          'flex lg:hidden justify-between items-center pl-4 border-b-[0.5px]',
+          variant === 'default' && 'bg-background border-accent',
           variant === 'transparent' && 'border-transparent',
         )}
       >

@@ -18,7 +18,7 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
   positions,
 }) => (
   <AccordionItem value="v2" className="!border-0">
-    <AccordionTrigger className="px-5 underline-offset-2">
+    <AccordionTrigger className="px-7 underline-offset-2">
       {`V2 Positions (${positions.length})`}
     </AccordionTrigger>
     <AccordionContent className="cursor-default">
@@ -45,14 +45,16 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
           }
           leftContent={
             <React.Fragment>
-              <div className="text-sm font-medium overflow-hidden overflow-ellipsis">
+              <div className="text-base leading-6 font-medium truncate">
                 {position.name}
               </div>
-              <div className="text-xs text-muted-foreground">V2-0.30%</div>
+              <div className="text-sm leading-5 text-muted-foreground">
+                V2-0.30%
+              </div>
             </React.Fragment>
           }
           rightContent={
-            <span className="text-sm font-medium overflow-hidden overflow-ellipsis">
+            <span className="text-base leading-6 font-medium">
               {formatUSD(position.amountUSD)}
             </span>
           }

@@ -11,6 +11,7 @@ export type ListKeyValueProps =
       skeleton?: never
       flex?: boolean
       className?: string
+      fontWeight?: 'normal' | 'medium'
     }
   | {
       title?: never
@@ -19,6 +20,7 @@ export type ListKeyValueProps =
       skeleton?: boolean
       flex?: boolean
       className?: string
+      fontWeight?: 'normal' | 'medium'
     }
 
 export const ListKeyValue: FC<ListKeyValueProps> = ({
@@ -28,6 +30,7 @@ export const ListKeyValue: FC<ListKeyValueProps> = ({
   skeleton,
   flex = false,
   className = '',
+  fontWeight = 'medium',
 }) => {
   if (skeleton) {
     return (
@@ -52,12 +55,24 @@ export const ListKeyValue: FC<ListKeyValueProps> = ({
       )}
     >
       <div className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium">{title}</span>
+        <span
+          className={classNames(
+            'text-sm',
+            fontWeight === 'medium' ? 'font-medium' : 'font-normal',
+          )}
+        >
+          {title}
+        </span>
         {subtitle && (
           <span className="text-xs text-muted-foreground">{subtitle}</span>
         )}
       </div>
-      <div className="flex justify-end w-full text-sm font-medium text-right truncate">
+      <div
+        className={classNames(
+          'flex justify-end w-full text-sm text-right truncate',
+          fontWeight === 'medium' ? 'font-medium' : 'font-normal',
+        )}
+      >
         {children}
       </div>
     </div>

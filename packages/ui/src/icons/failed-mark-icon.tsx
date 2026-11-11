@@ -12,7 +12,7 @@ export const FailedMarkIcon: IconComponent = (props) => {
     >
       <circle
         fillOpacity="0"
-        className="circle animate-grow origin-center scale-0 text-red"
+        className="circle animate-grow origin-center scale-0 text-red/20"
         stroke="currentColor"
         strokeWidth={16}
         fill="currentColor"
@@ -23,11 +23,11 @@ export const FailedMarkIcon: IconComponent = (props) => {
       <path
         className="tick animate-draw"
         fill="none"
-        stroke="#FFF"
+        stroke="#ef4444"
         strokeOpacity={0}
         strokeDasharray={29}
         strokeDashoffset={29}
-        strokeWidth="6"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeMiterlimit="10"

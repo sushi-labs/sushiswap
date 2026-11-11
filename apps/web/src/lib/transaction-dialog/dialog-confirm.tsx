@@ -31,6 +31,7 @@ interface DialogConfirmProps<TChainId extends ChainId>
   buttonText?: string
   txHash: TxHashFor<TChainId> | undefined
   status: 'pending' | 'success' | 'error'
+  successTitle?: ReactNode
 }
 
 export function DialogConfirm<TChainId extends ChainId>({
@@ -42,6 +43,7 @@ export function DialogConfirm<TChainId extends ChainId>({
   status,
   txHash,
   variant,
+  successTitle = 'Success',
   ...contentProps
 }: DialogConfirmProps<TChainId>) {
   const { open, setOpen } = useDialog(DialogType.Confirm)
@@ -62,14 +64,26 @@ export function DialogConfirm<TChainId extends ChainId>({
       >
         <DialogHeader>
           <DialogTitle
-            className={classNames(variant === 'perps' && '!text-perps-muted')}
+            className={classNames(
+              variant === 'perps' && '!text-perps-muted',
+              'md:!text-2xl !text-left',
+            )}
           >
             {status === 'pending' ? (
-              <Dots>Confirming</Dots>
+              <div className="flex items-center gap-2">
+                <Loader size={42} strokeWidth={1.5} className="!text-pink" />
+                <Dots>Confirming</Dots>
+              </div>
             ) : status === 'success' ? (
-              'Success!'
+              <div className="flex items-center gap-2">
+                <CheckMarkIcon width={42} height={42} />
+                <h2>{successTitle}</h2>
+              </div>
             ) : (
-              'Oops!'
+              <div className="flex items-center gap-2">
+                <FailedMarkIcon width={42} height={42} />
+                <h2>Something went wrong</h2>
+              </div>
             )}
           </DialogTitle>
           <DialogDescription
@@ -77,47 +91,37 @@ export function DialogConfirm<TChainId extends ChainId>({
               'font-medium',
               variant === 'perps' && '!text-perps-muted-50',
             )}
-          >
-            {status === 'pending' ? (
-              <>
-                Waiting for your{' '}
-                <a
-                  target="_blank"
-                  href={txHashUrl}
-                  className="cursor-pointer text-blue hover:underline"
-                  rel="noreferrer"
-                >
-                  transaction
-                </a>{' '}
-                to be confirmed on the blockchain.
-              </>
-            ) : status === 'success' ? (
-              <a
-                target="_blank"
-                href={txHashUrl}
-                className="cursor-pointer text-blue hover:underline"
-                rel="noreferrer"
-              >
-                {successMessage}
-              </a>
-            ) : (
-              <a
-                target="_blank"
-                href={txHashUrl}
-                className="cursor-pointer text-blue hover:underline"
-                rel="noreferrer"
-              >
-                Something went wrong...
-              </a>
-            )}
-          </DialogDescription>
+            aria-describedby="dialog-description"
+          />
           <div className="py-6 flex justify-center">
             {status === 'pending' ? (
-              <Loader size={132} strokeWidth={1} className="!text-blue" />
+              <p>
+                Waiting for your{' '}
+                {txHashUrl ? (
+                  <a
+                    target="_blank"
+                    href={txHashUrl}
+                    className="cursor-pointer text-pink hover:underline"
+                    rel="noreferrer"
+                  >
+                    transaction
+                  </a>
+                ) : (
+                  'transaction'
+                )}{' '}
+                to be confirmed on {getChainById(chainId).name}.
+              </p>
             ) : status === 'success' ? (
-              <CheckMarkIcon width={132} height={132} />
+              <>{successMessage}</>
             ) : (
-              <FailedMarkIcon width={132} height={132} />
+              <a
+                target="_blank"
+                href={txHashUrl}
+                className="cursor-pointer text-pink hover:underline"
+                rel="noreferrer"
+              >
+                Something went wrong confirming the transaction.
+              </a>
             )}
           </div>
           <DialogFooter>

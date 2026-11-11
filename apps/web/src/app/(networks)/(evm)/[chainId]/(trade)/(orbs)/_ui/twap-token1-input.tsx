@@ -1,6 +1,7 @@
 'use client'
 
 import { useDstTokenPanel } from '@orbs-network/spot-react'
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
 import type { SupportedChainId } from 'src/config'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { type EvmChainId, isEvmWNativeSupported } from 'sushi/evm'
@@ -21,7 +22,7 @@ export const TwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       value={formatDecimals(value ?? '', 6)}
       chainId={chainId}
       onSelect={setToken1}
@@ -29,7 +30,7 @@ export const TwapToken1Input = () => {
       disableMaxButton
       currencyLoading={isLoading}
       allowNative={isEvmWNativeSupported(chainId)}
-      label="You're buying"
+      label={<SwapInputLabel chainId={chainId} type="OUTPUT" />}
     />
   )
 }

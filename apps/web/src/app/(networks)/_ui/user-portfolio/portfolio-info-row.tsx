@@ -37,24 +37,24 @@ const _PortfolioInfoRow: FC<PortfolioInfoRow> = ({
     <div
       onClick={onClick}
       onKeyDown={onClick}
-      className="flex w-full items-center border-b border-b-accent hover:bg-muted px-5 py-3 gap-x-6 whitespace-nowrap"
+      className="group/portfolio-row flex w-full items-center hover:bg-muted px-7 py-2 gap-x-6 whitespace-nowrap"
     >
       <div className="shrink-0">
         <Badge
-          className="border-2 border-background bg-background rounded-full z-[11]"
+          className="!-right-1 !-bottom-1 border-2 border-background bg-background rounded-full z-[11]"
           position="bottom-right"
           badgeContent={
-            <NetworkIcon chainId={chainId} width={14} height={14} />
+            <NetworkIcon chainId={chainId} width={16} height={16} />
           }
         >
           {icon}
         </Badge>
       </div>
-      <div className="flex w-full justify-between items-center gap-x-3 overflow-hidden">
-        <div className="flex flex-col gap-y-1 overflow-hidden">
+      <div className="flex min-w-0 flex-1 justify-between items-center gap-x-3">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {leftContent}
         </div>
-        <div className="flex-[1_0_20%] flex flex-col gap-y-1 overflow-hidden text-right">
+        <div className="shrink-0 flex flex-col text-right tabular-nums">
           {rightContent}
         </div>
       </div>

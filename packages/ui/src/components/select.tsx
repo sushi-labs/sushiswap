@@ -24,7 +24,7 @@ const SelectIcon = React.forwardRef<
       strokeWidth={2}
       width={16}
       height={16}
-      className={classNames(className, 'w-4 h-4')}
+      className={classNames('w-4 h-4', className)}
     />
   </SelectPrimitive.Icon>
 ))

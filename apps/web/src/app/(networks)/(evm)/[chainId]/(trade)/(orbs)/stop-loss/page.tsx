@@ -5,7 +5,7 @@ import { StopLossWidget } from './_ui/stop-loss-widget'
 
 export default function SwapStopLossPage() {
   return (
-    <Container maxWidth="lg" className="relative">
+    <Container maxWidth="xl" className="relative">
       <StopLossWidget />
     </Container>
   )

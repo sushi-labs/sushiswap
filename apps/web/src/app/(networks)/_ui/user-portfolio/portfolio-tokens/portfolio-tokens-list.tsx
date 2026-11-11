@@ -102,7 +102,7 @@ export function PortfolioTokensList({
 
   return (
     <>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain cursor-default">
+      <div className="cursor-default">
         {tokens.map(({ currency, onSend, token }) => {
           const canSend = Boolean(
             (isEvmChainId(currency.chainId) && wallets.evm?.account) ||

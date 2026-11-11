@@ -2,7 +2,7 @@ import { LinkExternal } from '@sushiswap/ui'
 
 export const Disclaimer = () => {
   return (
-    <div className="text-sm">
+    <div className="text-center text-sm leading-5 text-muted-foreground [&_a]:!text-pink [&_a]:font-medium">
       By connecting your wallet, you agree to Sushi Labs&apos;{' '}
       <LinkExternal href="/legal/terms-of-service">
         Terms of Service

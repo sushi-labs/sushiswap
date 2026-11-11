@@ -7,12 +7,12 @@ import classNames from 'classnames'
 import type { IconComponent } from '../types'
 
 const buttonVariants = cva(
-  'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
+  'cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-pink',
   {
     variants: {
       variant: {
         default:
-          'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
+          'bg-pink hover:bg-pink-600 focus:bg-pink-700 active:bg-pink-600 text-white',
         destructive:
           'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
         warning:
@@ -20,9 +20,9 @@ const buttonVariants = cva(
         outline:
           '!border border-accent bg-background hover:bg-muted hover:text-accent-foreground',
         secondary:
-          'bg-secondary hover:bg-muted focus:bg-accent black:bg-muted black:hover:bg-accent black:focus:bg-accent',
-        ghost: 'hover:bg-secondary focus:bg-accent transition-all',
-        link: 'text-blue hover:underline hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+          'bg-secondary border border-accent hover:bg-muted focus:bg-accent black:bg-muted black:hover:bg-accent black:focus:bg-accent',
+        ghost: 'hover:bg-muted focus:bg-accent transition-all',
+        link: 'text-pink hover:underline hover:text-pink-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
         blank: '',
         'perps-default':
           'bg-gradient-to-b text-perps-blue from-[#349BFE]/[0.13] to-[#349BFE]/[0.05] shadow-[inset_1.5px_2px_1px_-2px_rgba(52,155,254,0.4),inset_-1.5px_-1.5px_1px_-2px_rgba(52,155,254,0.325)] transition-all hover:from-[#349BFE]/[0.18] hover:to-[#349BFE]/[0.08] hover:border-[#349BFE]/[0.15]',
@@ -38,11 +38,11 @@ const buttonVariants = cva(
           'bg-sushi-gradient text-white shadow-[inset_0px_1px_4px_1px_#FFFFFF65] transition-all border-sushi-gradient',
       },
       size: {
-        xs: 'min-h-[26px] h-[26px] px-2 text-xs rounded-lg',
-        sm: 'min-h-[36px] h-[36px] px-3 text-sm rounded-xl',
-        default: 'min-h-[40px] h-[40px] py-2 px-4 text-sm rounded-xl',
-        lg: 'min-h-[44px] h-[44px] px-4 rounded-xl',
-        xl: 'min-h-[52px] h-[52px] px-4 rounded-xl',
+        xs: 'min-h-[26px] h-[26px] px-2 text-xs rounded-full',
+        sm: 'min-h-[36px] h-[36px] px-3 text-sm rounded-full',
+        default: 'min-h-[40px] h-[40px] py-2 px-4 text-sm rounded-full',
+        lg: 'min-h-[44px] h-[44px] px-4 rounded-full',
+        xl: 'min-h-[52px] h-[52px] px-4 rounded-full',
       },
     },
     defaultVariants: {

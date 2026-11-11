@@ -75,7 +75,7 @@ module.exports = {
           DEFAULT: '#3b82f6',
         },
         pink: {
-          DEFAULT: '#ec4899',
+          DEFAULT: '#FA52A0',
         },
         green: {
           DEFAULT: 'rgb(var(--green))',

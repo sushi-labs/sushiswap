@@ -1,9 +1,11 @@
 'use client'
 
+import { Popover } from '@sushiswap/ui'
 import {
   type ReactNode,
   createContext,
   useContext,
+  useId,
   useMemo,
   useState,
 } from 'react'
@@ -11,6 +13,7 @@ import { Sidebar } from './sidebar'
 import { DefaultSidebarView, type SidebarState, SidebarView } from './types'
 
 type SidebarContextValue = {
+  contentId: string
   isOpen: boolean
   view: SidebarState['view']
   context: SidebarState['context']
@@ -28,6 +31,7 @@ const DefaultState = { view: DefaultSidebarView, isOpen: false }
 
 export const SidebarProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<SidebarState>(DefaultState)
+  const contentId = useId()
 
   const value = useMemo(() => {
     const setView = (
@@ -57,6 +61,7 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return {
+      contentId,
       view: state.view,
       context: state.context,
       isOpen: state.isOpen,
@@ -64,12 +69,17 @@ export const SidebarProvider = ({ children }: { children: ReactNode }) => {
       close,
       setView,
     }
-  }, [state])
+  }, [state, contentId])
 
   return (
     <SidebarContext.Provider value={value}>
-      {children}
-      <Sidebar />
+      <Popover
+        open={state.isOpen}
+        onOpenChange={(isOpen) => setState((prev) => ({ ...prev, isOpen }))}
+      >
+        {children}
+        <Sidebar />
+      </Popover>
     </SidebarContext.Provider>
   )
 }

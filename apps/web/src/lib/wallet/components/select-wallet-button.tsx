@@ -26,7 +26,7 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
   pendingText,
   ...props
 }) => {
-  const { open } = useSidebar()
+  const { isOpen, open, close } = useSidebar()
 
   const { isPending } = useWalletContext()
 
@@ -40,7 +40,10 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
     )
   }
 
-  const onConnect = () => open('connect', { namespace, closeOnConnect: true })
+  function onConnect() {
+    if (isOpen) close()
+    else open('connect', { namespace, closeOnConnect: true })
+  }
 
   return (
     <TraceEvent
@@ -49,12 +52,7 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
       element={InterfaceElementName.CONNECT_WALLET_BUTTON}
     >
       <SidebarTrigger>
-        <Button
-          {...props}
-          onClick={onConnect}
-          onKeyDown={onConnect}
-          testId="connect"
-        >
+        <Button {...props} onClick={onConnect} testId="connect">
           {children ?? (
             <>
               <span className="hidden sm:block">Connect Wallet</span>

@@ -58,20 +58,16 @@ function Recipient<TChainId extends EvmChainId | SvmChainId>({
   }
 
   return (
-    <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-      <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
-        Recipient
-      </span>
-      <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+    <div className="flex justify-between items-center border-t border-accent mt-2 pt-2">
+      <span className="text-sm text-muted-foreground">Recipient</span>
+      <span className="text-right text-sm">
         <a
           target="_blank"
           href={getChainById(chainId as EvmChainId | SvmChainId).getAccountUrl(
             recipient as EvmAddress,
           )}
           className={classNames(
-            address !== recipient
-              ? 'text-yellow-600'
-              : 'text-gray-700 dark:text-slate-300',
+            address !== recipient ? 'text-yellow-600' : 'text-primary',
             'transition-all flex gap-1 items-center',
           )}
           rel="noreferrer"
@@ -135,7 +131,7 @@ export const SimpleSwapTradeStats: FC = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
+      <div className="flex items-center justify-between gap-2 text-muted-foreground">
         {!hasValidQuote ? null : <SimpleSwapTokenRate />}
         {!hasValidQuote ? null : loading || !quote?.gasSpentUsd ? (
           <div className="flex items-center gap-0.5">
@@ -146,11 +142,10 @@ export const SimpleSwapTradeStats: FC = () => {
           <div className="flex items-center gap-0.5">
             <div
               className={classNames(
-                'text-xs font-medium flex items-center, transition-opacity',
-                isDetailsCollapsed ? 'opacity-100' : 'opacity-0',
+                'text-xs md:text-sm text-primary font-medium flex items-center',
               )}
             >
-              <GasIcon className="inline-block w-3 h-4 mr-0.5" />
+              <GasIcon className="inline-block w-3 h-3 mr-0.5" />
               {chainId === EvmChainId.SKALE_EUROPA
                 ? 'FREE'
                 : quote?.gasSpentUsd
@@ -186,15 +181,13 @@ export const SimpleSwapTradeStats: FC = () => {
         )}
       </div>
       <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
-        <div className="pt-2 w-full flex flex-col gap-1">
+        <div className="pt-2 w-full flex flex-col gap-1 border-t border-accent text-sm">
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Price impact
-            </span>
+            <span className="text-muted-foreground">Price impact</span>
             <span
               className={classNames(
                 warningSeverityClassName(warningSeverity(quote?.priceImpact)),
-                'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
+                'text-right',
               )}
             >
               {loading || !quote?.priceImpact ? (
@@ -212,10 +205,8 @@ export const SimpleSwapTradeStats: FC = () => {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Max. received
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-muted-foreground">Max. received</span>
+            <span className="text-right">
               {loading || !quote?.amountOut ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : (
@@ -227,10 +218,8 @@ export const SimpleSwapTradeStats: FC = () => {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Min. received
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-muted-foreground">Min. received</span>
+            <span className="text-right">
               {loading || !quote?.minAmountOut ? (
                 <SkeletonBox className="h-4 py-0.5 w-[100px]" />
               ) : (
@@ -241,11 +230,9 @@ export const SimpleSwapTradeStats: FC = () => {
             </span>
           </div>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Fee
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <div className="flex justify-between items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Fee</span>
+            <span className="text-right">
               {loading || !quote?.fee ? (
                 <SkeletonBox className="h-4 py-0.5 w-[100px]" />
               ) : (
@@ -255,10 +242,8 @@ export const SimpleSwapTradeStats: FC = () => {
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Network fee
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-muted-foreground">Network fee</span>
+            <span className="text-right">
               {chainId === EvmChainId.SKALE_EUROPA ? (
                 'FREE'
               ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
@@ -272,10 +257,8 @@ export const SimpleSwapTradeStats: FC = () => {
           </div>
 
           <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Routing source
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-muted-foreground">Routing source</span>
+            <span className="text-sm text-right">
               {loading || !quote ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : (

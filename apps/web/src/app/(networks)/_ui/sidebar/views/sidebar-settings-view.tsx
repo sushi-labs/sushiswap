@@ -2,18 +2,15 @@ import { RadioGroup } from '@headlessui/react'
 import { ArrowLeftIcon } from '@heroicons/react/20/solid'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import { useLocalStorage } from '@sushiswap/hooks'
-import { List } from '@sushiswap/ui'
-import { classNames } from '@sushiswap/ui'
-import { IconButton } from '@sushiswap/ui'
-import { Switch } from '@sushiswap/ui'
+import { IconButton, Switch, classNames } from '@sushiswap/ui'
 import { useTheme } from 'next-themes'
 import React, { Fragment } from 'react'
 import { DefaultSidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
 
 const map = {
-  system: <span className="text-xs font-semibold">Auto</span>,
-  light: <SunIcon width={24} height={24} />,
-  dark: <MoonIcon width={20} height={20} />,
+  system: <span className="text-sm font-medium">Auto</span>,
+  light: <SunIcon width={20} height={20} />,
+  dark: <MoonIcon width={18} height={18} />,
 }
 
 export const SidebarSettingsView = () => {
@@ -22,35 +19,43 @@ export const SidebarSettingsView = () => {
   const [showTestnets, setShowTestnets] = useLocalStorage('showTestnets', false)
 
   return (
-    <div className="px-5 py-4">
-      <div className="grid grid-cols-3 mb-3">
+    <div className="flex flex-col gap-6 bg-background px-6 pt-4 pb-6">
+      <div className="grid shrink-0 grid-cols-[32px_1fr_32px] items-center">
         <div className="flex justify-start">
           <IconButton
             size="sm"
+            variant="ghost"
+            className="!h-8 !w-8 !min-h-8 !min-w-8 focus-visible:ring-pink"
             onClick={() => setView(DefaultSidebarView)}
             icon={ArrowLeftIcon}
             name="Back"
           />
         </div>
-        <span className="font-medium text-center">Settings</span>
+        <span className="text-lg leading-7 font-medium text-center">
+          Settings
+        </span>
         <div />
       </div>
-      <List>
-        <List.Label>Preferences</List.Label>
-        <List.Control className="bg-gray-100 dark:bg-slate-800">
-          <List.KeyValue flex title="Theme">
-            <RadioGroup value={theme} onChange={setTheme}>
-              <div className="items-center relative bg-black/[0.04] dark:bg-white/[0.02] rounded-lg px-1 overflow-hidden flex gap-1">
+      <section className="flex flex-col gap-2">
+        <h3 className="text-sm font-medium text-muted-foreground">
+          Preferences
+        </h3>
+        <div className="divide-y divide-accent">
+          <div className="flex flex-wrap items-center justify-between gap-3 py-4">
+            <span className="text-base font-medium">Theme</span>
+            <RadioGroup value={theme} onChange={setTheme} aria-label="Theme">
+              <div className="flex items-center gap-1 rounded-full bg-muted p-1">
                 {Object.entries(map).map(([k, v], i) => (
                   <RadioGroup.Option as={Fragment} key={i} value={k}>
                     {({ checked }) => (
                       <button
                         type="button"
+                        aria-label={k}
                         className={classNames(
+                          'relative flex h-8 w-12 items-center justify-center rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                           checked
-                            ? 'text-gray-900 dark:text-slate-50 bg-[#FDFDFD] dark:bg-white/[0.08]'
-                            : 'text-gray-500 dark:text-slate-500 hover:bg-gray-100 hover:dark:bg-white/[0.04]',
-                          'min-w-[60px] z-[1] relative rounded-lg text-sm h-8 font-medium flex flex-grow items-center justify-center',
+                            ? 'bg-background text-primary shadow-sm'
+                            : 'text-muted-foreground hover:bg-background/60 hover:text-primary',
                         )}
                       >
                         {v}
@@ -60,12 +65,17 @@ export const SidebarSettingsView = () => {
                 ))}
               </div>
             </RadioGroup>
-          </List.KeyValue>
-          <List.KeyValue title="Show testnets">
-            <Switch checked={showTestnets} onCheckedChange={setShowTestnets} />
-          </List.KeyValue>
-        </List.Control>
-      </List>
+          </div>
+          <div className="flex items-center justify-between gap-4 py-4">
+            <span className="text-base font-medium">Show testnets</span>
+            <Switch
+              checked={showTestnets}
+              onCheckedChange={setShowTestnets}
+              aria-label="Show testnets"
+            />
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

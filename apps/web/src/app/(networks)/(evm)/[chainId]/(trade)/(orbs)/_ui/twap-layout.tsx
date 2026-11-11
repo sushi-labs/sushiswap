@@ -27,7 +27,7 @@ export const TwapLayout = ({
       <Suspense fallback={null}>
         <DerivedstateSimpleSwapProvider chainId={chainId}>
           <EvmSimpleSwapTradeQuoteProvider>
-            <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
+            <main className="lg:p-4 mt-8 lg:mt-16 mb-[86px]">{children}</main>
           </EvmSimpleSwapTradeQuoteProvider>
         </DerivedstateSimpleSwapProvider>
       </Suspense>

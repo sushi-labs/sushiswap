@@ -83,7 +83,7 @@ export const SettingsOverlay: FC<SettingsOverlayProps> = ({
           <Button
             size="sm"
             className="!rounded-full"
-            variant="secondary"
+            variant="ghost"
             icon={Cog6ToothIcon}
           >
             {showSlippageBadge ? (

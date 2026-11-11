@@ -1,8 +1,8 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Button, cloudinaryFetchLoader } from '@sushiswap/ui'
-import { JazzIcon } from '@sushiswap/ui/icons/jazz-icon'
+import { Button, PopoverPrimitive, cloudinaryFetchLoader } from '@sushiswap/ui'
+import { WalletIcon } from '@sushiswap/ui/icons/wallet-icon'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
@@ -36,7 +36,7 @@ export function UserPortfolio({
 
   const address = wallet?.account ?? wagmiAddress
 
-  const { open } = useSidebar()
+  const { isOpen, open, close } = useSidebar()
 
   const { data: ensName } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
@@ -54,41 +54,44 @@ export function UserPortfolio({
       .length
   }, [wallets])
 
-  if (!address || !isMounted)
-    return (
-      <ConnectButton
-        variant={isPerps ? 'perps-default' : 'secondary'}
-        namespace={namespace}
-        loading={isRestoring}
-      />
-    )
-
   return (
-    <SidebarTrigger>
-      <Button
-        variant={isPerps ? 'perps-secondary' : 'secondary'}
-        onClick={() => open()}
-        className="items-center"
-      >
-        {avatar ? (
-          <Image
-            alt="ens-avatar"
-            src={avatar}
-            width={20}
-            height={20}
-            className="rounded-full"
-            loader={cloudinaryFetchLoader}
+    <PopoverPrimitive.Anchor asChild>
+      <div className="inline-flex">
+        {!address || !isMounted ? (
+          <ConnectButton
+            variant={isPerps ? 'perps-default' : 'default'}
+            namespace={namespace}
+            loading={isRestoring}
           />
         ) : (
-          <JazzIcon diameter={20} address={address} />
+          <SidebarTrigger>
+            <Button
+              variant={isPerps ? 'perps-secondary' : 'secondary'}
+              onClick={() => (isOpen ? close() : open())}
+              className="items-center"
+            >
+              {avatar ? (
+                <Image
+                  alt="ens-avatar"
+                  src={avatar}
+                  width={16}
+                  height={16}
+                  className="rounded-full"
+                  loader={cloudinaryFetchLoader}
+                />
+              ) : (
+                <WalletIcon width={16} height={16} />
+              )}
+              <span className="hidden lg:block">{shortenAddress(address)}</span>
+              {walletCount > 1 ? (
+                <div className="w-4 h-4 rounded-full bg-pink text-white font-medium text-[8px] flex items-center justify-center">
+                  +{walletCount - 1}
+                </div>
+              ) : null}
+            </Button>
+          </SidebarTrigger>
         )}
-        <span className="hidden lg:block">{shortenAddress(address)}</span>
-        {walletCount > 1 ? (
-          <div className="w-4 h-4 rounded-full bg-blue text-white font-medium text-[10px] flex items-center justify-center">
-            +{walletCount - 1}
-          </div>
-        ) : null}
-      </Button>
-    </SidebarTrigger>
+      </div>
+    </PopoverPrimitive.Anchor>
   )
 }

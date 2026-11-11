@@ -1,19 +1,18 @@
 'use client'
 
-import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useIsMounted } from '@sushiswap/hooks'
-import {
-  Badge,
-  Button,
-  SelectIcon,
-  SelectPrimitive,
-  TextField,
-  classNames,
-} from '@sushiswap/ui'
+import { Badge, Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, type Percent, getChainById } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
@@ -59,7 +58,7 @@ interface CurrencyInputProps<
   hideSearch?: boolean
   hidePricing?: boolean
   hideIcon?: boolean
-  label?: string
+  label?: ReactNode
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
   onNetworkChange?: (network: TNetwork) => void
@@ -222,14 +221,12 @@ function CurrencyInput<
                   </Badge>
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-xl leading-5">{currency.symbol}</span>
+                  <span className="text-base leading-5">{currency.symbol}</span>
                   <span className="text-xs leading-3 text-muted-foreground">
                     {getChainById(currency.chainId).name}
                   </span>
                 </div>
-                <SelectPrimitive.Icon asChild>
-                  <ChevronRightIcon strokeWidth={2} width={16} height={16} />
-                </SelectPrimitive.Icon>
+                <SelectIcon className="!w-3 !h-3" />
               </>
             ) : (
               <>
@@ -241,8 +238,8 @@ function CurrencyInput<
                     height={28}
                   />
                 </div>
-                <span className="text-xl">{currency.symbol}</span>
-                <SelectIcon />
+                <span className="text-base">{currency.symbol}</span>
+                <SelectIcon className="!w-3 !h-3" />
               </>
             )
           ) : (
@@ -271,7 +268,7 @@ function CurrencyInput<
     <div
       className={classNames(
         _error ? '!bg-red-500/20 !dark:bg-red-900/30' : '',
-        'relative space-y-2 overflow-hidden pb-2',
+        'relative overflow-hidden',
         className,
       )}
     >
@@ -282,45 +279,15 @@ function CurrencyInput<
       {label ? (
         <span className="text-sm text-muted-foreground">{label}</span>
       ) : null}
-      <div className="relative flex items-center gap-4">
-        <div
-          data-state={isLoading ? 'active' : 'inactive'}
-          className={classNames(
-            'data-[state=inactive]:hidden data-[state=active]:flex',
-            'gap-4 items-center justify-between flex-grow h-[44px]',
-          )}
-        >
-          <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
-          {currencyLoading ? (
-            <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />
-          ) : null}
-        </div>
-        <div
-          data-state={isLoading ? 'inactive' : 'active'}
-          className="data-[state=inactive]:hidden data-[state=active]:flex flex-1 items-center"
-        >
-          <TextField
-            testdata-id={`${id}-input`}
-            aria-label={label}
-            type="number"
-            variant="naked"
-            disabled={disabled}
-            onValueChange={_onChange}
-            value={pending ? localValue : value}
-            readOnly={disabled}
-            maxDecimals={currency?.decimals}
-            data-state={isLoading ? 'inactive' : 'active'}
-            className={classNames('p-0 py-1 !text-3xl font-medium')}
-          />
-        </div>
-
+      <div className="relative flex items-center gap-4 py-1">
         {selector}
         {!selector ? (
           <div
             id={`${id}-button`}
+            data-state={currencyLoading ? 'inactive' : 'active'}
             className={classNames(
               currencyClassName,
-              'flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
+              'data-[state=inactive]:hidden data-[state=active]:flex items-center gap-1 text-xl py-2 pl-2 pr-2 rounded-full font-medium whitespace-nowrap',
             )}
           >
             {currency ? (
@@ -344,33 +311,62 @@ function CurrencyInput<
             )}
           </div>
         ) : null}
-      </div>
-      <div className="flex flex-row items-center justify-between h-[36px]">
-        {hidePricing ? (
-          <div />
-        ) : (
-          <div className="flex items-center gap-2">
-            <PricePanel
-              value={value}
-              currency={currency}
-              priceImpact={priceImpact}
-              error={_error}
-              loading={currencyLoading || isPriceLoading}
-              price={price}
-            />
-            {currencyError && onCurrencyRetry ? (
-              <Button
-                type="button"
-                variant="link"
-                size="xs"
-                loading={currencyRetrying}
-                onClick={onCurrencyRetry}
-              >
-                Retry
-              </Button>
-            ) : null}
+        {currencyLoading ? (
+          <SkeletonBox className="w-32 h-11 shrink-0 !rounded-full" />
+        ) : null}
+        <div className="flex flex-col flex-1 min-w-0 items-end">
+          <div
+            data-state={isLoading ? 'active' : 'inactive'}
+            className="data-[state=inactive]:hidden data-[state=active]:flex w-full h-10 items-center justify-end"
+          >
+            <SkeletonBox className="w-2/3 max-w-32 h-8 rounded-lg" />
           </div>
-        )}
+          <div
+            data-state={isLoading ? 'inactive' : 'active'}
+            className="data-[state=inactive]:hidden data-[state=active]:flex w-full flex-1 items-center"
+          >
+            <TextField
+              testdata-id={`${id}-input`}
+              aria-label={typeof label === 'string' ? label : undefined}
+              type="number"
+              variant="naked"
+              disabled={disabled}
+              onValueChange={_onChange}
+              value={pending ? localValue : value}
+              readOnly={disabled}
+              maxDecimals={currency?.decimals}
+              data-state={isLoading ? 'inactive' : 'active'}
+              className={classNames('p-0 py-1 !text-2xl text-right')}
+            />
+          </div>
+          {hidePricing ? (
+            <div />
+          ) : (
+            <div className="flex items-center gap-2">
+              <PricePanel
+                value={value}
+                currency={currency}
+                priceImpact={priceImpact}
+                error={_error}
+                loading={currencyLoading || isPriceLoading}
+                price={price}
+              />
+              {currencyError && onCurrencyRetry ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  size="xs"
+                  loading={currencyRetrying}
+                  onClick={onCurrencyRetry}
+                >
+                  Retry
+                </Button>
+              ) : null}
+            </div>
+          )}
+        </div>
+      </div>
+      <div>
         <BalancePanel
           id={id}
           loading={isBalanceLoading}

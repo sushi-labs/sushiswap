@@ -14,14 +14,14 @@
       "Helvetica Neue", sans-serif;
     --font-orbitron: "Orbitron Variable", var(--font-sans);
 
-    --background-color: #f4f5f6;
-    --color: #000;
-    --secondary: #0000000a;
-    --muted: #0000000f;
-    --muted-foreground: #6b7280;
-    --accent: #00000014;
-    --accent-foreground: #111827;
-    --background: #f4f5f6;
+    --background-color: #ffffff;
+    --color: #181818;
+    --secondary: #fafafa;
+    --muted: #f2f2f2;
+    --muted-foreground: #686868;
+    --accent: #e3e3e3;
+    --accent-foreground: #181818;
+    --background: #ffffff;
     --green: 34 197 94;
     --red: 239 68 68;
   }
@@ -31,14 +31,14 @@
   }
 
   .dark {
-    --secondary: #ffffff0a;
-    --muted: #ffffff0f;
-    --muted-foreground: #94a3b8;
-    --accent: #ffffff14;
-    --accent-foreground: #e2e8f0;
-    --background-color: #0f172a;
+    --secondary: #202020;
+    --muted: #292929;
+    --muted-foreground: #acacac;
+    --accent: #3b3b3b;
+    --accent-foreground: #ffffff;
+    --background-color: #181818;
     --color: #ffffff;
-    --background: #0f172a;
+    --background: #181818;
     --green: 19 155 109;
     --red: 180 48 60;
   }

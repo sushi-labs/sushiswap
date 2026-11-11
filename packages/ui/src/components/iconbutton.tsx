@@ -12,21 +12,22 @@ import {
 } from './tooltip'
 
 const iconButtonVariants = cva(
-  'rounded-full cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-blue',
+  'rounded-full cursor-pointer whitespace-nowrap inline-flex gap-2 items-center justify-center font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-pink',
   {
     variants: {
       variant: {
         default:
-          'bg-blue hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-600 text-white',
+          'bg-pink hover:bg-pink-600 focus:bg-pink-700 active:bg-pink-600 text-white',
         destructive:
           'bg-red hover:bg-red-600 focus:bg-red-700 active:bg-red-600 text-white',
         warning:
           'bg-amber-400 hover:bg-amber-500 focus:bg-amber-600 active:bg-amber-500 text-amber-900',
         outline:
-          'border dark:border-slate-200/5 border-gray-900/5 hover:bg-muted focus:bg-accent',
-        secondary: 'bg-secondary hover:bg-muted focus:bg-accent',
-        ghost: 'hover:bg-secondary focus:bg-accent',
-        link: 'text-blue hover:text-blue-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
+          '!border border-accent bg-background hover:bg-muted hover:text-accent-foreground',
+        secondary:
+          'bg-secondary border border-accent hover:bg-muted focus:bg-accent black:bg-muted black:hover:bg-accent black:focus:bg-accent',
+        ghost: 'hover:bg-muted focus:bg-accent transition-all',
+        link: 'text-pink hover:underline hover:text-pink-700 font-semibold !p-0 !h-[unset] !min-h-[unset]',
         blank: '',
         'perps-default':
           'bg-gradient-to-b text-perps-blue from-[#349BFE]/[0.13] to-[#349BFE]/[0.05] shadow-[inset_1.5px_2px_1px_-2px_rgba(52,155,254,0.4),inset_-1.5px_-1.5px_1px_-2px_rgba(52,155,254,0.325)] transition-all hover:from-[#349BFE]/[0.18] hover:to-[#349BFE]/[0.08] hover:border-[#349BFE]/[0.15]',

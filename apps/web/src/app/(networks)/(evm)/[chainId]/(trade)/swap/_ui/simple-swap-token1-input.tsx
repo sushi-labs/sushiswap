@@ -1,5 +1,6 @@
 'use client'
 
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
 import { isTokenSelectorPair } from 'src/lib/wagmi/components/token-selector/selection'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isWNativeSupported } from 'sushi'
@@ -26,7 +27,7 @@ export const SimpleSwapToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={(selection) =>
@@ -41,7 +42,7 @@ export const SimpleSwapToken1Input = () => {
       disableMaxButton
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId)}
-      label="Buy"
+      label={<SwapInputLabel chainId={chainId} type="OUTPUT" />}
     />
   )
 }

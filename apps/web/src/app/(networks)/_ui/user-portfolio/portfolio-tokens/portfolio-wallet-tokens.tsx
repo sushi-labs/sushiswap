@@ -1,5 +1,7 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { getPortfolioWallet } from '@sushiswap/graph-client/data-api'
 import {
+  SkeletonBox,
   SkeletonCircle,
   SkeletonText,
   TextField,
@@ -109,20 +111,20 @@ export function PortfolioWalletTokens() {
   }, [refetch])
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-y-2 overflow-hidden">
-      <div className="shrink-0 px-5">
-        <div className="flex flex-col gap-y-3 bg-secondary rounded-xl px-5 py-3 border border-accent">
-          <span className="text-sm text-muted-foreground">Total Balance</span>
+    <div className="flex flex-col gap-y-4">
+      <div className="shrink-0 px-7 pt-4">
+        <div className="flex flex-col">
+          <span className="sr-only">Total Balance</span>
 
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col gap-y-1">
             {isLoading && !data && !isError ? (
               <>
-                <SkeletonText fontSize="lg" className="!w-1/3" />
-                <SkeletonText className="!w-1/2" />
+                <SkeletonBox className="!h-12 !w-1/2" />
+                <SkeletonBox className="!h-6 !w-1/2" />
               </>
             ) : (
               <>
-                <div className="text-2xl font-bold">
+                <div className="text-4xl font-medium">
                   {formatUSD(filteredTotalUsd)}
                 </div>
 
@@ -133,7 +135,7 @@ export function PortfolioWalletTokens() {
                 ) : (
                   <div
                     className={classNames(
-                      'text-sm',
+                      'text-sm tabular-nums',
                       (filteredAmountUSD24Change ?? 0) > 0
                         ? 'text-green'
                         : (filteredAmountUSD24Change ?? 0) < 0
@@ -162,7 +164,9 @@ export function PortfolioWalletTokens() {
           type="text"
           aria-label="Search tokens"
           placeholder="Search tokens"
-          className="bg-secondary !border !border-accent"
+          icon={MagnifyingGlassIcon}
+          wrapperClassName="min-w-0"
+          className="!bg-muted !border-0 !rounded-lg !font-normal text-base placeholder:text-muted-foreground"
           onChange={(event) => setSearch(event.target.value)}
           value={search}
         />
@@ -176,10 +180,13 @@ export function PortfolioWalletTokens() {
       {/* TOKEN LIST SECTION */}
       {isError ? // Hide skeletons + hide tokens list on error
       null : isLoading ? (
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div>
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="flex w-full items-center px-5 py-3 gap-x-5">
-              <SkeletonCircle radius={28} />
+            <div
+              key={i}
+              className="flex min-h-[60px] w-full items-center px-7 py-2 gap-x-6"
+            >
+              <SkeletonCircle radius={36} />
               <div className="flex w-full justify-between items-center gap-x-3">
                 <div className="basis-3/4 flex flex-col gap-y-1">
                   <SkeletonText fontSize="sm" />
@@ -199,7 +206,7 @@ export function PortfolioWalletTokens() {
           onTransferConfirmed={handleTransferConfirmed}
         />
       ) : (
-        <div className="px-5 py-3 text-sm text-muted-foreground">
+        <div className="px-7 py-3 text-sm text-muted-foreground">
           No tokens found.
         </div>
       )}

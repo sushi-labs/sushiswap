@@ -30,16 +30,16 @@ export const PortfolioPositions = () => {
   const { data, isLoading, isError } = usePortfolioPositions(id.address)
 
   return (
-    <div className="flex flex-col h-full overflow-hidden gap-y-5">
-      <div className="px-5">
-        <div className="flex flex-col px-5 py-3 gap-y-3 bg-secondary rounded-xl">
-          <span className="text-sm text-muted-foreground">Total Balance</span>
+    <div className="flex flex-col gap-y-4">
+      <div className="shrink-0 px-7 pt-4">
+        <div className="flex flex-col">
+          <span className="sr-only">Total Balance</span>
           <div className="">
             {isLoading && !data && !isError ? (
-              <SkeletonText fontSize="lg" className="!w-1/3" />
+              <SkeletonText fontSize="lg" className="!h-12 !w-1/2" />
             ) : (
               <>
-                <div className="text-2xl font-bold">
+                <div className="text-[40px] leading-[48px] font-medium tracking-tight tabular-nums">
                   {formatUSD(data?.totalUSD ?? 0)}
                 </div>
                 {isError ? (
@@ -55,13 +55,13 @@ export const PortfolioPositions = () => {
       {isError ? // Hide skeletons + hide pos list on error
       null : isLoading ? (
         <div>
-          <div className="px-5 py-4">
+          <div className="px-7 py-4">
             <SkeletonText />
           </div>
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={`${i}`}
-              className="flex items-center w-full px-5 py-3 gap-x-7"
+              className="flex items-center w-full px-7 py-2.5 gap-x-6"
             >
               <div className="flex items-center">
                 <SkeletonCircle radius={28} />
@@ -81,11 +81,7 @@ export const PortfolioPositions = () => {
           ))}
         </div>
       ) : (
-        <Accordion
-          type="multiple"
-          className="h-full overflow-y-auto"
-          defaultValue={['v2', 'v3', 'alm']}
-        >
+        <Accordion type="multiple" defaultValue={['v2', 'v3', 'alm']}>
           {data?.v2Positions.length ? (
             <PortfolioV2Positions positions={data.v2Positions} />
           ) : null}

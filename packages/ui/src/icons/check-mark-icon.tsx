@@ -14,7 +14,7 @@ export const CheckMarkIcon: IconComponent = (props) => {
       <circle
         fillOpacity="0"
         className={classNames(
-          'circle animate-grow origin-center text-green',
+          'circle animate-grow origin-center text-green/20',
           props.className,
         )}
         stroke="currentColor"
@@ -27,11 +27,11 @@ export const CheckMarkIcon: IconComponent = (props) => {
       <path
         className="tick animate-draw"
         fill="none"
-        stroke="#FFF"
+        stroke="#22c55e"
         strokeOpacity={0}
         strokeDasharray={29}
         strokeDashoffset={29}
-        strokeWidth="6"
+        strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeMiterlimit="10"

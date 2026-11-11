@@ -8,9 +8,10 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  classNames,
 } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import type { WalletWithState } from 'src/lib/wallet'
 import { Disclaimer } from 'src/lib/wallet/components/disclaimer'
 import { WalletConnectorsListSkeleton } from 'src/lib/wallet/components/wallet-connectors-list/wallet-connectors-list-skeleton'
@@ -35,6 +36,7 @@ const WalletConnectorsList = dynamic(
 
 type ConnectSubview =
   | { type: 'main' }
+  | { type: 'other-wallets' }
   | {
       type: 'select-namespace'
       wallets: WalletWithState[]
@@ -54,59 +56,70 @@ export const SidebarConnectView = () => {
 
   const [subview, setSubview] = useState<ConnectSubview>(DefaultSubview)
   const [tab, setTab] = useState<(typeof TABS)[number]>('evm')
+  const backButtonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (subview.type === 'other-wallets') backButtonRef.current?.focus()
+  }, [subview.type])
 
   const onConnect = closeOnConnect ? close : () => setView(DefaultSidebarView)
 
   const onBack =
-    subview.type === 'select-namespace'
+    subview.type !== 'main'
       ? () => setSubview(DefaultSubview)
       : namespace || action === 'switch'
         ? () => setView(DefaultSidebarView)
         : undefined
 
   return (
-    <div className="pb-4 cursor-default">
-      <div className="p-4 flex justify-between gap-4">
-        <div className="space-y-2">
-          <div className="flex gap-2">
+    <div className="flex flex-col gap-3 bg-background px-6 pt-4 pb-6 cursor-default">
+      <div className="flex shrink-0 items-start justify-between gap-3">
+        <div className="min-w-0 space-y-2">
+          <div className="flex min-h-8 items-center gap-2">
             <IconButton
+              ref={backButtonRef}
               icon={ArrowLeftIcon}
               name={'Back'}
               onClick={onBack}
-              className={!onBack ? 'hidden' : ''}
+              className={classNames(
+                '!h-8 !w-8 !min-h-8 !min-w-8 focus-visible:ring-pink',
+                !onBack ? 'hidden' : '',
+              )}
               variant="ghost"
-              size="xs"
+              size="sm"
             />
-            <span className="font-medium text-lg">
+            <span className="text-lg leading-7 font-medium">
               {subview.type === 'select-namespace'
                 ? 'Select Network'
-                : action === 'switch'
-                  ? 'Switch Wallet'
-                  : namespace
-                    ? `Connect ${
-                        getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
-                          .name
-                      } Wallet`
-                    : 'Connect'}
+                : subview.type === 'other-wallets'
+                  ? 'Other Wallets'
+                  : action === 'switch'
+                    ? 'Switch Wallet'
+                    : namespace
+                      ? `Connect ${
+                          getChainById(DEFAULT_CHAIN_ID_BY_NAMESPACE[namespace])
+                            .name
+                        } Wallet`
+                      : 'Connect'}
             </span>
           </div>
           {subview.type === 'select-namespace' ? (
-            <span className="text-sm text-muted-foreground">
+            <p className="text-sm leading-5 text-muted-foreground">
               {subview.wallets[0].name} supports multiple networks:
-            </span>
-          ) : (
-            <Disclaimer />
-          )}
+            </p>
+          ) : null}
         </div>
         <IconButton
           icon={XMarkIcon}
           name="Close"
-          className="sm:hidden"
+          className="!h-8 !w-8 !min-h-8 !min-w-8 shrink-0 focus-visible:ring-pink sm:hidden"
+          variant="ghost"
+          size="sm"
           onClick={close}
         />
       </div>
       {subview.type === 'select-namespace' ? (
-        <div className="overflow-y-auto h-[calc(100dvh-127px)] sm:h-[calc(100dvh-203px)]">
+        <div>
           <Suspense fallback={<WalletConnectorsListSkeleton />}>
             <WalletConnectorsList
               variant="namespace"
@@ -116,10 +129,12 @@ export const SidebarConnectView = () => {
           </Suspense>
         </div>
       ) : namespace ? (
-        <div className="overflow-y-auto h-[calc(100dvh-127px)] sm:h-[calc(100dvh-203px)]">
+        <div>
           <Suspense fallback={<WalletConnectorsListSkeleton />}>
             <WalletConnectorsList
               namespace={namespace}
+              showOtherWallets={subview.type === 'other-wallets'}
+              onShowOtherWallets={() => setSubview({ type: 'other-wallets' })}
               onConnect={onConnect}
               onSelectMultiNamespaceWallet={(wallets) =>
                 setSubview({
@@ -134,16 +149,19 @@ export const SidebarConnectView = () => {
         <Suspense fallback={<WalletConnectorsListSkeleton />}>
           <Tabs
             value={tab}
-            onValueChange={(val) => setTab(val as (typeof TABS)[number])}
-            className="w-full"
+            onValueChange={(val) => {
+              setTab(val as (typeof TABS)[number])
+              setSubview(DefaultSubview)
+            }}
+            className="flex w-full flex-col"
           >
-            <div className="flex px-2">
-              <TabsList className="w-full h-8">
+            <div className="flex shrink-0">
+              <TabsList className="!h-auto w-full gap-5 !justify-start !rounded-none !border-0 !bg-transparent !p-0">
                 {TABS.map((_tab) => (
                   <TabsTrigger
                     key={_tab}
                     value={_tab}
-                    className="w-full h-7 text-xs"
+                    className="!rounded-none !border-0 !border-b-2 !border-b-transparent !px-0 !pt-0 !pb-3 text-base !shadow-none focus-visible:ring-pink data-[state=active]:!border-b-pink data-[state=active]:!bg-transparent data-[state=active]:!text-primary"
                   >
                     {getNameFromNamespace(_tab)}
                   </TabsTrigger>
@@ -155,10 +173,14 @@ export const SidebarConnectView = () => {
               <TabsContent
                 value={_tab}
                 key={`tab-content-${_tab}`}
-                className="overflow-y-auto h-[calc(100vh-165px)] sm:h-[calc(100vh-241px)]"
+                className="!mt-4"
               >
                 <WalletConnectorsList
                   namespace={_tab}
+                  showOtherWallets={subview.type === 'other-wallets'}
+                  onShowOtherWallets={() =>
+                    setSubview({ type: 'other-wallets' })
+                  }
                   onConnect={onConnect}
                   onSelectMultiNamespaceWallet={(wallets) =>
                     setSubview({
@@ -172,6 +194,7 @@ export const SidebarConnectView = () => {
           </Tabs>
         </Suspense>
       )}
+      {subview.type !== 'select-namespace' ? <Disclaimer /> : null}
     </div>
   )
 }

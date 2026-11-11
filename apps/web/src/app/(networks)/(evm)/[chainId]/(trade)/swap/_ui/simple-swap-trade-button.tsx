@@ -1,9 +1,8 @@
 'use client'
 
-import { DialogTrigger, Message } from '@sushiswap/ui'
+import { DialogTrigger } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import type React from 'react'
-import { type FC, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import type { SupportedChainId } from 'src/config'
@@ -27,11 +26,10 @@ import { Success } from 'src/lib/wagmi/systems/checker/success'
 import { ZERO } from 'sushi'
 import {
   type EvmChainId,
-  EvmNative,
   RED_SNWAPPER_ADDRESS,
   isRedSnwapperChainId,
 } from 'sushi/evm'
-import { type SvmChainId, SvmNative, isSvmChainId } from 'sushi/svm'
+import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -100,17 +98,6 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
   )
   const walletNamespace = isSvmChainId(chainId) ? 'svm' : 'evm'
   const buttonVariant = variant === 'perps' ? 'perps-default' : 'default'
-
-  const [isWrap, isUnwrap] = useMemo(() => {
-    const wrappedAddress = isSvmChainId(chainId)
-      ? SvmNative.fromChainId(chainId).wrap().address
-      : EvmNative.fromChainId(chainId).wrap().address
-
-    return [
-      token0?.type === 'native' && token1?.wrap().address === wrappedAddress,
-      token1?.type === 'native' && token0?.wrap().address === wrappedAddress,
-    ]
-  }, [chainId, token0, token1])
 
   const showPriceImpactWarning = useMemo(() => {
     const priceImpactSeverity = warningSeverity(quote?.priceImpact)
@@ -196,11 +183,7 @@ function _SimpleSwapTradeButton<TChainId extends SupportedChainId>({
                                 ? 'Price impact too high'
                                 : quote?.status === 'NoWay'
                                   ? 'No trade found'
-                                  : isWrap
-                                    ? 'Wrap'
-                                    : isUnwrap
-                                      ? 'Unwrap'
-                                      : 'Swap'}
+                                  : 'Review'}
                             </Button>
                           </DialogTrigger>
                         </PartialRoute>

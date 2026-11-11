@@ -3,6 +3,7 @@
 import { createErrorToast } from '@sushiswap/notifications'
 import { Button } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { ChevronDown } from 'lucide-react'
 import { type FC, useCallback } from 'react'
 import { getNetworkName } from 'src/lib/network'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
@@ -82,6 +83,7 @@ export const HeaderNetworkSelector: FC<{
             {getNetworkName(selectedNetwork ?? chainId)}
           </div>
         )}
+        <ChevronDown className="w-4 h-4 dark:text-[#A0A0A0]" />
       </Button>
     </NetworkSelector>
   )

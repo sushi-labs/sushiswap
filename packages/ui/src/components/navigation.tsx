@@ -62,7 +62,7 @@ const navigationContainerVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-gray-100 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 black:bg-background black:border-accent',
+          'bg-background border-b-[0.5px] border-accent black:bg-background black:border-accent',
         transparent: '',
       },
     },
@@ -299,7 +299,7 @@ const SushiNavigationDropdown: React.FC<{
           <NavigationMenuTrigger className={className}>
             {children}
           </NavigationMenuTrigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className="border border-accent rounded-2xl">
             <ul className={'w-[216px] flex flex-col gap-6 px-4 py-6'}>
               <div className="flex flex-col gap-1">
                 <span className="font-semibold px-2">Company</span>
@@ -311,7 +311,7 @@ const SushiNavigationDropdown: React.FC<{
                           href={component.href}
                           target="_blank"
                           className={
-                            'cursor-pointer block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
                           }
                         >
                           <span className="text-sm font-medium text-muted-foreground">
@@ -333,7 +333,7 @@ const SushiNavigationDropdown: React.FC<{
                           href={component.href}
                           target="_blank"
                           className={
-                            'cursor-pointer block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
                           }
                         >
                           <span className="text-sm font-medium text-muted-foreground">
@@ -355,7 +355,7 @@ const SushiNavigationDropdown: React.FC<{
                           href={component.href}
                           target="_blank"
                           className={
-                            'cursor-pointer block select-none space-y-1 rounded-md p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
                           }
                         >
                           <span className="text-sm font-medium text-muted-foreground">

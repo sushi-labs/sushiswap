@@ -12,7 +12,7 @@ const escapeRegExp = (string: string) =>
 
 const numericInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
   {
-    placeholder: '0.0',
+    placeholder: '0.00',
   }
 
 const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
@@ -24,7 +24,7 @@ const percentInputProps: Partial<React.InputHTMLAttributes<HTMLInputElement>> =
   }
 
 const textFieldVariants = cva(
-  'truncate appearance-none dark:text-slate-50 text-gray-900 black:text-primary black:bg-muted black:placeholder:text-[#A9A9A9] w-full !ring-0 !outline-none',
+  'truncate appearance-none text-primary black:text-primary black:bg-muted black:placeholder:text-[#A9A9A9] w-full !ring-0 !outline-none',
   {
     variants: {
       size: {

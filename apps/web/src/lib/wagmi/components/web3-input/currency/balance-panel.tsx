@@ -1,5 +1,4 @@
 import { SkeletonText, classNames } from '@sushiswap/ui'
-import { WalletIcon } from '@sushiswap/ui/icons/wallet-icon'
 import { useCallback } from 'react'
 import { Amount } from 'sushi'
 
@@ -63,8 +62,8 @@ export function BalancePanel<TChainId extends BalanceChainId>({
 
   if (loading || !isMounted) {
     return (
-      <div className="w-[60px] flex items-center">
-        <SkeletonText fontSize="lg" className="w-full" />
+      <div className="w-24 h-6 flex items-center">
+        <SkeletonText fontSize="xs" className="w-full" />
       </div>
     )
   }
@@ -87,15 +86,15 @@ export function BalancePanel<TChainId extends BalanceChainId>({
       onClick={onClick}
       className={classNames(
         type === 'INPUT'
-          ? 'text-blue hover:text-blue-600 active:text-blue-700 hover:dark:text-slate-300'
-          : 'text-gray-500 dark:text-slate-500',
-        'font-medium flex gap-1.5 items-center py-1 dark:text-slate-400 px-2 rounded-md',
+          ? 'text-pink hover:text-pink-600 active:text-pink-700 hover:dark:text-slate-300'
+          : 'text-muted-foreground',
+        'font-medium flex gap-1.5 items-center py-1 rounded-md text-xs',
       )}
       disabled={disableMaxButton}
     >
-      <WalletIcon width={18} height={18} />
-      <span className="text-lg">
-        {big}.<span className="text-sm font-semibold">{portion ?? '00'}</span>
+      Balance:
+      <span>
+        {big}.<span>{portion ?? '00'}</span>
       </span>
     </button>
   )

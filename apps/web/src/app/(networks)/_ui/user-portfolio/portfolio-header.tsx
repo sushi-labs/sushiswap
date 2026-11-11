@@ -2,16 +2,19 @@
 
 import { ArrowLeftIcon } from '@heroicons/react-v1/solid'
 import {
-  ArrowLeftOnRectangleIcon,
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  Cog6ToothIcon,
   DocumentDuplicateIcon,
   KeyIcon,
   PlusIcon,
+  PowerIcon,
 } from '@heroicons/react/24/outline'
-import { PlusCircleIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import {
+  Cog6ToothIcon,
+  PlusCircleIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/solid'
 import { createErrorToast } from '@sushiswap/notifications'
 import {
   Badge,
@@ -30,6 +33,7 @@ import {
   useBreakpoint,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
+import { SushiLiteIcon } from '@sushiswap/ui/icons/sushi-lite-icon'
 import { SwitchIcon } from '@sushiswap/ui/icons/switch-icon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { SidebarView, useSidebar } from 'src/app/(networks)/_ui/sidebar'
@@ -56,7 +60,7 @@ export const PortfolioHeader = () => {
       .length
   }, [wallets])
   return (
-    <div className="flex justify-between px-5 py-6 bg-secondary">
+    <div className="flex justify-between px-6 pt-4 pb-2">
       {walletCount > 1 ? (
         <ConnectedWalletsPopover
           evm={wallets.evm}
@@ -98,57 +102,55 @@ const ConnectedWalletInfo = ({
   const utilButtonSize = isSm ? 'xs' : 'sm'
 
   return (
-    <div className="flex justify-between w-full">
-      <div className="flex gap-1.5 items-center">
+    <div className="relative flex w-full flex-col">
+      <div className="flex min-w-0 flex-col items-start gap-3">
         <IconButton
           size="xs"
           onClick={close}
           icon={ArrowLeftIcon}
-          className="block sm:hidden"
+          className="absolute -left-2 top-2 block sm:hidden"
           name="Back"
         />
-        <div className="shrink-0">
+        <div className="shrink-0 ml-7 sm:ml-0">
           {wallet ? (
             <Badge
               position="bottom-right"
-              className="!-bottom-0 !-right-0"
+              className="!-bottom-0.5 !-right-0.5"
               badgeContent={
-                <NetworkIcon chainId={wallet.chainId} width={16} height={16} />
-              }
-            >
-              {wallet.icon ? (
-                <div className="w-10 h-10 p-1">
+                wallet.icon ? (
                   <img
                     src={wallet.icon.trim()}
-                    width="36"
-                    height="36"
-                    className="rounded-md"
+                    width="16"
+                    height="16"
+                    className="rounded-sm"
                     alt={wallet.name}
                   />
-                </div>
-              ) : (
-                <UserCircleIcon
-                  width={40}
-                  height={40}
-                  className="!text-primary opacity-50"
-                />
-              )}
+                ) : (
+                  <UserCircleIcon
+                    width={16}
+                    height={16}
+                    className="text-muted-foreground"
+                  />
+                )
+              }
+            >
+              <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-b from-[#27B0E6] via-[#C26BB3] to-[#FA52A0]">
+                <SushiLiteIcon width={38} height={35} className="text-white" />
+              </div>
             </Badge>
           ) : (
-            <SkeletonCircle radius={40} />
+            <SkeletonCircle radius={52} />
           )}
         </div>
-        <div className="flex flex-col justify-center">
+        <div className="flex min-w-0 max-w-full flex-col justify-center gap-1">
           {!wallet?.account || isENSNameLoading ? (
             <SkeletonBox className="h-5 w-28" />
           ) : ensName ? (
-            <div className="font-semibold leading-tight cursor-default">
+            <div className="text-base font-medium leading-6 cursor-default truncate">
               {ensName}
             </div>
           ) : (
-            <div className="font-semibold leading-tight cursor-default">
-              {shortenAddress(wallet.account)}
-            </div>
+            <div className="sr-only">{shortenAddress(wallet.account)}</div>
           )}
           {!wallet?.account ? (
             <SkeletonBox className="h-3 w-24" />
@@ -162,13 +164,13 @@ const ConnectedWalletInfo = ({
                         asChild
                         variant="blank"
                         onClick={() => setCopied(wallet.account)}
-                        className="flex text-xs !justify-start items-center text-muted-foreground !p-0 !h-[unset] !min-h-[unset] leading-none"
+                        className="flex !text-base !font-normal !justify-start items-center gap-2 !p-0 !h-6 !min-h-6 leading-6 [&>svg]:text-muted-foreground"
                       >
                         {shortenAddress(wallet.account)}
                         {isCopied ? (
-                          <CheckIcon className="w-2.5 h-2.5" />
+                          <CheckIcon className="w-3.5 h-3.5" />
                         ) : (
-                          <DocumentDuplicateIcon className="w-2.5 h-2.5" />
+                          <DocumentDuplicateIcon className="w-3.5 h-3.5 opacity-50" />
                         )}
                       </Button>
                     </TooltipTrigger>
@@ -182,7 +184,7 @@ const ConnectedWalletInfo = ({
           )}
         </div>
       </div>
-      <div className="flex gap-0.5 justify-end items-center">
+      <div className="absolute top-2 right-0 flex gap-2 justify-end items-center [&>button]:!h-8 [&>button]:!w-8 [&>button]:!min-h-8 [&>button]:!min-w-8 [&>button>svg]:!h-5 [&>button>svg]:!w-5">
         <IconButton
           size={utilButtonSize}
           variant="ghost"
@@ -207,7 +209,7 @@ const ConnectedWalletInfo = ({
           <IconButton
             size={utilButtonSize}
             variant="ghost"
-            icon={ArrowLeftOnRectangleIcon}
+            icon={PowerIcon}
             description="Disconnect"
             name="Disconnect"
             tabIndex={-1}
@@ -352,7 +354,7 @@ const ConnectedWalletsPopover = ({
   svm?: WalletConnection<SvmChainId>
   stellar?: WalletConnection<StellarChainId>
 }) => {
-  const { setView } = useSidebar()
+  const { setView, close } = useSidebar()
 
   const { data: ensName } = useEnsName({
     chainId: EvmChainId.ETHEREUM,
@@ -379,21 +381,30 @@ const ConnectedWalletsPopover = ({
   }, [wallets])
 
   return (
-    <div className="flex w-full justify-between items-center">
+    <div className="relative flex w-full justify-between items-start">
+      <IconButton
+        size="xs"
+        onClick={close}
+        icon={ArrowLeftIcon}
+        className="absolute -left-2 top-2 block sm:hidden"
+        name="Back"
+      />
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger>
-          <div className="flex gap-2 items-center">
-            <UserCircleIcon
-              width={28}
-              height={28}
-              className="!text-primary opacity-50"
-            />
-            <span className="font-semibold">Wallets</span>
-            {isOpen ? (
-              <ChevronUpIcon className="w-2.5 stroke-2" />
-            ) : (
-              <ChevronDownIcon className="w-2.5 stroke-2" />
-            )}
+          <div className="flex flex-col gap-3 items-start">
+            <div className="ml-7 sm:ml-0">
+              <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-b from-[#27B0E6] via-[#C26BB3] to-[#FA52A0]">
+                <SushiLiteIcon width={38} height={35} className="text-white" />
+              </div>
+            </div>
+            <span className="flex items-center gap-2 text-base leading-6 font-normal">
+              Wallets
+              {isOpen ? (
+                <ChevronUpIcon className="w-3 stroke-2" />
+              ) : (
+                <ChevronDownIcon className="w-3 stroke-2" />
+              )}
+            </span>
           </div>
         </PopoverTrigger>
 
@@ -445,7 +456,7 @@ const ConnectedWalletsPopover = ({
                     <IconButton
                       size="xs"
                       variant="ghost"
-                      icon={ArrowLeftOnRectangleIcon}
+                      icon={PowerIcon}
                       description="Disconnect"
                       name="Disconnect"
                       tabIndex={-1}
@@ -472,14 +483,15 @@ const ConnectedWalletsPopover = ({
           </div>
         </PopoverContent>
       </Popover>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2 pt-2 [&>button]:!h-8 [&>button]:!w-8 [&>button]:!min-h-8 [&>button]:!min-w-8 [&>button>svg]:!h-5 [&>button>svg]:!w-5">
         <IconButton
-          className="p-1"
+          className="p-1 !bg-transparent"
           size="xs"
           icon={Cog6ToothIcon}
           onClick={() => setView(SidebarView.Settings)}
           description="Settings"
           name="Settings"
+          variant="ghost"
         />
         {namespacesToConnectTo?.length ? (
           <ConnectMoreWallets namespacesToConnectTo={namespacesToConnectTo} />

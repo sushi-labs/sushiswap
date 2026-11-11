@@ -1,18 +1,34 @@
-import React from 'react'
-
 import type { IconComponent } from '../types'
 
 export const WalletIcon: IconComponent = (props) => {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 12"
       fill="none"
-      viewBox="0 0 18 18"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
+        d="M2.07557 0.692139H13.1488C13.9133 0.692139 14.533 1.31185 14.533 2.0763V8.9971C14.533 9.76155 13.9133 10.3813 13.1488 10.3813H2.07557C1.31112 10.3813 0.691406 9.76155 0.691406 8.9971V2.0763C0.691406 1.31185 1.31112 0.692139 2.07557 0.692139Z"
+        strokeWidth="1.38416"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="currentColor"
+      />
+      <path
+        d="M0.691406 4.15308H14.533"
+        strokeWidth="1.38416"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="currentColor"
+      />
+      <path
+        d="M11.0749 8.30579C11.4571 8.30579 11.767 7.99594 11.767 7.61371C11.767 7.23149 11.4571 6.92163 11.0749 6.92163C10.6927 6.92163 10.3828 7.23149 10.3828 7.61371C10.3828 7.99594 10.6927 8.30579 11.0749 8.30579Z"
         fill="currentColor"
-        d="M15.6 4.6H1.85v-.55l12.1-.968v.968h1.65V2.4c0-1.21-.98-2.059-2.177-1.888L2.378 2.089C1.18 2.26.2 3.39.2 4.6v11a2.2 2.2 0 002.2 2.2h13.2a2.2 2.2 0 002.2-2.2V6.8a2.2 2.2 0 00-2.2-2.2zm-1.65 7.707a1.65 1.65 0 01-.63-3.176 1.65 1.65 0 11.63 3.176z"
+        strokeWidth="1.38416"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        stroke="currentColor"
       />
     </svg>
   )

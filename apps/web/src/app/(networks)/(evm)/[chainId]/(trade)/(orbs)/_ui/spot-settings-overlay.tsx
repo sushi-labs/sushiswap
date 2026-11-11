@@ -22,12 +22,7 @@ export function SpotSettingsOverlay() {
 
   return (
     <SettingsOverlay modules={[]} externalModules={[PriceProtection]}>
-      <Button
-        size="sm"
-        className="!rounded-full"
-        variant="secondary"
-        icon={Cog6ToothIcon}
-      >
+      <Button size="sm" variant="ghost" icon={Cog6ToothIcon}>
         {showPriceProtectionBadge ? (
           <TooltipProvider>
             <Tooltip delayDuration={150}>
