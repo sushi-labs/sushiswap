@@ -1,4 +1,4 @@
-export const reserveDateFormatter = new Intl.DateTimeFormat('en-GB', {
+export const reserveDateFormatter = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'short',
   year: 'numeric',

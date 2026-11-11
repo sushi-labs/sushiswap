@@ -1,34 +1,20 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import type { BuybackReserveTransaction } from '@sushiswap/graph-client/data-api'
-import { Chip, SkeletonText } from '@sushiswap/ui'
+import { SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { BUYBACK_TOKEN } from 'src/lib/hooks/react-query/buyback'
+import type { BuybackReserveTransaction } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-transactions'
 import { perpsNumberFormatter } from 'src/lib/perps/utils'
 import { getEvmChainById, shortenHash } from 'sushi/evm'
-import { reserveDateFormatter, reserveTimeFormatter } from '../../_lib/format'
+import { reserveDateFormatter } from '../../_lib/format'
 
 const columnBodyMeta = {
-  className: 'tabular-nums !px-2 first:!pl-0 last:!pr-0',
+  className: 'tabular-nums !px-4',
   skeleton: <SkeletonText fontSize="sm" />,
-}
-
-export const ROUND_COLUMN: ColumnDef<BuybackReserveTransaction> = {
-  id: 'round',
-  header: 'Round',
-  accessorKey: 'round',
-  enableSorting: false,
-  size: 70,
-  cell: ({ row }) => (
-    <Chip variant="secondary" className="inline-flex rounded-full">
-      #{row.original.round}
-    </Chip>
-  ),
-  meta: { body: columnBodyMeta },
 }
 
 export const SETTLED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'timestamp',
-  header: 'Settled',
+  header: 'Date',
   accessorKey: 'timestamp',
   enableSorting: false,
   size: 240,
@@ -38,41 +24,24 @@ export const SETTLED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
       <time dateTime={new Date(timestamp).toISOString()}>
         <span className="md:whitespace-nowrap">
           {reserveDateFormatter.format(timestamp)}
-        </span>{' '}
-        <span className="block whitespace-nowrap text-muted-foreground xl:inline">
-          {reserveTimeFormatter.format(timestamp)} UTC
         </span>
       </time>
     )
   },
-  meta: { body: columnBodyMeta },
-}
-
-export const SPENT_COLUMN: ColumnDef<BuybackReserveTransaction> = {
-  id: 'spent',
-  header: 'Spent',
-  enableSorting: false,
-  size: 170,
-  cell: ({ row }) => (
-    <div className="flex flex-col gap-1">
-      {row.original.spent.map((spent) => (
-        <span key={spent.token.id}>
-          {perpsNumberFormatter({
-            value: spent.amount,
-            minFraxDigits: 2,
-            maxFraxDigits: 2,
-          })}{' '}
-          <span className="text-muted-foreground">{spent.token.symbol}</span>
-        </span>
-      ))}
-    </div>
-  ),
-  meta: { body: columnBodyMeta },
+  meta: {
+    body: {
+      className: `${columnBodyMeta.className} !px-6`,
+      skeleton: columnBodyMeta.skeleton,
+    },
+    header: {
+      className: 'ml-6',
+    },
+  },
 }
 
 export const RECEIVED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   id: 'received',
-  header: 'Received',
+  header: 'SUSHI acquired',
   enableSorting: false,
   size: 190,
   cell: ({ row }) => {
@@ -93,21 +62,26 @@ export const RECEIVED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
   meta: { body: columnBodyMeta },
 }
 
-export const PRICE_COLUMN: ColumnDef<BuybackReserveTransaction> = {
-  id: 'priceUSD',
-  header: 'Price',
+export const CUM_ACQUIRED_COLUMN: ColumnDef<BuybackReserveTransaction> = {
+  id: 'cummulativeAcquired',
+  header: 'Cumulative acquired',
   enableSorting: false,
-  size: 110,
-  cell: ({ row }) => (
-    <span>
-      $
-      {perpsNumberFormatter({
-        value: row.original.priceUSD || 0,
-        minFraxDigits: 5,
-        maxFraxDigits: 5,
-      })}
-    </span>
-  ),
+  size: 190,
+  cell: ({ row }) => {
+    const received = perpsNumberFormatter({
+      value: row.original.cummulativeAcquired,
+      minFraxDigits: 4,
+      maxFraxDigits: 4,
+    })
+    return (
+      <span>
+        <span className="block truncate md:inline" title={received}>
+          {received}
+        </span>{' '}
+        <span className="text-muted-foreground">{BUYBACK_TOKEN.symbol}</span>
+      </span>
+    )
+  },
   meta: { body: columnBodyMeta },
 }
 
@@ -124,7 +98,7 @@ export const TRANSACTION_COLUMN: ColumnDef<BuybackReserveTransaction> = {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`View transaction for round ${row.original.round} on Etherscan`}
-      className="inline-flex max-w-full items-center gap-1 text-muted-foreground hover:text-blue hover:underline"
+      className="inline-flex max-w-full items-center gap-1 text-muted-foreground hover:text-pink hover:underline"
     >
       <span className="truncate">
         {shortenHash(row.original.transactionHash)}
@@ -136,10 +110,10 @@ export const TRANSACTION_COLUMN: ColumnDef<BuybackReserveTransaction> = {
     </a>
   ),
   meta: {
-    header: { className: 'text-right' },
+    header: { className: 'text-right !mr-6' },
     body: {
       ...columnBodyMeta,
-      className: `${columnBodyMeta.className} text-right`,
+      className: `${columnBodyMeta.className} text-right !px-6`,
     },
   },
 }

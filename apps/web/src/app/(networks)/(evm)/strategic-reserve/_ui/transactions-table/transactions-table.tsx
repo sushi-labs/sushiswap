@@ -5,40 +5,33 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  Chip,
   DataTableVirtual,
   useBreakpoint,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useBuybackReserveTransactions } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-transactions'
 import { MobileTable } from '~evm/perps/_ui/trade-tables/_common/mobile-table'
-import { reserveDateFormatter } from '../../_lib/format'
 import {
-  PRICE_COLUMN,
+  CUM_ACQUIRED_COLUMN,
   RECEIVED_COLUMN,
-  ROUND_COLUMN,
   SETTLED_COLUMN,
-  SPENT_COLUMN,
   TRANSACTION_COLUMN,
 } from './columns'
 
 const COLUMNS = [
-  ROUND_COLUMN,
   SETTLED_COLUMN,
-  SPENT_COLUMN,
   RECEIVED_COLUMN,
-  PRICE_COLUMN,
+  CUM_ACQUIRED_COLUMN,
   TRANSACTION_COLUMN,
 ]
 
 const MOBILE_COLUMNS = [
-  ROUND_COLUMN,
-  RECEIVED_COLUMN,
-  PRICE_COLUMN,
   SETTLED_COLUMN,
-  SPENT_COLUMN,
+  RECEIVED_COLUMN,
+  CUM_ACQUIRED_COLUMN,
   TRANSACTION_COLUMN,
 ]
 
@@ -65,21 +58,19 @@ export function TransactionsTable(): React.ReactElement {
     }
   }, [data])
 
-  const firstTimestamp = transactions.length
-    ? Math.min(...transactions.map((transaction) => transaction.timestamp))
-    : undefined
-
   return (
     <Card>
       <CardHeader className="gap-2 px-4 md:px-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-        <CardTitle>Buyback rounds</CardTitle>
-        <CardDescription>
-          {totalCount} rounds
-          {firstTimestamp !== undefined &&
-            ` since ${reserveDateFormatter.format(firstTimestamp * 1000)}`}
-        </CardDescription>
+        <CardTitle>
+          <div className="flex items-start gap-1">
+            <span>Buyback history</span>
+            <Chip variant="muted" className="!px-1.5 !rounded-full">
+              {totalCount}
+            </Chip>
+          </div>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="px-4 md:px-6">
+      <CardContent className="!px-0 bg-background !pb-0">
         {(!isError || data) &&
           (isMounted && isMd ? (
             <DataTableVirtual
@@ -92,10 +83,11 @@ export function TransactionsTable(): React.ReactElement {
                   pageSize: Math.max(transactions.length, 1),
                 },
               }}
-              thClassName="!px-2 first:!pl-0 last:!pr-0 !h-10"
+              thClassName="!mx-2 first:!pl-0 last:!pr-0 !h-10 bg-secondary"
               scrollClassName="!border-t-0"
               estimateSize={64}
               testId="reserve-transaction"
+              trClassName="!h-10"
             />
           ) : (
             <MobileTable

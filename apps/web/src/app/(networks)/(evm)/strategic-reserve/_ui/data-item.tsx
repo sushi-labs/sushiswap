@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  SkeletonBox,
-  classNames,
-} from '@sushiswap/ui'
+import { SkeletonBox } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 
 export const DataItem = ({
@@ -14,36 +7,31 @@ export const DataItem = ({
   subLabel,
   isLoading,
   isError,
-  className,
 }: {
   label: string
   value: ReactNode
   subLabel: ReactNode
   isLoading: boolean
   isError: boolean
-  className?: string
 }) => {
   return (
-    <Card className={classNames('w-full', className)}>
-      <CardHeader className="!pb-1 !p-4 md:!px-6">
-        <CardTitle className="flex gap-1 items-center">
-          <span className="text-sm text-muted-foreground">{label}</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="!gap-2 px-4 md:px-6">
-        {isLoading ? (
-          <SkeletonBox className="h-9 w-3/4" />
-        ) : isError ? (
-          <span className="text-sm text-red h-9">Error</span>
-        ) : (
-          <span className="text-3xl font-bold">{value}</span>
-        )}
-        {isLoading
-          ? subLabel && <SkeletonBox className="h-4 w-1/4" />
-          : subLabel && (
-              <span className="text-xs text-muted-foreground">{subLabel}</span>
-            )}
-      </CardContent>
-    </Card>
+    <div className="w-full flex h-full flex-col gap-2">
+      <span className="text-sm !font-normal text-muted-foreground">
+        {label}
+      </span>
+
+      {isLoading ? (
+        <SkeletonBox className="h-9 w-1/2" />
+      ) : isError ? (
+        <span className="text-sm text-red h-9">Error</span>
+      ) : (
+        <span className="text-3xl font-medium">{value}</span>
+      )}
+      {isLoading ? (
+        <SkeletonBox className="h-4 w-1/4" />
+      ) : (
+        <span className="text-xs text-muted-foreground">{subLabel}</span>
+      )}
+    </div>
   )
 }

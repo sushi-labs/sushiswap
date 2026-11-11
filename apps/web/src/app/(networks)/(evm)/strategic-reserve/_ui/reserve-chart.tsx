@@ -1,25 +1,19 @@
 'use client'
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  SkeletonBox,
-} from '@sushiswap/ui'
+import { Button, SkeletonBox } from '@sushiswap/ui'
 import type { EChartsOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import ms from 'ms'
 import { useTheme } from 'next-themes'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useBuybackReserveHistory } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-history'
 import { perpsNumberFormatter } from 'src/lib/perps/utils'
 import { formatNumber } from 'sushi'
 import { reserveDateFormatter, reserveTimeFormatter } from '../_lib/format'
-
 echarts.use([CanvasRenderer, LineChart, GridComponent, TooltipComponent])
 
 const chartDateFormatter = new Intl.DateTimeFormat('en-GB', {
@@ -28,13 +22,31 @@ const chartDateFormatter = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'UTC',
 })
 
+const TIMEFRAME_OPTIONS = ['1M', '3M', 'All'] as const
+
+type TimeframeOption = (typeof TIMEFRAME_OPTIONS)[number]
+
+const timeframeToMs: Record<TimeframeOption, number> = {
+  '1M': ms('30d'),
+  '3M': ms('90d'),
+  All: Number.MAX_SAFE_INTEGER,
+}
+
 export function ReserveChart(): React.ReactElement {
   const { resolvedTheme } = useTheme()
+  const [timeframe, setTimeframe] = useState<TimeframeOption>('All')
   const { data, isLoading, isError } = useBuybackReserveHistory({
     enabled: true,
   })
 
-  const points = data?.points ?? []
+  const points = useMemo(
+    () =>
+      (data?.points ?? []).filter((point) => {
+        const now = Date.now()
+        return now - point.timestamp * 1000 <= timeframeToMs[timeframe]
+      }),
+    [data?.points, timeframe],
+  )
   const token = data?.token
   const latestPoint = points.at(-1)
   const latestAmount = perpsNumberFormatter({
@@ -44,19 +56,20 @@ export function ReserveChart(): React.ReactElement {
   })
   const option = useMemo<EChartsOption>(() => {
     const isLight = resolvedTheme === 'light'
-    const textColor = isLight ? '#64748B' : '#94A3B8'
+    const textColor = isLight ? '#3b3b3b' : '#e3e3e3'
 
     return {
       useUTC: true,
       animation: false,
-      grid: { top: 24, left: 0, right: 12, bottom: 0, containLabel: true },
+      grid: { top: 24, left: 0, right: 0, bottom: 0, containLabel: true },
       tooltip: {
         trigger: 'axis',
         confine: true,
-        backgroundColor: isLight ? '#FFFFFF' : '#0F172A',
-        borderColor: isLight ? '#E2E8F0' : '#334155',
-        textStyle: { color: isLight ? '#0F172A' : '#F8FAFC', fontSize: 12 },
+        backgroundColor: isLight ? '#FFFFFF' : '#202020',
+        borderColor: isLight ? '#e3e3e3' : '#3b3b3b',
+        textStyle: { color: isLight ? '#181818' : '#ffffff', fontSize: 12 },
         axisPointer: { lineStyle: { type: 'dashed', color: textColor } },
+        borderRadius: 12,
         formatter: (params) => {
           const point = Array.isArray(params) ? params[0] : params
           const value = point?.value
@@ -94,7 +107,7 @@ export function ReserveChart(): React.ReactElement {
             value === 0 ? '0' : formatNumber(value),
         },
         splitLine: {
-          lineStyle: { color: isLight ? '#E2E8F0' : '#1E293B' },
+          lineStyle: { color: isLight ? '#e3e3e3' : '#3b3b3b' },
         },
       },
       series: [
@@ -127,19 +140,32 @@ export function ReserveChart(): React.ReactElement {
   }, [points, latestPoint, token?.symbol, resolvedTheme])
 
   return (
-    <Card>
-      <CardHeader className="gap-2 px-4 md:px-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-        <CardTitle>SUSHI held over time</CardTitle>
-      </CardHeader>
-      <CardContent className="px-4 md:px-6">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2 flex-wrap justify-between">
+        <h3 className="text-lg font-semibold">Cumulative buybacks</h3>
+        <div className="flex rounded-full bg-muted p-0.5 gap-1">
+          {TIMEFRAME_OPTIONS.map((time) => (
+            <Button
+              key={time}
+              onClick={() => setTimeframe(time)}
+              variant={timeframe === time ? 'secondary' : 'ghost'}
+              size="sm"
+              className="focus:bg-background"
+            >
+              {time}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <div>
         {isLoading ? (
           <div role="status" aria-label="Loading reserve history">
-            <SkeletonBox className="h-[260px] w-full" />
+            <SkeletonBox className="h-[190px] w-full" />
           </div>
         ) : isError ? (
           <div
             role="alert"
-            className="flex h-[260px] items-center justify-center text-sm text-red"
+            className="flex h-[190px] items-center justify-center text-sm text-red"
           >
             Unable to load reserve history.
           </div>
@@ -151,11 +177,11 @@ export function ReserveChart(): React.ReactElement {
             <ReactEchartsCore
               echarts={echarts}
               option={option}
-              style={{ height: 260 }}
+              style={{ height: 190 }}
             />
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
