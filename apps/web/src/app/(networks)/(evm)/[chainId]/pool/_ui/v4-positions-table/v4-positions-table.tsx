@@ -9,20 +9,19 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  Currency,
   DataTable,
-  FormattedNumber,
   LinkInternal,
   SkeletonCircle,
   SkeletonText,
-  classNames,
 } from '@sushiswap/ui'
 import type { ColumnDef, PaginationState } from '@tanstack/react-table'
 import { type ReactElement, type ReactNode, useMemo, useState } from 'react'
 import { Bound } from 'src/lib/constants'
+import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { getTickLimits } from 'src/lib/pool/cl'
-import { useV4Positions } from 'src/lib/pool/v4'
-import { useCurrencyWithCache } from 'src/lib/wagmi/hooks/tokens/use-currency-with-cache'
+import { useV4PoolById, useV4Positions } from 'src/lib/pool/v4'
+import { useCurrencyPair } from 'src/lib/wagmi/hooks/tokens/use-currency-pair'
+import { useWalletConnection } from 'src/lib/wallet'
 import { Amount, formatUSD } from 'sushi'
 import {
   type SushiSwapV4ChainId,
@@ -30,108 +29,112 @@ import {
   sushiSwapV4TickToPrice,
 } from 'sushi/evm'
 import { useConnection } from 'wagmi'
-
-function useV4PositionCurrencies(position: V4Position) {
-  const currency0 = useCurrencyWithCache({
-    chainId: position.chainId,
-    address: position.pool.currency0,
-  })
-  const currency1 = useCurrencyWithCache({
-    chainId: position.chainId,
-    address: position.pool.currency1,
-  })
-  return [currency0.data, currency1.data] as const
-}
-
-function NameCell({ position }: { position: V4Position }): ReactElement {
-  const [currency0, currency1] = useV4PositionCurrencies(position)
-  if (!currency0 || !currency1) return <SkeletonText fontSize="lg" />
-
-  return (
-    <div className="flex items-center gap-5">
-      <Currency.IconList iconWidth={26} iconHeight={26}>
-        <Currency.Icon disableLink currency={currency0} />
-        <Currency.Icon disableLink currency={currency1} />
-      </Currency.IconList>
-      <div className="flex flex-col gap-0.5">
-        <span className="flex items-center gap-1 text-sm font-medium text-gray-900 dark:text-slate-50">
-          {currency0.symbol}
-          <span className="font-normal text-gray-900 dark:text-slate-500">
-            /
-          </span>
-          {currency1.symbol}
-        </span>
-        <span className="text-xs text-gray-500 dark:text-slate-400">
-          #{position.tokenId.toString()}
-        </span>
-      </div>
-    </div>
-  )
-}
+import { PositionNameCell } from '../position-name-cell'
+import { PositionPriceRangeCell } from '../position-price-range-cell'
 
 function PriceRangeCell({ position }: { position: V4Position }): ReactElement {
-  const [currency0, currency1] = useV4PositionCurrencies(position)
+  const { currency0, currency1 } = useCurrencyPair({
+    chainId: position.chainId,
+    address0: position.pool.currency0,
+    address1: position.pool.currency1,
+  })
+  const [inverted, setInverted] = useState(false)
+  const { data: pool } = useV4PoolById({
+    chainId: position.chainId,
+    poolId: position.pool.poolId,
+  })
   if (!currency0 || !currency1) return <SkeletonText fontSize="lg" />
 
   const limits = getTickLimits(position.pool.tickSpacing)
   const closed = position.liquidity === 0n
+  const lowerAtLimit = position.tickLower === limits[Bound.LOWER]
+  const upperAtLimit = position.tickUpper === limits[Bound.UPPER]
   const atLimit = {
-    [Bound.LOWER]: position.tickLower === limits[Bound.LOWER],
-    [Bound.UPPER]: position.tickUpper === limits[Bound.UPPER],
+    [Bound.LOWER]: inverted ? upperAtLimit : lowerAtLimit,
+    [Bound.UPPER]: inverted ? lowerAtLimit : upperAtLimit,
   }
+  const priceLower = sushiSwapV4TickToPrice(
+    currency0,
+    currency1,
+    position.tickLower,
+  )
+  const priceUpper = sushiSwapV4TickToPrice(
+    currency0,
+    currency1,
+    position.tickUpper,
+  )
   const lower = formatTickPrice({
-    price: sushiSwapV4TickToPrice(currency0, currency1, position.tickLower),
+    price: inverted ? priceUpper.invert() : priceLower,
     atLimit,
     direction: Bound.LOWER,
   })
   const upper = formatTickPrice({
-    price: sushiSwapV4TickToPrice(currency0, currency1, position.tickUpper),
+    price: inverted ? priceLower.invert() : priceUpper,
     atLimit,
     direction: Bound.UPPER,
   })
+  const quote = inverted ? currency0 : currency1
+  const base = inverted ? currency1 : currency0
+  const currentPrice = inverted ? pool?.currency1Price : pool?.currency0Price
 
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className={classNames(
-          closed ? 'bg-gray-400' : position.inRange ? 'bg-green' : 'bg-red',
-          'w-2 h-2 rounded-full',
-        )}
-      />
-      <span className="text-sm">
-        <FormattedNumber number={lower} /> - <FormattedNumber number={upper} />{' '}
-        <span className="text-muted-foreground">
-          {currency1.symbol} per {currency0.symbol}
-        </span>
-      </span>
-    </div>
+    <PositionPriceRangeCell
+      lower={lower}
+      upper={upper}
+      currentPrice={currentPrice?.toSignificant(6)}
+      quoteSymbol={quote.symbol}
+      baseSymbol={base.symbol}
+      status={
+        closed ? 'closed' : position.inRange ? 'in-range' : 'out-of-range'
+      }
+      onInvert={() => setInverted((previous) => !previous)}
+    />
   )
 }
 
 function FeesCell({ position }: { position: V4Position }): ReactElement {
-  const [currency0, currency1] = useV4PositionCurrencies(position)
+  const { currency0, currency1 } = useCurrencyPair({
+    chainId: position.chainId,
+    address0: position.pool.currency0,
+    address1: position.pool.currency1,
+  })
+  const amounts = useMemo(
+    () =>
+      currency0 && currency1 && position.pendingFees
+        ? [
+            new Amount(currency0, position.pendingFees.amount0),
+            new Amount(currency1, position.pendingFees.amount1),
+          ]
+        : undefined,
+    [currency0, currency1, position.pendingFees],
+  )
+  const values = useTokenAmountDollarValues({
+    chainId: position.chainId,
+    amounts,
+  })
   if (!position.pendingFees) return <span>-</span>
   if (!currency0 || !currency1) return <SkeletonText fontSize="lg" />
 
-  return (
-    <div className="flex flex-col text-sm">
-      <span>
-        {new Amount(currency0, position.pendingFees.amount0).toSignificant(4)}{' '}
-        {currency0.symbol}
-      </span>
-      <span>
-        {new Amount(currency1, position.pendingFees.amount1).toSignificant(4)}{' '}
-        {currency1.symbol}
-      </span>
-    </div>
-  )
+  return <>{formatUSD(values.reduce((total, value) => total + value, 0))}</>
 }
 
 const COLUMNS: ColumnDef<V4Position, unknown>[] = [
   {
     id: 'name',
     header: 'Name',
-    cell: (props) => <NameCell position={props.row.original} />,
+    cell: ({ row: { original } }) => (
+      <PositionNameCell
+        chainId={original.chainId}
+        currency0={original.pool.currency0}
+        currency1={original.pool.currency1}
+        version="V4"
+        fee={
+          original.pool.fee.__typename === 'TerminalDynamicFee'
+            ? 'dynamic'
+            : original.pool.fee.rate
+        }
+      />
+    ),
     meta: {
       body: {
         skeleton: (
@@ -149,6 +152,7 @@ const COLUMNS: ColumnDef<V4Position, unknown>[] = [
   {
     id: 'priceRange',
     header: 'Price Range',
+    size: 250,
     cell: (props) => <PriceRangeCell position={props.row.original} />,
     meta: { body: { skeleton: <SkeletonText fontSize="lg" /> } },
   },
@@ -187,6 +191,7 @@ export function V4PositionsTable({
   actions,
 }: V4PositionsTableProps): ReactElement {
   const { address } = useConnection()
+  const { isRestoring, isPending } = useWalletConnection('evm')
   const { data: positions, isLoading } = useV4Positions({
     chainId,
     account: address,
@@ -238,7 +243,7 @@ export function V4PositionsTable({
       </CardHeader>
       <DataTable
         testId="v4-positions"
-        loading={isLoading}
+        loading={isRestoring || isPending || isLoading}
         linkFormatter={(row) =>
           `/${chainKey}/pool/v4/${row.pool.poolId}/${row.tokenId}`
         }

@@ -19,7 +19,7 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
   const render = useCallback(
     (vault: VaultV1) => {
       return (
-        <div className="w-[400px]">
+        <div className="w-[400px] h-full">
           <SteerPoolCard key={vault.id} pool={pool} vault={vault} />
         </div>
       )
@@ -29,7 +29,8 @@ export const SteerCarousel: FC<SteerCarousel> = ({ pool, vaults }) => {
 
   return enabledVaults?.length > 0 ? (
     <Carousel
-      containerWidth={1700}
+      contained
+      slideWidth={420}
       slides={enabledVaults}
       render={render}
       className="mt-0 pt-0"
@@ -51,7 +52,8 @@ export const SteerCarouselLoading: FC = () => {
 
   return (
     <Carousel
-      containerWidth={1700}
+      contained
+      slideWidth={420}
       slides={slides}
       render={render}
       className="px-2 mt-0 pt-0"

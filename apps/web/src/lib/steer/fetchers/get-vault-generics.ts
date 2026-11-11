@@ -30,7 +30,9 @@ function getPriceExtremes(
   return { min: lowerPrice, max: upperPrice }
 }
 
-function getAdjustment(vault: VaultV1): SteerStrategyGeneric['adjustment'] {
+export function getAdjustment(
+  vault: VaultV1,
+): SteerStrategyGeneric['adjustment'] {
   const next = formatDistanceToNow(
     (vault.lastAdjustmentTimestamp + vault.adjustmentFrequency) * 1000,
     {

@@ -88,7 +88,7 @@ export function SelectV4PoolConfigWidget({
             <FeeTierCard
               key={preset.fee}
               fee={preset.fee}
-              description={`${preset.description} Tick spacing ${preset.tickSpacing}.`}
+              description={preset.description}
               selected={
                 !isCustom &&
                 config?.fee === preset.fee &&

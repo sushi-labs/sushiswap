@@ -11,7 +11,6 @@ import {
   Stat,
   StatLabel,
   StatValue,
-  classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 import { formatPercent, formatUSD } from 'sushi'
@@ -27,15 +26,13 @@ interface SteerPoolCardProps {
 
 export const SteerPoolCard: FC<SteerPoolCardProps> = ({ pool, vault }) => {
   return (
-    <LinkInternal href={getSteerVaultHref(vault)}>
-      <Card
-        className={classNames(
-          'max-w-[400px] hover:border-blue-300 hover:shadow-md',
-        )}
-      >
-        <CardHeader className="pb-4">
+    <LinkInternal href={getSteerVaultHref(vault)} className="block h-full">
+      <Card className="flex flex-col h-full max-w-[400px] hover:border-blue-300 hover:shadow-md">
+        <CardHeader className="pb-4 flex-1">
           <CardTitle>{vault.strategy}</CardTitle>
-          <CardDescription>{vault.description}</CardDescription>
+          <CardDescription className="flex-1">
+            {vault.description?.trim() || 'No strategy description available.'}
+          </CardDescription>
           <Button className="mt-2 border border-accent" variant="secondary">
             Deposit
           </Button>

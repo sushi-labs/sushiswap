@@ -13,8 +13,10 @@ import {
   CardLabel,
   CardTitle,
   FormattedNumber,
+  LinkInternal,
   Message,
   Separator,
+  SkeletonBox,
   SkeletonText,
   Tabs,
   TabsContent,
@@ -24,6 +26,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { type ReactElement, useMemo, useState } from 'react'
+import { LiquidityDepositDivider } from 'src/lib/components/liquidity-deposit-input'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { getTickLimits } from 'src/lib/pool/cl'
@@ -32,6 +35,7 @@ import {
   useV4PositionDetails,
   useV4PositionFees,
 } from 'src/lib/pool/v4'
+import { CurrencyInputSkeleton } from 'src/lib/wagmi/components/web3-input/currency/currency-input-skeleton'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import { SushiSwapV4Position, getEvmChainById } from 'sushi/evm'
 import { type Hex, isAddressEqual } from 'viem'
@@ -274,7 +278,16 @@ export function V4PositionView({
                     />
                   </ConcentratedLiquidityProvider>
                 ) : isLoading ? (
-                  <SkeletonText />
+                  <div
+                    className="flex flex-col gap-4"
+                    role="status"
+                    aria-label="Loading add liquidity"
+                  >
+                    <CurrencyInputSkeleton className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary" />
+                    <LiquidityDepositDivider />
+                    <CurrencyInputSkeleton className="rounded-xl border border-accent bg-white p-3 dark:bg-secondary" />
+                    <SkeletonBox className="w-full h-[52px] rounded-xl" />
+                  </div>
                 ) : null}
               </CardContent>
             </TabsContent>
@@ -355,6 +368,18 @@ export function V4PositionView({
                 ? ` · ${pool.isDynamicFee ? 'Dynamic' : formatPercent(pool.fee / 1_000_000)} fee on ${getEvmChainById(chainId).name}`
                 : ''}
             </CardDescription>
+            <Button
+              asChild
+              size="sm"
+              variant="secondary"
+              className="self-start"
+            >
+              <LinkInternal
+                href={`/${getEvmChainById(chainId).key}/pool/v4/${poolId}`}
+              >
+                View pool
+              </LinkInternal>
+            </Button>
           </CardHeader>
           <CardContent>
             <CardGroup>

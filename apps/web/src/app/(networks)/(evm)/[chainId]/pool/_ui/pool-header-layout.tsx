@@ -1,5 +1,4 @@
 import { Container } from '@sushiswap/ui'
-import { headers } from 'next/headers'
 import type { ComponentProps, ReactElement, ReactNode } from 'react'
 import { getEvmChainById } from 'sushi/evm'
 import { PoolHeader } from './pool-header'
@@ -8,6 +7,7 @@ type PoolHeaderLayoutProps = Pick<
   ComponentProps<typeof PoolHeader>,
   'address' | 'showAddLiquidityButton'
 > & {
+  backUrl?: string
   pool: ComponentProps<typeof PoolHeader>['pool'] & {
     incentiveApr: number
     feeApr1d: number
@@ -19,21 +19,15 @@ type PoolHeaderLayoutProps = Pick<
 export async function PoolHeaderLayout({
   address,
   pool,
+  backUrl = `/${getEvmChainById(pool.chainId).key}/explore/pools`,
   showAddLiquidityButton = false,
   children,
 }: PoolHeaderLayoutProps): Promise<ReactElement> {
-  const headersList = await headers()
-  const referer = headersList.get('referer')
-
   return (
     <>
       <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
-          backUrl={
-            referer?.includes('/pool')
-              ? referer.toString()
-              : `/${getEvmChainById(pool.chainId).key}/explore/pools`
-          }
+          backUrl={backUrl}
           address={address}
           pool={pool}
           apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
@@ -41,7 +35,7 @@ export async function PoolHeaderLayout({
         />
       </Container>
       <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
+        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 flex-1">
           {children}
         </div>
       </section>

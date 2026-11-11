@@ -3,9 +3,13 @@ import { formatNumber, withoutScientificNotation } from 'sushi'
 
 interface FormattedNumberProps {
   number: number | string | undefined
+  maxDecimalPlaces?: number
 }
 
-const FormattedNumber: React.FC<FormattedNumberProps> = ({ number }) => {
+const FormattedNumber: React.FC<FormattedNumberProps> = ({
+  number,
+  maxDecimalPlaces = 2,
+}) => {
   if (typeof number === 'undefined') return undefined
   if (typeof number === 'number') {
     if (!Number.isFinite(number)) return '∞'
@@ -33,7 +37,7 @@ const FormattedNumber: React.FC<FormattedNumberProps> = ({ number }) => {
     zeroGroups[0].length === fractionalPart.length
   ) {
     // If no zero groups found or less than or equal to 4 zeros, return regular rendering
-    return <span>{formatNumber(numberStr)}</span>
+    return <span>{formatNumber(numberStr, maxDecimalPlaces)}</span>
   }
 
   const zeroCount = zeroGroups[0].length

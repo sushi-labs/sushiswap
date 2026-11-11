@@ -33,6 +33,12 @@ const V4PositionFragment = graphql(`
       key
       token0
       token1
+      fee {
+        __typename
+        ... on TerminalStaticFee {
+          rate
+        }
+      }
       ... on TerminalPancakeSwapInfinityPool {
         protocolPoolId
         manager
@@ -95,6 +101,7 @@ function parseV4Position(chainId: SushiSwapV4ChainId, raw: RawV4Position) {
       hooks: pool.hooks,
       parameters: pool.parameters,
       tickSpacing: pool.tickSpacing,
+      fee: pool.fee,
     },
   }
 }

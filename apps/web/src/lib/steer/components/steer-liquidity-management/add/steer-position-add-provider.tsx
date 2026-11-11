@@ -164,16 +164,12 @@ export function useSteerPositionAddDerivedInfo({
       dependentField === Field.CURRENCY_B ? currencyB : currencyA
 
     if (
-      independentReserve &&
-      dependentReserve &&
+      independentReserve !== undefined &&
+      dependentReserve !== undefined &&
       wrappedIndependentAmount &&
       dependentCurrency
     ) {
-      if (
-        independentReserve !== 0n &&
-        dependentReserve !== 0n &&
-        wrappedIndependentAmount.amount > 0
-      ) {
+      if (independentReserve !== 0n && wrappedIndependentAmount.amount > 0) {
         return new Amount(
           dependentCurrency,
           wrappedIndependentAmount.mul(dependentReserve).div(independentReserve)
@@ -216,6 +212,8 @@ export function useSteerPositionAddDerivedInfo({
     dependentAmount,
     dependentField,
     parsedAmounts,
+    depositADisabled: reserves?.reserve0 === 0n && reserves.reserve1 > 0n,
+    depositBDisabled: reserves?.reserve1 === 0n && reserves.reserve0 > 0n,
     isLoading,
   }
 }

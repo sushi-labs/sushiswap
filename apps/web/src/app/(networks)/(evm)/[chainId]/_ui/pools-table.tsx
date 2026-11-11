@@ -79,12 +79,11 @@ const COLUMNS = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      // V4 liquidity management is not supported yet
-      if (row.original.protocol === SushiSwapProtocol.SUSHISWAP_V4) {
-        return null
-      }
+      const poolPath = `/${getEvmChainById(row.original.chainId).key}/pool/${
+        POOL_PATH_SEGMENTS[row.original.protocol]
+      }/${row.original.address}`
 
-      return row.original.protocol === 'SUSHISWAP_V3' ? (
+      return row.original.protocol !== SushiSwapProtocol.SUSHISWAP_V2 ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
@@ -94,9 +93,18 @@ const COLUMNS = [
           <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuLabel>
               {row.original.name}
-              <Chip variant="blue" className="ml-2">
-                SushiSwap V3
-              </Chip>
+              {row.original.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
+                <Chip variant="blue" className="ml-2">
+                  SushiSwap V3
+                </Chip>
+              ) : (
+                <Chip
+                  variant="ghost"
+                  className="ml-2 bg-purple-500/10 text-purple-500"
+                >
+                  SushiSwap V4
+                </Chip>
+              )}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -105,9 +113,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                    row.original.address
-                  }`}
+                  href={poolPath}
                 >
                   <ArrowDownRightIcon width={16} height={16} className="mr-2" />
                   Pool details
@@ -118,9 +124,7 @@ const COLUMNS = [
                   onClick={(e) => e.stopPropagation()}
                   shallow={true}
                   className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                    row.original.address
-                  }/create`}
+                  href={`${poolPath}/create`}
                 >
                   <PlusIcon width={16} height={16} className="mr-2" />
                   Create position
@@ -137,9 +141,7 @@ const COLUMNS = [
                         onClick={(e) => e.stopPropagation()}
                         shallow={true}
                         className="flex items-center"
-                        href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                          row.original.address
-                        }/smart`}
+                        href={`${poolPath}/smart`}
                       >
                         <span className="relative">
                           <LightBulbIcon
@@ -166,52 +168,57 @@ const COLUMNS = [
                 </Tooltip>
               </TooltipProvider>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger
-                    asChild={isMerklChainId(row.original.chainId)}
-                  >
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!isMerklChainId(row.original.chainId)}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${
-                          getEvmChainById(row.original.chainId).key
-                        }/pool/incentivize?fromCurrency=${
-                          row.original.token0Address ===
-                          EvmNative.fromChainId(row.original.chainId).wrap()
-                            .address
-                            ? 'NATIVE'
-                            : row.original.token0Address
-                        }&toCurrency=${
-                          row.original.token1Address ===
-                          EvmNative.fromChainId(row.original.chainId).wrap()
-                            .address
-                            ? 'NATIVE'
-                            : row.original.token1Address
-                        }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
+            {/* The incentive form only supports V3 pools */}
+            {row.original.protocol === SushiSwapProtocol.SUSHISWAP_V3 ? (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger
+                        asChild={isMerklChainId(row.original.chainId)}
                       >
-                        <GiftIcon width={16} height={16} className="mr-2" />
-                        Add incentive
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!isMerklChainId(row.original.chainId)
-                        ? 'Not available on this network'
-                        : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </DropdownMenuGroup>
+                        <DropdownMenuItem
+                          asChild
+                          disabled={!isMerklChainId(row.original.chainId)}
+                        >
+                          <Link
+                            onClick={(e) => e.stopPropagation()}
+                            shallow={true}
+                            className="flex items-center"
+                            href={`/${
+                              getEvmChainById(row.original.chainId).key
+                            }/pool/incentivize?fromCurrency=${
+                              row.original.token0Address ===
+                              EvmNative.fromChainId(row.original.chainId).wrap()
+                                .address
+                                ? 'NATIVE'
+                                : row.original.token0Address
+                            }&toCurrency=${
+                              row.original.token1Address ===
+                              EvmNative.fromChainId(row.original.chainId).wrap()
+                                .address
+                                ? 'NATIVE'
+                                : row.original.token1Address
+                            }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
+                          >
+                            <GiftIcon width={16} height={16} className="mr-2" />
+                            Add incentive
+                          </Link>
+                        </DropdownMenuItem>
+                      </TooltipTrigger>
+                      <TooltipContent side="left" className="max-w-[240px]">
+                        <p>
+                          {!isMerklChainId(row.original.chainId)
+                            ? 'Not available on this network'
+                            : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </DropdownMenuGroup>
+              </>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (

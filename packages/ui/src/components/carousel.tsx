@@ -17,12 +17,14 @@ interface CarouselProps<T> {
   slides: T[]
   render(slide: T, i: number): ReactNode
   containerWidth?: number
+  contained?: boolean
   className?: string
 }
 
 export const Carousel = <T,>({
   defaultSlide = 0,
   containerWidth = 1280,
+  contained = false,
   slideWidth = 400,
   slides,
   render,
@@ -110,9 +112,11 @@ export const Carousel = <T,>({
                     'flex mr-5 h-full',
                   )}
                   style={{
-                    transform: `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${
-                      containerWidth / 2
-                    }px))`,
+                    transform: contained
+                      ? undefined
+                      : `translateX(calc(max(${containerWidth}px, 100vw)/2 - ${
+                          containerWidth / 2
+                        }px))`,
                   }}
                 >
                   <span />

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function EvmLayout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col min-h-screen w-full">
         <SanctionedAddressDialog />
         {children}
       </div>

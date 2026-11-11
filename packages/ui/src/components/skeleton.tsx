@@ -129,7 +129,8 @@ function SkeletonChartLoadingStateMask({
       return (
         <g transform={`translate(0, ${height}) scale(1,-1)`}>
           {Array.from({ length: 25 }).map((_, i) => {
-            const _height = Math.random() * height * 0.8 + 20
+            // Keep placeholder heights stable across server and client renders.
+            const _height = (((i * 7) % 25) / 25) * height * 0.8 + 20
             return (
               <rect
                 key={i}

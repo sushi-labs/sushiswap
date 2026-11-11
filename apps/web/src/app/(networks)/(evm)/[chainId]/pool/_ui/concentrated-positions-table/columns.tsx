@@ -3,7 +3,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import React from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { formatUSD } from 'sushi'
-import { PoolNameCellV3 } from './pool-name-cell-v3'
+import { getEvmCurrencyAddress, unwrapEvmToken } from 'sushi/evm'
+import { PositionNameCell } from '../position-name-cell'
 import { PriceRangeCell } from './price-range-cell'
 
 export const PRICE_RANGE_COLUMN: ColumnDef<
@@ -26,7 +27,15 @@ export const NAME_COLUMN_V3: ColumnDef<
 > = {
   id: 'name',
   header: 'Name',
-  cell: (props) => <PoolNameCellV3 {...props.row} />,
+  cell: ({ row: { original } }) => (
+    <PositionNameCell
+      chainId={original.chainId}
+      currency0={getEvmCurrencyAddress(unwrapEvmToken(original.pool.token0))}
+      currency1={getEvmCurrencyAddress(unwrapEvmToken(original.pool.token1))}
+      version="V3"
+      fee={original.fee}
+    />
+  ),
   meta: {
     body: {
       skeleton: (

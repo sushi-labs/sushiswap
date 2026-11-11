@@ -43,7 +43,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
     [chainId],
   )
 
-  const isBladeChain = isBladeChainId(chainId)
+  // const isBladeChain = isBladeChainId(chainId)
 
   return (
     <section className="flex flex-col gap-6">
@@ -73,7 +73,7 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem disabled={!isBladeChain} asChild>
+                  {/* <DropdownMenuItem disabled={!isBladeChain} asChild>
                     <LinkInternal
                       href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
                       className="flex flex-col !items-start gap-1 cursor-pointer"
@@ -88,7 +88,23 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                         Provide liquidity to a Blade liquidity pool.
                       </p>
                     </LinkInternal>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
+                  {isSushiSwapV4ChainId(chainId) ? (
+                    <DropdownMenuItem asChild>
+                      <LinkInternal
+                        href={`/${getEvmChainById(chainId).key}/pool/v4/add`}
+                        className="flex flex-col !items-start gap-1 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-1 font-medium leading-none">
+                          V4 Position
+                          <Chip variant="secondary">New 🔥</Chip>
+                        </div>
+                        <p className="text-sm leading-snug text-muted-foreground">
+                          Provide liquidity to a V4 liquidity pool.
+                        </p>
+                      </LinkInternal>
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuItem
                     disabled={!isSushiSwapV3ChainId(chainId)}
                     asChild
@@ -99,32 +115,15 @@ export const Hero: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
                     >
                       <div className="flex items-center gap-1 font-medium leading-none">
                         V3 Position
-                        <Chip variant="secondary">
-                          {isSushiSwapV3ChainId(chainId)
-                            ? 'New 🔥'
-                            : 'Unavailable'}
-                        </Chip>
+                        {!isSushiSwapV3ChainId(chainId) && (
+                          <Chip variant="secondary">Unavailable</Chip>
+                        )}
                       </div>
                       <p className="text-sm leading-snug text-muted-foreground">
                         Provide liquidity to a V3 liquidity pool.
                       </p>
                     </LinkInternal>
                   </DropdownMenuItem>
-                  {isSushiSwapV4ChainId(chainId) ? (
-                    <DropdownMenuItem asChild>
-                      <LinkInternal
-                        href={`/${getEvmChainById(chainId).key}/pool/v4/add`}
-                        className="flex flex-col !items-start gap-1 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-1 font-medium leading-none">
-                          V4 Position
-                        </div>
-                        <p className="text-sm leading-snug text-muted-foreground">
-                          Provide liquidity to a V4 liquidity pool.
-                        </p>
-                      </LinkInternal>
-                    </DropdownMenuItem>
-                  ) : null}
                   {isSushiSwapV2ChainId(chainId) ? (
                     <DropdownMenuItem asChild>
                       <LinkInternal

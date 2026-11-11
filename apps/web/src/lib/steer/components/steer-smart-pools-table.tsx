@@ -24,12 +24,7 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
-import type {
-  ColumnDef,
-  PaginationState,
-  SortingState,
-  TableState,
-} from '@tanstack/react-table'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import Link from 'next/link'
 import React, { type FC, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
@@ -299,17 +294,7 @@ export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
-
-  const state: Partial<TableState> = useMemo(() => {
-    return {
-      sorting,
-      pagination,
-    }
-  }, [sorting, pagination])
+  const [expanded, setExpanded] = useState(false)
 
   const vaults = useMemo(
     () =>
@@ -368,15 +353,32 @@ export const SteerSmartPoolsTable: FC<SteerSmartPoolsTableProps> = ({
       </CardHeader>
       <DataTable
         testId={(row) => `smart-pools-table-${row.id.replace(':', '-')}`}
-        onPaginationChange={setPagination}
         pagination={false}
-        state={state}
+        state={{
+          sorting,
+          pagination: {
+            pageIndex: 0,
+            pageSize: expanded ? Math.max(vaults.length, 3) : 3,
+          },
+        }}
         linkFormatter={getSteerVaultHref}
         onSortingChange={setSorting}
         loading={isLoading}
         columns={COLUMNS}
         data={vaults}
       />
+      {vaults.length > 3 && (
+        <div className="flex justify-center px-4 py-2">
+          <Button
+            variant="link"
+            size="sm"
+            aria-expanded={expanded}
+            onClick={() => setExpanded((expanded) => !expanded)}
+          >
+            {expanded ? 'Show less' : `Show all ${vaults.length} vaults`}
+          </Button>
+        </div>
+      )}
     </Card>
   )
 }

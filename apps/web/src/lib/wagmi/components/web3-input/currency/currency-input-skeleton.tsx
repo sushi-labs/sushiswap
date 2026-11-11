@@ -20,7 +20,7 @@ function CurrencyInputSkeleton({
       {label ? (
         <span className="text-sm text-muted-foreground">{label}</span>
       ) : null}
-      <div className="relative flex items-center gap-4">
+      <div className="relative flex items-center gap-4 mt-2">
         <div className="flex gap-4 items-center justify-between flex-grow h-[44px]">
           <SkeletonBox className="w-2/3 h-[32px] rounded-lg" />
           <SkeletonBox className="w-1/3 h-[32px] rounded-lg" />

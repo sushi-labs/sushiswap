@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useCurrencyWithCache } from 'src/lib/wagmi/hooks/tokens/use-currency-with-cache'
+import { useCurrencyPair } from 'src/lib/wagmi/hooks/tokens/use-currency-pair'
 import {
   type EvmCurrency,
   type SushiSwapV4ChainId,
@@ -80,22 +80,19 @@ export function useV4PoolById({
     poolId: poolId ?? '0x',
     enabled: Boolean(poolId),
   })
-  const currency0 = useCurrencyWithCache({
+  const { currency0, currency1, isLoading } = useCurrencyPair({
     chainId,
-    address: slot0.data?.currencies[0],
-  })
-  const currency1 = useCurrencyWithCache({
-    chainId,
-    address: slot0.data?.currencies[1],
+    address0: slot0.data?.currencies[0],
+    address1: slot0.data?.currencies[1],
   })
 
   const pool = useMemo(() => {
-    if (!slot0.data || !currency0.data || !currency1.data) return undefined
-    return toV4Pool(slot0.data, [currency0.data, currency1.data])
-  }, [slot0.data, currency0.data, currency1.data])
+    if (!slot0.data || !currency0 || !currency1) return undefined
+    return toV4Pool(slot0.data, [currency0, currency1])
+  }, [slot0.data, currency0, currency1])
 
   return {
     data: pool,
-    isLoading: slot0.isLoading || currency0.isLoading || currency1.isLoading,
+    isLoading: slot0.isLoading || isLoading,
   }
 }

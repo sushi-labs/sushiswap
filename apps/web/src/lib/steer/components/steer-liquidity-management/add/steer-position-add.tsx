@@ -1,14 +1,16 @@
 'use client'
 
-import { PlusIcon } from '@heroicons/react/24/solid'
 import { Button, DialogTrigger, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
+import {
+  LiquidityDepositDivider,
+  LiquidityDepositInput,
+} from 'src/lib/components/liquidity-deposit-input'
 import { APPROVE_TAG_ADD_STEER, Field } from 'src/lib/constants'
 import { STEER_PERIPHERY_ADDRESS } from 'src/lib/steer/config'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { Amounts } from 'src/lib/wagmi/systems/checker/amounts'
 import { ApproveERC20 } from 'src/lib/wagmi/systems/checker/approve-erc20'
 import { Connect } from 'src/lib/wagmi/systems/checker/connect'
@@ -36,6 +38,8 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
     independentField,
     dependentField,
     parsedAmounts,
+    depositADisabled,
+    depositBDisabled,
     isLoading,
   } = useSteerPositionAddDerivedInfo({
     vault,
@@ -50,8 +54,11 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
 
   const amounts = useMemo(() => {
     if (!parsedAmounts) return [undefined, undefined]
-    return Object.values(parsedAmounts)
-  }, [parsedAmounts])
+    const amounts = []
+    if (!depositADisabled) amounts.push(parsedAmounts[Field.CURRENCY_A])
+    if (!depositBDisabled) amounts.push(parsedAmounts[Field.CURRENCY_B])
+    return amounts
+  }, [parsedAmounts, depositADisabled, depositBDisabled])
 
   return (
     <CheckerProvider>
@@ -61,39 +68,25 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
           'flex flex-col gap-4',
         )}
       >
-        <div className="relative">
-          <Web3Input.Currency
-            id="add-liquidity-token0"
-            type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={vault.chainId}
-            value={formattedAmounts[Field.CURRENCY_A]}
-            onChange={onFieldAInput}
-            currency={currencies?.CURRENCY_A}
-            loading={isLoading}
-          />
-        </div>
-        <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-          <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-            <PlusIcon
-              width={16}
-              height={16}
-              className="text-muted-foreground"
-            />
-          </div>
-        </div>
-        <div className="relative">
-          <Web3Input.Currency
-            id="add-liquidity-token1"
-            type="INPUT"
-            className="p-3 bg-white dark:bg-secondary rounded-xl border border-accent"
-            chainId={vault.chainId}
-            value={formattedAmounts[Field.CURRENCY_B]}
-            onChange={onFieldBInput}
-            currency={currencies?.CURRENCY_B}
-            loading={isLoading}
-          />
-        </div>
+        <LiquidityDepositInput
+          id="add-liquidity-token0"
+          chainId={vault.chainId}
+          value={formattedAmounts[Field.CURRENCY_A]}
+          onChange={onFieldAInput}
+          currency={currencies?.CURRENCY_A}
+          loading={isLoading}
+          locked={depositADisabled}
+        />
+        <LiquidityDepositDivider />
+        <LiquidityDepositInput
+          id="add-liquidity-token1"
+          chainId={vault.chainId}
+          value={formattedAmounts[Field.CURRENCY_B]}
+          onChange={onFieldBInput}
+          currency={currencies?.CURRENCY_B}
+          loading={isLoading}
+          locked={depositBDisabled}
+        />
 
         {isMounted ? (
           <StockTokenRegion
@@ -119,12 +112,14 @@ export const SteerPositionAdd: FC<SteerPositionAddProps> = ({ vault }) => {
                     <ApproveERC20
                       fullWidth
                       id="approve-erc20-0"
+                      enabled={!depositADisabled}
                       amount={parsedAmounts?.[Field.CURRENCY_A]}
                       contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                     >
                       <ApproveERC20
                         fullWidth
                         id="approve-erc20-1"
+                        enabled={!depositBDisabled}
                         amount={parsedAmounts?.[Field.CURRENCY_B]}
                         contract={STEER_PERIPHERY_ADDRESS[vault.chainId]}
                       >

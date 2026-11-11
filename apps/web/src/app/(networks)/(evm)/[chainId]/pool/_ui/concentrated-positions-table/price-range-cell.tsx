@@ -1,8 +1,5 @@
 'use client'
 
-import { ArrowSmLeftIcon, ArrowSmRightIcon } from '@heroicons/react-v1/solid'
-import { classNames } from '@sushiswap/ui'
-import { FormattedNumber } from '@sushiswap/ui'
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 import { Bound } from 'src/lib/constants'
@@ -14,6 +11,7 @@ import { usePriceInverter } from 'src/lib/hooks/use-price-inverter'
 import { useIsTickAtLimit } from 'src/lib/pool/v3'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Position } from 'sushi/evm'
+import { PositionPriceRangeCell } from '../position-price-range-cell'
 
 export const PriceRangeCell: FC<
   Row<ConcentratedLiquidityPositionWithV3Pool>
@@ -79,79 +77,39 @@ export const PriceRangeCell: FC<
       : false
 
   return (
-    <div
-      className="flex flex-col gap-1"
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setManuallyInverted((prev) => !prev)
-      }}
-      onKeyDown={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setManuallyInverted((prev) => !prev)
-      }}
-    >
-      <div className="flex items-center gap-2">
-        <div
-          className={classNames(
-            invalidRange || !inRange
-              ? 'bg-red'
-              : closed
-                ? 'bg-slate-700'
-                : 'bg-green',
-            'w-2 h-2 rounded-full',
-          )}
-        />
-        <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
-          {fullRange ? (
-            '0'
-          ) : (
-            <FormattedNumber
-              number={formatTickPrice({
-                price: priceLower,
-                atLimit: tickAtLimit,
-                direction: Bound.LOWER,
-              })}
-            />
-          )}{' '}
-          {currencyQuote?.symbol}
-          <div className="flex items-center">
-            <ArrowSmLeftIcon
-              width={16}
-              height={16}
-              className="text-gray-500 dark:text-slate-500"
-            />
-            <ArrowSmRightIcon
-              width={16}
-              height={16}
-              className="text-gray-500 dark:text-slate-500 ml-[-7px]"
-            />
-          </div>
-          {fullRange ? (
-            '∞'
-          ) : (
-            <FormattedNumber
-              number={formatTickPrice({
-                price: priceUpper,
-                atLimit: tickAtLimit,
-                direction: Bound.UPPER,
-              })}
-            />
-          )}{' '}
-          {currencyQuote?.symbol}
-        </span>
-      </div>
-      <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
-        Current:{' '}
-        <FormattedNumber
-          number={(inverted
-            ? original.pool?.token1Price
-            : original.pool?.token0Price
-          )?.toSignificant(6)}
-        />{' '}
-        {currencyQuote?.symbol} per {currencyBase?.symbol}{' '}
-      </span>
-    </div>
+    <PositionPriceRangeCell
+      lower={
+        fullRange
+          ? '0'
+          : formatTickPrice({
+              price: priceLower,
+              atLimit: tickAtLimit,
+              direction: Bound.LOWER,
+            })
+      }
+      upper={
+        fullRange
+          ? '∞'
+          : formatTickPrice({
+              price: priceUpper,
+              atLimit: tickAtLimit,
+              direction: Bound.UPPER,
+            })
+      }
+      currentPrice={(inverted
+        ? original.pool.token1Price
+        : original.pool.token0Price
+      ).toSignificant(6)}
+      quoteSymbol={currencyQuote.symbol}
+      baseSymbol={currencyBase.symbol}
+      status={
+        invalidRange || !inRange
+          ? 'out-of-range'
+          : closed
+            ? 'closed'
+            : 'in-range'
+      }
+      onInvert={() => setManuallyInverted((previous) => !previous)}
+    />
   )
 }
