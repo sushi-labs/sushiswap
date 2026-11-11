@@ -14,8 +14,18 @@ import {
   SkeletonCircle,
   SkeletonText,
 } from '@sushiswap/ui'
-import type { ColumnDef, PaginationState } from '@tanstack/react-table'
-import { type ReactElement, type ReactNode, useMemo, useState } from 'react'
+import type {
+  ColumnDef,
+  PaginationState,
+  SortingState,
+} from '@tanstack/react-table'
+import {
+  type ReactElement,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { getTickLimits } from 'src/lib/pool/cl'
@@ -174,8 +184,6 @@ const COLUMNS: ColumnDef<V4Position, unknown>[] = [
   },
 ]
 
-const tableState = { sorting: [{ id: 'positionSize', desc: true }] }
-
 interface V4PositionsTableProps {
   chainId: SushiSwapV4ChainId
   /** Only this pool's positions, with a button to create one in it. */
@@ -201,6 +209,9 @@ export function V4PositionsTable({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'positionSize', desc: true },
+  ])
 
   const filtered = useMemo(
     () =>
@@ -214,6 +225,17 @@ export function V4PositionsTable({
   )
 
   const chainKey = getEvmChainById(chainId).key
+  const maxPageIndex = Math.max(
+    0,
+    Math.ceil(filtered.length / paginationState.pageSize) - 1,
+  )
+  useEffect(() => {
+    setPaginationState((previous) =>
+      previous.pageIndex > maxPageIndex
+        ? { ...previous, pageIndex: maxPageIndex }
+        : previous,
+    )
+  }, [maxPageIndex])
 
   return (
     <Card>
@@ -251,7 +273,8 @@ export function V4PositionsTable({
         data={filtered}
         pagination
         onPaginationChange={setPaginationState}
-        state={{ ...tableState, pagination: paginationState }}
+        onSortingChange={setSorting}
+        state={{ sorting, pagination: paginationState }}
       />
     </Card>
   )

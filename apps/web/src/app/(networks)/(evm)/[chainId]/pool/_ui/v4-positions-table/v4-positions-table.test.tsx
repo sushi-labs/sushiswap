@@ -1,6 +1,15 @@
+/** @vitest-environment jsdom */
+
 import type { V4Position } from '@sushiswap/graph-client/data-api'
 import { FormattedNumber } from '@sushiswap/ui'
-import React, { type ReactNode } from 'react'
+import type {
+  OnChangeFn,
+  PaginationState,
+  SortingState,
+  TableState,
+} from '@tanstack/react-table'
+import React, { type ReactNode, act } from 'react'
+import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Bound } from 'src/lib/constants'
 import { getTickLimits } from 'src/lib/pool/cl'
@@ -17,7 +26,10 @@ const state = vi.hoisted(() => ({
   hasResults: false,
   renderCells: false,
   poolLoaded: true,
+  interactive: false,
 }))
+const interactivePositions: V4Position[] = []
+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 const currency0 = new EvmToken({
   chainId: EvmChainId.ROBINHOOD,
@@ -78,7 +90,11 @@ vi.mock('src/lib/pool/v4', () => ({
       : undefined,
   }),
   useV4Positions: () => ({
-    data: state.hasResults ? [position] : [],
+    data: state.interactive
+      ? interactivePositions
+      : state.hasResults
+        ? [position]
+        : [],
     isLoading: state.isLoading,
   }),
 }))
@@ -87,40 +103,45 @@ vi.mock('src/lib/wagmi/hooks/tokens/use-currency-with-cache', () => ({
     data: address === currency0.address ? currency0 : currency1,
   }),
 }))
-vi.mock('@sushiswap/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@sushiswap/ui')>()),
-  DataTable: ({
-    loading,
-    data,
-    columns,
-  }: {
-    loading: boolean
-    data: V4Position[]
-    columns: {
-      id: string
-      cell: (props: { row: { original: V4Position } }) => ReactNode
-    }[]
-  }) =>
-    state.renderCells ? (
-      <div>
-        {data.map((original) =>
-          columns.map((column) => (
-            <div key={column.id} data-column={column.id}>
-              {column.cell({ row: { original } })}
-            </div>
-          )),
-        )}
-      </div>
-    ) : (
-      <span>
-        {loading
-          ? 'Loading positions'
-          : data.length
-            ? 'Position results'
-            : 'No results'}
-      </span>
-    ),
-}))
+vi.mock('@sushiswap/ui', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@sushiswap/ui')>()
+  return {
+    ...original,
+    DataTable: (props: {
+      loading: boolean
+      data: V4Position[]
+      state?: Partial<TableState>
+      onSortingChange?: OnChangeFn<SortingState>
+      onPaginationChange?: OnChangeFn<PaginationState>
+      columns: {
+        id: string
+        cell: (props: { row: { original: V4Position } }) => ReactNode
+      }[]
+    }) => {
+      if (state.interactive) return <original.DataTable {...props} />
+      const { loading, data, columns } = props
+      return state.renderCells ? (
+        <div>
+          {data.map((original) =>
+            columns.map((column) => (
+              <div key={column.id} data-column={column.id}>
+                {column.cell({ row: { original } })}
+              </div>
+            )),
+          )}
+        </div>
+      ) : (
+        <span>
+          {loading
+            ? 'Loading positions'
+            : data.length
+              ? 'Position results'
+              : 'No results'}
+        </span>
+      )
+    },
+  }
+})
 
 it('keeps positions loading through wallet restoration and the initial fetch', () => {
   function render(): string {
@@ -203,3 +224,63 @@ it('renders the indexed pool fee before the current pool price loads', () => {
     renderToStaticMarkup(<V4PositionsTable chainId={EvmChainId.ROBINHOOD} />),
   ).toContain('Dynamic')
 })
+
+it.each(['sorting', 'filtering'])(
+  'updates the positions table when %s changes',
+  (change) => {
+    state.interactive = true
+    state.isRestoring = false
+    state.isPending = false
+    state.isLoading = false
+    interactivePositions.splice(
+      0,
+      interactivePositions.length,
+      ...Array.from({ length: 15 }, (_, index) => ({
+        ...position,
+        id: `position-${index}`,
+        tokenId: BigInt(index),
+        amountUSD: index,
+        liquidity: index < 2 ? 1n : 0n,
+      })),
+    )
+    const container = document.createElement('div')
+    const root = createRoot(container)
+    function render(hideClosedPositions: boolean): void {
+      act(() =>
+        root.render(
+          <V4PositionsTable
+            chainId={EvmChainId.ROBINHOOD}
+            hideClosedPositions={hideClosedPositions}
+          />,
+        ),
+      )
+    }
+    try {
+      render(false)
+      if (change === 'sorting') {
+        const header = [...container.querySelectorAll('th')].find((node) =>
+          node.textContent?.includes('Position Size'),
+        )
+        const button = header?.querySelector('button')
+        if (!button) throw new Error('Missing sort button')
+        act(() => button.click())
+        expect(container.querySelector('tbody tr')?.textContent).toContain(
+          '$0.00',
+        )
+      } else {
+        const next = [...container.querySelectorAll('button')].find((button) =>
+          button.textContent?.includes('Go to next page'),
+        )
+        if (!next) throw new Error('Missing next page button')
+        act(() => next.click())
+        expect(container.textContent).toContain('Page 2 of 2')
+        render(true)
+        expect(container.textContent).toContain('Page 1 of 1')
+        expect(container.textContent).not.toContain('No results')
+      }
+    } finally {
+      act(() => root.unmount())
+      state.interactive = false
+    }
+  },
+)

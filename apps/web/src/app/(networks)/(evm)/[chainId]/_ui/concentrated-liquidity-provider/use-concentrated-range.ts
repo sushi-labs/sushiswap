@@ -142,7 +142,9 @@ export function useConcentratedRange<TCurrency extends EvmCurrency>({
         currentPrice,
         minPrice,
         maxPrice,
-        (independentBound ?? minBound) === minBound ? Bound.LOWER : Bound.UPPER,
+        (independentBound ?? Bound.LOWER) === minBound
+          ? Bound.LOWER
+          : Bound.UPPER,
         invertPrice ? 1 - weightLockedCurrency0 : weightLockedCurrency0,
       )
     } catch {
@@ -175,7 +177,13 @@ export function useConcentratedRange<TCurrency extends EvmCurrency>({
         return resolveRangeTick(true, bound, spacing)
       const priceOf0 = invertPrice ? 1 / value : value
       const tick = Math.log(priceOf0 * decimalsScale) / Math.log(1.0001)
-      return resolveRangeTick(tick, bound, spacing)
+      // Ignore floating-point noise before snapping outward by a whole spacing.
+      const rounded = Math.round(tick)
+      return resolveRangeTick(
+        Math.abs(tick - rounded) < 1e-7 ? rounded : tick,
+        bound,
+        spacing,
+      )
     }
     const newMin = toTick(weighted?.[0], minBound)
     const newMax = toTick(weighted?.[1], maxBound)

@@ -17,12 +17,15 @@ interface UseDensityChartData {
 }
 
 export function getDensityChartData(data: TickProcessed[]): ChartEntry[] {
-  return data.flatMap((tick) => {
+  const inverted = Number(data[0]?.price0) > Number(data.at(-1)?.price0)
+  return (inverted ? data.toReversed() : data).flatMap((tick) => {
+    // Inverted prices use liquidity before the tick instead of after it.
     const chartEntry = {
-      activeLiquidity: Number.parseFloat(tick.liquidityActive.toString()),
+      activeLiquidity: Number(
+        tick.liquidityActive - (inverted ? tick.liquidityNet : 0n),
+      ),
       price0: Number.parseFloat(tick.price0),
     }
-
     return chartEntry.activeLiquidity >= 0 ? [chartEntry] : []
   })
 }
