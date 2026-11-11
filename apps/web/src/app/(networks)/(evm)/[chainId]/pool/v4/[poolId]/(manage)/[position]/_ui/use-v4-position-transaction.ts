@@ -114,7 +114,8 @@ export function useV4PositionTransaction({
 
   const { status } = useWaitForTransactionReceipt({ chainId, hash })
 
-  // A failed simulation shows as an error but does not block a retry
+  // A rejected or failed send is toasted by the mutation, so it's swallowed
+  // here; the user can send again
   const send = prepare
     ? async (onSent?: () => void) => {
         try {

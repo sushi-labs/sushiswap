@@ -21,8 +21,9 @@ import {
 } from '@sushiswap/ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { type ReactElement, type ReactNode, useCallback, useMemo } from 'react'
-import { Bound, NativeAddress } from 'src/lib/constants'
+import { NativeAddress } from 'src/lib/constants'
 import { logger } from 'src/lib/logger'
+import { getDisplayedRange } from 'src/lib/pool/cl'
 import { onV4PositionFeesCollected } from 'src/lib/pool/v4'
 import {
   DialogConfirm,
@@ -280,12 +281,13 @@ export function V4AddLiquidityReviewModal({
   const { status } = useWaitForTransactionReceipt({ chainId, hash })
 
   // Prices are shown as currencyA in currencyB, as entered
-  const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
-  const leftPrice = invertPrice ? priceUpper?.invert() : priceLower
-  const rightPrice = invertPrice ? priceLower?.invert() : priceUpper
+  const {
+    minPrice: leftPrice,
+    maxPrice: rightPrice,
+    minAtLimit: leftAtLimit,
+    maxAtLimit: rightAtLimit,
+  } = getDisplayedRange(pricesAtTicks, ticksAtLimit, invertPrice)
   const midPrice = invertPrice ? price?.invert() : price
-  const leftAtLimit = ticksAtLimit[invertPrice ? Bound.UPPER : Bound.LOWER]
-  const rightAtLimit = ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]
 
   return (
     <DialogProvider>

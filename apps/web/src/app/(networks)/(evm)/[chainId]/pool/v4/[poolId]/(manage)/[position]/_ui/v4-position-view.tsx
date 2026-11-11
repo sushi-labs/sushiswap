@@ -29,7 +29,7 @@ import { type ReactElement, useMemo, useState } from 'react'
 import { LiquidityDepositDivider } from 'src/lib/components/liquidity-deposit-input'
 import { Bound } from 'src/lib/constants'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
-import { getTickLimits } from 'src/lib/pool/cl'
+import { getDisplayedRange, getTickLimits } from 'src/lib/pool/cl'
 import {
   useV4PoolById,
   useV4PositionDetails,
@@ -150,7 +150,7 @@ export function V4PositionView({
   // Burned positions have no details; a full removal burns, so stay mounted
   const closed = details === null || details?.liquidity === 0n
   const pair = pool ? `${pool.currency0.symbol}/${pool.currency1.symbol}` : ''
-  // Loaded, but the index has no fees for the position or failed to read them
+  // Loaded, but reading the fees from chain failed
   const feesUnavailable = Boolean(details && pool && !isFeesLoading && !fees)
 
   if (details === undefined && detailsError) {
@@ -186,22 +186,17 @@ export function V4PositionView({
       : [pool.currency0, pool.currency1]
     : [undefined, undefined]
   // Ticks price currency0, so inverting swaps and inverts the bounds
-  const minPrice = position
-    ? invert
-      ? position.currency0PriceUpper.invert()
-      : position.currency0PriceLower
-    : undefined
-  const maxPrice = position
-    ? invert
-      ? position.currency0PriceLower.invert()
-      : position.currency0PriceUpper
-    : undefined
-  const minAtLimit =
-    position?.[invert ? 'tickUpper' : 'tickLower'] ===
-    limits[invert ? Bound.UPPER : Bound.LOWER]
-  const maxAtLimit =
-    position?.[invert ? 'tickLower' : 'tickUpper'] ===
-    limits[invert ? Bound.LOWER : Bound.UPPER]
+  const { minPrice, maxPrice, minAtLimit, maxAtLimit } = getDisplayedRange(
+    {
+      [Bound.LOWER]: position?.currency0PriceLower,
+      [Bound.UPPER]: position?.currency0PriceUpper,
+    },
+    {
+      [Bound.LOWER]: position?.tickLower === limits[Bound.LOWER],
+      [Bound.UPPER]: position?.tickUpper === limits[Bound.UPPER],
+    },
+    invert,
+  )
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

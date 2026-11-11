@@ -1,6 +1,18 @@
-import { SqrtPriceMath, TickMath } from 'sushi/evm'
+import { Percent } from 'sushi'
+import {
+  EvmChainId,
+  EvmToken,
+  SqrtPriceMath,
+  SushiSwapV4Pool,
+  SushiSwapV4Position,
+  TickMath,
+} from 'sushi/evm'
 import { describe, expect, it } from 'vitest'
-import { getV4PoolReserves, getV4TickBitmapWords } from './v4-pool-math'
+import {
+  getV4MintMaxAmounts,
+  getV4PoolReserves,
+  getV4TickBitmapWords,
+} from './v4-pool-math'
 
 describe('getV4TickBitmapWords', () => {
   it('covers every word between the min and max tick', () => {
@@ -98,5 +110,49 @@ describe('getV4PoolReserves', () => {
       SqrtPriceMath.getAmount0Delta(sqrtPriceX96, sqrtUpper, liquidity, false),
       SqrtPriceMath.getAmount1Delta(sqrtLower, sqrtPriceX96, liquidity, false),
     ])
+  })
+})
+
+describe('getV4MintMaxAmounts', () => {
+  const currency0 = new EvmToken({
+    chainId: EvmChainId.ETHEREUM,
+    address: '0x0000000000000000000000000000000000000001',
+    decimals: 18,
+    symbol: 'AAA',
+    name: 'Token A',
+  })
+  const currency1 = new EvmToken({
+    chainId: EvmChainId.ETHEREUM,
+    address: '0x0000000000000000000000000000000000000002',
+    decimals: 6,
+    symbol: 'BBB',
+    name: 'Token B',
+  })
+  const tickCurrent = -200000
+  const pool = new SushiSwapV4Pool({
+    currencyA: currency0,
+    currencyB: currency1,
+    fee: 500,
+    tickSpacing: 10,
+    poolManager: '0x0000000000000000000000000000000000000003',
+    sqrtRatioX96: TickMath.getSqrtRatioAtTick(tickCurrent),
+    liquidity: 0n,
+    tickCurrent,
+  })
+  const slippage = new Percent({ numerator: 5, denominator: 1000 })
+
+  it('gives no maximum to the currency a single-sided range takes none of', () => {
+    // One spacing above the price, where the slippage-adjusted price is in range
+    const position = SushiSwapV4Position.fromAmounts({
+      pool,
+      tickLower: tickCurrent + 10,
+      tickUpper: tickCurrent + 1000,
+      amount0: 10n ** 18n,
+      amount1: 0n,
+      useFullPrecision: true,
+    })
+    const [max0, max1] = getV4MintMaxAmounts(position, slippage)
+    expect(max0.amount).toBeGreaterThan(0n)
+    expect(max1.amount).toBe(0n)
   })
 })

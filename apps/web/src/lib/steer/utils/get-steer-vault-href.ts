@@ -1,4 +1,5 @@
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
+import { POOL_PATH_SEGMENTS } from 'src/lib/pool/pool-path-segment'
 import {
   type EvmChainId,
   SushiSwapProtocol,
@@ -22,11 +23,6 @@ export function getSteerVaultProtocol(
   if (isHash(vault.poolAddress)) return SushiSwapProtocol.SUSHISWAP_V4
 
   throw new Error(`Unknown vault pool: ${vault.poolAddress}`)
-}
-
-const POOL_PATH_SEGMENTS: Record<SteerVaultProtocol, string> = {
-  [SushiSwapProtocol.SUSHISWAP_V3]: 'v3',
-  [SushiSwapProtocol.SUSHISWAP_V4]: 'v4',
 }
 
 export function getSteerPoolHref(

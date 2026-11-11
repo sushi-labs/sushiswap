@@ -1,13 +1,15 @@
 'use client'
 
-import type { VaultV1 } from '@sushiswap/graph-client/data-api'
+import {
+  type VaultV1,
+  hydratePoolCurrency,
+} from '@sushiswap/graph-client/data-api'
 import { SkeletonBox } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useV4PoolDensityChartData } from 'src/lib/pool/v4'
 import {
   type EvmCurrency,
-  EvmToken,
   SushiSwapProtocol,
   type SushiSwapV3ChainId,
   type SushiSwapV4ChainId,
@@ -95,7 +97,11 @@ const SteerStrategyLiquidityDistributionV4: FC<
   SteerStrategyLiquidityDistribution
 > = ({ vault, positions }) => {
   const [token0, token1] = useMemo(
-    () => [new EvmToken(vault.token0), new EvmToken(vault.token1)],
+    // Native as `EvmNative`, so V4 tick prices order it first
+    () => [
+      hydratePoolCurrency(vault.token0),
+      hydratePoolCurrency(vault.token1),
+    ],
     [vault.token0, vault.token1],
   )
 

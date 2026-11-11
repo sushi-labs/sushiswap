@@ -14,6 +14,7 @@ import {
   typographyVariants,
 } from '@sushiswap/ui'
 import React, { type FC } from 'react'
+import { POOL_PATH_SEGMENTS } from 'src/lib/pool/pool-path-segment'
 import { formatPercent, shortenAddress } from 'sushi'
 import {
   EvmChainId,
@@ -31,8 +32,6 @@ const PROTOCOLS: Record<
   {
     label: string
     className: string
-    /** The pool pages' URL segment: `/pool/<path>/<address>`. */
-    path: string
     /** The add liquidity page under the pool's pages. */
     addLiquidityPage: string
   }
@@ -40,19 +39,16 @@ const PROTOCOLS: Record<
   [SushiSwapProtocol.SUSHISWAP_V2]: {
     label: 'V2',
     className: 'bg-pink/20 text-pink',
-    path: 'v2',
     addLiquidityPage: 'add',
   },
   [SushiSwapProtocol.SUSHISWAP_V3]: {
     label: 'V3',
     className: 'bg-blue/20 text-blue',
-    path: 'v3',
     addLiquidityPage: 'positions',
   },
   [SushiSwapProtocol.SUSHISWAP_V4]: {
     label: 'V4',
     className: 'bg-purple-500/20 text-purple-500',
-    path: 'v4',
     addLiquidityPage: 'positions',
   },
 }
@@ -146,7 +142,7 @@ export const PoolHeader: FC<PoolHeader> = ({
           {showAddLiquidityButton ? (
             <Button asChild>
               <LinkInternal
-                href={`/${getEvmChainById(pool.chainId).key}/pool/${protocol.path}/${pool.address}/${protocol.addLiquidityPage}`}
+                href={`/${getEvmChainById(pool.chainId).key}/pool/${POOL_PATH_SEGMENTS[pool.protocol]}/${pool.address}/${protocol.addLiquidityPage}`}
               >
                 Add Liquidity
               </LinkInternal>

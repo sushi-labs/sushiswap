@@ -12,14 +12,19 @@ import {
 } from '@tanstack/react-query'
 import { readContracts } from '@wagmi/core'
 import ms from 'ms'
-import { useMemo } from 'react'
 import {
   type EvmAddress,
+  PositionLibrary,
   SUSHISWAP_V4_CL_POOL_MANAGER,
   SUSHISWAP_V4_CL_POSITION_MANAGER,
   type SushiSwapV4ChainId,
   type SushiSwapV4PoolKey,
+  TickLibrary,
   computeSushiSwapV4PoolId,
+  sushiSwapV4CLPoolManagerAbi_getFeeGrowthGlobals,
+  sushiSwapV4CLPoolManagerAbi_getPoolTickInfo,
+  sushiSwapV4CLPoolManagerAbi_getPosition,
+  sushiSwapV4CLPoolManagerAbi_getSlot0,
   sushiSwapV4CLPositionManagerAbi_ownerOf,
   sushiSwapV4CLPositionManagerAbi_positions,
 } from 'sushi/evm'
@@ -28,6 +33,7 @@ import {
   ContractFunctionRevertedError,
   isAddressEqual,
   toFunctionSelector,
+  toHex,
 } from 'viem'
 import { useConfig } from 'wagmi'
 
@@ -158,11 +164,15 @@ function isInvalidTokenIdError(error: Error): boolean {
   )
 }
 
-type V4PositionFees = NonNullable<V4Position['pendingFees']>
+export interface V4PositionFees {
+  amount0: bigint
+  amount1: bigint
+}
 
 /**
- * A position's uncollected fees, from its owner's indexed positions; null
- * until the index has the position.
+ * A position's uncollected fees, read from the pool manager at the latest
+ * block, so they're current right after a transaction. The index reads them
+ * some blocks behind the head.
  */
 export function useV4PositionFees({
   chainId,
@@ -170,26 +180,96 @@ export function useV4PositionFees({
 }: {
   chainId: SushiSwapV4ChainId
   details: V4PositionDetails | null | undefined
-}): { data: V4PositionFees | null | undefined; isLoading: boolean } {
-  const positions = useV4Positions({ chainId, account: details?.owner })
+}): UseQueryResult<V4PositionFees> {
+  const config = useConfig()
 
-  const data = useMemo(() => {
-    if (!positions.data || !details) return undefined
-    const position = positions.data.find(
-      ({ tokenId }) => tokenId === details.tokenId,
-    )
-    return position?.pendingFees ?? null
-  }, [positions.data, details])
+  return useQuery({
+    queryKey: [
+      'useV4PositionFees',
+      { chainId, tokenId: details?.tokenId.toString() },
+    ],
+    queryFn: async (): Promise<V4PositionFees> => {
+      if (!details) throw new Error('details are required')
 
-  return { data, isLoading: positions.isLoading }
+      const { poolId, tickLower, tickUpper, tokenId } = details
+      const address = SUSHISWAP_V4_CL_POOL_MANAGER[chainId]
+      const [position, [, tickCurrent], [global0, global1], lower, upper] =
+        await readContracts(config, {
+          allowFailure: false,
+          contracts: [
+            {
+              chainId,
+              address,
+              abi: sushiSwapV4CLPoolManagerAbi_getPosition,
+              functionName: 'getPosition',
+              // The position manager owns every position, salted by token ID
+              args: [
+                poolId,
+                SUSHISWAP_V4_CL_POSITION_MANAGER[chainId],
+                tickLower,
+                tickUpper,
+                toHex(tokenId, { size: 32 }),
+              ],
+            },
+            {
+              chainId,
+              address,
+              abi: sushiSwapV4CLPoolManagerAbi_getSlot0,
+              functionName: 'getSlot0',
+              args: [poolId],
+            },
+            {
+              chainId,
+              address,
+              abi: sushiSwapV4CLPoolManagerAbi_getFeeGrowthGlobals,
+              functionName: 'getFeeGrowthGlobals',
+              args: [poolId],
+            },
+            {
+              chainId,
+              address,
+              abi: sushiSwapV4CLPoolManagerAbi_getPoolTickInfo,
+              functionName: 'getPoolTickInfo',
+              args: [poolId, tickLower],
+            },
+            {
+              chainId,
+              address,
+              abi: sushiSwapV4CLPoolManagerAbi_getPoolTickInfo,
+              functionName: 'getPoolTickInfo',
+              args: [poolId, tickUpper],
+            },
+          ],
+        })
+
+      const [inside0, inside1] = TickLibrary.getFeeGrowthInside(
+        lower,
+        upper,
+        tickLower,
+        tickUpper,
+        tickCurrent,
+        global0,
+        global1,
+      )
+      const [amount0, amount1] = PositionLibrary.getTokensOwed(
+        position.feeGrowthInside0LastX128,
+        position.feeGrowthInside1LastX128,
+        position.liquidity,
+        inside0,
+        inside1,
+      )
+      return { amount0, amount1 }
+    },
+    refetchInterval: ms('15s'),
+    enabled: Boolean(details),
+  })
 }
 
 /**
  * Call once a transaction on a position confirms: any liquidity change or
- * collect claims all of its fees. Shows them as zero until the positions'
- * next interval refetch (rather than refetching now, when the index likely
- * still reads a block from before the transaction), and refetches the
- * position itself.
+ * collect claims all of its fees. Shows them as zero in the indexed
+ * positions until their next refetch, and rereads the position and its fees
+ * from chain.
  */
 export function onV4PositionFeesCollected(
   queryClient: QueryClient,
@@ -199,10 +279,11 @@ export function onV4PositionFeesCollected(
     { queryKey: ['useV4Positions', { chainId }] },
     (positions) =>
       positions?.map((position) =>
-        position.tokenId === tokenId && position.pendingFees
+        position.tokenId === tokenId
           ? { ...position, pendingFees: { amount0: 0n, amount1: 0n } }
           : position,
       ),
   )
   void queryClient.invalidateQueries({ queryKey: ['useV4PositionDetails'] })
+  void queryClient.invalidateQueries({ queryKey: ['useV4PositionFees'] })
 }

@@ -1,6 +1,7 @@
 import { type EvmCurrency, sushiSwapV4TickToPrice } from 'sushi/evm'
 
-const PRICE_FIXED_DIGITS = 8
+// Significant, not fixed, digits: prices of any magnitude keep their precision
+const PRICE_SIGNIFICANT_DIGITS = 8
 
 interface InitializedTick {
   tickIdx: number
@@ -50,7 +51,7 @@ export function processActiveLiquidity({
         ? ticks[pivot].liquidityNet
         : 0n,
     price0: sushiSwapV4TickToPrice(token0, token1, activeTick).toString({
-      fixed: PRICE_FIXED_DIGITS,
+      significant: PRICE_SIGNIFICANT_DIGITS,
     }),
   }
 
@@ -107,7 +108,7 @@ export function computeSurroundingTicks(
       liquidityNet: sortedTickData[i].liquidityNet,
       // Orders native as the pool does; equals V3's tickToPrice for tokens
       price0: sushiSwapV4TickToPrice(token0, token1, tick).toString({
-        fixed: PRICE_FIXED_DIGITS,
+        significant: PRICE_SIGNIFICANT_DIGITS,
       }),
     }
 

@@ -1086,6 +1086,7 @@ enum PerpsPointsSeason {
   CURRENT
   SEASON_1
   SEASON_2
+  SEASON_3
 }
 
 type PerpsLeaderboardEntry {
@@ -1153,7 +1154,7 @@ type PerpsQueries {
   leaderboard(timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboard!
   leaderboardUser(address: EvmAddress!, timeframe: PerpsLeaderboardTimeframe! = SEASON, season: PerpsPointsSeason! = CURRENT): PerpsLeaderboardUser!
   isReferralCodeAvailable(code: String!): Boolean!
-  pointClaimProof(season: PerpsPointsSeason! = SEASON_1, address: EvmAddress!): ClaimProofResult!
+  pointClaimProof(season: PerpsPointsSeason! = CURRENT, address: EvmAddress!): ClaimProofResult!
 }
 
 type PerpsMutations {
@@ -1183,6 +1184,11 @@ enum Protocol {
 type Token {
   id: ID!
   chainId: Int!
+
+  """
+  Native currency is 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, already
+  translated from the zero address V4 uses on chain.
+  """
   address: String!
   name: String!
   symbol: String!
@@ -2388,13 +2394,6 @@ type TerminalMarket {
   marketCap0Usd: Float
   marketCap1Usd: Float
   asOf: Int!
-  isStale: Boolean!
-
-  """
-  Whether verification and projection cover the market state block. False can
-  mean the state is newer than chain finality, not that ingestion is behind.
-  """
-  canonicalComplete: Boolean!
   pricingComplete: Boolean!
   verifiedThrough: BigInt
   marketRevision: BigInt!
@@ -2462,12 +2461,6 @@ type TerminalMetrics {
   tvlChangePercent: TerminalNullableWindowValues!
   asOf: String!
   source: String!
-
-  """
-  Whether the market snapshot is missing or older than two minutes.
-  Independent of finality, verification progress and USD pricing coverage.
-  """
-  isStale: Boolean!
 }
 
 type TerminalVolumeCoverage {
@@ -2840,7 +2833,9 @@ scalar ContractAddress
 """A field whose value is a Solana address"""
 scalar SvmAddress
 
-"""A field whose value is an EVM address"""
+"""
+A field whose value is an EVM address. Native currency is 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, already translated from the zero address protocols such as Uniswap V4 use on chain; the zero address never denotes native currency.
+"""
 scalar EvmAddress
 
 """A field whose value is a Stellar account address (G…)"""

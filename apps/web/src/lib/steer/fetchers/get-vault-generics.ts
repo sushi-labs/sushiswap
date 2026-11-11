@@ -1,9 +1,12 @@
-import type { VaultV1 } from '@sushiswap/graph-client/data-api'
+import {
+  type VaultV1,
+  hydratePoolCurrency,
+} from '@sushiswap/graph-client/data-api'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import { getWagmiConfig } from 'src/lib/wagmi/config'
 import { formatNumber } from 'sushi'
-import { EvmToken, tickToPrice } from 'sushi/evm'
+import { sushiSwapV4TickToPrice } from 'sushi/evm'
 import type { Address, PublicClient } from 'viem'
 import { getPublicClient } from 'wagmi/actions'
 import type { SteerStrategyGeneric } from '../components/steer-strategies'
@@ -13,11 +16,20 @@ import { getVaultPositions } from './get-vault-position'
 function getPriceExtremes(
   vault: VaultV1,
 ): SteerStrategyGeneric['priceExtremes'] {
-  const token0 = new EvmToken(vault.token0)
-  const token1 = new EvmToken(vault.token1)
+  // Prices in the pool's order, native first on V4; equal to V3's for tokens
+  const currency0 = hydratePoolCurrency(vault.token0)
+  const currency1 = hydratePoolCurrency(vault.token1)
 
-  let lowerPrice = tickToPrice(token0, token1, vault.lowerTick).toSignificant(7)
-  let upperPrice = tickToPrice(token0, token1, vault.upperTick).toSignificant(7)
+  let lowerPrice = sushiSwapV4TickToPrice(
+    currency0,
+    currency1,
+    vault.lowerTick,
+  ).toSignificant(7)
+  let upperPrice = sushiSwapV4TickToPrice(
+    currency0,
+    currency1,
+    vault.upperTick,
+  ).toSignificant(7)
 
   lowerPrice =
     !lowerPrice.includes('.') && lowerPrice.length > 9

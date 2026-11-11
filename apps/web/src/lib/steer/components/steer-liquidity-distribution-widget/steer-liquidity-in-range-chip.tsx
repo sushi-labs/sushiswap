@@ -3,8 +3,8 @@
 import type { VaultV1 } from '@sushiswap/graph-client/data-api'
 import { Chip, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { type FC, useMemo } from 'react'
-import { useConcentratedActiveLiquidity } from 'src/lib/pool/v3/use-concentrated-active-liquidity'
 import { useV4PoolSlot0 } from 'src/lib/pool/v4'
+import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {
   EvmToken,
   SushiSwapProtocol,
@@ -43,14 +43,15 @@ const SteerLiquidityInRangeChipV3: FC<SteerLiquidityInRangeChipProps> = ({
     }
   }, [vault.chainId, vault.feeTier, vault.token0, vault.token1])
 
-  const { activeTick, isLoading } = useConcentratedActiveLiquidity(
+  // The pool's own tick, not the spacing-floored active tick
+  const { data: pool, isLoading } = useConcentratedLiquidityPool(
     concentratedActiveLiquidityArgs,
   )
 
   return (
     <SteerLiquidityInRangeChipView
       vault={vault}
-      activeTick={activeTick}
+      activeTick={pool?.tickCurrent}
       isLoading={isLoading}
     />
   )
@@ -81,7 +82,8 @@ const SteerLiquidityInRangeChipView: FC<
 > = ({ vault, activeTick, isLoading }) => {
   const inRange = useMemo(() => {
     if (activeTick === undefined) return undefined
-    return vault.lowerTick < activeTick && vault.upperTick > activeTick
+    // A position is in range for tickLower <= tick < tickUpper
+    return vault.lowerTick <= activeTick && activeTick < vault.upperTick
   }, [vault.lowerTick, vault.upperTick, activeTick])
 
   if (isLoading) return <SkeletonBox className="w-[107px] h-5" />

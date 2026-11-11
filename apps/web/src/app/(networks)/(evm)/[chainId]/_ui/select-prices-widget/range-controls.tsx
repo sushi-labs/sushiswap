@@ -11,7 +11,7 @@ import {
 import { type ReactElement, type ReactNode, useMemo } from 'react'
 import { PriceBlock } from 'src/lib/components/price-block'
 import { Bound } from 'src/lib/constants'
-import type { PriceRange } from 'src/lib/pool/cl'
+import { type PriceRange, getDisplayedRange } from 'src/lib/pool/cl'
 import type { Price } from 'sushi'
 import {
   type EvmCurrency,
@@ -20,29 +20,6 @@ import {
 } from 'sushi/evm'
 import type { ConcentratedRange } from '../concentrated-liquidity-provider/use-concentrated-range'
 import type { RangeInput } from '../concentrated-liquidity-provider/use-range-input'
-
-/**
- * The range as displayed, in prices of currencyA: with `invertPrice`, the
- * min is the upper tick's price inverted.
- */
-function getDisplayedRange<TCurrency extends EvmCurrency>(
-  pricesAtTicks: ConcentratedRange<TCurrency>['pricesAtTicks'],
-  ticksAtLimit: ConcentratedRange<TCurrency>['ticksAtLimit'],
-  invertPrice: boolean,
-): {
-  minPrice: Price<TCurrency, TCurrency> | undefined
-  maxPrice: Price<TCurrency, TCurrency> | undefined
-  minAtLimit: boolean
-  maxAtLimit: boolean
-} {
-  const { [Bound.LOWER]: lower, [Bound.UPPER]: upper } = pricesAtTicks
-  return {
-    minPrice: invertPrice ? upper?.invert() : lower,
-    maxPrice: invertPrice ? lower?.invert() : upper,
-    minAtLimit: Boolean(ticksAtLimit[invertPrice ? Bound.UPPER : Bound.LOWER]),
-    maxAtLimit: Boolean(ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]),
-  }
-}
 
 /**
  * The value split of a position in the range at `price`, as of currencyA

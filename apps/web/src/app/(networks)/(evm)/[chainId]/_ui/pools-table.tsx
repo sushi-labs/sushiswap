@@ -12,7 +12,6 @@ import { Slot } from '@radix-ui/react-slot'
 import type {
   GetPools,
   PoolChainId,
-  PoolProtocol,
   Pools,
 } from '@sushiswap/graph-client/data-api'
 import {
@@ -47,6 +46,7 @@ import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { usePoolsInfinite } from 'src/lib/hooks/api/use-pools-infinite'
+import { POOL_PATH_SEGMENTS } from 'src/lib/pool/pool-path-segment'
 import {
   type EvmAddress,
   EvmNative,
@@ -62,12 +62,6 @@ import {
   VOLUME_1D_COLUMN,
   VOLUME_1W_COLUMN,
 } from './columns'
-
-const POOL_PATH_SEGMENTS: Record<PoolProtocol, string> = {
-  [SushiSwapProtocol.SUSHISWAP_V2]: 'v2',
-  [SushiSwapProtocol.SUSHISWAP_V3]: 'v3',
-  [SushiSwapProtocol.SUSHISWAP_V4]: 'v4',
-}
 
 const COLUMNS = [
   EXPLORE_NAME_COLUMN_POOL,
