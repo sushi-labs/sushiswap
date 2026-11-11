@@ -40,7 +40,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'The easiest way to trade.',
     },
     {
-      title: 'Explore',
+      title: 'Pools',
       href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/explore/pools`,
       description: 'Explore top pools.',
     },
@@ -133,19 +133,25 @@ export const headerElements = ({
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
   const _isLaunchpadV2ChainId = chainId && isLaunchpadV2ChainId(chainId)
-
+  console.log(`todo: find new place for onramper ${includeOnramper}`)
   return [
     {
       show: 'mobile',
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuPrimitive.Trigger asChild>
+          <NavigationMenuPrimitive.Trigger
+            asChild
+            onPointerMove={(event) => {
+              // Prevent Radix from opening the menu on hover.
+              event.preventDefault()
+            }}
+          >
             <Button variant="secondary" className="ml-1">
               <Bars3Icon className="h-5 w-5" />
             </Button>
           </NavigationMenuPrimitive.Trigger>
-          <NavigationMenuContent>
+          <NavigationMenuContent className="hide-scrollbar">
             <ul className="gap-3 p-4 w-[250px]">
               {EXPLORE_NAVIGATION_LINKS(chainId).map((component) => (
                 <NavigationListItem
@@ -217,36 +223,10 @@ export const headerElements = ({
       ),
     },
     {
+      title: 'Trade',
+      href: `/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`,
       show: 'desktop',
-      type: NavigationElementType.Custom,
-      item: (
-        <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>
-            <LinkInternal
-              href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}
-            >
-              Trade
-            </LinkInternal>
-          </NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="w-[400px] gap-3 p-4 ">
-              <NavigationListItem
-                title={'Swap'}
-                href={`/${getChainById(chainId ?? ChainId.ETHEREUM).key}/swap`}
-              >
-                The easiest way to trade.
-              </NavigationListItem>
-              {includeOnramper ? (
-                <OnramperButton>
-                  <NavigationListItem title={'Buy Crypto'}>
-                    Onramp with fiat.
-                  </NavigationListItem>
-                </OnramperButton>
-              ) : null}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      ),
+      type: NavigationElementType.Single,
     },
     {
       title: 'Perps',
@@ -261,7 +241,7 @@ export const headerElements = ({
       type: NavigationElementType.Single,
     },
     {
-      title: 'Explore',
+      title: 'Pools',
       href: `/${
         getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key
       }/explore/pools`,
@@ -273,13 +253,7 @@ export const headerElements = ({
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>
-            <LinkInternal
-              href={`/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`}
-            >
-              Positions
-            </LinkInternal>
-          </NavigationMenuTrigger>
+          <NavigationMenuTrigger>Positions</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="w-[400px] gap-3 p-4">
               <NavigationListItem
@@ -301,9 +275,7 @@ export const headerElements = ({
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>
-            <LinkInternal href={`/stake`}>Stake</LinkInternal>
-          </NavigationMenuTrigger>
+          <NavigationMenuTrigger>Stake</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="w-[400px] gap-3 p-4">
               <NavigationListItem title={'Stake'} href={`/stake`}>

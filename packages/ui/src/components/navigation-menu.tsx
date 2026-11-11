@@ -48,15 +48,21 @@ const navigationMenuTriggerStyle = buttonVariants({ variant: 'ghost' })
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, onPointerMove, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={classNames(
       navigationMenuTriggerStyle,
+      'focus:!bg-transparent active:!bg-muted',
       'group !gap-0.5',
       className,
     )}
     {...props}
+    onPointerMove={(event) => {
+      onPointerMove?.(event)
+      // Prevent Radix from opening the menu on hover.
+      event.preventDefault()
+    }}
   >
     {children}{' '}
     <ChevronDown
@@ -74,7 +80,7 @@ const NavigationMenuContent = React.forwardRef<
   <NavigationMenuPrimitive.Content
     ref={ref}
     className={classNames(
-      'left-0 top-0 w-full overflow-y-auto max-h-[90vw] data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
+      'left-0 top-0 w-full overflow-y-auto max-h-[90vw] border border-accent rounded-2xl bg-secondary data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
       className,
     )}
     {...props}
