@@ -145,8 +145,8 @@ export function TokenSelector<
       ) : null}
       <div
         className={classNames(
-          'relative flex flex-col gap-4 overflow-y-auto p-6',
-          theme === 'perps' && 'min-h-0 flex-1',
+          'relative flex flex-col gap-2 flex-1 overflow-y-auto p-6',
+          theme === 'perps' && 'min-h-0',
         )}
       >
         {currencyInfo ? (
@@ -163,11 +163,8 @@ export function TokenSelector<
           </DialogTitle>
           <DialogDescription
             className={classNames(theme === 'perps' && '!text-perps-muted-50')}
-          >
-            {allowPairSelection
-              ? 'Select a token from our default list or search by token symbol, token address, or pool address.'
-              : 'Select a token from our default list or search for a token by symbol or address.'}
-          </DialogDescription>
+            aria-describedby="token-selector-description"
+          />
         </DialogHeader>
         {networks && selectedNetwork && onNetworkSelect && !isMd ? (
           <MobileNetworkSelector
@@ -177,13 +174,9 @@ export function TokenSelector<
           />
         ) : null}
         {!hideSearch ? (
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 flex-col mt-1">
             <TextField
-              placeholder={
-                allowPairSelection
-                  ? 'Search by token or pool address'
-                  : 'Search by token or address'
-              }
+              placeholder={'Search tokens or paste address'}
               icon={MagnifyingGlassIcon}
               iconProps={{
                 className: classNames(
@@ -195,15 +188,27 @@ export function TokenSelector<
               value={query}
               onValueChange={setQuery}
               className={classNames(
-                theme === 'perps' &&
-                  '!border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted placeholder:!text-perps-muted-50 focus:!border-perps-blue',
+                '!font-normal',
+                theme === 'perps'
+                  ? '!border !border-white/[0.06] !bg-white/[0.04] !text-perps-muted placeholder:!text-perps-muted-50 focus:!border-perps-blue'
+                  : '!border-[0.5px] !border-accent !bg-secondary text-muted placeholder:text-muted-50 focus:border-accent !rounded-full',
               )}
             />
+            <p
+              className={classNames(
+                'text-xs text-muted-foreground',
+                theme === 'perps' && '!text-perps-muted-50',
+              )}
+            >
+              {allowPairSelection
+                ? 'Search by name, symbol, token address, or pool address.'
+                : 'Search by name, symbol, or token address.'}
+            </p>
           </div>
         ) : null}
         <div
           id="token-list-container"
-          className="flex flex-1 flex-grow flex-col gap-3 space-y-2 overflow-y-scroll px-1 py-0.5 pr-2 md:pr-4"
+          className="flex flex-1 flex-grow flex-col gap-3 space-y-2 overflow-y-scroll scroll py-0.5"
         >
           <TokenSelectorStates
             selected={selected}
@@ -239,7 +244,7 @@ export function TokenSelector<
           <DialogContent
             className={classNames(
               'h-[calc(100dvh-56px)] md:h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
-              networks ? 'md:min-w-[720px]' : 'md:min-w-[600px]',
+              networks ? 'md:min-w-[720px]' : 'md:min-w-[570px]',
             )}
           >
             {content}

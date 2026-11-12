@@ -54,14 +54,14 @@ export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
         'absolute inset-0 z-20 rounded-2xl py-6',
         isPerps
           ? 'bg-perps-background text-perps-muted [&_.text-muted-foreground]:!text-perps-muted-50'
-          : 'bg-gray-100 dark:bg-slate-800',
+          : 'bg-background',
       )}
     >
       <DialogPrimitive.Close asChild className="absolute top-6 right-6">
         <IconButton
           icon={XMarkIcon}
           name="Close"
-          variant={isPerps ? 'perps-secondary' : 'secondary'}
+          variant={isPerps ? 'perps-secondary' : 'ghost'}
         />
       </DialogPrimitive.Close>
       <div className="flex flex-col gap-4 h-full">
@@ -86,7 +86,7 @@ export function CurrencyInfo<TChainId extends TokenSelectorChainId>({
             </div>
           </DialogTitle>
         </DialogHeader>
-        <div className="px-6 overflow-y-auto">
+        <div className="px-6 overflow-y-auto scroll">
           <div className="flex gap-1 items-center py-2">
             <ChartBarSquareIcon className="h-4 w-4" />
             <span className="font-medium">Market Info</span>

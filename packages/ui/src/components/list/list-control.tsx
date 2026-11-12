@@ -12,7 +12,7 @@ export const ListControl = ({
   return (
     <Card
       className={classNames(
-        'p-1 border-accent !bg-secondary rounded-xl overflow-hidden black:bg-white black:bg-opacity-[0.02]',
+        'p-1 border-accent bg-secondary rounded-xl overflow-hidden black:bg-white black:bg-opacity-[0.02]',
         className,
       )}
       {...props}

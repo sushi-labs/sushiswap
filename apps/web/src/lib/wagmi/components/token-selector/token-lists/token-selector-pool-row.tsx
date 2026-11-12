@@ -50,7 +50,7 @@ export function TokenSelectorPoolRow({ onSelect, pool }: TokenSelectorPoolRow) {
               'rounded px-1.5 py-0.5 text-[10px] font-medium uppercase leading-none',
               isPerps
                 ? 'bg-white/[0.08] text-perps-muted-50'
-                : 'bg-blue text-primary',
+                : 'bg-blue text-white',
             )}
           >
             {pool.version}

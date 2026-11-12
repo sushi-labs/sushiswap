@@ -37,12 +37,13 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="flex flex-1 flex-col">
       <List.Control
         className={classNames(
-          'flex flex-1',
-          theme === 'perps' &&
-            '!border-white/[0.06] !bg-white/[0.02] shadow-none',
+          'flex flex-1 !p-0',
+          theme === 'perps'
+            ? '!border-white/[0.06] !bg-white/[0.02] shadow-none'
+            : '!border-transparent !bg-background',
         )}
       >
-        <div className="block max-w-full flex-1">{children}</div>
+        <div className="flex-1 block">{children}</div>
       </List.Control>
     </div>
   )

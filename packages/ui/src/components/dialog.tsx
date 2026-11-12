@@ -52,7 +52,7 @@ const dialogOverlayVariants = cva(
 const dialogCloseVariants = cva('', {
   variants: {
     variant: {
-      default: 'absolute top-6 right-6',
+      default: 'absolute top-3 right-6',
       perps: 'absolute top-6 right-6',
       opaque: 'hidden',
     },
@@ -124,7 +124,7 @@ const DialogContent = React.forwardRef<
             <IconButton
               icon={XMarkIcon}
               name="Close"
-              variant={variant === 'perps' ? 'perps-secondary' : undefined}
+              variant={variant === 'perps' ? 'perps-secondary' : 'ghost'}
             />
           </DialogPrimitive.Close>
         )}
