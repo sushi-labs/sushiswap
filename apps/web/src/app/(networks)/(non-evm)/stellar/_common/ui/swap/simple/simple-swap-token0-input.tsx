@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useBestRoute } from '~stellar/swap/lib/hooks'
 
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import {
   useSimpleSwapActions,
@@ -103,8 +104,8 @@ export const SimpleSwapToken0Input = () => {
       currency={token0}
       value={String(amount)}
       onChange={setAmount}
-      className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
-      label="Sell"
+      className="border border-accent p-4 bg-muted rounded-2xl"
+      label={<SwapInputLabel chainId={token0.chainId} type="INPUT" />}
     />
   )
 }

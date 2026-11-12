@@ -1,4 +1,4 @@
-import React from 'react'
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { formatUnits } from 'viem'
 import {
@@ -24,9 +24,9 @@ export const SimpleSwapToken1Input = () => {
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       disableInsufficientBalanceError={true}
-      label="Buy"
+      label={<SwapInputLabel chainId={token1.chainId} type="OUTPUT" />}
     />
   )
 }

@@ -52,15 +52,13 @@ export const SimpleSwapTradeStats = () => {
     >
       <div className="w-full px-2 pt-4 flex flex-col gap-1">
         <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">
-            Price impact
-          </span>
+          <span className="text-sm text-muted-foreground">Price impact</span>
           <span
             className={classNames(
               warningSeverityClassName(
                 warningSeverity(priceImpact || undefined),
               ),
-              'text-sm font-semibold text-gray-700 text-right dark:text-slate-400',
+              'text-sm font-semiboldtext-right',
             )}
           >
             {loading ? (
@@ -76,10 +74,8 @@ export const SimpleSwapTradeStats = () => {
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">
-            Est. received
-          </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm text-muted-foreground">Est. received</span>
+          <span className="text-sm font-semiboldtext-right">
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : outputSwapTokenAmount ? (
@@ -90,10 +86,10 @@ export const SimpleSwapTradeStats = () => {
           </span>
         </div>
         <div className="flex justify-between items-center gap-2">
-          <span className="text-sm text-gray-700 dark:text-slate-400">
+          <span className="text-sm text-muted-foreground">
             Min. received after slippage
           </span>
-          <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+          <span className="text-sm font-semiboldtext-right">
             {loading ? (
               <SkeletonBox className="h-4 py-0.5 w-[120px] rounded-md" />
             ) : minReceivedAmount ? (

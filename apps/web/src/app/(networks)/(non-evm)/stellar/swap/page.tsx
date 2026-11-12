@@ -4,7 +4,7 @@ import { SimpleSwapWidget } from '~stellar/_common/ui/swap/simple/simple-swap-wi
 
 export default function SwapSimplePage() {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <SimpleSwapWidget />
     </Container>
   )

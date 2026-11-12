@@ -10,8 +10,8 @@ import { SimpleSwapTradeStats } from './simple-swap-trade-stats'
 export const SimpleSwapWidget = () => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-4 p-4 md:p-6 bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(25,32,49,0.8)] rounded-3xl backdrop-blur-2xl">
-        <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 p-4 md:px-12 md:py-6 bg-secondary rounded-3xl border-accent border">
+        <div className="flex items-center self-end w-full py-2 gap-1">
           <SwapModeButtons chainId={StellarChainId.STELLAR} />
           <SimpleSwapSettingsOverlay />
         </div>

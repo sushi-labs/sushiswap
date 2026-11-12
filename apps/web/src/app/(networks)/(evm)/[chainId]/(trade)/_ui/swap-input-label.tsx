@@ -1,12 +1,13 @@
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
-import type { SupportedChainId } from 'src/config'
+import type { ChainId } from 'sushi'
+
 import { getNetworkName } from 'src/lib/network'
 
 export const SwapInputLabel = ({
   chainId,
   type,
 }: {
-  chainId: SupportedChainId
+  chainId: ChainId
   type: 'INPUT' | 'OUTPUT'
 }) => {
   return (
