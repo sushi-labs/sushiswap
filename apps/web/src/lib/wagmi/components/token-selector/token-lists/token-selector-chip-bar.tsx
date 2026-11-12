@@ -6,7 +6,13 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import { Button, Currency, IconButton, buttonIconVariants } from '@sushiswap/ui'
+import {
+  Button,
+  Currency,
+  IconButton,
+  OverflowX,
+  buttonIconVariants,
+} from '@sushiswap/ui'
 import { NativeAddress } from 'src/lib/constants'
 import { type EvmCurrency, isEvmChainId } from 'sushi/evm'
 import { type SvmCurrency, isSvmChainId } from 'sushi/svm'
@@ -34,50 +40,59 @@ export function TokenSelectorChipBar<TChainId extends TokenSelectorChainId>({
     isEvmChainId(t.chainId) || isSvmChainId(t.chainId)
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {tokens.map(({ token, default: isDefault }) => (
-        <TraceEvent
-          events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
-          name={InterfaceEventName.TOKEN_SELECTED}
-          properties={{
-            token_symbol: token?.symbol,
-            token_address:
-              token.type === 'native' ? NativeAddress : token.address,
-          }}
-          element={InterfaceElementName.COMMON_BASES_CURRENCY_BUTTON}
-          key={token.id}
-        >
-          <div
-            className="group"
-            testdata-id={`token-selector-chip-${
-              token.type === 'native'
-                ? NativeAddress
-                : token.address.toLowerCase()
-            }`}
+    <OverflowX
+      key={chainId}
+      variant={theme}
+      wrapperClassName="shrink-0"
+      className="min-h-[82px]"
+    >
+      <div className="grid grid-flow-col auto-cols-max justify-start gap-2">
+        {tokens.map(({ token, default: isDefault }) => (
+          <TraceEvent
+            events={[BrowserEvent.onClick, BrowserEvent.onKeyPress]}
+            name={InterfaceEventName.TOKEN_SELECTED}
+            properties={{
+              token_symbol: token?.symbol,
+              token_address:
+                token.type === 'native' ? NativeAddress : token.address,
+            }}
+            element={InterfaceElementName.COMMON_BASES_CURRENCY_BUTTON}
+            key={token.id}
           >
-            <Button
-              size="sm"
-              variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
+            <div
               className="group"
-              key={token.id}
-              onClick={() => onSelect(token)}
+              testdata-id={`token-selector-chip-${
+                token.type === 'native'
+                  ? NativeAddress
+                  : token.address.toLowerCase()
+              }`}
             >
-              <Currency.Icon
-                width={20}
-                height={20}
-                className={buttonIconVariants({ size: 'default' })}
-                currency={token}
-                disableLink
-              />
-              {token.symbol}
-              {!isDefault && isPinnable(token) && (
-                <PinRemoveButton token={token} />
-              )}
-            </Button>
-          </div>
-        </TraceEvent>
-      ))}
-    </div>
+              <Button
+                size="sm"
+                variant={theme === 'perps' ? 'perps-secondary' : 'secondary'}
+                className="group !h-auto !rounded-lg px-2 py-3 !w-[62px]"
+                key={token.id}
+                onClick={() => onSelect(token)}
+              >
+                <div className="flex flex-col items-center justify-center gap-1">
+                  <Currency.Icon
+                    width={30}
+                    height={30}
+                    className={buttonIconVariants({ size: 'default' })}
+                    currency={token}
+                    disableLink
+                  />
+                  <div className="truncate w-[52px]">{token.symbol}</div>
+                  {!isDefault && isPinnable(token) && (
+                    <PinRemoveButton token={token} />
+                  )}
+                </div>
+              </Button>
+            </div>
+          </TraceEvent>
+        ))}
+      </div>
+    </OverflowX>
   )
 }
 

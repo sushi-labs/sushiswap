@@ -1,17 +1,47 @@
 'use client'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react-v1/solid'
-import { classNames } from '@sushiswap/ui'
-import { useEffect, useRef, useState } from 'react'
 
-export const OverflowX = ({
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import { type VariantProps, cva } from 'class-variance-authority'
+import classNames from 'classnames'
+import {
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+
+const scrollButtonVariants = cva(
+  'z-10 flex items-center justify-center absolute top-0 h-full min-w-[30px] w-[30px] to-transparent',
+  {
+    variants: {
+      variant: {
+        default: 'from-background',
+        perps: 'from-perps-background dark:from-[#161b1f]',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+)
+
+export interface OverflowXProps
+  extends VariantProps<typeof scrollButtonVariants> {
+  children: ReactNode
+  className?: string
+  wrapperClassName?: string
+  hideScrollBtns?: boolean
+}
+
+export function OverflowX({
   children,
   className,
+  wrapperClassName,
   hideScrollBtns,
-}: {
-  children: React.ReactNode
-  className?: string
-  hideScrollBtns?: boolean
-}) => {
+  variant,
+}: OverflowXProps): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null)
   const { hasOverflowRight, hasOverflowLeft } = useIsOverflow(containerRef)
 
@@ -61,7 +91,7 @@ export const OverflowX = ({
     }
   }, [])
 
-  const handleButtonClickScroll = (direction: 'left' | 'right') => {
+  function handleButtonClickScroll(direction: 'left' | 'right') {
     if (containerRef.current) {
       const scrollAmount = containerRef.current.clientWidth / 1.75
       containerRef.current.scrollBy({
@@ -71,7 +101,7 @@ export const OverflowX = ({
     }
   }
   return (
-    <div className="relative overflow-hidden">
+    <div className={classNames('relative overflow-hidden', wrapperClassName)}>
       <div
         className={classNames(
           'snap-x overflow-x-auto hide-scrollbar',
@@ -83,7 +113,10 @@ export const OverflowX = ({
           <button
             onClick={() => handleButtonClickScroll('left')}
             type="button"
-            className="z-10 flex items-center justify-center absolute top-0 left-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r to-transparent from-perps-background dark:from-[#161b1f]"
+            className={scrollButtonVariants({
+              variant,
+              className: 'left-0 bg-gradient-to-r',
+            })}
             aria-label="Scroll Left Horizontally"
           >
             <ChevronLeftIcon className="h-5 w-5" />
@@ -94,7 +127,10 @@ export const OverflowX = ({
           <button
             onClick={() => handleButtonClickScroll('right')}
             type="button"
-            className="flex items-center z-10 justify-center absolute top-0 right-0 h-full min-w-[30px] w-[30px] bg-gradient-to-r from-transparent to-perps-background dark:to-[#161b1f]"
+            className={scrollButtonVariants({
+              variant,
+              className: 'right-0 bg-gradient-to-l',
+            })}
             aria-label="Scroll Right Horizontally"
           >
             <ChevronRightIcon className="h-5 w-5" />
@@ -105,14 +141,17 @@ export const OverflowX = ({
   )
 }
 
-export const useIsOverflow = (ref: React.RefObject<HTMLElement | null>) => {
+export function useIsOverflow(ref: RefObject<HTMLElement | null>): {
+  hasOverflowRight: boolean
+  hasOverflowLeft: boolean
+} {
   const [hasOverflowRight, setHasOverflowRight] = useState(false)
   const [hasOverflowLeft, setHasOverflowLeft] = useState(false)
 
   useEffect(() => {
     const element = ref.current
 
-    const update = () => {
+    function update() {
       if (element) {
         const tolerance = 2
         const reachedEnd =

@@ -1,5 +1,5 @@
 import { useLocalStorage } from '@sushiswap/hooks'
-import { Button, Card, SkeletonBox, classNames } from '@sushiswap/ui'
+import { Button, OverflowX, SkeletonBox, classNames } from '@sushiswap/ui'
 import { SushiSubIcon } from '@sushiswap/ui/icons/sushi-sub-icon'
 import { useMemo } from 'react'
 import {
@@ -9,7 +9,7 @@ import {
   useFavoriteAssets,
 } from 'src/lib/perps'
 import { formatPercent } from 'sushi'
-import { AssetIcon, FavoriteIcon, OverflowX } from '../_common'
+import { AssetIcon, FavoriteIcon } from '../_common'
 import { PerpsCard } from '../_common/perps-card'
 import { useAssetListState } from '../asset-selector'
 import { useAssetState } from '../trade-widget'
@@ -66,6 +66,7 @@ export const Favorites = () => {
         </PerpsCard>
       ) : null}
       <OverflowX
+        variant="perps"
         hideScrollBtns={
           (favorites.length && favorites.length !== enrichedFavorites.length) ||
           !enrichedFavorites.length
