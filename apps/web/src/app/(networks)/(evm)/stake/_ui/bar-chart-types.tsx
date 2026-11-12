@@ -1,5 +1,4 @@
-import { Toggle } from '@sushiswap/ui'
-import React from 'react'
+import { Toggle, ToggleGroup } from '@sushiswap/ui'
 
 export enum BarChartType {
   APR = 'APR',
@@ -18,10 +17,10 @@ function BarChartTypes<C extends string>({
   setChart,
 }: BarChartTypesProps<C>) {
   return (
-    <div className="flex items-center gap-1">
+    <ToggleGroup>
       {charts.map((chart) => (
         <Toggle
-          size="xs"
+          size="sm"
           pressed={chart === selectedChart}
           onClick={() => setChart(chart)}
           key={chart}
@@ -29,7 +28,7 @@ function BarChartTypes<C extends string>({
           {chart}
         </Toggle>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }
 

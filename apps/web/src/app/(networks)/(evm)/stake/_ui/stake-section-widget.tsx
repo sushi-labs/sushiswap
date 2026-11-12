@@ -1,13 +1,6 @@
 'use client'
 
-import { ArrowDownIcon } from '@heroicons/react/20/solid'
-import {
-  Widget,
-  WidgetDescription,
-  WidgetFooter,
-  WidgetHeader,
-  WidgetTitle,
-} from '@sushiswap/ui'
+import { SwitchArrowsIcon } from '@sushiswap/ui/icons/switch-arrows-icon'
 import { type ReactNode, useMemo } from 'react'
 import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import type { Amount } from 'sushi'
@@ -39,44 +32,39 @@ export const StakeSectionWidget = ({
   )
 
   return (
-    <Widget id="stakeSushi" variant="empty">
-      <WidgetHeader>
-        <WidgetTitle>Stake</WidgetTitle>
-        <WidgetDescription>
-          <XSushiPrice totalSupply={totalSupply} sushiBalance={sushiBalance} />
-        </WidgetDescription>
-      </WidgetHeader>
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-4">
         <Web3Input.Currency
           type="INPUT"
-          className="border border-accent px-3 py-1.5 !rounded-xl"
+          className="border border-accent p-4 bg-muted rounded-2xl"
           loading={false}
           value={input}
           onChange={onInput}
           currency={SUSHI[EvmChainId.ETHEREUM]}
           chainId={EvmChainId.ETHEREUM}
+          label="You stake"
         />
-        <div className="flex items-center justify-center mt-[-24px] mb-[-24px] z-10">
-          <div className="p-1 bg-white dark:bg-slate-900 border border-accent rounded-full">
-            <ArrowDownIcon
-              width={16}
-              height={16}
-              className="text-muted-foreground"
-            />
+        <div className="flex items-center justify-center mt-[-30px] mb-[-30px] z-10">
+          <div className="shadow-md z-10 group bg-background dark:bg-muted py-3 px-7 border border-accent transition-all rounded-full">
+            <SwitchArrowsIcon className="w-3.5 h-3.5" />
           </div>
         </div>
         <Web3Input.Currency
           type="OUTPUT"
-          className="border border-accent px-3 py-1.5 !rounded-xl"
+          className="border border-accent p-4 bg-muted rounded-2xl"
           loading={Boolean(isLoading && parsedInput?.gt(0n))}
           value={xSushiAmount?.toSignificant() ?? ''}
           currency={XSUSHI[EvmChainId.ETHEREUM]}
           chainId={EvmChainId.ETHEREUM}
           disabled
           disableInsufficientBalanceError
+          label="You receive"
         />
       </div>
-      <WidgetFooter>{children}</WidgetFooter>
-    </Widget>
+      <div>
+        <XSushiPrice />
+      </div>
+      {children}
+    </div>
   )
 }

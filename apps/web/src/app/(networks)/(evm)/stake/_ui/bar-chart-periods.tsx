@@ -1,5 +1,5 @@
-import { Toggle } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import { Toggle, ToggleGroup } from '@sushiswap/ui'
+import type { FC } from 'react'
 
 export enum BarChartPeriod {
   Day = '1D',
@@ -29,7 +29,7 @@ const BarChartPeriods: FC<BarChartPeriodsProps> = ({
   setPeriod,
 }) => {
   return (
-    <div className="flex items-center gap-1">
+    <ToggleGroup>
       {periods.map((period) => (
         <Toggle
           size="xs"
@@ -40,7 +40,7 @@ const BarChartPeriods: FC<BarChartPeriodsProps> = ({
           {period}
         </Toggle>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }
 

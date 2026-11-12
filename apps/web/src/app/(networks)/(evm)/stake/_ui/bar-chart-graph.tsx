@@ -1,27 +1,19 @@
 'use client'
 
-import {
-  CardContent,
-  CardHeader,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
-import { CardDescription, CardTitle } from '@sushiswap/ui'
-import { SkeletonBox } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonText, classNames } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import { type FC, useCallback, useMemo } from 'react'
-import { formatNumber, formatPercent } from 'sushi'
-
-import { useBarChartData } from 'src/lib/stake'
-import { BarChartPeriod, chartPeriods } from './bar-chart-periods'
-import { BarChartType } from './bar-chart-types'
-
 import type { EChartOption } from 'echarts'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
+import { useTheme } from 'next-themes'
+import { type FC, useCallback, useMemo } from 'react'
+import { useBarChartData } from 'src/lib/stake'
+import { formatNumber, formatPercent } from 'sushi'
+import { BarChartPeriod, chartPeriods } from './bar-chart-periods'
+import { BarChartType } from './bar-chart-types'
 
 interface BarChartProps {
   chart: BarChartType.APR | BarChartType.TotalSupply
@@ -32,6 +24,7 @@ echarts.use([LineChart, CanvasRenderer, GridComponent, TooltipComponent])
 
 export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
   const { data: barData, isLoading } = useBarChartData()
+  const { resolvedTheme } = useTheme()
 
   const [xData, yData] = useMemo(() => {
     const data =
@@ -87,39 +80,33 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
     [period, chart],
   )
 
-  const DEFAULT_OPTION = useMemo<EChartOption>(
-    () => ({
+  const DEFAULT_OPTION = useMemo<EChartOption>(() => {
+    const isLight = resolvedTheme === 'light'
+    const textColor = isLight ? '#3b3b3b' : '#e3e3e3'
+    return {
       tooltip: {
         trigger: 'axis',
-        extraCssText:
-          'z-index: 1000; padding: 0 !important; box-shadow: none !important',
-        responsive: true,
-        // @ts-ignore
-        backgroundColor: 'transparent',
-        textStyle: {
-          fontSize: 12,
-          fontWeight: 600,
-        },
-        axisPointer: {
-          lineStyle: {
-            type: 'dashed',
-          },
-        },
+        confine: true,
+        backgroundColor: isLight ? '#FFFFFF' : '#202020',
+        borderColor: isLight ? '#e3e3e3' : '#3b3b3b',
+        textStyle: { color: isLight ? '#181818' : '#ffffff', fontSize: 12 },
+        axisPointer: { lineStyle: { type: 'dashed', color: textColor } },
+        borderRadius: 12,
         formatter: (params: any) => {
           onMouseOver({ name: params[0].name, value: params[0].value })
 
           const date = new Date(Number(params[0].name * 1000))
-          return `<div class="flex flex-col gap-0.5 paper bg-white/50 dark:bg-slate-800/50 px-3 py-2 rounded-xl overflow-hidden shadow-lg">
-            <span class="text-sm dark:text-slate-50 text-gray-900 font-medium">${
+          return `<div class="flex flex-col gap-0.5 ">
+            <span class="text-sm  font-medium">${
               chart === BarChartType.APR
                 ? formatPercent(params[0].value)
                 : formatNumber(params[0].value)
             }</span>
-            <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">${
+            <span class="text-xs text-muted-foreground font-medium">${
               date instanceof Date && !Number.isNaN(date?.getTime())
                 ? format(
                     date,
-                    `dd MMM yyyy${
+                    `MMM dd, yyyy${
                       chartPeriods[period] < chartPeriods[BarChartPeriod.Week]
                         ? ' p'
                         : ''
@@ -129,7 +116,6 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
             }</span>
           </div>`
         },
-        borderWidth: 0,
       },
       grid: {
         top: 4,
@@ -147,75 +133,77 @@ export const BarChartGraph: FC<BarChartProps> = ({ chart, period }) => {
       ],
       yAxis: [
         {
-          show: false,
+          show: true,
           type: 'value',
+          splitNumber: 3,
+          axisLine: { show: false },
+          axisTick: { show: false },
+          axisLabel: { show: false },
+          splitLine: {
+            show: true,
+            lineStyle: { color: isLight ? '#e3e3e3' : '#3b3b3b' },
+          },
         },
       ],
       series: [
         {
           type: 'line',
-          smooth: false,
-          xAxisIndex: 0,
-          yAxisIndex: 0,
-          itemStyle: {
-            color: 'blue',
-            normal: {
-              barBorderRadius: 2,
-            },
+          showSymbol: false,
+          itemStyle: { color: '#FA52A0' },
+          lineStyle: { color: '#FA52A0', width: 2 },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#FA52A040' },
+              { offset: 1, color: '#FA52A000' },
+            ]),
           },
           animationEasing: 'elasticOut',
           animationDelayUpdate: (idx: number) => idx * 2,
           data: yData,
         },
       ],
-    }),
-    [xData, chart, yData, onMouseOver, period],
-  )
+    }
+  }, [xData, chart, yData, onMouseOver, period, resolvedTheme])
 
   return (
-    <>
-      <CardHeader>
-        <CardTitle>
-          {isLoading ? (
-            <div>
-              <SkeletonText fontSize="sm" className="!w-20" />
-            </div>
-          ) : (
-            <span className="hoveredItemValue">
-              {chart === BarChartType.APR
-                ? formatPercent(yData[yData.length - 1])
-                : formatNumber(yData[yData.length - 1])}
-            </span>
-          )}
-        </CardTitle>
-        <CardDescription>
-          {xData.length ? (
-            <div className="text-sm text-gray-500 dark:text-slate-500 hoveredItemName">
-              {format(
-                new Date(xData[xData.length - 1] * 1000),
-                'dd MMM yyyy HH:mm',
-              )}
-            </div>
-          ) : (
-            <SkeletonText fontSize="sm" className="!w-32" />
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         {isLoading ? (
-          <SkeletonBox
-            className={classNames(
-              'h-[200px] w-full dark:via-slate-800 dark:to-slate-900',
-            )}
+          <SkeletonText
+            fontSize="3xl"
+            className="!w-20"
+            style={{ height: 36 }}
           />
         ) : (
-          <ReactEChartsCore
-            echarts={echarts}
-            option={DEFAULT_OPTION}
-            style={{ height: 200 }}
-          />
+          <span className="text-3xl font-medium hoveredItemValue">
+            {chart === BarChartType.APR
+              ? formatPercent(yData[yData.length - 1])
+              : formatNumber(yData[yData.length - 1])}
+          </span>
         )}
-      </CardContent>
-    </>
+      </div>
+      <div className="flex flex-col">
+        {isLoading ? (
+          <SkeletonText
+            fontSize="xs"
+            className="!w-20"
+            style={{ height: 16 }}
+          />
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            {format(new Date(xData[xData.length - 1] * 1000), 'MMM dd, yyyy')}
+          </span>
+        )}
+      </div>
+      {isLoading ? (
+        <SkeletonBox className={classNames('h-[185.5px] w-full')} />
+      ) : (
+        <ReactEChartsCore
+          echarts={echarts}
+          option={DEFAULT_OPTION}
+          style={{ height: 185.5 }}
+        />
+      )}
+    </div>
   )
 }

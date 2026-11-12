@@ -1,12 +1,11 @@
 'use client'
 
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import {
+  Button,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Separator,
+  LinkExternal,
   Tabs,
   TabsContent,
   TabsList,
@@ -20,19 +19,14 @@ export const ManageBarCard = () => {
   const [tab, setTab] = useState<'stake' | 'unstake'>('stake')
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Manage</CardTitle>
-        <CardDescription>
-          Manage your position in the Sushi Bar.
-        </CardDescription>
-      </CardHeader>
-      <Tabs
-        value={tab}
-        onValueChange={(tab) => setTab(tab as 'stake' | 'unstake')}
-        className="w-full"
-        defaultValue={tab}
-      >
-        <CardContent>
+      <CardContent className="!pt-6 !gap-2 !pb-3">
+        <h3 className="text-xl font-medium">Manage stake</h3>
+        <Tabs
+          value={tab}
+          onValueChange={(tab) => setTab(tab as 'stake' | 'unstake')}
+          className="w-full"
+          defaultValue={tab}
+        >
           <TabsList className="!flex">
             <TabsTrigger
               testdata-id="stake-tab"
@@ -49,21 +43,30 @@ export const ManageBarCard = () => {
               Unstake
             </TabsTrigger>
           </TabsList>
-        </CardContent>
-        <div className="px-6 pb-4">
-          <Separator />
-        </div>
-        <TabsContent value="stake">
-          <CardContent>
+
+          <TabsContent value="stake">
             <StakeSection />
-          </CardContent>
-        </TabsContent>
-        <TabsContent value="unstake">
-          <CardContent>
+          </TabsContent>
+          <TabsContent value="unstake">
             <UnstakeSection />
-          </CardContent>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+        <LinkExternal href="https://etherscan.io/token/0x8798249c2e607446efb7ad49ec89dd1865ff4272">
+          <Button
+            variant="ghost"
+            size="xs"
+            asChild
+            icon={ArrowTopRightOnSquareIcon}
+            iconPosition="end"
+            iconProps={{
+              className: '!w-3 !h-3',
+            }}
+            className="!text-muted-foreground"
+          >
+            xSUSHI contract
+          </Button>
+        </LinkExternal>
+      </CardContent>
     </Card>
   )
 }

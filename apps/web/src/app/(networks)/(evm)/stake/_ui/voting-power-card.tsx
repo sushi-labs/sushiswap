@@ -1,90 +1,94 @@
 'use client'
 
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
-import { InformationCircleIcon } from '@heroicons/react/24/outline'
 
 import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Explainer,
   LinkExternal,
   SkeletonText,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
-import { type Amount, formatNumber } from 'sushi'
+import { type Amount, formatNumber, formatPercent } from 'sushi'
 import type { EvmCurrency } from 'sushi/evm'
+import { DataItem } from '../../strategic-reserve/_ui/data-item'
+import { useSushiBar } from './sushi-bar-provider'
 import { useVotingPower } from './voting-power-provider'
 
 export const VotingPowerCard = () => {
-  const { votingPower, balances, isConnected, isLoading } = useVotingPower()
-
-  const nonZeroBalances: Amount<EvmCurrency>[] = useMemo(
-    () =>
-      !balances
-        ? []
-        : Object.values(balances).filter((amount) => amount?.gt(0n)),
-    [balances],
-  )
+  const { votingPower, balances, isLoading, isError } = useVotingPower()
+  const { isPricesLoading, pricePer, apy } = useSushiBar()
 
   return (
     <Card>
-      <CardHeader className="!pb-3">
-        <CardTitle className="flex gap-1 items-center">
-          <span className="text-xs text-muted-foreground">
-            Your Voting Power
-          </span>
-          <Explainer
-            icon={InformationCircleIcon}
-            iconProps={{ width: 12, height: 12 }}
-          >
-            Voting power is used to participate in the Sushi DAO.
-          </Explainer>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-1.5 flex-col">
-          <div className="flex items-center gap-3">
-            {isConnected && isLoading ? (
-              <>
-                <SkeletonText fontSize="xl" className="!w-[200px]" />
-              </>
+      <CardContent className="pt-6 !pb-3.5">
+        <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+          <div className="pb-1.5 md:pb-0">
+            <DataItem
+              label={
+                <span className="font-medium text-primary text-2xl">
+                  Your stake
+                </span>
+              }
+              value={
+                <div className="flex gap-1.5 items-end">
+                  <div className="text-4xl">
+                    {formatNumber(balances?.xsushi?.toString() || '0')}
+                  </div>
+                  <div className="text-muted-foreground font-normal text-lg">
+                    xSUSHI
+                  </div>
+                </div>
+              }
+              subLabel={
+                balances?.xsushi
+                  ? `Equivalent to ${balances?.xsushi?.mulHuman(pricePer)?.toSignificant(4)} SUSHI`
+                  : ''
+              }
+              isLoading={isLoading || isPricesLoading}
+              isError={isError}
+            />
+          </div>
+          <div className="border-t md:border-t-0 pt-4 md:pt-0 md:border-l border-accent md:px-8">
+            <DataItem
+              label={
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  APY · 1 month
+                  <Explainer>
+                    The APY displayed is algorithmic and subject to change.
+                  </Explainer>
+                </div>
+              }
+              value={formatPercent(apy || '0')}
+              subLabel={undefined}
+              isLoading={isLoading || isPricesLoading}
+              isError={isError}
+            />
+          </div>
+        </div>
+        <div className="border-t border-accent pt-3 flex justify-between items-center text-muted-foreground">
+          <div className="text-xs flex items-center gap-1 whitespace-nowrap">
+            <div>Voting power:</div>
+            {isLoading || isPricesLoading ? (
+              <SkeletonText fontSize="xs" className="!w-[50px]" />
+            ) : votingPower === 0 || votingPower === undefined ? (
+              0
             ) : (
-              <>
-                <span className="text-xl font-bold">
-                  {votingPower === 0 || votingPower === undefined
-                    ? 0
-                    : formatNumber(votingPower)}{' '}
-                  SUSHI POWAH
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {nonZeroBalances
-                    .map(
-                      (amount) =>
-                        `${formatNumber(amount.toSignificant(6))} ${
-                          amount.currency.symbol
-                        }`,
-                    )
-                    .join(' + ')}
-                </span>
-              </>
+              formatNumber(votingPower)
             )}
           </div>
-          <div className="flex gap-6">
-            <LinkExternal href="https://snapshot.org/#/delegate/sushigov.eth">
-              <Button
-                asChild
-                variant="link"
-                size="sm"
-                className="!font-medium !text-secondary-foreground"
-              >
-                Delegate <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-              </Button>
-            </LinkExternal>
-            {/* <BoostVotingPowerModal weights={weights} /> */}
-          </div>
+          <LinkExternal href="https://snapshot.org/#/delegate/sushigov.eth">
+            <Button
+              asChild
+              variant="ghost"
+              size="xs"
+              className="!text-muted-foreground"
+            >
+              Delegate <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+            </Button>
+          </LinkExternal>
         </div>
       </CardContent>
     </Card>

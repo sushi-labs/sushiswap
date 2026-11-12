@@ -117,7 +117,7 @@ describe('Other Wallets navigation', () => {
 
     const loading = container.querySelector('[role="status"]')
     expect(loading?.getAttribute('aria-label')).toBe('Loading wallets')
-    expect(loading?.querySelectorAll('button:disabled')).toHaveLength(4)
+    expect(loading?.querySelectorAll('button:disabled')).toHaveLength(5)
 
     state.wallets = [
       createWallet(0, { namespace: 'stellar', name: 'Freighter' }),

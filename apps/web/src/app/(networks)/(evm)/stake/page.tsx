@@ -1,5 +1,4 @@
 import { Container } from '@sushiswap/ui'
-import { BarBalanceCard } from './_ui/bar-balance-card'
 import { BarBalanceProvider } from './_ui/bar-balance-provider'
 import { BarChartCard } from './_ui/bar-chart-card'
 import { ManageBarCard } from './_ui/manage-bar-card'
@@ -8,20 +7,23 @@ import { VotingPowerProvider } from './_ui/voting-power-provider'
 
 export default async function Page() {
   return (
-    <Container maxWidth="5xl" className="px-2 sm:px-4">
-      <VotingPowerProvider>
-        <VotingPowerCard />
-      </VotingPowerProvider>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+    <Container
+      maxWidth="7xl"
+      className="grid grid-cols-1 lg:grid-cols-[minmax(0,62fr)_minmax(0,38fr)] gap-4 px-2 pb-8 sm:px-4 lg:pb-16"
+    >
+      <div className="flex min-w-0 flex-col gap-4 order-2 lg:order-1">
         <div>
-          <ManageBarCard />
-        </div>
-        <div className="flex flex-col gap-6">
           <BarBalanceProvider>
-            <BarBalanceCard />
+            <VotingPowerProvider>
+              <VotingPowerCard />
+            </VotingPowerProvider>
           </BarBalanceProvider>
-          <BarChartCard />
         </div>
+
+        <BarChartCard />
+      </div>
+      <div className="min-w-0 order-1 lg:order-2">
+        <ManageBarCard />
       </div>
     </Container>
   )

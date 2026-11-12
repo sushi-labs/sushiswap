@@ -1,6 +1,6 @@
 'use client'
 
-import { Card } from '@sushiswap/ui'
+import { Card, CardContent } from '@sushiswap/ui'
 import { useState } from 'react'
 import { BarChartGraph } from './bar-chart-graph'
 import { BarChartPeriod, BarChartPeriods } from './bar-chart-periods'
@@ -21,19 +21,21 @@ export const BarChartCard = () => {
 
   return (
     <Card>
-      <div className="border-b border-accent px-6 py-4 flex flex-col items-center justify-between gap-4 md:flex-row">
-        <BarChartTypes
-          charts={charts}
-          selectedChart={chart}
-          setChart={setChart}
-        />
-        <BarChartPeriods
-          periods={periods}
-          selectedPeriod={period}
-          setPeriod={setPeriod}
-        />
-      </div>
-      <BarChartGraph chart={chart} period={period} />
+      <CardContent className="pt-6 !pb-3.5 !gap-2">
+        <div className="flex flex-wrap gap-2 justify-between items-center">
+          <BarChartTypes
+            charts={charts}
+            selectedChart={chart}
+            setChart={setChart}
+          />
+          <BarChartPeriods
+            periods={periods}
+            selectedPeriod={period}
+            setPeriod={setPeriod}
+          />
+        </div>
+        <BarChartGraph chart={chart} period={period} />
+      </CardContent>
     </Card>
   )
 }

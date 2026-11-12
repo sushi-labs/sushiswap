@@ -86,7 +86,7 @@ it('shows zero XLM in an empty swap input for an unfunded account', async () => 
     expect(
       container.querySelector('button[aria-label="Use maximum XLM"]')
         ?.textContent,
-    ).toBe('0.00')
+    ).toBe('Balance:0.00')
   } finally {
     act(() => root.unmount())
     client.clear()
@@ -175,7 +175,7 @@ it('uses the same deJAAA balance for the currency input and paired submit guard'
     expect(
       container.querySelector('button[aria-label="Use maximum deJAAA"]')
         ?.textContent,
-    ).toMatch(/^0\.20964/)
+    ).toMatch(/^Balance:0\.20964/)
     expect(container.textContent).toContain('Add liquidity')
 
     const selectorKey = [

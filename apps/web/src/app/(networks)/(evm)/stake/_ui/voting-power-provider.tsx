@@ -8,7 +8,7 @@ import {
   useContext,
   useMemo,
 } from 'react'
-import { Amount, ChainId, Fraction } from 'sushi'
+import { Amount, ChainId, type CurrencyMetadata, Fraction } from 'sushi'
 import {
   type EvmCurrency,
   EvmToken,
@@ -56,9 +56,9 @@ interface VotingPowerContext {
   votingPower: number | undefined
   balances:
     | {
-        xsushi: Amount<EvmCurrency>
-        slp: Amount<EvmCurrency>
-        xsushiPolygon: Amount<EvmCurrency>
+        xsushi: Amount<EvmCurrency<CurrencyMetadata>> | undefined
+        slp: Amount<EvmCurrency<CurrencyMetadata>> | undefined
+        xsushiPolygon: Amount<EvmCurrency<CurrencyMetadata>> | undefined
       }
     | undefined
   weights:
@@ -211,23 +211,12 @@ export const VotingPowerProvider: FC<{
     const xSushiBalance = ethereumBalances?.get(XSUSHI[ChainId.ETHEREUM].id)
     const slpBalance = ethereumBalances?.get(SUSHI_ETH_SLP.id)
 
-    if (
-      !xSushiBalance ||
-      !slpBalance ||
-      !votingPowerData?.vp_by_strategy?.[1] ||
-      !userStakedSLP
-    ) {
-      return undefined
-    }
-
     return {
       xsushi: xSushiBalance,
-      slp: slpBalance.add(
-        new Amount(SUSHI_ETH_SLP, userStakedSLP[0]),
-      ) as Amount<EvmCurrency>,
+      slp: slpBalance?.add(new Amount(SUSHI_ETH_SLP, userStakedSLP?.[0] ?? 0n)),
       xsushiPolygon: Amount.fromHuman(
         XSUSHI[ChainId.POLYGON],
-        votingPowerData.vp_by_strategy[1].toString(),
+        votingPowerData?.vp_by_strategy?.[1]?.toString() ?? '0',
       ),
     }
   }, [ethereumBalances, userStakedSLP, votingPowerData?.vp_by_strategy])

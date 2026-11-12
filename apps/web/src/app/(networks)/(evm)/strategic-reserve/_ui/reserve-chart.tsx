@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, SkeletonBox } from '@sushiswap/ui'
+import { SkeletonBox, Toggle, ToggleGroup } from '@sushiswap/ui'
 import type { EChartsOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
@@ -143,19 +143,18 @@ export function ReserveChart(): React.ReactElement {
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2 flex-wrap justify-between">
         <h3 className="text-lg font-semibold">Cumulative buybacks</h3>
-        <div className="flex rounded-full bg-muted p-0.5 gap-1">
+        <ToggleGroup>
           {TIMEFRAME_OPTIONS.map((time) => (
-            <Button
+            <Toggle
               key={time}
               onClick={() => setTimeframe(time)}
-              variant={timeframe === time ? 'secondary' : 'ghost'}
+              pressed={timeframe === time}
               size="sm"
-              className="focus:bg-background"
             >
               {time}
-            </Button>
+            </Toggle>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
       <div>
         {isLoading ? (
