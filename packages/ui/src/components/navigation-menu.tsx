@@ -48,7 +48,7 @@ const navigationMenuTriggerStyle = buttonVariants({ variant: 'ghost' })
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
->(({ className, children, onPointerMove, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={classNames(
@@ -58,11 +58,6 @@ const NavigationMenuTrigger = React.forwardRef<
       className,
     )}
     {...props}
-    onPointerMove={(event) => {
-      onPointerMove?.(event)
-      // Prevent Radix from opening the menu on hover.
-      event.preventDefault()
-    }}
   >
     {children}{' '}
     <ChevronDown

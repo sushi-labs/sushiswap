@@ -140,13 +140,7 @@ export const headerElements = ({
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuPrimitive.Trigger
-            asChild
-            onPointerMove={(event) => {
-              // Prevent Radix from opening the menu on hover.
-              event.preventDefault()
-            }}
-          >
+          <NavigationMenuPrimitive.Trigger asChild>
             <Button variant="secondary" className="ml-1">
               <Bars3Icon className="h-5 w-5" />
             </Button>
