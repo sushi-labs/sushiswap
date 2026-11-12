@@ -10,9 +10,7 @@ import {
   LinkExternal,
   SkeletonText,
 } from '@sushiswap/ui'
-import { useMemo } from 'react'
-import { type Amount, formatNumber, formatPercent } from 'sushi'
-import type { EvmCurrency } from 'sushi/evm'
+import { formatNumber, formatPercent } from 'sushi'
 import { DataItem } from '../../strategic-reserve/_ui/data-item'
 import { useSushiBar } from './sushi-bar-provider'
 import { useVotingPower } from './voting-power-provider'
