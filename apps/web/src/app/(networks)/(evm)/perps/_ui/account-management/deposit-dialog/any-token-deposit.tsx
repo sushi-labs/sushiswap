@@ -55,6 +55,7 @@ import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-pri
 import type { Step } from '~evm/api/cross-chain/schemas'
 import { InputWithKeyboard } from '../../_common'
 import { PerpsChecker } from '../../perps-checker'
+import type { AnyTokenAnyChainDepositChainId } from './any-token-deposit-config'
 import type { AnyTokenDepositOption } from './deposit-dialog'
 import { USDCOptions, getMinDepositAmount, getUSDCArgs } from './usdc-options'
 
@@ -75,15 +76,15 @@ type AnyTokenAnyChainDepositOption = Extract<
   { type: 'any-token-any-chain' }
 >
 
-type RobinhoodToArbitrumStep = Step<
-  typeof EvmChainId.ROBINHOOD,
+type AnyChainToArbitrumStep = Step<
+  AnyTokenAnyChainDepositChainId,
   typeof EvmChainId.ARBITRUM,
   'lifi'
 >
 
-type RobinhoodToArbitrumRoute = {
-  step: RobinhoodToArbitrumStep
-  amountIn: Amount<CurrencyFor<typeof EvmChainId.ROBINHOOD>>
+type AnyChainToArbitrumRoute = {
+  step: AnyChainToArbitrumStep
+  amountIn: Amount<CurrencyFor<AnyTokenAnyChainDepositChainId>>
   amountOut: Amount<CurrencyFor<typeof EvmChainId.ARBITRUM>>
   amountOutMin: Amount<CurrencyFor<typeof EvmChainId.ARBITRUM>>
 }
@@ -636,10 +637,10 @@ const AnyTokenAnyChainDeposit = ({
   const [token, setToken] = useState<TokenToSwap | undefined>(undefined)
   const [swapAmount, setSwapAmount] = useState<string>('')
   const [sourceTxHash, setSourceTxHash] = useState<
-    TxHashFor<typeof EvmChainId.ROBINHOOD> | undefined
+    TxHashFor<AnyTokenAnyChainDepositChainId> | undefined
   >(undefined)
   const [crossChainTradeId, setCrossChainTradeId] = useState<string>('')
-  const routeRef = useRef<RobinhoodToArbitrumRoute | null>(null)
+  const routeRef = useRef<AnyChainToArbitrumRoute | null>(null)
   const receivingTxHashRef = useRef<
     TxHashFor<typeof EvmChainId.ARBITRUM> | undefined
   >(undefined)
@@ -669,9 +670,7 @@ const AnyTokenAnyChainDeposit = ({
       return undefined
     }
 
-    return Amount.tryFromHuman(token.currency, swapAmount) as
-      | Amount<CurrencyFor<typeof EvmChainId.ROBINHOOD>>
-      | undefined
+    return Amount.tryFromHuman(token.currency, swapAmount)
   }, [swapAmount, token, depositOption.chainId])
 
   const { data: pricesMap } = usePrices({
@@ -720,7 +719,7 @@ const AnyTokenAnyChainDeposit = ({
     isLoading: isLoadingRoutes,
     isError: isRoutesError,
   } = useCrossChainTradeRoutes<
-    typeof EvmChainId.ROBINHOOD,
+    AnyTokenAnyChainDepositChainId,
     typeof EvmChainId.ARBITRUM
   >({
     fromAmount: _amount,
@@ -736,11 +735,11 @@ const AnyTokenAnyChainDeposit = ({
     if (!route || !_amount) return undefined
 
     return {
-      step: route.step as RobinhoodToArbitrumStep,
+      step: route.step,
       amountIn: new Amount(_amount.currency, route.fromAmount),
       amountOut: new Amount(ANY_CHAIN_TO_TOKEN, route.toAmount),
       amountOutMin: new Amount(ANY_CHAIN_TO_TOKEN, route.toAmountMin),
-    } satisfies RobinhoodToArbitrumRoute
+    } satisfies AnyChainToArbitrumRoute
   }, [routes, _amount])
 
   const { approved: isCrossChainApproved } = useApproved(
@@ -754,7 +753,7 @@ const AnyTokenAnyChainDeposit = ({
 
   const { data: crossChainStep, isLoading: isLoadingCrossChainStep } =
     useCrossChainTradeStep<
-      typeof EvmChainId.ROBINHOOD,
+      AnyTokenAnyChainDepositChainId,
       typeof EvmChainId.ARBITRUM
     >({
       step: selectedRoute?.step,
@@ -787,7 +786,7 @@ const AnyTokenAnyChainDeposit = ({
   }, [crossChainStep?.transactionRequest, depositOption.chainId, estGas])
 
   const { data: lifiStatus } = useLiFiStatus<
-    typeof EvmChainId.ROBINHOOD,
+    AnyTokenAnyChainDepositChainId,
     typeof EvmChainId.ARBITRUM
   >({
     txHash: sourceTxHash,
@@ -907,9 +906,8 @@ const AnyTokenAnyChainDeposit = ({
         account: address,
         ...fees,
       } as Parameters<typeof sendTransactionAsync>[0])
-      const typedHash = hash as TxHashFor<typeof EvmChainId.ROBINHOOD>
-      setSourceTxHash(typedHash)
-      setCrossChainTradeId(typedHash)
+      setSourceTxHash(hash)
+      setCrossChainTradeId(hash)
 
       const promise = client.waitForTransactionReceipt({
         hash,
@@ -1233,11 +1231,7 @@ const AnyTokenAnyChainDeposit = ({
                     id={APPROVE_CROSS_CHAIN_TAG}
                     variant="perps-tertiary"
                     amount={_amount}
-                    contract={
-                      selectedRoute?.step.estimate.approvalAddress as
-                        | AddressFor<typeof EvmChainId.ROBINHOOD>
-                        | undefined
-                    }
+                    contract={selectedRoute?.step.estimate.approvalAddress}
                     enabled={token?.currency.type !== 'native'}
                   >
                     <Checker.Success tag={APPROVE_CROSS_CHAIN_TAG}>

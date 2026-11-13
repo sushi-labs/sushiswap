@@ -23,6 +23,7 @@ import { EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import { AnyTokenDeposit } from './any-token-deposit'
+import { ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS } from './any-token-deposit-config'
 // import { FiatDeposit } from './fiat-deposit'
 import { HyperunitOptions } from './hyperunit/hyperunit-options'
 import { USDCOptions } from './usdc-options'
@@ -55,28 +56,17 @@ const DEPOSIT_OPTIONS = [
     chainId: EvmChainId.ARBITRUM,
     type: 'any-token' as const,
   },
-  {
-    label: 'Any Token (Robinhood)',
-    value: 'any-robinhood' as const,
-    chainId: EvmChainId.ROBINHOOD,
+  ...ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS.map((chainId) => ({
+    label: `Any Token (${getChainById(chainId).name})`,
+    value: `any-${chainId}` as const,
+    chainId,
     type: 'any-token-any-chain' as const,
-  },
+  })),
   // {
   //   label: 'Fiat',
   //   value: 'fiat' as const,
   //   type: 'fiat' as const,
   // },
-  {
-    label: 'ETH (Ethereum Mainnet)',
-    value: 'eth' as const,
-    chainName: 'ethereum' as const,
-    token: 'eth',
-    tokenType: 'ethereum' as const,
-    type: 'hyperunit' as const,
-    minDeposit: '0.007',
-    chainId: EvmChainId.ETHEREUM,
-    asset: EvmNative.fromChainId(EvmChainId.ETHEREUM),
-  },
   {
     label: 'BTC (Bitcoin)',
     value: 'btc' as const,
@@ -321,6 +311,7 @@ export const DepositDialog = ({
       case 'any-token-any-chain':
         return (
           <AnyTokenDeposit
+            key={depositOption.chainId}
             depositOption={depositOption}
             setOpen={handleOpenChange}
           />
@@ -420,7 +411,7 @@ export const DepositDialog = ({
             >
               <SelectTrigger className="w-full text-sm !px-2 mt-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
                 <div className="flex items-center gap-1">
-                  {depositOption.asset ? (
+                  {'asset' in depositOption && depositOption.asset ? (
                     <Currency.Icon
                       disableLink
                       currency={depositOption.asset}
@@ -439,7 +430,7 @@ export const DepositDialog = ({
                     className="font-medium !text-white gap-4"
                   >
                     <div className="flex items-center gap-1">
-                      {i.asset ? (
+                      {'asset' in i && i.asset ? (
                         <Currency.Icon
                           disableLink
                           currency={i.asset}
