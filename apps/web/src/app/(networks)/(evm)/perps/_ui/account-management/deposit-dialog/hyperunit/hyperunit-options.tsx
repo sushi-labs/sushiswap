@@ -8,7 +8,6 @@ import {
   IconButton,
   LinkExternal,
   SkeletonBox,
-  SkeletonText,
   classNames,
 } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
@@ -141,10 +140,7 @@ export const HyperunitOptions = ({
           <img
             src={`https://app.hyperliquid.xyz/coins/${depositOption.value.toUpperCase()}.svg`}
             alt={depositOption.token}
-            className={classNames(
-              'rounded-full w-10 h-10',
-              depositOption.value === 'eth' ? 'bg-white' : '',
-            )}
+            className="rounded-full w-10 h-10"
           />
           {DepositInfo}
           {address ? (
