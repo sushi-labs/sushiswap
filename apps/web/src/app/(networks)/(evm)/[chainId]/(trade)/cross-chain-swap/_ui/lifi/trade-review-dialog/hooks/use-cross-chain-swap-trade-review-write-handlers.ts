@@ -24,6 +24,7 @@ import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
 import { StepState } from '../../confirmation-dialog'
+import { useSharedLifiTracking } from '../../tracking-context'
 import {
   type UseLifiXSwapSelectedTradeRouteReturn,
   useLifiXSwap,
@@ -71,6 +72,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
   } = useDetailsInteractionTracker()
 
   const address = useAccount(chainId0)
+  const sharedTracking = useSharedLifiTracking()
   const { confirm } = useDialog(DialogType.Review)
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
@@ -105,6 +107,15 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
       const receiptPromise = waitForReceipt(hash)
 
       groupTs.current = new Date().getTime()
+      sharedTracking?.track({
+        chainId0,
+        chainId1,
+        hash,
+        route: routeRef.current,
+        account: address,
+        groupTimestamp: groupTs.current,
+        sourceReceipt: receiptPromise,
+      })
       const destinationChainName = routeRef.current?.toChainId
         ? getChainById(routeRef.current.toChainId as LifiXSwapSupportedChainId)
             .name
@@ -267,6 +278,7 @@ export function useCrossChainSwapTradeReviewWriteHandlers<
       resetDetailsTrackedState,
       feeData,
       prices,
+      sharedTracking,
       isDetailsCollapsed,
       wasDetailsTouched,
     ],

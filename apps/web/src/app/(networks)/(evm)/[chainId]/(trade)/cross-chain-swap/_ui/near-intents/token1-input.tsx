@@ -3,6 +3,7 @@
 import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { Amount } from 'sushi'
 import { isStellarChainId } from 'sushi/stellar'
+import { SwapInputLabel } from '../../../_ui/swap-input-label'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
 import { useXSwapForm } from '../xswap-form-provider'
 import { useNearIntentsXSwap } from './xswap-provider'
@@ -36,7 +37,7 @@ export function NearIntentsCrossChainSwapToken1Input() {
       fetching={previewQuote.isFetching}
       currencyLoading={isLoadingTokens}
       allowNative={!isStellarChainId(chainId1)}
-      label="Buy"
+      label={<SwapInputLabel chainId={chainId1} type="OUTPUT" />}
       currencies={currenciesByChain[chainId1]}
       networks={networks}
       selectedNetwork={chainId1}

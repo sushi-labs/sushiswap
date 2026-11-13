@@ -1,30 +1,13 @@
-import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
-import { isSupportedChainId } from 'src/config'
+import { isUnifiedSwapChainId } from 'src/lib/swap/unified-swap'
 import { isEvmChainId } from 'sushi/evm'
-import { EvmSimpleSwapRuntime } from './_ui/evm-simple-swap-runtime'
-import { SimpleSwapWidgetFrame } from './_ui/simple-swap-widget-frame'
-import { SimpleSwapWidgetSkeleton } from './_ui/simple-swap-widget-skeleton'
-import { Providers } from './providers'
+import { UnifiedSwap } from './unified-swap'
 
 export default async function SwapSimplePage({
   params,
-}: {
-  params: Promise<{ chainId: string }>
-}) {
+}: { params: Promise<{ chainId: string }> }) {
   const chainId = Number((await params).chainId)
-  if (!isSupportedChainId(chainId) || !isEvmChainId(chainId)) return notFound()
-
-  return (
-    <Container maxWidth="xl">
-      <SimpleSwapWidgetFrame>
-        <Suspense fallback={<SimpleSwapWidgetSkeleton />}>
-          <Providers>
-            <EvmSimpleSwapRuntime chainId={chainId} />
-          </Providers>
-        </Suspense>
-      </SimpleSwapWidgetFrame>
-    </Container>
-  )
+  if (!isUnifiedSwapChainId(chainId) || !isEvmChainId(chainId))
+    return notFound()
+  return <UnifiedSwap chainId={chainId} />
 }

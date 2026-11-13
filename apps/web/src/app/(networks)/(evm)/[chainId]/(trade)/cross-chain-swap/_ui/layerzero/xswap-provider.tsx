@@ -6,6 +6,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
 } from 'react'
@@ -19,6 +20,7 @@ import { usePublicClient } from 'wagmi'
 import { useLifiXSwap } from '../lifi/xswap-provider'
 import { useNearIntentsXSwap } from '../near-intents/xswap-provider'
 import { type XSwapFormMutators, useXSwapForm } from '../xswap-form-provider'
+import { useSharedLayerZeroExecutions } from './execution-state-context'
 import {
   type LayerZeroExecutionState,
   useLayerZeroExecutions,
@@ -59,6 +61,39 @@ export function LayerZeroXSwapProvider({
   children,
   enabled = true,
 }: { children: ReactNode; enabled?: boolean }): ReactNode {
+  const executionState = useSharedLayerZeroExecutions()
+  return executionState ? (
+    <LayerZeroXSwapRuntime enabled={enabled} executionState={executionState}>
+      {children}
+    </LayerZeroXSwapRuntime>
+  ) : (
+    <LocalLayerZeroXSwapProvider enabled={enabled}>
+      {children}
+    </LocalLayerZeroXSwapProvider>
+  )
+}
+
+function LocalLayerZeroXSwapProvider({
+  children,
+  enabled,
+}: { children: ReactNode; enabled: boolean }): ReactNode {
+  const executionState = useLayerZeroExecutions()
+  return (
+    <LayerZeroXSwapRuntime enabled={enabled} executionState={executionState}>
+      {children}
+    </LayerZeroXSwapRuntime>
+  )
+}
+
+function LayerZeroXSwapRuntime({
+  children,
+  enabled,
+  executionState,
+}: {
+  children: ReactNode
+  enabled: boolean
+  executionState: LayerZeroExecutionState
+}): ReactNode {
   const form = useXSwapForm<ValueTransferChainId, ValueTransferChainId>()
   const chainId0 = form.chainId0
   const chainId1 =
@@ -93,7 +128,6 @@ export function LayerZeroXSwapProvider({
     chainId: isEvmChainId(chainId0) ? chainId0 : undefined,
   })
   const [slippagePercent] = useSlippageTolerance()
-  const executionState = useLayerZeroExecutions()
   const inputs = useRef({
     enabled,
     chainId0,
@@ -110,6 +144,12 @@ export function LayerZeroXSwapProvider({
     token0,
     token1,
   }
+  useEffect(() => {
+    inputs.current.enabled = enabled
+    return () => {
+      inputs.current.enabled = false
+    }
+  }, [enabled])
   const clearSwapAmountIfUnchanged = useCallback(
     (quote: ValueTransferTrade): void => {
       const current = inputs.current

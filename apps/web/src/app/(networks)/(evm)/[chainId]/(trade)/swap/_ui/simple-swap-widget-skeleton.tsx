@@ -1,12 +1,23 @@
 import { SkeletonBox } from '@sushiswap/ui'
 import { SwitchArrowsIcon } from '@sushiswap/ui/icons/switch-arrows-icon'
+import type { ReactElement } from 'react'
 import { CurrencyInputSkeleton } from 'src/lib/wagmi/components/web3-input/currency/currency-input-skeleton'
+import type { ChainId } from 'sushi'
+import { SwapInputLabel } from '../../_ui/swap-input-label'
 
-function SimpleSwapWidgetSkeleton() {
+function SimpleSwapWidgetSkeleton({
+  chainId,
+}: { chainId?: ChainId }): ReactElement {
   return (
     <>
       <CurrencyInputSkeleton
-        label={<span className="flex text-xs text-primary">From:</span>}
+        label={
+          chainId ? (
+            <SwapInputLabel chainId={chainId} type="INPUT" />
+          ) : (
+            <span className="flex text-xs text-primary">From:</span>
+          )
+        }
         className="border border-accent p-4 bg-muted rounded-2xl"
       />
       <div className="left-0 right-0 mt-[-28px] mb-[-28px] flex items-center justify-center">
@@ -19,11 +30,19 @@ function SimpleSwapWidgetSkeleton() {
           <SwitchArrowsIcon className="w-3.5 h-3.5" />
         </button>
       </div>
-      <CurrencyInputSkeleton
-        label={<span className="flex text-xs text-primary">To:</span>}
-        className="border border-accent p-4 bg-muted rounded-2xl"
-      />
-      <SkeletonBox className="w-full h-[52px] !rounded-full mb-2" />
+      <div className="flex flex-col">
+        <CurrencyInputSkeleton
+          label={
+            chainId ? (
+              <SwapInputLabel chainId={chainId} type="OUTPUT" />
+            ) : (
+              <span className="flex text-xs text-primary">To:</span>
+            )
+          }
+          className="border border-accent p-4 bg-muted rounded-2xl"
+        />
+        <SkeletonBox className="w-full h-[52px] !rounded-full mb-2" />
+      </div>
     </>
   )
 }

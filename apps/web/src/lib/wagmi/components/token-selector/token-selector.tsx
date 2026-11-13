@@ -31,6 +31,7 @@ import type { TokenSelectorChainId } from './config'
 import { CurrencyInfo } from './currency-info'
 import { DesktopNetworkSelector } from './desktop-network-selector'
 import { MobileNetworkSelector } from './mobile-network-selector'
+import { NetworkSelectorBar } from './network-selector-bar'
 import type { TokenSelectorSelection } from './selection'
 import { TokenSelectorStates } from './token-selector-states'
 import {
@@ -49,6 +50,7 @@ interface TokenSelectorProps<
   onSelect?(
     selection: TokenSelectorSelection<TChainId, TAllowPairSelection>,
   ): void
+  onOpenChange?(open: boolean): void
   allowPairSelection?: TAllowPairSelection
   children: ReactNode
   currencies?: Record<string, CurrencyFor<TChainId, { approved?: boolean }>>
@@ -57,6 +59,7 @@ interface TokenSelectorProps<
   networks?: readonly TNetwork[]
   selectedNetwork?: TNetwork
   onNetworkSelect?: (network: TNetwork) => void
+  networkSelectorLayout?: 'sidebar' | 'bar'
   theme?: TokenSelectorTheme
 }
 
@@ -76,6 +79,7 @@ export function TokenSelector<
     networks,
     selectedNetwork,
     onNetworkSelect,
+    networkSelectorLayout = 'sidebar',
     theme = 'default',
   } = props
   const address = useAccount(chainId)
@@ -106,17 +110,26 @@ export function TokenSelector<
     }
   }, [_currencies])
 
+  const _onOpenChange = useCallback(
+    (open: boolean) => {
+      setOpen(open)
+      props.onOpenChange?.(open)
+    },
+    [props.onOpenChange],
+  )
+
   const _onSelect = useCallback(
     (selection: TokenSelectorSelection<TChainId, TAllowPairSelection>) => {
       props.onSelect?.(selection)
 
-      setOpen(false)
+      _onOpenChange(false)
     },
-    [props.onSelect],
+    [props.onSelect, _onOpenChange],
   )
 
   const _onNetworkSelect = useCallback(
     (network: TNetwork) => {
+      if (networkSelectorLayout === 'bar') setQuery('')
       if (currencyInfo) {
         showCurrencyInfo(false)
       }
@@ -125,7 +138,7 @@ export function TokenSelector<
         onNetworkSelect(network)
       }
     },
-    [onNetworkSelect, currencyInfo],
+    [onNetworkSelect, currencyInfo, networkSelectorLayout],
   )
 
   const { isMd } = useBreakpoint('md')
@@ -136,7 +149,11 @@ export function TokenSelector<
       modal={InterfaceModalName.TOKEN_SELECTOR}
       shouldLogImpression
     >
-      {networks && selectedNetwork && onNetworkSelect && isMd ? (
+      {networkSelectorLayout === 'sidebar' &&
+      networks &&
+      selectedNetwork &&
+      onNetworkSelect &&
+      isMd ? (
         <DesktopNetworkSelector
           networks={networks}
           selectedNetwork={selectedNetwork}
@@ -166,7 +183,11 @@ export function TokenSelector<
             aria-describedby="token-selector-description"
           />
         </DialogHeader>
-        {networks && selectedNetwork && onNetworkSelect && !isMd ? (
+        {networkSelectorLayout === 'sidebar' &&
+        networks &&
+        selectedNetwork &&
+        onNetworkSelect &&
+        !isMd ? (
           <MobileNetworkSelector
             networks={networks}
             selectedNetwork={selectedNetwork}
@@ -206,6 +227,16 @@ export function TokenSelector<
             </p>
           </div>
         ) : null}
+        {networkSelectorLayout === 'bar' &&
+        networks &&
+        selectedNetwork &&
+        onNetworkSelect ? (
+          <NetworkSelectorBar
+            networks={networks}
+            selectedNetwork={selectedNetwork}
+            onSelect={_onNetworkSelect}
+          />
+        ) : null}
         <div
           id="token-list-container"
           className="flex flex-1 flex-grow flex-col gap-3 space-y-2 overflow-y-scroll scroll py-0.5"
@@ -228,7 +259,7 @@ export function TokenSelector<
 
   return (
     <TokenSelectorThemeProvider theme={theme}>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={_onOpenChange}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         {theme === 'perps' ? (
           <PerpsDialogContent
@@ -243,8 +274,11 @@ export function TokenSelector<
         ) : (
           <DialogContent
             className={classNames(
-              'h-[calc(100dvh-56px)] md:h-[80vh] !flex !flex-col md:!flex-row w-fit !p-0',
-              networks ? 'md:min-w-[720px]' : 'md:min-w-[570px]',
+              'h-[calc(100dvh-56px)] md:h-[80vh] !flex !flex-col w-fit !p-0',
+              networkSelectorLayout === 'sidebar' && 'md:!flex-row',
+              networks && networkSelectorLayout === 'sidebar'
+                ? 'md:min-w-[720px]'
+                : 'md:min-w-[570px]',
             )}
           >
             {content}

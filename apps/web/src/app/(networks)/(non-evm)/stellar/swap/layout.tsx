@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'SushiSwap on Stellar',
@@ -10,9 +9,5 @@ export const metadata: Metadata = {
 export default function SwapLayout({
   children,
 }: { children: React.ReactNode }) {
-  return (
-    <Providers>
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-    </Providers>
-  )
+  return <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
 }

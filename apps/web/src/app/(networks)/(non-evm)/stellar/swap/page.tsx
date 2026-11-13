@@ -1,11 +1,6 @@
-'use client'
-import { Container } from '@sushiswap/ui'
-import { SimpleSwapWidget } from '~stellar/_common/ui/swap/simple/simple-swap-widget'
+import { StellarChainId } from 'sushi/stellar'
+import { UnifiedSwap } from '~evm/[chainId]/(trade)/swap/unified-swap'
 
 export default function SwapSimplePage() {
-  return (
-    <Container maxWidth="xl">
-      <SimpleSwapWidget />
-    </Container>
-  )
+  return <UnifiedSwap chainId={StellarChainId.STELLAR} />
 }

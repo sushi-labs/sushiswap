@@ -17,6 +17,7 @@ import {
 import { TransactionReceiptRevertedError } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { StepState } from '../../confirmation-dialog'
+import { LifiTrackingContext } from '../../tracking-context'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from '../../xswap-provider'
 import { useCrossChainSwapTradeReviewWriteHandlers } from './use-cross-chain-swap-trade-review-write-handlers'
 
@@ -30,6 +31,7 @@ const mocks = vi.hoisted(() => ({
   createToast: vi.fn(),
   createErrorToast: vi.fn(),
   logger: vi.fn(),
+  track: vi.fn(),
 }))
 
 vi.mock('src/lib/transaction-dialog', async () =>
@@ -148,9 +150,16 @@ describe('LI.FI source confirmation dialog', () => {
     act(() => {
       root.render(
         <QueryClientProvider client={client}>
-          <DialogProvider>
-            <Harness />
-          </DialogProvider>
+          <LifiTrackingContext.Provider
+            value={{
+              track: mocks.track,
+              subscribeToCompletion: () => () => {},
+            }}
+          >
+            <DialogProvider>
+              <Harness />
+            </DialogProvider>
+          </LifiTrackingContext.Provider>
         </QueryClientProvider>,
       )
     })
@@ -192,6 +201,17 @@ describe('LI.FI source confirmation dialog', () => {
       expect(mocks.waitForReceipt).toHaveBeenCalledWith(txHash)
       expect(mocks.setSwapAmount).toHaveBeenCalledWith('')
       expect(mutation.data).toBeUndefined()
+      expect(mocks.track).toHaveBeenCalledTimes(1)
+      expect(mocks.track).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hash: txHash,
+          chainId0: 1,
+          chainId1: 10,
+          account: '0x0000000000000000000000000000000000000001',
+          groupTimestamp: expect.any(Number),
+          sourceReceipt: receipt.promise,
+        }),
+      )
 
       if (dismiss) act(() => confirmation.setOpen(false))
 
@@ -243,5 +263,6 @@ describe('LI.FI source confirmation dialog', () => {
     expect(mocks.waitForReceipt).not.toHaveBeenCalled()
     expect(mocks.setSwapAmount).not.toHaveBeenCalled()
     expect(mocks.createErrorToast).not.toHaveBeenCalled()
+    expect(mocks.track).not.toHaveBeenCalled()
   })
 })

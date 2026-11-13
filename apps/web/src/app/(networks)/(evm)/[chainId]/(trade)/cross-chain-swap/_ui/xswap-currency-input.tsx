@@ -24,7 +24,7 @@ export function XSwapCurrencyInput<
       <CurrencyInput
         {...props}
         className={classNames(
-          'border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl',
+          'border border-accent p-4 bg-muted rounded-2xl',
           className,
         )}
       />

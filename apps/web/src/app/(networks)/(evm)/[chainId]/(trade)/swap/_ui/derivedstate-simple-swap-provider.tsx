@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { type SupportedChainId, isSupportedChainId } from 'src/config'
 import type { DirectPool } from 'src/lib/swap/direct-pool'
+import { useUnifiedSwap } from 'src/lib/swap/unified-swap-context'
 import { useTokenWithCache } from 'src/lib/wagmi/hooks/tokens/use-token-with-cache'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, type Percent } from 'sushi'
@@ -93,6 +94,7 @@ function DerivedstateSimpleSwapProvider<
   const { chainId: routeChainId } = useParams()
   const { address } = useConnection()
   const svmAddress = useAccount('svm')
+  const unifiedSwap = useUnifiedSwap()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tokenTax, setTokenTax] = useState<Percent | false | undefined>(
@@ -299,9 +301,13 @@ function DerivedstateSimpleSwapProvider<
   // Update the URL with a new swapAmount
   const setSwapAmount = useCallback<(value: string) => void>(
     (value) => {
+      if (unifiedSwap) {
+        unifiedSwap.setAmount(value)
+        return
+      }
       updateSearchParams([{ name: 'swapAmount', value: value || null }])
     },
-    [updateSearchParams],
+    [updateSearchParams, unifiedSwap],
   )
 
   const token0Param = defaultedParams.get('token0') as string

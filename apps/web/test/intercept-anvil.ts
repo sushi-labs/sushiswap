@@ -16,6 +16,18 @@ const telemetryHosts = [
   'www.googletagmanager.com',
 ]
 
+const swapConfigPaths = new Set([
+  '/api/config/swap',
+  '/api/config/xswap',
+  '/api/config/near-intents-xswap',
+  '/api/config/layerzero-xswap',
+])
+const swapCatalogPaths = new Set([
+  '/api/cross-chain/value-transfer/chains',
+  '/api/cross-chain/value-transfer/tokens',
+  '/api/cross-chain/near-intents/tokens',
+])
+
 export type MockHandler = (
   request: Request,
 ) => Promise<Response | undefined> | Response | undefined
@@ -114,12 +126,19 @@ export class NetworkMocks {
       }
     }
     if (
+      request.method === 'GET' &&
       url.hostname === 'edge-config.vercel.com' &&
-      url.pathname.endsWith('/item/swap')
+      /\/item\/(swap|xswap)$/.test(url.pathname)
     )
       return Response.json({ maintenance: false })
-    if (url.pathname === '/api/config/swap')
+    if (request.method === 'GET' && url.pathname === '/api/config/swap')
       return Response.json({ maintenance: false })
+    if (request.method === 'GET' && swapConfigPaths.has(url.pathname))
+      return Response.json({ success: true, data: { maintenance: false } })
+    if (request.method === 'GET' && swapCatalogPaths.has(url.pathname))
+      return Response.json(
+        url.pathname.endsWith('/chains') ? { chains: [] } : { tokens: [] },
+      )
     if (url.pathname === `/price/v1/${chainId}`) return Response.json({})
     if (/\/(quote|swap)\/v7\//.test(url.pathname)) {
       // Intermediate token/amount edits may have no recorded quote. Executable
@@ -167,7 +186,10 @@ export class NetworkMocks {
     // Next's fixture passes same-origin requests through. Handle our local API
     // fixture and wallet RPC explicitly, preserving Next headers on other routes.
     await page.route(
-      (url) => this.isRpc(url) || url.pathname === '/api/config/swap',
+      (url) =>
+        this.isRpc(url) ||
+        swapConfigPaths.has(url.pathname) ||
+        swapCatalogPaths.has(url.pathname),
       async (route) => {
         const request = route.request()
         const response = await this.dispatch(

@@ -1,28 +1,22 @@
-import { createInfoToast, createToast } from '@sushiswap/notifications'
-import { SwapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { nativeFromChainId } from 'src/lib/currency-from-chain-id'
-import { waitForSvmSignature } from 'src/lib/svm/wait-for-svm-signature'
-import {
-  getCrossChainFeesBreakdown,
-  useLiFiStatus,
-} from 'src/lib/swap/cross-chain'
+import { getCrossChainFeesBreakdown } from 'src/lib/swap/cross-chain'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
 import { SLIPPAGE_WARNING_THRESHOLD } from 'src/lib/wagmi/systems/checker/slippage'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { Amount, getChainById } from 'sushi'
-import { type EvmChainId, isEvmChainId } from 'sushi/evm'
-import { isSvmChainId } from 'sushi/svm'
-import { usePublicClient } from 'wagmi'
-import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { Amount } from 'sushi'
 import { usePrice } from '~evm/_common/ui/price-provider/price-provider/use-price'
-import { StepState } from '../../confirmation-dialog'
+import {
+  getLifiTrackingId,
+  useSharedLifiTracking,
+} from '../../tracking-context'
 import { useLifiXSwap } from '../../xswap-provider'
 import type {
   CrossChainSwapTradeReviewBase,
   CrossChainSwapTradeReviewWithWarnings,
 } from '../types'
+import { useLifiTracking } from './use-lifi-tracking'
 
 export function useCrossChainSwapTradeReviewPost<
   TChainId0 extends LifiXSwapSupportedChainId,
@@ -37,153 +31,30 @@ export function useCrossChainSwapTradeReviewPost<
 
   const { tracking, step } = tradeReview
   const { groupTs, reset } = tracking
-  const trackingEnabled = Boolean(tradeId && tradeReview.hash)
-
-  const { data: lifiData } = useLiFiStatus<TChainId0, TChainId1>({
-    tradeId,
-    txHash: tradeReview.hash,
-    enabled: trackingEnabled,
+  const sharedTracking = useSharedLifiTracking()
+  const submittedSource = tradeReview.routeRef.current?.fromChainId ?? chainId0
+  const trackingId =
+    sharedTracking && tradeReview.hash
+      ? getLifiTrackingId(submittedSource, tradeReview.hash)
+      : tradeId
+  const lifiData = useLifiTracking<TChainId0, TChainId1>({
+    tradeId: trackingId,
+    hash: tradeReview.hash,
+    route: tradeReview.routeRef.current,
+    chainId0,
+    chainId1,
+    account: address,
+    groupTimestamp: groupTs.current,
+    sourceState: tradeReview.stepStates.source,
+    reset,
+    setStepStates: tracking.setStepStates,
+    enabled: !sharedTracking && Boolean(tradeId && tradeReview.hash),
+    effectsEnabled: !sharedTracking,
   })
-
-  const evmClient = usePublicClient({
-    chainId:
-      chainId1 !== undefined && isEvmChainId(chainId1) ? chainId1 : undefined,
-  })
-
-  const waitForSignature = useCallback(
-    async (txHash: TxHashFor<TChainId1>) => {
-      if (isSvmChainId(chainId1)) {
-        return waitForSvmSignature(txHash)
-      }
-
-      return evmClient.waitForTransactionReceipt({
-        hash: txHash as TxHashFor<EvmChainId>,
-      })
-    },
-    [evmClient, chainId1],
-  )
-
-  const { refetchChain } = useRefetchBalances()
-
-  //biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    const txHash = lifiData?.receiving?.txHash
-    const route = tradeReview.routeRef.current
-
-    if (!chainId1 || !groupTs.current || !txHash || !route) return
-
-    const destinationChainName =
-      (getChainById(route.toChainId) as { name?: string } | undefined)?.name ??
-      'Destination chain'
-
-    const summary =
-      route.step?.includedStepsWithoutFees?.[1]?.type === 'swap' ||
-      route.step?.includedStepsWithoutFees?.[2]?.type === 'swap'
-        ? {
-            pending: `Swapping ${
-              route.step?.includedStepsWithoutFees[2]?.action.fromToken?.symbol
-            } to ${route.amountOut?.toSignificant(
-              6,
-            )} ${route.amountOut?.currency.symbol}`,
-            completed: `Swapped ${
-              route.step?.includedStepsWithoutFees[2]?.action.fromToken?.symbol
-            } to ${route.amountOut?.toSignificant(
-              6,
-            )} ${route.amountOut?.currency.symbol}`,
-            failed: `Something went wrong when trying to swap ${
-              route.step?.includedStepsWithoutFees[2]?.action.fromToken?.symbol
-            } to ${route.amountOut?.toSignificant(
-              6,
-            )} ${route.amountOut?.currency.symbol}`,
-          }
-        : {
-            pending: `Receiving ${route.amountOut?.toSignificant(6)} ${
-              route.amountOut?.currency.symbol
-            } on ${destinationChainName}`,
-            completed: `Received ${route.amountOut?.toSignificant(6)} ${
-              route.amountOut?.currency.symbol
-            } on ${destinationChainName}`,
-            failed: `Something went wrong when trying to receive ${route.amountOut?.toSignificant(
-              6,
-            )} ${route.amountOut?.currency.symbol} on ${destinationChainName}`,
-          }
-
-    const waitPromise = waitForSignature(txHash)
-
-    const promise = waitPromise
-      .catch((error) => {
-        sendAnalyticsEvent(SwapEventName.XSWAP_DST_TRANSACTION_FAILED, {
-          chain_id: chainId1,
-          txHash,
-          error: error instanceof Error ? error.message : undefined,
-        })
-        throw error
-      })
-      .then(() => {
-        sendAnalyticsEvent(SwapEventName.XSWAP_DST_TRANSACTION_COMPLETED, {
-          chain_id: chainId1,
-          txHash,
-        })
-        refetchChain(chainId1)
-      })
-      .then(reset)
-
-    void createToast({
-      account: address,
-      type: 'swap',
-      chainId: chainId1,
-      txHash,
-      promise,
-      summary,
-      timestamp: new Date().getTime(),
-      groupTimestamp: groupTs.current,
-    })
-  }, [lifiData?.receiving?.txHash])
-
-  useEffect(() => {
-    if (lifiData?.status !== 'DONE') return
-
-    if (lifiData?.substatus === 'COMPLETED') {
-      tracking.setStepStates({
-        source: StepState.Success,
-        bridge: StepState.Success,
-        dest: StepState.Success,
-      })
-    }
-
-    if (lifiData?.substatus === 'PARTIAL') {
-      tracking.setStepStates({
-        source: StepState.Success,
-        bridge: StepState.Success,
-        dest: StepState.PartialSuccess,
-      })
-    }
-  }, [lifiData?.status, lifiData?.substatus, tracking.setStepStates])
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (
-      !lifiData?.lifiExplorerLink ||
-      !groupTs.current ||
-      tradeReview.stepStates.source !== StepState.Success ||
-      !chainId0 ||
-      !chainId1
-    ) {
-      return
-    }
-
-    void createInfoToast({
-      account: address,
-      type: 'xswap',
-      chainId: chainId0,
-      href: lifiData.lifiExplorerLink,
-      summary: `Bridging ${tradeReview.routeRef?.current?.fromToken?.symbol} from ${
-        getChainById(chainId0 as LifiXSwapSupportedChainId).name
-      } to ${getChainById(chainId1 as LifiXSwapSupportedChainId)?.name}`,
-      timestamp: new Date().getTime(),
-      groupTimestamp: groupTs.current,
-    })
-  }, [lifiData?.lifiExplorerLink])
+    if (!sharedTracking || !tradeReview.hash) return
+    return sharedTracking.subscribeToCompletion(trackingId, reset)
+  }, [sharedTracking, tradeReview.hash, trackingId, reset])
 
   const { showPriceImpactWarning } = useMemo(() => {
     const priceImpactSeverity = warningSeverity(tradeReview.step?.priceImpact)

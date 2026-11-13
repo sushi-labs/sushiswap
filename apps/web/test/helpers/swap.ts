@@ -45,9 +45,11 @@ export class SwapPage extends BaseActions {
   ): Promise<void> {
     await this.prepare(input, output, amount)
     await this.approve(input)
-    const button = this.page.locator('[testdata-id=swap-button]')
-    await expect(button).toHaveText(input.type === 'native' ? 'Wrap' : 'Unwrap')
-    await this.confirm(input, output)
+    await this.confirm(
+      input,
+      output,
+      input.type === 'native' ? 'Wrap' : 'Unwrap',
+    )
   }
 
   async swap(
@@ -105,8 +107,16 @@ export class SwapPage extends BaseActions {
     ).toBeEnabled()
   }
 
-  async confirm(input: EvmCurrency, output: EvmCurrency): Promise<void> {
+  async confirm(
+    input: EvmCurrency,
+    output: EvmCurrency,
+    expectedAction?: 'Wrap' | 'Unwrap',
+  ): Promise<void> {
     await this.review()
+    if (expectedAction)
+      await expect(
+        this.page.locator('[testdata-id=confirm-swap-button]'),
+      ).toHaveText(expectedAction)
     const beforeIn = await currencyBalance(this.fork.client, input)
     const beforeOut = await currencyBalance(this.fork.client, output)
     await this.transact(`Swap ${input.symbol} to ${output.symbol}`, () =>

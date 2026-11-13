@@ -8,7 +8,6 @@ import { StellarChainId } from 'sushi/stellar'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header as StellarHeader } from '~stellar/header'
 import { Header } from '../header'
-import { Providers } from './providers'
 
 const CROSS_CHAIN_SWAP_NETWORKS = getSortedChainIds([
   ...LIFI_XSWAP_SUPPORTED_CHAIN_IDS,
@@ -38,7 +37,7 @@ export default async function CrossChainSwapLayout(props: {
   }
 
   return (
-    <Providers chainId={chainId}>
+    <>
       {chainId === StellarChainId.STELLAR ? (
         <StellarHeader networks={CROSS_CHAIN_SWAP_NETWORKS} />
       ) : (
@@ -47,6 +46,6 @@ export default async function CrossChainSwapLayout(props: {
       <main className="lg:p-4 mt-16 mb-[86px] h-[clamp(600px,_calc(100vh_-_280px),_800px)]">
         {children}
       </main>
-    </Providers>
+    </>
   )
 }

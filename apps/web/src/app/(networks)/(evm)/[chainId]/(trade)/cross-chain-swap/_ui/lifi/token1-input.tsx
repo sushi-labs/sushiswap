@@ -3,6 +3,7 @@
 import type { LifiXSwapSupportedChainId } from 'src/config'
 import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { isWNativeSupported } from 'sushi'
+import { SwapInputLabel } from '../../../_ui/swap-input-label'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
 import { useXSwapForm } from '../xswap-form-provider'
 import { useLifiXSwap, useLifiXSwapSelectedTradeRoute } from './xswap-provider'
@@ -40,7 +41,7 @@ export function CrossChainSwapToken1Input<
       fetching={isFetching}
       currencyLoading={tokenLoading}
       allowNative={isWNativeSupported(chainId1)}
-      label="Buy"
+      label={<SwapInputLabel chainId={chainId1} type="OUTPUT" />}
       networks={networks}
       selectedNetwork={chainId1}
       onNetworkChange={form.setChainId1}

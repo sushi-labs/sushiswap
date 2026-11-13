@@ -1,5 +1,13 @@
 import { NativeAddress } from 'src/lib/constants'
-import { EvmNative, SUSHI, USDC, USDT, WBTC } from 'sushi/evm'
+import {
+  EvmChainId,
+  EvmNative,
+  type EvmToken,
+  SUSHI,
+  USDC,
+  USDT,
+  WBTC,
+} from 'sushi/evm'
 import * as z from 'zod'
 import { chainId } from './constants'
 import type { Fork } from './fixtures'
@@ -21,8 +29,50 @@ export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
     SUSHI[chainId],
     fork.token,
   ]
+  const browseNetworks = [EvmChainId.BASE, EvmChainId.ETHEREUM] as const
+
+  function tokenFixture(requestedChainId: unknown): {
+    native: EvmNative
+    tokens: EvmToken[]
+    forkBalances: boolean
+  } {
+    const requested = Number(requestedChainId)
+    if (requested === chainId) return { native, tokens, forkBalances: true }
+    const browseChain = browseNetworks.find((network) => network === requested)
+    if (browseChain === undefined)
+      throw new Error(`Unmocked token-list chain: ${String(requestedChainId)}`)
+    const browseNative = EvmNative.fromChainId(browseChain)
+    return {
+      native: browseNative,
+      tokens: [browseNative.wrap(), USDC[browseChain]],
+      forkBalances: false,
+    }
+  }
+
   mocks.add(async (request) => {
     const url = new URL(request.url)
+    const priceChain = browseNetworks.find(
+      (network) => url.pathname === `/price/v1/${network}`,
+    )
+    if (request.method === 'GET' && priceChain !== undefined) {
+      const prices = {
+        [NativeAddress]: 3000,
+        [EvmNative.fromChainId(priceChain).wrap().address]: 3000,
+        [USDC[priceChain].address]: 1,
+      }
+      if (request.headers.get('accept')?.includes('application/octet-stream')) {
+        const entries = Object.entries(prices)
+        const buffer = Buffer.alloc(entries.length * 24)
+        entries.forEach(([address, price], index) => {
+          Buffer.from(address.slice(2), 'hex').copy(buffer, index * 24)
+          buffer.writeFloatLE(price, index * 24 + 20)
+        })
+        return new Response(new Uint8Array(buffer), {
+          headers: { 'content-type': 'application/octet-stream' },
+        })
+      }
+      return Response.json(prices)
+    }
     if (
       url.hostname === 'api.merkl.xyz' &&
       (url.pathname === '/v4/campaigns' ||
@@ -50,6 +100,7 @@ export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
     if (operationName === 'V3PoolsByTokens')
       return Response.json({ data: { v3PoolsByTokens: [] } })
     if (operationName === 'TokenList') {
+      const { tokens } = tokenFixture(variables.chainId)
       const search =
         typeof variables.search === 'string'
           ? variables.search.toLowerCase()
@@ -74,6 +125,7 @@ export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
       })
     }
     if (operationName === 'TokenListBalances') {
+      const { native, tokens, forkBalances } = tokenFixture(variables.chainId)
       const currencies = variables.includeNative ? [native, ...tokens] : tokens
       return Response.json({
         data: {
@@ -86,8 +138,9 @@ export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
                 currency.type === 'native' ? NativeAddress : currency.address,
               approved: true,
               approvalStatus: 'APPROVED',
-              balance: (
-                await currencyBalance(fork.client, currency)
+              balance: (forkBalances
+                ? await currencyBalance(fork.client, currency)
+                : 0n
               ).toString(),
             })),
           ),

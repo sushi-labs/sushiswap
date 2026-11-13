@@ -58,10 +58,11 @@ async function fetchCatalog(): Promise<CatalogResponse> {
   }
 }
 
-export function useValueTransferCatalog(): ValueTransferCatalog {
+export function useValueTransferCatalog(enabled = true): ValueTransferCatalog {
   const query = useQuery({
     queryKey: ['value-transfer-catalog'],
     queryFn: fetchCatalog,
+    enabled,
     staleTime: 5 * 60_000,
     retry: 2,
   })

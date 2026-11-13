@@ -18,6 +18,8 @@ import {
 
 interface SimpleSwapProvider {
   children: ReactNode
+  form?: Pick<State, 'token0' | 'token1' | 'amount'> &
+    Pick<SwapApi, 'setToken0' | 'setToken1' | 'setAmount' | 'swapTokens'>
 }
 
 type State = {
@@ -62,10 +64,24 @@ type Actions =
   | { type: 'setLoadingPrice'; value: boolean }
   | { type: 'setPriceFetching'; value: boolean }
   | { type: 'setIsTransactionPending'; value: boolean }
+  | { type: 'setFormTokens'; token0: StellarToken; token1: StellarToken }
 
-export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
+export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({
+  children,
+  form,
+}) => {
   const reducer = (state: State, action: Actions): State => {
     switch (action.type) {
+      case 'setFormTokens':
+        return {
+          ...state,
+          token0: action.token0,
+          token1: action.token1,
+          outputAmount: 0n,
+          slippageAmount: 0,
+          priceImpact: null,
+          error: '',
+        }
       case 'setToken0':
         return { ...state, token0: action.value, amount: '' }
       case 'setToken1':
@@ -102,8 +118,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   }
 
   const [internalState, dispatch] = useReducer(reducer, {
-    token0: STELLAR_XLM[StellarChainId.STELLAR],
-    token1: STELLAR_USDT0[StellarChainId.STELLAR],
+    token0: form?.token0 ?? STELLAR_XLM[StellarChainId.STELLAR],
+    token1: form?.token1 ?? STELLAR_USDT0[StellarChainId.STELLAR],
     amount: '',
     slippageAmount: 0,
     outputAmount: 0n,
@@ -114,9 +130,30 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
     isTransactionPending: false,
   })
 
+  if (
+    form &&
+    (form.token0.address !== internalState.token0.address ||
+      form.token1.address !== internalState.token1.address)
+  ) {
+    // Discard the previous quote before rendering the new pair, while keeping
+    // the execution widget and its pending transaction state mounted.
+    dispatch({
+      type: 'setFormTokens',
+      token0: form.token0,
+      token1: form.token1,
+    })
+  }
+
   const state = useMemo(() => {
-    return { ...internalState }
-  }, [internalState])
+    return form
+      ? {
+          ...internalState,
+          token0: form.token0,
+          token1: form.token1,
+          amount: form.amount,
+        }
+      : internalState
+  }, [internalState, form])
 
   const setToken0 = useCallback(
     (token0: StellarToken) => {
@@ -141,8 +178,11 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   )
 
   const api = useMemo(() => {
-    const swapTokens = () => dispatch({ type: 'swapTokens' })
-    const setAmount = (value: string) => dispatch({ type: 'setAmount', value })
+    const swapTokens =
+      form?.swapTokens ?? (() => dispatch({ type: 'swapTokens' }))
+    const setAmount =
+      form?.setAmount ??
+      ((value: string) => dispatch({ type: 'setAmount', value }))
     const setSlippageAmount = (value: number) =>
       dispatch({ type: 'setSlippageAmount', value })
     const setOutputAmount = (value: bigint) =>
@@ -158,8 +198,8 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       dispatch({ type: 'setIsTransactionPending', value })
 
     return {
-      setToken0,
-      setToken1,
+      setToken0: form?.setToken0 ?? setToken0,
+      setToken1: form?.setToken1 ?? setToken1,
       swapTokens,
       setAmount,
       setSlippageAmount,
@@ -170,7 +210,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       setPriceFetching,
       setIsTransactionPending,
     }
-  }, [setToken0, setToken1])
+  }, [setToken0, setToken1, form])
 
   return (
     <SimpleSwapActionsContext.Provider value={api}>

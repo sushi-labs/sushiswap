@@ -1,8 +1,14 @@
 import { trace } from '@opentelemetry/api'
 import { type NextRequest, NextResponse } from 'next/server'
 import { getChainById, getChainByKey, isChainId, isChainKey } from 'sushi'
-import { getEvmChainById, isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
+import {
+  getEvmChainById,
+  isBladeChainId,
+  isEvmChainId,
+  isSushiSwapChainId,
+} from 'sushi/evm'
 import { SUPPORTED_NETWORKS } from './config'
+import { isUnifiedSwapChainId } from './lib/swap/unified-swap'
 
 export const config = {
   matcher: [
@@ -121,11 +127,23 @@ async function _proxy(req: NextRequest) {
         searchParams.has('token0') &&
         searchParams.has('token1')
       ) {
-        const token0 = searchParams.get('token0')?.toLowerCase()
-        const token1 = searchParams.get('token1')?.toLowerCase()
+        const token0 = searchParams.get('token0')
+        const token1 = searchParams.get('token1')
+        const unified = isUnifiedSwapChainId(chain.chainId)
+        const source = Number(searchParams.get('chainId0'))
+        const chainId0 =
+          unified && isUnifiedSwapChainId(source) ? source : chain.chainId
+        const destination = Number(searchParams.get('chainId1'))
+        const chainId1 =
+          unified && isUnifiedSwapChainId(destination) ? destination : chainId0
+        const sameToken =
+          isEvmChainId(chainId0) || chain.type === 'mvm'
+            ? token0?.toLowerCase() === token1?.toLowerCase()
+            : token0 === token1
 
-        // Tokens cant be the same
-        if (token0 === token1) {
+        // Identical addresses on different networks are different tokens.
+        // Aptos keeps its existing same-chain validation outside unified swap.
+        if (chainId0 === chainId1 && sameToken) {
           searchParams.delete('token0')
           searchParams.delete('token1')
           url.search = `?${searchParams.toString()}`

@@ -87,7 +87,7 @@ export function NearIntentsCrossChainSwapTradeStats() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
+      <div className="flex items-center justify-between gap-2 text-muted-foreground">
         {!hasValidQuote ? null : (
           <NearIntentsCrossChainSwapTokenRate
             amountInUsd={amountInUsd}
@@ -146,10 +146,8 @@ export function NearIntentsCrossChainSwapTradeStats() {
       <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
         <div className="pt-2 w-full flex flex-col gap-1">
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Est. received
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-sm text-muted-foreground">Est. received</span>
+            <span className="text-sm font-semibold text-right">
               {isLoading || !outputAmount ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : (
@@ -159,10 +157,8 @@ export function NearIntentsCrossChainSwapTradeStats() {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Min. received
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-sm text-muted-foreground">Min. received</span>
+            <span className="text-sm font-semibold text-right">
               {isLoading || !minimumOutputAmount ? (
                 <SkeletonBox className="h-4 py-0.5 w-[100px]" />
               ) : (
@@ -172,10 +168,8 @@ export function NearIntentsCrossChainSwapTradeStats() {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              {feeLabel}
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-sm text-muted-foreground">{feeLabel}</span>
+            <span className="text-sm font-semibold text-right">
               {isLoading || feeUsd === undefined ? (
                 <SkeletonBox className="h-4 py-0.5 w-[100px]" />
               ) : (
@@ -185,10 +179,8 @@ export function NearIntentsCrossChainSwapTradeStats() {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Network fee
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-sm text-muted-foreground">Network fee</span>
+            <span className="text-sm font-semibold text-right">
               {isLoading || networkFee.isLoading ? (
                 <SkeletonBox className="h-4 py-0.5 w-[120px]" />
               ) : networkFee.amount && networkFee.symbol ? (
@@ -200,10 +192,8 @@ export function NearIntentsCrossChainSwapTradeStats() {
           </div>
 
           <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-slate-400">
-              Est. arrival
-            </span>
-            <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
+            <span className="text-sm text-muted-foreground">Est. arrival</span>
+            <span className="text-sm font-semibold text-right">
               {isLoading ? (
                 <SkeletonBox className="h-4 py-0.5 w-[80px]" />
               ) : (
@@ -217,9 +207,7 @@ export function NearIntentsCrossChainSwapTradeStats() {
               <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
                 Status
               </span>
-              <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
-                {status}
-              </span>
+              <span className="font-semibold text-right">{status}</span>
             </div>
           ) : null}
           <Recipient chainId={chainId1} recipient={recipient} />
@@ -258,7 +246,7 @@ function Recipient({
       <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
         Recipient
       </span>
-      <span className="font-semibold text-gray-700 text-right dark:text-slate-400">
+      <span className="font-semibold text-right">
         <a
           target="_blank"
           href={href}

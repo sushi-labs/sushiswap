@@ -19,14 +19,13 @@ import {
   useDialog,
 } from 'src/lib/transaction-dialog'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
-import { getChainById } from 'sushi'
-import { CrossChainSwapConfirmationDialog } from '../cross-chain-swap-confirmation-dialog'
-import { CrossChainSwapConfirmationContent } from '../lifi/confirmation-dialog'
 import { DialogBody } from '../lifi/trade-review-dialog/dialog-body'
 import { useXSwapRoutingLock } from '../xswap-routing-context'
-import { getLayerZeroExecutionStepStates } from './execution-step-states'
+import { LayerZeroExecutionConfirmation } from './execution-confirmation'
+import { useSharedLayerZeroExecutions } from './execution-state-context'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
 import { useLayerZeroExecute } from './hooks/use-layerzero-execute'
+import { LayerZeroPendingExecutions } from './pending-executions'
 import { LayerZeroTradeDetails } from './trade-details'
 import { useLayerZeroXSwap } from './xswap-provider'
 
@@ -50,6 +49,7 @@ function LayerZeroTradeReviewDialogContent({
     previewQuote,
     sourceNetworkFee,
   } = useLayerZeroXSwap()
+  const sharedExecutions = useSharedLayerZeroExecutions()
   const execute = useLayerZeroExecute()
   const { approved } = useApproved(APPROVE_TAG_XSWAP)
   const { open: confirmationOpen, setOpen: setConfirmationOpen } = useDialog(
@@ -62,29 +62,8 @@ function LayerZeroTradeReviewDialogContent({
   )
   const [executionId, setExecutionId] = useState<string>()
   const execution = executions.find((item) => item.id === executionId)
-  const submittedQuote = execution?.quote ?? execute.variables?.quote
-  const submittedAmounts = submittedQuote
-    ? getLayerZeroTradeAmounts(submittedQuote)
-    : undefined
-  const error = execution
-    ? execution.delivery?.status === 'SUCCESS'
-      ? undefined
-      : execution.error
-    : execute.error?.message
-  const stepStates = getLayerZeroExecutionStepStates(execution, Boolean(error))
-  const bridgeUrl =
-    execution?.delivery?.explorerUrl ??
-    (execution?.txHash
-      ? `https://layerzeroscan.com/tx/${encodeURIComponent(execution.txHash)}`
-      : undefined)
   const quote = previewQuote.data
   const amounts = quote ? getLayerZeroTradeAmounts(quote) : undefined
-  const pending = executions.filter(
-    (item) =>
-      (item.txHash || item.submitted) &&
-      item.sourceStatus !== 'FAILED' &&
-      item.delivery?.status !== 'SUCCESS',
-  )
 
   return (
     <>
@@ -142,62 +121,21 @@ function LayerZeroTradeReviewDialogContent({
           </>
         )}
       </DialogReview>
-      {pending.length ? (
-        <div className="mt-2 flex flex-col gap-1">
-          {pending.map((item) => (
-            <Button
-              key={item.id}
-              variant="secondary"
-              fullWidth
-              onClick={() => {
-                setExecutionId(item.id)
-                setConfirmationOpen(true)
-              }}
-            >
-              Track Swap: {getChainById(item.quote.fromChainId).name} →{' '}
-              {getChainById(item.quote.toChainId).name}
-            </Button>
-          ))}
-        </div>
+      {!sharedExecutions ? (
+        <LayerZeroPendingExecutions
+          executions={executions}
+          onSelect={(id) => {
+            setExecutionId(id)
+            setConfirmationOpen(true)
+          }}
+        />
       ) : null}
-      <CrossChainSwapConfirmationDialog
-        stepStates={stepStates}
-        closeDisabled={
-          isSubmitting && !execution?.txHash && !execution?.submitted
-        }
-        description={
-          execution?.delivery?.status === 'ACTION_REQUIRED' ? (
-            'This transfer needs attention. Open the transfer explorer for recovery details.'
-          ) : submittedQuote ? (
-            <CrossChainSwapConfirmationContent
-              chainId0={submittedQuote.fromChainId}
-              chainId1={submittedQuote.toChainId}
-              txHash={execution?.txHash}
-              dstTxHash={execution?.delivery?.destinationTxHash}
-              bridgeUrl={bridgeUrl}
-              dialogState={stepStates}
-              recipient={submittedQuote.recipient}
-              amountIn={submittedAmounts?.amountIn.toSignificant(6)}
-              amountOut={submittedAmounts?.amountOut.toSignificant(6)}
-              token0Symbol={submittedAmounts?.amountIn.currency.symbol}
-              token1Symbol={submittedAmounts?.amountOut.currency.symbol}
-            />
-          ) : (
-            'Please sign order with your wallet.'
-          )
-        }
-      >
-        {bridgeUrl ? (
-          <a
-            href={bridgeUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue text-sm text-center"
-          >
-            Track transfer ↗
-          </a>
-        ) : null}
-      </CrossChainSwapConfirmationDialog>
+      <LayerZeroExecutionConfirmation
+        execution={execution}
+        fallbackQuote={execute.variables?.quote}
+        error={execute.error?.message}
+        isSubmitting={isSubmitting}
+      />
     </>
   )
 }

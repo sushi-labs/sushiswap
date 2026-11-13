@@ -87,7 +87,7 @@ export function LayerZeroTradeStats(): ReactNode {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-2 text-gray-700 dark:text-slate-400">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Button
           className="!text-xs !font-medium !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
           variant="ghost"
@@ -105,12 +105,7 @@ export function LayerZeroTradeStats(): ReactNode {
             : amounts.amountOut.currency.symbol}
         </Button>
         <div className="ml-auto flex items-center gap-0.5">
-          <div
-            className={classNames(
-              'text-xs font-medium flex items-center transition-opacity',
-              isDetailsCollapsed ? 'opacity-100' : 'opacity-0',
-            )}
-          >
+          <div className={classNames('text-xs font-medium flex items-center')}>
             <GasIcon className="inline-block w-3 h-4 mr-0.5" />
             <SourceNetworkFee
               fee={sourceNetworkFee}
@@ -189,15 +184,15 @@ export function LayerZeroTradeStats(): ReactNode {
           </Stat>
           <Stat title="Provider">LayerZero</Stat>
           {recipient ? (
-            <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-              <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+            <div className="flex justify-between items-center border-t border-accent mt-2 pt-2">
+              <span className="font-medium text-sm text-muted-foreground">
                 Recipient
               </span>
               <a
                 href={getChainById(chainId1).getAccountUrl(recipient)}
                 target="_blank"
                 rel="noreferrer"
-                className="font-semibold text-sm text-gray-700 dark:text-slate-300"
+                className="font-semibold text-sm"
               >
                 {shortenAddress(recipient)}
               </a>
@@ -215,12 +210,10 @@ function Stat({
 }: { title: ReactNode; children: ReactNode }): ReactNode {
   return (
     <div className="flex justify-between items-center gap-2">
-      <span className="text-sm text-gray-700 dark:text-slate-400 inline-flex items-center gap-1">
+      <span className="text-sm text-muted-foreground inline-flex items-center gap-1">
         {title}
       </span>
-      <span className="text-sm font-semibold text-gray-700 text-right dark:text-slate-400">
-        {children}
-      </span>
+      <span className="text-sm font-semibold text-right">{children}</span>
     </div>
   )
 }

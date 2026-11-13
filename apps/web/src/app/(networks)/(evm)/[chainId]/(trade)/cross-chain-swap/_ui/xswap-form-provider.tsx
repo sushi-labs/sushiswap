@@ -22,6 +22,7 @@ import {
   type NearIntentsSupportedChainId,
   isNearIntentsChainId,
 } from 'src/lib/swap/near-intents'
+import { useUnifiedSwap } from 'src/lib/swap/unified-swap-context'
 import { EvmChainId } from 'sushi/evm'
 
 type XSwapChainId = LifiXSwapSupportedChainId | NearIntentsSupportedChainId
@@ -66,12 +67,14 @@ const XSwapFormContext = createContext<XSwapFormState | null>(null)
 interface XSwapFormProviderProps {
   children: React.ReactNode
   defaultChainId: XSwapChainId
+  unified?: boolean
 }
 
 /* Holds the URL/path-derived form layer for the cross-chain swap route:
  * chainId0 (path), chainId1/token0/token1/swapAmount (query). Chain-agnostic
  * — domain providers (LiFi, Near Intents) layer their own token resolution
  * and default-filling on top of this hook.
+ * Unified swap pages keep both chain IDs in the query and allow equal chains.
  *
  * URL example:
  * /ethereum/cross-chain-swap?chainId1=42161&token0=NATIVE&token1=0x6b35...
@@ -79,7 +82,9 @@ interface XSwapFormProviderProps {
 const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
   children,
   defaultChainId,
+  unified = false,
 }) => {
+  const unifiedSwap = useUnifiedSwap()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [tradeId, setTradeId] = useState(nanoid())
@@ -88,8 +93,14 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
   useEffect(() => setChainId0State(defaultChainId), [defaultChainId])
 
-  const chainId0 = isXSwapChainId(chainId0State)
-    ? chainId0State
+  const chainId0Raw = Number(searchParams.get('chainId0') ?? Number.NaN)
+  const sourceChainId = unified
+    ? isXSwapChainId(chainId0Raw)
+      ? chainId0Raw
+      : defaultChainId
+    : chainId0State
+  const chainId0 = isXSwapChainId(sourceChainId)
+    ? sourceChainId
     : EvmChainId.ETHEREUM
 
   const chainId1Raw = Number(searchParams.get('chainId1') ?? Number.NaN)
@@ -127,6 +138,17 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
     const token0 = params.get('token0')
     const token1 = params.get('token1')
 
+    if (unified) {
+      updateSearchParams([
+        { name: 'swapAmount', value: null },
+        { name: 'token0', value: token1 },
+        { name: 'token1', value: token0 },
+        { name: 'chainId0', value: chainId1.toString() },
+        { name: 'chainId1', value: chainId0.toString() },
+      ])
+      return
+    }
+
     const url = `${replaceNetworkSlug(chainId1, pathname)}?${createQueryString([
       { name: 'swapAmount', value: null },
       { name: 'token0', value: token1 },
@@ -136,10 +158,28 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
     history.pushState(null, '', url)
     setChainId0State(chainId1)
-  }, [chainId0, chainId1, pathname, searchParams, createQueryString])
+  }, [
+    chainId0,
+    chainId1,
+    pathname,
+    searchParams,
+    createQueryString,
+    unified,
+    updateSearchParams,
+  ])
 
   const setChainId0 = useCallback(
     (newChainId: XSwapChainId) => {
+      if (unified) {
+        if (chainId0 === newChainId) return
+        updateSearchParams([
+          { name: 'chainId0', value: newChainId.toString() },
+          { name: 'swapAmount', value: null },
+          { name: 'token0', value: null },
+        ])
+        return
+      }
+
       if (chainId1 === newChainId) {
         switchTokens()
         return
@@ -155,11 +195,29 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
       history.pushState(null, '', url)
       setChainId0State(newChainId)
     },
-    [chainId1, pathname, createQueryString, switchTokens],
+    [
+      chainId0,
+      chainId1,
+      pathname,
+      createQueryString,
+      switchTokens,
+      unified,
+      updateSearchParams,
+    ],
   )
 
   const setChainId1 = useCallback(
     (newChainId: XSwapChainId) => {
+      if (unified) {
+        if (chainId1 === newChainId) return
+        updateSearchParams([
+          { name: 'swapAmount', value: null },
+          { name: 'chainId1', value: newChainId.toString() },
+          { name: 'token1', value: null },
+        ])
+        return
+      }
+
       if (chainId0 === newChainId) {
         switchTokens()
         return
@@ -170,7 +228,7 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
         { name: 'token1', value: null },
       ])
     },
-    [chainId0, updateSearchParams, switchTokens],
+    [chainId0, chainId1, unified, updateSearchParams, switchTokens],
   )
 
   const setToken0Param = useCallback(
@@ -199,9 +257,13 @@ const XSwapFormProvider: FC<XSwapFormProviderProps> = ({
 
   const setSwapAmount = useCallback(
     (swapAmount: string) => {
+      if (unifiedSwap) {
+        unifiedSwap.setAmount(swapAmount)
+        return
+      }
       updateSearchParams([{ name: 'swapAmount', value: swapAmount || null }])
     },
-    [updateSearchParams],
+    [updateSearchParams, unifiedSwap],
   )
 
   const value = useMemo<XSwapFormState>(

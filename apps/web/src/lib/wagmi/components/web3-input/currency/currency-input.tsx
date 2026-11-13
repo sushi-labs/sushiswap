@@ -13,6 +13,7 @@ import {
   useState,
   useTransition,
 } from 'react'
+import { useSwapTokenSelector } from 'src/lib/swap/swap-token-selector-context'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Amount, type Percent, getChainById } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
@@ -100,6 +101,7 @@ function CurrencyInput<
     selectedNetwork,
     onNetworkChange,
   } = props
+  const SwapTokenSelector = useSwapTokenSelector()
   const isMounted = useIsMounted()
 
   const [localValue, setLocalValue] = useState<string>('')
@@ -170,6 +172,78 @@ function CurrencyInput<
   const selector = useMemo(() => {
     if (!props.onSelect) return null
 
+    const trigger = (
+      <Button
+        data-state={currencyLoading ? 'inactive' : 'active'}
+        size="lg"
+        variant={currency ? 'secondary' : 'default'}
+        id={id}
+        type="button"
+        className={classNames(
+          currency ? 'pl-2 pr-3' : '',
+          networks || SwapTokenSelector ? '!h-11' : '',
+          currencyClassName,
+          '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
+        )}
+      >
+        {currency ? (
+          networks || SwapTokenSelector ? (
+            <>
+              <div className="w-[28px] h-[28px] mr-1.5">
+                <Badge
+                  className="border border-slate-900 rounded-full z-[11]"
+                  position="bottom-right"
+                  badgeContent={
+                    <NetworkIcon
+                      chainId={currency.chainId}
+                      width={16}
+                      height={16}
+                    />
+                  }
+                >
+                  <Currency.Icon
+                    disableLink
+                    currency={currency}
+                    width={28}
+                    height={28}
+                  />
+                </Badge>
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="text-base leading-5">{currency.symbol}</span>
+                <span className="text-xs leading-3 text-muted-foreground">
+                  {getChainById(currency.chainId).name}
+                </span>
+              </div>
+              <SelectIcon className="!w-3 !h-3" />
+            </>
+          ) : (
+            <>
+              <div className="w-[28px] h-[28px] mr-0.5">
+                <Currency.Icon
+                  disableLink
+                  currency={currency}
+                  width={28}
+                  height={28}
+                />
+              </div>
+              <span className="text-base">{currency.symbol}</span>
+              <SelectIcon className="!w-3 !h-3" />
+            </>
+          )
+        ) : (
+          'Select token'
+        )}
+      </Button>
+    )
+
+    if (SwapTokenSelector)
+      return (
+        <SwapTokenSelector side={type} currency={currency}>
+          {trigger}
+        </SwapTokenSelector>
+      )
+
     return (
       <TokenSelector
         id={id}
@@ -184,71 +258,12 @@ function CurrencyInput<
         selectedNetwork={selectedNetwork}
         onNetworkSelect={onNetworkChange}
       >
-        <Button
-          data-state={currencyLoading ? 'inactive' : 'active'}
-          size="lg"
-          variant={currency ? 'secondary' : 'default'}
-          id={id}
-          type="button"
-          className={classNames(
-            currency ? 'pl-2 pr-3' : '',
-            networks ? '!h-11' : '',
-            currencyClassName,
-            '!rounded-full data-[state=inactive]:hidden data-[state=active]:flex',
-          )}
-        >
-          {currency ? (
-            networks ? (
-              <>
-                <div className="w-[28px] h-[28px] mr-1.5">
-                  <Badge
-                    className="border border-slate-900 rounded-full z-[11]"
-                    position="bottom-right"
-                    badgeContent={
-                      <NetworkIcon
-                        chainId={currency.chainId}
-                        width={16}
-                        height={16}
-                      />
-                    }
-                  >
-                    <Currency.Icon
-                      disableLink
-                      currency={currency}
-                      width={28}
-                      height={28}
-                    />
-                  </Badge>
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-base leading-5">{currency.symbol}</span>
-                  <span className="text-xs leading-3 text-muted-foreground">
-                    {getChainById(currency.chainId).name}
-                  </span>
-                </div>
-                <SelectIcon className="!w-3 !h-3" />
-              </>
-            ) : (
-              <>
-                <div className="w-[28px] h-[28px] mr-0.5">
-                  <Currency.Icon
-                    disableLink
-                    currency={currency}
-                    width={28}
-                    height={28}
-                  />
-                </div>
-                <span className="text-base">{currency.symbol}</span>
-                <SelectIcon className="!w-3 !h-3" />
-              </>
-            )
-          ) : (
-            'Select token'
-          )}
-        </Button>
+        {trigger}
       </TokenSelector>
     )
   }, [
+    SwapTokenSelector,
+    type,
     currencyClassName,
     currencyLoading,
     id,

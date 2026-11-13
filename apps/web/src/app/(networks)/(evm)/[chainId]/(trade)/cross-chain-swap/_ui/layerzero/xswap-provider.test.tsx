@@ -3,14 +3,22 @@ import { type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { LayerZeroExecutionContext } from './execution-state-context'
+import type { LayerZeroExecutionState } from './hooks/use-layerzero-executions'
 import { LayerZeroXSwapProvider, useLayerZeroXSwap } from './xswap-provider'
 
-const { useForm, useQuote, useCatalog, setSwapAmount } = vi.hoisted(() => ({
-  useForm: vi.fn(),
-  useQuote: vi.fn(),
-  useCatalog: vi.fn(),
-  setSwapAmount: vi.fn(),
-}))
+const { useForm, useQuote, useCatalog, setSwapAmount, useLocalExecutions } =
+  vi.hoisted(() => ({
+    useForm: vi.fn(),
+    useQuote: vi.fn(),
+    useCatalog: vi.fn(),
+    setSwapAmount: vi.fn(),
+    useLocalExecutions: vi.fn(() => ({
+      executions: [],
+      isSubmitting: false,
+      mutate: {},
+    })),
+  }))
 vi.mock('../lifi/xswap-provider', () => ({
   useLifiXSwap: () => ({ state: {} }),
 }))
@@ -25,11 +33,7 @@ vi.mock('./hooks/use-value-transfer-catalog', () => ({
   useValueTransferCatalog: useCatalog,
 }))
 vi.mock('./hooks/use-layerzero-executions', () => ({
-  useLayerZeroExecutions: () => ({
-    executions: [],
-    isSubmitting: false,
-    mutate: {},
-  }),
+  useLayerZeroExecutions: useLocalExecutions,
 }))
 vi.mock('./hooks/use-layerzero-source-network-fee', () => ({
   useLayerZeroSourceNetworkFee: () => ({ status: 'unavailable' }),
@@ -129,5 +133,41 @@ describe('Value Transfer provider', () => {
     render()
     expect(context.state.swapAmount).toBeUndefined()
     expect(useQuote.mock.lastCall?.[0].amount).toBeUndefined()
+  })
+
+  it('reuses shared executions without starting a second tracker', () => {
+    const executionState: LayerZeroExecutionState = {
+      executions: [],
+      isSubmitting: true,
+      mutate: {
+        beginExecution: vi.fn(() => true),
+        updateExecution: vi.fn(),
+        failExecution: vi.fn(),
+        finishSubmission: vi.fn(),
+      },
+    }
+    act(() =>
+      root.render(
+        <LayerZeroExecutionContext.Provider value={executionState}>
+          <LayerZeroXSwapProvider>
+            <Harness />
+          </LayerZeroXSwapProvider>
+        </LayerZeroExecutionContext.Provider>,
+      ),
+    )
+    expect(useLocalExecutions).not.toHaveBeenCalled()
+    expect(context.state.executions).toBe(executionState.executions)
+    expect(context.state.isSubmitting).toBe(true)
+    expect(context.mutate.beginExecution).toBe(
+      executionState.mutate.beginExecution,
+    )
+  })
+
+  it('does not clear the next swap amount after its runtime unmounts', () => {
+    render()
+    const clearSwapAmount = context.mutate.clearSwapAmountIfUnchanged
+    act(() => root.render(null))
+    clearSwapAmount(trade)
+    expect(setSwapAmount).not.toHaveBeenCalled()
   })
 })
