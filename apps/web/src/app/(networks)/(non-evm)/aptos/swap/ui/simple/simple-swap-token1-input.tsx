@@ -1,4 +1,6 @@
 import React from 'react'
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
+import { ChainId } from 'sushi'
 import { formatNumberWithDecimals } from '~aptos/_common/lib/common/format-number-with-decimals'
 import { CurrencyInput } from '~aptos/_common/ui/currency/currency-input/currency-input'
 import {
@@ -27,9 +29,9 @@ export const SimpleSwapToken1Input = () => {
       disabled={true}
       type="OUTPUT"
       value={outputSwapTokenAmount}
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       disableInsufficientBalanceError={true}
-      label="Buy"
+      label={<SwapInputLabel chainId={ChainId.APTOS} type="OUTPUT" />}
     />
   )
 }

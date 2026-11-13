@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useCurrencyPrice } from 'src/app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-currency-price'
 import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
 import { Amount, formatNumber, formatUSD } from 'sushi'
+import { ReviewAmountValue } from '../../../_ui/review-amount-value'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 
 export function SourceNetworkFee({
@@ -12,7 +13,7 @@ export function SourceNetworkFee({
 }: {
   fee: LayerZeroSourceNetworkFee
   currency: CurrencyFor<ValueTransferChainId>
-  display?: 'native' | 'usd'
+  display?: 'native' | 'usd' | 'review'
 }): ReactNode {
   const price = useCurrencyPrice({
     currency,
@@ -42,6 +43,15 @@ export function SourceNetworkFee({
       const nativeFee = `${formatNumber(amount.toString())} ${currency.symbol}`
       if (display === 'usd')
         return amountUSD !== undefined || price.isLoading ? usd : nativeFee
+      if (display === 'review')
+        return (
+          <ReviewAmountValue
+            usdValue={amountUSD}
+            isUsdLoading={price.isLoading}
+          >
+            {nativeFee}
+          </ReviewAmountValue>
+        )
       return (
         <span>
           {nativeFee} <span className="text-muted-foreground">({usd})</span>

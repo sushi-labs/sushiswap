@@ -2,6 +2,7 @@
 
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isWNativeSupported } from 'sushi'
+import { SwapInputLabel } from '../../../(trade)/_ui/swap-input-label'
 import {
   useDerivedStateSwapWidget,
   useSwapWidgetTradeQuote,
@@ -20,7 +21,7 @@ export const SwapWidgetToken1Input = () => {
       id="swap-to"
       type="OUTPUT"
       disabled
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       value={quote?.amountOut?.toSignificant() ?? ''}
       chainId={chainId}
       onSelect={setToken1}
@@ -29,7 +30,7 @@ export const SwapWidgetToken1Input = () => {
       fetching={isFetching}
       disableMaxButton
       allowNative={isWNativeSupported(chainId)}
-      label="Buy"
+      label={<SwapInputLabel chainId={chainId} type="OUTPUT" />}
     />
   )
 }

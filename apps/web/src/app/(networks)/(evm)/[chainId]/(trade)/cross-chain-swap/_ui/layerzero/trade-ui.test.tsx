@@ -1,6 +1,11 @@
 /** @vitest-environment jsdom */
 
-import { type ComponentProps, type PropsWithChildren, act } from 'react'
+import {
+  type ComponentProps,
+  type PropsWithChildren,
+  type ReactNode,
+  act,
+} from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import type { ValueTransferTrade as LayerZeroQuote } from 'src/lib/swap/value-transfer/trade'
 import { valueTransferTestTrade } from 'src/lib/swap/value-transfer/trade-test-fixtures'
@@ -26,6 +31,9 @@ vi.mock(
 )
 vi.mock('src/lib/hooks/use-slippage-tolerance', () => ({
   useSlippageTolerance: () => [{ toPercentString: () => '0.5%' }],
+}))
+vi.mock('src/lib/wallet/hooks/use-account', () => ({
+  useAccount: () => undefined,
 }))
 vi.mock('@sushiswap/telemetry', () => ({
   BrowserEvent: {},
@@ -62,13 +70,17 @@ vi.mock('@sushiswap/ui', () => {
     Collapsible: ({ open, children }: PropsWithChildren<{ open: boolean }>) =>
       open ? children : null,
     Explainer: () => null,
+    Currency: { Icon: () => null },
     SkeletonCircle: () => null,
     SkeletonText: () => null,
     SelectIcon: () => null,
     classNames: (...values: unknown[]) => values.filter(Boolean).join(' '),
     List: Object.assign(Block, {
       Control: Block,
-      KeyValue: ({ title, children }: PropsWithChildren<{ title: string }>) => (
+      KeyValue: ({
+        title,
+        children,
+      }: PropsWithChildren<{ title: ReactNode }>) => (
         <div>
           {title}: {children}
         </div>
@@ -207,7 +219,7 @@ describe('LayerZero trade UI', () => {
     expect(container.querySelector('button')).toBeNull()
   })
 
-  it('renders the LiFi-style route and recipient cards with expandable review details', () => {
+  it('renders the swap amounts, route, recipient, and all review details', () => {
     act(() =>
       root.render(
         <LayerZeroTradeDetails
@@ -221,21 +233,24 @@ describe('LayerZero trade UI', () => {
       ),
     )
     expect(container.textContent).toContain('Protocol fees: $0.10')
+    expect(container.textContent).toContain('You sell: 1USDT')
+    expect(container.textContent).toContain('Estimated received: 0.9USDT0')
     expect(container.textContent).toContain('Estimated arrival: ~17 minutes')
     expect(container.textContent).toContain('Send 1 USDT')
     expect(container.textContent).toContain('Receive 0.9 USDT0')
-    expect(container.textContent).toContain('ETHEREUM')
-    expect(container.textContent).toContain('STELLAR')
-    expect(container.textContent).not.toContain('Min. received after slippage')
-    click('Toggle review details')
-    expect(container.textContent).toContain('Network fee: 0.0005 ETH ($1.50)')
-    expect(container.querySelector('.text-muted-foreground')?.textContent).toBe(
-      '($1.50)',
-    )
+    expect(container.textContent).toContain('Ethereum')
+    expect(container.textContent).toContain('Stellar')
+    expect(
+      container.querySelector('[aria-label="Toggle review details"]'),
+    ).toBeNull()
+    expect(container.textContent).toContain('Network fee: 0.0005 ETH$1.50')
+    const usdValues = [
+      ...container.querySelectorAll('.text-xs.text-muted-foreground'),
+    ].map((element) => element.textContent)
+    expect(usdValues).toEqual(['$2.00', '$1.90', '$1.89', '$1.50', '$3.30'])
     expect(container.textContent).not.toMatch(/up to/i)
-    expect(container.textContent).toContain(
-      'Min. received after slippage: 0.8955 USDT0',
-    )
+    expect(container.textContent).toContain('Minimum received: 0.8955 USDT0')
+    expect(container.textContent).toContain('Slippage tolerance: 0.5%')
     expect(container.textContent).toContain('Source native fee: 0.0011 ETH')
     expect(container.querySelector('a')?.href).toContain(quote.recipient)
   })
@@ -309,9 +324,8 @@ describe('LayerZero trade UI', () => {
         />,
       ),
     )
-    click('Toggle review details')
     expect(container.textContent).toContain('Source native fee: 0.11 XLM')
-    expect(container.textContent).toContain('Network fee: 0.01 XLM ($0.003)')
+    expect(container.textContent).toContain('Network fee: 0.01 XLM$0.003')
   })
 
   it.each([
@@ -367,8 +381,26 @@ describe('LayerZero trade UI', () => {
         />,
       ),
     )
-    click('Toggle review details')
-    expect(container.textContent).toContain('Network fee: 0.0005 ETH (N/A)')
+    expect(container.textContent).toContain('Network fee: 0.0005 ETH')
+    expect(container.textContent).not.toContain('N/A')
+    expect(
+      [...container.querySelectorAll('.text-xs.text-muted-foreground')].map(
+        (element) => element.textContent,
+      ),
+    ).toEqual(['$2.00', '$1.90', '$1.89'])
+  })
+
+  it('keeps a known zero review fee in both native and USD units', () => {
+    act(() =>
+      root.render(
+        <SourceNetworkFee
+          fee={{ status: 'estimated', amount: 0n }}
+          currency={EvmNative.fromChainId(EvmChainId.ETHEREUM)}
+          display="review"
+        />,
+      ),
+    )
+    expect(container.textContent).toBe('0.00 ETH$0.00')
   })
 
   it('shows the LiFi-style USD skeleton while the gas price loads', () => {

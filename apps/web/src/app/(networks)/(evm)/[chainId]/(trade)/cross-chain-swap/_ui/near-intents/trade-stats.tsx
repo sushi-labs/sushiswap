@@ -1,23 +1,12 @@
 'use client'
 
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import {
-  Button,
-  Collapsible,
-  Explainer,
-  IconButton,
-  SkeletonBox,
-  SkeletonCircle,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
-import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
+import { Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import { useEffect, useMemo, useState } from 'react'
 import {
   NEAR_INTENTS_UI_FEE_DECIMAL,
@@ -35,6 +24,13 @@ import {
 } from 'sushi/stellar'
 import { getStellarAddressLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
+import { TokenRate } from '../../../_ui/token-rate'
+import { TradeStatRow } from '../../../_ui/trade-stat-row'
+import {
+  TradeStats,
+  TradeStatsSummary,
+  TradeStatsToggle,
+} from '../../../_ui/trade-stats'
 import { useNearIntentsSourceNetworkFee } from './hooks/use-near-intents-source-network-fee'
 import { useNearIntentsXSwap } from './xswap-provider'
 
@@ -86,134 +82,99 @@ export function NearIntentsCrossChainSwapTradeStats() {
     networkFee.amountUsd === undefined ? 'N/A' : formatUSD(networkFee.amountUsd)
 
   return (
-    <>
-      <div className="flex items-center justify-between gap-2 text-muted-foreground">
-        {!hasValidQuote ? null : (
-          <NearIntentsCrossChainSwapTokenRate
-            amountInUsd={amountInUsd}
-            amountOutUsd={amountOutUsd}
-            isLoading={isLoading}
-            outputAmount={outputAmount}
-            swapAmount={swapAmount}
-          />
-        )}
-
-        {!hasValidQuote ? null : isLoading || networkFee.isLoading ? (
-          <div className="flex items-center gap-0.5">
-            <SkeletonText fontSize="sm" className="!w-[60px]" />
-            <SkeletonCircle radius={26} />
-          </div>
-        ) : (
-          <div className="flex items-center gap-0.5">
-            <div
-              className={classNames(
-                'text-xs font-medium flex items-center transition-opacity',
-                isDetailsCollapsed ? 'opacity-100' : 'opacity-0',
-              )}
-            >
-              <GasIcon className="inline-block w-3 h-4 mr-0.5" />
-              {networkFeeLabel}
-            </div>
-            <TraceEvent
-              events={[BrowserEvent.onClick]}
-              name={InterfaceEventName.XSWAP_DETAILS_TOGGLE_CLICKED}
-              element={InterfaceElementName.XSWAP_DETAILS_TOGGLE}
-              properties={{
-                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
-                feeUsd: networkFee.amountUsd ?? 'N/A',
-                chainId0,
-                chainId1,
-              }}
-            >
-              <IconButton
-                icon={ChevronDownIcon}
-                size="xs"
-                name="Toggle Swap Details"
-                onClick={() => {
-                  setIsDetailsCollapsed(!isDetailsCollapsed)
-                  setWasDetailsTouched(true)
-                }}
-                className={classNames(
-                  isDetailsCollapsed ? '' : 'rotate-180',
-                  'transition-transform',
-                )}
-                variant="ghost"
+    <TradeStats
+      open={hasValidQuote && !isDetailsCollapsed}
+      summary={
+        <TradeStatsSummary
+          rate={
+            !hasValidQuote ? null : (
+              <NearIntentsCrossChainSwapTokenRate
+                amountInUsd={amountInUsd}
+                amountOutUsd={amountOutUsd}
+                isLoading={isLoading}
+                outputAmount={outputAmount}
+                swapAmount={swapAmount}
               />
-            </TraceEvent>
-          </div>
+            )
+          }
+          showFees={hasValidQuote}
+          isLoading={isLoading || networkFee.isLoading}
+          fee={networkFeeLabel}
+        >
+          <TraceEvent
+            events={[BrowserEvent.onClick]}
+            name={InterfaceEventName.XSWAP_DETAILS_TOGGLE_CLICKED}
+            element={InterfaceElementName.XSWAP_DETAILS_TOGGLE}
+            properties={{
+              detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+              feeUsd: networkFee.amountUsd ?? 'N/A',
+              chainId0,
+              chainId1,
+            }}
+          >
+            <TradeStatsToggle
+              collapsed={isDetailsCollapsed}
+              onClick={() => {
+                setIsDetailsCollapsed(!isDetailsCollapsed)
+                setWasDetailsTouched(true)
+              }}
+            />
+          </TraceEvent>
+        </TradeStatsSummary>
+      }
+    >
+      <TradeStatRow title="Est. received">
+        {isLoading || !outputAmount ? (
+          <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+        ) : (
+          `${outputAmount.toSignificant(6)} ${token1?.symbol ?? ''}`
         )}
-      </div>
-      <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
-        <div className="pt-2 w-full flex flex-col gap-1">
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-muted-foreground">Est. received</span>
-            <span className="text-sm font-semibold text-right">
-              {isLoading || !outputAmount ? (
-                <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-              ) : (
-                `${outputAmount.toSignificant(6)} ${token1?.symbol ?? ''}`
-              )}
-            </span>
-          </div>
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-muted-foreground">Min. received</span>
-            <span className="text-sm font-semibold text-right">
-              {isLoading || !minimumOutputAmount ? (
-                <SkeletonBox className="h-4 py-0.5 w-[100px]" />
-              ) : (
-                `${minimumOutputAmount.toSignificant(6)} ${token1?.symbol ?? ''}`
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Min. received">
+        {isLoading || !minimumOutputAmount ? (
+          <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+        ) : (
+          `${minimumOutputAmount.toSignificant(6)} ${token1?.symbol ?? ''}`
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-muted-foreground">{feeLabel}</span>
-            <span className="text-sm font-semibold text-right">
-              {isLoading || feeUsd === undefined ? (
-                <SkeletonBox className="h-4 py-0.5 w-[100px]" />
-              ) : (
-                formatUSD(feeUsd)
-              )}
-            </span>
-          </div>
+      <TradeStatRow title={feeLabel}>
+        {isLoading || feeUsd === undefined ? (
+          <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+        ) : (
+          formatUSD(feeUsd)
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-muted-foreground">Network fee</span>
-            <span className="text-sm font-semibold text-right">
-              {isLoading || networkFee.isLoading ? (
-                <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-              ) : networkFee.amount && networkFee.symbol ? (
-                `${networkFee.amount} ${networkFee.symbol} (${networkFeeLabel})`
-              ) : (
-                networkFeeLabel
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Network fee">
+        {isLoading || networkFee.isLoading ? (
+          <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+        ) : networkFee.amount && networkFee.symbol ? (
+          `${networkFee.amount} ${networkFee.symbol} (${networkFeeLabel})`
+        ) : (
+          networkFeeLabel
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-sm text-muted-foreground">Est. arrival</span>
-            <span className="text-sm font-semibold text-right">
-              {isLoading ? (
-                <SkeletonBox className="h-4 py-0.5 w-[80px]" />
-              ) : (
-                (previewQuote.executionDuration ?? 'N/A')
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Est. arrival">
+        {isLoading ? (
+          <SkeletonBox className="h-4 py-0.5 w-[80px]" />
+        ) : (
+          (previewQuote.executionDuration ?? 'N/A')
+        )}
+      </TradeStatRow>
 
-          {status ? (
-            <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-              <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
-                Status
-              </span>
-              <span className="font-semibold text-right">{status}</span>
-            </div>
-          ) : null}
-          <Recipient chainId={chainId1} recipient={recipient} />
+      {status ? (
+        <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
+          <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
+            Status
+          </span>
+          <span className="font-semibold text-right">{status}</span>
         </div>
-      </Collapsible>
-    </>
+      ) : null}
+      <Recipient chainId={chainId1} recipient={recipient} />
+    </TradeStats>
   )
 }
 
@@ -242,18 +203,14 @@ function Recipient({
     : getChainById(chainId).getAccountUrl(recipient as EvmAddress)
 
   return (
-    <div className="flex justify-between items-center border-t border-gray-200 dark:border-slate-200/5 mt-2 pt-2">
-      <span className="font-medium text-sm text-gray-700 dark:text-slate-300">
-        Recipient
-      </span>
-      <span className="font-semibold text-right">
+    <div className="flex justify-between items-center border-t border-accent mt-2 pt-2">
+      <span className="text-sm text-muted-foreground">Recipient</span>
+      <span className="text-right text-sm">
         <a
           target="_blank"
           href={href}
           className={classNames(
-            address !== recipient
-              ? 'text-yellow-600'
-              : 'text-gray-700 dark:text-slate-300',
+            address !== recipient ? 'text-yellow-600' : 'text-primary',
             'transition-all flex gap-1 items-center',
           )}
           rel="noreferrer"
@@ -308,23 +265,18 @@ function NearIntentsCrossChainSwapTokenRate({
       : quotePrice.toString({ fixed: 6 })
   }, [invert, outputAmount, swapAmount])
 
-  if (isLoading || !swapAmount || !outputAmount || !price) {
-    return <SkeletonText fontSize="sm" className="!w-[100px]" />
-  }
-
   return (
-    <Button
-      className="!text-xs !font-medium !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
-      variant="ghost"
-      size="xs"
-      onClick={() => setInvert((prev) => !prev)}
-    >
-      1 {invert ? swapAmount.currency.symbol : outputAmount.currency.symbol} ={' '}
-      {price}{' '}
-      {invert ? outputAmount.currency.symbol : swapAmount.currency.symbol}
-      <span className="text-gray-600 dark:text-slate-500 !font-normal">
-        ({formatUSD(Number(invert ? amountInUsd : amountOutUsd) || 0)})
-      </span>
-    </Button>
+    <TokenRate
+      baseSymbol={
+        invert ? swapAmount?.currency.symbol : outputAmount?.currency.symbol
+      }
+      quoteSymbol={
+        invert ? outputAmount?.currency.symbol : swapAmount?.currency.symbol
+      }
+      rate={price}
+      fiatValue={formatUSD(Number(invert ? amountInUsd : amountOutUsd) || 0)}
+      isLoading={isLoading || !swapAmount || !outputAmount || !price}
+      onInvert={() => setInvert((prev) => !prev)}
+    />
   )
 }

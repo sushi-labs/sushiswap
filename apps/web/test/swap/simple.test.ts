@@ -1,5 +1,5 @@
 import { NativeAddress } from 'src/lib/constants'
-import { Amount } from 'sushi'
+import { Amount, getChainById } from 'sushi'
 import { EvmChainId, EvmNative, USDC, USDT, WBTC } from 'sushi/evm'
 import { chainId, nativeAmount } from '../constants'
 import { expect, test } from '../fixtures'
@@ -17,10 +17,13 @@ test('selecting a network and token switches swap modes on the same page', async
   mocks,
 }, testInfo) => {
   const swapPage = new SwapPage(page, chainId, fork, mocks)
-  await swapPage.goTo(`/${chainId}/swap`)
+  await swapPage.goTo(`/${getChainById(chainId).key}/swap`)
   await expect(page.locator('#swap-to')).toBeVisible()
   const initialUrl = page.url()
   const destination = EvmChainId.BASE
+  await expect(
+    page.getByRole('button', { name: 'Advanced', exact: true }),
+  ).toBeDisabled()
 
   await page.locator('#swap-to').click()
   await page.getByRole('button', { name: 'More networks' }).click()
@@ -57,8 +60,21 @@ test('selecting a network and token switches swap modes on the same page', async
   await expect
     .poll(() => new URL(page.url()).searchParams.get('chainId0'))
     .toBe(String(destination))
+  await expect
+    .poll(() => new URL(page.url()).pathname)
+    .toBe(`/${getChainById(destination).key}/swap`)
   await expect(page.locator('#swap-from')).toContainText('USDC')
   await expect(page.locator('#swap-to')).toContainText('ETH')
+  await expect(
+    page.locator('[testdata-id=network-selector-button]'),
+  ).toContainText('Base')
+  const advanced = page.getByRole('button', { name: 'Advanced', exact: true })
+  await expect(advanced).toBeEnabled()
+  await advanced.hover()
+  await expect(
+    page.getByRole('link', { name: 'Limit', exact: true }),
+  ).toHaveAttribute('href', '/base/limit')
+  await page.locator('#swap-from').hover()
 
   await page.reload()
   await expect(page.locator('#swap-from')).toContainText('USDC')
@@ -71,7 +87,13 @@ test('selecting a network and token switches swap modes on the same page', async
   )
 
   await page.goBack()
-  await expect(page.locator('#swap-from')).toContainText(native.symbol)
+  await expect(page.locator('#swap-from:visible')).toContainText(native.symbol)
+  await expect
+    .poll(() => new URL(page.url()).pathname)
+    .toBe(`/${getChainById(chainId).key}/swap`)
+  await expect(
+    page.getByRole('button', { name: 'Advanced', exact: true }),
+  ).toBeDisabled()
   expect(new URL(page.url()).searchParams.get('chainId0')).toBe(String(chainId))
   expect(new URL(page.url()).searchParams.get('chainId1')).toBe(
     String(destination),

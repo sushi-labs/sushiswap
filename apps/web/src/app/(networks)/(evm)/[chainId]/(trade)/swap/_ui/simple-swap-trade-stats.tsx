@@ -1,6 +1,5 @@
 'use client'
 
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   BrowserEvent,
@@ -8,16 +7,7 @@ import {
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import {
-  Collapsible,
-  Explainer,
-  IconButton,
-  SkeletonBox,
-  SkeletonCircle,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
-import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
+import { Explainer, SkeletonBox, classNames } from '@sushiswap/ui'
 import React, { useEffect, useMemo, type FC } from 'react'
 import {
   warningSeverity,
@@ -34,6 +24,12 @@ import {
   isSvmChainId,
 } from 'sushi/svm'
 import { useDetailsInteractionTracker } from '~evm/[chainId]/(trade)/_ui/details-interaction-tracker-provider'
+import { TradeStatRow } from '../../_ui/trade-stat-row'
+import {
+  TradeStats,
+  TradeStatsSummary,
+  TradeStatsToggle,
+} from '../../_ui/trade-stats'
 import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
@@ -130,146 +126,113 @@ export const SimpleSwapTradeStats: FC = () => {
   }, [chainId])
 
   return (
-    <>
-      <div className="flex items-center justify-between gap-2 text-muted-foreground">
-        {!hasValidQuote ? null : <SimpleSwapTokenRate />}
-        {!hasValidQuote ? null : loading || !quote?.gasSpentUsd ? (
-          <div className="flex items-center gap-0.5">
-            <SkeletonText fontSize="sm" className="!w-[60px]" />
-            <SkeletonCircle radius={26} />
-          </div>
-        ) : (
-          <div className="flex items-center gap-0.5">
-            <div
-              className={classNames(
-                'text-xs md:text-sm text-primary font-medium flex items-center',
-              )}
-            >
-              <GasIcon className="inline-block w-3 h-3 mr-0.5" />
-              {chainId === EvmChainId.SKALE_EUROPA
-                ? 'FREE'
-                : quote?.gasSpentUsd
-                  ? `${formatUSD(quote.gasSpentUsd)}`
-                  : null}
-            </div>
-            <TraceEvent
-              events={[BrowserEvent.onClick]}
-              name={InterfaceEventName.SWAP_DETAILS_TOGGLE_CLICKED}
-              element={InterfaceElementName.SWAP_DETAILS_TOGGLE}
-              properties={{
-                detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
-                feeUsd: quote?.fee ? quote.fee : 'N/A',
-                chainId,
+    <TradeStats
+      open={hasValidQuote && !isDetailsCollapsed}
+      summary={
+        <TradeStatsSummary
+          rate={!hasValidQuote ? null : <SimpleSwapTokenRate />}
+          showFees={hasValidQuote}
+          isLoading={loading || !quote?.gasSpentUsd}
+          fee={
+            chainId === EvmChainId.SKALE_EUROPA
+              ? 'FREE'
+              : quote?.gasSpentUsd
+                ? `${formatUSD(quote.gasSpentUsd)}`
+                : null
+          }
+          feeClassName="gap-1"
+          gasIconClassName="h-3"
+        >
+          <TraceEvent
+            events={[BrowserEvent.onClick]}
+            name={InterfaceEventName.SWAP_DETAILS_TOGGLE_CLICKED}
+            element={InterfaceElementName.SWAP_DETAILS_TOGGLE}
+            properties={{
+              detailsCollapsedState: isDetailsCollapsed ? 'closed' : 'open',
+              feeUsd: quote?.fee ? quote.fee : 'N/A',
+              chainId,
+            }}
+          >
+            <TradeStatsToggle
+              collapsed={isDetailsCollapsed}
+              onClick={() => {
+                setIsDetailsCollapsed(!isDetailsCollapsed)
+                setWasDetailsTouched(true)
               }}
-            >
-              <IconButton
-                icon={ChevronDownIcon}
-                size="xs"
-                name="Toggle Swap Details"
-                onClick={() => {
-                  setIsDetailsCollapsed(!isDetailsCollapsed)
-                  setWasDetailsTouched(true)
-                }}
-                className={classNames(
-                  isDetailsCollapsed ? '' : 'rotate-180',
-                  'transition-transform',
-                )}
-                variant="ghost"
-              />
-            </TraceEvent>
-          </div>
+            />
+          </TraceEvent>
+        </TradeStatsSummary>
+      }
+    >
+      <TradeStatRow
+        title="Price impact"
+        fontWeight="normal"
+        valueClassName={warningSeverityClassName(
+          warningSeverity(quote?.priceImpact),
         )}
-      </div>
-      <Collapsible open={hasValidQuote && !isDetailsCollapsed}>
-        <div className="pt-2 w-full flex flex-col gap-1 border-t border-accent text-sm">
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-muted-foreground">Price impact</span>
-            <span
-              className={classNames(
-                warningSeverityClassName(warningSeverity(quote?.priceImpact)),
-                'text-right',
-              )}
-            >
-              {loading || !quote?.priceImpact ? (
-                <SkeletonBox className="h-4 py-0.5 w-[40px]" />
-              ) : quote?.priceImpact ? (
-                `${
-                  quote?.priceImpact?.lt(ZERO)
-                    ? '+'
-                    : quote?.priceImpact?.gt(ZERO)
-                      ? '-'
-                      : ''
-                }${Math.abs(Number(quote?.priceImpact?.toString({ fixed: 2 })))}%`
-              ) : null}
-            </span>
-          </div>
+      >
+        {loading || !quote?.priceImpact ? (
+          <SkeletonBox className="h-4 py-0.5 w-[40px]" />
+        ) : quote?.priceImpact ? (
+          `${
+            quote?.priceImpact?.lt(ZERO)
+              ? '+'
+              : quote?.priceImpact?.gt(ZERO)
+                ? '-'
+                : ''
+          }${Math.abs(Number(quote?.priceImpact?.toString({ fixed: 2 })))}%`
+        ) : null}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-muted-foreground">Max. received</span>
-            <span className="text-right">
-              {loading || !quote?.amountOut ? (
-                <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-              ) : (
-                `${quote?.amountOut?.toSignificant(6) ?? '0.00'} ${
-                  quote?.amountOut?.currency?.symbol ?? ''
-                }`
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Max. received" fontWeight="normal">
+        {loading || !quote?.amountOut ? (
+          <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+        ) : (
+          `${quote?.amountOut?.toSignificant(6) ?? '0.00'} ${
+            quote?.amountOut?.currency?.symbol ?? ''
+          }`
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2">
-            <span className="text-muted-foreground">Min. received</span>
-            <span className="text-right">
-              {loading || !quote?.minAmountOut ? (
-                <SkeletonBox className="h-4 py-0.5 w-[100px]" />
-              ) : (
-                `${quote?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
-                  quote?.amountOut?.currency?.symbol ?? ''
-                }`
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Min. received" fontWeight="normal">
+        {loading || !quote?.minAmountOut ? (
+          <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+        ) : (
+          `${quote?.minAmountOut?.toSignificant(6) ?? '0.00'} ${
+            quote?.amountOut?.currency?.symbol ?? ''
+          }`
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Fee</span>
-            <span className="text-right">
-              {loading || !quote?.fee ? (
-                <SkeletonBox className="h-4 py-0.5 w-[100px]" />
-              ) : (
-                `${quote?.fee}`
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Fee" fontWeight="normal">
+        {loading || !quote?.fee ? (
+          <SkeletonBox className="h-4 py-0.5 w-[100px]" />
+        ) : (
+          `${quote?.fee}`
+        )}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Network fee</span>
-            <span className="text-right">
-              {chainId === EvmChainId.SKALE_EUROPA ? (
-                'FREE'
-              ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
-                <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-              ) : quote?.gasSpent ? (
-                `${quote.gasSpent} ${nativeSymbol} ${
-                  quote?.gasSpentUsd ? `($${quote.gasSpentUsd})` : ''
-                }`
-              ) : null}
-            </span>
-          </div>
+      <TradeStatRow title="Network fee" fontWeight="normal">
+        {chainId === EvmChainId.SKALE_EUROPA ? (
+          'FREE'
+        ) : loading || !quote?.gasSpent || quote.gasSpent === '0' ? (
+          <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+        ) : quote?.gasSpent ? (
+          `${quote.gasSpent} ${nativeSymbol} ${
+            quote?.gasSpentUsd ? `($${quote.gasSpentUsd})` : ''
+          }`
+        ) : null}
+      </TradeStatRow>
 
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Routing source</span>
-            <span className="text-sm text-right">
-              {loading || !quote ? (
-                <SkeletonBox className="h-4 py-0.5 w-[120px]" />
-              ) : (
-                'SushiSwap API'
-              )}
-            </span>
-          </div>
+      <TradeStatRow title="Routing source" fontWeight="normal">
+        {loading || !quote ? (
+          <SkeletonBox className="h-4 py-0.5 w-[120px]" />
+        ) : (
+          'SushiSwap API'
+        )}
+      </TradeStatRow>
 
-          <Recipient chainId={chainId} recipient={recipient} />
-        </div>
-      </Collapsible>
-    </>
+      <Recipient chainId={chainId} recipient={recipient} />
+    </TradeStats>
   )
 }

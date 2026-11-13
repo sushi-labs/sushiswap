@@ -17,6 +17,7 @@ import { EdgeProvider } from '~stellar/_common/providers/edge-config-provider'
 import { SimpleSwapProvider } from '~stellar/_common/ui/swap/simple/simple-swap-provider/simple-swap-provider'
 import { SimpleSwapWidget } from '~stellar/_common/ui/swap/simple/simple-swap-widget'
 import { Providers as StellarWalletProvider } from '~stellar/providers'
+import { SwapInputLabel } from '../../_ui/swap-input-label'
 import { useValueTransferCatalog } from '../../cross-chain-swap/_ui/layerzero/hooks/use-value-transfer-catalog'
 
 function useStellarSwapToken(
@@ -136,7 +137,9 @@ export function StellarUnifiedSwapRuntime({
               value={swap?.swapAmountString ?? ''}
               onChange={swap?.setAmount}
               onSelect={setToken0}
-              label="Sell"
+              label={
+                <SwapInputLabel chainId={StellarChainId.STELLAR} type="INPUT" />
+              }
             />
             <CurrencyInput
               id="swap-to"
@@ -147,7 +150,12 @@ export function StellarUnifiedSwapRuntime({
               onSelect={setToken1}
               disabled
               disableMaxButton
-              label="Buy"
+              label={
+                <SwapInputLabel
+                  chainId={StellarChainId.STELLAR}
+                  type="OUTPUT"
+                />
+              }
             />
             <Message size="sm">
               {token0Loading || token1Loading

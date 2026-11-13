@@ -49,7 +49,6 @@ export type CrossChainSwapTradeReviewState<
         substatus?: string
       }
     | undefined
-  amountOutUSD: string | undefined
   amountOutMinUSD: string | undefined
   price?: number
   isPriceLoading: boolean

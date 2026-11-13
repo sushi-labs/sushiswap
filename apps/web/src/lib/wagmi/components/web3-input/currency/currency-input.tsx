@@ -1,21 +1,21 @@
 'use client'
 
 import { useIsMounted } from '@sushiswap/hooks'
-import { Badge, Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
+import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
 import { SkeletonBox } from '@sushiswap/ui'
-import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import {
   type ReactNode,
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useState,
   useTransition,
 } from 'react'
 import { useSwapTokenSelector } from 'src/lib/swap/swap-token-selector-context'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
-import { Amount, type Percent, getChainById } from 'sushi'
+import { Amount, type Percent } from 'sushi'
 import type { BalanceChainId } from '~evm/_common/ui/balance-provider/types'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 import { useCurrencyPrice } from '~evm/_common/ui/price-provider/price-provider/use-currency-price'
@@ -103,6 +103,7 @@ function CurrencyInput<
   } = props
   const SwapTokenSelector = useSwapTokenSelector()
   const isMounted = useIsMounted()
+  const labelId = useId()
 
   const [localValue, setLocalValue] = useState<string>('')
   const address = useAccount(chainId)
@@ -187,50 +188,18 @@ function CurrencyInput<
         )}
       >
         {currency ? (
-          networks || SwapTokenSelector ? (
-            <>
-              <div className="w-[28px] h-[28px] mr-1.5">
-                <Badge
-                  className="border border-slate-900 rounded-full z-[11]"
-                  position="bottom-right"
-                  badgeContent={
-                    <NetworkIcon
-                      chainId={currency.chainId}
-                      width={16}
-                      height={16}
-                    />
-                  }
-                >
-                  <Currency.Icon
-                    disableLink
-                    currency={currency}
-                    width={28}
-                    height={28}
-                  />
-                </Badge>
-              </div>
-              <div className="flex flex-col items-start">
-                <span className="text-base leading-5">{currency.symbol}</span>
-                <span className="text-xs leading-3 text-muted-foreground">
-                  {getChainById(currency.chainId).name}
-                </span>
-              </div>
-              <SelectIcon className="!w-3 !h-3" />
-            </>
-          ) : (
-            <>
-              <div className="w-[28px] h-[28px] mr-0.5">
-                <Currency.Icon
-                  disableLink
-                  currency={currency}
-                  width={28}
-                  height={28}
-                />
-              </div>
-              <span className="text-base">{currency.symbol}</span>
-              <SelectIcon className="!w-3 !h-3" />
-            </>
-          )
+          <>
+            <div className="w-[28px] h-[28px] mr-0.5">
+              <Currency.Icon
+                disableLink
+                currency={currency}
+                width={28}
+                height={28}
+              />
+            </div>
+            <span className="text-base">{currency.symbol}</span>
+            <SelectIcon className="!w-3 !h-3" />
+          </>
         ) : (
           'Select token'
         )}
@@ -292,7 +261,9 @@ function CurrencyInput<
         className="transition-all data-[state=inactive]:hidden data-[state=active]:block absolute inset-0 overflow-hidden p-4 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_.5s_infinite] before:bg-gradient-to-r before:from-transparent dark:before:via-slate-50/10 before:via-gray-900/[0.07] before:to-transparent"
       />
       {label ? (
-        <span className="text-sm text-muted-foreground">{label}</span>
+        <span id={labelId} className="text-sm text-muted-foreground">
+          {label}
+        </span>
       ) : null}
       <div className="relative flex items-center gap-4 py-1">
         {selector}
@@ -343,6 +314,9 @@ function CurrencyInput<
             <TextField
               testdata-id={`${id}-input`}
               aria-label={typeof label === 'string' ? label : undefined}
+              aria-labelledby={
+                typeof label !== 'string' && label ? labelId : undefined
+              }
               type="number"
               variant="naked"
               disabled={disabled}

@@ -2,7 +2,6 @@
 
 import {
   Currency,
-  Explainer,
   List,
   SkeletonBox,
   SkeletonText,
@@ -15,6 +14,7 @@ import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
 } from 'src/lib/hooks/react-query/trade/types'
+import { useAmountUsd } from 'src/lib/hooks/use-amount-usd'
 import {
   type warningSeverity,
   warningSeverityClassName,
@@ -22,6 +22,9 @@ import {
 import { ChainId, type Percent, ZERO, getChainById } from 'sushi'
 import { EvmNative } from 'sushi/evm'
 import { SvmNative, isSvmChainId } from 'sushi/svm'
+import { ReviewAmountValue } from '../../../_ui/review-amount-value'
+import { ReviewDetailRow } from '../../../_ui/review-detail-row'
+import { TradeAmounts } from './trade-amounts'
 
 export function TradeDetails<TChainId extends SupportedChainId>({
   chainId,
@@ -46,100 +49,36 @@ export function TradeDetails<TChainId extends SupportedChainId>({
     }
     return EvmNative.fromChainId(chainId).symbol
   }, [chainId])
+  const minimumUsd = useAmountUsd({
+    amount: trade?.minAmountOut,
+    enabled: isSwap,
+  })
 
   return (
     <div className="flex flex-col gap-2">
       {isSwap ? (
-        <List className="!pt-0">
-          <List.Control
-            className={classNames('!bg-transparent !rounded-2xl !py-2 !px-0')}
-          >
-            <List.KeyValue
-              title={
-                <div className="text-muted-foreground whitespace-nowrap">
-                  You sell
-                </div>
-              }
-              fontWeight="normal"
-              className="!py-2"
-              flex
-            >
-              <div className="flex items-center gap-1 text-lg">
-                {isSwapQueryFetching ? (
-                  <SkeletonText align="right" fontSize="lg" />
-                ) : trade?.amountIn ? (
-                  <div className="flex items-center gap-1">
-                    {trade?.amountIn?.toSignificant(6)}
-                    <Currency.Icon
-                      currency={trade?.amountIn?.currency}
-                      width={16}
-                      height={16}
-                    />
-                    {trade?.amountIn?.currency.symbol}
-                  </div>
-                ) : (
-                  '-'
-                )}
-              </div>
-            </List.KeyValue>
-            <List.KeyValue
-              title={
-                <div className="text-muted-foreground whitespace-nowrap">
-                  Estimated received
-                </div>
-              }
-              fontWeight="normal"
-              className="!py-2"
-              flex
-            >
-              <div className="flex items-center gap-1 text-lg">
-                {isSwapQueryFetching ? (
-                  <SkeletonText align="right" fontSize="lg" />
-                ) : trade?.amountOut ? (
-                  <div className="flex items-center gap-1">
-                    {trade?.amountOut?.toSignificant(6)}
-                    <Currency.Icon
-                      currency={trade?.amountOut?.currency}
-                      width={16}
-                      height={16}
-                    />
-                    {trade?.amountOut?.currency.symbol}
-                  </div>
-                ) : (
-                  '-'
-                )}
-              </div>
-            </List.KeyValue>
-          </List.Control>
-        </List>
+        <TradeAmounts
+          amountIn={trade?.amountIn}
+          amountOut={trade?.amountOut}
+          isLoading={isSwapQueryFetching}
+        />
       ) : null}
       <List className="!pt-0 !gap-0">
         <List.Control
           className={classNames('border-transparent !bg-transparent !px-0')}
         >
-          <List.KeyValue
-            title={<div className="text-muted-foreground">Network</div>}
-            fontWeight="normal"
-            className="!py-1.5 !px-0"
-          >
+          <ReviewDetailRow title="Network">
             <div className="flex items-center gap-1 ">
               <NetworkIcon chainId={chainId} className="w-4 h-4" />
               {getChainById(chainId as SupportedChainId).name}
             </div>
-          </List.KeyValue>
+          </ReviewDetailRow>
           {isSwap && (
-            <List.KeyValue
-              className="!py-1.5 !px-0"
-              fontWeight="normal"
-              title={
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <span>Price impact</span>
-                  <Explainer>
-                    <div>
-                      The impact your trade has on the market price of this
-                      pool.
-                    </div>
-                  </Explainer>
+            <ReviewDetailRow
+              title="Price impact"
+              explanation={
+                <div>
+                  The impact your trade has on the market price of this pool.
                 </div>
               }
             >
@@ -163,107 +102,103 @@ export function TradeDetails<TChainId extends SupportedChainId>({
                   '-'
                 )}
               </span>
-            </List.KeyValue>
+            </ReviewDetailRow>
           )}
           {isSwap && trade?.tokenTax && (
-            <List.KeyValue
-              className="!py-1.5 !px-0"
-              title={
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <span>Token tax</span>
-                  <Explainer>
-                    <div>
-                      Certain tokens incur a fee upon purchase or sale.
-                      Sushiswap does not collect any of these fees.
-                    </div>
-                  </Explainer>
+            <ReviewDetailRow
+              title="Token tax"
+              explanation={
+                <div>
+                  Certain tokens incur a fee upon purchase or sale. Sushiswap
+                  does not collect any of these fees.
                 </div>
               }
-              fontWeight="normal"
             >
               <span className="text-right text-yellow">
                 {trade.tokenTax.toPercentString()}
               </span>
-            </List.KeyValue>
+            </ReviewDetailRow>
           )}
           {isSwap && (
             <>
-              <List.KeyValue
-                className="!py-1.5 !px-0"
-                fontWeight="normal"
-                subtitle=""
-                title={
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <span>Slippage tolerance</span>
-                    <Explainer>
-                      <div>
-                        The percentage of slippage you are willing to accept.
-                        Slippage is the difference between the expected price
-                        and the actual price at which the trade is executed. The
-                        transaction will revert if the price changes more than
-                        this amount.
-                      </div>
-                    </Explainer>
+              <ReviewDetailRow
+                title="Slippage tolerance"
+                explanation={
+                  <div>
+                    The percentage of slippage you are willing to accept.
+                    Slippage is the difference between the expected price and
+                    the actual price at which the trade is executed. The
+                    transaction will revert if the price changes more than this
+                    amount.
                   </div>
                 }
               >
                 {slippagePercent.toPercentString()}
-              </List.KeyValue>
-              <List.KeyValue
-                className="!py-1.5 !px-0"
-                fontWeight="normal"
-                title={
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <span>Minimum received</span>
-                    <Explainer>
-                      <div>
-                        The minimum amount you are guaranteed to receive after
-                        slippage:{' '}
-                        {isSwapQueryFetching ? (
-                          <SkeletonText align="right" fontSize="sm" />
-                        ) : trade?.minAmountOut ? (
-                          `${trade?.minAmountOut?.toSignificant(6)} ${token1Symbol}`
-                        ) : (
-                          '-'
-                        )}
-                      </div>
-                    </Explainer>
+              </ReviewDetailRow>
+              <ReviewDetailRow
+                title="Minimum received"
+                explanation={
+                  <div>
+                    The minimum amount you are guaranteed to receive after
+                    slippage:{' '}
+                    {isSwapQueryFetching ? (
+                      <SkeletonText align="right" fontSize="sm" />
+                    ) : trade?.minAmountOut ? (
+                      `${trade?.minAmountOut?.toSignificant(6)} ${token1Symbol}`
+                    ) : (
+                      '-'
+                    )}
                   </div>
                 }
               >
-                {isSwapQueryFetching ? (
-                  <SkeletonText align="right" fontSize="sm" />
-                ) : trade?.minAmountOut ? (
-                  <div className="flex items-center gap-1">
-                    {trade?.minAmountOut?.toSignificant(6)}
-                    <Currency.Icon
-                      currency={trade?.minAmountOut?.currency}
-                      width={16}
-                      height={16}
-                    />
-                    {token1Symbol}
-                  </div>
-                ) : (
-                  '-'
-                )}
-              </List.KeyValue>
+                <ReviewAmountValue
+                  usdValue={minimumUsd.data}
+                  isUsdLoading={isSwapQueryFetching || minimumUsd.isLoading}
+                >
+                  {isSwapQueryFetching ? (
+                    <SkeletonText align="right" fontSize="sm" />
+                  ) : trade?.minAmountOut ? (
+                    <div className="flex items-center gap-1">
+                      {trade?.minAmountOut?.toSignificant(6)}
+                      <Currency.Icon
+                        currency={trade?.minAmountOut?.currency}
+                        width={16}
+                        height={16}
+                      />
+                      {token1Symbol}
+                    </div>
+                  ) : (
+                    '-'
+                  )}
+                </ReviewAmountValue>
+              </ReviewDetailRow>
             </>
           )}
-          <List.KeyValue
-            className="!py-1.5 !px-0"
-            fontWeight="normal"
-            title={<div className="text-muted-foreground">Network fee</div>}
-          >
-            {chainId === ChainId.SKALE_EUROPA ? (
-              'FREE'
-            ) : isSwapQueryFetching ||
-              !trade?.gasSpent ||
-              trade.gasSpent === '0' ? (
-              <SkeletonText align="right" fontSize="sm" />
-            ) : (
-              `${trade.gasSpent} ${nativeSymbol}`
-            )}
-          </List.KeyValue>
+          <ReviewDetailRow title="Network fee">
+            <ReviewAmountValue
+              usdValue={
+                chainId === ChainId.SKALE_EUROPA
+                  ? undefined
+                  : trade?.gasSpentUsd
+              }
+              isUsdLoading={
+                chainId !== ChainId.SKALE_EUROPA &&
+                (isSwapQueryFetching ||
+                  !trade?.gasSpent ||
+                  trade.gasSpent === '0')
+              }
+            >
+              {chainId === ChainId.SKALE_EUROPA ? (
+                'FREE'
+              ) : isSwapQueryFetching ||
+                !trade?.gasSpent ||
+                trade.gasSpent === '0' ? (
+                <SkeletonText align="right" fontSize="sm" />
+              ) : (
+                `${trade.gasSpent} ${nativeSymbol}`
+              )}
+            </ReviewAmountValue>
+          </ReviewDetailRow>
         </List.Control>
       </List>
     </div>

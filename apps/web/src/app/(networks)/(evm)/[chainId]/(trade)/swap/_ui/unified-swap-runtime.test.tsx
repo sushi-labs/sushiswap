@@ -5,6 +5,7 @@ import {
   type PropsWithChildren,
   Suspense,
   act,
+  useEffect,
 } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import type { UnifiedSwapChainId } from 'src/lib/swap/unified-swap'
@@ -28,11 +29,13 @@ const mocks = vi.hoisted(() => ({
   lifi: vi.fn(),
   routing: vi.fn(),
   edge: vi.fn(),
+  executionMounted: vi.fn(),
+  executionUnmounted: vi.fn(),
   captureForm: vi.fn<(form: UnifiedSwapState | null) => void>(),
 }))
 
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/ethereum/swap',
+  usePathname: () => window.location.pathname,
   useSearchParams: () => mocks.searchParams,
 }))
 vi.mock('next/dynamic', async () => {
@@ -72,6 +75,10 @@ vi.mock('src/providers/edge-config-provider', () => ({
 vi.mock('../../cross-chain-swap/_ui/unified-swap-execution-provider', () => ({
   UnifiedSwapExecutionProvider: ({ children }: PropsWithChildren) => {
     mocks.captureForm(useUnifiedSwap())
+    useEffect(() => {
+      mocks.executionMounted()
+      return () => mocks.executionUnmounted()
+    }, [])
     return children
   },
 }))
@@ -147,6 +154,7 @@ beforeEach(() => {
 
 afterEach(() => {
   act(() => root.unmount())
+  vi.restoreAllMocks()
 })
 
 async function renderPair(
@@ -168,6 +176,14 @@ async function renderParams(
   crossChainConfigPromise: Promise<SwapEdgeConfig> = readyCrossChainConfig,
 ): Promise<void> {
   window.history.replaceState(null, '', `/ethereum/swap?${params.toString()}`)
+  await renderCurrentUrl(defaultChainId, crossChainConfigPromise)
+}
+
+async function renderCurrentUrl(
+  defaultChainId: UnifiedSwapChainId = EvmChainId.ETHEREUM,
+  crossChainConfigPromise: Promise<SwapEdgeConfig> = readyCrossChainConfig,
+): Promise<void> {
+  const pathname = window.location.pathname
   mocks.searchParams = new URLSearchParams(window.location.search)
   await act(async () =>
     root.render(
@@ -183,6 +199,10 @@ async function renderParams(
   await act(async () => {
     await vi.dynamicImportSettled()
   })
+  // Next's native-history integration rerenders after the effect updates the URL.
+  if (window.location.pathname !== pathname) {
+    await renderCurrentUrl(defaultChainId, crossChainConfigPromise)
+  }
 }
 
 function currentForm(): UnifiedSwapState {
@@ -283,8 +303,8 @@ it.each([
       defaultChainId: source,
       unified: true,
     })
-    expect(mocks.lifi).toHaveBeenCalledOnce()
-    expect(mocks.routing).toHaveBeenCalledOnce()
+    expect(mocks.lifi).toHaveBeenCalled()
+    expect(mocks.routing).toHaveBeenCalled()
     expect(mocks.edge).toHaveBeenCalledWith(crossChainConfig)
     expect(mocks.evm).not.toHaveBeenCalled()
     expect(mocks.svm).not.toHaveBeenCalled()
@@ -300,6 +320,105 @@ it('switches from same-chain to cross-chain and back on the mounted page', async
   await renderPair(SvmChainId.SOLANA)
   expectOnlyRuntime('jupiter')
   expect(container.querySelector('[data-cross-provider]')).toBeNull()
+  expect(mocks.executionMounted).toHaveBeenCalledOnce()
+  expect(mocks.executionUnmounted).not.toHaveBeenCalled()
+})
+
+it.each([
+  [EvmChainId.ARBITRUM, '/arbitrum/swap'],
+  [SvmChainId.SOLANA, '/solana/swap'],
+  [StellarChainId.STELLAR, '/stellar/swap'],
+] as const)(
+  'aligns an initial source %s with its path while preserving query, hash, and history length',
+  async (source, pathname) => {
+    const params = pendingSwapParams()
+    params.set('chainId0', String(source))
+    params.set('referrer', 'keep')
+    window.history.replaceState(
+      { __NA: true },
+      '',
+      `/base/swap?${params}#review`,
+    )
+    const replaceState = vi.spyOn(window.history, 'replaceState')
+    const historyLength = window.history.length
+
+    await renderCurrentUrl()
+
+    expect(window.location.pathname).toBe(pathname)
+    expect(window.location.search).toBe(`?${params}`)
+    expect(window.location.hash).toBe('#review')
+    // Passing Next's internal marker would bypass its pathname subscription.
+    expect(replaceState).toHaveBeenCalledWith(
+      null,
+      '',
+      `${pathname}?${params}#review`,
+    )
+    expect(window.history.length).toBe(historyLength)
+    expect(currentForm().chainId0).toBe(source)
+    expect(mocks.executionMounted).toHaveBeenCalledOnce()
+    expect(mocks.executionUnmounted).not.toHaveBeenCalled()
+  },
+)
+
+it('follows committed source, reversal, and pool changes while keeping destination-only edits on the source path', async () => {
+  const params = pendingSwapParams()
+  params.set('referrer', 'keep')
+  await renderParams(params)
+
+  act(() => currentForm().selectToken('OUTPUT', EvmChainId.ARBITRUM, 'output'))
+  await renderCurrentUrl()
+  expect(window.location.pathname).toBe('/ethereum/swap')
+  expect(currentForm().token1Param).toBe('output')
+  expect(currentForm().swapAmountString).toBe('12')
+
+  act(() => currentForm().selectToken('INPUT', EvmChainId.BASE, 'input'))
+  await renderCurrentUrl()
+  expect(window.location.pathname).toBe('/base/swap')
+  expect(currentForm().chainId1).toBe(EvmChainId.ARBITRUM)
+  expect(currentForm().token0Param).toBe('input')
+  expect(currentForm().token1Param).toBe('output')
+  expect(currentForm().swapAmountString).toBe('')
+
+  act(() => currentForm().switchTokens())
+  await renderCurrentUrl()
+  expect(window.location.pathname).toBe('/arbitrum/swap')
+  expect(currentForm().chainId1).toBe(EvmChainId.BASE)
+  expect(currentForm().token0Param).toBe('output')
+  expect(currentForm().token1Param).toBe('input')
+
+  act(() => currentForm().selectPair(SvmChainId.SOLANA, 'pool0', 'pool1'))
+  await renderCurrentUrl()
+  expect(window.location.pathname).toBe('/solana/swap')
+  expect(currentForm().chainId1).toBe(SvmChainId.SOLANA)
+  expect(currentForm().token0Param).toBe('pool0')
+  expect(currentForm().token1Param).toBe('pool1')
+  expect(new URLSearchParams(window.location.search).get('referrer')).toBe(
+    'keep',
+  )
+  expect(mocks.executionMounted).toHaveBeenCalledOnce()
+  expect(mocks.executionUnmounted).not.toHaveBeenCalled()
+
+  act(() => currentForm().setAmount('3'))
+  expect(new URLSearchParams(window.location.search).get('swapAmount')).toBe(
+    '3',
+  )
+})
+
+it('aligns source updates made through the cross-chain form query without remounting execution tracking', async () => {
+  await renderParams(pendingSwapParams())
+  const params = new URLSearchParams(window.location.search)
+  params.set('chainId0', String(EvmChainId.ARBITRUM))
+  params.set('token0', 'new-input')
+  params.delete('swapAmount')
+  window.history.pushState(null, '', `${window.location.pathname}?${params}`)
+
+  await renderCurrentUrl()
+
+  expect(window.location.pathname).toBe('/arbitrum/swap')
+  expect(window.location.search).toBe(`?${params}`)
+  expect(currentForm().chainId0).toBe(EvmChainId.ARBITRUM)
+  expect(mocks.executionMounted).toHaveBeenCalledOnce()
+  expect(mocks.executionUnmounted).not.toHaveBeenCalled()
 })
 
 it.each(['2.5', ''])(
@@ -357,22 +476,26 @@ it('ignores a pending completion callback after navigating to another pathname',
   )
 })
 
-it('restores the effective source when history restores an earlier query on the original page', async () => {
+it('restores the effective source and path when history restores an earlier pair', async () => {
   const earlierParams = new URLSearchParams({
     chainId0: String(EvmChainId.BASE),
     chainId1: String(EvmChainId.BASE),
   })
   await renderParams(earlierParams)
   expect(currentForm().chainId0).toBe(EvmChainId.BASE)
+  const earlierUrl = window.location.href
   await renderPair(SvmChainId.SOLANA)
   expectOnlyRuntime('jupiter')
 
   // Next's search-param subscription rerenders this same runtime after popstate.
-  await renderParams(earlierParams)
+  window.history.replaceState(null, '', earlierUrl)
+  await renderCurrentUrl()
 
   expect(currentForm().chainId0).toBe(EvmChainId.BASE)
   expect(currentForm().chainId1).toBe(EvmChainId.BASE)
   expect(mocks.evm).toHaveBeenLastCalledWith(EvmChainId.BASE)
   expectOnlyRuntime('sushi')
-  expect(window.location.pathname).toBe('/ethereum/swap')
+  expect(window.location.pathname).toBe('/base/swap')
+  expect(mocks.executionMounted).toHaveBeenCalledOnce()
+  expect(mocks.executionUnmounted).not.toHaveBeenCalled()
 })

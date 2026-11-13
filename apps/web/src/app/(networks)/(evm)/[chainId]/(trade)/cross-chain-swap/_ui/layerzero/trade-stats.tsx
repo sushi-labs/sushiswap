@@ -1,25 +1,23 @@
 'use client'
 
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
   BrowserEvent,
   InterfaceElementName,
   InterfaceEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
-import {
-  Button,
-  Collapsible,
-  Explainer,
-  IconButton,
-  SkeletonCircle,
-  SkeletonText,
-  classNames,
-} from '@sushiswap/ui'
-import { GasIcon } from '@sushiswap/ui/icons/gas-icon'
+import { Explainer, SkeletonText, classNames } from '@sushiswap/ui'
 import { type ReactNode, useEffect, useId, useMemo, useState } from 'react'
+import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { Price, formatUSD, getChainById, shortenAddress } from 'sushi'
 import { useDetailsInteractionTracker } from '../../../_ui/details-interaction-tracker-provider'
+import { TokenRate } from '../../../_ui/token-rate'
+import { TradeStatRow } from '../../../_ui/trade-stat-row'
+import {
+  TradeStats,
+  TradeStatsSummary,
+  TradeStatsToggle,
+} from '../../../_ui/trade-stats'
 import { getLayerZeroTradeAmounts } from './get-trade-amounts'
 import { SourceNetworkFee } from './source-network-fee'
 import { useLayerZeroXSwap } from './xswap-provider'
@@ -30,6 +28,8 @@ export function LayerZeroTradeStats(): ReactNode {
     previewQuote,
     sourceNetworkFee,
   } = useLayerZeroXSwap()
+  const address = useAccount(chainId1)
+
   const {
     state: { isDetailsCollapsed },
     mutate: {
@@ -70,49 +70,50 @@ export function LayerZeroTradeStats(): ReactNode {
   if (!hasValidQuote) return null
   if (previewQuote.isLoading || !amounts || !price) {
     return (
-      <div
-        className="flex items-center justify-between gap-2"
+      <TradeStatsSummary
+        rate={<SkeletonText fontSize="sm" className="!w-[100px]" />}
+        isLoading
+        className=""
         aria-label="Loading swap details"
-      >
-        <SkeletonText fontSize="sm" className="!w-[100px]" />
-        <div className="flex items-center gap-0.5">
-          <SkeletonText fontSize="sm" className="!w-[60px]" />
-          <SkeletonCircle radius={26} />
-        </div>
-      </div>
+      />
     )
   }
 
   const messagingFee = `${amounts.messagingFee.toSignificant(6)} ${amounts.messagingFee.currency.symbol}`
 
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Button
-          className="!text-xs !font-medium !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
-          variant="ghost"
-          size="xs"
-          aria-label="Invert exchange rate"
-          onClick={() => setInvert((value) => !value)}
-        >
-          1{' '}
-          {invert
-            ? amounts.amountOut.currency.symbol
-            : amounts.amountIn.currency.symbol}{' '}
-          = {price}{' '}
-          {invert
-            ? amounts.amountIn.currency.symbol
-            : amounts.amountOut.currency.symbol}
-        </Button>
-        <div className="ml-auto flex items-center gap-0.5">
-          <div className={classNames('text-xs font-medium flex items-center')}>
-            <GasIcon className="inline-block w-3 h-4 mr-0.5" />
+    <TradeStats
+      open={!isDetailsCollapsed}
+      detailsId={detailsId}
+      summary={
+        <TradeStatsSummary
+          className="flex-wrap"
+          feeClassName="ml-auto gap-0.5"
+          rate={
+            <TokenRate
+              baseSymbol={
+                invert
+                  ? amounts.amountOut.currency.symbol
+                  : amounts.amountIn.currency.symbol
+              }
+              quoteSymbol={
+                invert
+                  ? amounts.amountIn.currency.symbol
+                  : amounts.amountOut.currency.symbol
+              }
+              rate={price}
+              aria-label="Invert exchange rate"
+              onInvert={() => setInvert((value) => !value)}
+            />
+          }
+          fee={
             <SourceNetworkFee
               fee={sourceNetworkFee}
               currency={amounts.messagingFee.currency}
               display="usd"
             />
-          </div>
+          }
+        >
           <TraceEvent
             events={[BrowserEvent.onClick]}
             name={InterfaceEventName.XSWAP_DETAILS_TOGGLE_CLICKED}
@@ -123,97 +124,67 @@ export function LayerZeroTradeStats(): ReactNode {
               chainId1,
             }}
           >
-            <IconButton
-              icon={ChevronDownIcon}
-              size="xs"
-              name="Toggle Swap Details"
-              aria-expanded={!isDetailsCollapsed}
-              aria-controls={detailsId}
+            <TradeStatsToggle
+              collapsed={isDetailsCollapsed}
+              detailsId={detailsId}
               onClick={() => {
                 setIsDetailsCollapsed(!isDetailsCollapsed)
                 setWasDetailsTouched(true)
               }}
-              className={classNames(
-                isDetailsCollapsed ? '' : 'rotate-180',
-                'transition-transform',
-              )}
-              variant="ghost"
             />
           </TraceEvent>
-        </div>
-      </div>
-      <Collapsible open={!isDetailsCollapsed}>
-        <div
-          id={detailsId}
-          aria-hidden={isDetailsCollapsed}
-          inert={isDetailsCollapsed}
-          className="pt-2 w-full flex flex-col gap-1"
-        >
-          <Stat title="Est. received">
-            {amounts.amountOut.toSignificant(6)}{' '}
-            {amounts.amountOut.currency.symbol}
-          </Stat>
-          <Stat title="Min. received">
-            {amounts.minimumAmountOut.toSignificant(6)}{' '}
-            {amounts.minimumAmountOut.currency.symbol}
-          </Stat>
-          <Stat title="Protocol fees">
-            {previewQuote.data
-              ? formatUSD(Number(previewQuote.data.quote.feeUsd))
-              : 'N/A'}
-          </Stat>
-          <Stat
-            title={
-              <>
-                Source native fee{' '}
-                <Explainer>
-                  Included in the total protocol fees above. Source network gas
-                  is additional.
-                </Explainer>
-              </>
-            }
+        </TradeStatsSummary>
+      }
+    >
+      <TradeStatRow title="Est. received">
+        {amounts.amountOut.toSignificant(6)} {amounts.amountOut.currency.symbol}
+      </TradeStatRow>
+      <TradeStatRow title="Min. received">
+        {amounts.minimumAmountOut.toSignificant(6)}{' '}
+        {amounts.minimumAmountOut.currency.symbol}
+      </TradeStatRow>
+      <TradeStatRow title="Protocol fees">
+        {previewQuote.data
+          ? formatUSD(Number(previewQuote.data.quote.feeUsd))
+          : 'N/A'}
+      </TradeStatRow>
+      <TradeStatRow
+        title={
+          <>
+            Source native fee{' '}
+            <Explainer>
+              Included in the total protocol fees above. Source network gas is
+              additional.
+            </Explainer>
+          </>
+        }
+      >
+        {messagingFee}
+      </TradeStatRow>
+      <TradeStatRow title="Network fee">
+        <SourceNetworkFee
+          fee={sourceNetworkFee}
+          currency={amounts.messagingFee.currency}
+          display="usd"
+        />
+      </TradeStatRow>
+      <TradeStatRow title="Provider">LayerZero</TradeStatRow>
+      {recipient ? (
+        <div className="flex justify-between items-center border-t border-accent mt-2 pt-2">
+          <span className="text-sm text-muted-foreground">Recipient</span>
+          <a
+            href={getChainById(chainId1).getAccountUrl(recipient)}
+            target="_blank"
+            rel="noreferrer"
+            className={classNames(
+              address !== recipient ? 'text-yellow-600' : 'text-primary',
+              'transition-all flex gap-1 items-center',
+            )}
           >
-            {messagingFee}
-          </Stat>
-          <Stat title="Network fee">
-            <SourceNetworkFee
-              fee={sourceNetworkFee}
-              currency={amounts.messagingFee.currency}
-              display="usd"
-            />
-          </Stat>
-          <Stat title="Provider">LayerZero</Stat>
-          {recipient ? (
-            <div className="flex justify-between items-center border-t border-accent mt-2 pt-2">
-              <span className="font-medium text-sm text-muted-foreground">
-                Recipient
-              </span>
-              <a
-                href={getChainById(chainId1).getAccountUrl(recipient)}
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-sm"
-              >
-                {shortenAddress(recipient)}
-              </a>
-            </div>
-          ) : null}
+            {shortenAddress(recipient)}
+          </a>
         </div>
-      </Collapsible>
-    </>
-  )
-}
-
-function Stat({
-  title,
-  children,
-}: { title: ReactNode; children: ReactNode }): ReactNode {
-  return (
-    <div className="flex justify-between items-center gap-2">
-      <span className="text-sm text-muted-foreground inline-flex items-center gap-1">
-        {title}
-      </span>
-      <span className="text-sm font-semibold text-right">{children}</span>
-    </div>
+      ) : null}
+    </TradeStats>
   )
 }

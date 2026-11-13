@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { Button, SelectIcon, TextField, classNames } from '@sushiswap/ui'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { type ReactNode, useCallback, useEffect, useState } from 'react'
 import { useStablePrice } from '~aptos/_common/lib/common/use-stable-price'
 import { useTokenBalance } from '~aptos/_common/lib/common/use-token-balances'
 import type { Token } from '~aptos/_common/lib/types/token'
@@ -20,7 +20,7 @@ type CurrencyInput = {
   className?: string
   fetching?: boolean
   disableInsufficientBalanceError?: boolean
-  label?: string
+  label?: ReactNode
 }
 
 export function CurrencyInput({

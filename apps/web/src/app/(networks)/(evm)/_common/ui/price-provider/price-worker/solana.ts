@@ -68,11 +68,12 @@ export function createSolanaRequestHandlers(deps: SolanaWorkerDeps) {
         if (pending.size === 0) break
 
         const batch = Array.from(pending).slice(0, SOLANA_REQUEST_MAX_ADDRESSES)
-        batch.forEach((addr) => pending.delete(addr))
 
+        // Keep in-flight addresses pending so consumers share the same request.
         await respectSolanaRateLimit(chainState)
 
         await requestAndApplySolanaPrices(chainState, batch)
+        batch.forEach((addr) => pending.delete(addr))
       }
     } finally {
       chainState.isUpdating = false

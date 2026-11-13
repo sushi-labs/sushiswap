@@ -18,6 +18,8 @@ import {
   DialogType,
   useDialog,
 } from 'src/lib/transaction-dialog'
+import { DialogBody } from '../../../swap/_ui/simple-swap-trade-review-dialog/dialog-body'
+import { TradeHeader } from '../../../swap/_ui/simple-swap-trade-review-dialog/trade-header'
 import { useXSwapRoutingLock } from '../xswap-routing-context'
 import {
   ConfirmationDialogContent,
@@ -28,12 +30,10 @@ import {
   finishedState,
 } from './confirmation-dialog'
 import { ConfirmSwapButton } from './trade-review-dialog/confirm-swap-button'
-import { DialogBody } from './trade-review-dialog/dialog-body'
 import { useCrossChainSwapTradeReview } from './trade-review-dialog/hooks/use-cross-chain-swap-trade-review'
 import { RecipientSection } from './trade-review-dialog/recipient-section'
 import { ReviewIntro } from './trade-review-dialog/review-intro'
 import { TradeDetails } from './trade-review-dialog/trade-details'
-import { TradeHeader } from './trade-review-dialog/trade-header'
 import { TradeWarnings } from './trade-review-dialog/trade-warnings'
 import type { UseLifiXSwapSelectedTradeRouteReturn } from './xswap-provider'
 
@@ -71,8 +71,6 @@ function CrossChainSwapTradeReviewDialogContent<
     executionDuration,
     feesBreakdown,
     totalFeesUSD,
-    chainId0Fees,
-    amountOutUSD,
     amountOutMinUSD,
     isPriceLoading,
     slippagePercent,
@@ -107,7 +105,7 @@ function CrossChainSwapTradeReviewDialogContent<
           <>
             <ReviewIntro estGasError={estGasError}>{children}</ReviewIntro>
             <DialogContent className="max-h-[80vh]">
-              <TradeHeader step={step} />
+              <TradeHeader variant="default" />
               <DialogBody>
                 <TradeWarnings
                   showSlippageWarning={showSlippageWarning}
@@ -118,8 +116,6 @@ function CrossChainSwapTradeReviewDialogContent<
                   step={step}
                   feesBreakdown={feesBreakdown}
                   totalFeesUSD={totalFeesUSD}
-                  chainId0Fees={chainId0Fees}
-                  amountOutUSD={amountOutUSD}
                   amountOutMinUSD={amountOutMinUSD}
                   isPriceLoading={isPriceLoading}
                   slippagePercent={slippagePercent}

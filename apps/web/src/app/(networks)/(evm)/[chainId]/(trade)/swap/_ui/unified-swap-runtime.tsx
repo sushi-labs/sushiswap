@@ -3,9 +3,9 @@
 import { Button, Message } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { type ReactElement, useMemo } from 'react'
+import { type ReactElement, useEffect, useMemo } from 'react'
 import { isLifiXSwapSupportedChainId, isSupportedChainId } from 'src/config'
-import { getNetworkName } from 'src/lib/network'
+import { getNetworkName, replaceNetworkSlug } from 'src/lib/network'
 import { isNearIntentsChainId } from 'src/lib/swap/near-intents'
 import { SwapTokenSelectorContext } from 'src/lib/swap/swap-token-selector-context'
 import {
@@ -119,6 +119,24 @@ export function UnifiedSwapRuntime({
       },
     }
   }, [searchParams, defaultChainId, pathname])
+
+  useEffect(() => {
+    if (
+      window.location.pathname !== pathname ||
+      new URLSearchParams(window.location.search).toString() !==
+        searchParams.toString()
+    )
+      return
+    const sourcePathname = replaceNetworkSlug(form.chainId0, pathname)
+    if (sourcePathname === pathname) return
+
+    // Keep pending cross-chain tracking mounted when the source network changes.
+    history.replaceState(
+      null,
+      '',
+      `${sourcePathname}${window.location.search}${window.location.hash}`,
+    )
+  }, [form.chainId0, pathname, searchParams])
 
   return (
     <UnifiedSwapContext.Provider value={form}>

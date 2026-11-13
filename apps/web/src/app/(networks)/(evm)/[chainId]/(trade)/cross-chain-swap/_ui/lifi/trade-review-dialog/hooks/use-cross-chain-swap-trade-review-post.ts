@@ -73,15 +73,6 @@ export function useCrossChainSwapTradeReviewPost<
     address: token1?.wrap().address,
   })
 
-  const amountOutUSD = useMemo(() => {
-    const amountOut = tradeReview.step?.amountOut
-    if (!price || !amountOut) return undefined
-
-    return `${(
-      (price * Number(amountOut.amount)) / 10 ** amountOut.currency.decimals
-    ).toFixed(2)}`
-  }, [price, tradeReview.step?.amountOut])
-
   const amountOutMinUSD = useMemo(() => {
     const amountOutMin = tradeReview.step?.amountOutMin
     if (!price || !amountOutMin) return undefined
@@ -138,7 +129,6 @@ export function useCrossChainSwapTradeReviewPost<
     totalFeesUSD,
     chainId0Fees,
     lifiData,
-    amountOutUSD,
     amountOutMinUSD,
     price,
     isPriceLoading,

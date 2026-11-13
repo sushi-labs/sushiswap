@@ -4,6 +4,7 @@ import { getValueTransferCurrencyParam } from 'src/lib/swap/value-transfer/token
 import { VALUE_TRANSFER_SUPPORTED_CHAIN_IDS } from 'src/lib/swap/value-transfer/types'
 import { Amount } from 'sushi'
 import { StellarChainId } from 'sushi/stellar'
+import { SwapInputLabel } from '../../../_ui/swap-input-label'
 import { useNearIntentsXSwap } from '../near-intents/xswap-provider'
 import { XSwapCurrencyInput } from '../xswap-currency-input'
 import { XSwapSwitchTokensButton } from '../xswap-switch-tokens-button'
@@ -50,7 +51,7 @@ export function LayerZeroCrossChainSwapWidget() {
         value={swapAmountString}
         onChange={setSwapAmount}
         allowNative
-        label="Sell"
+        label={<SwapInputLabel chainId={chainId0} type="INPUT" />}
         networks={VALUE_TRANSFER_SUPPORTED_CHAIN_IDS}
         selectedNetwork={chainId0}
         onNetworkChange={setChainId0}
@@ -76,7 +77,7 @@ export function LayerZeroCrossChainSwapWidget() {
           fetching={previewQuote.isFetching}
           disableMaxButton
           allowNative
-          label="Buy"
+          label={<SwapInputLabel chainId={chainId1} type="OUTPUT" />}
           networks={VALUE_TRANSFER_SUPPORTED_CHAIN_IDS}
           selectedNetwork={chainId1}
           onNetworkChange={setChainId1}

@@ -116,7 +116,10 @@ export function CrossChainSwapFeesHoverCard<
       <div className="hidden sm:block">
         <HoverCard openDelay={300} closeDelay={0}>
           <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-          <HoverCardContent side="right" className="!p-0 max-w-[320px]">
+          <HoverCardContent
+            side="right"
+            className="!p-0 max-w-[320px] !border-transparent"
+          >
             {content}
           </HoverCardContent>
         </HoverCard>
@@ -126,7 +129,10 @@ export function CrossChainSwapFeesHoverCard<
           <PopoverTrigger onClick={(e) => e.stopPropagation()} asChild>
             {children}
           </PopoverTrigger>
-          <PopoverContent side="right" className="!p-0 max-w-[320px]">
+          <PopoverContent
+            side="right"
+            className="!p-0 max-w-[320px] !border-transparent"
+          >
             {content}
           </PopoverContent>
         </Popover>

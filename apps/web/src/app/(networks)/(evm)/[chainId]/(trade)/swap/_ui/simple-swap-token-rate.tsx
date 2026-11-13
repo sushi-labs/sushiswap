@@ -1,8 +1,8 @@
-import { Button, SkeletonText } from '@sushiswap/ui'
 import { useMemo, useState } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { Amount, Price, formatUSD } from 'sushi'
 import { usePrices } from '~evm/_common/ui/price-provider/price-provider/use-prices'
+import { TokenRate } from '../../_ui/token-rate'
 import { useDerivedStateSimpleSwap } from './derivedstate-simple-swap-provider'
 
 //@dev can also use useTradeQuote to get price directly from quote but this does not require the quote api call
@@ -52,22 +52,14 @@ export const SimpleSwapTokenRate = () => {
       : '0.00'
   }, [invert, prices, token0, token1])
 
-  if (isPricesLoading) {
-    return <SkeletonText fontSize="sm" className="!w-[100px]" />
-  }
-
   return (
-    <Button
-      className="!text-xs md:!text-sm !font-medium !text-primary !gap-0.5 !px-0 hover:!bg-transparent focus:!bg-transparent"
-      variant="ghost"
-      size="xs"
-      onClick={() => setInvert((prev) => !prev)}
-    >
-      1 {invert ? token0?.symbol : token1?.symbol} = {price}{' '}
-      {invert ? token1?.symbol : token0?.symbol}
-      <span className="!font-normal">
-        ({formatUSD(invert ? token0FiatPrice : token1FiatPrice)})
-      </span>
-    </Button>
+    <TokenRate
+      baseSymbol={invert ? token0?.symbol : token1?.symbol}
+      quoteSymbol={invert ? token1?.symbol : token0?.symbol}
+      rate={price}
+      fiatValue={formatUSD(invert ? token0FiatPrice : token1FiatPrice)}
+      isLoading={isPricesLoading}
+      onInvert={() => setInvert((prev) => !prev)}
+    />
   )
 }

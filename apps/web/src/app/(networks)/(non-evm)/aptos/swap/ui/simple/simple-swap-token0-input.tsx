@@ -1,4 +1,6 @@
 import React, { useEffect, useTransition } from 'react'
+import { SwapInputLabel } from 'src/app/(networks)/(evm)/[chainId]/(trade)/_ui/swap-input-label'
+import { ChainId } from 'sushi'
 import { CurrencyInput } from '~aptos/_common/ui/currency/currency-input/currency-input'
 import { useSwap } from '~aptos/swap/lib/use-swap'
 import {
@@ -62,8 +64,8 @@ export const SimpleSwapToken0Input = () => {
       token={token0}
       value={String(amount)}
       onChange={setAmount}
-      className="p-3 bg-white border border-accent dark:bg-slate-800 rounded-xl"
-      label="Sell"
+      className="border border-accent p-4 bg-muted rounded-2xl"
+      label={<SwapInputLabel chainId={ChainId.APTOS} type="INPUT" />}
     />
   )
 }

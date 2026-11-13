@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Button,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Dots,
-} from '@sushiswap/ui'
+import { Button, DialogContent, DialogFooter, Dots } from '@sushiswap/ui'
 import { nanoid } from 'nanoid'
 import { type ReactNode, useState } from 'react'
 import { APPROVE_TAG_XSWAP } from 'src/lib/constants'
@@ -19,7 +11,8 @@ import {
   useDialog,
 } from 'src/lib/transaction-dialog'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
-import { DialogBody } from '../lifi/trade-review-dialog/dialog-body'
+import { DialogBody } from '../../../swap/_ui/simple-swap-trade-review-dialog/dialog-body'
+import { TradeHeader } from '../../../swap/_ui/simple-swap-trade-review-dialog/trade-header'
 import { useXSwapRoutingLock } from '../xswap-routing-context'
 import { LayerZeroExecutionConfirmation } from './execution-confirmation'
 import { useSharedLayerZeroExecutions } from './execution-state-context'
@@ -72,20 +65,14 @@ function LayerZeroTradeReviewDialogContent({
           <>
             {children}
             <DialogContent className="max-h-[80vh]">
-              <DialogHeader className="!text-left">
-                <DialogTitle>
-                  Receive {amounts?.amountOut.toSignificant(6)} {token1?.symbol}
-                </DialogTitle>
-                <DialogDescription>
-                  Swap {amounts?.amountIn.toSignificant(6)} {token0?.symbol}
-                </DialogDescription>
-              </DialogHeader>
+              <TradeHeader variant="default" />
               <DialogBody>
                 {quote && amounts ? (
                   <LayerZeroTradeDetails
                     quote={quote}
                     amounts={amounts}
                     sourceNetworkFee={sourceNetworkFee}
+                    isLoading={previewQuote.isFetching}
                   />
                 ) : null}
               </DialogBody>

@@ -56,7 +56,7 @@ export function PricePanel<TChainId extends BalanceChainId>({
   return (
     <p
       className={classNames(
-        'font-medium text-xs flex items-baseline select-none text-gray-500 dark:text-slate-400',
+        'font-medium text-xs flex items-baseline select-none text-muted-foreground',
         className,
       )}
     >

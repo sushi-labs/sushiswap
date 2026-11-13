@@ -1,7 +1,7 @@
 'use client'
-
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import { isWNativeSupported } from 'sushi'
+import { SwapInputLabel } from '../../../(trade)/_ui/swap-input-label'
 import { useDerivedStateSwapWidget } from './derivedstate-swap-widget-provider'
 
 export const SwapWidgetToken0Input = () => {
@@ -14,14 +14,14 @@ export const SwapWidgetToken0Input = () => {
     <CurrencyInput
       id="swap-from"
       type="INPUT"
-      className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+      className="border border-accent p-4 bg-muted rounded-2xl"
       chainId={chainId}
       onSelect={setToken0}
       value={swapAmountString}
       onChange={setSwapAmount}
       currency={token0}
       allowNative={isWNativeSupported(chainId)}
-      label="Sell"
+      label={<SwapInputLabel chainId={chainId} type="INPUT" />}
     />
   )
 }

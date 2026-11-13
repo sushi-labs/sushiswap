@@ -1,10 +1,16 @@
 'use client'
 
-import { Button, List, SelectIcon } from '@sushiswap/ui'
-import { type ReactNode, useId, useState } from 'react'
+import { List } from '@sushiswap/ui'
+import type { ReactNode } from 'react'
+import { useAmountUsd } from 'src/lib/hooks/use-amount-usd'
+import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import type { ValueTransferTrade } from 'src/lib/swap/value-transfer/trade'
-import { formatUSD, getChainById, shortenAddress } from 'sushi'
-import { SendAction, VerticalDivider } from '../lifi/route-view'
+import { formatUSD } from 'sushi'
+import { ReviewAmountValue } from '../../../_ui/review-amount-value'
+import { ReviewDetailRow } from '../../../_ui/review-detail-row'
+import { RecipientSection } from '../../../swap/_ui/simple-swap-trade-review-dialog/recipient-section'
+import { TradeAmounts } from '../../../swap/_ui/simple-swap-trade-review-dialog/trade-amounts'
+import { CrossChainSwapRouteView } from '../lifi/route-view'
 import type { LayerZeroTradeAmounts } from './get-trade-amounts'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 import { SourceNetworkFee } from './source-network-fee'
@@ -13,120 +19,98 @@ export function LayerZeroTradeDetails({
   quote,
   amounts,
   sourceNetworkFee,
+  isLoading,
 }: {
   quote: ValueTransferTrade
   amounts: LayerZeroTradeAmounts
   sourceNetworkFee: LayerZeroSourceNetworkFee
+  isLoading?: boolean
 }): ReactNode {
-  const [showMore, setShowMore] = useState(false)
-  const detailsId = useId()
+  const [slippagePercent] = useSlippageTolerance()
+  const messagingFeeUSD = useAmountUsd({ amount: amounts.messagingFee })
+  const minimumAmountOutUSD =
+    Number(quote.quote.dstAmountUsd) *
+    (Number(quote.minAmountOut) / Number(quote.amountOut))
   const estimatedMinutes = quote.estimatedSeconds
     ? Math.max(1, Math.ceil(quote.estimatedSeconds / 60))
     : undefined
 
   return (
     <>
-      <List>
-        <List.Control>
-          <List.KeyValue
-            title="Estimated arrival"
-            subtitle="Estimated time after sending. Actual arrival time may vary."
-          >
-            {estimatedMinutes
-              ? `~${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}`
-              : 'Estimate unavailable'}
-          </List.KeyValue>
-          <List.KeyValue
-            title="Protocol fees"
-            subtitle="Total route fees, including native messaging fees. Source network gas is additional."
-          >
-            {formatUSD(Number(quote.quote.feeUsd))}
-          </List.KeyValue>
-          <List.KeyValue
-            title="Est. received"
-            subtitle="The estimated output amount."
-          >
-            <span className="text-sm font-medium">
-              {amounts.amountOut.toSignificant(6)}{' '}
-              {amounts.amountOut.currency.symbol}
-            </span>
-          </List.KeyValue>
-          {showMore ? (
-            <div id={detailsId}>
-              <List.KeyValue
-                title="Network fee"
-                subtitle="Additional to the LayerZero messaging fee. Final gas may vary; approval fees are separate."
-              >
-                <SourceNetworkFee
-                  fee={sourceNetworkFee}
-                  currency={amounts.messagingFee.currency}
-                />
-              </List.KeyValue>
-              <List.KeyValue
-                title="Source native fee"
-                subtitle="Included in the protocol fees above, paid in the source network's native currency."
+      <div className="flex flex-col gap-2">
+        <TradeAmounts
+          amountIn={amounts.amountIn}
+          amountOut={amounts.amountOut}
+          amountInUSD={quote.quote.srcAmountUsd}
+          amountOutUSD={quote.quote.dstAmountUsd}
+          isLoading={isLoading}
+        />
+        <List className="!pt-0 !gap-0">
+          <List.Control className="!border-transparent !bg-transparent !px-0">
+            <ReviewDetailRow
+              title="Slippage tolerance"
+              explanation="The percentage of slippage you are willing to accept. Slippage is the difference between the expected price and the actual price at which the trade is executed."
+            >
+              {slippagePercent.toPercentString()}
+            </ReviewDetailRow>
+            <ReviewDetailRow
+              title="Minimum received"
+              explanation="The minimum output enforced by this transfer."
+            >
+              <ReviewAmountValue usdValue={minimumAmountOutUSD}>
+                {amounts.minimumAmountOut.toSignificant(6)}{' '}
+                {amounts.minimumAmountOut.currency.symbol}
+              </ReviewAmountValue>
+            </ReviewDetailRow>
+            <ReviewDetailRow
+              title="Network fee"
+              explanation="Additional to the LayerZero messaging fee. Final gas may vary; approval fees are separate."
+            >
+              <SourceNetworkFee
+                fee={sourceNetworkFee}
+                currency={amounts.messagingFee.currency}
+                display="review"
+              />
+            </ReviewDetailRow>
+            <ReviewDetailRow
+              title="Protocol fees"
+              explanation="Total route fees, including native messaging fees. Source network gas is additional."
+            >
+              {formatUSD(Number(quote.quote.feeUsd))}
+            </ReviewDetailRow>
+            <ReviewDetailRow
+              title="Source native fee"
+              explanation="Included in the protocol fees above, paid in the source network's native currency."
+            >
+              <ReviewAmountValue
+                usdValue={messagingFeeUSD.data}
+                isUsdLoading={messagingFeeUSD.isLoading}
               >
                 {amounts.messagingFee.toSignificant(6)}{' '}
                 {amounts.messagingFee.currency.symbol}
-              </List.KeyValue>
-              <List.KeyValue
-                title="Min. received after slippage"
-                subtitle="The minimum output enforced by this transfer."
-              >
-                <span className="text-sm font-medium">
-                  {amounts.minimumAmountOut.toSignificant(6)}{' '}
-                  {amounts.minimumAmountOut.currency.symbol}
-                </span>
-              </List.KeyValue>
-            </div>
-          ) : null}
-          <div className="p-3">
-            <Button
-              size="xs"
-              fullWidth
-              variant="ghost"
-              aria-label="Toggle review details"
-              aria-expanded={showMore}
-              aria-controls={detailsId}
-              onClick={() => setShowMore((value) => !value)}
+              </ReviewAmountValue>
+            </ReviewDetailRow>
+            <ReviewDetailRow
+              title="Estimated arrival"
+              explanation="Estimated time after sending. Actual arrival time may vary."
             >
-              <SelectIcon className={showMore ? 'rotate-180' : undefined} />
-            </Button>
-          </div>
-        </List.Control>
-      </List>
-      <List className="!pt-2">
-        <List.Control className="!p-5">
-          <div className="flex gap-4">
-            <VerticalDivider count={2} className="pt-1.5 pl-1" />
-            <div className="flex flex-col gap-8">
-              <SendAction label="From" amount={amounts.amountIn} />
-              <span className="inline-flex items-center gap-1 text-xs leading-3 text-muted-foreground whitespace-nowrap">
-                Via <span className="font-semibold">LayerZero</span>
-              </span>
-              <SendAction label="To" amount={amounts.amountOut} />
-            </div>
-          </div>
-        </List.Control>
-      </List>
-      {quote.recipient ? (
-        <List className="!pt-2">
-          <List.Control>
-            <List.KeyValue title="Recipient">
-              <a
-                target="_blank"
-                href={getChainById(quote.toChainId).getAccountUrl(
-                  quote.recipient,
-                )}
-                className="flex items-center gap-2 cursor-pointer text-blue"
-                rel="noreferrer"
-              >
-                {shortenAddress(quote.recipient)}
-              </a>
-            </List.KeyValue>
+              {estimatedMinutes
+                ? `~${estimatedMinutes} minute${estimatedMinutes === 1 ? '' : 's'}`
+                : 'Estimate unavailable'}
+            </ReviewDetailRow>
           </List.Control>
         </List>
-      ) : null}
+      </div>
+      <List className="!pt-0">
+        <List.Control className="!bg-transparent !rounded-2xl !p-5">
+          <CrossChainSwapRouteView
+            amountIn={amounts.amountIn}
+            amountOut={amounts.amountOut}
+            provider="LayerZero"
+          />
+        </List.Control>
+      </List>
+      <RecipientSection chainId={quote.toChainId} recipient={quote.recipient} />
     </>
   )
 }
