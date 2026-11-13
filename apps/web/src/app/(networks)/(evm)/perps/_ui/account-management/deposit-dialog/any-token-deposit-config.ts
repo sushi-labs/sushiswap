@@ -6,6 +6,7 @@ import { EvmChainId } from 'sushi/evm'
 export const ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS = [
   EvmChainId.ROBINHOOD,
   EvmChainId.ETHEREUM,
+  EvmChainId.BASE,
 ] as const satisfies readonly Exclude<
   LifiXSwapSupportedChainId & EvmChainId,
   typeof EvmChainId.ARBITRUM

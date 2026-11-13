@@ -6,6 +6,7 @@ import { Amount } from 'sushi'
 import { EvmChainId, type EvmCurrency, EvmNative, USDC } from 'sushi/evm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AnyTokenDeposit } from './any-token-deposit'
+import type { AnyTokenAnyChainDepositChainId } from './any-token-deposit-config'
 
 const mocks = vi.hoisted(() => ({
   useRoutes: vi.fn(),
@@ -13,7 +14,10 @@ const mocks = vi.hoisted(() => ({
   useMyTokens: vi.fn(),
   usePublicClient: vi.fn(),
   useLiFiStatus: vi.fn(),
+  useRefetchBalances: vi.fn(),
+  useSimulateContract: vi.fn(),
   sendTransaction: vi.fn(),
+  writeContract: vi.fn(),
   waitForTransactionReceipt: vi.fn(),
   refetchBalances: vi.fn(),
   getFees: vi.fn(),
@@ -47,7 +51,13 @@ vi.mock('framer-motion', () => {
   function Wrapper({ children }: PropsWithChildren) {
     return <>{children}</>
   }
-  return { AnimatePresence: Wrapper, motion: { div: Wrapper } }
+  function MotionDiv({
+    children,
+    animate,
+  }: PropsWithChildren<{ animate?: { scaleX?: number } }>) {
+    return <div data-progress-target={animate?.scaleX}>{children}</div>
+  }
+  return { AnimatePresence: Wrapper, motion: { div: MotionDiv } }
 })
 vi.mock(
   'src/lib/hooks/react-query/cross-chain-trade/use-cross-chain-trade-routes',
@@ -104,11 +114,14 @@ vi.mock('wagmi', () => ({
     mutateAsync: mocks.sendTransaction,
     isPending: false,
   }),
-  useSimulateContract: () => ({ data: undefined }),
-  useWriteContract: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useSimulateContract: mocks.useSimulateContract,
+  useWriteContract: () => ({
+    mutateAsync: mocks.writeContract,
+    isPending: false,
+  }),
 }))
 vi.mock('~evm/_common/ui/balance-provider/use-refetch-balances', () => ({
-  useRefetchBalances: () => ({ refetchChain: mocks.refetchBalances }),
+  useRefetchBalances: mocks.useRefetchBalances,
 }))
 vi.mock('~evm/_common/ui/price-provider/price-provider/use-prices', () => ({
   usePrices: () => ({ data: undefined }),
@@ -137,11 +150,60 @@ const walletAddress = '0x0000000000000000000000000000000000000001'
 const bridgeAddress = '0x0000000000000000000000000000000000000002'
 const txHash =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
+const depositTxHash =
+  '0x0000000000000000000000000000000000000000000000000000000000000002'
 const bridgeStep = { estimate: { approvalAddress: bridgeAddress } }
+const depositRequest = {
+  chainId: EvmChainId.ARBITRUM,
+  address: bridgeAddress,
+  functionName: 'deposit',
+  args: [10_000_000n],
+}
 
 describe('AnyTokenDeposit cross-chain sources', () => {
   let container: HTMLDivElement
   let root: Root
+  let setOpen: ReturnType<typeof vi.fn>
+
+  function renderDeposit(
+    chainId: AnyTokenAnyChainDepositChainId = EvmChainId.ETHEREUM,
+    key = 'deposit',
+  ): void {
+    root.render(
+      <AnyTokenDeposit
+        key={key}
+        depositOption={{
+          chainId,
+          value: `any-${chainId}`,
+          label: 'Any Token',
+          type: 'any-token-any-chain',
+        }}
+        setOpen={setOpen}
+      />,
+    )
+  }
+
+  function progressTargets(): string[] {
+    return Array.from(container.querySelectorAll('[data-progress-target]')).map(
+      (element) => element.getAttribute('data-progress-target') ?? '',
+    )
+  }
+
+  async function completeBridge(): Promise<void> {
+    act(() => renderDeposit())
+    act(() => button('Use one token').click())
+    await act(async () => button('Swap & Bridge').click())
+    mocks.refetchBalances.mockClear()
+    mocks.useLiFiStatus.mockImplementation(
+      ({ enabled }: { enabled: boolean }) => ({
+        data: enabled ? { status: 'DONE', substatus: 'COMPLETED' } : undefined,
+      }),
+    )
+    act(() => renderDeposit())
+    expect(progressTargets()).toEqual(['1', '0'])
+    expect(mocks.refetchBalances).toHaveBeenCalledTimes(1)
+    expect(mocks.refetchBalances).toHaveBeenCalledWith(EvmChainId.ARBITRUM)
+  }
 
   function button(label: string): HTMLButtonElement {
     const element = Array.from(container.querySelectorAll('button')).find(
@@ -199,8 +261,19 @@ describe('AnyTokenDeposit cross-chain sources', () => {
     })
     mocks.waitForTransactionReceipt.mockResolvedValue({ status: 'success' })
     mocks.sendTransaction.mockResolvedValue(txHash)
+    mocks.writeContract.mockResolvedValue(depositTxHash)
     mocks.useLiFiStatus.mockReturnValue({ data: undefined })
+    mocks.useRefetchBalances.mockReturnValue({
+      refetchChain: mocks.refetchBalances,
+    })
+    mocks.getUSDCArgs.mockReturnValue(depositRequest)
+    mocks.useSimulateContract.mockImplementation(
+      ({ query }: { query: { enabled: boolean } }) => ({
+        data: query.enabled ? { request: depositRequest } : undefined,
+      }),
+    )
     mocks.getFees.mockResolvedValue(undefined)
+    setOpen = vi.fn()
     container = document.createElement('div')
     document.body.appendChild(container)
     root = createRoot(container)
@@ -214,20 +287,7 @@ describe('AnyTokenDeposit cross-chain sources', () => {
   it.each([EvmChainId.ETHEREUM, EvmChainId.ROBINHOOD] as const)(
     'bridges tokens from chain %s and deposits USDC on Arbitrum',
     async (chainId) => {
-      function renderDeposit(): void {
-        root.render(
-          <AnyTokenDeposit
-            depositOption={{
-              chainId,
-              value: `any-${chainId}`,
-              label: 'Any Token',
-              type: 'any-token-any-chain',
-            }}
-            setOpen={vi.fn()}
-          />,
-        )
-      }
-      act(renderDeposit)
+      act(() => renderDeposit(chainId))
       act(() => button('Use one token').click())
 
       expect(mocks.useRoutes).toHaveBeenLastCalledWith(
@@ -260,7 +320,7 @@ describe('AnyTokenDeposit cross-chain sources', () => {
       mocks.useLiFiStatus.mockReturnValue({
         data: { status: 'DONE', substatus: 'COMPLETED' },
       })
-      act(renderDeposit)
+      act(() => renderDeposit(chainId))
 
       expect(mocks.getUSDCArgs).toHaveBeenCalledWith({
         chainId: EvmChainId.ARBITRUM,
@@ -271,4 +331,59 @@ describe('AnyTokenDeposit cross-chain sources', () => {
       )
     },
   )
+
+  it('keeps both progress bars filled while depositing and closing the dialog', async () => {
+    await completeBridge()
+    const receipt = Promise.withResolvers<{ status: 'success' }>()
+    mocks.waitForTransactionReceipt.mockReturnValueOnce(receipt.promise)
+
+    await act(async () => button('Deposit').click())
+    expect(mocks.writeContract).toHaveBeenCalledTimes(1)
+    expect(mocks.writeContract).toHaveBeenCalledWith(depositRequest)
+    expect(progressTargets()).toEqual(['1', '1'])
+    expect(setOpen).not.toHaveBeenCalled()
+
+    const nextRefetchBalances = vi.fn()
+    mocks.useRefetchBalances.mockReturnValue({
+      refetchChain: nextRefetchBalances,
+    })
+    act(() => renderDeposit())
+
+    expect(progressTargets()).toEqual(['1', '1'])
+    expect(nextRefetchBalances).not.toHaveBeenCalled()
+    expect(mocks.refetchBalances).toHaveBeenCalledTimes(1)
+
+    await act(async () => {
+      receipt.resolve({ status: 'success' })
+      await receipt.promise
+    })
+
+    expect(setOpen).toHaveBeenCalledTimes(1)
+    expect(setOpen).toHaveBeenCalledWith(false)
+    expect(progressTargets()).toEqual(['1', '1'])
+    expect(mocks.refetchBalances).toHaveBeenCalledTimes(2)
+    expect(nextRefetchBalances).not.toHaveBeenCalled()
+
+    act(() => renderDeposit(EvmChainId.ETHEREUM, 'new-deposit'))
+    expect(progressTargets()).toEqual(['0', '0'])
+  })
+
+  it('returns to the deposit step if the deposit transaction reverts', async () => {
+    await completeBridge()
+    const receipt = Promise.withResolvers<{ status: 'reverted' }>()
+    mocks.waitForTransactionReceipt.mockReturnValueOnce(receipt.promise)
+
+    await act(async () => button('Deposit').click())
+    expect(progressTargets()).toEqual(['1', '1'])
+
+    await act(async () => {
+      receipt.resolve({ status: 'reverted' })
+      await receipt.promise
+    })
+
+    expect(progressTargets()).toEqual(['1', '0'])
+    expect(button('Deposit').disabled).toBe(false)
+    expect(setOpen).not.toHaveBeenCalled()
+    expect(mocks.refetchBalances).toHaveBeenCalledTimes(1)
+  })
 })

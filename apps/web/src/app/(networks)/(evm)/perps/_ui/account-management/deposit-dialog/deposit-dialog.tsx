@@ -185,23 +185,6 @@ const DEPOSIT_OPTIONS = [
     }),
   },
   {
-    label: 'VIRTUAL',
-    value: 'virtual' as const,
-    chainName: 'base' as const,
-    token: 'virtual',
-    tokenType: 'base' as const,
-    type: 'hyperunit' as const,
-    minDeposit: '25',
-    chainId: EvmChainId.BASE,
-    asset: new EvmToken({
-      chainId: EvmChainId.BASE,
-      address: '0x0b3e328455c4059EEb9e3f84b5543F74E24e7E1b',
-      decimals: 18,
-      symbol: 'VIRTUAL',
-      name: 'Virtual Protocol',
-    }),
-  },
-  {
     label: 'MON (Monad)',
     value: 'mon' as const,
     chainName: 'monad' as const,

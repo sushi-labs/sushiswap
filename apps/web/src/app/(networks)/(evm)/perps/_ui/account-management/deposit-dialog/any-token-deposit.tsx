@@ -815,11 +815,11 @@ const AnyTokenAnyChainDeposit = ({
   )
 
   useEffect(() => {
-    if (!isBridgeComplete) return
+    if (!isBridgeComplete || step !== 0) return
 
     refetchBalances(ANY_CHAIN_DEPOSIT_CHAIN_ID)
     setStep(1)
-  }, [isBridgeComplete, refetchBalances])
+  }, [isBridgeComplete, refetchBalances, step])
 
   useEffect(() => {
     if (!isBridgeFailed) return
@@ -1021,8 +1021,6 @@ const AnyTokenAnyChainDeposit = ({
       if (res.status === 'success') {
         refetchBalances(ANY_CHAIN_DEPOSIT_CHAIN_ID)
         setOpen(false)
-        setSwapAmount('')
-        resetCrossChainState()
       } else {
         setStep(1)
       }
@@ -1037,7 +1035,6 @@ const AnyTokenAnyChainDeposit = ({
     address,
     refetchBalances,
     setOpen,
-    resetCrossChainState,
   ])
 
   return (
