@@ -65,7 +65,7 @@ function _ApproveERC20({
   enabled = true,
   ...props
 }: ApproveERC20Props<EvmChainId>) {
-  const [max, setMax] = useState(false)
+  const [max, setMax] = useState(true)
   const [state, { write }] = useTokenApproval({
     amount,
     spender: contract,
@@ -107,10 +107,10 @@ function _ApproveERC20({
               'right-1 top-1 bottom-1',
             )}
           >
-            <SelectPrimitive.Trigger asChild>
+            <SelectPrimitive.Trigger asChild className="hover:bg-pink-800">
               <Button
                 asChild
-                size="xs"
+                size="sm"
                 variant="ghost"
                 name="Select"
                 className="!h-full !w-full"
@@ -127,7 +127,7 @@ function _ApproveERC20({
               We need your approval to execute this transaction on your behalf.{' '}
               <LinkExternal
                 target="_blank"
-                className="text-blue hover:underline"
+                className="text-pink hover:underline"
                 href="https://www.sushi.com/academy/articles/what-is-token-approval"
                 rel="noreferrer"
               >
@@ -140,7 +140,9 @@ function _ApproveERC20({
       <SelectContent className="w-80">
         <SelectItem value="false">
           <div className="flex flex-col">
-            <span className="font-semibold">Approve one-time only</span>
+            <span className="font-semibold text-primary">
+              Approve one-time only
+            </span>
             <span className="text-sm">
               {`You'll give your approval to spend `}
               {amount?.toSignificant(6)} {amount?.currency?.symbol} on your
@@ -150,7 +152,9 @@ function _ApproveERC20({
         </SelectItem>
         <SelectItem value="true">
           <div className="flex flex-col">
-            <span className="font-semibold">Approve unlimited amount</span>
+            <span className="font-semibold text-primary">
+              Approve unlimited amount
+            </span>
             <span className="text-sm">
               {`You won't need to approve again next time you want to spend`}{' '}
               {amount?.currency?.symbol}.

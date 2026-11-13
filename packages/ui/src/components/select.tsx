@@ -80,9 +80,8 @@ const SelectContent = React.forwardRef<
         collisionPadding={collisionPadding}
         sideOffset={sideOffset}
         className={classNames(
-          'max-h-[--radix-select-content-available-height] p-0.5 relative z-50 min-w-[8rem] rounded-xl overflow-hidden paper shadow-md animate-in fade-in-80',
-          'bg-white/50',
-          'dark:bg-slate-800/50',
+          'max-h-[--radix-select-content-available-height] border border-accent p-0.5 relative z-50 min-w-[8rem] rounded-2xl overflow-hidden shadow-md animate-in fade-in-80',
+          'bg-background',
           'black:bg-black/50',
           position === 'popper' && 'translate-y-1 ',
           className,
@@ -150,9 +149,8 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={classNames(
-      'relative flex w-full select-none cursor-pointer items-center rounded-md py-2 pl-8 pr-2 text-sm outline-none hover:bg-secondary focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      'text-gray-700',
-      'dark:text-slate-300',
+      'relative flex w-full select-none cursor-pointer items-center rounded-xl py-2 pl-8 pr-2 text-sm outline-none hover:bg-secondary focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'text-muted-foreground',
       'black:text-accent-foreground',
       className,
     )}
@@ -164,7 +162,7 @@ const SelectItem = React.forwardRef<
           strokeWidth={3}
           width={16}
           height={16}
-          className="text-blue"
+          className="text-pink"
         />
       </SelectPrimitive.ItemIndicator>
     </span>
@@ -196,7 +194,7 @@ const SelectCaption: FC<{ children: React.ReactNode; isError?: boolean }> = ({
     <span
       className={classNames(
         isError ? 'text-red' : '',
-        'mt-1.5 inline-block px-3 text-sm text-gray-500',
+        'mt-1.5 inline-block px-3 text-sm text-muted-foreground',
       )}
     >
       {children}

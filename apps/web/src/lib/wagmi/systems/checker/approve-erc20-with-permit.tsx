@@ -185,14 +185,13 @@ function _ApproveERC20WithPermit({
               'right-1 top-1 bottom-1',
             )}
           >
-            <SelectPrimitive.Trigger asChild>
+            <SelectPrimitive.Trigger asChild className="hover:bg-pink-800">
               <Button
                 asChild
-                size="xs"
+                size="sm"
                 variant="ghost"
                 name="Select"
                 className="!h-full !w-full"
-                id={'select-approval-type'}
               >
                 <ChevronDownIcon className="h-4 w-4" />
               </Button>
@@ -206,7 +205,7 @@ function _ApproveERC20WithPermit({
               We need your approval to execute this transaction on your behalf.{' '}
               <LinkExternal
                 target="_blank"
-                className="text-blue hover:underline"
+                className="text-pink hover:underline"
                 href="https://www.sushi.com/academy/articles/what-is-token-approval"
                 rel="noreferrer"
               >
