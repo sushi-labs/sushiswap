@@ -1,14 +1,13 @@
-import React, { useEffect, useMemo } from 'react'
-import { useBestRoute } from '~stellar/swap/lib/hooks'
-
+import React, { useEffect } from 'react'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
 } from '~stellar/_common/ui/swap/simple/simple-swap-provider/simple-swap-provider'
+import { useBestRoute } from '~stellar/swap/lib/hooks'
 
 export const SimpleSwapToken0Input = () => {
-  const { amount, token0, token1 } = useSimpleSwapState()
+  const { amount, amountIn, token0, token1 } = useSimpleSwapState()
   const {
     setAmount,
     setToken0,
@@ -18,22 +17,6 @@ export const SimpleSwapToken0Input = () => {
     setPriceImpact,
     setError,
   } = useSimpleSwapActions()
-
-  // Parse amount to bigint
-  const amountIn = useMemo(() => {
-    if (!amount || Number(amount) <= 0) return 0n
-    try {
-      const [integer = '0', fraction = ''] = amount.split('.')
-      const normalizedFraction = fraction
-        .padEnd(token0.decimals, '0')
-        .slice(0, token0.decimals)
-      const digits =
-        `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
-      return BigInt(digits)
-    } catch {
-      return 0n
-    }
-  }, [amount, token0.decimals])
 
   const {
     route,
@@ -96,7 +79,7 @@ export const SimpleSwapToken0Input = () => {
 
   return (
     <CurrencyInput
-      chainId={token0.chainId}
+      chainId={token0?.chainId}
       id="swap-from"
       type="INPUT"
       onSelect={setToken0}

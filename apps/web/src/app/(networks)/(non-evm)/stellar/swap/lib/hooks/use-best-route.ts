@@ -7,8 +7,8 @@ import type { RouteWithTokens, Vertex } from '../swap-get-route'
 import { usePoolGraph } from '../swap-get-route'
 
 interface UseBestRouteParams {
-  tokenIn: StellarToken | null
-  tokenOut: StellarToken | null
+  tokenIn: StellarToken | null | undefined
+  tokenOut: StellarToken | null | undefined
   amountIn: bigint
 }
 

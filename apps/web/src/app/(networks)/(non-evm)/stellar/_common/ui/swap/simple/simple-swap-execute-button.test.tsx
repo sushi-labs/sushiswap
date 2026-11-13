@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
   checkTrustlineRequired: vi.fn(),
   hasTrustline: vi.fn(),
   execute: vi.fn(),
+  bestRoute: vi.fn(),
   country: vi.fn(),
 }))
 vi.mock('src/lib/hooks/use-country-code', () => ({
@@ -63,11 +64,7 @@ vi.mock('~stellar/_common/lib/hooks/swap', () => ({
   }),
 }))
 vi.mock('~stellar/swap/lib/hooks', () => ({
-  useBestRoute: () => ({
-    route: { route: [], pools: [], fees: [] },
-    isPending: false,
-    isFetching: false,
-  }),
+  useBestRoute: mocks.bestRoute,
 }))
 vi.mock('./simple-swap-provider/simple-swap-provider', () => ({
   useSimpleSwapState: mocks.state,
@@ -97,6 +94,11 @@ beforeEach(() => {
   vi.resetAllMocks()
   vi.useFakeTimers()
   vi.stubEnv('NEXT_PUBLIC_APP_ENV', 'production')
+  mocks.bestRoute.mockReturnValue({
+    route: { route: [], pools: [], fees: [] },
+    isPending: false,
+    isFetching: false,
+  })
   mocks.country.mockReturnValue({
     data: 'US',
     isPending: false,
@@ -130,8 +132,10 @@ async function render(
   token0 = xlm,
   token1 = usdc,
 ): Promise<void> {
+  const parsedAmount = Amount.tryFromHuman(token0, amount ?? '')?.amount ?? 0n
   mocks.state.mockReturnValue({
     amount,
+    amountIn: parsedAmount > 0n ? parsedAmount : 0n,
     token0,
     token1,
     outputAmount: 10_000_000n,
@@ -149,16 +153,33 @@ async function render(
   })
 }
 
-it.each([null, '', '0', '0.00000001', 'invalid'])(
+it.each([null, '', '0', '0.00000001', 'invalid', '0x10', '1.2.3', '1e3', '-1'])(
   'does not check trustlines when the entered amount is %s',
   async (amount) => {
     await render(amount)
 
     expect(container.textContent).toBe('Enter Amount')
+    expect(mocks.bestRoute).toHaveBeenLastCalledWith(
+      expect.objectContaining({ amountIn: 0n }),
+    )
     expect(mocks.checkTrustlineRequired).not.toHaveBeenCalled()
     expect(mocks.hasTrustline).not.toHaveBeenCalled()
+    act(() => container.querySelector('button')?.click())
+    expect(mocks.execute).not.toHaveBeenCalled()
   },
 )
+
+it('uses the same validated amount for quoting and execution', async () => {
+  await render('1.00000009')
+
+  expect(mocks.bestRoute).toHaveBeenLastCalledWith(
+    expect.objectContaining({ amountIn: 10_000_001n }),
+  )
+  await act(async () => container.querySelector('button')?.click())
+  expect(mocks.execute).toHaveBeenCalledWith(
+    expect.objectContaining({ amountIn: 10_000_001n }),
+  )
+})
 
 it.each([
   { balance: 0n, isError: false, label: 'Insufficient Balance' },

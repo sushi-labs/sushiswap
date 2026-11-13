@@ -28,7 +28,7 @@ import {
 
 export const SimpleSwapExecuteButton = () => {
   const connectedAddress = useAccount('stellar')
-  const { amount, token0, token1, outputAmount, priceImpact } =
+  const { amountIn, token0, token1, outputAmount, priceImpact } =
     useSimpleSwapState()
   const { setAmount, setOutputAmount, setSlippageAmount, setPriceImpact } =
     useSimpleSwapActions()
@@ -48,21 +48,6 @@ export const SimpleSwapExecuteButton = () => {
   )
 
   // Get the same route that was used for price calculation
-  const amountIn = useMemo(() => {
-    if (!amount || Number(amount) <= 0 || !token0) return 0n
-    try {
-      const [integer = '0', fraction = ''] = amount.split('.')
-      const normalizedFraction = fraction
-        .padEnd(token0.decimals, '0')
-        .slice(0, token0.decimals)
-      const digits =
-        `${integer}${normalizedFraction}`.replace(/^0+(?=\d)/, '') || '0'
-      return BigInt(digits)
-    } catch {
-      return 0n
-    }
-  }, [amount, token0])
-
   const {
     route,
     isPending: isRoutePending,
@@ -113,14 +98,7 @@ export const SimpleSwapExecuteButton = () => {
   }, [outputAmount, slippageTolerance])
 
   const handleSwap = async () => {
-    if (
-      !connectedAddress ||
-      !token0 ||
-      !token1 ||
-      !amount ||
-      Number(amount) <= 0 ||
-      !route
-    ) {
+    if (!connectedAddress || !token0 || !token1 || amountIn <= 0n || !route) {
       return
     }
 
@@ -185,8 +163,7 @@ export const SimpleSwapExecuteButton = () => {
     !connectedAddress ||
     !token0 ||
     !token1 ||
-    !amount ||
-    Number(amount) <= 0 ||
+    amountIn <= 0n ||
     !outputAmount ||
     outputAmount === 0n ||
     executeSwap.isPending ||
@@ -205,14 +182,10 @@ export const SimpleSwapExecuteButton = () => {
       return 'Amount too small'
     }
     // Show loading state while fetching route
-    if (amount && Number(amount) > 0 && (isRoutePending || isRouteFetching)) {
+    if (amountIn > 0n && (isRoutePending || isRouteFetching)) {
       return 'Finding best route...'
     }
-    if (
-      amount &&
-      Number(amount) > 0 &&
-      (!route || !outputAmount || outputAmount === 0n)
-    ) {
+    if (amountIn > 0n && (!route || !outputAmount || outputAmount === 0n)) {
       return 'No route found'
     }
     return 'Swap'
@@ -222,7 +195,7 @@ export const SimpleSwapExecuteButton = () => {
     showPriceImpactWarning,
     checked,
     hasRouteButZeroOutput,
-    amount,
+    amountIn,
     route,
     outputAmount,
     isRoutePending,
