@@ -9,7 +9,6 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.POLYGON]: 'polygon_pos',
   [ChainId.AVALANCHE]: 'avax',
   [ChainId.CRONOS]: 'cro',
-  [ChainId.HARMONY]: 'one',
   [ChainId.BOBA]: 'boba',
   [ChainId.FANTOM]: 'ftm',
   [ChainId.METIS]: 'metis',
@@ -29,7 +28,6 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.BASE]: 'base',
   [ChainId.SCROLL]: 'scroll',
   [ChainId.ZETACHAIN]: 'zetachain',
-  [ChainId.BLAST]: 'blast',
   [ChainId.BOBA_BNB]: 'boba-bnb',
   [ChainId.ROOTSTOCK]: 'rootstock',
   [ChainId.SKALE_EUROPA]: 'skale-europa',
@@ -37,7 +35,6 @@ const COINGECKO_CHAIN_ID_BY_NAME = {
   [ChainId.MANTA]: 'manta-pacific',
   [ChainId.MODE]: 'mode',
   [ChainId.TAIKO]: 'taiko',
-  [ChainId.ZKLINK]: 'zklink-nova',
   [ChainId.APE]: 'apechain',
 
   [ChainId.SOLANA]: 'solana',

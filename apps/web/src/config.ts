@@ -77,7 +77,6 @@ export const isSwapApiEnabledChainId = (
 
 export const DISABLED_CHAIN_IDS = [
   ChainId.BOBA_BNB,
-  ChainId.HARMONY,
   ChainId.POLYGON_ZKEVM,
   ChainId.TATARA,
   ChainId.SEPOLIA,
@@ -115,7 +114,6 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.CELO,
   ChainId.SONIC,
   ChainId.SKALE_EUROPA,
-  ChainId.BLAST,
   ChainId.APTOS,
   ChainId.CORE,
   ChainId.ZETACHAIN,
@@ -133,11 +131,9 @@ export const PREFERRED_CHAINID_ORDER = [
   ChainId.ZKSYNC_ERA,
   ChainId.METIS,
   ChainId.MANTA,
-  ChainId.ZKLINK,
   ChainId.APE,
   ChainId.POLYGON_ZKEVM,
   ChainId.TAIKO,
-  ChainId.HARMONY,
 ] as const
 
 export const getSortedChainIds = <T extends ChainId>(
@@ -259,7 +255,6 @@ export const LIFI_XSWAP_SUPPORTED_CHAIN_IDS = [
   ChainId.AVALANCHE,
   ChainId.BASE,
   ChainId.BERACHAIN,
-  ChainId.BLAST,
   ChainId.BOBA,
   ChainId.BSC,
   ChainId.CELO,

@@ -53,7 +53,6 @@ const SUSHI_CONNECT_SOURCES = [
   'https://rpc.bittorrentchain.io',
   'https://api.node.glif.io',
   'https://elated-tan-skat-indexer.skalenodes.com:10072',
-  'https://rpc.zklink.io',
   'https://sepolia-rollup.arbitrum.io',
   'https://rpc.tatara.katanarpc.com',
   'https://rpc-bokuto.katanarpc.com',

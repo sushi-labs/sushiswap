@@ -19,7 +19,6 @@ export const publicTransports = {
   [EvmChainId.ETHEREUM]: drpc('ethereum'),
   [EvmChainId.FANTOM]: drpc('fantom'),
   [EvmChainId.GNOSIS]: drpc('gnosis'),
-  [EvmChainId.HARMONY]: drpc('harmony-0'),
   [EvmChainId.KAVA]: drpc('kava'),
   [EvmChainId.METIS]: drpc('metis'),
   [EvmChainId.OPTIMISM]: drpc('optimism'),
@@ -34,7 +33,6 @@ export const publicTransports = {
   [EvmChainId.FILECOIN]: http('https://api.node.glif.io/rpc/v1'),
   [EvmChainId.ZETACHAIN]: drpc('zeta-chain'),
   [EvmChainId.CRONOS]: drpc('cronos'),
-  [EvmChainId.BLAST]: drpc('blast'),
   [EvmChainId.SKALE_EUROPA]: http(
     'https://elated-tan-skat-indexer.skalenodes.com:10072',
   ),
@@ -43,7 +41,6 @@ export const publicTransports = {
   [EvmChainId.MANTA]: drpc('manta-pacific'),
   [EvmChainId.MODE]: drpc('mode'),
   [EvmChainId.TAIKO]: drpc('taiko'),
-  [EvmChainId.ZKLINK]: http('https://rpc.zklink.io'),
   [EvmChainId.APE]: drpc('apechain'),
   [EvmChainId.SONIC]: drpc('sonic'),
   [EvmChainId.HEMI]: drpc('hemi'),

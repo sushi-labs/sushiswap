@@ -11,7 +11,6 @@ const AvaxLogo = 'avax.svg'
 const BnbLogo = 'bnb.svg'
 const EthereumLogo = 'ethereum.svg'
 const FtmLogo = 'ftm.svg'
-const OneLogo = 'one.svg'
 // const HtLogo = 'ht.svg'
 const MaticLogo = 'matic.svg'
 // const OktLogo = 'okt.svg'
@@ -52,8 +51,6 @@ const LOGO: Record<number, string> = {
   // [ChainId.AVALANCHE_TESTNET]: AvaxLogo,
   // [ChainId.HECO]: HtLogo,
   // [ChainId.HECO_TESTNET]: HtLogo,
-  [ChainId.HARMONY]: OneLogo,
-  // [ChainId.HARMONY_TESTNET]: OneLogo,
   // [ChainId.OKEX]: OktLogo,
   // [ChainId.OKEX_TESTNET]: OktLogo,
   [ChainId.ARBITRUM]: EthereumLogo,
@@ -77,13 +74,11 @@ const LOGO: Record<number, string> = {
   [ChainId.FILECOIN]: FilecoinLogo,
   [ChainId.ZETACHAIN]: ZetaLogo,
   [ChainId.CRONOS]: CroLogo,
-  [ChainId.BLAST]: EthereumLogo,
   [ChainId.ROOTSTOCK]: BitcoinLogo,
   [ChainId.MANTLE]: MntLogo,
   [ChainId.MANTA]: EthereumLogo,
   [ChainId.MODE]: EthereumLogo,
   [ChainId.TAIKO]: EthereumLogo,
-  [ChainId.ZKLINK]: EthereumLogo,
   [ChainId.APE]: ApeLogo,
   [ChainId.SONIC]: SonicLogo,
   [ChainId.HEMI]: EthereumLogo,

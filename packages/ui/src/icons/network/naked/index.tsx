@@ -9,7 +9,6 @@ import { AvalancheNaked } from './avalanche-naked'
 import { BaseNaked } from './base-naked'
 import { BeraNaked } from './bera-naked'
 import { BinanceNaked } from './binance-naked'
-import { BlastNaked } from './blast-naked'
 import { BobaBNBNaked } from './boba-bnb-naked'
 import { BobaNaked } from './boba-naked'
 import { BttcNaked } from './bttc-naked'
@@ -21,7 +20,6 @@ import { FantomNaked } from './fantom-naked'
 import { FilecoinNaked } from './filecoin-naked'
 import { GnosisNaked } from './gnosis-naked'
 import { HaqqNaked } from './haqq-naked'
-import { HarmonyNaked } from './harmony-naked'
 import { HecoNaked } from './heco-naked'
 import { HemiNaked } from './hemi-naked'
 import { HyperEVMNaked } from './hyper-evm-naked'
@@ -48,7 +46,6 @@ import { StellarNaked } from './stellar-naked'
 import { TaikoNaked } from './taiko-naked'
 import { XLayerNaked } from './x-layer-naked'
 import { ZetaChainNaked } from './zeta-chain-naked'
-import { ZKLinkNaked } from './zk-link-naked'
 import { ZKSyncNaked } from './zk-sync-naked'
 
 export * from './ape-naked'
@@ -118,7 +115,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.BSC]: BinanceNaked,
   [ChainId.ARBITRUM]: ArbitrumNaked,
   [ChainId.AVALANCHE]: AvalancheNaked,
-  [ChainId.HARMONY]: HarmonyNaked,
   [ChainId.CELO]: CeloNaked,
   [ChainId.OPTIMISM]: OptimismNaked,
   [ChainId.KAVA]: KavaNaked,
@@ -135,7 +131,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.SCROLL]: ScrollNaked,
   [ChainId.FILECOIN]: FilecoinNaked,
   [ChainId.ZETACHAIN]: ZetaChainNaked,
-  [ChainId.BLAST]: BlastNaked,
   [ChainId.SKALE_EUROPA]: SkaleNaked,
   [ChainId.ROOTSTOCK]: RootstockNaked,
   [ChainId.CRONOS]: CronosNaked,
@@ -143,7 +138,6 @@ export const NETWORK_NAKED_ICON: Partial<
   [ChainId.MANTA]: MantaNaked,
   [ChainId.MODE]: ModeNaked,
   [ChainId.TAIKO]: TaikoNaked,
-  [ChainId.ZKLINK]: ZKLinkNaked,
   [ChainId.APE]: ApeNaked,
   [ChainId.SONIC]: SonicNaked,
   [ChainId.HEMI]: HemiNaked,
