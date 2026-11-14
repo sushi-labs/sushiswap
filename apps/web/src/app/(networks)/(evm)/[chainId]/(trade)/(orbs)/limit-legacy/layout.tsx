@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { TwapLayout } from '../_ui/twap-layout'
 
 export const metadata: Metadata = {
-  title: 'Limit',
-  description: 'Trade with limit orders on SushiSwap.',
+  title: 'Limit (Legacy — Orbs)',
+  description: 'View and cancel existing Orbs limit orders.',
 }
 
 export default async function SwapLimitLayout(props: {

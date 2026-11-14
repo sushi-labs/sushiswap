@@ -61,6 +61,7 @@ const SUSHI_CONNECT_SOURCES = [
 ]
 
 const PRODUCT_CONNECT_SOURCES = [
+  'https://api.cow.fi',
   'https://api.coingecko.com',
   'https://score.snapshot.org',
   'https://api.gopluslabs.io',
