@@ -1,7 +1,7 @@
 'use client'
 
+import { StrKey } from '@stellar/stellar-sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
   type FC,
@@ -21,6 +21,7 @@ import {
   isStellarContractAddress,
 } from 'sushi/stellar'
 import { getTokenByContract } from '~stellar/_common/lib/soroban/token-helpers'
+import SimpleSwapLoading from '~stellar/swap/loading'
 
 interface SimpleSwapProvider {
   children: ReactNode
@@ -68,24 +69,32 @@ type Actions =
   | { type: 'setPriceFetching'; value: boolean }
   | { type: 'setIsTransactionPending'; value: boolean }
 
-function useUrlToken(address: string) {
-  return useQuery({
+function useUrlToken(
+  address: string,
+  fallback: StellarToken,
+): StellarToken | undefined {
+  const validAddress =
+    isStellarContractAddress(address) && StrKey.isValidContract(address)
+  const query = useQuery({
     queryKey: ['stellar', 'token', address],
     queryFn: async () => {
       if (!isStellarContractAddress(address)) {
         throw new Error('Invalid Stellar token address')
       }
-      return getTokenByContract(address)
+      return getTokenByContract(address, { strict: true })
     },
     initialData: [
       STELLAR_XLM[StellarChainId.STELLAR],
       STELLAR_USDT0[StellarChainId.STELLAR],
     ].find((token) => token.address === address),
-    enabled: isStellarContractAddress(address),
+    enabled: validAddress,
     staleTime: 900000,
     refetchOnWindowFocus: false,
     retry: false,
   })
+
+  if (!validAddress) return fallback
+  return query.data ?? (query.isError ? fallback : undefined)
 }
 
 export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
@@ -104,12 +113,27 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   }, [searchParams])
   const token0Param = (defaultedParams.get('token0') || '').toUpperCase()
   const token1Param = (defaultedParams.get('token1') || '').toUpperCase()
-  const { data: token0, isLoading: isToken0Loading } = useUrlToken(token0Param)
-  const { data: token1, isLoading: isToken1Loading } = useUrlToken(token1Param)
+  let token0 = useUrlToken(token0Param, STELLAR_XLM[StellarChainId.STELLAR])
+  let token1 = useUrlToken(token1Param, STELLAR_USDT0[StellarChainId.STELLAR])
+  if (token0 && token1 && token0.address === token1.address) {
+    const alternate =
+      token0.address === STELLAR_USDT0[StellarChainId.STELLAR].address
+        ? STELLAR_XLM[StellarChainId.STELLAR]
+        : STELLAR_USDT0[StellarChainId.STELLAR]
+    if (searchParams.has('token0') && token0.address === token0Param) {
+      token1 = alternate
+    } else {
+      token0 = alternate
+    }
+  }
+  const token0Address = token0?.address ?? token0Param
+  const token1Address = token1?.address ?? token1Param
 
   const updateSearchParams = useCallback(
     (values: { name: string; value: string | null }[]) => {
       const params = new URLSearchParams(defaultedParams)
+      params.set('token0', token0Address)
+      params.set('token1', token1Address)
       for (const { name, value } of values) {
         if (value === null) {
           params.delete(name)
@@ -119,7 +143,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
       }
       history.pushState(null, '', `${pathname}?${params.toString()}`)
     },
-    [defaultedParams, pathname],
+    [defaultedParams, pathname, token0Address, token1Address],
   )
 
   const reducer = (state: InternalState, action: Actions): InternalState => {
@@ -173,34 +197,34 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
 
   const swapTokens = useCallback(() => {
     updateSearchParams([
-      { name: 'token0', value: token1Param },
-      { name: 'token1', value: token0Param },
+      { name: 'token0', value: token1Address },
+      { name: 'token1', value: token0Address },
       { name: 'swapAmount', value: null },
     ])
-  }, [token0Param, token1Param, updateSearchParams])
+  }, [token0Address, token1Address, updateSearchParams])
 
   const setToken0 = useCallback(
     (token: StellarToken) => {
       queryClient.setQueryData(['stellar', 'token', token.address], token)
-      if (token1Param === token.address) {
+      if (token1Address === token.address) {
         swapTokens()
       } else {
         updateSearchParams([{ name: 'token0', value: token.address }])
       }
     },
-    [queryClient, token1Param, swapTokens, updateSearchParams],
+    [queryClient, token1Address, swapTokens, updateSearchParams],
   )
 
   const setToken1 = useCallback(
     (token: StellarToken) => {
       queryClient.setQueryData(['stellar', 'token', token.address], token)
-      if (token0Param === token.address) {
+      if (token0Address === token.address) {
         swapTokens()
       } else {
         updateSearchParams([{ name: 'token1', value: token.address }])
       }
     },
-    [queryClient, token0Param, swapTokens, updateSearchParams],
+    [queryClient, token0Address, swapTokens, updateSearchParams],
   )
 
   const setAmount = useCallback(
@@ -241,14 +265,7 @@ export const SimpleSwapProvider: FC<SimpleSwapProvider> = ({ children }) => {
   }, [setToken0, setToken1, swapTokens, setAmount])
 
   if (!state) {
-    if (isToken0Loading || isToken1Loading) {
-      return <div role="status">Loading tokens...</div>
-    }
-    return (
-      <div role="alert">
-        Unable to load selected tokens. <Link href={pathname}>Reset swap</Link>
-      </div>
-    )
+    return <SimpleSwapLoading />
   }
 
   return (

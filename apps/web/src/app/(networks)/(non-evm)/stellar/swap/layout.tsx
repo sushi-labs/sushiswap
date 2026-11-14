@@ -11,8 +11,8 @@ export default function SwapLayout({
   children,
 }: { children: React.ReactNode }) {
   return (
-    <Providers>
-      <main className="lg:p-4 mt-16 mb-[86px]">{children}</main>
-    </Providers>
+    <main className="lg:p-4 mt-16 mb-[86px]">
+      <Providers>{children}</Providers>
+    </main>
   )
 }
