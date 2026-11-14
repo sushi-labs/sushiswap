@@ -97,6 +97,18 @@ describe('EVM wallet identity', () => {
     }
   })
 
+  it('resolves Oath to the shared WalletConnect connector without replacing its generic entry', () => {
+    const config = createTestConfig([
+      createNamedConnector('walletConnect', 'WalletConnect'),
+    ])
+    const oath = getWallet('evm:oath-wallet')
+    expect(oath.name).toBe('Oath Wallet')
+    expect(oath.adapterId).toBe(EvmAdapterId.WalletConnect)
+    expect(findEvmWalletConnector(config, oath)).toBe(
+      findEvmWalletConnector(config, getWallet('evm:walletconnect')),
+    )
+  })
+
   it('resolves each Privy login method to the shared connector', () => {
     const config = createTestConfig([privyEvmConnector()])
     const emailWallet = getWallet('evm:io.privy.wallet')

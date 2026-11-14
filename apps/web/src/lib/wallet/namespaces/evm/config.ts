@@ -12,6 +12,7 @@ import {
   getSafeConnector,
   getWalletConnectConnector,
 } from './adapters'
+import { OATH_WALLET, OATH_WALLET_ID } from './adapters/oath-wallet'
 
 export const EvmAdapterId = {
   Injected: 'evm-injected',
@@ -74,6 +75,15 @@ export const EVM_WALLETS: Wallet[] = [
     name: 'Browser Wallet',
     icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgMGgyOHYyOEgweiIvPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgeD0iNCIgeT0iNiIgZmlsbD0idXJsKCNhKSIgcng9IjMuNSIvPjxwYXRoIGZpbGw9IiMwZTc2ZmQiIGQ9Ik0xNiAxNGEzIDMgMCAwIDEgMy0zaDQuNGMuNTYgMCAuODQgMCAxLjA1NC4xMDlhMSAxIDAgMCAxIC40MzcuNDM3QzI1IDExLjc2IDI1IDEyLjA0IDI1IDEyLjZ2Mi44YzAgLjU2IDAgLjg0LS4xMDkgMS4wNTRhMSAxIDAgMCAxLS40MzcuNDM3QzI0LjI0IDE3IDIzLjk2IDE3IDIzLjQgMTdIMTlhMyAzIDAgMCAxLTMtMyIvPjxjaXJjbGUgY3g9IjE5IiBjeT0iMTQiIHI9IjEuMjUiIGZpbGw9IiNhM2Q3ZmYiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIxNCIgeDI9IjE0IiB5MT0iNiIgeTI9IjIyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agc3RvcC1jb2xvcj0iIzE3NDI5OSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwMWU1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==',
     adapterId: EvmAdapterId.Injected,
+  },
+  {
+    id: OATH_WALLET_ID,
+    connectionId: 'evm:walletconnect',
+    namespace: 'evm',
+    name: OATH_WALLET.name,
+    icon: OATH_WALLET.image_url,
+    adapterId: EvmAdapterId.WalletConnect,
+    url: OATH_WALLET.homepage,
   },
   {
     id: 'evm:walletconnect',
