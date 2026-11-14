@@ -10,13 +10,12 @@ export const SimpleSwapToken1Input = () => {
   const { token1, outputAmount, isPriceFetching } = useSimpleSwapState()
   const { setToken1 } = useSimpleSwapActions()
 
-  const outputSwapTokenAmount = outputAmount
-    ? formatUnits(outputAmount, token1.decimals)
-    : ''
+  const outputSwapTokenAmount =
+    token1 && outputAmount ? formatUnits(outputAmount, token1.decimals) : ''
 
   return (
     <CurrencyInput
-      chainId={token1.chainId}
+      chainId={token1?.chainId}
       id="swap-to"
       onSelect={setToken1}
       currency={token1}
