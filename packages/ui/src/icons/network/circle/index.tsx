@@ -9,7 +9,6 @@ import { AvalancheCircle } from './avalanche-circle'
 import { BaseCircle } from './base-circle'
 import { BeraCircle } from './bera-circle'
 import { BinanceCircle } from './binance-circle'
-import { BlastCircle } from './blast-circle'
 import { BobaBNBCircle } from './boba-bnb-circle'
 import { BobaCircle } from './boba-circle'
 import { BttcCircle } from './bttc-circle'
@@ -21,7 +20,6 @@ import { FantomCircle } from './fantom-circle'
 import { FilecoinCircle } from './filecoin-circle'
 import { GnosisCircle } from './gnosis-circle'
 import { HaqqCircle } from './haqq-circle'
-import { HarmonyCircle } from './harmony-circle'
 import { HemiCircle } from './hemi-circle'
 import { HyperEVMCircle } from './hyper-evm-circle'
 import { KatanaCircle } from './katana-circle'
@@ -47,7 +45,6 @@ import { StellarCircle } from './stellar-circle'
 import { TaikoCircle } from './taiko-circle'
 import { XLayerCircle } from './x-layer-circle'
 import { ZetaChainCircle } from './zeta-chain-circle'
-import { ZKLinkCircle } from './zk-link-circle'
 import { ZKSyncCircle } from './zk-sync-circle'
 
 export * from './ape-circle'
@@ -118,7 +115,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.BSC]: BinanceCircle,
   [ChainId.ARBITRUM]: ArbitrumCircle,
   [ChainId.AVALANCHE]: AvalancheCircle,
-  [ChainId.HARMONY]: HarmonyCircle,
   [ChainId.CELO]: CeloCircle,
   [ChainId.OPTIMISM]: OptimismCircle,
   [ChainId.METIS]: MetisCircle,
@@ -135,7 +131,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.SCROLL]: ScrollCircle,
   [ChainId.FILECOIN]: FilecoinCircle,
   [ChainId.ZETACHAIN]: ZetaChainCircle,
-  [ChainId.BLAST]: BlastCircle,
   [ChainId.SKALE_EUROPA]: SkaleCircle,
   [ChainId.ROOTSTOCK]: RootstockCircle,
   [ChainId.CRONOS]: CronosCircle,
@@ -143,7 +138,6 @@ export const NETWORK_CIRCLE_ICON: Partial<
   [ChainId.MANTA]: MantaCircle,
   [ChainId.MODE]: ModeCircle,
   [ChainId.TAIKO]: TaikoCircle,
-  [ChainId.ZKLINK]: ZKLinkCircle,
   [ChainId.APE]: ApeCircle,
   [ChainId.SONIC]: SonicCircle,
   [ChainId.HEMI]: HemiCircle,
