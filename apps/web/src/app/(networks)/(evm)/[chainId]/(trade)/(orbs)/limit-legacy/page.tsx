@@ -30,7 +30,7 @@ export default function SwapLimitPage() {
       >
         <div className="flex flex-col gap-4 p-4 md:p-6 bg-white/80 dark:bg-slate-900/80 rounded-3xl">
           <SwapModeButtons />
-          <h1 className="text-xl font-semibold">Limit (Legacy — Orbs)</h1>
+          <h1 className="text-xl font-semibold">Limit (Legacy)</h1>
           <p className="text-sm text-muted-foreground">
             View and cancel your existing Orbs limit orders. New limit orders
             use CoW Protocol. DCA, stop-loss and take-profit orders continue to

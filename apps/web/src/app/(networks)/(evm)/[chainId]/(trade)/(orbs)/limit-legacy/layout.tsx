@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { TwapLayout } from '../_ui/twap-layout'
 
 export const metadata: Metadata = {
-  title: 'Limit (Legacy — Orbs)',
+  title: 'Limit (Legacy)',
   description: 'View and cancel existing Orbs limit orders.',
 }
 

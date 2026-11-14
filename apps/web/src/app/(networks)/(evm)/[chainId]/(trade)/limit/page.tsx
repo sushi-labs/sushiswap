@@ -5,7 +5,7 @@ import { CowLimitWidget } from './_ui/cow-limit-widget'
 
 export default function LimitPage(): React.JSX.Element {
   return (
-    <Container maxWidth="lg" className="relative">
+    <Container maxWidth="6xl" className="relative">
       <CowLimitWidget />
     </Container>
   )

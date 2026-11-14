@@ -1,16 +1,9 @@
 'use client'
 
-import {
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@sushiswap/ui'
+import { Tabs, TabsList, TabsTrigger } from '@sushiswap/ui'
 import { COW_EXPIRATIONS } from 'src/lib/swap/cow/chains'
 import type { CowOrder } from 'src/lib/swap/cow/schema'
-import { formatCowTimestamp } from './cow-format'
+import { formatCowDate } from './cow-format'
 
 // `value` is a duration in seconds, or `keep` for an edited order's expiry.
 export function CowExpirySelect({
@@ -23,29 +16,22 @@ export function CowExpirySelect({
   editing: CowOrder | undefined
 }): React.JSX.Element {
   return (
-    <div className="flex items-center justify-between">
-      <Label htmlFor="cow-order-expiry">Expires</Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger
-          id="cow-order-expiry"
-          aria-label="Order expiry"
-          className="w-auto"
-        >
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
+    <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+      <span className="text-sm text-muted-foreground">Expires in</span>
+      <Tabs value={value} onValueChange={onChange}>
+        <TabsList aria-label="Order expiry">
           {editing && (
-            <SelectItem value="keep">
-              Keep {formatCowTimestamp(editing.validTo)}
-            </SelectItem>
+            <TabsTrigger value="keep">
+              Keep {formatCowDate(editing.validTo)}
+            </TabsTrigger>
           )}
           {COW_EXPIRATIONS.map((option) => (
-            <SelectItem key={option.seconds} value={String(option.seconds)}>
+            <TabsTrigger key={option.seconds} value={String(option.seconds)}>
               {option.label}
-            </SelectItem>
+            </TabsTrigger>
           ))}
-        </SelectContent>
-      </Select>
+        </TabsList>
+      </Tabs>
     </div>
   )
 }

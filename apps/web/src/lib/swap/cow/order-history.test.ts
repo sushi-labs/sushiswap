@@ -1,6 +1,10 @@
 import { keccak256, stringToHex } from 'viem'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getCowOrdersPage, getOpenCowSellAmount } from './order-history'
+import {
+  getCowOrdersPage,
+  getOpenCowOrders,
+  getOpenCowSellAmount,
+} from './order-history'
 import { getCowApi, getCowOrder } from './orderbook'
 import { historyOrder, owner, token0, token1 } from './test-fixtures'
 
@@ -35,6 +39,20 @@ describe('CoW order history', () => {
     expect(page.orders.map((item) => item.uid)).toEqual([order.uid])
     expect(page.nextOffset).toBeUndefined()
     expect(fetch).toHaveBeenCalledTimes(3)
+  })
+  it('lists open Sushi orders from the whole history, not just loaded pages', async () => {
+    const order = await historyOrder()
+    const filled = Array.from({ length: 60 }, (_, index) => ({
+      ...order,
+      uid: `0x${index.toString(16).padStart(2, '0').repeat(56)}`,
+      status: 'fulfilled',
+    }))
+    const other = { ...order, uid: `0x${'ff'.repeat(56)}`, fullAppData: '{}' }
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
+      Response.json([...filled, other, order]),
+    )
+    const open = await getOpenCowOrders({ chainId: 1, owner: owner.address })
+    expect(open.map((item) => item.uid)).toEqual([order.uid])
   })
   it('sums the remaining amounts of every open order selling the same token', async () => {
     const order = await historyOrder()

@@ -58,6 +58,22 @@ function getOrCreateChain(state: ProviderState, chainId: EvmChainId) {
 }
 
 /*
+  Unsubscribing only lowers the listener count; tokens left at zero listeners,
+  and their cached balances, are evicted here on the periodic sweep. An effect
+  re-run unsubscribes and resubscribes back-to-back, which must be a no-op.
+*/
+export function pruneInactiveBalances(state: ProviderState): void {
+  state.chains.forEach((chain) => {
+    chain.activeTokens.forEach((listenerCount, address) => {
+      if (listenerCount === 0) chain.activeTokens.delete(address)
+    })
+    chain.balanceMap.forEach((_, address) => {
+      if (!chain.activeTokens.has(address)) chain.balanceMap.delete(address)
+    })
+  })
+}
+
+/*
   This reducer and the surrounding hooks have been written in mind with the fact
   that the references of sets and maps inside of the state do not change, only the
   state object itself.
@@ -72,18 +88,21 @@ export function balanceReducer(
 
       if (tokenIds.length === 0) return state
 
+      let hasNewToken = false
+
       tokenIds.forEach((tokenId) => {
         const { chainId, address } = tokenId
 
         const chain = getOrCreateChain(state, chainId)
 
-        const currentListenerCount = chain.activeTokens.get(address) || 0
-        chain.activeTokens.set(address, currentListenerCount + 1)
+        const currentListenerCount = chain.activeTokens.get(address)
+        if (currentListenerCount === undefined) hasNewToken = true
+        chain.activeTokens.set(address, (currentListenerCount ?? 0) + 1)
       })
 
-      return {
-        ...state,
-      }
+      // Listener counts are never rendered; a new state is only needed to
+      // trigger an immediate fetch for tokens the provider isn't tracking yet.
+      return hasNewToken ? { ...state } : state
     }
     case 'DECREMENT_TOKEN': {
       const tokenIds = getTokenIds(action.payload)
@@ -99,17 +118,11 @@ export function balanceReducer(
 
         if (currentListenerCount === 0) return
 
-        if (currentListenerCount === 1) {
-          chain.activeTokens.delete(address)
-          chain.balanceMap.delete(address)
-        } else {
-          chain.activeTokens.set(address, currentListenerCount - 1)
-        }
+        chain.activeTokens.set(address, currentListenerCount - 1)
       })
 
-      return {
-        ...state,
-      }
+      // Listener counts are never rendered, and eviction happens on the sweep.
+      return state
     }
     case 'UPDATE_ACCOUNT': {
       state.chains.forEach((chain) => {
@@ -324,6 +337,7 @@ export function BalanceProvider({ children }: BalanceProviderContextProps) {
   )
 
   const updateAllIfStaleOrMissing = useCallback(() => {
+    pruneInactiveBalances(state)
     state.chains.forEach((_, chainId) => updateIfStaleOrMissing(chainId))
   }, [state, updateIfStaleOrMissing])
 

@@ -65,8 +65,8 @@ interface DerivedStateSimpleSwapProviderProps<
 > {
   children: React.ReactNode
   chainId?: TChainId
-  token0?: CurrencyFor<TChainId>
-  token1?: CurrencyFor<TChainId>
+  initialToken0?: CurrencyFor<TChainId>
+  initialToken1?: CurrencyFor<TChainId>
   initialSwapAmount?: string
   persistToUrl?: boolean
   fee?: number
@@ -82,8 +82,8 @@ function DerivedstateSimpleSwapProvider<
 >({
   children,
   chainId: providedChainId,
-  token0: initialToken0,
-  token1: initialToken1,
+  initialToken0,
+  initialToken1,
   initialSwapAmount,
   persistToUrl = true,
   fee,
@@ -107,25 +107,33 @@ function DerivedstateSimpleSwapProvider<
         : EvmChainId.ETHEREUM
   ) as TChainId
 
+  // Strings, so callers can pass a new currency instance on every render.
+  const initialToken0Id = initialToken0
+    ? getTokenAsString(chainId, initialToken0)
+    : undefined
+  const initialToken1Id = initialToken1
+    ? getTokenAsString(chainId, initialToken1)
+    : undefined
+
   const [localTokenCache, setLocalTokenCache] = useState<
     Map<string, CurrencyFor<TChainId>>
   >(() => {
     const cache = new Map<string, CurrencyFor<TChainId>>()
-    if (initialToken0) {
-      cache.set(getTokenAsString(chainId, initialToken0), initialToken0)
+    if (initialToken0 && initialToken0Id) {
+      cache.set(initialToken0Id, initialToken0)
     }
-    if (initialToken1) {
-      cache.set(getTokenAsString(chainId, initialToken1), initialToken1)
+    if (initialToken1 && initialToken1Id) {
+      cache.set(initialToken1Id, initialToken1)
     }
     return cache
   })
   const [localSearchParams, setLocalSearchParams] = useState(() => {
     const params = new URLSearchParams()
-    if (initialToken0) {
-      params.set('token0', getTokenAsString(chainId, initialToken0))
+    if (initialToken0Id) {
+      params.set('token0', initialToken0Id)
     }
-    if (initialToken1) {
-      params.set('token1', getTokenAsString(chainId, initialToken1))
+    if (initialToken1Id) {
+      params.set('token1', initialToken1Id)
     }
     if (initialSwapAmount) {
       params.set('swapAmount', initialSwapAmount)
@@ -141,13 +149,20 @@ function DerivedstateSimpleSwapProvider<
     )
 
     if (!params.has('token0')) {
-      params.set('token0', getDefaultCurrency(chainId))
+      params.set('token0', initialToken0Id ?? getDefaultCurrency(chainId))
     }
     if (!params.has('token1')) {
-      params.set('token1', getQuoteCurrency(chainId))
+      params.set('token1', initialToken1Id ?? getQuoteCurrency(chainId))
     }
     return params
-  }, [chainId, localSearchParams, persistToUrl, searchParams])
+  }, [
+    chainId,
+    initialToken0Id,
+    initialToken1Id,
+    localSearchParams,
+    persistToUrl,
+    searchParams,
+  ])
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair

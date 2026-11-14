@@ -1,7 +1,7 @@
 import { Price } from 'sushi'
 import { maxUint256 } from 'viem'
 import { describe, expect, it } from 'vitest'
-import { formatLimitPrice, getLimitBuyAmount, getOrderPrice } from './amounts'
+import { getLimitBuyAmount, getOrderPrice, getUsdMarketPrice } from './amounts'
 import { token, token1 } from './test-fixtures'
 
 describe('CoW limit amounts', () => {
@@ -30,7 +30,7 @@ describe('CoW limit amounts', () => {
       token(0, token1),
     )
     expect(getLimitBuyAmount(3n, original)).toBe(1n)
-    expect(formatLimitPrice(original)).toBe('0.333333333333333333333333')
+    expect(original.toSignificant(6)).toBe('0.333333')
     const tokenPrice = getOrderPrice(
       { sellAmount: '3000000', buyAmount: '1000000000000000000' },
       token(6),
@@ -38,6 +38,7 @@ describe('CoW limit amounts', () => {
     )
     expect(getLimitBuyAmount(1000000n, tokenPrice)).toBe(333333333333333334n)
   })
+
   it('rejects a limit that would overflow the order', () => {
     expect(() =>
       getLimitBuyAmount(
@@ -45,5 +46,16 @@ describe('CoW limit amounts', () => {
         Price.fromHuman(token(0), token(18, token1), '2'),
       ),
     ).toThrow()
+  })
+
+  it('estimates a market price from USD prices across decimals', () => {
+    const price = getUsdMarketPrice(token(18), token(6, token1), 3000, 1)
+    if (!price) throw new Error('Expected a USD market price')
+    expect(price.toSignificant()).toBe('3000')
+    expect(getLimitBuyAmount(10n ** 18n, price)).toBe(3_000_000_000n)
+    expect(getUsdMarketPrice(token(18), token(6, token1), 0, 1)).toBeUndefined()
+    expect(
+      getUsdMarketPrice(token(18), token(6, token1), 1, undefined),
+    ).toBeUndefined()
   })
 })

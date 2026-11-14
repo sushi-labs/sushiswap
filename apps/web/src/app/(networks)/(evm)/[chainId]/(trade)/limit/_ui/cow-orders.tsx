@@ -1,64 +1,72 @@
 'use client'
 
-import { OrderStatus } from '@cowprotocol/cow-sdk'
 import {
   Button,
   List,
   Message,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  classNames,
 } from '@sushiswap/ui'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import ms from 'ms'
 import { useState } from 'react'
 import type { CowLimitChainId } from 'src/lib/swap/cow/chains'
 import { isCowOrderOpen } from 'src/lib/swap/cow/order'
-import { getCowOrdersPage } from 'src/lib/swap/cow/order-history'
-import { getCowOrdersQueryKey } from 'src/lib/swap/cow/query-keys'
+import {
+  getCowOrdersPage,
+  getOpenCowOrders,
+} from 'src/lib/swap/cow/order-history'
+import {
+  getCowOpenOrdersQueryKey,
+  getCowOrdersQueryKey,
+} from 'src/lib/swap/cow/query-keys'
 import type { CowOrder } from 'src/lib/swap/cow/schema'
 import type { EvmAddress } from 'sushi/evm'
-import { CowOrderCard } from './cow-order-card'
+import { COW_ORDER_ROW_COLUMNS, CowOrderCard } from './cow-order-card'
 
-type CowOrderFilter =
-  | 'all'
-  | 'open'
-  | OrderStatus.FULFILLED
-  | OrderStatus.CANCELLED
-  | OrderStatus.EXPIRED
+type CowOrderFilter = 'open' | 'history'
 
-const FILTERS: { value: CowOrderFilter; label: string }[] = [
-  { value: 'all', label: 'All orders' },
-  { value: 'open', label: 'Open' },
-  { value: OrderStatus.FULFILLED, label: 'Filled' },
-  { value: OrderStatus.CANCELLED, label: 'Cancelled' },
-  { value: OrderStatus.EXPIRED, label: 'Expired' },
-]
-
-function matchesFilter(order: CowOrder, filter: CowOrderFilter): boolean {
-  if (filter === 'all') return true
-  if (filter === 'open') return isCowOrderOpen(order)
-  return order.status === filter
-}
-
-function useCowOrders({
+// Every open order, so none hides behind unloaded history pages.
+function useOpenCowOrders({
   chainId,
   owner,
 }: {
   chainId: CowLimitChainId
   owner?: EvmAddress
 }) {
+  return useQuery({
+    queryKey: getCowOpenOrdersQueryKey(chainId, owner),
+    queryFn: () => {
+      if (!owner) throw new Error('Connect a wallet to view orders')
+      return getOpenCowOrders({ chainId, owner })
+    },
+    enabled: Boolean(owner),
+    refetchInterval: ms('20s'),
+    retry: 1,
+  })
+}
+
+function useCowOrderHistory({
+  chainId,
+  owner,
+  enabled,
+}: {
+  chainId: CowLimitChainId
+  owner?: EvmAddress
+  enabled: boolean
+}) {
   return useInfiniteQuery({
     queryKey: getCowOrdersQueryKey(chainId, owner),
-    queryFn: ({ pageParam, signal }) => {
+    queryFn: ({ pageParam }) => {
       if (!owner) throw new Error('Connect a wallet to view orders')
-      return getCowOrdersPage({ chainId, owner, offset: pageParam, signal })
+      return getCowOrdersPage({ chainId, owner, offset: pageParam })
     },
     initialPageParam: 0,
     getNextPageParam: (page) => page.nextOffset,
-    enabled: Boolean(owner),
-    refetchInterval: 20_000,
+    enabled: Boolean(owner && enabled),
+    refetchInterval: ms('20s'),
     retry: 1,
   })
 }
@@ -74,65 +82,87 @@ export function CowOrders({
   onEdit(order: CowOrder): void
   disabled: boolean
 }): React.JSX.Element {
-  const [filter, setFilter] = useState<CowOrderFilter>('all')
+  const [filter, setFilter] = useState<CowOrderFilter>('open')
 
-  const history = useCowOrders({ chainId, owner })
-  const orders = history.data?.pages.flatMap((page) => page.orders) ?? []
+  const open = useOpenCowOrders({ chainId, owner })
+  const history = useCowOrderHistory({
+    chainId,
+    owner,
+    enabled: filter === 'history',
+  })
+  const query = filter === 'open' ? open : history
 
-  const visible = orders.filter((order) => matchesFilter(order, filter))
+  const visible =
+    filter === 'open'
+      ? (open.data ?? [])
+      : (history.data?.pages
+          .flatMap((page) => page.orders)
+          .filter((order) => !isCowOrderOpen(order)) ?? [])
+  const openCount = open.data?.length ?? 0
 
   return (
     <List className="!pt-0">
-      <div className="flex items-center justify-between gap-2">
-        <List.Label>Your CoW orders on Sushi</List.Label>
-        <Select
+      <div className="flex items-center justify-between gap-2 px-1">
+        <span className="text-sm font-medium">Your orders</span>
+        <Tabs
           value={filter}
           onValueChange={(value) =>
-            setFilter(
-              FILTERS.find((option) => option.value === value)?.value ?? 'all',
-            )
+            setFilter(value === 'history' ? 'history' : 'open')
           }
         >
-          <SelectTrigger aria-label="Filter orders" className="w-auto">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {FILTERS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <TabsList aria-label="Filter orders">
+            <TabsTrigger value="open">
+              {openCount ? `Open (${openCount})` : 'Open'}
+            </TabsTrigger>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
+      {owner && visible.length > 0 && (
+        // Card padding + border (13px), plus the chevron and its gap on the right.
+        <div
+          aria-hidden
+          className={classNames(
+            COW_ORDER_ROW_COLUMNS,
+            'hidden items-center pl-[13px] pr-[37px] text-xs text-muted-foreground lg:grid',
+          )}
+        >
+          <span>Order</span>
+          <span>Limit price</span>
+          <span>{filter === 'open' ? 'Expires' : 'Placed'}</span>
+          <span>Status</span>
+        </div>
+      )}
       <div className="flex flex-col gap-2">
         {!owner ? (
           <List.Control className="p-4 text-sm text-muted-foreground">
             Connect your wallet to view orders.
           </List.Control>
-        ) : history.isPending ? (
+        ) : query.isPending ? (
           <List.Control>
             <List.KeyValue skeleton />
             <List.KeyValue skeleton />
           </List.Control>
         ) : (
           <>
-            {history.isError && (
+            {query.isError && (
               <Message variant="destructive" size="sm" role="alert">
                 Unable to refresh CoW orders. Displayed statuses may be out of
                 date.{' '}
                 <Button
                   variant="link"
                   size="xs"
-                  onClick={() => void history.refetch()}
+                  onClick={() => void query.refetch()}
                 >
                   Retry
                 </Button>
               </Message>
             )}
-            {!history.isError && !visible.length && (
+            {!query.isError && !visible.length && (
               <List.Control className="p-4 text-sm text-muted-foreground">
-                No {filter === 'all' ? '' : `${filter} `}orders found.
+                {filter === 'open'
+                  ? 'No open orders found.'
+                  : 'No past orders found.'}
               </List.Control>
             )}
             {visible.map((order) => (
@@ -144,7 +174,7 @@ export function CowOrders({
                 disabled={disabled}
               />
             ))}
-            {history.hasNextPage && (
+            {filter === 'history' && history.hasNextPage && (
               <Button
                 variant="secondary"
                 loading={history.isFetchingNextPage}

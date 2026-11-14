@@ -2,7 +2,10 @@ import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 import { SkeletonBox } from '@sushiswap/ui'
 import { CurrencyInputSkeleton } from 'src/lib/wagmi/components/web3-input/currency/currency-input-skeleton'
 
-function SimpleSwapWidgetSkeleton() {
+// The sell and buy inputs, shared by trade modes with their own extra fields.
+function SimpleSwapInputsSkeleton({
+  label = 'Buy',
+}: { label?: string }): React.JSX.Element {
   return (
     <>
       <CurrencyInputSkeleton
@@ -20,12 +23,20 @@ function SimpleSwapWidgetSkeleton() {
         </button>
       </div>
       <CurrencyInputSkeleton
-        label="Buy"
+        label={label}
         className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
       />
+    </>
+  )
+}
+
+function SimpleSwapWidgetSkeleton(): React.JSX.Element {
+  return (
+    <>
+      <SimpleSwapInputsSkeleton />
       <SkeletonBox className="w-full h-[52px] rounded-xl mb-2" />
     </>
   )
 }
 
-export { SimpleSwapWidgetSkeleton }
+export { SimpleSwapInputsSkeleton, SimpleSwapWidgetSkeleton }

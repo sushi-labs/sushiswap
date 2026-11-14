@@ -11,6 +11,13 @@ export function getCowOrdersQueryKey(
   return ['cow-orders', chainId, owner?.toLowerCase()]
 }
 
+export function getCowOpenOrdersQueryKey(
+  chainId: CowLimitChainId,
+  owner: EvmAddress | undefined,
+): readonly unknown[] {
+  return [...getCowOrdersQueryKey(chainId, owner), 'open']
+}
+
 export function getCowOpenSellAmountQueryKey({
   chainId,
   owner,
@@ -30,20 +37,28 @@ export function getCowOpenSellAmountQueryKey({
   ]
 }
 
-export function getCowQuoteQueryKey({
-  chainId,
-  owner,
-  sellToken,
-  buyToken,
-  sellAmount,
-}: {
+interface CowQuotePair {
   chainId: CowLimitChainId
   owner: EvmAddress | undefined
   sellToken: EvmAddress | undefined
   buyToken: EvmAddress | undefined
-  sellAmount: string | undefined
-}): readonly unknown[] {
-  return ['cow-quote', chainId, owner, sellToken, buyToken, sellAmount]
+}
+
+// The prefix shared by every amount's quote for one pair.
+export function getCowQuotePairQueryKey({
+  chainId,
+  owner,
+  sellToken,
+  buyToken,
+}: CowQuotePair): readonly unknown[] {
+  return ['cow-quote', chainId, owner, sellToken, buyToken]
+}
+
+export function getCowQuoteQueryKey({
+  sellAmount,
+  ...pair
+}: CowQuotePair & { sellAmount: string | undefined }): readonly unknown[] {
+  return [...getCowQuotePairQueryKey(pair), sellAmount]
 }
 
 // Keyed by status so the final fills load once an order closes.

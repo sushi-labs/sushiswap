@@ -97,8 +97,8 @@ export function SwapPanel({ token }: { token: LaunchpadTokenWithCurrencies }) {
         <DerivedstateSimpleSwapProvider
           key={token.address}
           chainId={token.chainId}
-          token0={defaultQuoteCurrency}
-          token1={token.currency}
+          initialToken0={defaultQuoteCurrency}
+          initialToken1={token.currency}
           initialSwapAmount="0.1"
           persistToUrl={false}
           fee={LOW_LIQUIDITY_SWAP_FEE}

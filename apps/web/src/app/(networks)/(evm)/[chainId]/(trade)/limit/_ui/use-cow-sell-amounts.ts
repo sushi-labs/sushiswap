@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import type { CowLimitChainId } from 'src/lib/swap/cow/chains'
 import { getOpenCowSellAmount } from 'src/lib/swap/cow/order-history'
 import { getCowOpenSellAmountQueryKey } from 'src/lib/swap/cow/query-keys'
-import { Amount } from 'sushi'
+import { Amount, ZERO } from 'sushi'
 import type { EvmAddress, EvmCurrency } from 'sushi/evm'
 import { useAmountBalance } from '~evm/_common/ui/balance-provider/use-balance'
 
@@ -19,11 +19,13 @@ export function useCowSellRequirement(
     [sell],
   )
   const { data: wrappedBalance } = useAmountBalance(wrapped)
+  // `ZERO`, not a `0n` literal: React Compiler bails out on bigint literals
+  // and would leave this hook unmemoized.
+  const covered = wrappedBalance?.amount ?? ZERO
 
   if (!sell || !sellAmount) return undefined
   if (!wrapped) return new Amount(sell, sellAmount)
 
-  const covered = wrappedBalance?.amount ?? 0n
   return covered >= sellAmount
     ? new Amount(wrapped, sellAmount)
     : new Amount(sell, sellAmount - covered)
@@ -43,7 +45,7 @@ export function useCowApprovalAmount({
   sellAmount: bigint | undefined
   replacedUid: string | undefined
 }): Amount<EvmCurrency> | undefined {
-  const token = sell?.wrap()
+  const token = useMemo(() => sell?.wrap(), [sell])
 
   const { data: openAmount, isError } = useQuery({
     queryKey: getCowOpenSellAmountQueryKey({
@@ -65,9 +67,12 @@ export function useCowApprovalAmount({
     enabled: Boolean(owner && token),
   })
 
-  if (!token || !sellAmount) return undefined
-  // Without the order history, approve at least this order.
-  if (isError) return new Amount(token, sellAmount)
-  if (openAmount === undefined) return undefined
-  return new Amount(token, sellAmount + openAmount)
+  // Memoized so the approval checker gets a stable amount across renders.
+  return useMemo(() => {
+    if (!token || !sellAmount) return undefined
+    // Without the order history, approve at least this order.
+    if (isError) return new Amount(token, sellAmount)
+    if (openAmount === undefined) return undefined
+    return new Amount(token, sellAmount + openAmount)
+  }, [token, sellAmount, isError, openAmount])
 }

@@ -17,11 +17,11 @@ import {
   useDerivedStateSimpleSwap,
   useSimpleSwapTradeQuote,
 } from '../../swap/_ui/derivedstate-simple-swap-provider'
+import { SimpleSwapSwitchTokensButton } from '../../swap/_ui/simple-swap-switch-tokens-button'
 import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
 import { OrbsBanner } from './orbs-banner'
 import { SpotSettingsOverlay } from './spot-settings-overlay'
 import { TwapOrdersDialogTriggerButton } from './twap-orders-dialog'
-import { TwapSwitchTokensButton } from './twap-switch-tokens-button'
 import { TwapToken0Input } from './twap-token0-input'
 import { TwapToken1Input } from './twap-token1-input'
 import { TwapTradeButton } from './twap-trade-button'
@@ -136,7 +136,7 @@ export function TwapForm({
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-4">
             <TwapToken0Input />
-            <TwapSwitchTokensButton />
+            <SimpleSwapSwitchTokensButton />
             <TwapToken1Input />
           </div>
           {children}

@@ -165,12 +165,30 @@ test('CoW creates, edits and cancels an order with a real token approval', async
   if (await switchNetwork.isVisible()) await actions.switchNetwork(chainId)
   const input = page.locator('[testdata-id=cow-sell-input]')
   await input.fill('1')
+  const price = page.getByLabel('Limit price', { exact: false })
+  const receive = page.getByRole('textbox', { name: 'Minimum receive' })
+  await page.getByRole('button', { name: '+10%', exact: true }).click()
+  await expect(price).toHaveValue('2.2')
+  await expect(receive).toHaveValue('2.2')
+  await page.getByRole('button', { name: 'Invert price', exact: true }).click()
+  await expect(price).toHaveValue('0.454545')
+  await expect(receive).toHaveValue('2.2')
+  await page.getByRole('button', { name: '−10%', exact: true }).click()
+  await expect(price).toHaveValue('0.45')
+  await expect(receive).toHaveValue('2.22222')
+  await page.getByRole('button', { name: 'Market', exact: true }).click()
+  await expect(price).toHaveValue('0.5')
+  await expect(receive).toHaveValue('2')
+  await page.getByRole('button', { name: 'Invert price', exact: true }).click()
   await page.getByLabel('Limit price', { exact: false }).fill('3')
-  const expiry = page.getByRole('combobox', { name: 'Order expiry' })
-  await expect(expiry).toHaveText('1 week')
-  await expiry.click()
-  await page.getByRole('option', { name: '1 day', exact: true }).click()
-  await expect(expiry).toHaveText('1 day')
+  const expiry = page.getByRole('tablist', { name: 'Order expiry' })
+  await expect(
+    expiry.getByRole('tab', { name: '1 week', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true')
+  await expiry.getByRole('tab', { name: '1 day', exact: true }).click()
+  await expect(
+    expiry.getByRole('tab', { name: '1 day', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true')
   // The approval checker approves this order plus the account's open orders.
   await approveForCow(page)
   await expect
@@ -211,8 +229,10 @@ test('CoW creates, edits and cancels an order with a real token approval', async
   expect(orders[1]?.status).toBe('cancelled')
   expect(orders[0]?.validTo).toBe(orders[1]?.validTo)
   await page.getByRole('button', { name: 'Place another order' }).click()
-  await page.getByRole('combobox', { name: 'Filter orders' }).click()
-  await page.getByRole('option', { name: 'Open', exact: true }).click()
+  await page
+    .getByRole('tablist', { name: 'Filter orders' })
+    .getByRole('tab', { name: /^Open/ })
+    .click()
   await expect(page.getByRole('button', { name: /FT.*Cancelled/ })).toHaveCount(
     0,
   )
@@ -259,6 +279,9 @@ test('CoW reports unavailable quotes without exposing an order submission', asyn
     }),
   ).toBeVisible()
   await expect(
+    page.getByRole('button', { name: '+10%', exact: true }),
+  ).toBeDisabled()
+  await expect(
     page.getByRole('button', { name: 'Review limit order', exact: true }),
   ).toBeDisabled()
 })
@@ -266,7 +289,7 @@ test('CoW reports unavailable quotes without exposing an order submission', asyn
 test('Legacy Orbs limits have no creation controls', async ({ page }) => {
   await page.goto('/katana/limit-legacy')
   await expect(
-    page.getByRole('heading', { name: 'Limit (Legacy — Orbs)' }),
+    page.getByRole('heading', { name: 'Limit (Legacy)' }),
   ).toBeVisible()
   await expect(page.locator('[testdata-id=cow-sell-input]')).toHaveCount(0)
   await expect(

@@ -34,7 +34,7 @@ const ADVANCED_SEGMENTS = [
 
 const ADVANCED_LABELS: Record<(typeof ADVANCED_SEGMENTS)[number], string> = {
   limit: 'Limit',
-  'limit-legacy': 'Limit (Legacy — Orbs)',
+  'limit-legacy': 'Limit (Legacy)',
   dca: 'DCA',
   'stop-loss': 'Stop Loss',
   'take-profit': 'Take Profit',
@@ -201,7 +201,7 @@ export const SwapModeButtons = ({
                   active={getActiveState(`${basePath}/limit-legacy`)}
                   fullWidth
                 >
-                  Limit (Legacy — Orbs)
+                  Limit (Legacy)
                 </SwapModeButton>
               )}
               <SwapModeButton

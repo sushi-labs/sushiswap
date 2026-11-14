@@ -7,6 +7,7 @@ import type { EvmAddress } from 'sushi/evm'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { SimpleSwapTokenNotFoundDialog } from '../../swap/_ui/simple-swap-token-not-found-dialog'
 import { SimpleSwapWidgetFrame } from '../../swap/_ui/simple-swap-widget-frame'
+import { CowLimitColumns } from './cow-limit-columns'
 import { CowLimitInputs } from './cow-limit-inputs'
 import { CowLimitReviewButton } from './cow-limit-review-button'
 import { CowOrderReviewDialog } from './cow-order-review'
@@ -21,13 +22,7 @@ export function CowLimitWidget(): React.JSX.Element {
     state: { chainId },
   } = useDerivedStateSimpleSwap<CowLimitChainId>()
   return (
-    <SimpleSwapWidgetFrame chainId={chainId} mode="limit">
-      <CowLimitForm
-        key={`${chainId}:${owner}`}
-        chainId={chainId}
-        owner={owner}
-      />
-    </SimpleSwapWidgetFrame>
+    <CowLimitForm key={`${chainId}:${owner}`} chainId={chainId} owner={owner} />
   )
 }
 
@@ -46,51 +41,59 @@ function CowLimitForm({
   const { sellAmount, buyAmount, inputError, quote, debouncedAmount } = pricing
 
   return (
-    <>
-      <CowLimitInputs chainId={chainId} pricing={pricing} draft={draft} />
-      {inputError && (
-        <Message variant="destructive" size="sm" role="alert">
-          {inputError}
-        </Message>
-      )}
-      {draft.error && (
-        <Message variant="destructive" size="sm" role="alert">
-          {draft.error}
-        </Message>
-      )}
-      <CowOrderReviewDialog
-        chainId={chainId}
-        action={action}
-        onPlaced={draft.discard}
-      >
-        <CowLimitReviewButton
+    <CowLimitColumns
+      form={
+        <SimpleSwapWidgetFrame chainId={chainId} mode="limit">
+          <CowLimitInputs chainId={chainId} pricing={pricing} draft={draft} />
+          {inputError && (
+            <Message variant="destructive" size="sm" role="alert">
+              {inputError}
+            </Message>
+          )}
+          {draft.error && (
+            <Message variant="destructive" size="sm" role="alert">
+              {draft.error}
+            </Message>
+          )}
+          <CowOrderReviewDialog
+            chainId={chainId}
+            action={action}
+            marketPrice={pricing.marketPrice}
+            onPlaced={draft.discard}
+          >
+            <CowLimitReviewButton
+              chainId={chainId}
+              owner={owner}
+              sell={token0}
+              sellAmount={sellAmount}
+              replacedUid={draft.editing?.uid}
+              loading={draft.reviewing}
+              disabled={
+                draft.reviewing ||
+                action.busy ||
+                !sellAmount ||
+                !buyAmount ||
+                Boolean(inputError) ||
+                quote.isError ||
+                !quote.data ||
+                quote.isPlaceholderData ||
+                quote.isFetching ||
+                debouncedAmount !== swapAmountString
+              }
+              onReview={draft.review}
+            />
+          </CowOrderReviewDialog>
+          <SimpleSwapTokenNotFoundDialog />
+        </SimpleSwapWidgetFrame>
+      }
+      orders={
+        <CowOrders
           chainId={chainId}
           owner={owner}
-          sell={token0}
-          sellAmount={sellAmount}
-          replacedUid={draft.editing?.uid}
-          loading={draft.reviewing}
-          disabled={
-            draft.reviewing ||
-            action.busy ||
-            !sellAmount ||
-            !buyAmount ||
-            Boolean(inputError) ||
-            quote.isError ||
-            !quote.data ||
-            quote.isFetching ||
-            debouncedAmount !== swapAmountString
-          }
-          onReview={draft.review}
+          onEdit={(order) => void draft.edit(order)}
+          disabled={action.busy || draft.reviewing}
         />
-      </CowOrderReviewDialog>
-      <SimpleSwapTokenNotFoundDialog />
-      <CowOrders
-        chainId={chainId}
-        owner={owner}
-        onEdit={(order) => void draft.edit(order)}
-        disabled={action.busy || draft.reviewing}
-      />
-    </>
+      }
+    />
   )
 }

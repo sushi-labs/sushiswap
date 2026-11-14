@@ -27,8 +27,41 @@ export function getOrderPrice(
   })
 }
 
-export function formatLimitPrice(price: CowLimitPrice): string {
-  return price.toString({ maxFixed: 24 })
+// USD quotes are floats; this fixed scale keeps their precision in integer math.
+const USD_SCALE = 1e18
+
+// An estimate of the market rate from two USD prices, for display and presets
+// when no CoW quote is available, e.g. before an amount is entered.
+export function getUsdMarketPrice(
+  sell: EvmCurrency,
+  buy: EvmCurrency,
+  sellUsd: number | undefined,
+  buyUsd: number | undefined,
+): CowLimitPrice | undefined {
+  if (!sellUsd || !buyUsd || !(sellUsd > 0) || !(buyUsd > 0)) return undefined
+  const sellScaled = BigInt(Math.round(sellUsd * USD_SCALE))
+  const buyScaled = BigInt(Math.round(buyUsd * USD_SCALE))
+  if (sellScaled === 0n || buyScaled === 0n) return undefined
+  // Raw buy-per-sell units: (sellUsd / buyUsd) * 10^buyDecimals / 10^sellDecimals.
+  return new Price({
+    base: sell,
+    quote: buy,
+    numerator: sellScaled * 10n ** BigInt(buy.decimals),
+    denominator: buyScaled * 10n ** BigInt(sell.decimals),
+  })
+}
+
+// The percentage by which `price` is above (positive) or below `market`.
+export function getPriceDifference(
+  price: CowLimitPrice,
+  market: CowLimitPrice,
+): Fraction {
+  return price.div(market).sub(1).mul(100)
+}
+
+// e.g. "+5%" or "-1.25%"
+export function formatPriceDifference(difference: Fraction): string {
+  return `${difference.lt(0) ? '' : '+'}${difference.toString({ maxFixed: 2 })}%`
 }
 
 export function getRemainingSellAmount(order: {

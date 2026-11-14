@@ -1,9 +1,8 @@
 'use client'
 
-import { Button, Message } from '@sushiswap/ui'
+import { SwitchTokensButton } from 'src/lib/components/switch-tokens-button'
 import type { CowLimitChainId } from 'src/lib/swap/cow/chains'
 import { CurrencyInput } from 'src/lib/wagmi/components/web3-input/currency'
-import { formatUnits } from 'viem'
 import { useDerivedStateSimpleSwap } from '../../swap/_ui/derivedstate-simple-swap-provider'
 import { CowEditOptions } from './cow-edit-options'
 import { CowExpirySelect } from './cow-expiry-select'
@@ -25,7 +24,7 @@ export function CowLimitInputs({
     mutate: { setToken0, setToken1, setSwapAmount, switchTokens },
   } = useDerivedStateSimpleSwap<CowLimitChainId>()
 
-  const { buyAmount, resetPrice } = pricing
+  const { buyAmountString, setBuyAmount } = pricing
   const { editing, expiry, setExpiry } = draft
 
   return (
@@ -33,59 +32,27 @@ export function CowLimitInputs({
       <CurrencyInput
         id="cow-sell"
         type="INPUT"
+        className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
         value={swapAmountString}
         onChange={setSwapAmount}
         currency={token0}
         chainId={chainId}
-        onSelect={
-          editing
-            ? undefined
-            : (currency) => {
-                setToken0(currency)
-                resetPrice()
-              }
-        }
+        onSelect={editing ? undefined : setToken0}
         label={editing ? 'Remaining sell amount' : 'Sell'}
       />
-      {!editing && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            switchTokens()
-            resetPrice()
-          }}
-        >
-          Switch tokens
-        </Button>
-      )}
+      {!editing && <SwitchTokensButton onClick={switchTokens} />}
       <CurrencyInput
         id="cow-buy"
         type="OUTPUT"
-        value={
-          buyAmount && token1 ? formatUnits(buyAmount, token1.decimals) : ''
-        }
+        className="border border-accent p-3 bg-white dark:bg-slate-800 rounded-xl"
+        value={buyAmountString}
+        onChange={setBuyAmount}
         currency={token1}
         chainId={chainId}
-        onSelect={
-          editing
-            ? undefined
-            : (currency) => {
-                setToken1(currency)
-                resetPrice()
-              }
-        }
-        disabled
+        onSelect={editing ? undefined : setToken1}
         disableMaxButton
         label="Minimum receive"
       />
-      {token0?.isNative && (
-        <Message variant="muted" size="sm">
-          Approve {token0.wrap().symbol} for CoW, then any {token0.symbol} not
-          covered by your {token0.wrap().symbol} balance is wrapped before you
-          sign your limit order. Approval and wrapping cost network gas.
-        </Message>
-      )}
       <CowLimitPriceField pricing={pricing} />
       <CowExpirySelect value={expiry} onChange={setExpiry} editing={editing} />
       {editing && (
