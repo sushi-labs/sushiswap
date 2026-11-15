@@ -8,6 +8,7 @@ export const config = {
   matcher: [
     '/swap/:path*',
     '/limit/:path*',
+    '/limit-legacy/:path*',
     '/dca/:path*',
     '/cross-chain-swap/:path*',
     '/pool',
@@ -15,6 +16,7 @@ export const config = {
     '/explore',
     '/:chainId/swap/:path*',
     '/:chainId/limit/:path*',
+    '/:chainId/limit-legacy/:path*',
     '/:chainId/dca/:path*',
     '/:chainId/cross-chain-swap/:path*',
     '/:chainId/stop-loss/:path*',
@@ -58,6 +60,7 @@ async function _proxy(req: NextRequest) {
     pathname === '/stop-loss' ||
     pathname === '/take-profit' ||
     pathname === '/limit' ||
+    pathname === '/limit-legacy' ||
     pathname === '/dca' ||
     pathname === '/cross-chain-swap'
   ) {

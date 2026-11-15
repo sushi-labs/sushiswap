@@ -52,8 +52,8 @@ export function QuickBuyTradeReview({
       <CheckerProvider>
         <DerivedstateSimpleSwapProvider
           chainId={token.chainId}
-          token0={nativeCurrency}
-          token1={launchCurrency}
+          initialToken0={nativeCurrency}
+          initialToken1={launchCurrency}
           persistToUrl={false}
           fee={LAUNCHPAD_SWAP_FEE}
           slippageToleranceOptions={LAUNCHPAD_SLIPPAGE_TOLERANCE_OPTIONS}

@@ -32,9 +32,14 @@ export const TwapCancelOrderButton = ({
   chainId: EvmChainId
   order: Order
 }) => {
-  const client = usePublicClient()
+  const client = usePublicClient({ chainId })
 
-  const { address } = useConnection()
+  const { address, chainId: walletChainId } = useConnection()
+  const canCancel = Boolean(
+    address?.toLowerCase() === order.maker.toLowerCase() &&
+      walletChainId === chainId &&
+      order.chainId === chainId,
+  )
   const { mutate: refetchOrders, isPending: isRefetchingOrders } =
     useCancelOrderRefetchUntilStatusSynced()
 
@@ -66,7 +71,7 @@ export const TwapCancelOrderButton = ({
   const { data: estGas, isError: isEstGasError } = useEstimateGas({
     ...tx,
     query: {
-      enabled: Boolean(tx),
+      enabled: canCancel,
     },
   })
   const title = getTwapOrderTitle(order.type)
@@ -124,7 +129,7 @@ export const TwapCancelOrderButton = ({
   })
 
   const write = useMemo(() => {
-    if (!sendTransactionAsync || !estGas) return undefined
+    if (!canCancel || !sendTransactionAsync || !estGas) return undefined
 
     return async (confirm?: () => void) => {
       try {
@@ -136,7 +141,7 @@ export const TwapCancelOrderButton = ({
         confirm?.()
       } catch {}
     }
-  }, [sendTransactionAsync, tx, estGas, refetchOrders, order.hash])
+  }, [canCancel, sendTransactionAsync, tx, estGas, refetchOrders, order.hash])
 
   const { isLoading: isTxLoading, isError: isTxError } =
     useWaitForTransactionReceipt({
@@ -148,10 +153,11 @@ export const TwapCancelOrderButton = ({
     <Button
       fullWidth
       size="xl"
-      loading={(!write && !isEstGasError) || isRefetchingOrders}
+      loading={(canCancel && !write && !isEstGasError) || isRefetchingOrders}
       onClick={() => write?.()}
       disabled={Boolean(
-        isEstGasError ||
+        !canCancel ||
+          isEstGasError ||
           isWritePending ||
           isRefetchingOrders ||
           isTxLoading ||
