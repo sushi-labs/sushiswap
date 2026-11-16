@@ -17,6 +17,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { getPerpsDepositTransactionFees } from 'src/lib/perps/deposit/get-perps-deposit-transaction-fees'
 import { LIFI_PERPS_USDC_DECIMALS } from 'src/lib/perps/deposit/lifi-perps-schemas'
 import {
   useLifiPerpsDepositRoutes,
@@ -31,7 +32,6 @@ import { useMyTokens } from 'src/lib/wagmi/components/token-selector/hooks/use-m
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { useApproved } from 'src/lib/wagmi/systems/checker/provider'
-import { getRobinhoodTransactionFees } from 'src/lib/wagmi/transactions/get-robinhood-transaction-fees'
 import {
   TransactionReceiptRevertedError,
   TransactionReplacedError,
@@ -261,7 +261,7 @@ export function AnyTokenAnyChainDeposit({
     setSubmissionError(undefined)
     let broadcast = false
     try {
-      const fees = await getRobinhoodTransactionFees(
+      const fees = await getPerpsDepositTransactionFees(
         depositOption.chainId,
         client,
       )
@@ -274,9 +274,6 @@ export function AnyTokenAnyChainDeposit({
         data: transaction.data,
         value: BigInt(transaction.value),
         gas: addGasMargin(gas, 30),
-        gasPrice: transaction.gasPrice
-          ? BigInt(transaction.gasPrice)
-          : undefined,
         ...fees,
       })
       broadcast = true

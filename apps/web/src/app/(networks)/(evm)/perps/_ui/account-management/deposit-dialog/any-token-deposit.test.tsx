@@ -2,6 +2,7 @@
 
 import { type ComponentProps, type PropsWithChildren, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
+import type { PerpsDepositTransactionFees } from 'src/lib/perps/deposit/get-perps-deposit-transaction-fees'
 import {
   type LifiPerpsRoute,
   lifiPerpsRouteSchema,
@@ -128,8 +129,8 @@ vi.mock('src/lib/wagmi/systems/checker', () => {
 vi.mock('src/lib/wagmi/systems/checker/provider', () => ({
   useApproved: mocks.useApproved,
 }))
-vi.mock('src/lib/wagmi/transactions/get-robinhood-transaction-fees', () => ({
-  getRobinhoodTransactionFees: mocks.getFees,
+vi.mock('src/lib/perps/deposit/get-perps-deposit-transaction-fees', () => ({
+  getPerpsDepositTransactionFees: mocks.getFees,
 }))
 vi.mock('src/lib/wallet', () => ({ useAccount: () => connectedAddress }))
 vi.mock('wagmi', () => ({
@@ -180,6 +181,12 @@ const txHash =
 const replacementTxHash =
   '0x0000000000000000000000000000000000000000000000000000000000000002'
 let connectedAddress: EvmAddress = walletAddress
+const freshFees = {
+  type: 'eip1559',
+  gasPrice: undefined,
+  maxFeePerGas: 32n,
+  maxPriorityFeePerGas: 2n,
+} satisfies PerpsDepositTransactionFees
 
 function createRoute(fromAmount: Amount<EvmCurrency>): LifiPerpsRoute {
   const fromToken = {
@@ -332,7 +339,7 @@ describe('AnyTokenDeposit direct perps deposits', () => {
     mocks.useRefetchBalances.mockReturnValue({
       refetchChain: mocks.refetchBalances,
     })
-    mocks.getFees.mockResolvedValue(undefined)
+    mocks.getFees.mockResolvedValue(freshFees)
     mocks.invalidateQueries.mockResolvedValue(undefined)
     mocks.useApproved.mockReturnValue({ approved: true })
     setOpen = vi.fn()
@@ -364,6 +371,7 @@ describe('AnyTokenDeposit direct perps deposits', () => {
           account: walletAddress,
           to: bridgeAddress,
           value: 1_000_000_000_000_000_000n,
+          ...freshFees,
         }),
       )
       expect(mocks.getFees).toHaveBeenCalledWith(chainId, expect.any(Object))
@@ -552,8 +560,38 @@ describe('AnyTokenDeposit direct perps deposits', () => {
     expect(mocks.sendTransaction).toHaveBeenCalledTimes(1)
   })
 
+  it('uses refreshed legacy fees instead of the LI.FI quote price', async () => {
+    mocks.getFees.mockResolvedValue({
+      type: 'legacy',
+      gasPrice: 125n,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+    } satisfies PerpsDepositTransactionFees)
+    await submitDeposit()
+    expect(mocks.sendTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'legacy',
+        gasPrice: 125n,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+      }),
+    )
+  })
+
+  it('does not submit a stale quoted fee when current fee estimation fails', async () => {
+    mocks.getFees.mockRejectedValue(new Error('RPC unavailable'))
+    await submitDeposit()
+    expect(mocks.sendTransaction).not.toHaveBeenCalled()
+    expect(mocks.createErrorToast).toHaveBeenCalledWith(
+      'RPC unavailable',
+      false,
+      'perps',
+    )
+    expect(button('Deposit').disabled).toBe(false)
+  })
+
   it('does not submit twice while source transaction fees are loading', async () => {
-    const fees = Promise.withResolvers<undefined>()
+    const fees = Promise.withResolvers<PerpsDepositTransactionFees>()
     mocks.getFees.mockReturnValue(fees.promise)
     act(() => renderDeposit())
     act(() => button('Use one token').click())
@@ -562,32 +600,32 @@ describe('AnyTokenDeposit direct perps deposits', () => {
       depositButton.click()
       depositButton.click()
     })
-    await act(async () => fees.resolve(undefined))
+    await act(async () => fees.resolve(freshFees))
 
     expect(mocks.getFees).toHaveBeenCalledTimes(1)
     expect(mocks.sendTransaction).toHaveBeenCalledTimes(1)
   })
 
   it('aborts submission when the wallet changes during fee preparation', async () => {
-    const fees = Promise.withResolvers<undefined>()
+    const fees = Promise.withResolvers<PerpsDepositTransactionFees>()
     mocks.getFees.mockReturnValue(fees.promise)
     await submitDeposit()
 
     connectedAddress = otherWalletAddress
     act(() => renderDeposit())
-    await act(async () => fees.resolve(undefined))
+    await act(async () => fees.resolve(freshFees))
 
     expect(mocks.sendTransaction).not.toHaveBeenCalled()
     expect(setOpen).not.toHaveBeenCalled()
   })
 
   it('aborts submission when the source changes during fee preparation', async () => {
-    const fees = Promise.withResolvers<undefined>()
+    const fees = Promise.withResolvers<PerpsDepositTransactionFees>()
     mocks.getFees.mockReturnValue(fees.promise)
     await submitDeposit(EvmChainId.ETHEREUM)
 
     act(() => renderDeposit(EvmChainId.BASE))
-    await act(async () => fees.resolve(undefined))
+    await act(async () => fees.resolve(freshFees))
 
     expect(mocks.sendTransaction).not.toHaveBeenCalled()
     expect(setOpen).not.toHaveBeenCalled()

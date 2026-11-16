@@ -80,8 +80,12 @@ for (const sourceChainId of ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS) {
           to: PERPS_ROUTER_ADDRESS,
           data: '0x12345678',
           value: numberToHex(parseEther('1')),
+          type: '0x2',
+          maxFeePerGas: numberToHex(3_250_000_000n),
+          maxPriorityFeePerGas: numberToHex(1_250_000_000n),
         },
       })
+      expect(wallet.transactions[0].transaction.gasPrice).toBeUndefined()
       await expect.poll(() => perps.statusRequests.length).toBeGreaterThan(0)
       expect(perps.quoteRequests.at(-1)).toMatchObject({
         fromChainId: sourceChainId,
