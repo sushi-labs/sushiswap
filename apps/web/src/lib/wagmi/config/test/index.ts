@@ -14,11 +14,7 @@ import {
   createConnectorRestoringStorage,
   hasPersistedConnectorMatching,
 } from '../persisted-connectors'
-import { accounts, testChains } from './constants'
-
-const anvilPort = String(
-  process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
-)
+import { accounts, getTestRpcUrl, testChains } from './constants'
 
 // const chainId = Number(
 //   process.env.CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID || 137,
@@ -28,8 +24,6 @@ const testWalletIndex = Number(
     process.env.NEXT_PUBLIC_TEST_WALLET_INDEX ||
     0,
 )
-
-const localHttpUrl = `http://127.0.0.1:${anvilPort}`
 
 export const createTestConfig = () => {
   const storage = createConnectorRestoringStorage()
@@ -47,7 +41,7 @@ export const createTestConfig = () => {
     chains: testChains,
     transports: testChains.reduce(
       (acc, chain) => {
-        acc[chain.id] = http(localHttpUrl)
+        acc[chain.id] = http(getTestRpcUrl(chain.id))
         return acc
       },
       {} as Record<EvmChainId, HttpTransport>,

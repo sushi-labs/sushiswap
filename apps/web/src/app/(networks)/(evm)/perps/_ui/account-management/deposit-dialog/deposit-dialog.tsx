@@ -18,6 +18,7 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSidebar } from 'src/app/(networks)/_ui/sidebar'
+import { useLifiPerpsDepositExecution } from 'src/lib/perps/deposit/use-lifi-perps-deposit-execution'
 import { getChainById } from 'sushi'
 import { EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative, SvmToken, svmAddress } from 'sushi/svm'
@@ -26,7 +27,6 @@ import { AnyTokenDeposit } from './any-token-deposit'
 import { ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS } from './any-token-deposit-config'
 // import { FiatDeposit } from './fiat-deposit'
 import { HyperunitOptions } from './hyperunit/hyperunit-options'
-import { USDCOptions } from './usdc-options'
 
 export const HYPEREVM_USDC = new EvmToken({
   chainId: EvmChainId.HYPEREVM,
@@ -42,20 +42,6 @@ export const USDC_HYPEREVM_DEPOSIT_BRIDGE =
   '0x6B9E773128f453f5c2C60935Ee2DE2CBc5390A24' as const
 
 const DEPOSIT_OPTIONS = [
-  {
-    label: 'USDC (HyperEVM)',
-    value: 'usdc-hyperevm' as const,
-    asset: HYPEREVM_USDC,
-    depositBridge: USDC_HYPEREVM_DEPOSIT_BRIDGE,
-    type: 'token' as const,
-    chainId: EvmChainId.HYPEREVM,
-  },
-  {
-    label: 'Any Token (Arbitrum)',
-    value: 'any-arb' as const,
-    chainId: EvmChainId.ARBITRUM,
-    type: 'any-token' as const,
-  },
   ...ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS.map((chainId) => ({
     label: `Any Token (${getChainById(chainId).name})`,
     value: `any-${chainId}` as const,
@@ -228,9 +214,8 @@ type DepositOption = (typeof DEPOSIT_OPTIONS)[number]
 
 export type AnyTokenDepositOption = Extract<
   DepositOption,
-  { type: 'any-token' | 'any-token-any-chain' }
+  { type: 'any-token-any-chain' }
 >
-export type TokenDepositOption = Extract<DepositOption, { type: 'token' }>
 export type HyperunitDepositOption = Extract<
   DepositOption,
   { type: 'hyperunit' }
@@ -256,6 +241,8 @@ export const DepositDialog = ({
     DEPOSIT_OPTIONS[0],
   )
   const [open, setOpen] = useState<boolean>(false)
+  const execution = useLifiPerpsDepositExecution()
+  const isExecutionActive = execution.isSubmitting || !!execution.submitted
 
   const isControlled = isOpen !== undefined
   const resolvedOpen = isControlled ? isOpen : open
@@ -274,13 +261,6 @@ export const DepositDialog = ({
 
   const content = useMemo(() => {
     switch (depositOption.type) {
-      case 'token':
-        return (
-          <USDCOptions
-            depositChainId={depositOption.chainId}
-            setOpen={handleOpenChange}
-          />
-        )
       // case 'fiat':
       //   return <FiatDeposit />
       case 'hyperunit':
@@ -290,29 +270,26 @@ export const DepositDialog = ({
             setOpen={handleOpenChange}
           />
         )
-      case 'any-token':
       case 'any-token-any-chain':
         return (
           <AnyTokenDeposit
             key={depositOption.chainId}
             depositOption={depositOption}
             setOpen={handleOpenChange}
+            execution={execution}
           />
         )
       default:
         return null
     }
-  }, [depositOption, handleOpenChange])
+  }, [depositOption, handleOpenChange, execution])
 
   const description = useMemo(() => {
     switch (depositOption.type) {
-      case 'token':
-        return `Deposit ${depositOption.asset.symbol} from ${getChainById(depositOption.asset.chainId).name}`
       // case 'fiat':
       //   return 'Deposit Fiat'
       case 'hyperunit':
         return `Deposit ${depositOption.label} via Unit`
-      case 'any-token':
       case 'any-token-any-chain':
         return `Swap to Deposit USDC from ${getChainById(depositOption.chainId).name}`
       default:
@@ -348,7 +325,9 @@ export const DepositDialog = ({
         <PerpsDialogInnerContent className="!pt-0">
           <Select
             value={selectedChain.toString()}
+            disabled={isExecutionActive}
             onValueChange={(val: string | number) => {
+              if (isExecutionActive) return
               const chain = DEPOSIT_CHAIN_OPTIONS.find(
                 (c) => c.toString() === val,
               )
@@ -359,7 +338,10 @@ export const DepositDialog = ({
               }
             }}
           >
-            <SelectTrigger className="w-full text-sm !px-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
+            <SelectTrigger
+              aria-label="Deposit network"
+              className="w-full text-sm !px-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border"
+            >
               <div className="flex items-center gap-1">
                 <_NetworkIcon chainId={selectedChain} />
                 {typeof selectedChain === 'number'
@@ -385,14 +367,19 @@ export const DepositDialog = ({
           {optionsBySelectedChain.length > 1 ? (
             <Select
               value={depositOption.value}
+              disabled={isExecutionActive}
               onValueChange={(val: string) => {
+                if (isExecutionActive) return
                 const option = optionsBySelectedChain.find(
                   (o) => o.value === val,
                 )
                 if (option) setDepositOption(option)
               }}
             >
-              <SelectTrigger className="w-full text-sm !px-2 mt-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border">
+              <SelectTrigger
+                aria-label="Deposit method"
+                className="w-full text-sm !px-2 mt-2 !h-[40px] !gap-1 !border-[#FFFFFF1A] bg-transparent !border"
+              >
                 <div className="flex items-center gap-1">
                   {'asset' in depositOption && depositOption.asset ? (
                     <Currency.Icon

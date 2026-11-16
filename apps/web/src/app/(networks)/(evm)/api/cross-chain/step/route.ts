@@ -1,10 +1,15 @@
 import type { NextRequest } from 'next/server'
+import type { LifiXSwapSupportedChainId } from 'src/config'
 import {
-  type LifiXSwapSupportedChainId,
-  isLifiXSwapSupportedChainId,
-} from 'src/config'
-import { stringify } from 'viem'
+  getLifiPerpsStepRequest,
+  parseLifiPerpsPreparedStep,
+} from 'src/lib/perps/deposit/lifi-perps-api'
+import {
+  type LifiPerpsStep,
+  lifiPerpsStepSchema,
+} from 'src/lib/perps/deposit/lifi-perps-schemas'
 import * as z from 'zod'
+import { postLifiRequest } from '../lifi-client'
 import { stepSchema, sushiChainIdSchema } from '../schemas'
 
 const stepBaseInputSchema = z.object({
@@ -14,7 +19,7 @@ const stepBaseInputSchema = z.object({
   }),
 })
 
-function parseStepInput(params: Record<string, string>) {
+function parseStepInput(params: unknown) {
   const base = stepBaseInputSchema.parse(params)
   return stepSchema(
     base.action.fromChainId,
@@ -33,41 +38,67 @@ export type CrossChainStepResponse<
   TChainId1 extends LifiXSwapSupportedChainId,
 > = z.output<ReturnType<typeof stepSchema<TChainId0, TChainId1, 'lifi'>>>
 
-export async function POST(request: NextRequest) {
-  const params = await request.json()
+type StepRequestContext =
+  | { destination: 'perps'; input: LifiPerpsStep }
+  | { destination: 'swap'; input: ReturnType<typeof parseStepInput> }
 
-  const lifiParams = parseStepInput(params)
-
-  const url = new URL('https://li.quest/v1/advanced/stepTransaction')
-
-  const options = {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      ...(process.env.LIFI_API_KEY && {
-        'x-lifi-api-key': process.env.LIFI_API_KEY,
-      }),
-    },
-    body: stringify({
-      ...lifiParams,
-      integrator: 'sushi',
-    }),
+export async function POST(request: NextRequest): Promise<Response> {
+  const destination = request.nextUrl.searchParams.get('destination')
+  const isPerps = destination === 'perps'
+  if (destination !== null && !isPerps) {
+    return Response.json({ error: 'Unsupported destination' }, { status: 400 })
+  }
+  let context: StepRequestContext
+  try {
+    const params: unknown = await request.json()
+    context = isPerps
+      ? { destination: 'perps', input: lifiPerpsStepSchema.parse(params) }
+      : { destination: 'swap', input: parseStepInput(params) }
+  } catch (error) {
+    if (!isPerps) throw error
+    return Response.json(
+      { error: 'Invalid perps deposit step' },
+      { status: 400 },
+    )
   }
 
-  const response = await fetch(url, options)
-  const json = await response.json()
+  try {
+    const body =
+      context.destination === 'perps'
+        ? getLifiPerpsStepRequest(context.input)
+        : { ...context.input, integrator: 'sushi' }
+    const { response, json } = await postLifiRequest(
+      'stepTransaction',
+      body,
+      isPerps ? 'no-store' : undefined,
+    )
+    if (context.destination === 'perps') {
+      if (!response.ok) {
+        return Response.json(
+          { error: 'Unable to prepare perps deposit' },
+          { status: response.status },
+        )
+      }
+      return Response.json(parseLifiPerpsPreparedStep(json, context.input), {
+        headers: { 'Cache-Control': 'no-store' },
+      })
+    }
 
-  const parsed = stepSchema(
-    lifiParams.action.fromChainId,
-    lifiParams.action.toChainId,
-    'lifi',
-  ).parse(json)
+    const parsed = stepSchema(
+      context.input.action.fromChainId,
+      context.input.action.toChainId,
+      'lifi',
+    ).parse(json)
 
-  return Response.json(parsed, {
-    status: response.status,
-    headers: {
-      'Cache-Control': 's-maxage=8, stale-while-revalidate=10',
-    },
-  })
+    return Response.json(parsed, {
+      status: response.status,
+      headers: { 'Cache-Control': 's-maxage=8, stale-while-revalidate=10' },
+    })
+  } catch (error) {
+    if (!isPerps) throw error
+    return Response.json(
+      { error: 'Unable to prepare perps deposit' },
+      { status: 502 },
+    )
+  }
 }
