@@ -51,21 +51,26 @@ async function getTokenFromTokenList(
  * Get a token by its contract address (case-insensitive).
  * Stellar contract addresses are case-insensitive, but may be stored
  * or returned in different cases by different systems.
+ * Strict lookups reject metadata failures instead of synthesizing a token.
  *
  * @param contract - The contract address of the token
  */
 export async function getTokenByContract(
   contract: StellarContractAddress,
+  { strict = false }: { strict?: boolean } = {},
 ): Promise<StellarToken> {
+  const canonicalContract = normalizeStellarAddress(contract)
   const tokenFromList = await getTokenFromTokenList(contract)
-  if (tokenFromList) {
+  if (
+    tokenFromList &&
+    (!strict || tokenFromList.address === canonicalContract)
+  ) {
     return tokenFromList
   }
 
   // Fallback: fetch from chain
-  const canonicalContract = normalizeStellarAddress(contract)
   try {
-    const onChainMetadata = await getTokenMetadata(canonicalContract)
+    const onChainMetadata = await getTokenMetadata(canonicalContract, strict)
     return new StellarToken({
       chainId: StellarChainId.STELLAR,
       address: canonicalContract,
@@ -78,6 +83,7 @@ export async function getTokenByContract(
       origin: 'unknown',
     })
   } catch (error) {
+    if (strict) throw error
     console.warn(`Failed to fetch metadata for token ${contract}:`, error)
     return new StellarToken({
       chainId: StellarChainId.STELLAR,
@@ -133,7 +139,10 @@ export async function getTokenBalance(
  * @param tokenAddress - The token contract address
  * @returns Token metadata
  */
-async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
+async function getTokenMetadata(
+  tokenAddress: StellarContractAddress,
+  strict: boolean,
+): Promise<{
   name: string
   symbol: string
   decimals: number
@@ -152,7 +161,8 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
         .then(
           (assembledTransaction: AssembledTransaction<string>) =>
             assembledTransaction.result,
-          (e: any) => {
+          (e: unknown) => {
+            if (strict) throw e
             console.error('Error fetching token name:', e)
             return ''
           },
@@ -165,7 +175,8 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
         .then(
           (assembledTransaction: AssembledTransaction<string>) =>
             assembledTransaction.result,
-          (e: any) => {
+          (e: unknown) => {
+            if (strict) throw e
             console.error('Error fetching token symbol:', e)
             return ''
           },
@@ -178,7 +189,8 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
         .then(
           (assembledTransaction: AssembledTransaction<number>) =>
             assembledTransaction.result,
-          (e: any) => {
+          (e: unknown) => {
+            if (strict) throw e
             console.error('Error fetching token decimals:', e)
             return 0
           },
@@ -193,6 +205,7 @@ async function getTokenMetadata(tokenAddress: StellarContractAddress): Promise<{
       decimals: decimalsResult || 0,
     }
   } catch (error) {
+    if (strict) throw error
     console.error('Error fetching token metadata:', error)
     return {
       name: '',

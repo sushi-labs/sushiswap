@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 
-import { type ReactNode, act, useState } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
-import type { UnifiedSwapState } from 'src/lib/swap/unified-swap-context'
 import {
   STELLAR_USDT0,
   STELLAR_XLM,
@@ -10,6 +10,8 @@ import {
   StellarToken,
 } from 'sushi/stellar'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import type { SwapEdgeConfig } from '~stellar/_common/lib/edge/get-swap-edge-config'
+import { useEdgeConfig } from '~stellar/_common/providers/edge-config-provider'
 import {
   useSimpleSwapActions,
   useSimpleSwapState,
@@ -17,49 +19,34 @@ import {
 import { StellarUnifiedSwapRuntime } from './stellar-unified-swap-runtime'
 
 const mocks = vi.hoisted(() => ({
-  form: vi.fn(),
-  search: vi.fn(),
-  catalog: vi.fn(),
-  catalogCurrency: vi.fn(),
+  params: new URLSearchParams(),
+  getToken: vi.fn(),
 }))
 
-vi.mock('src/lib/swap/unified-swap-context', () => ({
-  useUnifiedSwap: mocks.form,
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/swap',
+  useSearchParams: () => mocks.params,
 }))
-vi.mock(
-  'src/lib/wagmi/components/token-selector/hooks/use-search-tokens',
-  () => ({ useSearchTokens: mocks.search }),
-)
-vi.mock(
-  '../../cross-chain-swap/_ui/layerzero/hooks/use-value-transfer-catalog',
-  () => ({ useValueTransferCatalog: mocks.catalog }),
-)
-vi.mock('src/lib/wagmi/components/web3-input/currency', () => ({
-  CurrencyInput: ({ label }: { label: string }) => (
-    <button type="button">{label}</button>
-  ),
+vi.mock('~stellar/_common/lib/soroban/token-helpers', () => ({
+  getTokenByContract: mocks.getToken,
 }))
 vi.mock('~stellar/providers', () => ({
   Providers: ({ children }: { children: ReactNode }) => children,
 }))
-vi.mock('~stellar/_common/providers/edge-config-provider', () => ({
-  EdgeProvider: ({ children }: { children: ReactNode }) => children,
+vi.mock('~stellar/swap/loading', () => ({
+  default: () => <span>Loading Stellar tokens</span>,
 }))
 vi.mock('~stellar/_common/ui/swap/simple/simple-swap-widget', () => ({
   SimpleSwapWidget: function Widget() {
-    const { token0, token1, amount, outputAmount } = useSimpleSwapState()
-    quoteActions = useSimpleSwapActions()
-    const [pending, setPending] = useState(false)
-    setWidgetPending = setPending
+    const { token0, token1, amount } = useSimpleSwapState()
+    const { maintenance } = useEdgeConfig<SwapEdgeConfig>()
+    actions = useSimpleSwapActions()
     return (
-      <span data-output={outputAmount.toString()} data-pending={pending}>
+      <span data-maintenance={maintenance}>
         {`${token0.symbol}/${token1.symbol}: ${amount}`}
       </span>
     )
   },
-}))
-vi.mock('@sushiswap/ui', () => ({
-  Message: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }))
 
 const xlm = STELLAR_XLM[StellarChainId.STELLAR]
@@ -73,143 +60,101 @@ const custom = new StellarToken({
 })
 let container: HTMLDivElement
 let root: Root
-let form: UnifiedSwapState
-let quoteActions: ReturnType<typeof useSimpleSwapActions>
-let setWidgetPending: (pending: boolean) => void
+let client: QueryClient
+let actions: ReturnType<typeof useSimpleSwapActions>
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 beforeEach(() => {
-  vi.clearAllMocks()
+  vi.resetAllMocks()
+  vi.useFakeTimers()
+  history.replaceState(null, '', '/swap')
+  client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   container = document.createElement('div')
   root = createRoot(container)
-  form = {
-    chainId0: StellarChainId.STELLAR,
-    chainId1: StellarChainId.STELLAR,
-    token0Param: xlm.address,
-    token1Param: usdt.address,
-    swapAmountString: '12',
-    setAmount: vi.fn(),
-    selectToken: vi.fn(),
-    selectPair: vi.fn(),
-    switchTokens: vi.fn(),
-  }
-  mocks.form.mockImplementation(() => form)
-  mocks.search.mockReturnValue({ data: [], isLoading: false })
-  mocks.catalogCurrency.mockReturnValue(undefined)
-  mocks.catalog.mockReturnValue({
-    getCurrency: mocks.catalogCurrency,
-    isLoading: false,
-  })
+  mocks.getToken.mockResolvedValue(custom)
 })
 
-afterEach(() => act(() => root.unmount()))
+afterEach(() => {
+  act(() => root.unmount())
+  client.clear()
+  vi.useRealTimers()
+})
 
-function render(): void {
-  act(() => {
-    root.render(<StellarUnifiedSwapRuntime config={{ maintenance: false }} />)
+async function render(params?: Record<string, string>): Promise<void> {
+  if (params) {
+    history.replaceState(null, '', `/swap?${new URLSearchParams(params)}`)
+  }
+  mocks.params = new URLSearchParams(location.search)
+  await act(async () => {
+    root.render(
+      <QueryClientProvider client={client}>
+        <StellarUnifiedSwapRuntime config={{ maintenance: true }} />
+      </QueryClientProvider>,
+    )
+  })
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1)
   })
 }
 
-it('uses existing Stellar swap contracts with the selected tokens and amount', () => {
-  render()
-  expect(container.textContent).toBe(`${xlm.symbol}/${usdt.symbol}: 12`)
+it('uses the tokens and amount from the URL and provides the edge config', async () => {
+  await render({ token0: usdt.address, token1: xlm.address, swapAmount: '12' })
+  expect(container.textContent).toBe(`${usdt.symbol}/${xlm.symbol}: 12`)
+  expect(container.querySelector('span')?.dataset.maintenance).toBe('true')
+  expect(mocks.getToken).not.toHaveBeenCalled()
 })
 
-it('resolves a selected non-base Stellar token by exact address', () => {
-  form.token1Param = custom.address
-  mocks.search.mockReturnValue({ data: [usdt, custom], isLoading: false })
-  render()
-  expect(container.textContent).toBe(`${xlm.symbol}/deHYB: 12`)
+it('uses the provider defaults when the URL has no token parameters', async () => {
+  await render()
+  expect(container.textContent).toBe(`${xlm.symbol}/${usdt.symbol}: `)
 })
 
-it('resolves a catalog-only Stellar token on a same-chain pair', () => {
-  form.token1Param = custom.address
-  mocks.catalogCurrency.mockImplementation(
-    (chainId: number, address: string | undefined) =>
-      chainId === StellarChainId.STELLAR && address === custom.address
-        ? custom
-        : undefined,
+it('waits for the provider to resolve a non-base token from the URL', async () => {
+  let resolve!: (token: StellarToken) => void
+  mocks.getToken.mockReturnValue(
+    new Promise<StellarToken>((done) => {
+      resolve = done
+    }),
   )
-  render()
+  await render({
+    token0: xlm.address,
+    token1: custom.address.toLowerCase(),
+    swapAmount: '12',
+  })
+  expect(container.textContent).toBe('Loading Stellar tokens')
+  expect(mocks.getToken).toHaveBeenCalledWith(custom.address, { strict: true })
+
+  await act(async () => resolve(custom))
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1)
+  })
   expect(container.textContent).toBe(`${xlm.symbol}/deHYB: 12`)
 })
 
-it('does not substitute a different catalog token when API lookup fails', () => {
-  form.token1Param = custom.address
-  mocks.search.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: true,
-  })
-  mocks.catalogCurrency.mockReturnValue(usdt)
-  render()
-  expect(container.textContent).toContain('Unable to load')
-  expect(container.textContent).not.toContain(`${xlm.symbol}/${usdt.symbol}`)
+it('updates the widget when navigation changes the URL pair and amount', async () => {
+  await render({ token0: xlm.address, token1: usdt.address, swapAmount: '12' })
+  await render({ token0: usdt.address, token1: xlm.address, swapAmount: '3.5' })
+  expect(container.textContent).toBe(`${usdt.symbol}/${xlm.symbol}: 3.5`)
 })
 
-it('removes the executable widget while the newly selected token is unresolved', () => {
-  render()
-  form = { ...form, token1Param: custom.address }
-  mocks.search.mockReturnValue({ data: [usdt], isLoading: true })
-  render()
-  expect(container.textContent).toContain('Loading Stellar tokens')
-  expect(container.querySelector('span')?.closest('[hidden]')).not.toBeNull()
-  expect(container.querySelector('span')?.closest('[inert]')).not.toBeNull()
-  expect(container.querySelectorAll('button')).toHaveLength(2)
-})
+it('writes widget edits to the URL while preserving the unified chain parameters', async () => {
+  const chainParams = {
+    chainId0: String(StellarChainId.STELLAR),
+    chainId1: String(StellarChainId.STELLAR),
+  }
+  await render({ ...chainParams, token0: xlm.address, token1: usdt.address })
+  act(() => actions.setToken1(custom))
+  await render()
+  act(() => actions.setAmount('2.5'))
+  await render()
 
-it('does not replace an invalid selected address with a default token', () => {
-  form.token0Param = 'invalid'
-  render()
-  expect(container.textContent).toContain('Unable to load')
-  expect(container.textContent).not.toContain(`${xlm.symbol}/${usdt.symbol}`)
-})
-
-it('discards the previous pair quote without remounting pending execution state', () => {
-  render()
-  act(() => {
-    quoteActions.setOutputAmount(42n)
-    setWidgetPending(true)
+  expect(Object.fromEntries(new URLSearchParams(location.search))).toEqual({
+    ...chainParams,
+    token0: xlm.address,
+    token1: custom.address,
+    swapAmount: '2.5',
   })
-  expect(container.querySelector('span')?.dataset.output).toBe('42')
-
-  form = { ...form, token1Param: custom.address }
-  mocks.search.mockReturnValue({ data: [custom], isLoading: false })
-  render()
-
-  expect(container.textContent).toBe(`${xlm.symbol}/deHYB: 12`)
-  expect(container.querySelector('span')?.dataset.output).toBe('0')
-  expect(container.querySelector('span')?.dataset.pending).toBe('true')
-})
-
-it('preserves pending execution through delayed and failed metadata lookup', () => {
-  render()
-  act(() => {
-    quoteActions.setOutputAmount(42n)
-    setWidgetPending(true)
-  })
-
-  form = { ...form, token1Param: custom.address }
-  mocks.search.mockReturnValue({ data: undefined, isLoading: true })
-  render()
-  expect(container.querySelector('span')?.closest('[hidden]')).not.toBeNull()
-  expect(container.querySelector('span')?.dataset.pending).toBe('true')
-
-  mocks.search.mockReturnValue({
-    data: undefined,
-    isLoading: false,
-    isError: true,
-  })
-  render()
-  expect(container.textContent).toContain('Unable to load')
-  expect(container.querySelector('span')?.closest('[inert]')).not.toBeNull()
-  expect(container.querySelector('span')?.dataset.pending).toBe('true')
-
-  mocks.search.mockReturnValue({ data: [custom], isLoading: false })
-  render()
-  expect(container.querySelector('span')?.closest('[hidden]')).toBeNull()
-  expect(container.querySelector('span')?.dataset.pending).toBe('true')
-  expect(container.querySelector('span')?.dataset.output).toBe('0')
-  expect(container.textContent).toBe(`${xlm.symbol}/deHYB: 12`)
+  expect(container.textContent).toBe(`${xlm.symbol}/deHYB: 2.5`)
+  expect(mocks.getToken).not.toHaveBeenCalled()
 })

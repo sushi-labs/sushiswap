@@ -57,6 +57,19 @@ const nextConfig = bundleAnalyzer({
   staticPageGenerationTimeout: 180,
   turbopack: {
     root: path.join(__dirname, '../../'),
+    rules: {
+      // React Compiler skips functions containing bigint literals; see
+      // `react-compiler/hoist-bigint-literals-plugin.cjs`.
+      '*.{ts,tsx}': {
+        condition: { all: [{ not: 'foreign' }, { path: /apps\/web\/src\// }] },
+        loaders: [
+          path.join(
+            __dirname,
+            'react-compiler/hoist-bigint-literals-loader.cjs',
+          ),
+        ],
+      },
+    },
   },
   experimental: {
     staticGenerationRetryCount: 3,

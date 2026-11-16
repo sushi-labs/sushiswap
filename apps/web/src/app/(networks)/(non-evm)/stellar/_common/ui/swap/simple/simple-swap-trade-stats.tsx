@@ -27,19 +27,22 @@ export const SimpleSwapTradeStats = () => {
   const loading =
     Boolean(isLoadingPrice && Number(amount) > 0) || isPriceFetching
 
-  const outputSwapTokenAmount = outputAmount
-    ? (Number(outputAmount) / 10 ** token1.decimals).toFixed(6)
-    : null
+  const outputSwapTokenAmount =
+    token1 && outputAmount
+      ? (Number(outputAmount) / 10 ** token1.decimals).toFixed(6)
+      : null
 
   // Calculate minimum received with slippage
-  const minReceivedAmount = outputAmount
-    ? (() => {
-        const slippagePercent = parseSlippageTolerance(slippageTolerance)
-        const slippageBps = Math.floor(slippagePercent * 100)
-        const minAmount = (outputAmount * BigInt(10000 - slippageBps)) / 10000n
-        return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)
-      })()
-    : null
+  const minReceivedAmount =
+    token1 && outputAmount
+      ? (() => {
+          const slippagePercent = parseSlippageTolerance(slippageTolerance)
+          const slippageBps = Math.floor(slippagePercent * 100)
+          const minAmount =
+            (outputAmount * BigInt(10000 - slippageBps)) / 10000n
+          return (Number(minAmount) / 10 ** token1.decimals).toFixed(6)
+        })()
+      : null
 
   return (
     <Transition

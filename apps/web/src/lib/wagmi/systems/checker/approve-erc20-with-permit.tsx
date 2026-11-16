@@ -22,7 +22,7 @@ import {
 } from '@sushiswap/ui'
 import { useEffect, useState } from 'react'
 import type { Amount } from 'sushi'
-import { EvmChainId, type EvmCurrency } from 'sushi/evm'
+import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { type SvmChainId, isSvmChainId } from 'sushi/svm'
 import type { Address } from 'viem'
 import { useBytecode, useConnection } from 'wagmi'
@@ -35,7 +35,6 @@ import {
   type PermitInfo,
   useTokenPermit,
 } from '../../hooks/approvals/hooks/use-token-permit'
-import { ApproveERC20 } from './approve-erc20'
 import { useApprovedActions } from './provider'
 import { RevokeApproveERC20 } from './revoke-approve-erc20'
 
@@ -57,13 +56,6 @@ interface ApproveERC20WithPermitProps<TChainId extends EvmChainId | SvmChainId>
   tag: string
 }
 
-const PERMIT_DISABLED_CHAIN_IDS = [EvmChainId.HARMONY]
-
-const isPermitSupportedChainId = (chainId: number) =>
-  !PERMIT_DISABLED_CHAIN_IDS.includes(
-    chainId as (typeof PERMIT_DISABLED_CHAIN_IDS)[number],
-  )
-
 function ApproveERC20WithPermit<TChainId extends EvmChainId | SvmChainId>(
   props: ApproveERC20WithPermitProps<TChainId>,
 ) {
@@ -73,12 +65,10 @@ function ApproveERC20WithPermit<TChainId extends EvmChainId | SvmChainId>(
 
   const _props = props as ApproveERC20WithPermitProps<EvmChainId>
 
-  return isPermitSupportedChainId(_props.chainId) ? (
+  return (
     <RevokeApproveERC20 {..._props} id={`revoke-${_props.id}`}>
       <_ApproveERC20WithPermit {..._props} />
     </RevokeApproveERC20>
-  ) : (
-    <ApproveERC20 {..._props} />
   )
 }
 
