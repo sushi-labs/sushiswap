@@ -1,9 +1,19 @@
-import { foundry } from 'viem/chains'
+import type { EvmChainId } from 'sushi/evm'
 import { publicChains } from '../viem'
+
+const anvilPort = String(
+  process.env.ANVIL_PORT || process.env.NEXT_PUBLIC_ANVIL_PORT || 8545,
+)
+
+export function getTestRpcUrl(chainId: EvmChainId): string {
+  // Identify the actual client/provider chain at the browser RPC boundary.
+  // Fork tests ignore this query and forward to their isolated Anvil worker.
+  return `http://127.0.0.1:${anvilPort}/?chainId=${chainId}`
+}
 
 export const testChains = publicChains.map((chain) => ({
   ...chain,
-  rpcUrls: foundry.rpcUrls,
+  rpcUrls: { default: { http: [getTestRpcUrl(chain.id)] } },
 })) as unknown as typeof publicChains
 
 export type TestChainId = (typeof testChains)[number]['id']

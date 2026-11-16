@@ -5,8 +5,17 @@ import {
   XSWAP_STABLE_UI_FEE_DECIMAL,
   XSWAP_SUSHI_UI_FEE_DECIMAL,
 } from 'src/config'
+import {
+  getLifiPerpsRoutesRequest,
+  parseLifiPerpsRoutesResponse,
+} from 'src/lib/perps/deposit/lifi-perps-api'
+import {
+  type LifiPerpsRoutesInput,
+  lifiPerpsRoutesInputSchema,
+} from 'src/lib/perps/deposit/lifi-perps-schemas'
 import { isLifiNoRouteResponse } from 'src/lib/swap/cross-chain/route-availability'
 import * as z from 'zod'
+import { postLifiRequest } from '../lifi-client'
 import {
   type LifiChainId,
   getAddressSchema,
@@ -102,27 +111,37 @@ export type CrossChainRoutesResponse<
   TChainId1 extends LifiChainId,
 > = z.output<ReturnType<typeof routesOutputSchema<TChainId0, TChainId1>>>
 
-export async function GET(request: NextRequest) {
-  const params = Object.fromEntries(request.nextUrl.searchParams.entries())
+type RoutesRequestContext =
+  | {
+      destination: 'perps'
+      input: LifiPerpsRoutesInput
+      body: ReturnType<typeof getLifiPerpsRoutesRequest>
+    }
+  | {
+      destination: 'swap'
+      input: ReturnType<typeof parseRoutesInput>
+      body: Record<string, unknown>
+    }
 
-  const {
-    slippage,
-    order = 'CHEAPEST',
-    ...parsedParams
-  } = parseRoutesInput(params)
+function getRoutesRequest(
+  params: Record<string, string>,
+): RoutesRequestContext {
+  if (params.destination === 'perps') {
+    const { destination: _destination, ...source } = params
+    const input = lifiPerpsRoutesInputSchema.parse(source)
+    return {
+      destination: 'perps',
+      input,
+      body: getLifiPerpsRoutesRequest(input),
+    }
+  }
+  const input = parseRoutesInput(params)
+  const { slippage, order = 'CHEAPEST', ...parsedParams } = input
 
-  const url = new URL('https://li.quest/v1/advanced/routes')
-
-  const options = {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'content-type': 'application/json',
-      ...(process.env.LIFI_API_KEY && {
-        'x-lifi-api-key': process.env.LIFI_API_KEY,
-      }),
-    },
-    body: JSON.stringify({
+  return {
+    destination: 'swap',
+    input,
+    body: {
       ...parsedParams,
       options: {
         slippage,
@@ -147,29 +166,64 @@ export async function GET(request: NextRequest) {
             ? XSWAP_STABLE_UI_FEE_DECIMAL
             : EVM_UI_FEE_DECIMAL,
       },
-    }),
-  }
-
-  const response = await fetch(url, options)
-  const json = await response.json()
-
-  // LI.FI uses NoQuoteError for pairs/amounts without a route. Preserve other
-  // HTTP failures so an outage or rate limit cannot silently change providers.
-  if (isLifiNoRouteResponse(response.status, json)) {
-    return Response.json({ routes: [] })
-  }
-
-  const parsed = routesOutputSchema(
-    parsedParams.fromChainId,
-    parsedParams.toChainId,
-  ).parse({
-    routes: json.routes ?? [],
-  })
-
-  return Response.json(parsed, {
-    status: response.status,
-    headers: {
-      'Cache-Control': 's-maxage=15, stale-while-revalidate=20',
     },
-  })
+  }
+}
+
+export async function GET(request: NextRequest): Promise<Response> {
+  const params = Object.fromEntries(request.nextUrl.searchParams.entries())
+  const isPerps = params.destination === 'perps'
+  if (params.destination !== undefined && !isPerps) {
+    return Response.json({ error: 'Unsupported destination' }, { status: 400 })
+  }
+  let context: RoutesRequestContext
+  try {
+    context = getRoutesRequest(params)
+  } catch (error) {
+    if (!isPerps) throw error
+    return Response.json(
+      { error: 'Invalid perps deposit quote' },
+      { status: 400 },
+    )
+  }
+
+  try {
+    const { response, json } = await postLifiRequest(
+      'routes',
+      context.body,
+      isPerps ? 'no-store' : undefined,
+    )
+    // Preserve outages and rate limits instead of treating them as no route.
+    if (isLifiNoRouteResponse(response.status, json)) {
+      return Response.json({ routes: [] })
+    }
+    if (context.destination === 'perps') {
+      if (!response.ok) {
+        return Response.json(
+          { error: 'Unable to quote perps deposit' },
+          { status: response.status },
+        )
+      }
+      return Response.json(parseLifiPerpsRoutesResponse(json, context.input), {
+        headers: { 'Cache-Control': 'no-store' },
+      })
+    }
+
+    const { routes } = z.object({ routes: z.unknown().nullish() }).parse(json)
+    const parsed = routesOutputSchema(
+      context.input.fromChainId,
+      context.input.toChainId,
+    ).parse({ routes: routes ?? [] })
+
+    return Response.json(parsed, {
+      status: response.status,
+      headers: { 'Cache-Control': 's-maxage=15, stale-while-revalidate=20' },
+    })
+  } catch (error) {
+    if (!isPerps) throw error
+    return Response.json(
+      { error: 'Unable to quote perps deposit' },
+      { status: 502 },
+    )
+  }
 }

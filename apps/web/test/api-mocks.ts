@@ -1,4 +1,4 @@
-import { NativeAddress } from 'src/lib/constants'
+import { NativeAddress, SUSHI_DATA_API_HOST } from 'src/lib/constants'
 import {
   EvmChainId,
   EvmNative,
@@ -13,6 +13,7 @@ import { chainId } from './constants'
 import type { Fork } from './fixtures'
 import { currencyBalance } from './fork'
 import type { NetworkMocks } from './intercept-anvil'
+import { installWalletConnectMocks } from './walletconnect-mocks'
 
 export const graphRequest = z.object({
   operationName: z.string(),
@@ -20,6 +21,7 @@ export const graphRequest = z.object({
 })
 
 export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
+  installWalletConnectMocks(mocks)
   const native = EvmNative.fromChainId(chainId)
   const tokens = [
     native.wrap(),
@@ -73,6 +75,32 @@ export function installApiMocks(mocks: NetworkMocks, fork: Fork): void {
       }
       return Response.json(prices)
     }
+    if (
+      request.method === 'POST' &&
+      url.hostname === 'loki.analytics.sushi.com' &&
+      url.pathname === '/loki/api/v1/push'
+    )
+      return new Response(null, { status: 204 })
+    // The Edge Config SDK reads the complete config in development, while
+    // production requests the individual /item/swap endpoint.
+    if (
+      request.method === 'GET' &&
+      url.hostname === 'edge-config.vercel.com' &&
+      /^\/ecfg_[a-z0-9]+\/items$/.test(url.pathname)
+    )
+      return Response.json({ swap: { maintenance: false } })
+    if (
+      request.method === 'GET' &&
+      url.origin === new URL(SUSHI_DATA_API_HOST).origin &&
+      url.pathname === `/price/v1/${chainId}` &&
+      request.headers.get('accept') === 'application/octet-stream'
+    )
+      return new Response(new Uint8Array(), {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Last-Updated': '0',
+        },
+      })
     if (
       url.hostname === 'api.merkl.xyz' &&
       (url.pathname === '/v4/campaigns' ||
