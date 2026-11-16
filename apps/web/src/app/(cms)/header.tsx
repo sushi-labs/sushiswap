@@ -1,11 +1,8 @@
 import { getDifficulties } from '@sushiswap/graph-client/strapi'
-import {
-  Navigation,
-  type NavigationElement,
-  NavigationElementType,
-} from '@sushiswap/ui'
+import { type NavigationElement, NavigationElementType } from '@sushiswap/ui'
 import React from 'react'
 import { EXPLORE_NAVIGATION_LINKS } from '../_common/header-elements'
+import { Navigation } from '../_common/navigation'
 import { DOCS_URL } from './constants'
 
 interface HeaderLink {

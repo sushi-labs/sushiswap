@@ -1,9 +1,21 @@
 import { type VariantProps, cva } from 'class-variance-authority'
+import { CodeXml, Shuffle } from 'lucide-react'
 import Link from 'next/link'
 import * as React from 'react'
 
 import classNames from 'classnames'
+import { DiscordIcon } from '../icons/discord-icon'
+import { GithubIcon } from '../icons/github-icon'
 import { SushiIcon } from '../icons/sushi-icon'
+import { TelegramIcon } from '../icons/telegram-icon'
+import { XIcon } from '../icons/x-icon'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './accordion'
+import { buttonVariants } from './button'
 import { LinkInternal } from './link'
 import { navigationMenuTriggerStyle } from './navigation-menu'
 import {
@@ -15,12 +27,37 @@ import {
   NavigationMenuTrigger,
 } from './navigation-menu'
 
+const PRODUCT_NAVIGATION_LINKS = [
+  {
+    title: 'Sushi API',
+    href: 'https://docs.sushi.com/api/swagger',
+    description: 'Swap, quotes, and pricing',
+    icon: CodeXml,
+  },
+  {
+    title: 'Sushi Aggregator',
+    href: 'https://docs.sushi.com/aggregator/introduction',
+    description: 'Best-price routing',
+    icon: Shuffle,
+  },
+]
+
 const COMPANY_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
   {
     title: 'Blog',
     href: '/blog',
     description:
       'Stay up to date with the latest product developments at Sushi.',
+  },
+  {
+    title: 'Academy',
+    href: '/academy',
+    description: 'Everything you need to get up to speed with DeFi.',
+  },
+  {
+    title: 'FAQ',
+    href: '/faq',
+    description: 'Answers to the most common questions about Sushi.',
   },
 ]
 
@@ -54,6 +91,22 @@ const PARTNER_NAVIGATION_LINKS: NavigationElementDropdown['items'] = [
     href: '/tokenlist-request',
     description: 'Get your token on our default token list.',
   },
+]
+
+const LEGAL_NAVIGATION_LINKS = [
+  { title: 'Terms of Service', href: '/legal/terms-of-service' },
+  { title: 'Privacy Policy', href: '/legal/privacy-policy' },
+  {
+    title: 'Launchpad Terms of Service',
+    href: '/legal/sushi-launchpad-terms-of-use',
+  },
+]
+
+const SOCIAL_NAVIGATION_LINKS = [
+  { title: 'X', href: 'https://sushi.com/twitter', icon: XIcon },
+  { title: 'Discord', href: 'https://sushi.com/discord', icon: DiscordIcon },
+  { title: 'Telegram', href: 'https://sushi.com/telegram', icon: TelegramIcon },
+  { title: 'GitHub', href: 'https://sushi.com/github', icon: GithubIcon },
 ]
 
 const navigationContainerVariants = cva(
@@ -151,6 +204,8 @@ interface NavProps extends VariantProps<typeof navigationContainerVariants> {
   rightElement?: React.ReactNode
   className?: string
   hideSushiDropdown?: boolean
+  cookiePreferences?: React.ReactNode
+  sushiDropdownTriggerRef?: React.Ref<HTMLButtonElement>
 }
 
 const Navigation: React.FC<NavProps> = ({
@@ -159,6 +214,8 @@ const Navigation: React.FC<NavProps> = ({
   variant,
   className,
   hideSushiDropdown = false,
+  cookiePreferences,
+  sushiDropdownTriggerRef,
 }) => {
   const leftElements = React.useMemo(() => {
     const SingleItem = (entry: NavigationElementSingle) => {
@@ -229,7 +286,10 @@ const Navigation: React.FC<NavProps> = ({
     <NavigationContainer variant={variant} className={className}>
       <div className="flex space-x-1">
         {!hideSushiDropdown ? (
-          <SushiNavigationDropdown>
+          <SushiNavigationDropdown
+            cookiePreferences={cookiePreferences}
+            triggerRef={sushiDropdownTriggerRef}
+          >
             <SushiIcon width={24} height={24} />
           </SushiNavigationDropdown>
         ) : null}
@@ -288,86 +348,141 @@ const NavigationListItem = React.forwardRef<
 
 NavigationListItem.displayName = 'NavListItem'
 
-const SushiNavigationDropdown: React.FC<{
+function SushiNavigationDropdown({
+  children,
+  className,
+  cookiePreferences,
+  triggerRef,
+}: {
   children?: React.ReactElement
   className?: string
-}> = ({ children, className }) => {
+  cookiePreferences?: React.ReactNode
+  triggerRef?: React.Ref<HTMLButtonElement>
+}): React.JSX.Element {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className={className}>
+          <NavigationMenuTrigger
+            ref={triggerRef}
+            aria-label="Sushi menu"
+            className={className}
+          >
             {children}
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="border border-accent rounded-2xl">
-            <ul className={'w-[216px] flex flex-col gap-6 px-4 py-6'}>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold px-2">Company</span>
-                <div>
-                  {COMPANY_NAVIGATION_LINKS.map((component) => (
-                    <li key={component.title}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={component.href}
+          <NavigationMenuContent className="!max-h-[calc(100dvh-5rem)] overscroll-contain scroll">
+            <div className="w-[min(36rem,calc(100vw-2rem))] space-y-3 p-3 text-primary sm:space-y-4 sm:p-4">
+              <section className="space-y-2">
+                <h2 className="px-1 text-xs text-muted-foreground">Products</h2>
+                <ul className="grid gap-2 sm:grid-cols-2">
+                  {PRODUCT_NAVIGATION_LINKS.map(
+                    ({ title, href, description, icon: Icon }) => (
+                      <li key={title}>
+                        <NavigationMenuLink
+                          href={href}
                           target="_blank"
-                          className={
-                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
-                          }
+                          rel="noopener noreferrer"
+                          className="flex h-full items-center gap-3 rounded-2xl border border-accent p-3 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink"
                         >
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {component.title}
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pink text-white">
+                            <Icon className="h-4 w-4" aria-hidden="true" />
                           </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </div>
+                          <span className="min-w-0 space-y-0.5">
+                            <span className="block text-sm font-semibold">
+                              {title}
+                            </span>
+                            <span className="block text-xs text-muted-foreground">
+                              {description}
+                            </span>
+                          </span>
+                        </NavigationMenuLink>
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </section>
+
+              <div className="grid grid-cols-2 gap-3 rounded-2xl border border-accent bg-muted p-3 sm:grid-cols-3 sm:p-4">
+                {[
+                  { title: 'Company', links: COMPANY_NAVIGATION_LINKS },
+                  { title: 'Protocol', links: PROTOCOL_NAVIGATION_LINKS },
+                  { title: 'Partnership', links: PARTNER_NAVIGATION_LINKS },
+                ].map(({ title, links }) => (
+                  <section
+                    key={title}
+                    className="last:col-span-2 sm:last:col-span-1"
+                  >
+                    <h2 className="px-1.5 pb-1.5 text-xs text-muted-foreground">
+                      {title}
+                    </h2>
+                    <ul>
+                      {links.map((link) => (
+                        <li key={link.title}>
+                          <NavigationMenuLink
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex min-h-9 items-center rounded-lg p-1.5 text-sm transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink"
+                          >
+                            {link.title}
+                          </NavigationMenuLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold px-2">Protocol</span>
-                <div>
-                  {PROTOCOL_NAVIGATION_LINKS.map((component) => (
-                    <li key={component.title}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={component.href}
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <Accordion type="single" collapsible className="min-w-0 flex-1">
+                  <AccordionItem value="legal" className="!border-0">
+                    <AccordionTrigger className="min-h-9 !justify-start gap-1.5 rounded-lg px-1 !py-1.5 text-xs !font-normal text-muted-foreground hover:text-primary hover:!no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink [&>svg]:!h-3 [&>svg]:!w-3">
+                      Legal &amp; Privacy
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="pt-1">
+                        {LEGAL_NAVIGATION_LINKS.map(({ title, href }) => (
+                          <li key={title}>
+                            <NavigationMenuLink
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex min-h-9 items-center rounded-lg p-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:bg-muted focus-visible:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink"
+                            >
+                              {title}
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                        {cookiePreferences ? (
+                          <li>{cookiePreferences}</li>
+                        ) : null}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+                <ul className="flex shrink-0 gap-1.5">
+                  {SOCIAL_NAVIGATION_LINKS.map(
+                    ({ title, href, icon: Icon }) => (
+                      <li key={title}>
+                        <NavigationMenuLink
+                          href={href}
                           target="_blank"
-                          className={
-                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
-                          }
+                          rel="noopener noreferrer"
+                          aria-label={title}
+                          className={buttonVariants({
+                            variant: 'outline',
+                            size: 'sm',
+                            className: 'w-9 !bg-secondary !p-0 hover:!bg-muted',
+                          })}
                         >
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {component.title}
-                          </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </div>
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                        </NavigationMenuLink>
+                      </li>
+                    ),
+                  )}
+                </ul>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold px-2">Partnership</span>
-                <div>
-                  {PARTNER_NAVIGATION_LINKS.map((component) => (
-                    <li key={component.title}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={component.href}
-                          target="_blank"
-                          className={
-                            'cursor-pointer block select-none space-y-1 rounded-full p-2 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
-                          }
-                        >
-                          <span className="text-sm font-medium text-muted-foreground">
-                            {component.title}
-                          </span>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  ))}
-                </div>
-              </div>
-            </ul>
+            </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -1,10 +1,11 @@
 'use client'
 
-import { Navigation, SushiNavigationDropdown, classNames } from '@sushiswap/ui'
+import { Navigation, classNames } from '@sushiswap/ui'
 import { SushiIcon } from '@sushiswap/ui/icons/sushi-icon'
 import { SushiWithTextIcon } from '@sushiswap/ui/icons/sushi-with-text-icon'
 import type { ReactNode } from 'react'
 import { headerElements } from 'src/app/_common/header-elements'
+import { SushiNavigationDropdown } from 'src/app/_common/navigation'
 import type { ChainId } from 'sushi'
 
 interface HeaderShellProps {

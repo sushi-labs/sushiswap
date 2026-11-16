@@ -1,8 +1,8 @@
 'use client'
 
-import { Navigation } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { headerElements } from '../_common/header-elements'
+import { Navigation } from '../_common/navigation'
 
 export const metadata: Metadata = {
   title: 'Partner',

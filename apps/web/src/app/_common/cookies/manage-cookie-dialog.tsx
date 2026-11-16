@@ -23,15 +23,18 @@ export function ManageCookieDialog({
   cookieSet,
   variant,
   onAction,
+  onCloseAutoFocus,
 }: {
   cookieSet: Set<CookieType>
   variant: CookieDialogVariant
   onAction: (action: ManageAction) => void
+  onCloseAutoFocus?: (event: Event) => void
 }) {
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false)
 
   return (
     <DialogContent
+      onCloseAutoFocus={onCloseAutoFocus}
       hideClose
       variant={variant}
       className="!left-[unset] !top-[unset] !bottom-0 md:!right-0 !translate-x-[0%] md:!translate-x-[-50px] md:!translate-y-[-50px] space-y-4"

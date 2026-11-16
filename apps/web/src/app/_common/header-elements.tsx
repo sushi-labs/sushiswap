@@ -1,11 +1,6 @@
-import {
-  ArrowTopRightOnSquareIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/outline'
+import { Bars3Icon } from '@heroicons/react/24/outline'
 import {
   Button,
-  LinkExternal,
-  LinkInternal,
   type NavigationElement,
   type NavigationElementDropdown,
   NavigationElementType,
@@ -14,17 +9,10 @@ import {
   NavigationMenuItem,
   NavigationMenuPrimitive,
   NavigationMenuTrigger,
-  OnramperButton,
-  Separator,
 } from '@sushiswap/ui'
-import { DiscordIcon } from '@sushiswap/ui/icons/discord-icon'
-import { GithubIcon } from '@sushiswap/ui/icons/github-icon'
-import { XIcon } from '@sushiswap/ui/icons/x-icon'
-import Link from 'next/link'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'
 import { isLaunchpadV2ChainId } from 'sushi/evm'
-import { CookieDialog } from './cookies/cookie-dialog'
 
 export const EXPLORE_NAVIGATION_LINKS = (
   chainId?: ChainId,
@@ -156,61 +144,6 @@ export const headerElements = ({
                   {component.description}
                 </NavigationListItem>
               ))}
-              <Separator />
-              <div className={'px-3 py-6 w-full'}>
-                <CookieDialog defaultOpen={false}>
-                  <span className="text-sm text-center cursor-pointer font-medium hover:text-muted-foreground focus:text-muted-foreground">
-                    Manage Cookie Preferences
-                  </span>
-                </CookieDialog>
-              </div>
-              <Separator />
-              <div className="px-3 py-4 flex flex-col gap-4">
-                <span className="text-sm font-medium cursor-default">
-                  Support
-                </span>
-                {SUPPORT_NAVIGATION_LINKS.map((component) => (
-                  <Link
-                    key={component.title}
-                    href={component.href}
-                    target="_blank"
-                    className={
-                      'cursor-pointer flex items-center gap-2 text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground'
-                    }
-                  >
-                    <span className="text-sm">{component.title}</span>
-                    <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                  </Link>
-                ))}
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground cursor-default">
-                    Socials
-                  </span>
-                  <div className="flex gap-5 items-center">
-                    <LinkExternal href={'https://sushi.com/github'}>
-                      <GithubIcon
-                        width={18}
-                        height={18}
-                        className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
-                      />
-                    </LinkExternal>
-                    <LinkExternal href={'https://sushi.com/discord'}>
-                      <DiscordIcon
-                        width={18}
-                        height={18}
-                        className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
-                      />
-                    </LinkExternal>
-                    <LinkExternal href={'https://sushi.com/twitter'}>
-                      <XIcon
-                        width={18}
-                        height={18}
-                        className="text-muted-foreground hover:text-accent-foreground focus:text-accent-foreground"
-                      />
-                    </LinkExternal>
-                  </div>
-                </div>
-              </div>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>

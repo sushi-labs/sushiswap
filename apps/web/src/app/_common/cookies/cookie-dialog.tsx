@@ -10,7 +10,13 @@ import {
 } from '@sushiswap/ui'
 import dynamic from 'next/dynamic'
 import { useSelectedLayoutSegments } from 'next/navigation'
-import { type ReactElement, useCallback, useEffect, useState } from 'react'
+import {
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { announceCookieChange } from './announce-cookie-change'
 import {
   type CookieDialogVariant,
@@ -115,7 +121,14 @@ export type { CookieType } from './cookie-types'
 export function CookieDialog({
   defaultOpen,
   children,
-}: { defaultOpen: boolean; children: ReactElement }) {
+  renderTrigger,
+  onCloseAutoFocus,
+}: {
+  defaultOpen: boolean
+  children: ReactElement
+  renderTrigger?: (trigger: ReactElement) => ReactNode
+  onCloseAutoFocus?: (event: Event) => void
+}): ReactElement {
   const segments = useSelectedLayoutSegments()
   const variant: CookieDialogVariant = segments.some(
     (segment) => segment === 'perps' || segment === 'launchpad',
@@ -189,6 +202,12 @@ export function CookieDialog({
     }
   }, [onConfirm])
 
+  const trigger = (
+    <DialogTrigger asChild onClick={() => setPage('manage')}>
+      {children}
+    </DialogTrigger>
+  )
+
   return (
     <>
       {open && page === 'base' ? (
@@ -196,15 +215,14 @@ export function CookieDialog({
       ) : null}
 
       <Dialog open={open && page === 'manage'} onOpenChange={setOpen}>
-        <DialogTrigger asChild onClick={() => setPage('manage')}>
-          {children}
-        </DialogTrigger>
+        {renderTrigger ? renderTrigger(trigger) : trigger}
 
         {page === 'manage' ? (
           <ManageCookieDialog
             cookieSet={enabledCookieSet}
             variant={variant}
             onAction={onManageAction}
+            onCloseAutoFocus={onCloseAutoFocus}
           />
         ) : null}
       </Dialog>
