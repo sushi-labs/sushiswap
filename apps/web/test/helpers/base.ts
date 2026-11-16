@@ -56,7 +56,9 @@ export class BaseActions {
   async approveIfNeeded(approve: Locator, ready: Locator): Promise<void> {
     await expect
       .poll(
-        async () => (await approve.isVisible()) || (await ready.isEnabled()),
+        async () =>
+          (await approve.isVisible()) ||
+          ((await ready.isVisible()) && (await ready.isEnabled())),
         {
           message: 'Allowance check resolves',
         },

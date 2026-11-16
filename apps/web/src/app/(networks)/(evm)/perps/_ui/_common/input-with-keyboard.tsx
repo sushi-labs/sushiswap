@@ -127,6 +127,7 @@ export const InputWithKeyboard = ({
             />
           </div>
           <TextField
+            aria-label="Amount"
             type="number"
             variant="naked"
             disabled={!address || isLoading || !isLg}

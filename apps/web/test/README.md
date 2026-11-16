@@ -1,7 +1,8 @@
 # Web E2E tests
 
-The PR suite uses a production test build, a mock wallet, a Polygon fork pinned
-to block **71015789**, and recorded HTTP responses. Transactions execute on Anvil;
+The swap and pool browser tests use a production test build, a mock wallet, a
+Polygon fork pinned to block **71015789**, and recorded HTTP responses.
+Transactions execute on Anvil;
 successful receipts and changes in balances/positions are asserted independently
 of UI notifications. External application-data requests fail unless mocked.
 
@@ -28,6 +29,7 @@ pnpm exec turbo run build --filter web
 pnpm --filter web test
 pnpm --filter web test --workers=2 --retries=0
 pnpm --filter web test --grep 'Wrap and unwrap'
+pnpm --filter web exec playwright test -c test/perps-playwright.config.ts
 pnpm --filter web test:harness
 ```
 
@@ -36,6 +38,33 @@ isolation, browser/server RPC forwarding, snapshot restoration, worker replaceme
 on retry, strict recordings, and rejection of reverted receipts. Its retry probe
 intentionally fails once in a subprocess; the outer harness asserts this outcome.
 Use a different `ANVIL_PORT` if running it alongside the app suite.
+
+## Direct perps deposits
+
+The default browser suite also runs `perps/direct-perps.test.ts`. Its source-chain
+cases come from `ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS`, so adding a supported
+chain to the application config adds a browser case automatically. The dedicated
+`perps-playwright.config.ts` runs these cases without starting an Anvil fork; it
+uses the same test app build and Wagmi test connector as the fork suite.
+
+These are controlled browser integration tests. The UI calls the real shared
+`/api/cross-chain/routes` and `/api/cross-chain/step` handlers, while LI.FI,
+Hyperliquid HTTP/WebSocket, and wallet JSON-RPC responses are deterministic.
+Unknown application requests fail; no transaction reaches a live network.
+Test-only RPC URLs identify the chain selected by Wagmi, letting the fixtures
+reject transactions sent to a different chain.
+
+Each configured source verifies FASTEST routing, one source-chain transaction,
+pending state after its receipt, and completion only after verified perps USDC
+delivery. Additional cases cover ERC20 approval, wallet rejection, source reverts,
+missing routes, partial/refunded/unverified delivery, and reopening a pending
+deposit. An unrelated account credit cannot complete a pending transfer.
+Reports attach upstream quotes, prepared steps, status polls, and wallet
+requests so a notification alone cannot establish successful settlement.
+
+WalletConnect's AppKit bootstrap metadata is mocked by exact host, method, and
+path in `walletconnect-mocks.ts`. Its harness regressions also verify unknown
+WalletConnect requests remain errors.
 
 ## Fixture ownership
 

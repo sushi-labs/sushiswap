@@ -12,10 +12,12 @@ import {
 } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
+import type { LifiPerpsDepositExecution } from 'src/lib/perps/deposit/use-lifi-perps-deposit-execution'
 import { EvmChainId } from 'sushi/evm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
 import type { ActiveAccount } from '~evm/perps/active-account-state'
+import { ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS } from './any-token-deposit-config'
 import {
   type AnyTokenDepositOption,
   DepositDialog,
@@ -23,9 +25,13 @@ import {
 } from './deposit-dialog'
 
 vi.mock('@sushiswap/ui', () => {
-  const DialogContext = createContext(false)
+  const DialogContext = createContext({
+    open: false,
+    onOpenChange: (_open: boolean): void => {},
+  })
   const SelectContext = createContext({
     value: '',
+    disabled: false,
     onValueChange: (_value: string): void => {},
   })
 
@@ -34,17 +40,35 @@ vi.mock('@sushiswap/ui', () => {
   }
 
   return {
-    Button: ({ children, disabled }: ComponentProps<'button'>) => (
-      <button type="button" disabled={disabled}>
+    Button: ({ children, disabled, onClick }: ComponentProps<'button'>) => (
+      <button type="button" disabled={disabled} onClick={onClick}>
         {children}
       </button>
     ),
     Currency: { Icon: () => null },
-    PerpsDialog: ({ children, open }: PropsWithChildren<{ open: boolean }>) => (
-      <DialogContext.Provider value={open}>{children}</DialogContext.Provider>
+    PerpsDialog: ({
+      children,
+      open,
+      onOpenChange,
+    }: PropsWithChildren<{
+      open: boolean
+      onOpenChange: (open: boolean) => void
+    }>) => (
+      <DialogContext.Provider value={{ open, onOpenChange }}>
+        {children}
+      </DialogContext.Provider>
     ),
-    PerpsDialogContent: ({ children }: PropsWithChildren) =>
-      useContext(DialogContext) ? <div role="dialog">{children}</div> : null,
+    PerpsDialogContent: ({ children }: PropsWithChildren) => {
+      const dialog = useContext(DialogContext)
+      return dialog.open ? (
+        <div role="dialog">
+          <button type="button" onClick={() => dialog.onOpenChange(false)}>
+            Dismiss deposit
+          </button>
+          {children}
+        </div>
+      ) : null
+    },
     PerpsDialogDescription: Wrapper,
     PerpsDialogHeader: Wrapper,
     PerpsDialogInnerContent: Wrapper,
@@ -55,16 +79,24 @@ vi.mock('@sushiswap/ui', () => {
     }: {
       children: ReactElement<ComponentProps<'button'>>
       disabled?: boolean
-    }) => cloneElement(children, { disabled }),
+    }) => {
+      const dialog = useContext(DialogContext)
+      return cloneElement(children, {
+        disabled,
+        onClick: () => dialog.onOpenChange(true),
+      })
+    },
     Select: ({
       children,
       value,
       onValueChange,
+      disabled = false,
     }: PropsWithChildren<{
       value: string
       onValueChange: (value: string) => void
+      disabled?: boolean
     }>) => (
-      <SelectContext.Provider value={{ value, onValueChange }}>
+      <SelectContext.Provider value={{ value, onValueChange, disabled }}>
         {children}
       </SelectContext.Provider>
     ),
@@ -77,6 +109,7 @@ vi.mock('@sushiswap/ui', () => {
           role="option"
           data-value={value}
           aria-selected={value === select.value}
+          disabled={select.disabled}
           onClick={() => select.onValueChange(value)}
         >
           {children}
@@ -99,18 +132,59 @@ vi.mock('~evm/perps/active-account-provider', () => ({
 vi.mock('./any-token-deposit', () => ({
   AnyTokenDeposit: ({
     depositOption,
-  }: { depositOption: AnyTokenDepositOption }) => {
+    execution,
+  }: {
+    depositOption: AnyTokenDepositOption
+    execution?: LifiPerpsDepositExecution
+  }) => {
     const [bridgeComplete, setBridgeComplete] = useState(false)
     return (
       <div
         data-testid="any-token-deposit"
         data-chain-id={depositOption.chainId}
         data-deposit-type={depositOption.type}
+        data-submitted-hash={execution?.submitted?.hash}
+        data-submitting={execution?.isSubmitting}
       >
         {depositOption.label}
         <button type="button" onClick={() => setBridgeComplete(true)}>
           {bridgeComplete ? 'Bridge complete' : 'Start bridge'}
         </button>
+        {execution && depositOption.type === 'any-token-any-chain' && (
+          <>
+            <button
+              type="button"
+              onClick={() => execution.setIsSubmitting(true)}
+            >
+              Prepare deposit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                execution.setSubmitted({
+                  hash: depositTxHash,
+                  chainId: depositOption.chainId,
+                  recipient: '0x0000000000000000000000000000000000000001',
+                  bridge: 'across',
+                  amount: '11000000',
+                  minimumAmount: '10000000',
+                })
+                execution.setIsSubmitting(false)
+              }}
+            >
+              Broadcast deposit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                execution.setSubmitted(undefined)
+                execution.setIsSubmitting(false)
+              }}
+            >
+              Reset deposit
+            </button>
+          </>
+        )}
       </div>
     )
   },
@@ -129,6 +203,9 @@ vi.mock('./usdc-options', () => ({
 }))
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
+
+const depositTxHash =
+  '0x0000000000000000000000000000000000000000000000000000000000000001'
 
 function selectAccount(type: ActiveAccount['type']): void {
   const activeAccount: ActiveAccount = {
@@ -188,6 +265,21 @@ describe('DepositDialog chain selection', () => {
     act(() => option.click())
   }
 
+  function clickButton(label: string): void {
+    const element = Array.from(container.querySelectorAll('button')).find(
+      (button) => button.textContent === label,
+    )
+    if (!element) throw new Error(`Button not found: ${label}`)
+    act(() => element.click())
+  }
+
+  function expectSelectorsDisabled(disabled: boolean): void {
+    const options =
+      container.querySelectorAll<HTMLButtonElement>('[role="option"]')
+    expect(options.length).toBeGreaterThan(0)
+    for (const option of options) expect(option.disabled).toBe(disabled)
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
     selectAccount('master')
@@ -202,8 +294,8 @@ describe('DepositDialog chain selection', () => {
     container.remove()
   })
 
-  it.each([EvmChainId.ETHEREUM, EvmChainId.ROBINHOOD])(
-    'uses the any-token cross-chain flow for chain %s',
+  it.each(ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS)(
+    'uses the direct perps flow for configured chain %s',
     (chainId) => {
       selectChain(chainId)
 
@@ -215,23 +307,20 @@ describe('DepositDialog chain selection', () => {
         'any-token-any-chain',
       )
       expect(deposit?.textContent).toContain('Any Token')
+      expect(
+        container.querySelectorAll(`[role="option"][data-value="${chainId}"]`),
+      ).toHaveLength(1)
+      expect(container.querySelector('[data-testid="usdc-deposit"]')).toBeNull()
       expect(container.querySelector('[data-testid="unit-deposit"]')).toBeNull()
     },
   )
 
-  it('preserves the direct USDC, same-chain swap, and Unit deposit flows', () => {
-    expect(
-      container
-        .querySelector('[data-testid="usdc-deposit"]')
-        ?.getAttribute('data-chain-id'),
-    ).toBe(String(EvmChainId.HYPEREVM))
-
-    selectChain(EvmChainId.ARBITRUM)
-    expect(
-      container
-        .querySelector('[data-testid="any-token-deposit"]')
-        ?.getAttribute('data-deposit-type'),
-    ).toBe('any-token')
+  it('defaults to the first configured source and keeps Unit deposits available', () => {
+    const deposit = container.querySelector('[data-testid="any-token-deposit"]')
+    expect(deposit?.getAttribute('data-chain-id')).toBe(
+      String(ANY_TOKEN_ANY_CHAIN_DEPOSIT_CHAIN_IDS[0]),
+    )
+    expect(container.querySelector('[data-testid="usdc-deposit"]')).toBeNull()
 
     selectChain('Bitcoin')
     expect(
@@ -252,4 +341,55 @@ describe('DepositDialog chain selection', () => {
     expect(container.textContent).toContain('Start bridge')
     expect(container.textContent).not.toContain('Bridge complete')
   })
+
+  it('locks chain and deposit-method selectors while submitting or tracking', () => {
+    selectChain(EvmChainId.ETHEREUM)
+    expectSelectorsDisabled(false)
+    clickButton('Prepare deposit')
+    expectSelectorsDisabled(true)
+
+    selectChain(EvmChainId.ROBINHOOD)
+    expect(
+      container
+        .querySelector('[data-testid="any-token-deposit"]')
+        ?.getAttribute('data-chain-id'),
+    ).toBe(String(EvmChainId.ETHEREUM))
+
+    clickButton('Broadcast deposit')
+    expectSelectorsDisabled(true)
+    clickButton('Reset deposit')
+    expectSelectorsDisabled(false)
+    selectChain(EvmChainId.ROBINHOOD)
+    expect(
+      container
+        .querySelector('[data-testid="any-token-deposit"]')
+        ?.getAttribute('data-chain-id'),
+    ).toBe(String(EvmChainId.ROBINHOOD))
+  })
+
+  it.each(['Prepare deposit', 'Broadcast deposit'] as const)(
+    'preserves execution after %s when the dialog is dismissed and reopened',
+    (action) => {
+      act(() => root.render(<DepositDialog />))
+      clickButton('Deposit')
+      selectChain(EvmChainId.ETHEREUM)
+      clickButton(action)
+      clickButton('Dismiss deposit')
+
+      expect(container.querySelector('[role="dialog"]')).toBeNull()
+      clickButton('Deposit')
+      const deposit = container.querySelector(
+        '[data-testid="any-token-deposit"]',
+      )
+      expect(deposit?.getAttribute('data-chain-id')).toBe(
+        String(EvmChainId.ETHEREUM),
+      )
+      if (action === 'Broadcast deposit') {
+        expect(deposit?.getAttribute('data-submitted-hash')).toBe(depositTxHash)
+      } else {
+        expect(deposit?.getAttribute('data-submitting')).toBe('true')
+      }
+      expectSelectorsDisabled(true)
+    },
+  )
 })
