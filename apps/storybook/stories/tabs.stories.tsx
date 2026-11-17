@@ -59,3 +59,20 @@ export const Default = {
     )
   },
 } satisfies Story
+
+export const Underline = {
+  render: () => (
+    <Tabs defaultValue="explore">
+      <TabsList variant="underline">
+        <TabsTrigger variant="underline" value="explore">
+          Explore
+        </TabsTrigger>
+        <TabsTrigger variant="underline" value="positions">
+          My Positions
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="explore">Explore tab content</TabsContent>
+      <TabsContent value="positions">My positions tab content</TabsContent>
+    </Tabs>
+  ),
+} satisfies Story

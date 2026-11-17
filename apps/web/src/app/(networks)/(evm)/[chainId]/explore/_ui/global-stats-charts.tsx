@@ -1,9 +1,10 @@
 'use client'
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
+import { useIsMounted } from '@sushiswap/hooks'
 import ms from 'ms'
 import { type FC, Suspense } from 'react'
 import { useAnalyticsDayBuckets } from 'src/lib/hooks/react-query/explore/use-analytics-day-buckets'
-import { type EvmChainId, isBladeChainId } from 'sushi/evm'
+import type { EvmChainId } from 'sushi/evm'
 import { GlobalStatsLoading } from './global-stats-loading'
 import { TVLChart } from './tvl-chart'
 import { VolumeChart } from './volume-chart'
@@ -32,18 +33,16 @@ const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
     chainId,
     enabled: isPoolChainId(chainId),
   })
+  const isMounted = useIsMounted()
 
-  // const showBlade = isBladeChainId(chainId)
-  const showBlade = false
-
-  if (isLoading || !dayBuckets) {
+  if (isLoading || !dayBuckets || !isMounted) {
     return <GlobalStatsLoading chainId={chainId} />
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
-      <TVLChart chainId={chainId} data={dayBuckets} showBlade={showBlade} />
-      <VolumeChart chainId={chainId} data={dayBuckets} showBlade={showBlade} />
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <TVLChart chainId={chainId} data={dayBuckets} showBlade={false} />
+      <VolumeChart chainId={chainId} data={dayBuckets} showBlade={false} />
     </div>
   )
 }

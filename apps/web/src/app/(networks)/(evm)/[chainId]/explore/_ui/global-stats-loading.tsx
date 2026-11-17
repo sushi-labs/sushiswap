@@ -81,7 +81,7 @@ export function GlobalStatsLoading({
   chainId,
 }: { chainId: EvmChainId }): React.ReactElement {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <GlobalStatsChartLoading
         chainId={chainId}
         title="Total value locked"

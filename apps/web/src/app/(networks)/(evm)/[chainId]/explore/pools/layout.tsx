@@ -10,6 +10,7 @@ import { isEvmChainId } from 'sushi/evm'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../../header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
+import { Hero } from '../_ui/hero'
 import { NavigationItems } from '../navigation-items'
 
 export const metadata: Metadata = {
@@ -39,7 +40,10 @@ export default async function ExploreLayout(props: {
     <>
       <Header chainId={chainId} networks={POOL_SUPPORTED_NETWORKS} />
       <Suspense fallback={null}>
-        <main className="flex flex-col h-full flex-1 animate-slide">
+        <main className="flex flex-col h-full flex-1">
+          <Container maxWidth="7xl" className="px-4 pt-7 md:pt-10 mb-6">
+            <Hero chainId={chainId} />
+          </Container>
           <Container maxWidth="7xl" className="px-4 py-4">
             <GlobalStatsCharts chainId={chainId} />
           </Container>
