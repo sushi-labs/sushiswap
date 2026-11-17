@@ -1,14 +1,9 @@
-import {
-  Card,
-  CardContent,
-  SkeletonBox,
-  SkeletonChartLoadingStateMask,
-  SkeletonChartXAxe,
-  Toggle,
-  ToggleGroup,
-} from '@sushiswap/ui'
+import { SkeletonChartLoadingStateMask, SkeletonChartXAxe } from '@sushiswap/ui'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
-import { TIMEFRAME_OPTIONS } from './global-stats-charts'
+import {
+  type GlobalStatsChartCardProps,
+  GlobalStatsChartsLayout,
+} from './global-stats-chart-card'
 
 export function SkeletonChart({
   type,
@@ -36,7 +31,7 @@ export function SkeletonChart({
   )
 }
 
-function GlobalStatsChartLoading({
+function getLoadingChart({
   chainId,
   title,
   type,
@@ -44,50 +39,42 @@ function GlobalStatsChartLoading({
   chainId: EvmChainId
   title: string
   type: 'area' | 'bar'
-}): React.ReactElement {
-  return (
-    <Card aria-busy="true" aria-label={`Loading ${title.toLowerCase()}`}>
-      <CardContent className="pt-6 pb-3">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-sm">{title}</span>
-              <SkeletonBox className="w-36 h-9" />
-              <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
-                <span>{getEvmChainById(chainId).name} ·</span>
-                <SkeletonBox className="w-24 h-4" />
-              </div>
-            </div>
-            <ToggleGroup className="h-fit">
-              {TIMEFRAME_OPTIONS.map((time) => (
-                <Toggle key={time} pressed={time === 'All'} size="xs" disabled>
-                  {time}
-                </Toggle>
-              ))}
-            </ToggleGroup>
-          </div>
-          <div className="flex gap-1 self-end" aria-hidden="true">
-            <SkeletonBox className="w-8 h-4" />
-            <SkeletonBox className="w-8 h-4" />
-          </div>
-        </div>
-        <SkeletonChart type={type} />
-      </CardContent>
-    </Card>
-  )
+}): GlobalStatsChartCardProps {
+  return {
+    title,
+    timeframe: type === 'area' ? 'All' : '1M',
+    summary: (
+      <span aria-busy="true" className="flex flex-col gap-1">
+        <span className="w-28 h-9 rounded-lg bg-muted animate-pulse" />
+        <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+          <span>{getEvmChainById(chainId).name} ·</span>
+          <span className="w-24 h-4 rounded-lg bg-muted animate-pulse" />
+        </span>
+      </span>
+    ),
+    children: <SkeletonChart type={type} />,
+  }
 }
 
 export function GlobalStatsLoading({
   chainId,
 }: { chainId: EvmChainId }): React.ReactElement {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <GlobalStatsChartLoading
-        chainId={chainId}
-        title="Total value locked"
-        type="area"
-      />
-      <GlobalStatsChartLoading chainId={chainId} title="Volume" type="bar" />
-    </div>
+    <GlobalStatsChartsLayout
+      charts={[
+        {
+          value: 'tvl',
+          ...getLoadingChart({
+            chainId,
+            title: 'Total value locked',
+            type: 'area',
+          }),
+        },
+        {
+          value: 'volume',
+          ...getLoadingChart({ chainId, title: 'Trading volume', type: 'bar' }),
+        },
+      ]}
+    />
   )
 }

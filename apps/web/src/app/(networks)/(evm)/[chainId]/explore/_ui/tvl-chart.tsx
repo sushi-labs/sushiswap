@@ -2,7 +2,6 @@
 
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
-import { Card, CardContent, Toggle, ToggleGroup } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -11,14 +10,15 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import {
-  TIMEFRAME_OPTIONS,
-  type TimeframeOption,
-  timeframeToMs,
-} from './global-stats-charts'
+  GlobalStatsChartCard,
+  type GlobalStatsChartCardProps,
+} from './global-stats-chart-card'
+import { type TimeframeOption, timeframeToMs } from './global-stats-charts'
+import { useChartHover } from './use-chart-hover'
 
 interface TVLChart {
   data: AnalyticsDayBuckets
@@ -28,7 +28,11 @@ interface TVLChart {
 
 echarts.use([CanvasRenderer, LineChart, TooltipComponent, GridComponent])
 
-export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
+export function useTVLChart({
+  data,
+  chainId,
+  showBlade,
+}: TVLChart): GlobalStatsChartCardProps {
   const [timeframe, setTimeframe] = useState<TimeframeOption>('All')
 
   const isMounted = useIsMounted()
@@ -77,33 +81,15 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     }
   }, [v2, v3])
 
-  const onMouseOver = useCallback(
-    (params: { data?: number[] }[]) => {
-      if (!params[0].data || !params[1].data) return ''
-
-      const tvlNode = document.getElementById('hoveredTVL')
-      const dateNode = document.getElementById('hoveredTVLDate')
-
-      if (tvlNode)
-        tvlNode.innerHTML = formatUSD(
-          params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0),
-        )
-      if (dateNode)
-        dateNode.innerHTML = `${getEvmChainById(chainId).name} · ${format(new Date(params[0].data[0]), 'MMM dd, yyyy')}`
-
-      return ''
-    },
-    [chainId],
-  )
-
-  const onMouseLeave = useCallback(() => {
-    const tvlNode = document.getElementById('hoveredTVL')
-    const dateNode = document.getElementById('hoveredTVLDate')
-
-    if (tvlNode) tvlNode.innerHTML = formatUSD(combinedTVL)
-    if (dateNode)
-      dateNode.innerHTML = `${getEvmChainById(chainId).name} · ${format(new Date(currentDate), 'MMM dd, yyyy')}`
-  }, [combinedTVL, currentDate, chainId])
+  const { value, label, onMouseOver, onMouseLeave } = useChartHover({
+    value: combinedTVL,
+    label:
+      isMounted && currentDate
+        ? `${getEvmChainById(chainId).name} · ${format(new Date(currentDate), 'MMM dd, yyyy')}`
+        : '',
+    chainId,
+    timeframe,
+  })
 
   const DEFAULT_OPTION = useMemo<EChartOption>(() => {
     const isLight = resolvedTheme === 'light'
@@ -247,78 +233,33 @@ export const TVLChart: FC<TVLChart> = ({ data, chainId, showBlade }) => {
     currentDate,
   ])
 
-  return (
-    <Card>
-      <CardContent className="pt-6 pb-3">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-sm">
-                Total value locked
-              </span>
-              <div className="flex justify-between">
-                <div className="flex flex-col gap-1">
-                  <div className="text-3xl font-normal">
-                    <span id="hoveredTVL">{formatUSD(combinedTVL)}</span>
-                  </div>
-                  <div>
-                    <div
-                      id="hoveredTVLDate"
-                      className="text-xs text-muted-foreground whitespace-nowrap"
-                    >
-                      {isMounted && currentDate
-                        ? `${getEvmChainById(chainId).name} · ${format(new Date(currentDate), 'MMM dd, yyyy')}`
-                        : ''}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <ToggleGroup className="h-fit">
-              {TIMEFRAME_OPTIONS.map((time) => (
-                <Toggle
-                  key={time}
-                  onClick={() => setTimeframe(time)}
-                  pressed={timeframe === time}
-                  size="xs"
-                >
-                  {time}
-                </Toggle>
-              ))}
-            </ToggleGroup>
-          </div>
-          <div className="flex flex-row text-muted-foreground gap-1 self-end">
-            <div className="flex justify-between items-center gap-2 text-xs">
-              <span className="flex gap-1 items-center">
-                <span className="bg-[#A0A0A0] rounded-full w-2 h-2" />
-                <span className="font-medium">V2</span>
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-xs">
-              <span className="flex gap-1 items-center">
-                <span className="bg-[#FA52A0] rounded-full w-2 h-2" />
-                <span className="font-medium">V3</span>
-              </span>
-            </div>
-            {showBlade && (
-              <div className="flex justify-between items-center gap-2 text-xs">
-                <span className="flex gap-1 items-center">
-                  <span className="bg-[#F23BF6] rounded-full w-2 h-2" />
-                  <span className="font-medium">Blade</span>
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-        <ReactEchartsCore
-          option={DEFAULT_OPTION}
-          echarts={echarts}
-          style={{ height: 200 }}
-          onEvents={{
-            globalout: onMouseLeave,
-          }}
-        />
-      </CardContent>
-    </Card>
-  )
+  return {
+    title: 'Total value locked',
+    timeframe,
+    onTimeframeChange: setTimeframe,
+    showBlade,
+    onDeselect: onMouseLeave,
+    summary: (
+      <>
+        <span className="text-2xl sm:text-3xl text-primary">
+          {formatUSD(value)}
+        </span>
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </>
+    ),
+    children: (
+      <ReactEchartsCore
+        option={DEFAULT_OPTION}
+        echarts={echarts}
+        style={{ height: 200 }}
+        onEvents={{
+          globalout: onMouseLeave,
+        }}
+      />
+    ),
+  }
+}
+
+export function TVLChart(props: TVLChart): React.ReactElement {
+  return <GlobalStatsChartCard {...useTVLChart(props)} />
 }

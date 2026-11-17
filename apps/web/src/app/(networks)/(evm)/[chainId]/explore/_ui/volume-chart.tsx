@@ -1,7 +1,6 @@
 'use client'
 
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import { Card, CardContent, Toggle, ToggleGroup } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -10,14 +9,15 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import {
-  TIMEFRAME_OPTIONS,
-  type TimeframeOption,
-  timeframeToMs,
-} from './global-stats-charts'
+  GlobalStatsChartCard,
+  type GlobalStatsChartCardProps,
+} from './global-stats-chart-card'
+import { type TimeframeOption, timeframeToMs } from './global-stats-charts'
+import { useChartHover } from './use-chart-hover'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
@@ -34,7 +34,11 @@ const TIMEFRAME_LABELS: Record<TimeframeOption, string> = {
   All: 'Available history',
 }
 
-export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
+export function useVolumeChart({
+  data,
+  chainId,
+  showBlade,
+}: VolumeChart): GlobalStatsChartCardProps {
   const [timeframe, setTimeframe] = useState<TimeframeOption>('1M')
   const { resolvedTheme } = useTheme()
   const periodLabel = `${getEvmChainById(chainId).name} · ${TIMEFRAME_LABELS[timeframe]}`
@@ -68,32 +72,12 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     return [v2, v3, blade, totalVolume]
   }, [data, timeframe])
 
-  const onMouseOver = useCallback(
-    (params: { data?: number[] }[]) => {
-      if (!params[0]?.data || !params[1]?.data) return ''
-
-      const volumeNode = document.getElementById('hoveredVolume')
-      const dateNode = document.getElementById('hoveredVolumeDate')
-
-      if (volumeNode)
-        volumeNode.textContent = formatUSD(
-          params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0),
-        )
-      if (dateNode)
-        dateNode.textContent = `${getEvmChainById(chainId).name} · ${format(new Date(params[0].data[0]), 'MMM dd, yyyy')}`
-
-      return ''
-    },
-    [chainId],
-  )
-
-  const onMouseLeave = useCallback(() => {
-    const volumeNode = document.getElementById('hoveredVolume')
-    const dateNode = document.getElementById('hoveredVolumeDate')
-
-    if (volumeNode) volumeNode.textContent = formatUSD(totalVolume)
-    if (dateNode) dateNode.textContent = periodLabel
-  }, [totalVolume, periodLabel])
+  const { value, label, onMouseOver, onMouseLeave } = useChartHover({
+    value: totalVolume,
+    label: periodLabel,
+    chainId,
+    timeframe,
+  })
 
   const DEFAULT_OPTION = useMemo<EChartOption>(() => {
     const isLight = resolvedTheme === 'light'
@@ -186,74 +170,33 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     }
   }, [onMouseOver, resolvedTheme, v2, v3, blade, showBlade])
 
-  return (
-    <Card>
-      <CardContent className="pt-6 pb-3">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap justify-between">
-            <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-sm">Volume</span>
-              <div className="flex justify-between">
-                <div className="flex flex-col gap-1">
-                  <div className="text-3xl font-normal">
-                    <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
-                  </div>
-                  <div>
-                    <div
-                      id="hoveredVolumeDate"
-                      className="text-xs text-muted-foreground whitespace-nowrap"
-                    >
-                      {periodLabel}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <ToggleGroup className="h-fit">
-              {TIMEFRAME_OPTIONS.map((time) => (
-                <Toggle
-                  key={time}
-                  onClick={() => setTimeframe(time)}
-                  pressed={timeframe === time}
-                  size="xs"
-                >
-                  {time}
-                </Toggle>
-              ))}
-            </ToggleGroup>
-          </div>
-          <div className="flex flex-row text-muted-foreground gap-1 self-end">
-            <div className="flex justify-between items-center gap-2 text-xs">
-              <span className="flex gap-1 items-center">
-                <span className="bg-[#A0A0A0] rounded-full w-2 h-2" />
-                <span className="font-medium">V2</span>
-              </span>
-            </div>
-            <div className="flex justify-between items-center gap-2 text-xs">
-              <span className="flex gap-1 items-center">
-                <span className="bg-[#FA52A0] rounded-full w-2 h-2" />
-                <span className="font-medium">V3</span>
-              </span>
-            </div>
-            {showBlade && (
-              <div className="flex justify-between items-center gap-2 text-xs">
-                <span className="flex gap-1 items-center">
-                  <span className="bg-[#F23BF6] rounded-full w-2 h-2" />
-                  <span className="font-medium">Blade</span>
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-        <ReactEchartsCore
-          option={DEFAULT_OPTION}
-          echarts={echarts}
-          style={{ height: 200 }}
-          onEvents={{
-            globalout: onMouseLeave,
-          }}
-        />
-      </CardContent>
-    </Card>
-  )
+  return {
+    title: 'Trading volume',
+    timeframe,
+    onTimeframeChange: setTimeframe,
+    showBlade,
+    onDeselect: onMouseLeave,
+    summary: (
+      <>
+        <span className="text-2xl sm:text-3xl text-primary">
+          {formatUSD(value)}
+        </span>
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </>
+    ),
+    children: (
+      <ReactEchartsCore
+        option={DEFAULT_OPTION}
+        echarts={echarts}
+        style={{ height: 200 }}
+        onEvents={{
+          globalout: onMouseLeave,
+        }}
+      />
+    ),
+  }
+}
+
+export function VolumeChart(props: VolumeChart): React.ReactElement {
+  return <GlobalStatsChartCard {...useVolumeChart(props)} />
 }
