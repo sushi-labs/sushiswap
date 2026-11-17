@@ -1,8 +1,9 @@
-import { SkeletonBox } from '@sushiswap/ui'
+import { SkeletonBox, classNames } from '@sushiswap/ui'
 import { SwitchArrowsIcon } from '@sushiswap/ui/icons/switch-arrows-icon'
 import type { ReactElement } from 'react'
 import { CurrencyInputSkeleton } from 'src/lib/wagmi/components/web3-input/currency/currency-input-skeleton'
 import type { ChainId } from 'sushi'
+import { StellarChainId } from 'sushi/stellar'
 import { SwapInputLabel } from '../../_ui/swap-input-label'
 
 function SimpleSwapWidgetSkeleton({
@@ -41,7 +42,12 @@ function SimpleSwapWidgetSkeleton({
           }
           className="border border-accent p-4 bg-muted rounded-2xl"
         />
-        <SkeletonBox className="w-full h-[52px] !rounded-full mb-2" />
+        <SkeletonBox
+          className={classNames(
+            'w-full h-[52px] !rounded-full',
+            chainId === StellarChainId.STELLAR ? 'mt-4' : 'mb-2',
+          )}
+        />
       </div>
     </>
   )

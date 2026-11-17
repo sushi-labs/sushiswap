@@ -25,6 +25,7 @@ const mocks = vi.hoisted(() => ({
   getToken: vi.fn(),
 }))
 vi.mock('next/navigation', () => ({
+  useParams: () => ({}),
   usePathname: () => '/stellar/swap',
   useSearchParams: () => mocks.params,
 }))
