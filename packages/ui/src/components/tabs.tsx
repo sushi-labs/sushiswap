@@ -12,7 +12,12 @@ const tabsListVariants = cva('inline-flex items-center text-muted-foreground', {
   variants: {
     variant: {
       default: 'justify-center rounded-full bg-muted p-0.5',
-      underline: 'w-full justify-start gap-8 border-b border-b-accent',
+      underline: [
+        'group/tabs-list relative w-full justify-start gap-8 border-b border-b-accent [anchor-scope:--active-tab]',
+        "after:pointer-events-none after:absolute after:-bottom-px after:hidden after:h-0.5 after:bg-pink after:content-[''] supports-[anchor-scope:--active-tab]:after:block",
+        'after:left-[anchor(--active-tab_left,0px)] after:w-[anchor-size(--active-tab_width,0px)]',
+        'after:transition-[left,width] after:duration-200 after:ease-out motion-reduce:after:transition-none',
+      ],
     },
   },
   defaultVariants: {
@@ -27,6 +32,7 @@ const TabsList = React.forwardRef<
 >(({ className, variant, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
+    data-variant={variant}
     className={tabsListVariants({ variant, className })}
     {...props}
   />
@@ -40,8 +46,11 @@ const tabsTriggerVariants = cva(
       variant: {
         default:
           'border rounded-full px-3 py-1.5 text-sm data-[state=inactive]:border-transparent data-[state=active]:border-accent data-[state=active]:bg-secondary black:data-[state=active]:bg-accent black:data-[state=active]:border-white/[0.08]',
-        underline:
+        underline: [
           '-mb-px rounded-none border-b-2 border-b-transparent bg-transparent px-0 py-1.5 text-muted-foreground data-[state=active]:border-b-pink',
+          'data-[state=active]:[anchor-name:--active-tab]',
+          'supports-[anchor-scope:--active-tab]:group-data-[variant=underline]/tabs-list:data-[state=active]:border-b-transparent',
+        ],
       },
     },
     defaultVariants: {
