@@ -34,7 +34,7 @@ export const LiquidityNavDesktop = ({ chainId }: { chainId: ChainId }) => {
       {linkOptions.map((i, idx) => (
         <LinkInternal href={i.href} key={idx}>
           <Toggle
-            className="!px-16"
+            className="w-[250px]"
             onClick={() => {}}
             pressed={isExplorePage && i.href.includes('/explore')}
           >

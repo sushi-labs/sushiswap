@@ -1,7 +1,7 @@
 // Toggle.stories.ts|tsx
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Toggle, type ToggleProps } from '@sushiswap/ui'
+import { Toggle, ToggleGroup, type ToggleProps } from '@sushiswap/ui'
 import * as React from 'react'
 
 import { ViewGroup } from '../components/view'
@@ -66,3 +66,34 @@ export const Variants = (args) => {
 
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
+
+function SlidingToggleGroup({
+  variant,
+}: Pick<ToggleProps, 'variant'>): React.ReactElement {
+  const [selected, setSelected] = React.useState('Explore')
+
+  return (
+    <ToggleGroup aria-label={`${variant} toggles`}>
+      {['Explore', 'My Positions'].map((label) => (
+        <Toggle
+          key={label}
+          variant={variant}
+          pressed={selected === label}
+          onPressedChange={() => setSelected(label)}
+        >
+          {label}
+        </Toggle>
+      ))}
+    </ToggleGroup>
+  )
+}
+
+export const SlidingGroups = {
+  render: () => (
+    <ViewGroup>
+      {variants.map((variant) => (
+        <SlidingToggleGroup key={variant} variant={variant} />
+      ))}
+    </ViewGroup>
+  ),
+} satisfies Story
