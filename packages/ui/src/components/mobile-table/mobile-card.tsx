@@ -1,7 +1,10 @@
-import { ChevronDownIcon } from '@heroicons/react-v1/solid'
-import { IconButton, classNames } from '@sushiswap/ui'
+'use client'
+
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { type Header, type Row, flexRender } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import classNames from 'classnames'
+import { type ReactElement, useEffect, useMemo, useState } from 'react'
+import { IconButton } from '../iconbutton'
 
 type MobileCardProps<T> = {
   row: Row<T>
@@ -11,11 +14,11 @@ type MobileCardProps<T> = {
   }
 }
 
-export const MobileCard = <T,>({
+export function MobileCard<T>({
   row,
   headers,
   isExpandedOverride,
-}: MobileCardProps<T>) => {
+}: MobileCardProps<T>): ReactElement {
   const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {

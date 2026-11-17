@@ -1,4 +1,4 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import { type BalanceItemType, useBalances } from 'src/lib/perps'
@@ -8,7 +8,7 @@ import {
   PerpSpotTransferDialog,
   SendDialog,
 } from '../../account-management'
-import { MobileTable, tableRowClassName } from '../_common'
+import { tableRowClassName } from '../_common'
 import { ShareClosedPnlDialog } from '../_common/share-closed-pnl-dialog'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {

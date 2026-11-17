@@ -1,4 +1,4 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type {
   ColumnDef,
   PaginationState,
@@ -10,7 +10,7 @@ import {
   useUserBorrowLendInterest,
 } from 'src/lib/perps'
 import { useActiveAccountState } from '~evm/perps/active-account-provider'
-import { MobileTable, tableRowClassName } from '../_common'
+import { tableRowClassName } from '../_common'
 import {
   EARNED_COLUMN,
   PAID_COLUMN,

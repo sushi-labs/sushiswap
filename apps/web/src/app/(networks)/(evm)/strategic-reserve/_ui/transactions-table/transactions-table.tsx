@@ -9,11 +9,11 @@ import {
   CardTitle,
   Chip,
   DataTableVirtual,
+  MobileTable,
   useBreakpoint,
 } from '@sushiswap/ui'
 import { useMemo } from 'react'
 import { useBuybackReserveTransactions } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-transactions'
-import { MobileTable } from '~evm/perps/_ui/trade-tables/_common/mobile-table'
 import {
   CUM_ACQUIRED_COLUMN,
   RECEIVED_COLUMN,

@@ -54,21 +54,13 @@ vi.mock('@sushiswap/ui', () => ({
   DataTableVirtual: <T,>(
     props: TestAccountTableProps<T> & { loading: boolean },
   ) => <TestAccountTable {...props} label="desktop" />,
+  MobileTable: <T,>(
+    props: TestAccountTableProps<T> & { isLoading: boolean },
+  ) => <TestAccountTable {...props} loading={props.isLoading} label="mobile" />,
   useBreakpoint: () => ({ isLg: mocks.isLg }),
   SkeletonText: () => <span>Loading...</span>,
   classNames: (...classes: (string | undefined)[]) =>
     classes.filter(Boolean).join(' '),
-}))
-vi.mock('../../_ui/trade-tables/_common', () => ({
-  MobileTable: <T,>(
-    props: TestAccountTableProps<T> & { isLoading: boolean },
-  ) => <TestAccountTable {...props} loading={props.isLoading} label="mobile" />,
-  tableRowClassName: '',
-}))
-vi.mock('../../_ui/trade-tables/_common/mobile-table', () => ({
-  MobileTable: <T,>(
-    props: TestAccountTableProps<T> & { isLoading: boolean },
-  ) => <TestAccountTable {...props} loading={props.isLoading} label="mobile" />,
 }))
 vi.mock('../../_ui/_common/perps-card', () => ({
   PerpsCard: ({ children }: { children: ReactNode }) => <div>{children}</div>,

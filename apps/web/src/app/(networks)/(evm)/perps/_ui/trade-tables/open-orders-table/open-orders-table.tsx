@@ -1,4 +1,4 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type {
   ColumnDef,
   PaginationState,
@@ -14,7 +14,7 @@ import {
   useModifyOrder,
   useUserOpenOrders,
 } from 'src/lib/perps'
-import { MobileTable, tableRowClassName } from '../_common'
+import { tableRowClassName } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CANCEL_COLUMN,

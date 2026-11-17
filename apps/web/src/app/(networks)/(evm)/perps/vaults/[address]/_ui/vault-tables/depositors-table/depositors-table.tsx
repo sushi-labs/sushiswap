@@ -1,14 +1,11 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import {
   type DepositorType,
   useVaultDetails,
 } from 'src/lib/perps/info/use-vault-details'
-import {
-  MobileTable,
-  tableRowClassName,
-} from '~evm/perps/_ui/trade-tables/_common'
+import { tableRowClassName } from '~evm/perps/_ui/trade-tables/_common'
 import { useVaultTables } from '../vault-tables-provider'
 import {
   ALL_TIME_PNL_COLUMN,

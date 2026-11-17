@@ -3,24 +3,19 @@
 import { act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MobileTable } from './mobile-table'
+import { MobileTable } from '../../../../../packages/ui/src/components/mobile-table/mobile-table'
 
-vi.mock('@sushiswap/ui', async () => ({
-  classNames: (...classes: (string | undefined)[]) =>
-    classes.filter(Boolean).join(' '),
-  useTableVirtualizer: (
-    await import(
-      '../../../../../../../../../../packages/ui/src/components/data-table/use-table-virtualizer'
-    )
-  ).useTableVirtualizer,
-}))
 vi.mock('@sushiswap/hooks', async () => ({
   useIsomorphicLayoutEffect: (await import('react')).useLayoutEffect,
 }))
-vi.mock('./mobile-card', () => ({ MobileCard: () => <div>Default card</div> }))
-vi.mock('./mobile-card-skeleton', () => ({
-  MobileCardSkeleton: () => <div>Loading</div>,
-}))
+vi.mock(
+  '../../../../../packages/ui/src/components/mobile-table/mobile-card',
+  () => ({ MobileCard: () => <div>Default card</div> }),
+)
+vi.mock(
+  '../../../../../packages/ui/src/components/mobile-table/mobile-card-skeleton',
+  () => ({ MobileCardSkeleton: () => <div>Loading</div> }),
+)
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
 
 const columns = [{ id: 'name', accessorKey: 'name', header: 'Name' }]

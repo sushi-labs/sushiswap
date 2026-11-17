@@ -1,10 +1,14 @@
 'use client'
 
-import { DataTableVirtual, SkeletonBox, SkeletonCircle } from '@sushiswap/ui'
+import {
+  DataTableVirtual,
+  MobileTable,
+  SkeletonBox,
+  SkeletonCircle,
+} from '@sushiswap/ui'
 import { type Row, flexRender } from '@tanstack/react-table'
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { MobileTable } from '~evm/perps/_ui/trade-tables/_common'
 import type { LaunchpadToken, LaunchpadTokenSortField } from '../../types'
 import { CollectionStateCard } from '../_common/state-card'
 import { TokenPagination, type TokenPaginationProps } from './token-pagination'

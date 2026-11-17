@@ -1,6 +1,8 @@
-import { SkeletonCircle, SkeletonText, classNames } from '@sushiswap/ui'
+import classNames from 'classnames'
+import type { ReactElement } from 'react'
+import { SkeletonCircle, SkeletonText } from '../skeleton'
 
-export const MobileCardSkeleton = () => {
+export function MobileCardSkeleton(): ReactElement {
   return (
     <div
       className={classNames(

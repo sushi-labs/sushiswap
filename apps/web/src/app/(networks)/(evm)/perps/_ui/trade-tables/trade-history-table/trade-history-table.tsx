@@ -1,4 +1,4 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type {
   ColumnDef,
   PaginationState,
@@ -6,7 +6,7 @@ import type {
 } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { type TradeHistoryItemType, useTradeHistory } from 'src/lib/perps'
-import { MobileTable, tableRowClassName } from '../_common'
+import { tableRowClassName } from '../_common'
 import { type TradeFilterType, useTradeTables } from '../trade-tables-provider'
 import {
   CLOSED_PNL_COLUMN,

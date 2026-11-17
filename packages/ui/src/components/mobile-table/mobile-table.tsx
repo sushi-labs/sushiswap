@@ -1,16 +1,19 @@
-import { classNames, useTableVirtualizer } from '@sushiswap/ui'
-import { useReactTable } from '@tanstack/react-table'
+'use client'
+
 import {
   type ColumnDef,
   type Row,
+  getCoreRowModel,
   getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table'
-import { getCoreRowModel } from '@tanstack/react-table'
+import classNames from 'classnames'
 import { Fragment, type ReactNode, useMemo, useRef } from 'react'
+import { useTableVirtualizer } from '../data-table/use-table-virtualizer'
 import { MobileCard } from './mobile-card'
 import { MobileCardSkeleton } from './mobile-card-skeleton'
 
-export const MobileTable = <T,>({
+export function MobileTable<T>({
   columns,
   data,
   isLoading,
@@ -35,7 +38,7 @@ export const MobileTable = <T,>({
   rowRenderer?: (row: Row<T>, content: ReactNode) => ReactNode
   skeleton?: ReactNode
   footer?: ReactNode
-}) => {
+}): ReactNode {
   const table = useReactTable({
     data: data,
     columns: columns,

@@ -1,6 +1,11 @@
 'use client'
 
-import { Button, DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import {
+  Button,
+  DataTableVirtual,
+  MobileTable,
+  useBreakpoint,
+} from '@sushiswap/ui'
 import type { TableState } from '@tanstack/react-table'
 import { type ReactElement, useMemo } from 'react'
 import { useAllPerpMetas } from 'src/lib/perps/info/use-all-perp-metas'
@@ -17,7 +22,6 @@ import { useAccount } from 'src/lib/wallet'
 import { PerpsCard } from '../../_ui/_common/perps-card'
 import { useAssetListState } from '../../_ui/asset-selector'
 import { tableRowClassName } from '../../_ui/trade-tables/_common/column-meta'
-import { MobileTable } from '../../_ui/trade-tables/_common/mobile-table'
 import {
   ACTIONS_COLUMN,
   ADDRESS_COLUMN,

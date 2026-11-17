@@ -1,4 +1,4 @@
-import { DataTableVirtual, useBreakpoint } from '@sushiswap/ui'
+import { DataTableVirtual, MobileTable, useBreakpoint } from '@sushiswap/ui'
 import type { ColumnDef, TableState } from '@tanstack/react-table'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -7,10 +7,7 @@ import {
   useVaultPositions,
 } from 'src/lib/perps'
 import { useAccount } from 'src/lib/wallet'
-import {
-  MobileTable,
-  tableRowClassName,
-} from '~evm/perps/_ui/trade-tables/_common'
+import { tableRowClassName } from '~evm/perps/_ui/trade-tables/_common'
 import {
   CLOSE_COLUMN,
   COIN_COLUMN,
