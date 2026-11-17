@@ -14,6 +14,8 @@ export const ROBINHOOD_TOKEN_RESTRICTIONS: readonly TokenRestriction[] = [
     chainId: EvmChainId.ROBINHOOD,
     address: '0x80E10255A83B257F5A8674D363F547842aa53b8e', // TTEQ
     countries: new Set([
+      // Keep the general stock restrictions even before registry inclusion.
+      ...ROBINHOOD_STOCK_TOKEN_RESTRICTED_COUNTRIES,
       'AT', // Austria
       'EE', // Estonia
       'HU', // Hungary

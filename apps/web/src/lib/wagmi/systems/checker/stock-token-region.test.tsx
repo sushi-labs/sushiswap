@@ -8,6 +8,7 @@ import {
 import { type ButtonHTMLAttributes, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { useCountryCode } from 'src/lib/hooks/use-country-code'
+import { ROBINHOOD_STOCK_TOKEN_RESTRICTED_COUNTRIES } from 'src/lib/robinhood/restricted-countries'
 import { EvmChainId, EvmNative, EvmToken } from 'sushi/evm'
 import { SvmChainId, SvmNative } from 'sushi/svm'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -263,6 +264,26 @@ describe('StockTokenRegion and country lookup', () => {
       })
     },
   )
+
+  describe.each([...ROBINHOOD_STOCK_TOKEN_RESTRICTED_COUNTRIES])(
+    'TTEQ general stock restrictions in %s',
+    (country) => {
+      it.each(['token0', 'token1'] as const)(
+        'blocks TTEQ as %s even when absent from the registry',
+        async (side) => {
+          respond(country)
+          await render({ [side]: tteq })
+          expectBlocked('TTEQ unavailable in your region')
+        },
+      )
+    },
+  )
+
+  it('blocks TTEQ in a generally restricted country when the registry is empty', async () => {
+    respond('US', { assets: [] })
+    await render({ token0: tteq })
+    expectBlocked('TTEQ unavailable in your region')
+  })
 
   it.each(['AT', 'US', 'CA'])(
     'blocks registry-recognized TTEQ in restricted country %s',
