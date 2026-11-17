@@ -1,19 +1,12 @@
-import {
-  isPoolChainId,
-  isSmartPoolChainId,
-} from '@sushiswap/graph-client/data-api'
+import { isPoolChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { SteerSmartPoolsTable } from 'src/lib/steer/components/steer-smart-pools-table'
 import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
-import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-only'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { TableFiltersSmartPoolsOnly } from '~evm/[chainId]/_ui/table-filters-smart-pools-only'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>
@@ -27,15 +20,7 @@ export default async function PoolsPage(props: {
 
   return (
     <Container maxWidth="7xl" className="px-4">
-      {isSmartPoolChainId(chainId) ? (
-        <div className="mb-4 relative rounded-xl">
-          <div className="absolute -inset-1 rounded-xl bg-blue opacity-40 blur-sm" />
-          <div className="relative rounded-xl bg-background">
-            <SteerSmartPoolsTable chainId={chainId} />
-          </div>
-        </div>
-      ) : null}
-      <div className="flex flex-wrap gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 md:mb-4">
         <TableFiltersSearchToken />
         <TableFiltersPoolType />
         <TableFiltersNetwork
@@ -44,8 +29,6 @@ export default async function PoolsPage(props: {
           unsupportedNetworkHref="/ethereum/explore/pools"
           className="lg:hidden block"
         />
-        <TableFiltersFarmsOnly />
-        <TableFiltersSmartPoolsOnly />
         <TableFiltersResetButton />
       </div>
       <PoolsTable chainId={chainId} />

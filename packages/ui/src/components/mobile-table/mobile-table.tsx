@@ -24,6 +24,7 @@ export function MobileTable<T>({
   rowRenderer,
   skeleton,
   footer,
+  hideExpand,
 }: {
   columns: ColumnDef<T, unknown>[]
   data: T[]
@@ -38,6 +39,7 @@ export function MobileTable<T>({
   rowRenderer?: (row: Row<T>, content: ReactNode) => ReactNode
   skeleton?: ReactNode
   footer?: ReactNode
+  hideExpand?: boolean
 }): ReactNode {
   const table = useReactTable({
     data: data,
@@ -77,6 +79,7 @@ export function MobileTable<T>({
         row={row}
         isExpandedOverride={isExpandedOverride}
         headers={headersById}
+        hideExpand={hideExpand}
       />
     )
     return rowRenderer ? rowRenderer(row, content) : content

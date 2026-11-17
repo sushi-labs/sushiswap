@@ -1,6 +1,6 @@
 'use client'
 
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { useMutationObserver } from '@sushiswap/hooks'
 import {
   Chip,
@@ -77,35 +77,27 @@ export const TableFiltersPoolType: FC = () => {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          icon={PlusCircleIcon}
+          icon={ChevronDownIcon}
           aria-label="Select a protocol"
-          variant="outline"
+          variant="secondary"
           role="combobox"
           size="sm"
           aria-expanded={open}
-          className="!border-dashed"
+          iconPosition="end"
+          className="!text-muted-foreground"
         >
-          <span>Type</span>
-          {values?.length > 0 && (
-            <>
-              <Separator orientation="vertical" className="m-1 !h-4" />
-              <Chip variant="secondary" className="lg:hidden">
-                {values.length}
-              </Chip>
-              <div className="hidden lg:flex gap-1">
-                {values.length > 2 ? (
-                  <Chip variant="secondary">{values.length} selected</Chip>
-                ) : (
-                  POOL_TYPES.filter((option) => values.includes(option)).map(
-                    (option) => (
-                      <Chip variant="secondary" key={option}>
-                        {PROTOCOL_MAP[option]}
-                      </Chip>
-                    ),
-                  )
-                )}
-              </div>
-            </>
+          {values?.length > 0 ? (
+            <div className="flex gap-1">
+              {POOL_TYPES.filter((option) => values.includes(option)).map(
+                (option) => (
+                  <Chip variant="secondary" key={option}>
+                    {PROTOCOL_MAP[option]}
+                  </Chip>
+                ),
+              )}
+            </div>
+          ) : (
+            <span>All types</span>
           )}
         </Button>
       </PopoverTrigger>
@@ -189,7 +181,7 @@ const ProtocolItem: FC<ProtocolItemProps> = ({
             strokeWidth={3}
             width={16}
             height={16}
-            className="text-blue"
+            className="text-pink"
           />
         </span>
       ) : null}

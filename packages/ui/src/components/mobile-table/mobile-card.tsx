@@ -12,12 +12,14 @@ type MobileCardProps<T> = {
   headers: {
     [k: string]: Header<T, unknown>
   }
+  hideExpand?: boolean
 }
 
 export function MobileCard<T>({
   row,
   headers,
   isExpandedOverride,
+  hideExpand,
 }: MobileCardProps<T>): ReactElement {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -35,7 +37,7 @@ export function MobileCard<T>({
   return (
     <div
       className={classNames(
-        'rounded-lg border text-xs border-accent bg-secondary p-4 flex gap-2',
+        'rounded-2xl border text-xs border-accent bg-secondary p-4 flex gap-2',
         isExpanded ? 'flex-col' : 'flex-row justify-between',
       )}
     >
@@ -56,22 +58,28 @@ export function MobileCard<T>({
           )
         })}
       </div>
-      {isExpanded ? <div className="w-full h-[1px] bg-accent mt-2" /> : null}
+      {hideExpand ? null : (
+        <>
+          {isExpanded ? (
+            <div className="w-full h-[1px] bg-accent mt-2" />
+          ) : null}
 
-      <IconButton
-        size="xs"
-        className={isExpanded ? 'self-end' : 'self-center'}
-        icon={() => (
-          <ChevronDownIcon
-            className={classNames(
-              'transition-transform w-4 h-4',
-              isExpanded && 'rotate-180',
+          <IconButton
+            size="xs"
+            className={isExpanded ? 'self-end' : 'self-center'}
+            icon={() => (
+              <ChevronDownIcon
+                className={classNames(
+                  'transition-transform w-4 h-4',
+                  isExpanded && 'rotate-180',
+                )}
+              />
             )}
+            onClick={() => setIsExpanded((prev) => !prev)}
+            name="Toggle Details"
           />
-        )}
-        onClick={() => setIsExpanded((prev) => !prev)}
-        name="Toggle Details"
-      />
+        </>
+      )}
     </div>
   )
 }

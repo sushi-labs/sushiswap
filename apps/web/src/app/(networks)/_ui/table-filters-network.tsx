@@ -1,8 +1,7 @@
 'use client'
 
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import {
-  Chip,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -64,15 +63,17 @@ export const TableFiltersNetwork: FC<{
     <Popover modal={true} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          icon={PlusCircleIcon}
-          variant="outline"
+          icon={ChevronDownIcon}
+          variant="secondary"
           role="combobox"
           size="sm"
           aria-expanded={open}
-          className={classNames(className, '!border-dashed')}
+          iconPosition="end"
+          className={classNames(className, '!text-muted-foreground')}
         >
           <span>Network</span>
-          <Chip variant="secondary">{getNetworkName(network)}</Chip>
+          <NetworkIcon type="circle" chainId={network} width={14} height={14} />
+          <span>{getNetworkName(network)}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -111,7 +112,7 @@ export const TableFiltersNetwork: FC<{
                         strokeWidth={3}
                         width={16}
                         height={16}
-                        className="text-blue"
+                        className="text-pink"
                       />
                     </span>
                   ) : null}

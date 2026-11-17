@@ -4,7 +4,7 @@ import {
 } from '@sushiswap/graph-client/data-api'
 import { LinkInternal } from '@sushiswap/ui'
 import { PathnameButton } from 'src/app/_ui/pathname-button'
-import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { type EvmChainId, getEvmChainById, isBladeChainId } from 'sushi/evm'
 
 export function NavigationItems({ chainId }: { chainId: EvmChainId }) {
   const chainKey = getEvmChainById(chainId).key

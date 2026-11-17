@@ -1,13 +1,6 @@
 'use client'
 
-import {
-  ArrowDownRightIcon,
-  EllipsisHorizontalIcon,
-  GiftIcon,
-  LightBulbIcon,
-  MinusIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline'
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
 import type {
   GetPools,
@@ -19,21 +12,17 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  Chip,
-  DataTable,
+  DataTableVirtual,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Loader,
+  MobileTable,
   SkeletonText,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
 } from '@sushiswap/ui'
 import type {
   ColumnDef,
@@ -41,20 +30,16 @@ import type {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { usePoolsInfinite } from 'src/lib/hooks/api/use-pools-infinite'
+import { type EvmAddress, SushiSwapProtocol, getEvmChainById } from 'sushi/evm'
 import {
-  type EvmAddress,
-  EvmNative,
-  SushiSwapProtocol,
-  getEvmChainById,
-  isMerklChainId,
-} from 'sushi/evm'
-import {
+  ACTION_COLUMN,
   APR_WITH_REWARDS_COLUMN,
+  BLANK_COLUMN,
   EXPLORE_NAME_COLUMN_POOL,
   TRANSACTIONS_1D_COLUMN,
   TVL_COLUMN,
@@ -62,203 +47,40 @@ import {
   VOLUME_1W_COLUMN,
 } from './columns'
 
-const COLUMNS = [
+const COLUMNS: ColumnDef<Pools[number], unknown>[] = [
   EXPLORE_NAME_COLUMN_POOL,
   TVL_COLUMN,
   VOLUME_1D_COLUMN,
   VOLUME_1W_COLUMN,
   TRANSACTIONS_1D_COLUMN,
   APR_WITH_REWARDS_COLUMN,
-  {
-    id: 'actions',
-    cell: ({ row }) =>
-      row.original.protocol === 'SUSHISWAP_V3' ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-fit">
-            <DropdownMenuLabel>
-              {row.original.name}
-              <Chip variant="blue" className="ml-2">
-                SushiSwap V3
-              </Chip>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                    row.original.address
-                  }`}
-                >
-                  <ArrowDownRightIcon width={16} height={16} className="mr-2" />
-                  Pool details
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                    row.original.address
-                  }/create`}
-                >
-                  <PlusIcon width={16} height={16} className="mr-2" />
-                  Create position
-                </Link>
-              </DropdownMenuItem>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild={row.original.isSmartPool}>
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!row.original.isSmartPool}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${getEvmChainById(row.original.chainId).key}/pool/v3/${
-                          row.original.address
-                        }/smart`}
-                      >
-                        <span className="relative">
-                          <LightBulbIcon
-                            width={16}
-                            height={16}
-                            className="mr-2"
-                          />
-                          <sup className="rounded-full bg-background absolute right-[3px]">
-                            <PlusIcon width={12} height={12} />
-                          </sup>
-                        </span>
-                        Create smart position
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!row.original.isSmartPool
-                        ? 'No Liquidity Vaults available for this pool'
-                        : `Liquidity Vaults optimize liquidity allocation within custom price ranges, enhancing trading efficiency by
-          providing deeper liquidity around the current price, increasing Liquidity Providers (LP) fee earnings.`}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger
-                    asChild={isMerklChainId(row.original.chainId)}
-                  >
-                    <DropdownMenuItem
-                      asChild
-                      disabled={!isMerklChainId(row.original.chainId)}
-                    >
-                      <Link
-                        onClick={(e) => e.stopPropagation()}
-                        shallow={true}
-                        className="flex items-center"
-                        href={`/${
-                          getEvmChainById(row.original.chainId).key
-                        }/pool/incentivize?fromCurrency=${
-                          row.original.token0Address ===
-                          EvmNative.fromChainId(row.original.chainId).wrap()
-                            .address
-                            ? 'NATIVE'
-                            : row.original.token0Address
-                        }&toCurrency=${
-                          row.original.token1Address ===
-                          EvmNative.fromChainId(row.original.chainId).wrap()
-                            .address
-                            ? 'NATIVE'
-                            : row.original.token1Address
-                        }&feeAmount=${row.original.swapFee * 10_000 * 100}`}
-                      >
-                        <GiftIcon width={16} height={16} className="mr-2" />
-                        Add incentive
-                      </Link>
-                    </DropdownMenuItem>
-                  </TooltipTrigger>
-                  <TooltipContent side="left" className="max-w-[240px]">
-                    <p>
-                      {!isMerklChainId(row.original.chainId)
-                        ? 'Not available on this network'
-                        : 'Add rewards to a pool to incentivize liquidity providers joining in.'}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button icon={EllipsisHorizontalIcon} variant="ghost" size="sm">
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-fit">
-            <DropdownMenuLabel>
-              {row.original.name}
-              {row.original.protocol === 'SUSHISWAP_V2' && (
-                <Chip variant="pink" className="ml-2">
-                  SushiSwap V2
-                </Chip>
-              )}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v2/${
-                    row.original.address
-                  }/add`}
-                >
-                  <PlusIcon width={16} height={16} className="mr-2" />
-                  Add liquidity
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  onClick={(e) => e.stopPropagation()}
-                  shallow={true}
-                  className="flex items-center"
-                  href={`/${getEvmChainById(row.original.chainId).key}/pool/v2/${
-                    row.original.address
-                  }/remove`}
-                >
-                  <MinusIcon width={16} height={16} className="mr-2" />
-                  Remove liquidity
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    size: 80,
-    meta: {
-      disableLink: true,
-      body: {
-        skeleton: <SkeletonText fontSize="lg" />,
-      },
-    },
-  } satisfies ColumnDef<Pools[number], unknown>,
-] as ColumnDef<Pools[number], unknown>[]
+  ACTION_COLUMN,
+]
+
+const MOBILE_COLUMNS: ColumnDef<Pools[number], unknown>[] = [
+  EXPLORE_NAME_COLUMN_POOL,
+  BLANK_COLUMN,
+  ACTION_COLUMN,
+  TVL_COLUMN,
+  VOLUME_1D_COLUMN,
+  VOLUME_1W_COLUMN,
+  TRANSACTIONS_1D_COLUMN,
+  APR_WITH_REWARDS_COLUMN,
+]
+
+const SORT_OPTIONS = [
+  { id: 'liquidityUSD', label: 'TVL' },
+  { id: 'volumeUSD1d', label: 'Volume (24h)' },
+  { id: 'volumeUSD1w', label: 'Volume (1w)' },
+  { id: 'txCount1d', label: 'Transactions (24h)' },
+  { id: 'totalApr1d', label: 'APR' },
+] satisfies { id: NonNullable<GetPools['orderBy']>; label: string }[]
+
+function linkFormatter(row: Pools[number]): string {
+  return `/${getEvmChainById(row.chainId).key}/pool/${
+    row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
+  }/${row.address}`
+}
 
 interface PoolsTableProps {
   chainId: PoolChainId
@@ -271,12 +93,19 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   onRowClick,
   forcedTokenAddresses,
 }) => {
+  const router = useRouter()
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
+  const selectedSort = SORT_OPTIONS.find(
+    (option) => option.id === sorting[0]?.id,
+  )
+  const sortLabel = selectedSort?.label ?? 'Default'
+  const isAscending = sorting[0]?.desc === false
+  const sortDescription = `${sortLabel}, ${isAscending ? 'lowest first' : 'highest first'}`
 
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
     const tokenSymbolsSet = new Set([
@@ -338,6 +167,46 @@ export const PoolsTable: FC<PoolsTableProps> = ({
     [onRowClick],
   )
 
+  const mobileRowRenderer = useCallback(
+    (row: Row<Pools[number]>, rowNode: ReactNode): ReactNode => {
+      function navigate(): void {
+        onRowClick?.(row.original)
+        router.push(linkFormatter(row.original))
+      }
+
+      return (
+        <div
+          role="link"
+          tabIndex={0}
+          aria-label={`View ${row.original.name} pool`}
+          className="cursor-pointer rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+          onClick={(event) => {
+            if (
+              event.defaultPrevented ||
+              !(event.target instanceof Element) ||
+              !event.currentTarget.contains(event.target) ||
+              event.target.closest(
+                'a, button, input, select, textarea, [role="button"], [role="menuitem"]',
+              )
+            ) {
+              return
+            }
+            navigate()
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && event.target === event.currentTarget) {
+              event.preventDefault()
+              navigate()
+            }
+          }}
+        >
+          {rowNode}
+        </div>
+      )
+    },
+    [onRowClick, router],
+  )
+
   return (
     <InfiniteScroll
       dataLength={data.length}
@@ -349,36 +218,105 @@ export const PoolsTable: FC<PoolsTableProps> = ({
         </div>
       }
     >
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {isLoading ? (
-              <div className="!w-28 !h-[18px]">
-                <SkeletonText />
-              </div>
-            ) : (
-              <span>
-                Pools{' '}
-                <span className="text-gray-400 dark:text-slate-500">
-                  ({count ?? 0})
+      <Card className="!bg-transparent md:!bg-secondary !border-transparent md:!border-accent">
+        <CardHeader className="!px-0 md:!px-6">
+          <div className="flex items-center justify-between gap-3">
+            <CardTitle className="shrink-0">
+              {isLoading ? (
+                <div className="!w-28 !h-[18px]">
+                  <SkeletonText />
+                </div>
+              ) : (
+                <span>
+                  Pools{' '}
+                  <span className="text-muted-foreground text-sm font-normal">
+                    ({count ?? 0})
+                  </span>
                 </span>
-              </span>
-            )}
-          </CardTitle>
+              )}
+            </CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="block md:hidden">
+                <Button
+                  aria-label={`Sort pools by ${sortDescription}`}
+                  title={sortDescription}
+                  variant="secondary"
+                  size="sm"
+                  icon={isAscending ? ArrowUpIcon : ArrowDownIcon}
+                  iconProps={{ className: 'shrink-0' }}
+                  iconPosition="end"
+                  className="min-w-0 lg:hidden"
+                >
+                  <span className="truncate">{sortLabel}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="lg:hidden">
+                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={sorting[0]?.id ?? ''}
+                  onValueChange={(id) => {
+                    const option = SORT_OPTIONS.find(
+                      (option) => option.id === id,
+                    )
+                    if (option) {
+                      setSorting([
+                        { id: option.id, desc: sorting[0]?.desc ?? true },
+                      ])
+                    }
+                  }}
+                >
+                  {SORT_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem key={option.id} value={option.id}>
+                      {option.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  aria-label="Sort direction"
+                  value={sorting[0]?.desc === false ? 'asc' : 'desc'}
+                  onValueChange={(direction) =>
+                    setSorting([
+                      {
+                        id: sorting[0]?.id ?? 'liquidityUSD',
+                        desc: direction === 'desc',
+                      },
+                    ])
+                  }
+                >
+                  <DropdownMenuRadioItem value="desc">
+                    Highest first
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="asc">
+                    Lowest first
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </CardHeader>
-        <DataTable
-          state={state}
-          onSortingChange={setSorting}
-          loading={isLoading}
-          linkFormatter={(row) =>
-            `/${getEvmChainById(row.chainId).key}/pool/${
-              row.protocol === SushiSwapProtocol.SUSHISWAP_V2 ? 'v2' : 'v3'
-            }/${row.address}`
-          }
-          rowRenderer={rowRenderer}
-          columns={COLUMNS}
-          data={data}
-        />
+        <div className="hidden md:block">
+          <DataTableVirtual
+            state={state}
+            onSortingChange={setSorting}
+            loading={isLoading}
+            linkFormatter={linkFormatter}
+            rowRenderer={rowRenderer}
+            columns={COLUMNS}
+            data={data}
+          />
+        </div>
+        <div className="md:hidden">
+          <MobileTable
+            sorting={sorting}
+            isLoading={isLoading}
+            isExpandedOverride={true}
+            hideExpand={true}
+            rowRenderer={mobileRowRenderer}
+            columns={MOBILE_COLUMNS}
+            data={data}
+          />
+        </div>
       </Card>
     </InfiniteScroll>
   )
