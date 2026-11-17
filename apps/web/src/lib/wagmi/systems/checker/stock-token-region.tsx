@@ -3,8 +3,7 @@
 import { Button, type ButtonProps } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { useCountryCode } from 'src/lib/hooks/use-country-code'
-import { ROBINHOOD_STOCK_TOKEN_RESTRICTED_COUNTRIES } from 'src/lib/robinhood/restricted-countries'
-import { isRobinhoodStockToken } from 'src/lib/robinhood/stock-tokens'
+import { getRobinhoodTokenRestrictedCountries } from 'src/lib/robinhood/token-restrictions'
 import { useRobinhoodStockTokens } from 'src/lib/robinhood/use-robinhood-stock-tokens'
 import { EvmChainId, type EvmToken } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
@@ -81,23 +80,28 @@ function RobinhoodTokenRegion({
     )
   }
 
-  const stocks = tokens.filter((token) =>
-    isRobinhoodStockToken(token, stockTokens),
-  )
-  if (stocks.length === 0) return <>{children}</>
+  const restrictions = tokens
+    .map((token) => ({
+      token,
+      countries: getRobinhoodTokenRestrictedCountries(token, stockTokens),
+    }))
+    .filter(({ countries }) => countries.size > 0)
+  if (restrictions.length === 0) return <>{children}</>
 
   return (
-    <StockTokenCountryRegion tokens={stocks} {...props}>
+    <StockTokenCountryRegion restrictions={restrictions} {...props}>
       {children}
     </StockTokenCountryRegion>
   )
 }
 
 function StockTokenCountryRegion({
-  tokens,
+  restrictions,
   children,
   ...props
-}: ButtonProps & { tokens: EvmToken[] }): ReactNode {
+}: ButtonProps & {
+  restrictions: { token: EvmToken; countries: ReadonlySet<string> }[]
+}): ReactNode {
   const { data: countryCode, isPending, isError } = useCountryCode()
 
   if (isPending) {
@@ -114,10 +118,16 @@ function StockTokenCountryRegion({
     )
   }
 
-  if (ROBINHOOD_STOCK_TOKEN_RESTRICTED_COUNTRIES.has(countryCode)) {
+  const restrictedTokens = restrictions
+    .filter(({ countries }) => countries.has(countryCode))
+    .map(({ token }) => token)
+
+  if (restrictedTokens.length > 0) {
     const symbols = [
       ...new Set(
-        tokens.map((token) => token.symbol || token.name || 'Stock token'),
+        restrictedTokens.map(
+          (token) => token.symbol || token.name || 'Stock token',
+        ),
       ),
     ]
     return (

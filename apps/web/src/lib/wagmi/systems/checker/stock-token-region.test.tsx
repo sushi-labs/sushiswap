@@ -44,6 +44,13 @@ const otherStock = new EvmToken({
   symbol: 'XYZ',
   name: 'XYZ stock',
 })
+const tteq = new EvmToken({
+  chainId: EvmChainId.ROBINHOOD,
+  address: '0x80E10255A83B257F5A8674D363F547842aa53b8e',
+  decimals: 18,
+  symbol: 'TTEQ',
+  name: 'TTEQ stock',
+})
 const imitation = new EvmToken({
   chainId: EvmChainId.ROBINHOOD,
   address: '0x0000000000000000000000000000000000000001',
@@ -234,6 +241,148 @@ describe('StockTokenRegion and country lookup', () => {
       expect(onSwap).toHaveBeenCalledOnce()
     },
   )
+
+  describe.each(['AT', 'EE', 'HU', 'SE', 'DK'])(
+    'TTEQ-specific restrictions in %s',
+    (country) => {
+      it.each(['token0', 'token1'] as const)(
+        'blocks TTEQ as %s even when absent from the registry',
+        async (side) => {
+          respond(country)
+          await render({ token0: stock, token1: stock, [side]: tteq })
+          expectBlocked('TTEQ unavailable in your region')
+        },
+      )
+
+      it('allows other Robinhood stock tokens', async () => {
+        respond(country)
+        await render({ token0: stock, token1: otherStock })
+        expect(container.textContent).toBe('Swap')
+        act(() => container.querySelector('button')?.click())
+        expect(onSwap).toHaveBeenCalledOnce()
+      })
+    },
+  )
+
+  it.each(['AT', 'US', 'CA'])(
+    'blocks registry-recognized TTEQ in restricted country %s',
+    async (country) => {
+      respond(country, {
+        assets: [
+          ...registry.assets,
+          {
+            tokenSymbol: tteq.symbol,
+            tokenName: tteq.name,
+            deployments: [
+              { chainId: tteq.chainId, contractAddress: tteq.address },
+            ],
+          },
+        ],
+      })
+      await render({ token0: tteq })
+      expectBlocked('TTEQ unavailable in your region')
+    },
+  )
+
+  it('matches the TTEQ contract with lowercase address and different metadata', async () => {
+    respond('AT')
+    await render({
+      token0: new EvmToken({
+        chainId: tteq.chainId,
+        address: '0x80e10255a83b257f5a8674d363f547842aa53b8e',
+        decimals: tteq.decimals,
+        symbol: 'RENAMED',
+        name: 'Different token name',
+      }),
+    })
+    expectBlocked('RENAMED unavailable in your region')
+  })
+
+  it.each(['DE', 'FR'])(
+    'allows TTEQ in unrestricted country %s',
+    async (country) => {
+      respond(country)
+      await render({ token0: tteq, token1: stock })
+      expect(container.textContent).toBe('Swap')
+      act(() => container.querySelector('button')?.click())
+      expect(onSwap).toHaveBeenCalledOnce()
+    },
+  )
+
+  it('does not apply the TTEQ restriction to the same address on another chain', async () => {
+    respond('AT')
+    await render({
+      token0: new EvmToken({
+        chainId: EvmChainId.ETHEREUM,
+        address: tteq.address,
+        decimals: tteq.decimals,
+        symbol: tteq.symbol,
+        name: tteq.name,
+      }),
+    })
+    expect(container.textContent).toBe('Swap')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('does not apply the TTEQ restriction to an imitation at another address', async () => {
+    respond('AT')
+    await render({
+      token0: new EvmToken({
+        chainId: tteq.chainId,
+        address: imitation.address,
+        decimals: tteq.decimals,
+        symbol: tteq.symbol,
+        name: tteq.name,
+      }),
+    })
+    expect(container.textContent).toBe('Swap')
+    act(() => container.querySelector('button')?.click())
+    expect(onSwap).toHaveBeenCalledOnce()
+  })
+
+  it('normalizes country codes for the TTEQ restriction', async () => {
+    respond(' at ')
+    await render({ token0: tteq })
+    expectBlocked('TTEQ unavailable in your region')
+  })
+
+  it('updates the restriction when switching between TTEQ and another stock', async () => {
+    respond('AT')
+    await render({ token0: tteq, token1: stock })
+    expectBlocked('TTEQ unavailable in your region')
+    await render({ token0: otherStock, token1: stock })
+    expect(container.textContent).toBe('Swap')
+    await render({ token0: stock, token1: tteq })
+    expectBlocked('TTEQ unavailable in your region')
+  })
+
+  it('blocks TTEQ while country lookup is loading even when absent from the registry', async () => {
+    fetchMock.mockImplementation(async (url) => {
+      if (url === '/api/robinhood/stock-tokens') return Response.json(registry)
+      return new Promise(() => {})
+    })
+    await render({ token0: tteq })
+    expectBlocked('Checking your region')
+  })
+
+  it.each([null, '', 'AUT', 123])(
+    'blocks TTEQ with unavailable or malformed country data: %j',
+    async (country) => {
+      respond(country)
+      await render({ token0: tteq })
+      expectBlocked('Unable to verify your region')
+    },
+  )
+
+  it('blocks TTEQ when country lookup fails even when absent from the registry', async () => {
+    fetchMock.mockImplementation(async (url) =>
+      url === '/api/robinhood/stock-tokens'
+        ? Response.json(registry)
+        : new Response(null, { status: 503 }),
+    )
+    await render({ token0: tteq })
+    expectBlocked('Unable to verify your region')
+  })
 
   it('names both stocks and deduplicates the label for the same stock', async () => {
     await render({ token0: stock, token1: otherStock })
