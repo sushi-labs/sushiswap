@@ -1,5 +1,6 @@
 'use client'
 import { isPoolChainId } from '@sushiswap/graph-client/data-api'
+import ms from 'ms'
 import { type FC, Suspense } from 'react'
 import { useAnalyticsDayBuckets } from 'src/lib/hooks/react-query/explore/use-analytics-day-buckets'
 import { type EvmChainId, isBladeChainId } from 'sushi/evm'
@@ -15,13 +16,25 @@ export const GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   )
 }
 
+export const TIMEFRAME_OPTIONS = ['1W', '1M', '3M', 'All'] as const
+
+export type TimeframeOption = (typeof TIMEFRAME_OPTIONS)[number]
+
+export const timeframeToMs: Record<TimeframeOption, number> = {
+  '1W': ms('7d'),
+  '1M': ms('30d'),
+  '3M': ms('90d'),
+  All: Number.MAX_SAFE_INTEGER,
+}
+
 const _GlobalStatsCharts: FC<{ chainId: EvmChainId }> = ({ chainId }) => {
   const { data: dayBuckets, isLoading } = useAnalyticsDayBuckets({
     chainId,
     enabled: isPoolChainId(chainId),
   })
 
-  const showBlade = isBladeChainId(chainId)
+  // const showBlade = isBladeChainId(chainId)
+  const showBlade = false
 
   if (isLoading || !dayBuckets) {
     return <GlobalStatsLoading chainId={chainId} />

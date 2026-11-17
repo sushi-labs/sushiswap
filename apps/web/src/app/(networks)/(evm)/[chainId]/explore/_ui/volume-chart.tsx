@@ -1,6 +1,7 @@
 'use client'
 
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
+import { Card, CardContent, Toggle, ToggleGroup } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import type { EChartOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
@@ -9,9 +10,14 @@ import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import {
+  TIMEFRAME_OPTIONS,
+  type TimeframeOption,
+  timeframeToMs,
+} from './global-stats-charts'
 
 interface VolumeChart {
   data: AnalyticsDayBuckets
@@ -21,10 +27,20 @@ interface VolumeChart {
 
 echarts.use([CanvasRenderer, BarChart, TooltipComponent, GridComponent])
 
+const TIMEFRAME_LABELS: Record<TimeframeOption, string> = {
+  '1W': 'Past week',
+  '1M': 'Past month',
+  '3M': 'Past 3 months',
+  All: 'Available history',
+}
+
 export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
+  const [timeframe, setTimeframe] = useState<TimeframeOption>('1M')
   const { resolvedTheme } = useTheme()
+  const periodLabel = `${getEvmChainById(chainId).name} · ${TIMEFRAME_LABELS[timeframe]}`
 
   const [v2, v3, blade, totalVolume] = useMemo(() => {
+    const now = Date.now()
     const xData = (
       data.v2.length || data.v3.length
         ? data.v2.length > data.v3.length
@@ -32,17 +48,17 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
           : data.v3
         : data.blade
     )
-      .slice(0, 30)
-      .map((data) => data.date * 1000)
+      .map((data, index) => ({ date: data.date * 1000, index }))
+      .filter(({ date }) => now - date <= timeframeToMs[timeframe])
 
     const v2 = xData
-      .map((xData, i) => [xData, data.v2[i]?.volumeUSD ?? 0])
+      .map(({ date, index }) => [date, data.v2[index]?.volumeUSD ?? 0])
       .reverse()
     const v3 = xData
-      .map((xData, i) => [xData, data.v3[i]?.volumeUSD ?? 0])
+      .map(({ date, index }) => [date, data.v3[index]?.volumeUSD ?? 0])
       .reverse()
     const blade = xData
-      .map((xData, i) => [xData, data.blade[i]?.volumeUSD ?? 0])
+      .map(({ date, index }) => [date, data.blade[index]?.volumeUSD ?? 0])
       .reverse()
     const totalVolume = xData.reduce(
       (sum, _, i) => sum + v2[i][1] + v3[i][1] + blade[i][1],
@@ -50,75 +66,61 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
     )
 
     return [v2, v3, blade, totalVolume]
-  }, [data])
+  }, [data, timeframe])
 
-  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
-    if (!params[0].data || !params[1].data) return ''
+  const onMouseOver = useCallback(
+    (params: { data?: number[] }[]) => {
+      if (!params[0]?.data || !params[1]?.data) return ''
 
-    const volumeNode = document.getElementById('hoveredVolume')
-    const v2VolumeNode = document.getElementById('hoveredV2Volume')
-    const v3VolumeNode = document.getElementById('hoveredV3Volume')
-    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
-    const dateNode = document.getElementById('hoveredVolumeDate')
+      const volumeNode = document.getElementById('hoveredVolume')
+      const dateNode = document.getElementById('hoveredVolumeDate')
 
-    if (volumeNode)
-      volumeNode.innerHTML = formatUSD(
-        params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] || 0),
-      )
-    if (dateNode)
-      dateNode.innerHTML = format(
-        new Date(params[0].data[0]),
-        "dd MMM yyyy'<br>'hh:mm aa",
-      )
-    if (v2VolumeNode)
-      v2VolumeNode.innerHTML = params[0].data[1]
-        ? formatUSD(params[0].data[1])
-        : ''
-    if (v3VolumeNode)
-      v3VolumeNode.innerHTML = params[1].data[1]
-        ? formatUSD(params[1].data[1])
-        : ''
-    if (bladeVolumeNode)
-      bladeVolumeNode.innerHTML = params[2]?.data?.[1]
-        ? formatUSD(params[2].data[1])
-        : ''
+      if (volumeNode)
+        volumeNode.textContent = formatUSD(
+          params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0),
+        )
+      if (dateNode)
+        dateNode.textContent = `${getEvmChainById(chainId).name} · ${format(new Date(params[0].data[0]), 'MMM dd, yyyy')}`
 
-    return ''
-  }, [])
+      return ''
+    },
+    [chainId],
+  )
 
   const onMouseLeave = useCallback(() => {
     const volumeNode = document.getElementById('hoveredVolume')
-    const v2VolumeNode = document.getElementById('hoveredV2Volume')
-    const v3VolumeNode = document.getElementById('hoveredV3Volume')
-    const bladeVolumeNode = document.getElementById('hoveredBladeVolume')
     const dateNode = document.getElementById('hoveredVolumeDate')
 
-    if (volumeNode) volumeNode.innerHTML = formatUSD(totalVolume)
-    if (dateNode) dateNode.innerHTML = 'Past month'
-    if (v2VolumeNode) v2VolumeNode.innerHTML = ''
-    if (v3VolumeNode) v3VolumeNode.innerHTML = ''
-    if (bladeVolumeNode) bladeVolumeNode.innerHTML = ''
-  }, [totalVolume])
+    if (volumeNode) volumeNode.textContent = formatUSD(totalVolume)
+    if (dateNode) dateNode.textContent = periodLabel
+  }, [totalVolume, periodLabel])
 
-  const DEFAULT_OPTION = useMemo<EChartOption>(
-    () => ({
+  const DEFAULT_OPTION = useMemo<EChartOption>(() => {
+    const isLight = resolvedTheme === 'light'
+    const textColor = '#A0A0A0'
+
+    return {
+      animation: false,
       tooltip: {
         trigger: 'axis',
         padding: 0,
         borderWidth: 0,
         axisPointer: {
           lineStyle: {
-            type: 'solid',
+            type: 'dashed',
+            color: textColor,
           },
         },
         formatter: (params) =>
           onMouseOver(Array.isArray(params) ? params : [params]),
       },
+      color: ['#A0A0A0', '#FA52A0', '#F23BF6'],
       grid: {
-        top: 0,
+        top: 24,
         left: 0,
         right: 0,
-        bottom: 40,
+        bottom: 0,
+        containLabel: true,
       },
       xAxis: [
         {
@@ -132,34 +134,26 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
           axisTick: {
             show: false,
           },
-          splitNumber: 2,
+          splitNumber: 3,
           axisLabel: {
             hideOverlap: true,
-            showMinLabel: true,
-            showMaxLabel: true,
-            color: resolvedTheme === 'dark' ? 'white' : 'black',
-            formatter: (value: number, index: number) => {
-              const label = format(new Date(value), 'MMM d')
-              return index === 0
-                ? `{min|${label}}`
-                : value > v2?.[v2.length - 2]?.[0]
-                  ? `{max|${label}}`
-                  : label
-            },
-            rich: {
-              min: {
-                padding: [0, 10, 0, 50],
-              },
-              max: {
-                padding: [0, 50, 0, 10],
-              },
-            },
+            color: textColor,
+            margin: 16,
+            formatter: (value: number) => format(new Date(value), 'd MMM'),
           },
         },
       ],
       yAxis: [
         {
-          show: false,
+          type: 'value',
+          min: 0,
+          splitNumber: 3,
+          axisLabel: {
+            show: false,
+          },
+          splitLine: {
+            lineStyle: { color: isLight ? '#e3e3e3' : '#3b3b3b' },
+          },
         },
       ],
       series: [
@@ -168,14 +162,14 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
           type: 'bar',
           stack: 'a',
           data: v2,
-          itemStyle: { color: '#3B7EF6', barBorderRadius: [0, 0, 2, 2] },
+          itemStyle: { color: '#A0A0A0', barBorderRadius: [0, 0, 2, 2] },
         },
         {
           name: 'v3',
           type: 'bar',
           stack: 'a',
           data: v3,
-          itemStyle: { color: '#A755DD', barBorderRadius: [2, 2, 0, 0] },
+          itemStyle: { color: '#FA52A0', barBorderRadius: [2, 2, 0, 0] },
         },
         ...(showBlade
           ? [
@@ -189,65 +183,77 @@ export const VolumeChart: FC<VolumeChart> = ({ data, chainId, showBlade }) => {
             ]
           : []),
       ],
-    }),
-    [onMouseOver, resolvedTheme, v2, v3, blade, showBlade],
-  )
+    }
+  }, [onMouseOver, resolvedTheme, v2, v3, blade, showBlade])
 
   return (
-    <div>
-      <div className="flex flex-col gap-3">
-        <span className="text-muted-foreground text-sm">
-          {getEvmChainById(chainId).name} Volume
-        </span>
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-3">
-            <div className="text-3xl font-medium">
-              <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
-            </div>
-            <div>
-              <div
-                id="hoveredVolumeDate"
-                className="text-sm text-gray-500 dark:text-slate-500 min-h-[40px]"
-              >
-                Past month
+    <Card>
+      <CardContent className="pt-6 pb-3">
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-wrap justify-between">
+            <div className="flex flex-col gap-1">
+              <span className="text-muted-foreground text-sm">Volume</span>
+              <div className="flex justify-between">
+                <div className="flex flex-col gap-1">
+                  <div className="text-3xl font-normal">
+                    <span id="hoveredVolume">{formatUSD(totalVolume)}</span>
+                  </div>
+                  <div>
+                    <div
+                      id="hoveredVolumeDate"
+                      className="text-xs text-muted-foreground whitespace-nowrap"
+                    >
+                      {periodLabel}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+            <ToggleGroup className="h-fit">
+              {TIMEFRAME_OPTIONS.map((time) => (
+                <Toggle
+                  key={time}
+                  onClick={() => setTimeframe(time)}
+                  pressed={timeframe === time}
+                  size="xs"
+                >
+                  {time}
+                </Toggle>
+              ))}
+            </ToggleGroup>
           </div>
-          <div className="flex flex-col">
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV2Volume" />
+          <div className="flex flex-row text-muted-foreground gap-1 self-end">
+            <div className="flex justify-between items-center gap-2 text-xs">
               <span className="flex gap-1 items-center">
-                <span className="font-medium">v2</span>
-                <span className="bg-[#3B7EF6] rounded-[4px] w-3 h-3" />
+                <span className="bg-[#A0A0A0] rounded-full w-2 h-2" />
+                <span className="font-medium">V2</span>
               </span>
             </div>
-            <div className="flex justify-between items-center gap-2 text-sm">
-              <span id="hoveredV3Volume" />
+            <div className="flex justify-between items-center gap-2 text-xs">
               <span className="flex gap-1 items-center">
-                <span className="font-medium">v3</span>
-                <span className="bg-[#A755DD] rounded-[4px] w-3 h-3" />
+                <span className="bg-[#FA52A0] rounded-full w-2 h-2" />
+                <span className="font-medium">V3</span>
               </span>
             </div>
             {showBlade && (
-              <div className="flex justify-between items-center gap-2 text-sm">
-                <span id="hoveredBladeVolume" />
+              <div className="flex justify-between items-center gap-2 text-xs">
                 <span className="flex gap-1 items-center">
-                  <span className="font-medium">blade</span>
-                  <span className="bg-[#F23BF6] rounded-[4px] w-3 h-3" />
+                  <span className="bg-[#F23BF6] rounded-full w-2 h-2" />
+                  <span className="font-medium">Blade</span>
                 </span>
               </div>
             )}
           </div>
         </div>
-      </div>
-      <ReactEchartsCore
-        option={DEFAULT_OPTION}
-        echarts={echarts}
-        style={{ height: 400 }}
-        onEvents={{
-          globalout: onMouseLeave,
-        }}
-      />
-    </div>
+        <ReactEchartsCore
+          option={DEFAULT_OPTION}
+          echarts={echarts}
+          style={{ height: 200 }}
+          onEvents={{
+            globalout: onMouseLeave,
+          }}
+        />
+      </CardContent>
+    </Card>
   )
 }

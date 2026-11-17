@@ -47,9 +47,7 @@ export default async function ExploreLayout(props: {
             <NavigationItems chainId={chainId} />
           </Container>
           <section className="flex flex-col flex-1">
-            <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-              <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
-            </div>
+            <PoolsFiltersProvider>{children}</PoolsFiltersProvider>
           </section>
         </main>
       </Suspense>
