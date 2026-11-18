@@ -23,7 +23,7 @@ export default async function Layout(props: {
         <Container maxWidth="7xl" className="px-4 pb-10">
           <LinkInternal
             href={`/${getEvmChainById(chainId).key}/explore/blade-pools`}
-            className="text-blue text-sm hover:underline"
+            className="text-pink text-sm hover:underline"
           >
             ← Back
           </LinkInternal>

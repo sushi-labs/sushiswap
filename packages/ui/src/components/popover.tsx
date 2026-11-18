@@ -32,8 +32,8 @@ const PopoverContent = React.forwardRef<
         sideOffset={sideOffset}
         className={classNames(
           className,
-          'border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-72 rounded-2xl p-4 shadow-md outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-          'bg-secondary',
+          'border border-accent max-h-[var(--radix-popper-available-height)] z-50 w-72 rounded-2xl p-4 shadow-sm outline-none animate-in data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+          'bg-background',
           'black:bg-black/60',
         )}
         {...props}

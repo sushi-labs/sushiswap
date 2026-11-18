@@ -37,7 +37,7 @@ export const PoolHeader = ({ pool, backUrl, address }: PoolHeaderProps) => {
       <div className="flex flex-col gap-4">
         <LinkInternal
           href={backUrl}
-          className="text-blue hover:underline text-sm"
+          className="text-pink hover:underline text-sm"
         >
           ← Back
         </LinkInternal>

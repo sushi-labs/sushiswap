@@ -32,7 +32,7 @@ export default async function Layout(props: {
 
   return (
     <>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="6xl" className="pt-10 px-4">
         <PoolHeader
           backUrl={
             referer?.includes('/pool')
@@ -42,14 +42,16 @@ export default async function Layout(props: {
           address={address}
           pool={pool}
           apy={{ rewards: pool.incentiveApr, fees: pool.feeApr1d }}
+          title={{
+            main: 'Migrate Pool',
+            sub: 'Move your liquidity to a V3 position',
+          }}
         />
       </Container>
-      <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
-          <Container maxWidth="5xl" className="px-4">
-            {children}
-          </Container>
-        </div>
+      <section className="flex flex-col flex-1 mt-4  py-10">
+        <Container maxWidth="6xl" className="px-4">
+          {children}
+        </Container>
       </section>
     </>
   )

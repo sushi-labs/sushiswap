@@ -53,7 +53,7 @@ export const BladePoolLiquidityHeader: FC<PoolHeader> = ({
       <div className="flex flex-col gap-3 sm:gap-4">
         <LinkInternal
           href={backUrl}
-          className="text-sm text-blue hover:underline"
+          className="text-sm text-pink hover:underline"
         >
           ← Back
         </LinkInternal>
