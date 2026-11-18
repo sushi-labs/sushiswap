@@ -78,7 +78,7 @@ export const TableFiltersNetwork: FC<{
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll"
+        className="!p-0 !overflow-x-hidden !overflow-y-scroll scroll !bg-background"
       >
         <Command className="flex items-center gap-1">
           <CommandInput
@@ -102,7 +102,7 @@ export const TableFiltersNetwork: FC<{
                         : undefined
                   }
                   className={classNames(
-                    'py-2 pl-8 pr-2',
+                    'py-2 pl-8 pr-2 cursor-pointer hover:bg-muted',
                     !isSupported ? 'opacity-30' : null,
                   )}
                 >

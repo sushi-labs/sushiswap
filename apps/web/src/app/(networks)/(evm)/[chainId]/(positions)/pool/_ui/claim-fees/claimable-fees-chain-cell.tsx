@@ -2,7 +2,7 @@ import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import type { Row } from '@tanstack/react-table'
 import type { FC } from 'react'
 import { getEvmChainById } from 'sushi/evm'
-import type { ClaimableFees } from './claimable-fees-tab'
+import type { ClaimableFees } from './claimable-fees-dialog'
 
 export const ClaimableFeesChainCell: FC<Row<ClaimableFees>> = ({
   original,

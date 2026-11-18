@@ -12,8 +12,13 @@ import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { formatUSD, getChainById } from 'sushi'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/evm'
-import { ClaimFeesDialog } from './claim-fees/claim-fees-dialog'
+import { SushiSwapV3ChainIds, isEvmTestnetChainId } from 'sushi/evm'
+import { ClaimableFeesDialog } from './claim-fees/claimable-fees-dialog'
 import { usePositionFilters } from './position-filters-provider'
+
+const CLAIM_SUPPORTED_CHAIN_IDS = SushiSwapV3ChainIds.filter(
+  (chainId) => !isEvmTestnetChainId(chainId),
+)
 
 export const PositionStats = ({
   chainId,
@@ -36,6 +41,14 @@ export const PositionStats = ({
     chainIds: isSushiSwapV3ChainId(chainId) ? [chainId] : [],
   })
   const {
+    data: allV3Positions,
+    isInitialLoading: isAllV3PositionsLoading,
+    isError: isAllV3PositionsError,
+  } = useConcentratedLiquidityPositions({
+    account: address,
+    chainIds: CLAIM_SUPPORTED_CHAIN_IDS,
+  })
+  const {
     data: v2Positions,
     isLoading: isV2PositionsLoading,
     isError: isV2PositionsError,
@@ -43,10 +56,15 @@ export const PositionStats = ({
     user: address,
     chainId: isSushiSwapV2ChainId(chainId) ? chainId : undefined,
   })
-  const isLoading = isV2PositionsLoading || isV3PositionsLoading || !isMounted
-  const isError = isV2PositionsError || isV3PositionsError
+  const isLoading =
+    isV2PositionsLoading ||
+    isV3PositionsLoading ||
+    isAllV3PositionsLoading ||
+    !isMounted
+  const isError =
+    isV2PositionsError || isV3PositionsError || isAllV3PositionsError
 
-  const { totalPosValue, totalPosCount, totalUnclaimedFees } = useMemo(() => {
+  const { totalPosValue, totalPosCount } = useMemo(() => {
     const _v3Positions = v3Positions?.filter((pos) =>
       hideClosedPositions ? pos.liquidity !== 0n : true,
     )
@@ -56,16 +74,20 @@ export const PositionStats = ({
       _v3Positions?.reduce((acc, pos) => acc + pos.position.positionUSD, 0) ?? 0
     const totalPosCount =
       tab === 'v2' ? (v2Positions?.length ?? 0) : (_v3Positions?.length ?? 0)
-    const totalV3UnclaimedFees =
-      _v3Positions?.reduce((acc, pos) => acc + pos.position.unclaimedUSD, 0) ??
-      0
-
     return {
       totalPosValue: tab === 'v2' ? totalV2PosValue : totalV3PosValue,
       totalPosCount,
-      totalUnclaimedFees: tab === 'v2' ? 0 : totalV3UnclaimedFees,
     }
   }, [tab, v2Positions, v3Positions, hideClosedPositions])
+
+  const totalUnclaimedFees = useMemo(
+    () =>
+      allV3Positions?.reduce(
+        (acc, pos) => acc + pos.position.unclaimedUSD,
+        0,
+      ) ?? 0,
+    [allV3Positions],
+  )
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
@@ -115,9 +137,9 @@ export const PositionStats = ({
             <DataItem
               label={
                 <div className="relative">
-                  <div>Unclaimed fees</div>
-                  <div className="absolute top-0 right-0">
-                    <ClaimFeesDialog />
+                  <div>Total unclaimed fees</div>
+                  <div className="absolute top-0 right-0 z-[1]">
+                    <ClaimableFeesDialog />
                   </div>
                 </div>
               }

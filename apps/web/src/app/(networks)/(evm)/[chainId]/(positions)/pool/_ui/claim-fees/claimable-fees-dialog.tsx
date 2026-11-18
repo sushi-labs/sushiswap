@@ -1,14 +1,29 @@
 'use client'
 
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  Container,
-  DataTable,
+  Button,
+  DataTableVirtual,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  MobileTable,
+  useBreakpoint,
 } from '@sushiswap/ui'
-import type { ColumnDef, PaginationState } from '@tanstack/react-table'
-import React, { type FC, useMemo, useState } from 'react'
+import type { ColumnDef, Row, TableState } from '@tanstack/react-table'
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import {
+  DialogProvider,
+  DialogType,
+  useDialog,
+} from 'src/lib/transaction-dialog'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { Amount } from 'sushi'
@@ -19,10 +34,14 @@ import {
 } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { useMultiChainPrices } from '~evm/_common/ui/price-provider/price-provider/use-multi-chain-prices'
+import { ConcentratedLiquidityCollectAllDialogContent } from '~evm/_ui/concentrated-liquidity-collect-all-dialog'
+import { ClaimableFeesActionCell } from './claimable-fees-action-cell'
+import { ClaimableFeesAmountCell } from './claimable-fees-amount-cell'
+import { ClaimableFeesChainCell } from './claimable-fees-chain-cell'
 import {
-  FEES_ACTION_COLUMN,
   FEES_AMOUNT_COLUMN,
   FEES_CHAIN_COLUMN,
+  createFeesActionColumn,
 } from './columns'
 
 export type ClaimableFees = {
@@ -33,24 +52,77 @@ export type ClaimableFees = {
   positions: ConcentratedLiquidityPositionWithV3Pool[]
 }
 
-const COLUMNS = [
-  FEES_CHAIN_COLUMN,
-  FEES_AMOUNT_COLUMN,
-  FEES_ACTION_COLUMN,
-] satisfies ColumnDef<ClaimableFees, unknown>[]
+function renderMobileRow(
+  row: Row<ClaimableFees>,
+  onClaim: (claim: ClaimableFees) => void,
+): ReactNode {
+  return (
+    <dl className="flex flex-col gap-4 rounded-2xl border border-accent bg-secondary p-4 text-xs">
+      <div className="flex flex-col gap-1">
+        <dt className="text-muted-foreground">Chain</dt>
+        <dd>
+          <ClaimableFeesChainCell {...row} />
+        </dd>
+      </div>
+      <div className="flex flex-col gap-1">
+        <dt className="text-muted-foreground">Fees Amount</dt>
+        <dd>
+          <ClaimableFeesAmountCell {...row} />
+        </dd>
+      </div>
+      <div className="flex flex-col gap-1">
+        <dt className="text-muted-foreground">Action</dt>
+        <dd>
+          <ClaimableFeesActionCell {...row} onClaim={onClaim} />
+        </dd>
+      </div>
+    </dl>
+  )
+}
 
-export const ClaimableFeesTab: FC = () => {
+export function ClaimableFeesDialog(): ReactNode {
+  return (
+    <DialogProvider>
+      <ClaimableFeesDialogContent />
+    </DialogProvider>
+  )
+}
+
+function ClaimableFeesDialogContent(): ReactNode {
+  const { isMd } = useBreakpoint('md')
   const { address, isConnecting } = useConnection()
+  const { open: isReviewOpen, setOpen: setReviewOpen } = useDialog(
+    DialogType.Review,
+  )
+  const { open: isConfirmOpen } = useDialog(DialogType.Confirm)
+  // Preserve the active claim when a refetch removes its table row.
+  const [selectedClaim, setSelectedClaim] = useState<ClaimableFees>()
+
+  const onClaim = useCallback(
+    (claim: ClaimableFees) => {
+      setSelectedClaim(claim)
+      setReviewOpen(true)
+    },
+    [setReviewOpen],
+  )
+
+  useEffect(() => {
+    if (!isReviewOpen && !isConfirmOpen) setSelectedClaim(undefined)
+  }, [isReviewOpen, isConfirmOpen])
+
+  const columns = useMemo<ColumnDef<ClaimableFees, unknown>[]>(
+    () => [
+      FEES_CHAIN_COLUMN,
+      FEES_AMOUNT_COLUMN,
+      createFeesActionColumn(onClaim),
+    ],
+    [onClaim],
+  )
   const { data: _data, isInitialLoading: isPositionsLoading } =
     useConcentratedLiquidityPositions({
       account: address,
       chainIds: SushiSwapV3ChainIds,
     })
-
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
   const { data: prices, isLoading: isPricesLoading } = useMultiChainPrices({
     chainIds: SushiSwapV3ChainIds,
@@ -163,28 +235,51 @@ export const ClaimableFeesTab: FC = () => {
     return Object.values(feesByChain)
   }, [_data, prices])
 
+  const state = useMemo<Partial<TableState>>(
+    () => ({
+      pagination: { pageIndex: 0, pageSize: Math.max(data.length, 1) },
+    }),
+    [data.length],
+  )
+
   return (
-    <Container maxWidth="7xl" className="px-4 mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            Claimable Fees{' '}
-            <span className="text-gray-400 dark:text-slate-500">
-              ({data.length})
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <DataTable
-          loading={isLoading || isConnecting}
-          columns={COLUMNS}
-          data={data}
-          pagination={true}
-          onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
-        />
-      </Card>
-    </Container>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Claim Fees</Button>
+      </DialogTrigger>
+      <DialogContent className="md:!max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Claimable Fees ({data?.length ?? 0})</DialogTitle>
+        </DialogHeader>
+        {isMd ? (
+          <DataTableVirtual
+            loading={isLoading || isConnecting}
+            columns={columns}
+            data={data}
+            state={state}
+            scrollClassName="max-h-[60dvh]"
+            estimateSize={72}
+          />
+        ) : (
+          <MobileTable
+            sorting={[]}
+            isLoading={isLoading || isConnecting}
+            isExpandedOverride={true}
+            hideExpand={true}
+            rowRenderer={(row) => renderMobileRow(row, onClaim)}
+            columns={columns}
+            data={data}
+            scrollClassName="max-h-[60dvh] !min-h-0 overflow-y-auto"
+          />
+        )}
+        {selectedClaim ? (
+          <ConcentratedLiquidityCollectAllDialogContent
+            positions={selectedClaim.positions}
+            chainId={selectedClaim.chainId}
+            account={address}
+          />
+        ) : null}
+      </DialogContent>
+    </Dialog>
   )
 }

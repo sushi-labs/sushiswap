@@ -353,15 +353,15 @@ const Failed = () => {
 
 const Loading = () => (
   <Loader
-    circleClassName="!text-blue/[0.15]"
-    className="!text-blue"
+    circleClassName="!text-pink/[0.15]"
+    className="!text-pink"
     size={40}
   />
 )
 
 const Pending: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <div className="text-lg w-10 h-10 rounded-full flex justify-center items-center bg-gray-300 text-gray-500 dark:bg-slate-800 dark:text-slate-400 font-semibold">
+    <div className="text-lg w-10 h-10 rounded-full flex justify-center items-center bg-secondary text-muted-foreground font-semibold">
       {children}
     </div>
   )
@@ -370,7 +370,7 @@ const Pending: FC<{ children: ReactNode }> = ({ children }) => {
 export const Divider = () => {
   return (
     <div className="h-10 flex justify-center items-center">
-      <div className="h-0.5 w-10 bg-gray-200 dark:bg-slate-800 rounded-full" />
+      <div className="h-0.5 w-10 bg-accent rounded-full" />
     </div>
   )
 }

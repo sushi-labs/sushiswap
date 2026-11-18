@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ClaimableFeesActionCell } from './claimable-fees-action-cell'
 import { ClaimableFeesAmountCell } from './claimable-fees-amount-cell'
 import { ClaimableFeesChainCell } from './claimable-fees-chain-cell'
-import type { ClaimableFees } from './claimable-fees-tab'
+import type { ClaimableFees } from './claimable-fees-dialog'
 
 export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
   id: 'chain',
@@ -20,6 +20,7 @@ export const FEES_CHAIN_COLUMN: ColumnDef<ClaimableFees, unknown> = {
           </div>
         </div>
       ),
+      className: 'md:!h-[72px]',
     },
   },
 }
@@ -36,23 +37,31 @@ export const FEES_AMOUNT_COLUMN: ColumnDef<ClaimableFees, unknown> = {
           <SkeletonText fontSize="sm" />
         </div>
       ),
+      className: 'md:!h-[72px]',
     },
   },
 }
 
-export const FEES_ACTION_COLUMN: ColumnDef<ClaimableFees, unknown> = {
-  id: 'action',
-  header: 'Action',
-  cell: (props) => <ClaimableFeesActionCell {...props.row} />,
-  size: 280,
-  meta: {
-    body: {
-      skeleton: (
-        <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
-        </div>
-      ),
+export function createFeesActionColumn(
+  onClaim: (claim: ClaimableFees) => void,
+): ColumnDef<ClaimableFees, unknown> {
+  return {
+    id: 'action',
+    header: 'Action',
+    cell: (props) => (
+      <ClaimableFeesActionCell {...props.row} onClaim={onClaim} />
+    ),
+    size: 280,
+    meta: {
+      body: {
+        skeleton: (
+          <div className="flex gap-3 w-[280px]">
+            <SkeletonBox className="h-10 w-full" />
+            <SkeletonBox className="h-10 w-full" />
+          </div>
+        ),
+        className: 'md:!h-[72px]',
+      },
     },
-  },
+  }
 }

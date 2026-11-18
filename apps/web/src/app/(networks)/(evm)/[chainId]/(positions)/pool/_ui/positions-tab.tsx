@@ -50,9 +50,7 @@ export const PositionsTab: FC<{
   }
 
   return (
-    <div className="flex flex-col mt-4 mb-8">
-      {tab === 'v2' ? <V2MigrationNotice /> : null}
-
+    <div className="flex flex-col mt-3 mb-8 gap-3">
       <Tabs value={tab} defaultValue={tab}>
         <TabsContent value="v3">
           <ConcentratedPositionsTable
@@ -74,6 +72,7 @@ export const PositionsTab: FC<{
           </TabsContent>
         )}
       </Tabs>
+      {tab === 'v2' ? <V2MigrationNotice /> : null}
     </div>
   )
 }

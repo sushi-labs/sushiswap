@@ -20,6 +20,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
@@ -68,18 +69,18 @@ export const ConcentratedLiquidityCollectAllDialog: FC<
 > = ({ positions, chainId, account, children }) => {
   return (
     <DialogProvider>
-      <_ConcentratedLiquidityCollectAllDialog
+      <ConcentratedLiquidityCollectAllDialogContent
         positions={positions}
         chainId={chainId}
         account={account}
       >
         {children}
-      </_ConcentratedLiquidityCollectAllDialog>
+      </ConcentratedLiquidityCollectAllDialogContent>
     </DialogProvider>
   )
 }
 
-const _ConcentratedLiquidityCollectAllDialog: FC<
+export const ConcentratedLiquidityCollectAllDialogContent: FC<
   ConcentratedLiquidityCollectAllDialog
 > = ({ positions, chainId, account, children }) => {
   const { open: isOpen } = useDialog(DialogType.Review)
@@ -88,6 +89,14 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
   const queryClient = useQueryClient()
   const { refetchChain: refetchBalances } = useRefetchBalances()
   const [receiveWrapped, setReceiveWrapped] = useState(false)
+  const isMounted = useRef(false)
+
+  useEffect(() => {
+    isMounted.current = true
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
 
   useEffect(() => {
     if (chainId === EvmChainId.ARC) {
@@ -269,7 +278,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
     return async (confirm: () => void) => {
       try {
         await sendTransactionAsync(prepare)
-        confirm()
+        if (isMounted.current) confirm()
       } catch {}
     }
   }, [isSimulationError, prepare, sendTransactionAsync])
@@ -290,16 +299,16 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                  <span className="font-semibold text-sm text-gray-900 dark:text-slate-50">
+                <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary border border-accent">
+                  <span className="font-semibold text-sm text-primary">
                     Total Value
                   </span>
-                  <span className="font-semibold text-sm text-gray-900 dark:text-slate-50">
+                  <span className="font-semibold text-sm text-primary">
                     ${totalFeeValue.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex flex-col gap-3 p-4 bg-white rounded-xl dark:bg-secondary border border-accent">
-                  <span className="text-xs text-gray-400 dark:text-slate-400">
+                <div className="flex flex-col gap-3 p-4 rounded-2xl bg-secondary border border-accent">
+                  <span className="text-xs text-muted-foreground">
                     You'll receive collected fees:
                   </span>
                   <div className="flex flex-col gap-4">
@@ -314,15 +323,15 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                             width={18}
                             height={18}
                           />
-                          <span className="text-sm text-gray-500 dark:text-slate-400 font-medium">
+                          <span className="text-sm text-muted-foreground font-medium">
                             {amount.currency.symbol}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-900 dark:text-slate-50 font-semibold">
+                          <span className="text-sm text-primary font-semibold">
                             {amount.toSignificant(6)}
                           </span>
-                          <span className="text-sm text-gray-400 dark:text-slate-400">
+                          <span className="text-sm text-muted-foreground">
                             ${feeValues[i].toFixed(1)}
                           </span>
                         </div>
@@ -332,7 +341,7 @@ const _ConcentratedLiquidityCollectAllDialog: FC<
                 </div>
                 {hasNativeToken && chainId !== EvmChainId.ARC && (
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-gray-500 dark:text-slate-400 text-sm">
+                    <span className="text-sm text-muted-foreground">
                       Receive {nativeToken?.wrap().symbol} instead of{' '}
                       {nativeToken?.symbol}
                     </span>

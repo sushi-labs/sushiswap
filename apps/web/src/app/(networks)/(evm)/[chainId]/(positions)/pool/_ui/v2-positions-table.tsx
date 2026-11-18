@@ -173,6 +173,8 @@ export function V2PositionsTable({
           data={_positions}
           state={state}
           onSortingChange={setSorting}
+          trClassName="h-[72px]"
+          estimateSize={72}
         />
       </div>
       <div className="md:hidden">

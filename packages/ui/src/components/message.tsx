@@ -8,7 +8,7 @@ import { IconButton } from './iconbutton'
 const messageVariants = cva('relative', {
   variants: {
     variant: {
-      info: 'bg-blue/10 text-blue',
+      info: 'bg-pink/10 text-pink',
       destructive: 'bg-red/10 text-red',
       warning: 'bg-yellow/10 dark:text-yellow text-amber-900',
       muted: 'bg-secondary',

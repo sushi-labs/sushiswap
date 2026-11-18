@@ -101,7 +101,7 @@ export const TableFiltersPoolType: FC = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="!w-[unset] !p-0">
+      <PopoverContent align="start" className="!w-[unset] !p-0 !bg-background">
         <HoverCard>
           <PopoverPrimitive.Portal>
             <HoverCardContent
@@ -173,7 +173,7 @@ const ProtocolItem: FC<ProtocolItemProps> = ({
       key={protocol}
       value={protocol}
       onSelect={onSelect}
-      className="py-2 pl-8 pr-2 cursor-pointer"
+      className="py-2 pl-8 pr-2 cursor-pointer  hover:bg-muted"
     >
       {selected.includes(protocol) ? (
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

@@ -278,6 +278,8 @@ export function ConcentratedPositionsTable({
           data={_positions}
           state={state}
           onSortingChange={setSorting}
+          estimateSize={72}
+          trClassName="h-[72px]"
         />
       </div>
       <div className="md:hidden">

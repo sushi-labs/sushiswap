@@ -287,7 +287,7 @@ export function DataTableVirtual<TData, TValue>({
               ) : null}
             </>
           ) : (
-            <TableRow>
+            <TableRow className={classNames(trClassName ?? '')}>
               <TableCell
                 testdata-id="table-no-results"
                 colSpan={columns.length}

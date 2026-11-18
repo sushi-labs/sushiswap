@@ -10,24 +10,24 @@ import {
 import type { Row } from '@tanstack/react-table'
 import { type FC, useMemo } from 'react'
 import { formatUSD } from 'sushi'
-import type { ClaimableFees } from './claimable-fees-tab'
+import type { ClaimableFees } from './claimable-fees-dialog'
 
 export const ClaimableFeesAmountCell: FC<Row<ClaimableFees>> = ({
   original,
 }) => {
   const { card, trigger } = useMemo(() => {
     const card = (
-      <div className="flex flex-col gap-5 p-5 w-80">
+      <div className="flex flex-col gap-5 p-5">
         <span className="text-muted-foreground font-medium text-xs">
           Fees Breakdown
         </span>
-        <div className="flex flex-col gap-5 p-4 bg-background rounded-xl">
+        <div className="flex flex-col gap-5 p-4 bg-background sm:bg-secondary rounded-xl">
           <div className="flex flex-col gap-4">
             {Object.values(original.feeAmounts).map((amount) => {
               return (
                 <div
                   key={amount.currency.id}
-                  className="flex justify-between text-sm"
+                  className="flex justify-between text-sm gap-2"
                 >
                   <div className="flex gap-1.5 items-center">
                     <Currency.Icon
@@ -81,7 +81,7 @@ export const ClaimableFeesAmountCell: FC<Row<ClaimableFees>> = ({
             />
           ))}
           {additionalRewardTokens > 0 ? (
-            <div className="h-4 px-0.5 flex items-center rounded-full bg-[rgba(256,256,256,.04)] border border-[rgba(256,256,256,0.08)]">
+            <div className="h-4 px-0.5 flex items-center rounded-full bg-secondary border border-accent">
               <span className="text-[8px] leading-4 font-semibold text-muted-foreground">
                 +{additionalRewardTokens}
               </span>
