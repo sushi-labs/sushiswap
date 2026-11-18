@@ -2,11 +2,7 @@
 
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
-import {
-  type RawV2Pool,
-  type V2Pool,
-  hydrateV2Pool,
-} from '@sushiswap/graph-client/data-api'
+import { type RawV2Pool, hydrateV2Pool } from '@sushiswap/graph-client/data-api'
 import { SlippageToleranceStorageKey, TTLStorageKey } from '@sushiswap/hooks'
 import {
   Card,
@@ -26,6 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Dots,
+  FormSection,
   IconButton,
   List,
   Message,
@@ -34,7 +31,7 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import React, { type FC, useMemo, useState } from 'react'
+import { type FC, useMemo, useState } from 'react'
 import { APPROVE_TAG_MIGRATE, Bound, Field } from 'src/lib/constants'
 import { useV2Pool } from 'src/lib/hooks/api/use-v2-pool'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
@@ -389,14 +386,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
     return (
       <DialogProvider>
         <Card>
-          <CardHeader>
-            <CardTitle>Migrate position</CardTitle>
-            <CardDescription>
-              Migrate your V2 position to a concentrated liquidity position to
-              improve your capital efficiency.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6 !pb-3">
             <div className="flex flex-col gap-6 md:flex-row">
               <CardGroup>
                 <CardLabel>V2 Price</CardLabel>
@@ -458,11 +448,10 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                 fiatValue={formatUSD(value1)}
               />
             </CardGroup>
-          </CardContent>
-          <div className="pb-4">
             <Separator />
-          </div>
-          <CardContent className="!pb-0">
+          </CardContent>
+
+          <CardContent className="!pb-0 !gap-1">
             <SelectFeeConcentratedWidget
               chainId={pool.chainId as SushiSwapV3ChainId}
               setFeeAmount={setFeeAmount}
@@ -504,13 +493,12 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                 ) : null}
               </SelectPricesWidget>
             </div>
+            <Separator />
           </CardContent>
-          <CardContent className="pt-0">
-            <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px]">
-              <div className="col-span-3 md:col-span-1" />
-              <div className="col-span-3 space-y-6 md:col-span-2">
-                <Separator />
-                <Card className="bg-transparent shadow-none">
+          <CardContent className="pt-2">
+            <div className="grid grid-cols-3 gap-x-10 py-2">
+              <div className="col-span-3 space-y-6 py-4">
+                <Card className="!bg-muted shadow-none">
                   <CardHeader>
                     <CardTitle>Migrated value</CardTitle>
                     <CardDescription>
@@ -532,7 +520,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                     </CardGroup>
                   </CardContent>
                 </Card>
-                <Card className="bg-transparent shadow-none">
+                <Card className="!bg-muted shadow-none">
                   <CardHeader>
                     <CardTitle>Refunded tokens</CardTitle>
                     <CardDescription>
@@ -555,19 +543,15 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                   </CardContent>
                 </Card>
                 <CardFooter className="!px-0 !pb-0">
-                  <Checker.Connect fullWidth size="default">
-                    <Checker.Network
-                      fullWidth
-                      size="default"
-                      chainId={pool.chainId}
-                    >
+                  <Checker.Connect fullWidth size="xl">
+                    <Checker.Network fullWidth size="xl" chainId={pool.chainId}>
                       <Checker.Guard
-                        size="default"
+                        size="xl"
                         guardWhen={!balance?.gt(ZERO)}
                         guardText="Not enough balance"
                       >
                         <Checker.Guard
-                          size="default"
+                          size="xl"
                           guardWhen={Boolean(
                             !position ||
                               positionAmount0?.eq(ZERO) ||
@@ -577,7 +561,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                         >
                           <Checker.ApproveERC20
                             fullWidth
-                            size="default"
+                            size="xl"
                             id="approve-migrate"
                             amount={balance ?? undefined}
                             contract={
@@ -598,18 +582,23 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                                     <DialogTrigger asChild>
                                       <Button
                                         fullWidth
-                                        size="default"
+                                        size="xl"
                                         testId="migrate"
                                       >
                                         Migrate Liquidity
                                       </Button>
                                     </DialogTrigger>
-                                    <DialogContent>
+                                    <DialogContent className="max-h-[80vh] scroll">
                                       <DialogHeader>
+                                        <DialogTitle>
+                                          Migrate Liquidity
+                                        </DialogTitle>
+
                                         <div className="flex justify-between">
-                                          <DialogTitle>
-                                            Migrate Liquidity
-                                          </DialogTitle>
+                                          <DialogDescription>
+                                            {token0?.symbol}/{token1?.symbol} •
+                                            SushiSwap V3 • {feeAmount / 10000}%
+                                          </DialogDescription>
                                           <SettingsOverlay
                                             options={{
                                               slippageTolerance: {
@@ -634,14 +623,9 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
                                               name="Settings"
                                               icon={Cog6ToothIcon}
                                               variant="secondary"
-                                              className="mr-12"
                                             />
                                           </SettingsOverlay>
                                         </div>
-                                        <DialogDescription>
-                                          {token0?.symbol}/{token1?.symbol} •
-                                          SushiSwap V3 • {feeAmount / 10000}%
-                                        </DialogDescription>
                                       </DialogHeader>
                                       <div className="flex flex-col gap-4">
                                         <List className="!pt-0">
@@ -890,7 +874,7 @@ export const MigrateTab: FC<{ pool: RawV2Pool }> = withCheckerRoot(
             chainId={pool.chainId as SushiSwapV3ChainId}
             status={status}
             testId="migrate-confirmation-modal"
-            successMessage={`Successfully migrated your ${token0.symbol}/${token1.symbol} position`}
+            successMessage={`Successfully migrated your ${token0?.symbol}/${token1?.symbol} position`}
             buttonText="Go to pool"
             buttonLink={`/pools/${pool.chainId}:${v3Address}?activeTab=myPositions`}
             txHash={hash}

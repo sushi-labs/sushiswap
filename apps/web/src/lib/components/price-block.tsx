@@ -48,7 +48,7 @@ export function PriceBlock({
     if (typeof next === 'string') onUserInput(next)
   }
   return (
-    <Card className="bg-transparent shadow-none">
+    <Card className="!bg-muted shadow-none w-full">
       <CardHeader>
         <CardTitle>{label}</CardTitle>
         <CardDescription>
@@ -77,16 +77,16 @@ export function PriceBlock({
             disabled={locked}
             className="text-3xl font-medium pt-1 pb-2"
           />
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <button
               type="button"
               aria-label={`Decrease ${label.toLowerCase()}`}
               disabled={locked || decrementDisabled}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => step(decrement)}
-              className="flex items-center justify-center w-6 h-6 bg-secondary hover:bg-muted rounded-full disabled:opacity-40"
+              className="flex items-center border border-accent justify-center w-8 h-8 bg-secondary hover:bg-background rounded-full disabled:opacity-40"
             >
-              <MinusIcon width={12} height={12} />
+              <MinusIcon width={14} height={14} />
             </button>
             <button
               type="button"
@@ -94,9 +94,9 @@ export function PriceBlock({
               disabled={locked || incrementDisabled}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => step(increment)}
-              className="flex items-center justify-center w-6 h-6 bg-secondary hover:bg-muted rounded-full disabled:opacity-40"
+              className="flex items-center border border-accent justify-center w-8 h-8 bg-secondary hover:bg-background rounded-full disabled:opacity-40"
             >
-              <PlusIcon width={12} height={12} />
+              <PlusIcon width={14} height={14} />
             </button>
           </div>
         </div>

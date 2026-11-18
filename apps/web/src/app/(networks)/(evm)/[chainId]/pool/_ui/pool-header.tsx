@@ -79,7 +79,7 @@ export const PoolHeader: FC<PoolHeader> = ({
       {title ? (
         <div className="flex flex-col gap-1 mb-2">
           <h1 className="text-3xl md:text-4xl font-medium">{title.main}</h1>
-          <h2 className="md:text-lg text-secondary-foreground">{title.sub}</h2>
+          <h2 className="md:text-lg text-muted-foreground">{title.sub}</h2>
         </div>
       ) : null}
       <div className="flex flex-col gap-4 md:flex-row center md:justify-between md:flex-wrap">

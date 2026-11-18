@@ -1,12 +1,15 @@
 'use client'
 
+import { Radio, RadioGroup } from '@headlessui/react'
 import { SwitchHorizontalIcon } from '@heroicons/react-v1/solid'
+import { ExternalLinkIcon } from '@heroicons/react-v1/solid'
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 import { useIsMounted } from '@sushiswap/hooks'
 import {
   Button,
   Card,
   CardDescription,
-  CardFooter,
   CardHeader,
   Explainer,
   FormSection,
@@ -32,7 +35,10 @@ import React, {
 } from 'react'
 import { PriceBlock } from 'src/lib/components/price-block'
 import { Bound, Field } from 'src/lib/constants'
+import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
+import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
+import { Amount, Fraction, formatPercent } from 'sushi'
 import {
   type EvmAddress,
   type EvmCurrency,
@@ -43,13 +49,6 @@ import {
   getTokenRatio,
   tickToPrice,
 } from 'sushi/evm'
-
-import { Radio, RadioGroup } from '@headlessui/react'
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/solid'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
-import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
-import { useConcentratedLiquidityPositionsFromTokenId } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-positions-from-token-id'
-import { Amount, Fraction, formatPercent } from 'sushi'
 import { useConnection } from 'wagmi'
 import {
   useConcentratedDerivedMintInfo,
@@ -494,15 +493,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
       description={
         <>
           Select a price range to provide liquidity. You will not earn any fees
-          when prices move outside of this range.{' '}
-          <a
-            target="_blank"
-            className="text-blue"
-            rel="noopener noreferrer"
-            href="https://docs.uniswap.org/concepts/protocol/concentrated-liquidity"
-          >
-            Learn more.
-          </a>
+          when prices move outside of this range.
         </>
       }
     >
@@ -526,7 +517,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
           </div>
         ) : null}
         {children ? children : null}
-        <div className="rounded-xl flex flex-col gap-8">
+        <div className="rounded-xl flex flex-col gap-4">
           {isMounted && showStartPrice && (
             <div className="flex flex-col gap-3">
               {noLiquidity && (
@@ -580,7 +571,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               )}
             </div>
           )}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <div className="flex lg:hidden">
               {isLoading || !pool || !token0 || !token1 ? (
                 <SkeletonText fontSize="xs" />
@@ -588,7 +579,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 <div
                   onClick={() => setInvert((prev) => !prev)}
                   onKeyDown={() => setInvert((prev) => !prev)}
-                  className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-blue hover:text-blue-600"
+                  className="text-xs flex items-center font-semibold gap-1.5 rounded-xl text-pink hover:text-pink-600"
                 >
                   <SwitchHorizontalIcon width={16} height={16} />
                   <div className="flex items-baseline gap-1.5">
@@ -615,7 +606,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                       disabled={!feeAmount}
                       size="sm"
                       variant="outline"
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap bg-secondary data-[state=on]:!bg-background data-[state=on]:!border-pink"
                       onClick={
                         priceRange === value
                           ? () => {
@@ -635,7 +626,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                 ))}
               </RadioGroup>
             </div>
-            <Card>
+            <Card className="!bg-muted">
               <CardHeader>
                 <CardDescription className="flex flex-col gap-3 !text-accent-foreground">
                   <div className="flex flex-wrap items-start justify-between gap-1 flex-col sm:flex-row sm:items-center">
@@ -732,6 +723,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
                           <TooltipTrigger asChild>
                             <span className="mr-1">
                               <span className="underline decoration-dotted">
+                                Estimated{' '}
                                 {yieldRate === YieldRatePeriod.DAILY
                                   ? 'Daily Rate'
                                   : yieldRate === YieldRatePeriod.MONTHLY
@@ -791,7 +783,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               </CardHeader>
             </Card>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <PriceBlock
               id={'min-price'}
               token0={token0}
@@ -841,27 +833,21 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
               }
             />
           </div>
-          <Card>
-            <CardHeader>
-              <CardDescription>
-                We{`'`}re excited to share that Sushi integration is now live on{' '}
-                <LinkExternal href="https://poolfish.xyz/calculators/sushi">
-                  Poolfish.xyz
-                </LinkExternal>
-                ! To get an estimate of the fees you could earn based on your
-                chosen parameters, please visit our platform by clicking here.
-                We look forward to assisting you with your earnings
-                calculations.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <LinkExternal href={poolFish.toString()}>
-                <Button variant="link" size="sm" asChild>
-                  View position on Poolfish.xyz
-                </Button>
-              </LinkExternal>
-            </CardFooter>
-          </Card>
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <p>Estimated fees for you selected range.</p>
+            <LinkExternal href={poolFish.toString()}>
+              <Button
+                variant="link"
+                size="sm"
+                asChild
+                className="!rounded-none"
+                iconPosition="end"
+                icon={ExternalLinkIcon}
+              >
+                View position on Poolfish.xyz
+              </Button>
+            </LinkExternal>
+          </div>
         </div>
       </div>
     </FormSection>

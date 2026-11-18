@@ -20,9 +20,10 @@ import {
   LinkInternal,
 } from '@sushiswap/ui'
 import { Dots } from '@sushiswap/ui'
-import React, { type FC, memo, useCallback, useMemo } from 'react'
+import { type FC, memo, useCallback, useMemo } from 'react'
 import { FeeTierCard } from 'src/lib/components/fee-tier-card'
 import { usePoolsByTokenPair } from 'src/lib/hooks/use-pools-by-token-pair'
+import { getChainById } from 'sushi'
 import {
   EvmChainId,
   type EvmCurrency,
@@ -150,7 +151,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
             {FEE_OPTIONS.map((option) => {
               const tvlShare = tvlDistribution.get(option.value)
               const badge = tvlShare ? (
-                <Chip key={option.value} variant="secondary">
+                <Chip key={option.value} variant="muted">
                   {isLoading ? (
                     <Dots />
                   ) : (
@@ -186,7 +187,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
                           variant="secondary"
                         >
                           <LinkInternal
-                            href={`/pool/add?chainId=${
+                            href={`/${getChainById(token0.chainId).key}/pool/v3/add?chainId=${
                               token0.chainId
                             }&feeAmount=${option.value}&fromCurrency=${
                               token0.type === 'native'

@@ -47,7 +47,7 @@ export function FeeTierCard({
       disabled={disabled}
       onClick={onSelect}
       testdata-id={`fee-option-${fee}`}
-      className="!h-auto !w-auto !p-0 !text-left !justify-start items-stretch whitespace-normal bg-white dark:bg-background dark:data-[state=on]:bg-secondary"
+      className="!h-auto !w-auto !p-0 !text-left !rounded-2xl !justify-start items-stretch whitespace-normal !border-transparent bg-secondary data-[state=on]:!bg-background data-[state=on]:!border-pink"
     >
       <Card variant="outline" className="w-full text-left">
         {content}

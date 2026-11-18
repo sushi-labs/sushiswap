@@ -6,6 +6,7 @@ import {
   CardTitle,
   FormSection,
   Toggle,
+  classNames,
 } from '@sushiswap/ui'
 import type { FC } from 'react'
 
@@ -52,9 +53,12 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
             <Toggle
               pressed={checked}
               asChild
-              className="!h-full !w-full !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
+              className={classNames(
+                '!h-full !w-full !p-0 !text-left !border-accent !justify-start bg-secondary data-[state=on]:!bg-background !rounded-2xl data-[state=on]:!border-pink',
+                !isSmartPoolSupported && 'cursor-not-allowed',
+              )}
             >
-              <Card className={!isSmartPoolSupported ? 'opacity-40' : ''}>
+              <Card className={!isSmartPoolSupported ? 'opacity-40 ' : ''}>
                 <CardHeader>
                   <CardTitle>Liquidity Vault</CardTitle>
                   <CardDescription>Apply automated strategy</CardDescription>
@@ -68,7 +72,7 @@ export const SelectV3PoolTypeWidget: FC<SelectV3PoolTypeWidgetProps> = ({
             <Toggle
               pressed={checked}
               asChild
-              className="!h-full !w-full !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
+              className="!h-full !w-full !p-0 !text-left !border-accent !justify-start bg-secondary data-[state=on]:!bg-background !rounded-2xl data-[state=on]:!border-pink"
             >
               <Card>
                 <CardHeader>

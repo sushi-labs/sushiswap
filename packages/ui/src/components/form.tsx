@@ -29,14 +29,14 @@ const FormSection = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-x-10 lg:gap-x-[56px] py-2">
-      <div className="col-span-3 md:col-span-1 py-4">
+    <div className="grid grid-cols-3 gap-x-10 py-2">
+      <div className="col-span-3 py-2">
         <CardHeader className="!p-0">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
       </div>
-      <div className="col-span-3 md:col-span-2 space-y-6 py-4">{children}</div>
+      <div className="col-span-3 space-y-6 py-4">{children}</div>
     </div>
   )
 }

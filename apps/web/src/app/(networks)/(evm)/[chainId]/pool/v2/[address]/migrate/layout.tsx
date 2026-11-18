@@ -32,7 +32,7 @@ export default async function Layout(props: {
 
   return (
     <>
-      <Container maxWidth="6xl" className="pt-10 px-4">
+      <Container maxWidth="5xl" className="pt-10 px-4">
         <PoolHeader
           backUrl={
             referer?.includes('/pool')
@@ -48,8 +48,8 @@ export default async function Layout(props: {
           }}
         />
       </Container>
-      <section className="flex flex-col flex-1 mt-4  py-10">
-        <Container maxWidth="6xl" className="px-4">
+      <section className="flex flex-col flex-1 mt-4 py-10">
+        <Container maxWidth="5xl" className="px-4">
           {children}
         </Container>
       </section>
