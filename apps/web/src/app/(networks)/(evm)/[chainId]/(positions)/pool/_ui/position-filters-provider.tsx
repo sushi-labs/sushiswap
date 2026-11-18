@@ -1,8 +1,15 @@
 'use client'
 import type { PoolChainId } from '@sushiswap/graph-client/data-api'
-import { useLocalStorage } from '@sushiswap/hooks'
+import { useIsMounted, useLocalStorage } from '@sushiswap/hooks'
 import { useSearchParams } from 'next/navigation'
-import { type FC, createContext, useContext, useMemo, useState } from 'react'
+import {
+  type FC,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   SushiSwapProtocol,
   isSushiSwapV2ChainId,
@@ -42,7 +49,9 @@ interface State {
   }
 }
 
-const PositionFiltersContext = createContext<State>({} as State)
+const PositionFiltersContext = createContext<
+  (State & { defaultTab: PositionTabType }) | undefined
+>(undefined)
 
 interface PositionFiltersProviderProps {
   children: React.ReactNode
@@ -55,28 +64,30 @@ const PositionFiltersProvider: FC<PositionFiltersProviderProps> = ({
 }) => {
   const tabOptions = useMemo(() => createItems(chainId), [chainId])
   const searchParams = useSearchParams()
-  const urlTab = searchParams.get('tab')
+  const urlTabOption = tabOptions.find(
+    (item) => item.value === searchParams.get('tab') && !item.disabled,
+  )
 
   // Find the first non-disabled tab as default
   const defaultTab = useMemo(() => {
-    if (urlTab) {
-      const matchingItem = tabOptions.find(
-        (item) => item.value === urlTab && !item.disabled,
-      )
-      if (matchingItem) {
-        return matchingItem.value
-      }
-    }
+    if (urlTabOption) return urlTabOption.value
     const firstAvailable = tabOptions.find((item) => !item.disabled)
     return firstAvailable?.value || 'v3'
-  }, [tabOptions, urlTab])
+  }, [tabOptions, urlTabOption])
   const [tab, setTab] = useLocalStorage<PositionTabType>('tab', defaultTab)
+
+  // An explicit URL selection takes precedence over the saved preference.
+  // Synchronize URL/network changes so the dropdown remains free to change tabs.
+  useEffect(() => {
+    if (urlTabOption) setTab(urlTabOption.value)
+  }, [urlTabOption, setTab])
 
   const [hideClosedPositions, setHideClosedPositions] = useState(true)
   return (
     <PositionFiltersContext.Provider
       value={useMemo(() => {
         return {
+          defaultTab,
           state: {
             tab,
             hideClosedPositions,
@@ -87,20 +98,31 @@ const PositionFiltersProvider: FC<PositionFiltersProviderProps> = ({
             setHideClosedPositions,
           },
         }
-      }, [tab, hideClosedPositions, tabOptions, setTab])}
+      }, [defaultTab, tab, hideClosedPositions, tabOptions, setTab])}
     >
       {children}
     </PositionFiltersContext.Provider>
   )
 }
 
-const usePositionFilters = () => {
+function usePositionFilters(): State {
   const context = useContext(PositionFiltersContext)
-  if (!context) {
-    throw new Error('Hook can only be used inside Position Filters Context')
-  }
+  // Suspense can delay a consumer's hydration beyond the provider's mount.
+  const isMounted = useIsMounted()
 
-  return context
+  return useMemo(() => {
+    if (!context) {
+      throw new Error('Hook can only be used inside Position Filters Context')
+    }
+
+    return {
+      state: {
+        ...context.state,
+        tab: isMounted ? context.state.tab : context.defaultTab,
+      },
+      mutate: context.mutate,
+    }
+  }, [context, isMounted])
 }
 
 export { PositionFiltersProvider, usePositionFilters }

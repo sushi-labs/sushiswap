@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMounted } from '@sushiswap/hooks'
 import {
   BrowserEvent,
   InterfaceElementName,
@@ -27,12 +28,13 @@ export const SelectWalletButton: FC<SelectWalletButtonProps> = ({
   ...props
 }) => {
   const { isOpen, open, close } = useSidebar()
+  const isMounted = useIsMounted()
 
   const { isPending } = useWalletContext()
 
-  // Pending confirmation state
-  // Awaiting wallet confirmation
-  if (isPending) {
+  // Reconnection can start before a streamed button hydrates. Keep its first
+  // client render consistent with the server until this button has mounted.
+  if (isMounted && isPending) {
     return (
       <Button loading {...props}>
         {pendingText || 'Authorize Wallet'}
