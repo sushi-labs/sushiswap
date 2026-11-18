@@ -1,11 +1,12 @@
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
 import { TableFiltersNetwork } from 'src/app/(networks)/_ui/table-filters-network'
 import { TableFiltersSearchToken } from 'src/app/(networks)/_ui/table-filters-search-token'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isBladeChainId, isSushiSwapChainId } from 'sushi/evm'
+import { isSushiSwapChainId } from 'sushi/evm'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
+import { HideClosedPositions } from './_ui/hide-closed-positions'
+import { PositionTypeSelector } from './_ui/position-type-selector'
 import { PositionsTab } from './_ui/positions-tab'
 
 export default async function MyPositionsPage(props: {
@@ -14,25 +15,34 @@ export default async function MyPositionsPage(props: {
   const params = await props.params
   const chainId = +params.chainId
 
-  const isBladeChain = isBladeChainId(chainId)
-
-  if (!isSushiSwapChainId(chainId) && !isBladeChain) {
+  if (!isSushiSwapChainId(chainId)) {
     return notFound()
   }
 
   return (
-    <Container maxWidth="7xl" className="px-4">
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <TableFiltersSearchToken />
-        <TableFiltersNetwork
-          network={chainId}
-          supportedNetworks={POOL_SUPPORTED_NETWORKS}
-          unsupportedNetworkHref="/ethereum/pool"
-          className="lg:hidden block"
-        />
-        <TableFiltersResetButton />
-      </div>
-      <PositionsTab chainId={chainId} />
-    </Container>
+    <>
+      <Container maxWidth="7xl" className="px-4">
+        <div className="flex flex-wrap justify-between gap-3 items-center">
+          <div className="flex flex-col xs:flex-row gap-3 flex-wrap items-start xs:items-center">
+            <TableFiltersSearchToken />
+            <PositionTypeSelector />
+            <TableFiltersNetwork
+              network={chainId}
+              // todo: remove Mantle from PoolChainIds
+              supportedNetworks={POOL_SUPPORTED_NETWORKS}
+              unsupportedNetworkHref="/ethereum/pool"
+            />
+            <span className="block md:hidden">
+              <HideClosedPositions />
+            </span>
+            <TableFiltersResetButton />
+          </div>
+          <span className="hidden md:block">
+            <HideClosedPositions />
+          </span>
+        </div>
+        <PositionsTab chainId={chainId} />
+      </Container>
+    </>
   )
 }

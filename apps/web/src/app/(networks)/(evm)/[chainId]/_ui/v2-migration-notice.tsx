@@ -42,7 +42,7 @@ export const V2MigrationNotice = ({ className }: { className?: string }) => {
         />
       </div>
       <Collapsible open={open}>
-        <div className="flex flex-col md:flex-row gap-4 items-center mt-2">
+        <div className="flex flex-col md:flex-row gap-4 items-center pt-2">
           <div className="flex flex-col">
             <p>
               If you had LPs staked in a MasterChef or MiniChef contracts, they

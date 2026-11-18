@@ -1,6 +1,5 @@
 'use client'
 
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import { Slot } from '@radix-ui/react-slot'
 import type {
   GetPools,
@@ -8,18 +7,11 @@ import type {
   Pools,
 } from '@sushiswap/graph-client/data-api'
 import {
-  Button,
   Card,
   CardHeader,
   CardTitle,
+  DataTableSortMenu,
   DataTableVirtual,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   Loader,
   MobileTable,
   SkeletonText,
@@ -100,12 +92,6 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'liquidityUSD', desc: true },
   ])
-  const selectedSort = SORT_OPTIONS.find(
-    (option) => option.id === sorting[0]?.id,
-  )
-  const sortLabel = selectedSort?.label ?? 'Default'
-  const isAscending = sorting[0]?.desc === false
-  const sortDescription = `${sortLabel}, ${isAscending ? 'lowest first' : 'highest first'}`
 
   const args = useMemo<Omit<GetPools, 'page'>>(() => {
     const tokenSymbolsSet = new Set([
@@ -235,64 +221,13 @@ export const PoolsTable: FC<PoolsTableProps> = ({
                 </span>
               )}
             </CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="block md:hidden">
-                <Button
-                  aria-label={`Sort pools by ${sortDescription}`}
-                  title={sortDescription}
-                  variant="secondary"
-                  size="sm"
-                  icon={isAscending ? ArrowUpIcon : ArrowDownIcon}
-                  iconProps={{ className: 'shrink-0' }}
-                  iconPosition="end"
-                  className="min-w-0 lg:hidden"
-                >
-                  <span className="truncate">{sortLabel}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="lg:hidden">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                <DropdownMenuRadioGroup
-                  value={sorting[0]?.id ?? ''}
-                  onValueChange={(id) => {
-                    const option = SORT_OPTIONS.find(
-                      (option) => option.id === id,
-                    )
-                    if (option) {
-                      setSorting([
-                        { id: option.id, desc: sorting[0]?.desc ?? true },
-                      ])
-                    }
-                  }}
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <DropdownMenuRadioItem key={option.id} value={option.id}>
-                      {option.label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup
-                  aria-label="Sort direction"
-                  value={sorting[0]?.desc === false ? 'asc' : 'desc'}
-                  onValueChange={(direction) =>
-                    setSorting([
-                      {
-                        id: sorting[0]?.id ?? 'liquidityUSD',
-                        desc: direction === 'desc',
-                      },
-                    ])
-                  }
-                >
-                  <DropdownMenuRadioItem value="desc">
-                    Highest first
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="asc">
-                    Lowest first
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <DataTableSortMenu
+              label="pools"
+              options={SORT_OPTIONS}
+              sorting={sorting}
+              onSortingChange={setSorting}
+              className="md:hidden"
+            />
           </div>
         </CardHeader>
         <div className="hidden md:block">

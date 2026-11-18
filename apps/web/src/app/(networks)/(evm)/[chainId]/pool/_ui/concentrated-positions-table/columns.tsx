@@ -1,6 +1,5 @@
 import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import type { ColumnDef } from '@tanstack/react-table'
-import React from 'react'
 import type { ConcentratedLiquidityPositionWithV3Pool } from 'src/lib/wagmi/hooks/positions/types'
 import { formatUSD } from 'sushi'
 import { PoolNameCellV3 } from './pool-name-cell-v3'
@@ -11,7 +10,7 @@ export const PRICE_RANGE_COLUMN: ColumnDef<
   unknown
 > = {
   id: 'priceRange',
-  header: 'Price Range',
+  header: 'Price range',
   cell: (props) => <PriceRangeCell {...props.row} />,
   meta: {
     body: {
@@ -40,6 +39,7 @@ export const NAME_COLUMN_V3: ColumnDef<
           </div>
         </div>
       ),
+      className: '!h-[72px]',
     },
   },
 }
@@ -50,7 +50,7 @@ export const POSITION_SIZE_CELL: ColumnDef<
 > = {
   id: 'positionSize',
   accessorFn: (row) => +row.position.positionUSD,
-  header: 'Position Size',
+  header: 'Position value',
   cell: (props) => formatUSD(props.row.original.position.positionUSD),
   meta: {
     body: {

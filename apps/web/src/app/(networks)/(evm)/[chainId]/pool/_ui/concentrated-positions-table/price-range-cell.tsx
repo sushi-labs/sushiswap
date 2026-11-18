@@ -92,18 +92,18 @@ export const PriceRangeCell: FC<
         setManuallyInverted((prev) => !prev)
       }}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 whitespace-nowrap">
         <div
           className={classNames(
             invalidRange || !inRange
               ? 'bg-red'
               : closed
-                ? 'bg-slate-700'
+                ? 'bg-muted-foreground'
                 : 'bg-green',
-            'w-2 h-2 rounded-full',
+            'w-2 h-2 rounded-full shrink-0',
           )}
         />
-        <span className="whitespace-nowrap text-sm flex items-center gap-1 text-gray-900 dark:text-slate-50">
+        <span className="whitespace-nowrap text-sm flex items-center gap-1 text-primary">
           {fullRange ? (
             '0'
           ) : (
@@ -120,12 +120,12 @@ export const PriceRangeCell: FC<
             <ArrowSmLeftIcon
               width={16}
               height={16}
-              className="text-gray-500 dark:text-slate-500"
+              className="text-muted-foreground"
             />
             <ArrowSmRightIcon
               width={16}
               height={16}
-              className="text-gray-500 dark:text-slate-500 ml-[-7px]"
+              className="text-muted-foreground ml-[-7px]"
             />
           </div>
           {fullRange ? (
@@ -142,7 +142,7 @@ export const PriceRangeCell: FC<
           {currencyQuote?.symbol}
         </span>
       </div>
-      <span className="text-xs flex items-center gap-1 text-gray-900 dark:text-slate-500">
+      <span className="text-xs flex items-center gap-1 text-muted-foreground whitespace-nowrap">
         Current:{' '}
         <FormattedNumber
           number={(inverted

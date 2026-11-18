@@ -11,7 +11,7 @@ import {
   SkeletonText,
 } from '@sushiswap/ui'
 import { formatNumber, formatPercent } from 'sushi'
-import { DataItem } from '../../strategic-reserve/_ui/data-item'
+import { DataItem } from '../../_common/ui/data-item'
 import { useSushiBar } from './sushi-bar-provider'
 import { useVotingPower } from './voting-power-provider'
 

@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { useBuybackReserve } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve'
 import { useBuybackReserveTransactions } from 'src/lib/hooks/react-query/buyback/use-buyback-reserve-transactions'
 import { formatNumber } from 'sushi'
+import { DataItem } from '../../_common/ui/data-item'
 import { reserveDateFormatter } from '../_lib/format'
-import { DataItem } from './data-item'
 
 export const SushiAcquiredData = () => {
   const {

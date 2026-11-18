@@ -85,6 +85,7 @@ export const NAME_COLUMN_POOL: ColumnDef<
           </div>
         </div>
       ),
+      className: '!h-[72px]',
     },
   },
   size: 300,
