@@ -23,7 +23,6 @@ import type { SushiSwapV2ChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
 
-// ! Column types have to be checked manually
 const COLUMNS = [
   NAME_COLUMN_POOL,
   VALUE_COLUMN,
