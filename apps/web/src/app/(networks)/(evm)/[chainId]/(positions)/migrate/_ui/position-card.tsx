@@ -1,15 +1,17 @@
 import type { V2Position } from '@sushiswap/graph-client/data-api'
-import { LinkInternal } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
 import { Currency } from '@sushiswap/ui'
-import { SkeletonCircle, SkeletonText } from '@sushiswap/ui'
+import { SkeletonBox, SkeletonCircle, SkeletonText } from '@sushiswap/ui'
 import {
+  Card,
+  CardContent,
+  LinkInternal,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import type { FC, ReactElement } from 'react'
 import { useTokensFromPool } from 'src/lib/hooks/use-tokens-from-pool'
 import { formatPercent, formatUSD } from 'sushi'
 import { getEvmChainById } from 'sushi/evm'
@@ -18,23 +20,31 @@ interface PositionCard {
   position: V2Position
 }
 
-export const PositionCardSkeleton = () => {
+export function PositionCardSkeleton(): ReactElement {
   return (
-    <div className="relative bg-white dark:bg-slate-800 hover:shadow-md transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-      <SkeletonText fontSize="xs" />
-      <SkeletonText fontSize="2xl" />
-      <div className="flex flex-col gap-2 items-center py-7">
-        <div className="inline-flex">
-          <SkeletonCircle radius={56} />
-          <SkeletonCircle radius={56} style={{ marginLeft: -48 / 3 }} />
+    <Card className="w-[320px]">
+      <CardContent className="!pt-6 !gap-2">
+        <div className="flex flex-col">
+          <SkeletonText fontSize="2xl" style={{ height: 32 }} />
+          <SkeletonText fontSize="xs" style={{ height: 16 }} />
         </div>
-      </div>
-      <SkeletonText fontSize="sm" />
-      <SkeletonText fontSize="sm" />
-      <div className="absolute bottom-7 right-7">
-        <SkeletonText fontSize="2xl" className="!h-[32px] !rounded-full" />
-      </div>
-    </div>
+        <div className="flex flex-col gap-2 items-center py-7">
+          <div className="inline-flex">
+            <div className="rounded-full border-2 border-transparent">
+              <SkeletonCircle radius={56} />
+            </div>
+            <div
+              className="rounded-full border-2 border-transparent"
+              style={{ marginLeft: -56 / 3 }}
+            >
+              <SkeletonCircle radius={56} />
+            </div>
+          </div>
+        </div>
+        <SkeletonText fontSize="sm" />
+        <SkeletonBox className="h-9 w-full !rounded-full" />
+      </CardContent>
+    </Card>
   )
 }
 
@@ -45,55 +55,59 @@ export const PositionCard: FC<PositionCard> = ({ position }) => {
     Number(position.pool.liquidityUSD)
 
   return (
-    <div className="relative bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all rounded-2xl p-7 overflow-hidden w-[320px]">
-      <span className="uppercase text-xs font-semibold dark:text-slate-400 text-gray-600">
-        {getEvmChainById(position.pool.chainId).name}
-      </span>
-      <h1 className="text-2xl font-semibold dark:text-white text-gray-900">
-        {token0.symbol}/{token1.symbol}{' '}
-        <span className="text-sm text-gray-600 dark:text-slate-400">
-          {formatPercent(position.pool.swapFee)}
-        </span>
-      </h1>
-      <div className="flex flex-col gap-2 items-center py-7">
-        <div className="flex min-w-[44px]">
-          <Currency.IconList iconWidth={56} iconHeight={56}>
-            <Currency.Icon currency={token0} />
-            <Currency.Icon currency={token1} />
-          </Currency.IconList>
+    <Card className="w-[320px]">
+      <CardContent className="!pt-6 !gap-2">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-medium text-primary">
+            {token0.symbol}/{token1.symbol}{' '}
+            <span className="text-sm font-normal text-muted-foreground">
+              {formatPercent(position.pool.swapFee)}
+            </span>
+          </h1>
+          <span className="text-xs text-muted-foreground">
+            {getEvmChainById(position.pool.chainId).name}
+          </span>
         </div>
-      </div>
-      <span className="text-sm pt-4">
-        Est. position value <br />
-        {formatUSD(valueUSD)}
-      </span>
-      <div className="flex gap-1 absolute top-7 right-7">
-        {position.pool.isIncentivized && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="whitespace-nowrap py-1 bg-green/20 text-green text-xs px-2 rounded-full">
-                  🧑‍🌾{' '}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Farm rewards available</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-      <div className="absolute bottom-7 right-7">
-        <Button size="sm" asChild>
+        <div className="flex flex-col gap-2 items-center py-7">
+          <div className="flex min-w-[44px]">
+            <Currency.IconList iconWidth={56} iconHeight={56}>
+              <Currency.Icon currency={token0} />
+              <Currency.Icon currency={token1} />
+            </Currency.IconList>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-sm">
+          <div className="text-muted-foreground">Position value:</div>
+          <div>{formatUSD(valueUSD)}</div>
+        </div>
+        <div className="flex gap-1 absolute top-3 right-3">
+          {position.pool.isIncentivized && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="whitespace-nowrap py-1 bg-green/20 text-green text-xs px-2 rounded-full">
+                    🧑‍🌾{' '}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Farm rewards available</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+        <div className="w-full">
           <LinkInternal
             href={`/${getEvmChainById(position.pool.chainId).key}/pool/v2/${
               position.pool.address
             }/migrate`}
           >
-            Migrate
+            <Button size="sm" className="w-full">
+              Migrate
+            </Button>
           </LinkInternal>
-        </Button>
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import React from 'react'
-
 import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { MigrateTabContent } from './_ui/migrate-tab-content'
 

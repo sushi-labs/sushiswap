@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Card,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -24,7 +25,14 @@ const MigrateTabContentPositions: FC<{ chainId: SushiSwapV2ChainId }> = ({
   if (!isConnected) {
     return (
       <Container maxWidth="7xl" className="px-4">
-        <ConnectButton />
+        <Card className="!bg-transparent md:!bg-secondary !border-transparent md:!border-accent">
+          <div className="flex flex-col justify-center gap-2 items-center min-h-[250px]">
+            <p className="text-muted-foreground text-sm">
+              Connect your wallet to migrate your positions.
+            </p>
+            <ConnectButton namespace="evm" />
+          </div>
+        </Card>
       </Container>
     )
   }
@@ -35,9 +43,13 @@ const MigrateTabContentPositions: FC<{ chainId: SushiSwapV2ChainId }> = ({
         if (!isLoading && positions.length === 0) {
           return (
             <Container maxWidth="7xl" className="px-4">
-              <span className="text-sm text-muted-foreground">
-                No positions found for migration.
-              </span>
+              <Card className="!bg-transparent md:!bg-secondary !border-transparent md:!border-accent">
+                <div className="flex flex-col justify-center gap-2 items-center min-h-[250px]">
+                  <p className="text-muted-foreground text-sm">
+                    No positions found for migration.
+                  </p>
+                </div>
+              </Card>
             </Container>
           )
         }
@@ -71,11 +83,10 @@ export const MigrateTabContent: FC<{ chainId: SushiSwapV2ChainId }> = ({
     <div className="mb-40">
       <Container maxWidth="7xl" className="px-4 mx-auto">
         <CardHeader className="!px-0">
-          <CardTitle>Migrate.</CardTitle>
+          <CardTitle>Migrate</CardTitle>
           <CardDescription>
-            By migrating your liquidity positions,
-            <br />
-            you will benefit from increased capital efficiency.
+            By migrating your liquidity positions, you will benefit from
+            increased capital efficiency.
           </CardDescription>
         </CardHeader>
       </Container>

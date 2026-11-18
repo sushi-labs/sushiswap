@@ -1,9 +1,13 @@
 'use client'
 import type { PoolChainId } from '@sushiswap/graph-client/data-api'
+import { useIsMounted } from '@sushiswap/hooks'
 import { Card, CardContent } from '@sushiswap/ui'
+import { LinkInternal } from '@sushiswap/ui'
+import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { DataItem } from 'src/app/(networks)/(evm)/_common/ui/data-item'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
+import { isV3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { formatUSD, getChainById } from 'sushi'
@@ -16,7 +20,10 @@ export const PositionStats = ({
 }: {
   chainId: PoolChainId
 }) => {
+  const searchParams = useSearchParams()
+  const canMigrate = isV3MigrateChainId(chainId)
   const address = useAccount('evm')
+  const isMounted = useIsMounted()
   const {
     state: { tab, hideClosedPositions },
   } = usePositionFilters()
@@ -36,7 +43,7 @@ export const PositionStats = ({
     user: address,
     chainId: isSushiSwapV2ChainId(chainId) ? chainId : undefined,
   })
-  const isLoading = isV2PositionsLoading || isV3PositionsLoading
+  const isLoading = isV2PositionsLoading || isV3PositionsLoading || !isMounted
   const isError = isV2PositionsError || isV3PositionsError
 
   const { totalPosValue, totalPosCount, totalUnclaimedFees } = useMemo(() => {
@@ -79,7 +86,21 @@ export const PositionStats = ({
         <Card>
           <CardContent className="pt-5">
             <DataItem
-              label="Positions"
+              label={
+                canMigrate &&
+                tab === 'v2' &&
+                v2Positions &&
+                v2Positions?.length > 0 ? (
+                  <LinkInternal
+                    href={`/${getChainById(chainId).key}/migrate?${searchParams.toString()}`}
+                    className="text-pink"
+                  >
+                    Migrate V2 Positions
+                  </LinkInternal>
+                ) : (
+                  <div>Positions</div>
+                )
+              }
               value={totalPosCount}
               isLoading={isLoading}
               isError={isError}
