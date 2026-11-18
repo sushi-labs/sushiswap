@@ -1,3 +1,5 @@
+'use client'
+
 import {
   LinkInternal,
   Tabs,
@@ -24,20 +26,23 @@ const getLinkOptions = (chainId: ChainId) => [
   },
 ]
 
+function getActiveTab(pathname: string): 'explore' | 'my-positions' | '' {
+  const [, , section, page] = pathname.split('/')
+
+  if (section === 'explore' && page === 'pools') return 'explore'
+  return 'my-positions'
+}
+
 export const LiquidityNavDesktop = ({ chainId }: { chainId: ChainId }) => {
   const linkOptions = useMemo(() => getLinkOptions(chainId), [chainId])
   const pathname = usePathname()
-  const isExplorePage = pathname.includes('/explore')
+  const activeTab = getActiveTab(pathname)
 
   return (
     <ToggleGroup className="h-fit w-fit">
       {linkOptions.map((i, idx) => (
         <LinkInternal href={i.href} key={idx}>
-          <Toggle
-            className="w-[250px]"
-            onClick={() => {}}
-            pressed={isExplorePage && i.href.includes('/explore')}
-          >
+          <Toggle className="w-[250px]" pressed={activeTab === i.value}>
             {i.label}
           </Toggle>
         </LinkInternal>
@@ -49,22 +54,14 @@ export const LiquidityNavDesktop = ({ chainId }: { chainId: ChainId }) => {
 export const LiquidityNavMobile = ({ chainId }: { chainId: ChainId }) => {
   const linkOptions = useMemo(() => getLinkOptions(chainId), [chainId])
   const pathname = usePathname()
-  const isExplorePage = pathname.includes('/explore')
+  const activeTab = getActiveTab(pathname)
 
   return (
-    <Tabs className="w-full">
+    <Tabs className="w-full" value={activeTab}>
       <TabsList variant="underline">
         {linkOptions.map((i, idx) => (
           <LinkInternal href={i.href} key={idx}>
-            <TabsTrigger
-              variant="underline"
-              data-state={
-                isExplorePage && i.href.includes('/explore')
-                  ? 'active'
-                  : 'inactive'
-              }
-              value={i.value}
-            >
+            <TabsTrigger variant="underline" value={i.value}>
               {i.label}
             </TabsTrigger>
           </LinkInternal>

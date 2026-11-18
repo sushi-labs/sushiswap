@@ -6,11 +6,8 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import {
-  LiquidityNavDesktop,
-  LiquidityNavMobile,
-} from '../../_ui/liquidity-nav'
-import { CreatePoolDropdown } from './create-pool-drowndown'
+import { CreatePoolDropdown } from '../explore/_ui/create-pool-drowndown'
+import { LiquidityNavDesktop, LiquidityNavMobile } from './liquidity-nav'
 
 const getAddPositionHref = (chainId: ChainId) => {
   if (isSushiSwapV3ChainId(chainId)) {
@@ -24,7 +21,7 @@ const getAddPositionHref = (chainId: ChainId) => {
   return `/${getChainById(EvmChainId.ETHEREUM).key}/pool/v3/add`
 }
 
-export const Hero = ({ chainId }: { chainId: ChainId }) => {
+export const LiquidityHero = ({ chainId }: { chainId: ChainId }) => {
   return (
     <div className="flex flex-col gap-2 md:gap-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-2">
