@@ -48,7 +48,7 @@ export const StatisticsChartsV3: FC<Charts> = ({ address, chainId, pool }) => {
 
   return (
     <Card className="self-start overflow-hidden">
-      <div className="border-b border-accent px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="px-6 pt-4 flex flex-wrap items-center justify-between gap-4">
         <PoolChartTypes
           charts={statisticsChart}
           selectedChart={chart}

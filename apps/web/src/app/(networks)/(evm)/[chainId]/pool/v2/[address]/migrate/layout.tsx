@@ -37,7 +37,7 @@ export default async function Layout(props: {
           backUrl={
             referer?.includes('/pool')
               ? referer?.toString()
-              : `/${getEvmChainById(chainId).key}/explore/pools`
+              : undefined
           }
           address={address}
           pool={pool}

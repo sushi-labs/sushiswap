@@ -99,29 +99,29 @@ export interface IconProps extends Omit<ImageProps, 'src' | 'alt'> {
   disableLink?: boolean
 }
 
+export function getCurrencyIconSrc(currency: Currency): string {
+  return currency.type === 'native'
+    ? `native-currency/${LOGO[currency.chainId]}`
+    : typeof currency.metadata?.icon === 'string'
+      ? currency.metadata.icon
+      : `tokens/${currency.chainId}/${currency.wrap().address}`
+}
+
 export const Icon: FC<IconProps> = ({
   currency,
   disableLink = true,
   shape,
   ...rest
 }) => {
-  const address = currency.wrap().address
-  const src =
-    currency.type === 'native'
-      ? `native-currency/${LOGO[currency.chainId]}`
-      : typeof currency.metadata?.icon === 'string'
-        ? currency.metadata.icon
-        : `tokens/${currency.chainId}/${address}`
-
   const avatar = (
     <CurrencyAvatar
       shape={shape}
       style={rest.style}
-      src={src}
+      src={getCurrencyIconSrc(currency)}
       width={rest.width}
       height={rest.height}
       chainId={currency.chainId}
-      address={address}
+      address={currency.wrap().address}
       fallback={getTokenFallbackMonogram(currency.symbol)}
     />
   )

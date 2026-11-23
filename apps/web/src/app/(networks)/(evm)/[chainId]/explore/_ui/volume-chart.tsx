@@ -1,8 +1,7 @@
 'use client'
 
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
-import format from 'date-fns/format'
-import type { EChartOption } from 'echarts'
+import type { EChartsOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
@@ -12,6 +11,11 @@ import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import {
+  getStatsChartAxes,
+  getStatsChartTooltip,
+  statsChartColors,
+} from '../../_ui/stats-chart-options'
 import {
   GlobalStatsChartCard,
   type GlobalStatsChartCardProps,
@@ -79,90 +83,44 @@ export function useVolumeChart({
     timeframe,
   })
 
-  const DEFAULT_OPTION = useMemo<EChartOption>(() => {
-    const isLight = resolvedTheme === 'light'
-    const textColor = '#A0A0A0'
-
+  const DEFAULT_OPTION = useMemo<EChartsOption>(() => {
     return {
       animation: false,
-      tooltip: {
-        trigger: 'axis',
-        padding: 0,
-        borderWidth: 0,
-        axisPointer: {
-          lineStyle: {
-            type: 'dashed',
-            color: textColor,
-          },
-        },
-        formatter: (params) =>
-          onMouseOver(Array.isArray(params) ? params : [params]),
-      },
-      color: ['#A0A0A0', '#FA52A0', '#F23BF6'],
-      grid: {
-        top: 24,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        containLabel: true,
-      },
-      xAxis: [
-        {
-          type: 'time',
-          splitLine: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitNumber: 3,
-          axisLabel: {
-            hideOverlap: true,
-            color: textColor,
-            margin: 16,
-            formatter: (value: number) => format(new Date(value), 'd MMM'),
-          },
-        },
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          min: 0,
-          splitNumber: 3,
-          axisLabel: {
-            show: false,
-          },
-          splitLine: {
-            lineStyle: { color: isLight ? '#e3e3e3' : '#3b3b3b' },
-          },
-        },
-      ],
+      tooltip: getStatsChartTooltip(onMouseOver),
+      color: Object.values(statsChartColors),
+      ...getStatsChartAxes({ resolvedTheme }),
       series: [
         {
           name: 'v2',
           type: 'bar',
           stack: 'a',
           data: v2,
-          itemStyle: { color: '#A0A0A0', barBorderRadius: [0, 0, 2, 2] },
+          itemStyle: {
+            color: statsChartColors.v2,
+            borderRadius: [0, 0, 2, 2],
+          },
         },
         {
           name: 'v3',
           type: 'bar',
           stack: 'a',
           data: v3,
-          itemStyle: { color: '#FA52A0', barBorderRadius: [2, 2, 0, 0] },
+          itemStyle: {
+            color: statsChartColors.v3,
+            borderRadius: [2, 2, 0, 0],
+          },
         },
         ...(showBlade
           ? [
               {
                 name: 'blade',
-                type: 'bar',
+                type: 'bar' as const,
                 stack: 'a',
                 data: blade,
-                itemStyle: { color: '#F23BF6', barBorderRadius: [2, 2, 0, 0] },
+                itemStyle: {
+                  color: statsChartColors.blade,
+                  borderRadius: [2, 2, 0, 0],
+                },
               },
             ]
           : []),

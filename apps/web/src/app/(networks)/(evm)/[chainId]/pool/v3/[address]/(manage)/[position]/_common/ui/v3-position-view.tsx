@@ -64,6 +64,7 @@ import {
   ConcentratedLiquidityProvider,
   useConcentratedDerivedMintInfo,
 } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { LiquidityAllocationCard } from '~evm/[chainId]/pool/_ui/liquidity-allocation-card'
 import { ConcentratedLiquidityWidget } from '~evm/[chainId]/pool/v3/_ui/concentrated-liquidity-widget'
 import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
 import { DistributionDataTable } from '../../../../_ui/distribution-data-table'
@@ -79,7 +80,7 @@ const Component: FC<{
   const { address } = useConnection()
   const [invert, setInvert] = useState(false)
 
-  const { data: positionDetails, isLoading: _isPositionDetailsLoading } =
+  const { data: positionDetails, isLoading: isPositionDetailsLoading } =
     useConcentratedLiquidityPositionsFromTokenId({
       chainId,
       tokenId,
@@ -209,14 +210,6 @@ const Component: FC<{
     (chainId === EvmChainId.KATANA && isKatanaRewardCampaignsLoading)
 
   const fiatValuesAmounts = useTokenAmountDollarValues({ chainId, amounts })
-  const positionAmounts = useMemo(
-    () => [position?.amount0, position?.amount1],
-    [position],
-  )
-  const fiatValuesPosition = useTokenAmountDollarValues({
-    chainId,
-    amounts: positionAmounts,
-  })
 
   return (
     <>
@@ -413,7 +406,18 @@ const Component: FC<{
               </Tabs>
             </Card>
           </div>
-          <div>
+          <div className="flex flex-col gap-6">
+            <LiquidityAllocationCard
+              title="Position Value"
+              amount0={position?.amount0}
+              amount1={position?.amount1}
+              isLoading={
+                isPositionDetailsLoading ||
+                token0Loading ||
+                token1Loading ||
+                isPositionLoading
+              }
+            />
             <Card>
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">
@@ -441,26 +445,8 @@ const Component: FC<{
                     )}
                   </div>
                 </CardTitle>
-                <CardDescription>
-                  {formatUSD(
-                    fiatValuesPosition.reduce((acc, cur) => acc + cur, 0),
-                  )}
-                </CardDescription>
               </CardHeader>
               <CardContent>
-                <CardGroup>
-                  <CardLabel>Tokens</CardLabel>
-                  <CardCurrencyAmountItem
-                    isLoading={isPositionLoading}
-                    amount={position?.amount0}
-                    fiatValue={formatUSD(fiatValuesPosition[0])}
-                  />
-                  <CardCurrencyAmountItem
-                    isLoading={isPositionLoading}
-                    amount={position?.amount1}
-                    fiatValue={formatUSD(fiatValuesPosition[1])}
-                  />
-                </CardGroup>
                 <CardGroup>
                   <CardLabel>Current price</CardLabel>
                   {pool && currencyBase && currencyQuote ? (

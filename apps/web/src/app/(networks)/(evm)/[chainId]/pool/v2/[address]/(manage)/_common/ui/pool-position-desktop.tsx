@@ -1,26 +1,16 @@
-import { CardCurrencyAmountItem, CardGroup, CardLabel } from '@sushiswap/ui'
-import type { FC } from 'react'
-import { formatUSD } from 'sushi'
-
+import type { ReactElement } from 'react'
+import { LiquidityAllocationCard } from '~evm/[chainId]/pool/_ui/liquidity-allocation-card'
 import { usePoolPosition } from '../../../_common/ui/pool-position-provider'
 
-export const PoolPositionDesktop: FC = () => {
-  const { underlying1, underlying0, value1, value0, isLoading } =
-    usePoolPosition()
+export function PoolPositionDesktop(): ReactElement {
+  const { underlying0, underlying1, isLoading } = usePoolPosition()
 
   return (
-    <CardGroup>
-      <CardLabel>Unstaked</CardLabel>
-      <CardCurrencyAmountItem
-        isLoading={isLoading}
-        amount={underlying0}
-        fiatValue={formatUSD(value0)}
-      />
-      <CardCurrencyAmountItem
-        isLoading={isLoading}
-        amount={underlying1}
-        fiatValue={formatUSD(value1)}
-      />
-    </CardGroup>
+    <LiquidityAllocationCard
+      title="Unstaked Position Value"
+      amount0={underlying0}
+      amount1={underlying1}
+      isLoading={isLoading}
+    />
   )
 }

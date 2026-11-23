@@ -15,7 +15,7 @@ import { APRHoverCard } from '~evm/[chainId]/_ui/apr-hover-card'
 import { ProtocolBadge } from '../../_ui/protocol-badge'
 
 type PoolHeader = {
-  backUrl: string
+  backUrl: string | undefined
   address: EvmAddress
   pool: RawV2Pool | RawV3Pool
   apy?: {
@@ -68,11 +68,11 @@ export const PoolHeader: FC<PoolHeader> = ({
                 : pool.protocol === 'SUSHISWAP_V3'
                   ? `/${getEvmChainById(pool.chainId).key}/pool/v3/${
                       pool.address
-                    }/positions`
+                    }/create`
                   : ''
             }
           >
-            <Button>Add Liquidity</Button>
+            <Button className='!px-8'>Add Liquidity</Button>
           </LinkInternal>
         ) : null}
       </div>
@@ -88,6 +88,9 @@ export const PoolHeader: FC<PoolHeader> = ({
             <Currency.Icon currency={token0} />
             <Currency.Icon currency={token1} />
           </Currency.IconList>
+          <LinkExternal
+            href={getEvmChainById(pool.chainId).getAccountUrl(address)}
+          >
           <Button
             asChild
             variant="link"
@@ -95,14 +98,11 @@ export const PoolHeader: FC<PoolHeader> = ({
               'truncate overflow-x-auto !rounded-none font-semibold !text-2xl'
             }
           >
-            <LinkExternal
-              href={getEvmChainById(pool.chainId).getAccountUrl(address)}
-            >
               <span className="tracking-wide !text-primary">
                 {token0.symbol}/{token1.symbol}
               </span>
-            </LinkExternal>
           </Button>
+            </LinkExternal>
           <ProtocolBadge protocol={pool.protocol} size="lg" />
         </div>
 

@@ -3,7 +3,7 @@
 import type { AnalyticsDayBuckets } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import format from 'date-fns/format'
-import type { EChartOption } from 'echarts'
+import type { EChartsOption } from 'echarts'
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
@@ -13,6 +13,12 @@ import { useTheme } from 'next-themes'
 import { useMemo, useState } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import {
+  getStatsChartAxes,
+  getStatsChartTooltip,
+  getStatsLineStyle,
+  statsChartColors,
+} from '../../_ui/stats-chart-options'
 import {
   GlobalStatsChartCard,
   type GlobalStatsChartCardProps,
@@ -91,90 +97,22 @@ export function useTVLChart({
     timeframe,
   })
 
-  const DEFAULT_OPTION = useMemo<EChartOption>(() => {
-    const isLight = resolvedTheme === 'light'
-    const textColor = '#A0A0A0'
-
+  const DEFAULT_OPTION = useMemo<EChartsOption>(() => {
     return {
       animation: false,
-      tooltip: {
-        trigger: 'axis',
-        padding: 0,
-        borderWidth: 0,
-        axisPointer: {
-          lineStyle: {
-            type: 'dashed',
-            color: textColor,
-          },
-        },
-        formatter: (params) =>
-          onMouseOver(Array.isArray(params) ? params : [params]),
-      },
-      color: ['#A0A0A0', '#FA52A0', '#F23BF6'],
-      grid: {
-        top: 24,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        containLabel: true,
-      },
-      xAxis: [
-        {
-          type: 'time',
-          min: v2[0]?.[0],
-          max: currentDate,
-          splitLine: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitNumber: 3,
-          axisLabel: {
-            hideOverlap: true,
-            color: textColor,
-            margin: 16,
-            formatter: (value: number) => format(new Date(value), 'd MMM'),
-          },
-        },
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          min: 0,
-          splitNumber: 3,
-          axisLabel: {
-            show: false,
-            color: textColor,
-            margin: 16,
-            formatter: (value: number) =>
-              value === 0 ? '0' : formatUSD(value),
-          },
-          splitLine: {
-            lineStyle: { color: isLight ? '#e3e3e3' : '#3b3b3b' },
-          },
-        },
-      ],
+      tooltip: getStatsChartTooltip(onMouseOver),
+      color: Object.values(statsChartColors),
+      ...getStatsChartAxes({
+        resolvedTheme,
+        min: v2[0]?.[0],
+        max: currentDate,
+      }),
       series: [
         {
           name: 'v2',
           type: 'line',
           stack: 'v2',
-          smooth: true,
-          lineStyle: {
-            color: '#A0A0A0',
-            width: 2,
-          },
-          showSymbol: false,
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#A0A0A040' },
-              { offset: 1, color: '#A0A0A000' },
-            ]),
-          },
+          ...getStatsLineStyle(statsChartColors.v2),
           data: v2,
           z: zIndex.v2,
         },
@@ -182,18 +120,7 @@ export function useTVLChart({
           name: 'v3',
           type: 'line',
           stack: 'v3',
-          smooth: true,
-          lineStyle: {
-            color: '#FA52A0',
-            width: 2,
-          },
-          showSymbol: false,
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#FA52A040' },
-              { offset: 1, color: '#FA52A000' },
-            ]),
-          },
+          ...getStatsLineStyle(statsChartColors.v3),
           data: v3,
           z: zIndex.v3,
         },
@@ -201,20 +128,9 @@ export function useTVLChart({
           ? [
               {
                 name: 'blade',
-                type: 'line',
+                type: 'line' as const,
                 stack: 'blade',
-                smooth: true,
-                lineStyle: {
-                  color: '#F23BF6',
-                  width: 2,
-                },
-                showSymbol: false,
-                areaStyle: {
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#F23BF640' },
-                    { offset: 1, color: '#F23BF600' },
-                  ]),
-                },
+                ...getStatsLineStyle(statsChartColors.blade),
                 data: blade,
                 z: 3,
               },

@@ -1,6 +1,7 @@
 'use client'
 
 import format from 'date-fns/format'
+import type { TooltipComponentFormatterCallbackParams } from 'echarts'
 import { useCallback, useEffect, useState } from 'react'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import type { TimeframeOption } from './global-stats-charts'
@@ -23,7 +24,7 @@ export function useChartHover({
 }): {
   value: number
   label: string
-  onMouseOver: (params: { data?: number[] }[]) => string
+  onMouseOver: (params: TooltipComponentFormatterCallbackParams) => string
   onMouseLeave: () => void
 } {
   const [hovered, setHovered] = useState<HoveredPoint | null>(null)
@@ -33,21 +34,29 @@ export function useChartHover({
     setHovered(null)
   }, [value, label, chainId, timeframe])
 
-  const onMouseOver = useCallback((params: { data?: number[] }[]) => {
-    if (!params[0]?.data || !params[1]?.data) return ''
+  const onMouseOver = useCallback(
+    (params: TooltipComponentFormatterCallbackParams) => {
+      if (!Array.isArray(params)) return ''
 
-    const date = params[0].data[0]
-    const value =
-      params[0].data[1] + params[1].data[1] + (params[2]?.data?.[1] ?? 0)
+      const [v2, v3, blade] = params.map((point) => point.data)
+      if (!Array.isArray(v2) || !Array.isArray(v3)) return ''
 
-    setHovered((previous) =>
-      previous?.date === date && previous.value === value
-        ? previous
-        : { value, date },
-    )
+      const date = Number(v2[0])
+      const value =
+        Number(v2[1]) +
+        Number(v3[1]) +
+        (Array.isArray(blade) ? Number(blade[1]) : 0)
 
-    return ''
-  }, [])
+      setHovered((previous) =>
+        previous?.date === date && previous.value === value
+          ? previous
+          : { value, date },
+      )
+
+      return ''
+    },
+    [],
+  )
 
   const onMouseLeave = useCallback(() => setHovered(null), [])
 

@@ -4,6 +4,8 @@ import { Icon, type IconProps } from './icon'
 import { IconList, type IconListProps } from './icon-list'
 import { List, type ListComponent } from './list'
 
+export { getCurrencyIconSrc } from './icon'
+
 type Currency = {
   List: ListComponent
   Icon: FC<IconProps>

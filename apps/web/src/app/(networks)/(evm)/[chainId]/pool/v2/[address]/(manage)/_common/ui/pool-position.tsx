@@ -1,23 +1,15 @@
 'use client'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@sushiswap/ui'
-import type { FC } from 'react'
-import { formatUSD } from 'sushi'
-
-import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
-import { SkeletonText } from '@sushiswap/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@sushiswap/ui'
+import type { ReactElement } from 'react'
 import { ConnectButton } from 'src/lib/wagmi/components/connect-button'
 import { useConnection } from 'wagmi'
-import { usePoolPosition } from '../../../_common/ui/pool-position-provider'
 import { PoolPositionDesktop } from './pool-position-desktop'
 
-const PoolPositionDisconnected: FC = () => {
+export function PoolPosition(): ReactElement {
+  const { address } = useConnection()
+
+  if (address) return <PoolPositionDesktop />
   return (
     <Card>
       <CardHeader>
@@ -28,32 +20,4 @@ const PoolPositionDisconnected: FC = () => {
       </CardContent>
     </Card>
   )
-}
-
-const PoolPositionConnected = () => {
-  const { value0, value1, isLoading } = usePoolPosition()
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>My Position</CardTitle>
-        <CardDescription>
-          {isLoading ? <SkeletonText /> : <>{formatUSD(value0 + value1)}</>}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <PoolPositionDesktop />
-      </CardContent>
-    </Card>
-  )
-}
-
-export const PoolPosition = () => {
-  const { address } = useConnection()
-
-  if (!address) {
-    return <PoolPositionDisconnected />
-  }
-
-  return <PoolPositionConnected />
 }

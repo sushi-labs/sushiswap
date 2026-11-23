@@ -25,10 +25,9 @@ export const TableFiltersFarmsOnly: FC = () => {
 
   return (
     <Toggle
-      variant="outline"
       onPressedChange={toggle}
       pressed={isPending ? checked : farmsOnly}
-      size="sm"
+     className='data-[state=on]:border-pink data-[state=off]:border-accent data-[state=off]:bg-secondary data-[state=on]:bg-background'
     >
       <span>🧑‍🌾</span> Farms only
     </Toggle>

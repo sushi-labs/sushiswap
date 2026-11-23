@@ -5,10 +5,7 @@ import Image from 'next/image'
 import * as React from 'react'
 
 import classNames from 'classnames'
-import {
-  cloudinaryLogoFetchLoader,
-  cloudinaryLogoImageLoader,
-} from '../cloudinary'
+import { getAvatarImageSource } from '../cloudinary'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -42,29 +39,16 @@ const AvatarImage = React.forwardRef<
     string | null
   >(null)
 
-  const isAbsoluteUrl = /^https?:\/\//.test(src)
-  const isCloudinaryUploadPath =
-    src.startsWith('native-currency') || src.startsWith('tokens')
-  const isUsingDirectCdnFallback = directCdnFallbackSrc === src
-  const imageSrc = isUsingDirectCdnFallback
-    ? `https://cdn.sushi.com/${src}`
-    : src
-  const loader = isUsingDirectCdnFallback
-    ? undefined
-    : isAbsoluteUrl
-      ? cloudinaryLogoFetchLoader
-      : isCloudinaryUploadPath
-        ? cloudinaryLogoImageLoader
-        : undefined
+  const source = getAvatarImageSource(src)
+  const fallbackSrc =
+    directCdnFallbackSrc === src ? source.fallbackSrc : undefined
+  const imageSrc = fallbackSrc ?? src
+  const loader = fallbackSrc ? undefined : source.loader
 
   function handleLoadingStatusChange(
     status: 'idle' | 'loading' | 'loaded' | 'error',
   ) {
-    if (
-      status === 'error' &&
-      isCloudinaryUploadPath &&
-      !isUsingDirectCdnFallback
-    ) {
+    if (status === 'error' && source.fallbackSrc && !fallbackSrc) {
       setDirectCdnFallbackSrc(src)
       return
     }
@@ -82,7 +66,7 @@ const AvatarImage = React.forwardRef<
     >
       <Image
         loader={loader}
-        unoptimized={isUsingDirectCdnFallback}
+        unoptimized={Boolean(fallbackSrc)}
         alt="avatar"
         src={imageSrc}
         width={_width}

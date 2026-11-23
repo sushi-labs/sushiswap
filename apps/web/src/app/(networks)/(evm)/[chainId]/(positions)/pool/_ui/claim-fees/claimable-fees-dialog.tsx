@@ -257,7 +257,7 @@ function ClaimableFeesDialogContent(): ReactNode {
             columns={columns}
             data={data}
             state={state}
-            scrollClassName="max-h-[60dvh]"
+            scrollClassName="max-h-[60dvh] scroll border-t-transparent"
             estimateSize={72}
           />
         ) : (
@@ -269,7 +269,7 @@ function ClaimableFeesDialogContent(): ReactNode {
             rowRenderer={(row) => renderMobileRow(row, onClaim)}
             columns={columns}
             data={data}
-            scrollClassName="max-h-[60dvh] !min-h-0 overflow-y-auto"
+            scrollClassName="max-h-[60dvh] !min-h-0 overflow-y-auto scroll"
           />
         )}
         {selectedClaim ? (

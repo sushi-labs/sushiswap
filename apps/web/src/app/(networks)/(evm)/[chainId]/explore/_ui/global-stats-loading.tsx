@@ -1,35 +1,11 @@
-import { SkeletonChartLoadingStateMask, SkeletonChartXAxe } from '@sushiswap/ui'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
+import { SkeletonChart } from '../../_ui/skeleton-chart'
 import {
   type GlobalStatsChartCardProps,
   GlobalStatsChartsLayout,
 } from './global-stats-chart-card'
 
-export function SkeletonChart({
-  type,
-}: { type: 'area' | 'bar' }): React.ReactElement {
-  const height = 200
-  const top = 24
-
-  return (
-    <div className="relative flex flex-row">
-      <svg
-        width="100%"
-        height={height}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-      >
-        <g transform={`translate(0, ${top})`}>
-          <SkeletonChartLoadingStateMask
-            type={type}
-            height={height - top - 32}
-          />
-        </g>
-        <SkeletonChartXAxe height={height - 16} />
-      </svg>
-    </div>
-  )
-}
+export { SkeletonChart }
 
 function getLoadingChart({
   chainId,

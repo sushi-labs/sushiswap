@@ -51,6 +51,20 @@ export function cloudinaryLogoImageLoader({
   )}/${normalizeSrc(src)}`
 }
 
+export function getAvatarImageSource(src: string): {
+  loader?: (props: ImageLoaderProps) => string
+  fallbackSrc?: string
+} {
+  if (/^https?:\/\//.test(src)) return { loader: cloudinaryLogoFetchLoader }
+  if (src.startsWith('native-currency') || src.startsWith('tokens')) {
+    return {
+      loader: cloudinaryLogoImageLoader,
+      fallbackSrc: `https://cdn.sushi.com/${src}`,
+    }
+  }
+  return {}
+}
+
 // from next/image
 // function cloudinaryLoader({
 //   config,

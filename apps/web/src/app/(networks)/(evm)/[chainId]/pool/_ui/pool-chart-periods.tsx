@@ -1,5 +1,5 @@
-import { Toggle } from '@sushiswap/ui'
-import React, { type FC } from 'react'
+import { Toggle, ToggleGroup } from '@sushiswap/ui'
+
 
 export enum PoolChartPeriod {
   Day = '1D',
@@ -29,7 +29,7 @@ export function PoolChartPeriods<T extends PoolChartPeriod>({
   setPeriod,
 }: PoolChartPeriods<T>) {
   return (
-    <div className="flex items-center gap-1">
+    <ToggleGroup>
       {periods.map((period) => (
         <Toggle
           size="xs"
@@ -40,6 +40,6 @@ export function PoolChartPeriods<T extends PoolChartPeriod>({
           {period}
         </Toggle>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }

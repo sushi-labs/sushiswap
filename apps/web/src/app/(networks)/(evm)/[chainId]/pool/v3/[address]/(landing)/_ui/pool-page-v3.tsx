@@ -1,17 +1,10 @@
 'use client'
 
-import {
-  type RawV3Pool,
-  type V3Pool,
-  hydrateV3Pool,
-} from '@sushiswap/graph-client/data-api'
+import { type RawV3Pool, hydrateV3Pool } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   Card,
   CardContent,
-  CardCurrencyAmountItem,
-  CardDescription,
-  CardGroup,
   CardHeader,
   CardLabel,
   CardTitle,
@@ -25,11 +18,11 @@ import {
 import { type FC, useMemo } from 'react'
 import { useConcentratedLiquidityPoolStats } from 'src/lib/hooks/react-query/pools/use-concentrated-liquidity-pool-stats'
 import { useRewardCampaigns } from 'src/lib/hooks/react-query/rewards/use-reward-campaigns'
-import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
 import { useConcentratedLiquidityPoolReserves } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool-reserves'
 import { formatUSD } from 'sushi'
 import { getEvmChainById, isMerklChainId } from 'sushi/evm'
 import { ConcentratedLiquidityProvider } from '~evm/[chainId]/_ui/concentrated-liquidity-provider'
+import { LiquidityAllocationCard } from '~evm/[chainId]/pool/_ui/liquidity-allocation-card'
 import { KatanaStakingMessage } from '../../_ui/katana-staking-message'
 import { PoolRewardDistributionsCard } from './pool-reward-distributions-card'
 import { PoolTransactionsV3 } from './pool-transactions-v3'
@@ -63,10 +56,9 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
       pool,
       chainId,
     })
-  const fiatValues = useTokenAmountDollarValues({ chainId, amounts: reserves })
 
   return (
-    <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+    <Container maxWidth="7xl" className="flex flex-col gap-4 md:pt-8 border-t border-transparent md:border-accent">
       {pool.hasEnabledSteerVault && (
         <Message
           variant="info"
@@ -91,32 +83,15 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
           </LinkInternal>
         </Message>
       )}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_45%]">
         <StatisticsChartsV3 address={address} chainId={chainId} pool={pool} />
         <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pool Liquidity</CardTitle>
-              <CardDescription>
-                {formatUSD(fiatValues[0] + fiatValues[1])}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CardGroup>
-                <CardLabel>Tokens</CardLabel>
-                <CardCurrencyAmountItem
-                  isLoading={isReservesLoading}
-                  amount={reserves?.[0]}
-                  fiatValue={formatUSD(fiatValues[0])}
-                />
-                <CardCurrencyAmountItem
-                  isLoading={isReservesLoading}
-                  amount={reserves?.[1]}
-                  fiatValue={formatUSD(fiatValues[1])}
-                />
-              </CardGroup>
-            </CardContent>
-          </Card>
+          <LiquidityAllocationCard
+            title="Pool Liquidity"
+            amount0={reserves?.[0]}
+            amount1={reserves?.[1]}
+            isLoading={isReservesLoading}
+          />
           <Card>
             <CardHeader>
               <CardTitle>

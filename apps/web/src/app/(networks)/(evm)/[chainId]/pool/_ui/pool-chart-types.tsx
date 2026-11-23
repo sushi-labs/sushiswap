@@ -1,5 +1,4 @@
-import { Toggle } from '@sushiswap/ui'
-import React from 'react'
+import { Toggle, ToggleGroup } from '@sushiswap/ui'
 
 export enum PoolChartType {
   Volume = 'Volume',
@@ -20,7 +19,7 @@ export function PoolChartTypes<C extends string>({
   setChart,
 }: PoolChartTypesProps<C>) {
   return (
-    <div className="flex items-center gap-1">
+    <ToggleGroup>
       {charts.map((chart) => (
         <Toggle
           size="xs"
@@ -31,6 +30,6 @@ export function PoolChartTypes<C extends string>({
           {chart}
         </Toggle>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }

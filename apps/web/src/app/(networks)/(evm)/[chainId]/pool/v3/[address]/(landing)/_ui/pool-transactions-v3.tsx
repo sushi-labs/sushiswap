@@ -11,11 +11,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  DataTable,
+  DataTableVirtual,
+  MobileTable,
   Toggle,
+  ToggleGroup,
 } from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 
 import type { V3Pool } from '@sushiswap/graph-client/data-api'
@@ -203,6 +204,14 @@ type TransactionV3 = NonNullable<
   ReturnType<typeof useTransactionsV3>['data']
 >[0]
 
+function getTransactionUrl(row: TransactionV3): string {
+  return (
+    getEvmChainById(row.pool.chainId).getTransactionUrl(
+      row.transaction.id as Hex,
+    ) ?? ''
+  )
+}
+
 interface PoolTransactionsV3Props {
   pool: V3Pool | undefined | null
   poolAddress: Address
@@ -212,13 +221,7 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   pool,
   poolAddress,
 }) => {
-  const [type, setType] = useState<
-    Parameters<typeof useTransactionsV3>['2']['type']
-  >(TransactionTypeV3.Swap)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const [type, setType] = useState(TransactionTypeV3.Swap)
 
   const COLUMNS = useMemo(() => {
     return [
@@ -230,75 +233,84 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
     ]
   }, [type])
 
-  const opts = useMemo(
-    () =>
-      ({
-        refetchInterval: 60_000,
-        first:
-          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
-        type,
-      }) as const,
-    [paginationState.pageIndex, paginationState.pageSize, type],
-  )
-
-  const { data, isLoading } = useTransactionsV3(pool, poolAddress, opts)
+  const { data, isLoading } = useTransactionsV3(pool, poolAddress, {
+    type,
+    first: 100,
+    refetchInterval: 60_000,
+  })
 
   const _data = useMemo(() => {
     return data ?? []
   }, [data])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
-            Transactions
-            <div className="flex items-center gap-1">
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Swap}
-                onClick={() => setType(TransactionTypeV3.Swap)}
-              >
-                Swaps
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Mint}
-                onClick={() => setType(TransactionTypeV3.Mint)}
-              >
-                Add
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionTypeV3.Burn}
-                onClick={() => setType(TransactionTypeV3.Burn)}
-              >
-                Remove
-              </Toggle>
-            </div>
-          </div>
-        </CardTitle>
+    <Card className="!bg-transparent lg:!bg-secondary !border-transparent lg:!border-accent">
+      <CardHeader className="!px-0 !pt-3 lg:!px-6 lg:!pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <CardTitle>Transactions</CardTitle>
+          <ToggleGroup>
+            <Toggle
+              size="xs"
+              pressed={type === TransactionTypeV3.Swap}
+              onClick={() => setType(TransactionTypeV3.Swap)}
+            >
+              Swaps
+            </Toggle>
+            <Toggle
+              size="xs"
+              pressed={type === TransactionTypeV3.Mint}
+              onClick={() => setType(TransactionTypeV3.Mint)}
+            >
+              Add
+            </Toggle>
+            <Toggle
+              size="xs"
+              pressed={type === TransactionTypeV3.Burn}
+              onClick={() => setType(TransactionTypeV3.Burn)}
+            >
+              Remove
+            </Toggle>
+          </ToggleGroup>
+        </div>
       </CardHeader>
       <CardContent className="!px-0">
-        <DataTable
-          linkFormatter={(row) =>
-            getEvmChainById(row.pool.chainId).getTransactionUrl(
-              row.transaction.id as Hex,
-            ) ?? ''
-          }
-          loading={isLoading}
-          columns={COLUMNS}
-          data={_data}
-          pagination={true}
-          externalLink={true}
-          onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
-        />
+        <div className="hidden lg:block">
+          <DataTableVirtual
+            linkFormatter={getTransactionUrl}
+            externalLink
+            loading={isLoading}
+            columns={COLUMNS}
+            data={_data}
+            scrollMode="window"
+            estimateSize={52}
+            skeletonRowCount={10}
+            state={{
+              pagination: { pageIndex: 0, pageSize: Math.max(_data.length, 1) },
+            }}
+          />
+        </div>
+        <div className="lg:hidden">
+          <MobileTable
+            key={type}
+            columns={COLUMNS}
+            data={_data}
+            isLoading={isLoading}
+            sorting={[]}
+            scrollMode="window"
+            isExpandedOverride
+            hideExpand
+            rowRenderer={(row, card) => (
+              <a
+                href={getTransactionUrl(row.original)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue"
+              >
+                {card}
+              </a>
+            )}
+          />
+        </div>
       </CardContent>
     </Card>
   )
