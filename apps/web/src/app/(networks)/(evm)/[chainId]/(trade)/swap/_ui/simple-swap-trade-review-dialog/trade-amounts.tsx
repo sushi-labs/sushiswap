@@ -2,12 +2,12 @@
 
 import { Currency, List, SkeletonText } from '@sushiswap/ui'
 import type { ReactElement } from 'react'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
 import { useAmountUsd } from 'src/lib/hooks/use-amount-usd'
 import type { Amount } from 'sushi'
 import type { EvmChainId } from 'sushi/evm'
 import type { StellarChainId } from 'sushi/stellar'
 import type { SvmChainId } from 'sushi/svm'
-import { ReviewAmountValue } from '../../../_ui/review-amount-value'
 
 type ReviewAmount =
   | Amount<CurrencyFor<EvmChainId | SvmChainId | StellarChainId>>

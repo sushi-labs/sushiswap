@@ -24,6 +24,8 @@ import {
   SettingsOverlay,
 } from '@sushiswap/ui'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
+import { ReviewDetailRow } from 'src/lib/components/review-detail-row'
 import { Bound } from 'src/lib/constants'
 import { NativeAddress } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
@@ -81,6 +83,14 @@ interface AddSectionReviewModalConcentratedProps
   children: ReactNode
   onSuccess: () => void
   successLink?: string
+}
+
+function formatRangePriceDetail(
+  unitPriceUsd: number,
+  priceDiff: number,
+): string {
+  const priceUsd = unitPriceUsd * (1 + (priceDiff || 0))
+  return `${formatUSD(priceUsd)} (${formatPercent(priceDiff)})`
 }
 
 export const AddSectionReviewModalConcentrated: FC<
@@ -332,7 +342,7 @@ export const AddSectionReviewModalConcentrated: FC<
         {({ confirm }) => (
           <>
             {children}
-            <DialogContent className="max-h-[80vh]">
+            <DialogContent className="max-h-[80vh]" hideClose>
               <div className="flex justify-between">
                 <DialogHeader>
                   <DialogTitle>
@@ -363,12 +373,12 @@ export const AddSectionReviewModalConcentrated: FC<
                     name="Settings"
                     icon={Cog6ToothIcon}
                     variant="secondary"
-                    className="mr-12"
+                    className="-mt-3"
                   />
                 </SettingsOverlay>
               </div>
               {/* 176px is sum of header, footer, padding, and gap */}
-              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)]">
+              <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)] scroll">
                 {hasZeroLiquidity && (
                   <Message size="sm" variant="warning">
                     This deposit rounds to zero liquidity. Adjust the amount or
@@ -376,130 +386,104 @@ export const AddSectionReviewModalConcentrated: FC<
                   </Message>
                 )}
                 <List className="!pt-0">
-                  <List.Control>
-                    <List.KeyValue flex title="Network">
+                  <List.Control className="border-transparent !bg-transparent !px-0">
+                    <ReviewDetailRow title="Network">
                       {getEvmChainById(chainId).name}
-                    </List.KeyValue>
+                    </ReviewDetailRow>
                     {feeAmount && (
-                      <List.KeyValue title="Fee Tier">{`${
-                        +feeAmount / 10000
-                      }%`}</List.KeyValue>
+                      <ReviewDetailRow title="Fee Tier">
+                        {`${+feeAmount / 10000}%`}
+                      </ReviewDetailRow>
                     )}
-                  </List.Control>
-                </List>
-                <List className="!pt-0">
-                  <List.Control>
-                    <List.KeyValue
-                      flex
-                      title={'Minimum Price'}
-                      subtitle={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
+                    <ReviewDetailRow
+                      title="Minimum Price"
+                      explanation={`Your position will be 100% composed of ${input0?.currency.symbol} at this price`}
                     >
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          {isLeftAtLimit ? (
-                            '0'
-                          ) : (
-                            <FormattedNumber
-                              number={leftPrice?.toSignificant(6)}
-                            />
-                          )}{' '}
-                          {token1?.symbol}
-                        </span>
+                      <ReviewAmountValue
+                        secondaryValue={
+                          isLeftAtLimit
+                            ? undefined
+                            : formatRangePriceDetail(
+                                fiatAmountsAsNumber[0],
+                                minPriceDiff,
+                              )
+                        }
+                      >
                         {isLeftAtLimit ? (
-                          ''
+                          '0'
                         ) : (
-                          <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            {formatUSD(
-                              fiatAmountsAsNumber[0] *
-                                (1 + +(minPriceDiff || 0)),
-                            )}{' '}
-                            ({formatPercent(minPriceDiff)})
-                          </span>
-                        )}
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue
-                      flex
+                          <FormattedNumber
+                            number={leftPrice?.toSignificant(6)}
+                          />
+                        )}{' '}
+                        {token1?.symbol}
+                      </ReviewAmountValue>
+                    </ReviewDetailRow>
+                    <ReviewDetailRow
                       title={noLiquidity ? 'Starting Price' : 'Market Price'}
-                      subtitle={
+                      explanation={
                         noLiquidity
                           ? 'Starting price as determined by you'
                           : 'Current price as determined by the ratio of the pool'
                       }
                     >
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          <FormattedNumber
-                            number={midPrice?.toSignificant(6)}
-                          />{' '}
-                          {token1?.symbol}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                          {formatUSD(fiatAmountsAsNumber[0])}
-                        </span>
-                      </div>
-                    </List.KeyValue>
-                    <List.KeyValue
-                      flex
-                      title={'Maximum Price'}
-                      subtitle={`Your position will be 100% composed of ${token1?.symbol} at this price`}
+                      <ReviewAmountValue usdValue={fiatAmountsAsNumber[0] ?? 0}>
+                        <FormattedNumber number={midPrice?.toSignificant(6)} />{' '}
+                        {token1?.symbol}
+                      </ReviewAmountValue>
+                    </ReviewDetailRow>
+                    <ReviewDetailRow
+                      title="Maximum Price"
+                      explanation={`Your position will be 100% composed of ${token1?.symbol} at this price`}
                     >
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          {isRightAtLimit ? (
-                            '∞'
-                          ) : (
-                            <FormattedNumber
-                              number={rightPrice?.toSignificant(6)}
-                            />
-                          )}{' '}
-                          {token1?.symbol}
-                        </span>
+                      <ReviewAmountValue
+                        secondaryValue={
+                          isRightAtLimit
+                            ? undefined
+                            : formatRangePriceDetail(
+                                fiatAmountsAsNumber[0],
+                                maxPriceDiff,
+                              )
+                        }
+                      >
                         {isRightAtLimit ? (
-                          ''
+                          '∞'
                         ) : (
-                          <span className="text-xs text-gray-500 dark:text-slate-400 text-slate-600">
-                            {formatUSD(
-                              fiatAmountsAsNumber[0] *
-                                (1 + +(maxPriceDiff || 0)),
-                            )}{' '}
-                            ({formatPercent(maxPriceDiff)})
-                          </span>
+                          <FormattedNumber
+                            number={rightPrice?.toSignificant(6)}
+                          />
                         )}{' '}
-                      </div>
-                    </List.KeyValue>{' '}
-                    <List.KeyValue flex title="Slippage">
+                        {token1?.symbol}
+                      </ReviewAmountValue>
+                    </ReviewDetailRow>
+                    <ReviewDetailRow title="Slippage">
                       {slippageTolerance.toPercentString()}
-                    </List.KeyValue>
+                    </ReviewDetailRow>
                   </List.Control>
-                </List>
-                <List className="!pt-0">
-                  <List.Control>
-                    {input0 && (
-                      <List.KeyValue flex title={`${input0?.currency.symbol}`}>
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon
-                            currency={input0.currency}
-                            width={18}
-                            height={18}
-                          />
-                          {input0?.toSignificant(6)} {input0?.currency.symbol}
-                        </div>
-                      </List.KeyValue>
-                    )}
-                    {input1 && (
-                      <List.KeyValue flex title={`${input1?.currency.symbol}`}>
-                        <div className="flex items-center gap-2">
-                          <Currency.Icon
-                            currency={input1.currency}
-                            width={18}
-                            height={18}
-                          />
-                          {input1?.toSignificant(6)} {input1?.currency.symbol}
-                        </div>
-                      </List.KeyValue>
-                    )}
-                  </List.Control>
+                  {(input0 || input1) && (
+                    <List.Control className="!rounded-2xl !bg-transparent !px-3 !py-2">
+                      {[input0, input1].map((amount) =>
+                        amount ? (
+                          <ReviewDetailRow
+                            key={amount.currency.id}
+                            title={'You add'}
+                          >
+                            <ReviewAmountValue>
+                              <div className="flex items-center gap-2">
+                                <Currency.Icon
+                                  currency={amount.currency}
+                                  width={18}
+                                  height={18}
+                                />
+                                {amount.toSignificant(6)}{' '}
+                                {amount.currency.symbol}
+                              </div>
+                            </ReviewAmountValue>
+                          </ReviewDetailRow>
+                        ) : null,
+                      )}
+                    </List.Control>
+                  )}
                 </List>
               </div>
               <DialogFooter>

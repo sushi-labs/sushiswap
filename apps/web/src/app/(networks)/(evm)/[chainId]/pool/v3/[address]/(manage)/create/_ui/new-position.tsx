@@ -44,18 +44,9 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
   }, [invertTokens, poolStats])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>New position</CardTitle>
-        <CardDescription>
-          Create a new concentrated liquidity position
-        </CardDescription>
-      </CardHeader>
-      <div className="px-6">
-        <Separator />
-      </div>
-      <CardContent>
-        <>
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_40%] gap-4">
+      <Card className="col-span-1">
+        <CardContent className="pt-6">
           <SelectPricesWidget
             chainId={chainId}
             token0={_token0}
@@ -65,6 +56,10 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
             tokenId={undefined}
             switchTokens={() => setInvertTokens((prev) => !prev)}
           />
+        </CardContent>
+      </Card>
+      <Card className="col-span-1 h-fit">
+        <CardContent className="pt-6">
           <ConcentratedLiquidityWidget
             chainId={chainId}
             account={account}
@@ -76,8 +71,8 @@ export const NewPosition: FC<NewPositionProps> = ({ address, chainId }) => {
             tokenId={undefined}
             successLink={`/${getChainById(chainId).key}/pool/v3/${address}/positions`}
           />
-        </>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

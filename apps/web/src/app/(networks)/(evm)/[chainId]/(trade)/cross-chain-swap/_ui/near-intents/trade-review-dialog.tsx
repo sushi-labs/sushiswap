@@ -16,6 +16,8 @@ import {
 } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
+import { ReviewDetailRow } from 'src/lib/components/review-detail-row'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import {
   NEAR_INTENTS_UI_FEE_DECIMAL,
@@ -45,8 +47,6 @@ import {
 } from 'sushi/stellar'
 import type { NearIntentsQuoteResponse } from '~evm/api/cross-chain/near-intents/schemas'
 import { getStellarAddressLink } from '~stellar/_common/lib/utils/stellarchain-helpers'
-import { ReviewAmountValue } from '../../../_ui/review-amount-value'
-import { ReviewDetailRow } from '../../../_ui/review-detail-row'
 import { DialogBody } from '../../../swap/_ui/simple-swap-trade-review-dialog/dialog-body'
 import { TradeAmounts } from '../../../swap/_ui/simple-swap-trade-review-dialog/trade-amounts'
 import { TradeHeader } from '../../../swap/_ui/simple-swap-trade-review-dialog/trade-header'

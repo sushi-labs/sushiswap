@@ -142,7 +142,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               yScale={yScale}
               xValue={xAccessor}
               yValue={yAccessor}
-              fill={styles.area.selection}
+              fill={styles.area.unselection}
               opacity={styles.area.opacity}
             />
 

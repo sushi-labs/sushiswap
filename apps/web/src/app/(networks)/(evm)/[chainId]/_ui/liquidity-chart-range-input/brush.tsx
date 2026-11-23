@@ -273,7 +273,7 @@ export const Brush: FC<BrushProps> = ({
                 >
                   <rect
                     fill="currentColor"
-                    className="text-gray-100 dark:text-slate-900"
+                    className="text-primary invert"
                     y="1"
                     x="-30"
                     height="30"
@@ -284,7 +284,7 @@ export const Brush: FC<BrushProps> = ({
                     textAnchor="middle"
                     fontSize={13}
                     fill="currentColor"
-                    className="text-gray-600 dark:text-slate-400 font-medium"
+                    className="text-muted-foreground font-medium"
                     transform="scale(-1, 1)"
                     y="16"
                     dominantBaseline="middle"
@@ -332,7 +332,7 @@ export const Brush: FC<BrushProps> = ({
                 >
                   <rect
                     fill="currentColor"
-                    className="text-gray-100 dark:text-slate-900"
+                    className="text-primary invert"
                     y="1"
                     x="-30"
                     height="30"
@@ -343,7 +343,7 @@ export const Brush: FC<BrushProps> = ({
                     textAnchor="middle"
                     fontSize={13}
                     fill="currentColor"
-                    className="text-gray-600 dark:text-slate-400 font-medium"
+                    className="text-muted-foreground font-medium"
                     y="16"
                     dominantBaseline="middle"
                   >

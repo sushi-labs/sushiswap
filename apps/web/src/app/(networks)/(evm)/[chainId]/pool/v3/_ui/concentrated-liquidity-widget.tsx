@@ -4,6 +4,7 @@ import {
   DialogTrigger,
   Dots,
   FormSection,
+  IconButton,
   Message,
   SettingsModule,
   SettingsOverlay,
@@ -190,14 +191,9 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
   if (withTitleAndDescription)
     return (
       <FormSection
-        title="Liquidity"
-        description={
-          <div className="flex flex-col gap-2">
-            <span>
-              {
-                'Depending on your range, the supplied tokens for this position will not always be a 50:50 ratio.'
-              }
-            </span>
+        title={
+          <div className="relative w-full">
+            <div>Liquidity</div>
             <SettingsOverlay
               options={{
                 slippageTolerance: {
@@ -207,17 +203,20 @@ export const ConcentratedLiquidityWidget: FC<ConcentratedLiquidityWidget> = (
               }}
               modules={[SettingsModule.SlippageTolerance]}
             >
-              <div>
-                <Button
-                  size="sm"
-                  name="Settings"
-                  icon={Cog6ToothIcon}
-                  variant="secondary"
-                >
-                  Settings
-                </Button>
-              </div>
+              <IconButton
+                size="sm"
+                name="Settings"
+                icon={Cog6ToothIcon}
+                variant="secondary"
+                className="absolute -top-3 right-0"
+              />
             </SettingsOverlay>
+          </div>
+        }
+        description={
+          <div className="max-w-[90%] flex flex-1">
+            Depending on your range, the supplied tokens for this position will
+            not always be a 50:50 ratio.
           </div>
         }
       >

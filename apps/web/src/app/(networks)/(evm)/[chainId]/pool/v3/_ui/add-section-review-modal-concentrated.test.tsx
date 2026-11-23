@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
 
-import { type ReactNode, act } from 'react'
+import { type ComponentProps, type ReactNode, act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import type { WalletNamespace } from 'src/lib/wallet/types'
-import { Percent } from 'sushi'
+import { Amount, Percent, Price } from 'sushi'
 import {
   EvmChainId,
   EvmToken,
@@ -57,7 +57,7 @@ vi.mock('src/lib/hooks/use-slippage-tolerance', () => ({
   ],
 }))
 vi.mock('src/lib/hooks/use-token-amount-dollar-values', () => ({
-  useTokenAmountDollarValues: () => [0, 0],
+  useTokenAmountDollarValues: () => [1, 0.5],
 }))
 vi.mock('src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline', () => ({
   useTransactionDeadline: () => ({ data: 1n }),
@@ -121,10 +121,10 @@ function fullRangePosition(amount1: bigint): Position {
 async function render({
   position,
   existingPosition,
-}: {
-  position?: Position
-  existingPosition?: Position
-} = {}): Promise<void> {
+  ...reviewProps
+}: Partial<
+  ComponentProps<typeof AddSectionReviewModalConcentrated>
+> = {}): Promise<void> {
   await act(async () => {
     root.render(
       <AddSectionReviewModalConcentrated
@@ -142,6 +142,7 @@ async function render({
         noLiquidity={!position}
         tokenId={existingPosition ? '1' : undefined}
         onSuccess={vi.fn()}
+        {...reviewProps}
       >
         Preview
       </AddSectionReviewModalConcentrated>,
@@ -159,6 +160,44 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root.unmount())
   vi.restoreAllMocks()
+})
+
+it('shows price bounds, their USD values and the supplied deposit amounts', async () => {
+  const token0 = USDG[EvmChainId.ROBINHOOD]
+  const review = {
+    chainId: token0.chainId,
+    token0,
+    token1: coin,
+    input0: Amount.fromHuman(token0, '4.5'),
+    input1: Amount.fromHuman(coin, '7'),
+    price: Price.fromHuman(token0, coin, '2'),
+    pricesAtTicks: {
+      LOWER: Price.fromHuman(token0, coin, '1'),
+      UPPER: Price.fromHuman(token0, coin, '3'),
+    },
+  }
+
+  await render(review)
+  expect(container.textContent).toContain('Minimum Price1 COIN$0.50 (-50%)')
+  expect(container.textContent).toContain('Starting Price2 COIN$1.00')
+  expect(container.textContent).toContain('Maximum Price3 COIN$1.50 (50%)')
+  expect(container.textContent).toContain('4.5 USDG')
+  expect(container.textContent).toContain('7 COIN')
+
+  await render({
+    ...review,
+    noLiquidity: false,
+    ticksAtLimit: { LOWER: true, UPPER: true },
+    input1: undefined,
+  })
+  expect(container.textContent).toContain('Minimum Price0 COIN')
+  expect(container.textContent).toContain('Market Price2 COIN$1.00')
+  expect(container.textContent).toContain('Maximum Price∞ COIN')
+  expect(container.textContent?.match(/\$/g)).toHaveLength(1)
+  expect(container.textContent).not.toContain('(50%)')
+  expect(container.textContent).not.toContain('(-50%)')
+  expect(container.textContent).toContain('4.5 USDG')
+  expect(container.textContent).not.toContain('7 COIN')
 })
 
 it.each([false, true])(

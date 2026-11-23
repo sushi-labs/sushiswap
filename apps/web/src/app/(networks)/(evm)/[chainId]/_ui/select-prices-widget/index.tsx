@@ -470,6 +470,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             onPressedChange={handleSwitchTokens}
             pressed={isSorted}
             size="sm"
+            className="bg-secondary data-[state=on]:!bg-background data-[state=on]:!border-pink"
           >
             {isSorted ? token0?.symbol : token1?.symbol}
           </Toggle>
@@ -478,6 +479,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
             onPressedChange={handleSwitchTokens}
             pressed={!isSorted}
             size="sm"
+            className="bg-secondary data-[state=on]:!bg-background data-[state=on]:!border-pink"
           >
             {isSorted ? token1?.symbol : token0?.symbol}
           </Toggle>
@@ -489,7 +491,7 @@ export const SelectPricesWidget: FC<SelectPricesWidget> = ({
 
   return (
     <FormSection
-      title="Range"
+      title="Set price range"
       description={
         <>
           Select a price range to provide liquidity. You will not earn any fees

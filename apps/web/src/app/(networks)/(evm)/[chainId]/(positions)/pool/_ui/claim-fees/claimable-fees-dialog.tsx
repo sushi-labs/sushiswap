@@ -247,7 +247,7 @@ function ClaimableFeesDialogContent(): ReactNode {
       <DialogTrigger asChild>
         <Button>Claim Fees</Button>
       </DialogTrigger>
-      <DialogContent className="md:!max-w-2xl">
+      <DialogContent className="md:!max-w-3xl">
         <DialogHeader>
           <DialogTitle>Claimable Fees ({data?.length ?? 0})</DialogTitle>
         </DialogHeader>

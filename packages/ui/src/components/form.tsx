@@ -24,12 +24,12 @@ const FormSection = ({
   description,
   children,
 }: {
-  title: string
+  title: React.ReactNode
   description: React.ReactNode
   children: React.ReactNode
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-x-10 py-2">
+    <div className="grid grid-cols-3 gap-x-10">
       <div className="col-span-3 py-2">
         <CardHeader className="!p-0">
           <CardTitle>{title}</CardTitle>

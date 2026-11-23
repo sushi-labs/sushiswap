@@ -1,6 +1,7 @@
 import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
+import { useTheme } from 'next-themes'
 import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
 import { Bound } from 'src/lib/constants'
 import type { Price } from 'sushi'
@@ -12,7 +13,6 @@ import {
   getPriceRangeWithTokenRatio,
 } from 'sushi/evm'
 import colors from 'tailwindcss/colors'
-
 import { Chart } from './chart'
 import { useDensityChartData } from './hooks'
 import type { HandleType, ZoomLevels } from './types'
@@ -68,10 +68,10 @@ interface InfoBoxProps {
 
 const InfoBox: FC<InfoBoxProps> = ({ message, icon }) => {
   return (
-    <div className="w-full items-center flex flex-col justify-center h-full bg-white dark:bg-white/[0.02] rounded-lg">
+    <div className="w-full items-center flex flex-col justify-center h-full bg-muted rounded-lg">
       {icon}
       {message && (
-        <span className="font-medium text-sm mt-5 text-center p-2.5 text-gray-600 dark:text-slate-400 text-slate-600">
+        <span className="font-medium text-sm mt-5 text-center p-2.5 text-muted-foreground">
           {message}
         </span>
       )}
@@ -112,6 +112,8 @@ export function LiquidityChartRangeInput({
   hideBrushes?: boolean
   tokenToggle?: ReactNode
 }) {
+  const { resolvedTheme } = useTheme()
+  const isDarkMode = resolvedTheme === 'dark'
   const isSorted =
     currencyA && currencyB && currencyA?.wrap().sortsBefore(currencyB?.wrap())
 
@@ -231,7 +233,7 @@ export function LiquidityChartRangeInput({
               <InboxIcon
                 width={16}
                 stroke="currentColor"
-                className="text-slate-200"
+                className="text-muted-foreground"
               />
             }
           />
@@ -250,7 +252,7 @@ export function LiquidityChartRangeInput({
               <StopIcon
                 width={16}
                 stroke="currentColor"
-                className="dark:text-slate-400 text-slate-600"
+                className="text-muted-foreground"
               />
             }
           />
@@ -264,7 +266,7 @@ export function LiquidityChartRangeInput({
               <ChartBarIcon
                 width={16}
                 stroke="currentColor"
-                className="dark:text-slate-400 text-slate-600"
+                className="text-muted-foreground"
               />
             }
           />
@@ -273,16 +275,17 @@ export function LiquidityChartRangeInput({
         <div className="relative items-center justify-center">
           <Chart
             data={{ series: data, current: price }}
-            dimensions={{ width: 400, height: 300 }}
+            dimensions={{ width: 400, height: 180 }}
             margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
             styles={{
               area: {
-                selection: colors.blue['500'],
+                selection: colors.pink['300'],
+                unselection: isDarkMode ? '#292929' : '#f2f2f2',
               },
               brush: {
                 handle: {
-                  west: colors.blue['600'],
-                  east: colors.blue['600'],
+                  west: colors.pink['600'],
+                  east: colors.pink['600'],
                 },
               },
             }}

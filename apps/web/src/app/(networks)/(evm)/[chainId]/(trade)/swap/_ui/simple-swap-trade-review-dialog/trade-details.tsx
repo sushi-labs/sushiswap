@@ -10,6 +10,8 @@ import {
 import { NetworkIcon } from '@sushiswap/ui/icons/network-icon'
 import { useMemo } from 'react'
 import type { SupportedChainId } from 'src/config'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
+import { ReviewDetailRow } from 'src/lib/components/review-detail-row'
 import type {
   UseEvmTradeReturn,
   UseSvmTradeReturn,
@@ -22,8 +24,6 @@ import {
 import { ChainId, type Percent, ZERO, getChainById } from 'sushi'
 import { EvmNative } from 'sushi/evm'
 import { SvmNative, isSvmChainId } from 'sushi/svm'
-import { ReviewAmountValue } from '../../../_ui/review-amount-value'
-import { ReviewDetailRow } from '../../../_ui/review-detail-row'
 import { TradeAmounts } from './trade-amounts'
 
 export function TradeDetails<TChainId extends SupportedChainId>({

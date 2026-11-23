@@ -1,9 +1,9 @@
 import { SkeletonText } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { useCurrencyPrice } from 'src/app/(networks)/(evm)/_common/ui/price-provider/price-provider/use-currency-price'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
 import type { ValueTransferChainId } from 'src/lib/swap/value-transfer/types'
 import { Amount, formatNumber, formatUSD } from 'sushi'
-import { ReviewAmountValue } from '../../../_ui/review-amount-value'
 import type { LayerZeroSourceNetworkFee } from './hooks/use-layerzero-source-network-fee'
 
 export function SourceNetworkFee({

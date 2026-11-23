@@ -208,7 +208,7 @@ export function LiquidityChartRangeInput({
               <InboxIcon
                 width={16}
                 stroke="currentColor"
-                className="text-slate-200"
+                className="text-muted-foreground"
               />
             }
           />
