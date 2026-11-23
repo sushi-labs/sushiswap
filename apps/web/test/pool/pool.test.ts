@@ -18,6 +18,24 @@ import {
 
 const NATIVE_TOKEN = EvmNative.fromChainId(chainId)
 
+test('returns to the referring pool page after reloading in a fresh tab', async ({
+  page,
+}) => {
+  const previousPage = '/polygon/pool?tab=v2'
+  await page.goto(previousPage)
+  const newTab = page.waitForEvent('popup', { timeout: 60_000 })
+  await page.evaluate(() => {
+    window.open('/polygon/pool/v2/add', '_blank')
+  })
+  const positionPage = await newTab
+  await positionPage.reload()
+
+  await positionPage
+    .getByRole('button', { name: '← Back', exact: true })
+    .click()
+  await expect(positionPage).toHaveURL(previousPage)
+})
+
 test('switches position types on the same chain and restores the selection on back', async ({
   page,
 }) => {

@@ -2,7 +2,6 @@ import { Container } from '@sushiswap/ui'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import type React from 'react'
-import { getChainById } from 'sushi'
 import { type EvmChainId, isSushiSwapV2ChainId } from 'sushi/evm'
 import { isAddress } from 'viem'
 import { PoolHeader } from '~evm/[chainId]/pool/_ui/pool-header'
@@ -33,7 +32,7 @@ export default async function Layout(props: {
 
   return (
     <>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+         <Container maxWidth="7xl" className="pt-6 md:pt-10 px-4">
         <PoolHeader
           backUrl={
             referer?.includes('/pool')
@@ -46,10 +45,10 @@ export default async function Layout(props: {
           showAddLiquidityButton
         />
       </Container>
-      <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
+      <section className="flex flex-col flex-1">
+        <Container maxWidth="7xl" className="px-4 py-10">
           {children}
-        </div>
+        </Container>
       </section>
     </>
   )

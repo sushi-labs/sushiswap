@@ -1,8 +1,10 @@
 'use client'
 
 import {
-  type ColumnDef,
   type Row,
+  type SortingState,
+  type TableMeta,
+  type TableOptions,
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
@@ -12,52 +14,71 @@ import { Fragment, type ReactNode, useMemo, useRef } from 'react'
 import { useTableVirtualizer } from '../data-table/use-table-virtualizer'
 import { MobileCard } from './mobile-card'
 import { MobileCardSkeleton } from './mobile-card-skeleton'
+import { MobileTableRowAction } from './mobile-table-row-action'
+
+export interface MobileTableProps<T> {
+  columns: TableOptions<T>['columns']
+  data: T[]
+  isLoading: boolean
+  meta?: TableMeta<T>
+  sorting: SortingState
+  /** Rows from a table over the same data, ordered before desktop pagination. */
+  orderedRows?: Row<T>[]
+  isExpandedOverride?: boolean
+  scrollClassName?: string
+  scrollMode?: 'element' | 'window'
+  linkFormatter?: (value: T) => string
+  onRowClick?: (value: T) => void
+  getRowLabel?: (value: T) => string
+  /** A custom renderer owns the row content and its interactions. */
+  rowRenderer?: (row: Row<T>, content: ReactNode) => ReactNode
+  skeleton?: ReactNode
+  footer?: ReactNode
+  hideExpand?: boolean
+}
 
 export function MobileTable<T>({
   columns,
   data,
   isLoading,
+  meta,
   sorting,
+  orderedRows,
   isExpandedOverride,
   scrollClassName,
   scrollMode = 'element',
+  linkFormatter,
+  onRowClick,
+  getRowLabel,
   rowRenderer,
   skeleton,
   footer,
   hideExpand,
-}: {
-  columns: ColumnDef<T, unknown>[]
-  data: T[]
-  isLoading: boolean
-  sorting: {
-    id: string
-    desc: boolean
-  }[]
-  isExpandedOverride?: boolean
-  scrollClassName?: string
-  scrollMode?: 'element' | 'window'
-  rowRenderer?: (row: Row<T>, content: ReactNode) => ReactNode
-  skeleton?: ReactNode
-  footer?: ReactNode
-  hideExpand?: boolean
-}): ReactNode {
+}: MobileTableProps<T>): ReactNode {
   const table = useReactTable({
     data: data,
     columns: columns,
+    meta,
     state: {
       sorting,
     },
+    manualSorting: orderedRows !== undefined,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
+  const headers = table.getFlatHeaders()
   const headersById = useMemo(() => {
     return Object.fromEntries(
-      table.getFlatHeaders().map((header) => [header.column.id, header]),
+      headers.map((header) => [header.column.id, header]),
     )
-  }, [table])
+  }, [headers])
 
-  const { rows } = table.getRowModel()
+  const rowModel = table.getRowModel()
+  const rows = useMemo(
+    () => orderedRows?.map((row) => rowModel.rows[row.index]) ?? rowModel.rows,
+    [orderedRows, rowModel],
+  )
 
   const parentRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
@@ -82,7 +103,17 @@ export function MobileTable<T>({
         hideExpand={hideExpand}
       />
     )
-    return rowRenderer ? rowRenderer(row, content) : content
+    if (rowRenderer) return rowRenderer(row, content)
+    if (!linkFormatter && !onRowClick) return content
+    return (
+      <MobileTableRowAction
+        href={linkFormatter?.(row.original)}
+        label={getRowLabel?.(row.original)}
+        onClick={onRowClick && (() => onRowClick(row.original))}
+      >
+        {content}
+      </MobileTableRowAction>
+    )
   }
 
   if (isLoading) {
@@ -96,7 +127,7 @@ export function MobileTable<T>({
     )
   }
 
-  if (!isLoading && data?.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="flex flex-col gap-3">
         <div className="rounded-lg border text-xs border-accent bg-secondary p-4 flex gap-2 justify-center">

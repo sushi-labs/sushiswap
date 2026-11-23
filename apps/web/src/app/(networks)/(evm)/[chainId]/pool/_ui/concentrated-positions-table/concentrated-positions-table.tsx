@@ -19,7 +19,6 @@ import type {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import { useRouter } from 'next/navigation'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
@@ -82,7 +81,6 @@ export function ConcentratedPositionsTable({
   hideCollectAllButton = false,
   actions,
 }: ConcentratedPositionsTableProps): ReactNode {
-  const router = useRouter()
   const { address } = useConnection()
   const { tokenSymbols } = usePoolFilters()
 
@@ -150,49 +148,6 @@ export function ConcentratedPositionsTable({
       return rowNode
     },
     [onRowClick],
-  )
-
-  const mobileRowRenderer = useCallback(
-    (
-      row: Row<ConcentratedLiquidityPositionWithV3Pool>,
-      rowNode: ReactNode,
-    ): ReactNode => {
-      function navigate(): void {
-        onRowClick?.(row.original)
-        router.push(linkFormatter(row.original))
-      }
-
-      return (
-        <div
-          role="link"
-          tabIndex={0}
-          aria-label={`View ${row.original.pool.token0.symbol}/${row.original.pool.token1.symbol} position #${row.original.tokenId}`}
-          className="cursor-pointer rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
-          onClick={(event) => {
-            if (
-              event.defaultPrevented ||
-              !(event.target instanceof Element) ||
-              !event.currentTarget.contains(event.target) ||
-              event.target.closest(
-                'a, button, input, select, textarea, [role="button"], [role="menuitem"], [aria-haspopup]',
-              )
-            ) {
-              return
-            }
-            navigate()
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && event.target === event.currentTarget) {
-              event.preventDefault()
-              navigate()
-            }
-          }}
-        >
-          {rowNode}
-        </div>
-      )
-    },
-    [linkFormatter, onRowClick, router],
   )
 
   return (
@@ -288,7 +243,11 @@ export function ConcentratedPositionsTable({
           isLoading={isInitialLoading}
           isExpandedOverride={true}
           hideExpand={true}
-          rowRenderer={mobileRowRenderer}
+          linkFormatter={linkFormatter}
+          onRowClick={onRowClick}
+          getRowLabel={(position) =>
+            `View ${position.pool.token0.symbol}/${position.pool.token1.symbol} position #${position.tokenId}`
+          }
           columns={MOBILE_COLUMNS}
           data={_positions}
         />

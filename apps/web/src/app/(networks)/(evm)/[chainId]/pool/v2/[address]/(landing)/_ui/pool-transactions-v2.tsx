@@ -7,16 +7,7 @@ import {
   getSushiV2Mints,
   getSushiV2Swaps,
 } from '@sushiswap/graph-client/data-api'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  DataTable,
-  Toggle,
-} from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
-import type { PaginationState } from '@tanstack/react-table'
 import { type FC, useMemo, useState } from 'react'
 import type { Address, Hex } from 'viem'
 
@@ -25,6 +16,10 @@ import {
   getEvmChainById,
   isSushiSwapV2ChainId,
 } from 'sushi/evm'
+import {
+  type PoolTransactionFilter,
+  PoolTransactionsCard,
+} from '~evm/[chainId]/pool/_ui/pool-transactions-card'
 import {
   TX_AMOUNT_IN_V2_COLUMN,
   TX_AMOUNT_OUT_V2_COLUMN,
@@ -176,6 +171,10 @@ function useTransactionsV2(
 
 type Transaction = NonNullable<ReturnType<typeof useTransactionsV2>['data']>[0]
 
+function getTransactionUrl(row: Transaction): string {
+  return getEvmChainById(row.chainId).getTransactionUrl(row.txHash as Hex) ?? ''
+}
+
 interface PoolTransactionsV2Props {
   pool: RawV2Pool
   poolAddress: Address
@@ -185,15 +184,10 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
   pool,
   poolAddress,
 }) => {
-  const [type, setType] = useState<
-    Parameters<typeof useTransactionsV2>['2']['type']
-  >(TransactionType.Swap)
-  const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  const [filter, setFilter] = useState<PoolTransactionFilter>('Swap')
+  const type = TransactionType[filter]
 
-  const COLUMNS = useMemo(() => {
+  const columns = useMemo(() => {
     return [
       TX_SENDER_V2_COLUMN,
       TX_AMOUNT_IN_V2_COLUMN(type),
@@ -203,76 +197,21 @@ const PoolTransactionsV2: FC<PoolTransactionsV2Props> = ({
     ]
   }, [type])
 
-  const opts = useMemo(
-    () =>
-      ({
-        refetchInterval: 60_000,
-        first:
-          paginationState.pageSize === 0 ? paginationState.pageIndex + 1 : 100,
-        type,
-      }) as const,
-    [paginationState.pageIndex, paginationState.pageSize, type],
-  )
-
-  const { data, isLoading } = useTransactionsV2(pool, poolAddress, opts)
-
-  const _data = useMemo(() => {
-    return data ?? []
-  }, [data])
+  const { data, isLoading } = useTransactionsV2(pool, poolAddress, {
+    type,
+    first: 100,
+    refetchInterval: 60_000,
+  })
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <div className="flex flex-col md:flex-row justify-between gap-y-4">
-            Transactions
-            <div className="flex items-center gap-1">
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionType.Swap}
-                onClick={() => setType(TransactionType.Swap)}
-              >
-                Swaps
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionType.Mint}
-                onClick={() => setType(TransactionType.Mint)}
-              >
-                Add
-              </Toggle>
-              <Toggle
-                variant="outline"
-                size="xs"
-                pressed={type === TransactionType.Burn}
-                onClick={() => setType(TransactionType.Burn)}
-              >
-                Remove
-              </Toggle>
-            </div>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="!px-0">
-        <DataTable
-          linkFormatter={(row) =>
-            getEvmChainById(row.chainId).getTransactionUrl(row.txHash as Hex) ??
-            ''
-          }
-          loading={isLoading}
-          columns={COLUMNS}
-          data={_data}
-          pagination={true}
-          externalLink={true}
-          onPaginationChange={setPaginationState}
-          state={{
-            pagination: paginationState,
-          }}
-        />
-      </CardContent>
-    </Card>
+    <PoolTransactionsCard
+      columns={columns}
+      transactions={data}
+      isLoading={isLoading}
+      filter={filter}
+      onFilterChange={setFilter}
+      getTransactionUrl={getTransactionUrl}
+    />
   )
 }
 

@@ -2,7 +2,7 @@
 
 import { Button, type ButtonProps, LinkInternal } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import type { ReactElement, Ref } from 'react'
+import { type ReactElement, type Ref, useCallback } from 'react'
 
 type BackButtonProps = Omit<ButtonProps, 'icon'> &
   (
@@ -11,7 +11,23 @@ type BackButtonProps = Omit<ButtonProps, 'icon'> &
   )
 
 function BackButton({ backUrl, ref, ...props }: BackButtonProps): ReactElement {
-  const { back } = useRouter()
+  const router = useRouter()
+
+  const goBack = useCallback(() => {
+    if (window.history.length === 1 && document.referrer) {
+      const referrer = new URL(document.referrer)
+      if (
+        referrer.origin === window.location.origin &&
+        referrer.href !== window.location.href
+      ) {
+        router.replace(referrer.href)
+        return
+      }
+    }
+
+    router.back()
+  }, [router])
+
   if (backUrl !== undefined) {
     return (
       <LinkInternal
@@ -23,9 +39,10 @@ function BackButton({ backUrl, ref, ...props }: BackButtonProps): ReactElement {
       </LinkInternal>
     )
   }
+
   return (
     <Button
-      onClick={back}
+      onClick={goBack}
       {...props}
       ref={ref}
       variant="link"

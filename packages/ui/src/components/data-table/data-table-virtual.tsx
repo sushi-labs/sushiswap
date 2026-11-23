@@ -5,10 +5,12 @@ import {
   type ColumnFiltersState,
   type OnChangeFn,
   type PaginationState,
+  type Table as ReactTable,
   type Row,
   type SortingState,
   type TableMeta,
   type TableState,
+  type Updater,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -22,20 +24,19 @@ import {
 import classNames from 'classnames'
 import Link from 'next/link'
 import { default as React, type ReactNode } from 'react'
-import { DataTableVirtualPagination } from '../..'
 import {
   Table,
   TableBody,
   TableCell,
-  TableCellAsLink,
   TableHead,
   TableHeader,
   TableRow,
 } from '../table'
 import { DataTableColumnHeader } from './data-table-column-header'
+import { DataTableVirtualPagination } from './data-table-virtual-pagination'
 import { useTableVirtualizer } from './use-table-virtualizer'
 
-interface DataTableVirtualProps<TData, TValue> {
+export interface DataTableVirtualProps<TData, TValue> {
   scrollMode?: 'element' | 'window'
   scrollClassName?: string
   footer?: ReactNode
@@ -46,6 +47,7 @@ interface DataTableVirtualProps<TData, TValue> {
   linkFormatter?: (value: TData) => string
   externalLink?: boolean
   state?: Partial<TableState>
+  manualSorting?: boolean
   onSortingChange?: OnChangeFn<SortingState>
   onPaginationChange?: OnChangeFn<PaginationState>
   rowRenderer?: (row: Row<TData>, value: ReactNode) => ReactNode
@@ -60,30 +62,15 @@ interface DataTableVirtualProps<TData, TValue> {
   skeletonRowCount?: number
 }
 
-export function DataTableVirtual<TData, TValue>({
-  scrollMode = 'element',
-  scrollClassName,
-  footer,
-  testId,
+export function useVirtualDataTable<TData, TValue>({
   columns,
   data,
-  loading,
-  linkFormatter,
-  externalLink = false,
   state,
+  manualSorting,
   onSortingChange,
   onPaginationChange,
-  rowRenderer,
-  showColumnHeaders = true,
   meta,
-  thClassName,
-  hideScrollbar = false,
-  overscan = 20,
-  estimateSize = 30,
-  trClassName,
-  pagination = false,
-  skeletonRowCount = 3,
-}: DataTableVirtualProps<TData, TValue>) {
+}: DataTableVirtualProps<TData, TValue>): ReactTable<TData> {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -92,7 +79,12 @@ export function DataTableVirtual<TData, TValue>({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
 
-  const table = useReactTable({
+  function handleSortingChange(updater: Updater<SortingState>): void {
+    if (state?.sorting === undefined) setSorting(updater)
+    onSortingChange?.(updater)
+  }
+
+  return useReactTable({
     data,
     columns,
     state: {
@@ -101,15 +93,16 @@ export function DataTableVirtual<TData, TValue>({
       columnVisibility: state?.columnVisibility
         ? state.columnVisibility
         : columnVisibility,
-      sorting: state?.sorting ? state.sorting : sorting,
+      sorting: state?.sorting ?? sorting,
       ...(state?.pagination && { pagination: state?.pagination }),
     },
     meta,
+    manualSorting,
     autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: onSortingChange ? onSortingChange : setSorting,
-    onPaginationChange: onPaginationChange,
+    onSortingChange: handleSortingChange,
+    ...(onPaginationChange && { onPaginationChange }),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
@@ -119,7 +112,37 @@ export function DataTableVirtual<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
+}
 
+export function DataTableVirtual<TData, TValue>(
+  props: DataTableVirtualProps<TData, TValue>,
+): React.ReactElement {
+  const table = useVirtualDataTable(props)
+  return <DataTableVirtualView {...props} table={table} />
+}
+
+export function DataTableVirtualView<TData, TValue>({
+  table,
+  scrollMode = 'element',
+  scrollClassName,
+  footer,
+  testId,
+  columns,
+  loading,
+  linkFormatter,
+  externalLink = false,
+  rowRenderer,
+  showColumnHeaders = true,
+  thClassName,
+  hideScrollbar = false,
+  overscan = 20,
+  estimateSize = 30,
+  trClassName,
+  pagination = false,
+  skeletonRowCount = 3,
+}: DataTableVirtualProps<TData, TValue> & {
+  table: ReactTable<TData>
+}): React.ReactElement {
   const { rows } = table.getRowModel()
 
   const parentRef = React.useRef<HTMLDivElement>(null)

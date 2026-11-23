@@ -6,16 +6,6 @@ import {
   getSushiV3Mints,
   getSushiV3Swaps,
 } from '@sushiswap/graph-client/data-api'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  DataTableVirtual,
-  MobileTable,
-  Toggle,
-  ToggleGroup,
-} from '@sushiswap/ui'
 import { useQuery } from '@tanstack/react-query'
 import { type FC, useMemo, useState } from 'react'
 
@@ -26,6 +16,10 @@ import {
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
 import type { Address, Hex } from 'viem'
+import {
+  type PoolTransactionFilter,
+  PoolTransactionsCard,
+} from '~evm/[chainId]/pool/_ui/pool-transactions-card'
 import {
   TX_AMOUNT_IN_V3_COLUMN,
   TX_AMOUNT_OUT_V3_COLUMN,
@@ -221,9 +215,10 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
   pool,
   poolAddress,
 }) => {
-  const [type, setType] = useState(TransactionTypeV3.Swap)
+  const [filter, setFilter] = useState<PoolTransactionFilter>('Swap')
+  const type = TransactionTypeV3[filter]
 
-  const COLUMNS = useMemo(() => {
+  const columns = useMemo(() => {
     return [
       TX_ORIGIN_V3_COLUMN,
       TX_AMOUNT_IN_V3_COLUMN(type),
@@ -239,80 +234,15 @@ const PoolTransactionsV3: FC<PoolTransactionsV3Props> = ({
     refetchInterval: 60_000,
   })
 
-  const _data = useMemo(() => {
-    return data ?? []
-  }, [data])
-
   return (
-    <Card className="!bg-transparent lg:!bg-secondary !border-transparent lg:!border-accent">
-      <CardHeader className="!px-0 !pt-3 lg:!px-6 lg:!pt-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <CardTitle>Transactions</CardTitle>
-          <ToggleGroup>
-            <Toggle
-              size="xs"
-              pressed={type === TransactionTypeV3.Swap}
-              onClick={() => setType(TransactionTypeV3.Swap)}
-            >
-              Swaps
-            </Toggle>
-            <Toggle
-              size="xs"
-              pressed={type === TransactionTypeV3.Mint}
-              onClick={() => setType(TransactionTypeV3.Mint)}
-            >
-              Add
-            </Toggle>
-            <Toggle
-              size="xs"
-              pressed={type === TransactionTypeV3.Burn}
-              onClick={() => setType(TransactionTypeV3.Burn)}
-            >
-              Remove
-            </Toggle>
-          </ToggleGroup>
-        </div>
-      </CardHeader>
-      <CardContent className="!px-0">
-        <div className="hidden lg:block">
-          <DataTableVirtual
-            linkFormatter={getTransactionUrl}
-            externalLink
-            loading={isLoading}
-            columns={COLUMNS}
-            data={_data}
-            scrollMode="window"
-            estimateSize={52}
-            skeletonRowCount={10}
-            state={{
-              pagination: { pageIndex: 0, pageSize: Math.max(_data.length, 1) },
-            }}
-          />
-        </div>
-        <div className="lg:hidden">
-          <MobileTable
-            key={type}
-            columns={COLUMNS}
-            data={_data}
-            isLoading={isLoading}
-            sorting={[]}
-            scrollMode="window"
-            isExpandedOverride
-            hideExpand
-            rowRenderer={(row, card) => (
-              <a
-                href={getTransactionUrl(row.original)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue"
-              >
-                {card}
-              </a>
-            )}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <PoolTransactionsCard
+      columns={columns}
+      transactions={data}
+      isLoading={isLoading}
+      filter={filter}
+      onFilterChange={setFilter}
+      getTransactionUrl={getTransactionUrl}
+    />
   )
 }
 

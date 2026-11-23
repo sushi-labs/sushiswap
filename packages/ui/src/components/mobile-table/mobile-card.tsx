@@ -3,7 +3,7 @@
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { type Header, type Row, flexRender } from '@tanstack/react-table'
 import classNames from 'classnames'
-import { type ReactElement, useEffect, useMemo, useState } from 'react'
+import { type ReactElement, useEffect, useState } from 'react'
 import { IconButton } from '../iconbutton'
 
 type MobileCardProps<T> = {
@@ -29,10 +29,8 @@ export function MobileCard<T>({
     }
   }, [isExpandedOverride])
 
-  const cellsToShow = useMemo(() => {
-    const cells = row.getVisibleCells()
-    return isExpanded ? cells : cells.slice(0, 3)
-  }, [row, isExpanded])
+  const cells = row.getVisibleCells()
+  const cellsToShow = isExpanded ? cells : cells.slice(0, 3)
 
   return (
     <div

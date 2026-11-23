@@ -6,17 +6,10 @@ import {
   CardHeader,
   CardTitle,
   DataTableSortMenu,
-  DataTableVirtual,
-  MobileTable,
+  ResponsiveDataTable,
   Slot,
 } from '@sushiswap/ui'
-import type {
-  DisplayColumnDef,
-  Row,
-  SortingState,
-  TableState,
-} from '@tanstack/react-table'
-import { useRouter } from 'next/navigation'
+import type { DisplayColumnDef, Row, SortingState } from '@tanstack/react-table'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks/api/use-sushi-v2-user-positions'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
@@ -53,7 +46,6 @@ export function V2PositionsTable({
   onRowClick,
   rowLink,
 }: PositionsTableProps): ReactNode {
-  const router = useRouter()
   const { address } = useConnection()
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'value', desc: true },
@@ -69,14 +61,6 @@ export function V2PositionsTable({
     return positions
   }, [positions])
 
-  const state = useMemo<Partial<TableState>>(
-    () => ({
-      sorting,
-      pagination: { pageIndex: 0, pageSize: Math.max(_positions.length, 1) },
-    }),
-    [_positions.length, sorting],
-  )
-
   const rowRenderer = useCallback(
     (row: Row<V2Position>, rowNode: ReactNode) => {
       if (onRowClick)
@@ -91,57 +75,6 @@ export function V2PositionsTable({
       return rowNode
     },
     [onRowClick],
-  )
-
-  const mobileRowRenderer = useCallback(
-    (row: Row<V2Position>, rowNode: ReactNode): ReactNode => {
-      if (!rowLink && !onRowClick) return rowNode
-
-      function navigate(): void {
-        onRowClick?.(row.original)
-        if (rowLink) router.push(rowLink(row.original))
-      }
-
-      return (
-        <div
-          role={rowLink ? 'link' : 'button'}
-          tabIndex={0}
-          aria-label={`View ${row.original.pool.name} position`}
-          className="cursor-pointer rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
-          onClick={(event) => {
-            if (
-              event.defaultPrevented ||
-              !(event.target instanceof Element) ||
-              !event.currentTarget.contains(event.target)
-            ) {
-              return
-            }
-            const interactiveTarget = event.target.closest(
-              'a, button, input, select, textarea, [role="button"], [role="menuitem"], [aria-haspopup]',
-            )
-            if (
-              interactiveTarget &&
-              interactiveTarget !== event.currentTarget
-            ) {
-              return
-            }
-            navigate()
-          }}
-          onKeyDown={(event) => {
-            if (
-              (event.key === 'Enter' || (!rowLink && event.key === ' ')) &&
-              event.target === event.currentTarget
-            ) {
-              event.preventDefault()
-              navigate()
-            }
-          }}
-        >
-          {rowNode}
-        </div>
-      )
-    },
-    [onRowClick, rowLink, router],
   )
 
   return (
@@ -163,30 +96,28 @@ export function V2PositionsTable({
           />
         </div>
       </CardHeader>
-      <div className="hidden md:block">
-        <DataTableVirtual
-          loading={isLoading}
-          rowRenderer={rowRenderer}
-          linkFormatter={rowLink}
-          columns={COLUMNS}
-          data={_positions}
-          state={state}
-          onSortingChange={setSorting}
-          trClassName="h-[72px]"
-          estimateSize={72}
-        />
-      </div>
-      <div className="md:hidden">
-        <MobileTable
-          sorting={sorting}
-          isLoading={isLoading}
-          isExpandedOverride={true}
-          hideExpand={true}
-          rowRenderer={mobileRowRenderer}
-          columns={MOBILE_COLUMNS}
-          data={_positions}
-        />
-      </div>
+      <ResponsiveDataTable
+        breakpoint="md"
+        scrollMode="element"
+        columns={COLUMNS}
+        data={_positions}
+        loading={isLoading}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        linkFormatter={rowLink}
+        desktop={{
+          rowRenderer,
+          trClassName: 'h-[72px]',
+          estimateSize: 72,
+        }}
+        mobile={{
+          columns: MOBILE_COLUMNS,
+          isExpandedOverride: true,
+          hideExpand: true,
+          getRowLabel: (position) => `View ${position.pool.name} position`,
+          onRowClick,
+        }}
+      />
     </Card>
   )
 }

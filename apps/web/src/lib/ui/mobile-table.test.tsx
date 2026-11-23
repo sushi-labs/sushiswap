@@ -3,8 +3,13 @@
 import { act } from 'react'
 import { type Root, createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MobileTable } from '../../../../../packages/ui/src/components/mobile-table/mobile-table'
+import {
+  MobileTable,
+  type MobileTableProps,
+} from '../../../../../packages/ui/src/components/mobile-table/mobile-table'
 
+const push = vi.hoisted(() => vi.fn())
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }))
 vi.mock('@sushiswap/hooks', async () => ({
   useIsomorphicLayoutEffect: (await import('react')).useLayoutEffect,
 }))
@@ -92,6 +97,34 @@ describe('MobileTable page scrolling', () => {
     expect(container.textContent).toContain('Token 0')
     expect(container.textContent).not.toContain('Default card')
     expect(container.querySelector('button')?.textContent).toBe('Load more')
+  })
+
+  it('uses the original row for actions and lets custom renderers take precedence', () => {
+    const onRowClick = vi.fn()
+    const props: MobileTableProps<(typeof data)[number]> = {
+      columns,
+      data: data.slice(0, 2),
+      sorting: [],
+      isLoading: false,
+      linkFormatter: (token) => `/tokens/${token.id}`,
+      getRowLabel: (token) => `View ${token.name}`,
+      onRowClick,
+    }
+    act(() => root.render(<MobileTable {...props} />))
+    container.querySelector<HTMLElement>('[aria-label="View Token 1"]')!.click()
+    expect(onRowClick).toHaveBeenCalledWith(data[1])
+    expect(push).toHaveBeenCalledWith('/tokens/1')
+
+    act(() =>
+      root.render(
+        <MobileTable
+          {...props}
+          rowRenderer={(row) => <span>{row.original.name}</span>}
+        />,
+      ),
+    )
+    expect(container.querySelector('[role="link"]')).toBeNull()
+    expect(container.textContent).toContain('Token 1')
   })
 
   it('updates the virtual rows when the page scrolls, without a fixed-height container', () => {

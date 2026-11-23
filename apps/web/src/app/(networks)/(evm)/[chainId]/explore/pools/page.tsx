@@ -20,7 +20,7 @@ export default async function PoolsPage(props: {
   }
 
   return (
-    <Container maxWidth="7xl" className="px-4">
+    <Container maxWidth="7xl" className="px-4 mb-8">
       <div className="flex flex-wrap gap-3 md:mb-4">
         <TableFiltersSearchToken />
         <TableFiltersPoolType />

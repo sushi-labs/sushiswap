@@ -22,7 +22,6 @@ import type {
   SortingState,
   TableState,
 } from '@tanstack/react-table'
-import { useRouter } from 'next/navigation'
 import { type FC, type ReactNode, useCallback, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { usePoolFilters } from 'src/app/(networks)/_ui/pools-filters-provider'
@@ -85,7 +84,6 @@ export const PoolsTable: FC<PoolsTableProps> = ({
   onRowClick,
   forcedTokenAddresses,
 }) => {
-  const router = useRouter()
   const { tokenSymbols, protocols, farmsOnly, smartPoolsOnly } =
     usePoolFilters()
 
@@ -153,46 +151,6 @@ export const PoolsTable: FC<PoolsTableProps> = ({
     [onRowClick],
   )
 
-  const mobileRowRenderer = useCallback(
-    (row: Row<Pools[number]>, rowNode: ReactNode): ReactNode => {
-      function navigate(): void {
-        onRowClick?.(row.original)
-        router.push(linkFormatter(row.original))
-      }
-
-      return (
-        <div
-          role="link"
-          tabIndex={0}
-          aria-label={`View ${row.original.name} pool`}
-          className="cursor-pointer rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
-          onClick={(event) => {
-            if (
-              event.defaultPrevented ||
-              !(event.target instanceof Element) ||
-              !event.currentTarget.contains(event.target) ||
-              event.target.closest(
-                'a, button, input, select, textarea, [role="button"], [role="menuitem"]',
-              )
-            ) {
-              return
-            }
-            navigate()
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && event.target === event.currentTarget) {
-              event.preventDefault()
-              navigate()
-            }
-          }}
-        >
-          {rowNode}
-        </div>
-      )
-    },
-    [onRowClick, router],
-  )
-
   return (
     <InfiniteScroll
       dataLength={data.length}
@@ -247,7 +205,9 @@ export const PoolsTable: FC<PoolsTableProps> = ({
             isLoading={isLoading}
             isExpandedOverride={true}
             hideExpand={true}
-            rowRenderer={mobileRowRenderer}
+            linkFormatter={linkFormatter}
+            onRowClick={onRowClick}
+            getRowLabel={(pool) => `View ${pool.name} pool`}
             columns={MOBILE_COLUMNS}
             data={data}
           />

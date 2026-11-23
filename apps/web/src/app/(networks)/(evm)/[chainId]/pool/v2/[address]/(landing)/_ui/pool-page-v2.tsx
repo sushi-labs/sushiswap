@@ -14,7 +14,7 @@ interface PoolPageV2 {
 
 export const PoolPageV2: FC<PoolPageV2> = ({ pool }) => {
   return (
-    <Container maxWidth="5xl" className="flex flex-col gap-4 px-4">
+    <Container maxWidth="7xl" className="flex flex-col gap-4 md:pt-8 border-t border-transparent md:border-accent">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <PoolChartV2 pool={pool} />
