@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { Button, Dots, FormSection, Loader } from '@sushiswap/ui'
+import { Button, Card, Dots, FormSection, Loader } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import React, {
@@ -206,13 +206,6 @@ function PoolForm({
     [],
   )
 
-  useEffect(() => {
-    setIsZapModeEnabled(
-      isZapSupportedChainId(chainId) &&
-        poolState === SushiSwapV2PoolState.EXISTS,
-    )
-  }, [chainId, poolState])
-
   const title =
     !token0 || !token1 ? (
       'Select Tokens'
@@ -227,61 +220,57 @@ function PoolForm({
     )
 
   return (
-    <>
-      <SelectPositionType chainId={chainId} positionType="v2" />
-      <SelectNetworkWidget
-        networks={networks}
-        selectedNetwork={chainId}
-        onSelect={(chainId) => {
-          if (!isSushiSwapV2ChainId(chainId)) return
-          router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
-        }}
-      />
-      <SelectTokensWidget
-        chainId={chainId}
-        token0={token0}
-        token1={token1}
-        setToken0={setToken0}
-        setToken1={setToken1}
-        includeNative={isEvmWNativeSupported(chainId)}
-      />
-      <FormSection
-        title="Deposit"
-        description="Select the amount of tokens you want to deposit"
-      >
-        {isZapSupportedChainId(chainId) &&
-        poolState === SushiSwapV2PoolState.EXISTS ? (
-          <ToggleZapCard
-            checked={isZapModeEnabled}
-            onCheckedChange={setIsZapModeEnabled}
-          />
-        ) : null}
-        {isZapModeEnabled ? (
-          <ZapWidget
-            chainId={chainId}
-            pool={pool}
-            poolState={poolState}
-            title={title}
-          />
-        ) : (
-          <AddLiquidityWidget
-            chainId={chainId}
-            pool={pool}
-            poolState={poolState}
-            title={title}
-            token0={token0}
-            token1={token1}
-            setToken0={setToken0}
-            setToken1={setToken1}
-            input0={input0}
-            input1={input1}
-            setTypedAmounts={setTypedAmounts}
-            independendField={independendField}
-            setIndependendField={setIndependendField}
-          />
-        )}
-      </FormSection>
-    </>
+    <Card className="divide-y divide-accent px-4 sm:px-6">
+      <div className="grid gap-x-6 py-3 sm:grid-cols-2">
+        <SelectPositionType chainId={chainId} positionType="v2" />
+        <SelectNetworkWidget
+          networks={networks}
+          selectedNetwork={chainId}
+          onSelect={(chainId) => {
+            if (!isSushiSwapV2ChainId(chainId)) return
+            router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
+          }}
+        />
+      </div>
+      <div className="py-3">
+        <FormSection
+          title="Deposit"
+          description="Select the tokens and amount you want to deposit"
+        >
+          {isZapSupportedChainId(chainId) &&
+          poolState === SushiSwapV2PoolState.EXISTS ? (
+            <ToggleZapCard
+              checked={isZapModeEnabled}
+              onCheckedChange={setIsZapModeEnabled}
+            />
+          ) : null}
+          {isZapModeEnabled ? (
+            <ZapWidget
+              chainId={chainId}
+              pool={pool}
+              poolState={poolState}
+              title={title}
+            />
+          ) : (
+            <AddLiquidityWidget
+              chainId={chainId}
+              pool={pool}
+              poolState={poolState}
+              title={title}
+              token0={token0}
+              token1={token1}
+              setToken0={setToken0}
+              setToken1={setToken1}
+              input0={input0}
+              input1={input1}
+              setTypedAmounts={setTypedAmounts}
+              independendField={independendField}
+              setIndependendField={setIndependendField}
+            />
+          )}
+        </FormSection>
+      </div>
+    </Card>
   )
 }
 
@@ -463,7 +452,7 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
       <Web3Input.Currency
         id="zap-liquidity-token"
         type="INPUT"
-        className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+        className="border border-accent p-4 bg-muted rounded-2xl"
         chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
@@ -690,7 +679,7 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
         <Web3Input.Currency
           id="add-liquidity-token0"
           type="INPUT"
-          className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+          className="border border-accent p-4 bg-muted rounded-2xl"
           chainId={chainId}
           value={input0}
           onChange={onChangeToken0TypedAmount}
@@ -704,21 +693,19 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
           loading={poolState === SushiSwapV2PoolState.LOADING}
           allowNative={isEvmWNativeSupported(chainId)}
         />
-        <div className="left-0 right-0 mt-[-24px] mb-[-24px] flex items-center justify-center">
-          <button
-            type="button"
-            className="z-10 p-2 bg-gray-100 rounded-full dark:bg-slate-900"
-          >
+        <div className="left-0 right-0 mt-[-24px] z-10 mb-[-24px] flex items-center justify-center">
+          <div className="p-1 bg-secondary border border-accent rounded-full">
             <PlusIcon
-              strokeWidth={3}
-              className="w-4 h-4 dark:text-slate-400 text-slate-600"
+              width={16}
+              height={16}
+              className="text-muted-foreground"
             />
-          </button>
+          </div>
         </div>
         <Web3Input.Currency
           id="add-liquidity-token1"
           type="INPUT"
-          className="p-3 bg-white dark:bg-slate-800 rounded-xl"
+          className="border border-accent p-4 bg-muted rounded-2xl"
           chainId={chainId}
           value={input1}
           onChange={onChangeToken1TypedAmount}

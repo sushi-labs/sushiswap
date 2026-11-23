@@ -6,9 +6,9 @@ import {
   StatLabel,
   StatValue,
 } from '@sushiswap/ui'
-import { type FC, useMemo } from 'react'
+import type { FC } from 'react'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
-import { type Amount, formatPercent } from 'sushi'
+import { type Amount, Price, formatPercent } from 'sushi'
 import type { EvmCurrency, SushiSwapV2Pool } from 'sushi/evm'
 
 interface AddSectionPoolShareCardV2 {
@@ -24,69 +24,55 @@ export const AddSectionPoolShareCardV2: FC<AddSectionPoolShareCardV2> = ({
   input0,
   input1,
 }) => {
-  const [token0Input, token1Input] = useMemo(() => {
-    if (!pool && poolState === SushiSwapV2PoolState.NOT_EXISTS)
-      return [input0, input1]
+  if (
+    !input0 ||
+    !input1 ||
+    (!pool && poolState !== SushiSwapV2PoolState.NOT_EXISTS)
+  )
+    return null
 
-    if (!pool || !input0 || !input1) return [undefined, undefined]
+  const [token0Input, token1Input] = pool?.token0.isSame(input1.currency.wrap())
+    ? [input1, input0]
+    : [input0, input1]
+  if (
+    pool &&
+    (!pool.token0.isSame(token0Input.currency.wrap()) ||
+      !pool.token1.isSame(token1Input.currency.wrap()))
+  )
+    return null
 
-    return [
-      input0.currency.wrap().id === pool.token0.id
-        ? input0.wrap()
-        : input1.wrap(),
-      input1.currency.wrap().id === pool.token1.id
-        ? input1.wrap()
-        : input0.wrap(),
-    ]
-  }, [pool, poolState, input0, input1])
+  const [baseAmount, quoteAmount] =
+    pool && (pool.reserve0.gt(0n) || pool.reserve1.gt(0n))
+      ? [pool.reserve0, pool.reserve1]
+      : [token0Input, token1Input]
+  const price =
+    baseAmount.gt(0n) && quoteAmount.gt(0n)
+      ? new Price({ baseAmount, quoteAmount })
+      : undefined
 
-  const [token1Per0, token0Per1] = useMemo(() => {
-    if (
-      !token0Input ||
-      !token1Input ||
-      token0Input?.eq(0n) ||
-      token1Input?.eq(0n)
-    )
-      return [undefined, undefined]
-
-    const token1Per0 = token1Input
-      .divToFraction(token0Input)
-      .mul(10n ** BigInt(token0Input.currency.decimals))
-      .toSignificant(6)
-
-    const token0Per1 = token0Input
-      .divToFraction(token1Input)
-      .mul(10n ** BigInt(token1Input.currency.decimals))
-      .toSignificant(6)
-
-    return [token1Per0, token0Per1]
-  }, [token0Input, token1Input])
-
-  const poolShare = useMemo(() => {
-    if (poolState === SushiSwapV2PoolState.NOT_EXISTS) return 1
-
-    if (!pool || !token0Input || token0Input.eq(0n)) return 0
-
-    return (
-      Number(token0Input.amount) /
-      (Number(pool.reserve0.amount) + Number(token0Input.amount))
-    )
-  }, [poolState, pool, token0Input])
-
-  if (!token0Input || !token1Input) return <></>
+  let poolShare = 1
+  if (pool) {
+    const deposit0 = token0Input.wrap().amount
+    poolShare =
+      deposit0 > 0n
+        ? Number(deposit0) / Number(pool.reserve0.amount + deposit0)
+        : 0
+  }
 
   return (
-    <Collapsible open={Boolean(token1Per0 && token1Per0)}>
+    <Collapsible open={Boolean(price)}>
       <Card variant="outline">
-        <CardContent className="grid grid-cols-3 pt-6">
+        <CardContent className="grid sm:grid-cols-3 pt-6">
           <Stat>
-            <StatValue size="sm">{token1Per0 || '-'}</StatValue>
+            <StatValue size="sm">{price?.toSignificant(6) ?? '-'}</StatValue>
             <StatLabel size="sm">
               {token1Input.currency.symbol} per {token0Input.currency.symbol}
             </StatLabel>
           </Stat>
           <Stat>
-            <StatValue size="sm">{token0Per1 || '-'}</StatValue>
+            <StatValue size="sm">
+              {price?.invert().toSignificant(6) ?? '-'}
+            </StatValue>
             <StatLabel size="sm">
               {token0Input.currency.symbol} per {token1Input.currency.symbol}
             </StatLabel>

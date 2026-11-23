@@ -1,34 +1,27 @@
-import { Container, typographyVariants } from '@sushiswap/ui'
-
+import { Container } from '@sushiswap/ui'
 import { BackButton } from 'src/app/(networks)/_ui/back-button'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Container maxWidth="5xl" className="py-10 px-4">
-        <div className="flex flex-col gap-2">
-          <div className="relative flex items-center gap-3">
-            <BackButton
-              variant="ghost"
-              name="back"
-              className="xl:absolute xl:ml-[-56px]"
-            />
-            <h1 className={typographyVariants({ variant: 'h3' })}>
-              Add Liquidity
-            </h1>
+      <Container maxWidth="7xl" className="pt-6 px-4">
+        <div className="flex flex-col gap-4">
+          <div>
+            <BackButton />
           </div>
-          <p className={typographyVariants({ variant: 'muted' })}>
-            Create a new pool or create a liquidity position on an existing
-            pool.
-          </p>
+
+          <div className="flex flex-col gap-1 mb-2">
+            <h1 className="text-3xl md:text-4xl font-medium">Add Liquidity</h1>
+            <h2 className="md:text-lg text-muted-foreground">
+              Create a new pool or add liquidity to an existing one.
+            </h2>
+          </div>
         </div>
       </Container>
       <section className="flex flex-col flex-1">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 h-full">
-          <Container maxWidth="5xl" className="px-4">
-            {children}
-          </Container>
-        </div>
+        <Container maxWidth="5xl" className="px-4 pb-10 md:pt-10 pt-5">
+          {children}
+        </Container>
       </section>
     </>
   )

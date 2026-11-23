@@ -449,7 +449,7 @@ export const AddSectionReviewModalLegacy: FC<
         {({ confirm }) => (
           <>
             <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[80vh]" hideClose>
               <div className="flex justify-between">
                 <DialogHeader>
                   <DialogTitle>Add liquidity</DialogTitle>
@@ -477,7 +477,7 @@ export const AddSectionReviewModalLegacy: FC<
                     name="Settings"
                     icon={Cog6ToothIcon}
                     variant="secondary"
-                    className="mr-12"
+                    className="-mt-1"
                   />
                 </SettingsOverlay>
               </div>

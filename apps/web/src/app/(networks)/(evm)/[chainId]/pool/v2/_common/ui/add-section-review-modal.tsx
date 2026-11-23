@@ -1,8 +1,9 @@
-import { Button, List } from '@sushiswap/ui'
-import { Currency } from '@sushiswap/ui'
+import { Button, Currency, List } from '@sushiswap/ui'
 import { type FC, useMemo } from 'react'
+import { ReviewAmountValue } from 'src/lib/components/review-amount-value'
+import { ReviewDetailRow } from 'src/lib/components/review-detail-row'
 import { useTokenAmountDollarValues } from 'src/lib/hooks/use-token-amount-dollar-values'
-import { type Amount, Price, formatUSD } from 'sushi'
+import { type Amount, Price } from 'sushi'
 import type { EvmChainId, EvmCurrency } from 'sushi/evm'
 import { Rate } from './rate'
 
@@ -17,9 +18,10 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   input0,
   input1,
 }) => {
-  const [value0, value1] = useTokenAmountDollarValues({
+  const amounts = [input0, input1]
+  const usdValues = useTokenAmountDollarValues({
     chainId,
-    amounts: [input0, input1],
+    amounts,
   })
 
   const price = useMemo(() => {
@@ -28,72 +30,47 @@ export const AddSectionReviewModal: FC<AddSectionReviewModal> = ({
   }, [input0, input1])
 
   return (
-    <div className="flex flex-col gap-4">
-      <List>
-        <List.Control>
-          {input0 ? (
-            <List.KeyValue
-              flex
-              title={`${input0.currency.symbol}`}
-              className="!items-start"
-            >
-              <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                  <Currency.Icon
-                    currency={input0.currency}
-                    width={18}
-                    height={18}
-                  />
-                  {input0?.toSignificant(6)} {input0.currency.symbol}
-                </div>
-                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                  {formatUSD(value0)}
-                </span>
-              </div>
-            </List.KeyValue>
-          ) : null}
-          {input1 ? (
-            <List.KeyValue
-              flex
-              title={`${input1.currency.symbol}`}
-              className="!items-start"
-            >
-              <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-2">
-                  <Currency.Icon
-                    currency={input1.currency}
-                    width={18}
-                    height={18}
-                  />
-                  {input1?.toSignificant(6)} {input1.currency.symbol}
-                </div>
-                <span className="text-xs font-normal text-gray-600 dark:text-slate-400">
-                  {formatUSD(value1)}
-                </span>
-              </div>
-            </List.KeyValue>
-          ) : null}
-          <List.KeyValue flex title="Rate">
+    <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(80vh-176px)] scroll">
+      <List className="!pt-0">
+        {(input0 || input1) && (
+          <List.Control className="!rounded-2xl !bg-transparent !px-3 !py-2">
+            {amounts.map((amount, index) =>
+              amount ? (
+                <ReviewDetailRow key={amount.currency.id} title="You add">
+                  <ReviewAmountValue usdValue={usdValues[index]}>
+                    <div className="flex items-center gap-2">
+                      {amount.toSignificant(6)}{' '}
+                      <Currency.Icon
+                        currency={amount.currency}
+                        width={18}
+                        height={18}
+                      />
+                      {amount.currency.symbol}
+                    </div>
+                  </ReviewAmountValue>
+                </ReviewDetailRow>
+              ) : null,
+            )}
+          </List.Control>
+        )}
+        <List.Control className="border-transparent !bg-transparent !px-0">
+          <ReviewDetailRow title="Rate">
             <Rate price={price}>
               {({ toggleInvert, content, usdPrice }) => (
-                <Button
-                  size="sm"
-                  asChild
-                  variant="link"
-                  role="button"
-                  className="!no-underline"
-                  onClick={() => toggleInvert()}
-                >
-                  {content}{' '}
-                  {usdPrice && (
-                    <span className="font-normal text-gray-500 dark:text-slate-300">
-                      (${usdPrice})
-                    </span>
-                  )}
-                </Button>
+                <ReviewAmountValue usdValue={usdPrice}>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="link"
+                    className="!no-underline"
+                    onClick={toggleInvert}
+                  >
+                    {content}
+                  </Button>
+                </ReviewAmountValue>
               )}
             </Rate>
-          </List.KeyValue>
+          </ReviewDetailRow>
         </List.Control>
       </List>
     </div>
