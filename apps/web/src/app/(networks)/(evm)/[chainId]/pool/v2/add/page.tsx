@@ -68,6 +68,7 @@ import {
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
 import { SelectNetworkWidget } from '../../_ui/select-network-widget'
+import { SelectPositionType } from '../../_ui/select-position-type'
 import { ToggleZapCard } from '../../_ui/toggle-zap-card'
 import { AddSectionReviewModalLegacy } from '../_common/ui/add-section-review-modal-legacy'
 import { V2ZapInfoCard } from '../_common/ui/v2-zap-info-card'
@@ -227,6 +228,7 @@ function PoolForm({
 
   return (
     <>
+      <SelectPositionType chainId={chainId} positionType="v2" />
       <SelectNetworkWidget
         networks={networks}
         selectedNetwork={chainId}

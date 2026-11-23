@@ -2,6 +2,7 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import type { RawV2Pool, RawV3Pool } from '@sushiswap/graph-client/data-api'
 import { Button, Currency, LinkExternal, LinkInternal } from '@sushiswap/ui'
 import type { FC } from 'react'
+import { BackButton } from 'src/app/(networks)/_ui/back-button'
 import { formatPercent, shortenAddress } from 'sushi'
 import {
   type EvmAddress,
@@ -52,12 +53,11 @@ export const PoolHeader: FC<PoolHeader> = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-between gap-6">
-        <LinkInternal
-          href={backUrl}
+        <BackButton
+          backUrl={backUrl}
           className="text-sm text-pink hover:underline"
-        >
-          ← Back
-        </LinkInternal>
+        />
+
         {showAddLiquidityButton ? (
           <LinkInternal
             href={

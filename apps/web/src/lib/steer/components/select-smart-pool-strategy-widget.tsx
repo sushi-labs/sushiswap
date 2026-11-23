@@ -57,7 +57,7 @@ export const SelectSmartPoolStrategyWidget = ({
               <Toggle
                 pressed={checked}
                 asChild
-                className="!h-full !w-full !p-0 !text-left !justify-start cursor-pointer dark:data-[state=on]:bg-secondary"
+                className="!h-full !w-full !p-0 !text-left !justify-start bg-secondary data-[state=on]:!bg-background !rounded-2xl data-[state=on]:!border-pink"
               >
                 <Card>
                   <div className="flex flex-col gap-2">

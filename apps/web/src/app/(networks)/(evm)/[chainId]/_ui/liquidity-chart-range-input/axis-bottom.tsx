@@ -12,14 +12,18 @@ interface AxisProps {
 }
 
 const Axis: FC<AxisProps> = ({ axisGenerator }) => {
-  const axisRef = (axis: SVGGElement) => {
-    axis &&
-      select(axis)
-        .call(axisGenerator)
-        .call((g) => g.select('.domain').remove())
+  const axisRef = (axis: SVGGElement | null) => {
+    if (!axis) return
+    const group = select(axis).call(axisGenerator)
+    group.select('.domain').remove()
+    group.selectAll('.tick text').attr('text-anchor', (_, i, labels) => {
+      if (i === 0) return 'start'
+      if (i === labels.length - 1) return 'end'
+      return 'middle'
+    })
   }
 
-  return <g ref={axisRef} className="text-slate-600 dark:text-slate-400" />
+  return <g ref={axisRef} className="text-muted-foreground" />
 }
 
 interface AxisBottomProps {
@@ -33,14 +37,15 @@ export const AxisBottom: FC<AxisBottomProps> = ({
   innerHeight,
   offset = 0,
 }) =>
-  useMemo(
-    () => (
+  useMemo(() => {
+    const [, width] = xScale.range()
+    const tickCount = Math.max(2, Math.min(6, Math.floor(width / 72)))
+    return (
       <g
-        className="[>_line]:hidden [>_text]:text-slate-400 [>_text]:translate-y-[5px]"
+        className="[>_line]:hidden [>_text]:text-muted-foreground [>_text]:translate-y-[5px]"
         transform={`translate(0, ${innerHeight + offset})`}
       >
-        <Axis axisGenerator={axisBottom(xScale).ticks(6)} />
+        <Axis axisGenerator={axisBottom(xScale).ticks(tickCount)} />
       </g>
-    ),
-    [innerHeight, offset, xScale],
-  )
+    )
+  }, [innerHeight, offset, xScale])

@@ -67,14 +67,25 @@ export class PoolPage extends BaseActions {
   }
 
   async createV3Pool(args: CreateV3PoolArgs): Promise<TransactionReceipt> {
+    const continueButton = this.page.getByRole('button', {
+      name: 'Continue',
+      exact: true,
+    })
+    const stepTwoButton = this.page.getByRole('button', { name: /^Step 2/ })
+    await expect(continueButton).toBeDisabled()
+    await expect(stepTwoButton).toBeDisabled()
     await this.handleToken(args.token0, 'FIRST')
     await this.handleToken(args.token1, 'SECOND')
+    await expect(continueButton).toBeDisabled()
     const feeOptionSelector = this.page.locator(
       '[testdata-id=fee-option-10000]',
     )
     await expect(feeOptionSelector).toBeEnabled()
     await feeOptionSelector.click()
     await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+    await expect(continueButton).toBeEnabled()
+    await expect(stepTwoButton).toBeEnabled()
+    await continueButton.click()
 
     const startPriceInput = this.page.locator('[testdata-id=start-price-input]')
     await expect(startPriceInput).toBeVisible()
@@ -253,6 +264,9 @@ export class PoolPage extends BaseActions {
     await expect(feeOptionSelector).toBeEnabled()
     await feeOptionSelector.click()
     await expect(feeOptionSelector).toHaveAttribute('data-state', 'on')
+    await this.page
+      .getByRole('button', { name: 'Continue', exact: true })
+      .click()
 
     const zap = this.page.locator('[testdata-id=toggle-zap-enabled]')
     if (isZapSupportedChainId(this.chainId)) {

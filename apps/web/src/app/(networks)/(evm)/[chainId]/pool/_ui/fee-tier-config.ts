@@ -17,3 +17,38 @@ export function isFeeTierEnabled(
 ): boolean {
   return !DISABLED_FEE_TIERS[chainId]?.includes(feeAmount)
 }
+
+export function getFeeOptions(
+  chainId: SushiSwapV3ChainId,
+): { value: SushiSwapV3FeeAmount; subtitle: string }[] {
+  return [
+    {
+      value: SushiSwapV3FeeAmount.LOWEST,
+      subtitle: 'Best for very stable pairs.',
+    },
+    {
+      value: SushiSwapV3FeeAmount.LOW,
+      subtitle: 'Best for less volatile pairs.',
+    },
+    {
+      value: SushiSwapV3FeeAmount.MEDIUM,
+      subtitle: 'Best for most pairs.',
+    },
+    {
+      value: SushiSwapV3FeeAmount.HIGH,
+      subtitle: 'Best for volatile pairs.',
+    },
+    ...(chainId === EvmChainId.KATANA
+      ? [
+          {
+            value: SushiSwapV3FeeAmount.HIGHER,
+            subtitle: 'Best for highly volatile pairs.',
+          },
+          {
+            value: SushiSwapV3FeeAmount.HIGHEST,
+            subtitle: 'Best for extremely volatile pairs.',
+          },
+        ]
+      : []),
+  ].filter((option) => isFeeTierEnabled(chainId, option.value))
+}

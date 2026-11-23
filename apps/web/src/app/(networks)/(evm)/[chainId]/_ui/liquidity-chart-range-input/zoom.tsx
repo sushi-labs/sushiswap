@@ -4,20 +4,26 @@ import {
 } from '@heroicons/react/20/solid'
 import { Button } from '@sushiswap/ui'
 import {
-  type ScaleLinear,
   type ZoomBehavior,
   type ZoomTransform,
   select,
   zoom,
   zoomIdentity,
+  zoomTransform,
 } from 'd3'
-import React, { type FC, useEffect, useMemo, useRef } from 'react'
+import React, {
+  type FC,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react'
 
 import type { ZoomLevels } from './types'
 
 interface ZoomProps {
   svg: SVGElement | null
-  xScale: ScaleLinear<number, number>
+  minZoomX: number
   setZoom: (transform: ZoomTransform) => void
   width: number
   height: number
@@ -28,7 +34,7 @@ interface ZoomProps {
 
 export const Zoom: FC<ZoomProps> = ({
   svg,
-  xScale,
+  minZoomX,
   setZoom,
   width,
   height,
@@ -37,8 +43,9 @@ export const Zoom: FC<ZoomProps> = ({
   zoomLevels,
 }) => {
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>(undefined)
+  const previousWidth = useRef(width)
 
-  const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
+  const [zoomIn, zoomOut] = useMemo(
     () => [
       () =>
         svg &&
@@ -52,58 +59,64 @@ export const Zoom: FC<ZoomProps> = ({
         select(svg as Element)
           .transition()
           .call(zoomBehavior.current.scaleBy, 0.5),
-      () =>
-        svg &&
-        zoomBehavior.current &&
-        select(svg as Element)
-          .transition()
-          .call(zoomBehavior.current.scaleTo, 0.5),
-      () =>
-        svg &&
-        zoomBehavior.current &&
-        select(svg as Element)
-          .call(
-            zoomBehavior.current.transform,
-            zoomIdentity.translate(0, 0).scale(1),
-          )
-          .transition()
-          .call(zoomBehavior.current.scaleTo, 0.5),
     ],
     [svg],
   )
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (!svg) return
+  const resetZoom = useCallback(() => {
+    if (!svg || !zoomBehavior.current) return
+    // Zoom out up to 2×, stopping when the centered viewport reaches price zero.
+    const halfSpan = (zoomLevels.initialMax - zoomLevels.initialMin) / 2
+    const scale = Math.max(0.5, halfSpan)
+    const center = previousWidth.current / 2
+    const transform = zoomIdentity
+      .translate(center * (1 - scale), 0)
+      .scale(scale)
+    select(svg as Element)
+      .interrupt()
+      .call(zoomBehavior.current.transform, transform)
+  }, [svg, zoomLevels])
 
-    zoomBehavior.current = zoom()
+  useLayoutEffect(() => {
+    if (!svg || width <= 0) return
+
+    const viewport: [[number, number], [number, number]] = [
+      [0, 0],
+      [width, height],
+    ]
+    const bounds: [[number, number], [number, number]] = [
+      [minZoomX, Number.NEGATIVE_INFINITY],
+      [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+    ]
+    const behavior = zoom()
       .scaleExtent([zoomLevels.min, zoomLevels.max])
-      .extent([
-        [0, 0],
-        [width, height],
-      ])
-      .on('zoom', ({ transform }: { transform: ZoomTransform }) =>
-        setZoom(transform),
-      )
+      .extent(viewport)
+      .translateExtent(bounds)
 
-    select(svg as Element).call(zoomBehavior.current)
-  }, [
-    height,
-    width,
-    setZoom,
-    svg,
-    xScale,
-    zoomBehavior,
-    zoomLevels,
-    zoomLevels.max,
-    zoomLevels.min,
-  ])
+    // D3 constrains gestures and animation endpoints, but zoom transitions can overshoot.
+    function constrain(transform: ZoomTransform) {
+      return behavior.constrain()(transform, viewport, bounds)
+    }
+    behavior.on('zoom', ({ transform }: { transform: ZoomTransform }) =>
+      setZoom(constrain(transform)),
+    )
+    zoomBehavior.current = behavior
+    const target = select(svg as Element).call(behavior)
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    // reset zoom to initial on zoomLevel change
-    zoomInitial()
-  }, [zoomInitial, zoomLevels])
+    // D3 stores pan in pixels. Scale it with the viewport to keep prices in view.
+    const { x, y, k } = zoomTransform(svg)
+    const resizedX =
+      previousWidth.current > 0 ? x * (width / previousWidth.current) : x
+    const resized = constrain(zoomIdentity.translate(resizedX, y).scale(k))
+    if (resized.x !== x) {
+      target.call(behavior.transform, resized)
+    }
+    previousWidth.current = width
+  }, [height, width, minZoomX, setZoom, svg, zoomLevels.max, zoomLevels.min])
+
+  useLayoutEffect(() => {
+    resetZoom()
+  }, [resetZoom])
 
   return (
     <div className="flex justify-between gap-2">
@@ -114,7 +127,7 @@ export const Zoom: FC<ZoomProps> = ({
           disabled={!showResetButton}
           onClick={() => {
             resetBrush()
-            zoomReset()
+            resetZoom()
           }}
         >
           Clear all

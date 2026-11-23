@@ -39,6 +39,46 @@ it('enables tiers by default and preserves Katana extended tiers', () => {
 })
 
 it.each([
+  ['', ['', '', '']],
+  ['fromCurrency=NATIVE', ['ETH', '', '']],
+  ['fromCurrency=NATIVE&toCurrency=ETH&feeAmount=500', ['ETH', '', '500']],
+  ['fromCurrency=unknown&toCurrency=USDC&feeAmount=500', ['', 'USDC', '500']],
+  ['fromCurrency=NATIVE&toCurrency=USDC', ['ETH', 'USDC', '']],
+  ['fromCurrency=NATIVE&toCurrency=USDC&feeAmount=20000', ['ETH', 'USDC', '']],
+  [
+    'fromCurrency=NATIVE&toCurrency=USDC&feeAmount=invalid',
+    ['ETH', 'USDC', ''],
+  ],
+  ['fromCurrency=NATIVE&toCurrency=USDC&feeAmount=500', ['ETH', 'USDC', '500']],
+] as const)(
+  'restores explicit V3 setup selections from "%s"',
+  async (query, expected) => {
+    mocks.params = new URLSearchParams(query)
+    const container = document.createElement('div')
+    const root = createRoot(container)
+    try {
+      await act(async () =>
+        root.render(
+          <ConcentratedLiquidityURLStateProvider
+            chainId={EvmChainId.ETHEREUM}
+            requireExplicitSelections
+          >
+            {({ token0, token1, selectedFeeAmount }) => (
+              <output>
+                {[token0?.symbol, token1?.symbol, selectedFeeAmount].join('|')}
+              </output>
+            )}
+          </ConcentratedLiquidityURLStateProvider>,
+        ),
+      )
+      expect(container.textContent).toBe(expected.join('|'))
+    } finally {
+      act(() => root.unmount())
+    }
+  },
+)
+
+it.each([
   { chainId: EvmChainId.ROBINHOOD, requested: 100, expected: 3000 },
   { chainId: EvmChainId.ROOTSTOCK, requested: 100, expected: 3000 },
   { chainId: EvmChainId.ETHEREUM, requested: 100, expected: 100 },

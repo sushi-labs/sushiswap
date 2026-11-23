@@ -18,15 +18,26 @@ interface UseDensityChartData {
   enabled?: boolean
 }
 
-export function getDensityChartData(data: TickProcessed[]): ChartEntry[] {
-  return data.flatMap((tick) => {
-    const chartEntry = {
-      activeLiquidity: Number.parseFloat(tick.liquidityActive.toString()),
-      price0: Number.parseFloat(tick.price0),
-    }
-
-    return chartEntry.activeLiquidity >= 0 ? [chartEntry] : []
+export function getDensityChartData(
+  data: TickProcessed[],
+  inverted = false,
+): ChartEntry[] {
+  const series = data.flatMap(({ liquidityActive, liquidityNet, price0 }) => {
+    // Each step describes the interval to its right. With inverse prices that
+    // interval lies below the tick, before its liquidity change is applied.
+    const liquidity = inverted
+      ? liquidityActive - liquidityNet
+      : liquidityActive
+    return liquidity >= 0n
+      ? [
+          {
+            activeLiquidity: Number(liquidity),
+            price0: Number.parseFloat(price0),
+          },
+        ]
+      : []
   })
+  return inverted ? series.reverse() : series
 }
 
 export function useDensityChartData({
@@ -48,9 +59,12 @@ export function useDensityChartData({
     const data = activeLiquidity.data
     if (!data) return activeLiquidity
 
+    const inverted = Boolean(
+      token0 && token1 && token1.wrap().sortsBefore(token0.wrap()),
+    )
     return {
       ...activeLiquidity,
-      data: getDensityChartData(data),
+      data: getDensityChartData(data, inverted),
     }
-  }, [activeLiquidity])
+  }, [activeLiquidity, token0, token1])
 }

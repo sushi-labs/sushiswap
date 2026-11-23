@@ -1,5 +1,5 @@
 import { type ZoomTransform, max, scaleLinear } from 'd3'
-import React, { type FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { type FC, useEffect, useMemo, useState } from 'react'
 
 import { Area } from './area'
 import { AxisBottom } from './axis-bottom'
@@ -27,7 +27,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
   hideBrushes,
   tokenToggle,
 }) => {
-  const zoomRef = useRef<SVGRectElement | null>(null)
+  const [zoomTarget, setZoomTarget] = useState<SVGRectElement | null>(null)
 
   const [zoom, setZoom] = useState<ZoomTransform | null>(null)
 
@@ -39,20 +39,18 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
     [width, height, margins],
   )
 
-  const { xScale, yScale } = useMemo(() => {
-    // Compute x-scale domain
-    const xScale = scaleLinear()
-      .domain([
-        current * zoomLevels.initialMin,
-        current * zoomLevels.initialMax,
-      ] as number[])
+  const defaultRange = useMemo<[number, number]>(
+    () => [current * zoomLevels.initialMin, current * zoomLevels.initialMax],
+    [current, zoomLevels.initialMin, zoomLevels.initialMax],
+  )
+
+  const { xScale, yScale, minZoomX } = useMemo(() => {
+    const halfSpan = (defaultRange[1] - defaultRange[0]) / 2
+    const baseXScale = scaleLinear()
+      .domain([current - halfSpan, current + halfSpan])
       .range([0, innerWidth])
 
-    // Apply zoom if present
-    if (zoom) {
-      const newXscale = zoom.rescaleX(xScale)
-      xScale.domain(newXscale.domain())
-    }
+    const xScale = zoom ? zoom.rescaleX(baseXScale) : baseXScale
 
     // Use global max for y-scale (not just visible data)
     // This keeps the scale consistent and avoids disorientation when panning
@@ -60,50 +58,28 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
       .domain([0, max(series, yAccessor)] as number[])
       .range([innerHeight, 0])
 
-    return { xScale, yScale }
-  }, [
-    current,
-    zoomLevels.initialMin,
-    zoomLevels.initialMax,
-    innerWidth,
-    series,
-    innerHeight,
-    zoom,
-  ])
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    // reset zoom as necessary
-    setZoom(null)
-  }, [zoomLevels])
+    return { xScale, yScale, minZoomX: baseXScale(0) }
+  }, [current, defaultRange, innerWidth, series, innerHeight, zoom])
 
   useEffect(() => {
     if (!brushDomain) {
-      onBrushDomainChange(xScale.domain() as [number, number], undefined)
+      onBrushDomainChange(defaultRange, undefined)
     }
-  }, [brushDomain, onBrushDomainChange, xScale])
+  }, [brushDomain, onBrushDomainChange, defaultRange])
 
   return (
     <div className="relative flex flex-col">
       <div className="flex flex-row-reverse justify-between">
         <Zoom
-          svg={zoomRef.current}
-          xScale={xScale}
+          svg={zoomTarget}
+          minZoomX={minZoomX}
           setZoom={setZoom}
           width={innerWidth}
           height={
             // allow zooming inside the x-axis
             height
           }
-          resetBrush={() => {
-            onBrushDomainChange(
-              [
-                current * zoomLevels.initialMin,
-                current * zoomLevels.initialMax,
-              ],
-              'reset',
-            )
-          }}
+          resetBrush={() => onBrushDomainChange(defaultRange, 'reset')}
           showResetButton={isPriceRangeSet}
           zoomLevels={zoomLevels}
         />
@@ -111,7 +87,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
       </div>
       <svg
         width="100%"
-        height="100%"
+        className="block h-auto"
         viewBox={`0 0 ${width} ${height}`}
         style={{ overflow: 'visible' }}
       >
@@ -170,7 +146,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
             className="cursor-grab active:cursor-grabbing"
             width={innerWidth}
             height={height}
-            ref={zoomRef}
+            ref={setZoomTarget}
           />
 
           {!hideBrushes ? (
@@ -179,7 +155,7 @@ export const Chart: FC<LiquidityChartRangeInputProps> = ({
               xScale={xScale}
               interactive={interactive}
               brushLabelValue={brushLabels}
-              brushExtent={brushDomain ?? (xScale.domain() as [number, number])}
+              brushExtent={brushDomain ?? defaultRange}
               innerWidth={innerWidth}
               innerHeight={innerHeight}
               setBrushExtent={onBrushDomainChange}

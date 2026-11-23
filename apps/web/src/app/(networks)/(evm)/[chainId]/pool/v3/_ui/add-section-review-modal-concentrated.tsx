@@ -373,7 +373,7 @@ export const AddSectionReviewModalConcentrated: FC<
                     name="Settings"
                     icon={Cog6ToothIcon}
                     variant="secondary"
-                    className="-mt-3"
+                    className="-mt-1"
                   />
                 </SettingsOverlay>
               </div>
@@ -386,6 +386,30 @@ export const AddSectionReviewModalConcentrated: FC<
                   </Message>
                 )}
                 <List className="!pt-0">
+                  {(input0 || input1) && (
+                    <List.Control className="!rounded-2xl !bg-transparent !px-3 !py-2">
+                      {[input0, input1].map((amount) =>
+                        amount ? (
+                          <ReviewDetailRow
+                            key={amount.currency.id}
+                            title={'You add'}
+                          >
+                            <ReviewAmountValue>
+                              <div className="flex items-center gap-2">
+                                {amount.toSignificant(6)}
+                                <Currency.Icon
+                                  currency={amount.currency}
+                                  width={18}
+                                  height={18}
+                                />
+                                {amount.currency.symbol}
+                              </div>
+                            </ReviewAmountValue>
+                          </ReviewDetailRow>
+                        ) : null,
+                      )}
+                    </List.Control>
+                  )}
                   <List.Control className="border-transparent !bg-transparent !px-0">
                     <ReviewDetailRow title="Network">
                       {getEvmChainById(chainId).name}
@@ -460,30 +484,6 @@ export const AddSectionReviewModalConcentrated: FC<
                       {slippageTolerance.toPercentString()}
                     </ReviewDetailRow>
                   </List.Control>
-                  {(input0 || input1) && (
-                    <List.Control className="!rounded-2xl !bg-transparent !px-3 !py-2">
-                      {[input0, input1].map((amount) =>
-                        amount ? (
-                          <ReviewDetailRow
-                            key={amount.currency.id}
-                            title={'You add'}
-                          >
-                            <ReviewAmountValue>
-                              <div className="flex items-center gap-2">
-                                <Currency.Icon
-                                  currency={amount.currency}
-                                  width={18}
-                                  height={18}
-                                />
-                                {amount.toSignificant(6)}{' '}
-                                {amount.currency.symbol}
-                              </div>
-                            </ReviewAmountValue>
-                          </ReviewDetailRow>
-                        ) : null,
-                      )}
-                    </List.Control>
-                  )}
                 </List>
               </div>
               <DialogFooter>

@@ -18,6 +18,27 @@ import {
 
 const NATIVE_TOKEN = EvmNative.fromChainId(chainId)
 
+test('switches position types on the same chain and restores the selection on back', async ({
+  page,
+}) => {
+  await page.goto('/polygon/pool/v4/add')
+  const selector = page.getByRole('combobox', { name: 'Position type' })
+  await expect(selector).toHaveText('V4')
+
+  for (const version of ['V2', 'V3', 'V4']) {
+    await selector.click()
+    await page.getByRole('option', { name: version, exact: true }).click()
+    await expect(page).toHaveURL(`/polygon/pool/${version.toLowerCase()}/add`, {
+      timeout: 60_000,
+    })
+    await expect(selector).toHaveText(version)
+  }
+
+  await page.goBack()
+  await expect(page).toHaveURL('/polygon/pool/v3/add')
+  await expect(selector).toHaveText('V3')
+})
+
 // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.skip(!isSushiSwapV3ChainId(chainId))

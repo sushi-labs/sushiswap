@@ -1,25 +1,39 @@
 'use client'
 
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
-import { IconButton, type IconButtonProps } from '@sushiswap/ui'
+import { Button, type ButtonProps, LinkInternal } from '@sushiswap/ui'
 import { useRouter } from 'next/navigation'
-import { forwardRef } from 'react'
+import type { ReactElement, Ref } from 'react'
 
-const BackButton = forwardRef<HTMLButtonElement, Omit<IconButtonProps, 'icon'>>(
-  ({ ...props }, ref) => {
-    const { back } = useRouter()
+type BackButtonProps = Omit<ButtonProps, 'icon'> &
+  (
+    | { backUrl: string; ref?: Ref<HTMLAnchorElement> }
+    | { backUrl?: undefined; ref?: Ref<HTMLButtonElement> }
+  )
+
+function BackButton({ backUrl, ref, ...props }: BackButtonProps): ReactElement {
+  const { back } = useRouter()
+  if (backUrl !== undefined) {
     return (
-      <IconButton
-        onClick={back}
-        {...props}
-        name={props.name}
-        icon={ChevronLeftIcon}
+      <LinkInternal
+        href={backUrl}
         ref={ref}
-      />
+        className="text-sm text-pink hover:underline"
+      >
+        ← Back
+      </LinkInternal>
     )
-  },
-)
-
-BackButton.displayName = 'BackButton'
+  }
+  return (
+    <Button
+      onClick={back}
+      {...props}
+      ref={ref}
+      variant="link"
+      className="text-sm !font-normal !rounded-none"
+    >
+      ← Back
+    </Button>
+  )
+}
 
 export { BackButton }

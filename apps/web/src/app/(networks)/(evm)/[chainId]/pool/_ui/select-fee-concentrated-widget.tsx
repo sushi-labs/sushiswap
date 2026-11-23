@@ -24,49 +24,14 @@ import { type FC, memo, useCallback, useMemo } from 'react'
 import { FeeTierCard } from 'src/lib/components/fee-tier-card'
 import { usePoolsByTokenPair } from 'src/lib/hooks/use-pools-by-token-pair'
 import { getChainById } from 'sushi'
-import {
-  EvmChainId,
-  type EvmCurrency,
-  type SushiSwapV3ChainId,
+import type {
+  EvmCurrency,
+  SushiSwapV3ChainId,
   SushiSwapV3FeeAmount,
 } from 'sushi/evm'
-import { isFeeTierEnabled } from './fee-tier-config'
+import { getFeeOptions } from './fee-tier-config'
 
-const EXTENDED_FEE_TIER_CHAIN_IDS = [EvmChainId.KATANA] as const
-
-export const getFeeOptions = (chainId: SushiSwapV3ChainId) =>
-  [
-    {
-      value: SushiSwapV3FeeAmount.LOWEST,
-      subtitle: 'Best for very stable pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.LOW,
-      subtitle: 'Best for less volatile pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.MEDIUM,
-      subtitle: 'Best for most pairs.',
-    },
-    {
-      value: SushiSwapV3FeeAmount.HIGH,
-      subtitle: 'Best for volatile pairs.',
-    },
-    ...(EXTENDED_FEE_TIER_CHAIN_IDS.includes(
-      chainId as (typeof EXTENDED_FEE_TIER_CHAIN_IDS)[number],
-    )
-      ? [
-          {
-            value: SushiSwapV3FeeAmount.HIGHER,
-            subtitle: 'Best for highly volatile pairs.',
-          },
-          {
-            value: SushiSwapV3FeeAmount.HIGHEST,
-            subtitle: 'Best for extremely volatile pairs.',
-          },
-        ]
-      : []),
-  ].filter((option) => isFeeTierEnabled(chainId, option.value))
+export { getFeeOptions } from './fee-tier-config'
 
 interface SelectFeeConcentratedWidget {
   chainId: SushiSwapV3ChainId

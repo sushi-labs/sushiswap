@@ -26,7 +26,7 @@ import {
 } from 'sushi/evm'
 import { type Address, isAddress } from 'viem'
 import * as z from 'zod'
-import { isFeeTierEnabled } from './fee-tier-config'
+import { getFeeOptions, isFeeTierEnabled } from './fee-tier-config'
 
 export const queryParamsSchema = z.object({
   fromCurrency: z.nullable(z.string()).transform((value) => value ?? 'NATIVE'),
@@ -51,6 +51,7 @@ type State = {
   token1: EvmCurrency | undefined
   tokensLoading: boolean
   feeAmount: SushiSwapV3FeeAmount
+  selectedFeeAmount: SushiSwapV3FeeAmount | undefined
   setToken0(currency: EvmCurrency): void
   setToken1(currency: EvmCurrency): void
   setFeeAmount(feeAmount: SushiSwapV3FeeAmount): void
@@ -65,6 +66,7 @@ interface ConcentratedLiquidityURLStateProvider {
   children: ReactNode | ((state: State) => ReactNode)
   chainId: SushiSwapV3ChainId
   supportedNetworks?: EvmChainId[]
+  requireExplicitSelections?: boolean
 }
 
 const getTokenFromUrl = (
@@ -72,6 +74,7 @@ const getTokenFromUrl = (
   currencyId: string | undefined | null,
   token: EvmToken | undefined,
   isLoading: boolean,
+  requireExplicitSelections: boolean,
 ) => {
   if (isLoading) {
     return undefined
@@ -79,7 +82,11 @@ const getTokenFromUrl = (
     return currencyFromShortCurrencyName(chainId, currencyId)
   } else if (currencyId && isAddress(currencyId) && token) {
     return token
-  } else if (!currencyId || !isEvmWNativeSupported(chainId)) {
+  } else if (
+    !currencyId ||
+    !isEvmWNativeSupported(chainId) ||
+    (requireExplicitSelections && currencyId !== 'NATIVE')
+  ) {
     return undefined
   } else {
     return EvmNative.fromChainId(chainId ? chainId : EvmChainId.ETHEREUM)
@@ -92,6 +99,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
   children,
   chainId,
   supportedNetworks = SUSHISWAP_V3_SUPPORTED_CHAIN_IDS,
+  requireExplicitSelections = false,
 }) => {
   const pathname = usePathname()
   const routeSearchParams = useSearchParams()!
@@ -115,21 +123,26 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     [pathname],
   )
 
+  const _chainId = supportedNetworks?.includes(chainId)
+    ? chainId
+    : EvmChainId.ETHEREUM
+  const feeParam = searchParams.get('feeAmount')
+  const selectedFeeAmount = getFeeOptions(_chainId).find(
+    ({ value }) => value === Number(feeParam),
+  )?.value
+  const missingCurrency = requireExplicitSelections ? '' : null
   const {
     fromCurrency,
     toCurrency,
     feeAmount: requestedFeeAmount,
     tokenId,
   } = queryParamsSchema.parse({
-    fromCurrency: searchParams.get('fromCurrency'),
-    toCurrency: searchParams.get('toCurrency'),
-    feeAmount: searchParams.get('feeAmount'),
+    fromCurrency: searchParams.get('fromCurrency') ?? missingCurrency,
+    toCurrency: searchParams.get('toCurrency') ?? missingCurrency,
+    feeAmount: requireExplicitSelections ? selectedFeeAmount : feeParam,
     tokenId: searchParams.get('tokenId'),
   })
 
-  const _chainId = supportedNetworks?.includes(chainId)
-    ? chainId
-    : EvmChainId.ETHEREUM
   const feeAmount = isFeeTierEnabled(_chainId, requestedFeeAmount)
     ? requestedFeeAmount
     : SushiSwapV3FeeAmount.MEDIUM
@@ -154,12 +167,14 @@ export const ConcentratedLiquidityURLStateProvider: FC<
       fromCurrency,
       tokenFrom,
       isTokenFromLoading,
+      requireExplicitSelections,
     )
     let token1 = getTokenFromUrl(
       _chainId,
       toCurrency,
       tokenTo,
       isTokenToLoading,
+      requireExplicitSelections,
     )
 
     // Cant have two of the same tokens
@@ -227,6 +242,7 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     return {
       tokenId,
       feeAmount,
+      selectedFeeAmount,
       token0,
       token1,
       chainId: _chainId,
@@ -246,6 +262,8 @@ export const ConcentratedLiquidityURLStateProvider: FC<
     isTokenToLoading,
     tokenId,
     feeAmount,
+    selectedFeeAmount,
+    requireExplicitSelections,
     searchParams,
     updateSearchParams,
   ])

@@ -18,8 +18,10 @@ import React, {
 import { OffScreenHandle, brushHandleAccentPath, brushHandlePath } from './svg'
 import { HandleType } from './types'
 
-// flips the handles draggers when close to the container edges
-const FLIP_HANDLE_THRESHOLD_PX = 20
+const LABEL_WIDTH = 60
+const LABEL_OFFSET = 50
+const FLIP_HANDLE_THRESHOLD_PX = LABEL_OFFSET + LABEL_WIDTH / 2
+const HANDLE_HIT_WIDTH = 30
 
 // margin to prevent tick snapping from putting the brush off screen
 const BRUSH_EXTENT_MARGIN_PX = 2
@@ -130,7 +132,7 @@ export const Brush: FC<BrushProps> = ({
         [Math.max(0 + BRUSH_EXTENT_MARGIN_PX, xScale(0)), 0],
         [innerWidth - BRUSH_EXTENT_MARGIN_PX, innerHeight],
       ])
-      .handleSize(30)
+      .handleSize(HANDLE_HIT_WIDTH)
       .filter(() => interactive)
       .on('brush end', brushed)
 
@@ -180,29 +182,18 @@ export const Brush: FC<BrushProps> = ({
     return () => clearTimeout(timeout)
   }, [localBrushExtent])
 
-  // variables to help render the SVGs
-  const flipWestHandle =
-    localBrushExtent && xScale(localBrushExtent[0]) > FLIP_HANDLE_THRESHOLD_PX
-  const flipEastHandle =
-    localBrushExtent &&
-    xScale(localBrushExtent[1]) > innerWidth - FLIP_HANDLE_THRESHOLD_PX
+  const westX = localBrushExtent ? xScale(localBrushExtent[0]) : 0
+  const eastX = localBrushExtent ? xScale(localBrushExtent[1]) : 0
+  const flipWestHandle = westX > FLIP_HANDLE_THRESHOLD_PX
+  const flipEastHandle = eastX > innerWidth - FLIP_HANDLE_THRESHOLD_PX
 
-  const showWestArrow =
-    localBrushExtent &&
-    (xScale(localBrushExtent[0]) < 0 || xScale(localBrushExtent[1]) < 0)
-  const showEastArrow =
-    localBrushExtent &&
-    (xScale(localBrushExtent[0]) > innerWidth ||
-      xScale(localBrushExtent[1]) > innerWidth)
-
-  const westHandleInView =
-    localBrushExtent &&
-    xScale(localBrushExtent[0]) >= 0 &&
-    xScale(localBrushExtent[0]) <= innerWidth
-  const eastHandleInView =
-    localBrushExtent &&
-    xScale(localBrushExtent[1]) >= 0 &&
-    xScale(localBrushExtent[1]) <= innerWidth
+  // A tick can snap just past the edge while its drag target is still visible.
+  const minHandleX = -HANDLE_HIT_WIDTH / 2
+  const maxHandleX = innerWidth + HANDLE_HIT_WIDTH / 2
+  const westHandleInView = westX > minHandleX && westX < maxHandleX
+  const eastHandleInView = eastX > minHandleX && eastX < maxHandleX
+  const showWestArrow = Math.min(westX, eastX) <= minHandleX
+  const showEastArrow = Math.max(westX, eastX) >= maxHandleX
 
   return useMemo(
     () => (
@@ -241,7 +232,7 @@ export const Brush: FC<BrushProps> = ({
               <g
                 transform={`translate(${Math.max(
                   0,
-                  xScale(localBrushExtent[0]),
+                  Math.min(innerWidth, westX),
                 )}, 0), scale(${flipWestHandle ? '-1' : '1'}, 1)`}
               >
                 <g>
@@ -267,7 +258,7 @@ export const Brush: FC<BrushProps> = ({
                 <g
                   className="transition-opacity duration-300"
                   opacity={showLabels || hovering ? 1 : 0}
-                  transform={`translate(50,0), scale(${
+                  transform={`translate(${LABEL_OFFSET},0), scale(${
                     flipWestHandle ? '1' : '-1'
                   }, 1)`}
                 >
@@ -275,9 +266,9 @@ export const Brush: FC<BrushProps> = ({
                     fill="currentColor"
                     className="text-primary invert"
                     y="1"
-                    x="-30"
+                    x={-LABEL_WIDTH / 2}
                     height="30"
-                    width="60"
+                    width={LABEL_WIDTH}
                     rx="8"
                   />
                   <text
@@ -298,9 +289,7 @@ export const Brush: FC<BrushProps> = ({
             {/* east handle */}
             {eastHandleInView ? (
               <g
-                transform={`translate(${xScale(
-                  localBrushExtent[1],
-                )}, 0), scale(${flipEastHandle ? '-1' : '1'}, 1)`}
+                transform={`translate(${Math.max(0, Math.min(innerWidth, eastX))}, 0), scale(${flipEastHandle ? '-1' : '1'}, 1)`}
               >
                 <g>
                   <path
@@ -326,7 +315,7 @@ export const Brush: FC<BrushProps> = ({
                 <g
                   className="transition-opacity duration-300"
                   opacity={showLabels || hovering ? 1 : 0}
-                  transform={`translate(50,0), scale(${
+                  transform={`translate(${LABEL_OFFSET},0), scale(${
                     flipEastHandle ? '-1' : '1'
                   }, 1)`}
                 >
@@ -334,9 +323,9 @@ export const Brush: FC<BrushProps> = ({
                     fill="currentColor"
                     className="text-primary invert"
                     y="1"
-                    x="-30"
+                    x={-LABEL_WIDTH / 2}
                     height="30"
-                    width="60"
+                    width={LABEL_WIDTH}
                     rx="8"
                   />
                   <text
@@ -368,6 +357,7 @@ export const Brush: FC<BrushProps> = ({
       brushLabelValue,
       eastHandleColor,
       eastHandleInView,
+      eastX,
       flipEastHandle,
       flipWestHandle,
       hovering,
@@ -380,7 +370,7 @@ export const Brush: FC<BrushProps> = ({
       showWestArrow,
       westHandleColor,
       westHandleInView,
-      xScale,
+      westX,
     ],
   )
 }

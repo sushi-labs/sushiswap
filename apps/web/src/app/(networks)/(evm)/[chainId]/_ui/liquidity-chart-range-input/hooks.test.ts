@@ -36,4 +36,21 @@ describe('getDensityChartData', () => {
       ]),
     ).toEqual([])
   })
+
+  it('keeps liquidity on the correct price intervals when the pair is reversed', () => {
+    expect(
+      getDensityChartData(
+        [
+          { tick: 100, price0: '4', liquidityActive: 3n, liquidityNet: 3n },
+          { tick: 200, price0: '2', liquidityActive: 11n, liquidityNet: 8n },
+          { tick: 300, price0: '1', liquidityActive: 0n, liquidityNet: -11n },
+        ],
+        true,
+      ),
+    ).toEqual([
+      { price0: 1, activeLiquidity: 11 },
+      { price0: 2, activeLiquidity: 3 },
+      { price0: 4, activeLiquidity: 0 },
+    ])
+  })
 })

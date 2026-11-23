@@ -2,7 +2,15 @@ import { ChartBarIcon, InboxIcon, StopIcon } from '@heroicons/react-v1/solid'
 import { SkeletonBox } from '@sushiswap/ui'
 import { format } from 'd3'
 import { useTheme } from 'next-themes'
-import React, { type FC, type ReactNode, useCallback, useMemo } from 'react'
+import React, {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Bound } from 'src/lib/constants'
 import type { Price } from 'sushi'
 import {
@@ -114,6 +122,22 @@ export function LiquidityChartRangeInput({
 }) {
   const { resolvedTheme } = useTheme()
   const isDarkMode = resolvedTheme === 'dark'
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [chartWidth, setChartWidth] = useState(0)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width } = entry.contentRect
+      // Keep the current chart mounted while the pool setup step is visible.
+      if (width > 0) setChartWidth(width)
+    })
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [])
+
   const isSorted =
     currencyA && currencyB && currencyA?.wrap().sortsBefore(currencyB?.wrap())
 
@@ -223,7 +247,7 @@ export function LiquidityChartRangeInput({
   )
 
   return (
-    <div className="grid auto-rows-auto gap-3 min-h-[300px] overflow-hidden">
+    <div ref={containerRef} className="grid min-h-56 min-w-0 overflow-hidden">
       {isUninitialized ? (
         <div className="flex flex-col gap-2">
           {tokenToggle}
@@ -271,36 +295,34 @@ export function LiquidityChartRangeInput({
             }
           />
         </div>
-      ) : (
-        <div className="relative items-center justify-center">
-          <Chart
-            data={{ series: data, current: price }}
-            dimensions={{ width: 400, height: 180 }}
-            margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
-            styles={{
-              area: {
-                selection: colors.pink['300'],
-                unselection: isDarkMode ? '#292929' : '#f2f2f2',
+      ) : chartWidth > 0 ? (
+        <Chart
+          data={{ series: data, current: price }}
+          dimensions={{ width: chartWidth, height: 180 }}
+          margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
+          styles={{
+            area: {
+              selection: colors.pink['300'],
+              unselection: isDarkMode ? '#292929' : '#f2f2f2',
+            },
+            brush: {
+              handle: {
+                west: colors.pink['600'],
+                east: colors.pink['600'],
               },
-              brush: {
-                handle: {
-                  west: colors.pink['600'],
-                  east: colors.pink['600'],
-                },
-              },
-            }}
-            interactive={interactive}
-            brushLabels={brushLabelValue}
-            brushDomain={brushDomain}
-            onBrushDomainChange={onBrushDomainChangeEnded}
-            getNewRangeWhenBrushing={getNewRangeWhenBrushing}
-            zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
-            isPriceRangeSet={priceRange !== undefined}
-            hideBrushes={hideBrushes}
-            tokenToggle={tokenToggle}
-          />
-        </div>
-      )}
+            },
+          }}
+          interactive={interactive}
+          brushLabels={brushLabelValue}
+          brushDomain={brushDomain}
+          onBrushDomainChange={onBrushDomainChangeEnded}
+          getNewRangeWhenBrushing={getNewRangeWhenBrushing}
+          zoomLevels={ZOOM_LEVELS[feeAmount ?? SushiSwapV3FeeAmount.MEDIUM]}
+          isPriceRangeSet={priceRange !== undefined}
+          hideBrushes={hideBrushes}
+          tokenToggle={tokenToggle}
+        />
+      ) : null}
     </div>
   )
 }
