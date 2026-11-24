@@ -5,6 +5,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
+import { graphRequest } from '../api-mocks'
 import { chainId, transactionTimeout } from '../constants'
 import { expect, test } from '../fixtures'
 import { PoolPage } from '../helpers/pool'
@@ -161,6 +162,49 @@ test.describe('V3', () => {
 test.describe('V2', () => {
   test.skip(!isSushiSwapV2ChainId(chainId))
 
+  test('starts a fresh deposit when reopened from Explore Pools', async ({
+    page,
+    mocks,
+  }) => {
+    const explorePools = '/polygon/explore/pools'
+    const createPool = page.getByRole('button', { name: 'Create Pool' })
+    const v2Position = page.getByRole('menuitem', { name: /V2 Position/ })
+    const continueButton = page.getByRole('button', {
+      name: 'Continue',
+      exact: true,
+    })
+    const deposit = page.locator('[testdata-id=add-liquidity-token0-input]')
+
+    mocks.add(async (request) => {
+      if (new URL(request.url).pathname !== '/api/graphql') return
+      const { operationName } = graphRequest.parse(await request.json())
+      if (operationName === 'SushiDayBuckets')
+        return Response.json({
+          data: { sushiDayBuckets: { v2: [], v3: [], blade: [] } },
+        })
+      if (operationName === 'Pools')
+        return Response.json({ data: { pools: { count: 0, data: [] } } })
+    })
+
+    await page.goto(explorePools)
+    await expect(page.getByRole('heading', { name: 'Pools (0)' })).toBeVisible()
+    await createPool.click()
+    await v2Position.click()
+    await continueButton.click()
+    await deposit.fill('0.25')
+    await expect(deposit).toHaveValue('0.25')
+
+    await page.getByRole('button', { name: '← Back', exact: true }).click()
+    await expect(page).toHaveURL(explorePools)
+    await createPool.click()
+    await v2Position.click()
+    await expect(
+      page.getByRole('region', { name: 'Select token pair' }),
+    ).toBeVisible()
+    await continueButton.click()
+    await expect(deposit).toHaveValue('')
+  })
+
   test('Create, add & remove', async ({ page, fork, mocks }) => {
     test.setTimeout(240_000)
     const FAKE_TOKEN = fork.token
@@ -188,6 +232,8 @@ test.describe('V2', () => {
 
     const originalLp = await lpBalance(fork)
     expect(originalLp).toBeGreaterThan(0n)
+    await page.reload()
+    await poolPage.connect()
     await poolPage.addLiquidityV2({
       token0: NATIVE_TOKEN,
       token1: FAKE_TOKEN,

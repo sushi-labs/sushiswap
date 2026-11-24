@@ -32,13 +32,9 @@ export default async function Layout(props: {
 
   return (
     <>
-         <Container maxWidth="7xl" className="pt-6 md:pt-10 px-4">
+      <Container maxWidth="7xl" className="pt-6 md:pt-10 px-4">
         <PoolHeader
-          backUrl={
-            referer?.includes('/pool')
-              ? referer?.toString()
-              : undefined
-          }
+          backUrl={referer?.includes('/pool') ? referer?.toString() : undefined}
           address={pool.address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}

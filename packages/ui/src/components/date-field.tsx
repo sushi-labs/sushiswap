@@ -34,7 +34,15 @@ const DateField: FC<DateFieldProps> = ({
         customInput={
           <input
             testdata-id={testId}
-            className={textFieldVariants({ variant, className })}
+            className={textFieldVariants({
+              variant,
+              className: [
+                'placeholder:!text-muted-foreground focus-visible:!ring-2 focus-visible:ring-pink',
+                variant === 'outline' &&
+                  'hover:!border-muted-foreground focus:!border-pink',
+                className,
+              ],
+            })}
           />
         }
         {...props}

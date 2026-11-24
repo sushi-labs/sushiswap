@@ -40,6 +40,7 @@ interface SelectFeeConcentratedWidget {
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
   title?: string
+  description?: string
   disableIfNotExists?: boolean
 }
 
@@ -50,6 +51,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
     setFeeAmount: _setFeeAmount,
     token0,
     token1,
+    description = 'Some fee tiers work better than others depending on the volatility of your pair. Lower fee tiers generally work better when pairing stable coins. Higher fee tiers generally work better when pairing exotic coins.',
     disableIfNotExists = false,
   }) {
     const trace = useTrace()
@@ -102,10 +104,7 @@ export const SelectFeeConcentratedWidget: FC<SelectFeeConcentratedWidget> =
     }, [pools, FEE_OPTIONS])
 
     return (
-      <FormSection
-        title="Fee tier"
-        description="Some fee tiers work better than others depending on the volatility of your pair. Lower fee tiers generally work better when pairing stable coins. Higher fee tiers generally work better when pairing exotic coins."
-      >
+      <FormSection title="Fee tier" description={description}>
         <div className={!token0 || !token1 ? 'opacity-40' : ''}>
           <RadioGroup
             value={feeAmount}

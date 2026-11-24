@@ -402,7 +402,7 @@ export const AddSectionReviewModalConcentrated: FC<
                           >
                             <ReviewAmountValue>
                               <div className="flex items-center gap-2">
-                                {amount.toSignificant(6)}
+                                {amount.toSignificant(6)}{' '}
                                 <Currency.Icon
                                   currency={amount.currency}
                                   width={18}

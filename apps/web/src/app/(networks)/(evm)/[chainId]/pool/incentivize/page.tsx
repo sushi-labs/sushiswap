@@ -16,18 +16,18 @@ import {
   FormSection,
   LinkExternal,
   List,
-  Separator,
+  MultiStepForm,
   Slider,
   Switch,
   TextField,
   classNames,
-  typographyVariants,
 } from '@sushiswap/ui'
 import format from 'date-fns/format'
 import getUnixTime from 'date-fns/getUnixTime'
 import ms from 'ms'
 import { useRouter } from 'next/navigation'
 import { use, useMemo, useState } from 'react'
+import { LiquidityDepositInput } from 'src/lib/components/liquidity-deposit-input'
 import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import { useRewardTokens } from 'src/lib/hooks/react-query/rewards/use-reward-tokens'
 import {
@@ -35,7 +35,6 @@ import {
   DialogProvider,
   DialogReview,
 } from 'src/lib/transaction-dialog'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { useConcentratedLiquidityPool } from 'src/lib/wagmi/hooks/pools/hooks/use-concentrated-liquidity-pool'
 import {
   AngleConditionsState,
@@ -68,6 +67,8 @@ import {
   ConcentratedLiquidityURLStateProvider,
   useConcentratedLiquidityURLState,
 } from '../_ui/concentrated-liquidity-url-state-provider'
+import { PoolFormSession } from '../_ui/pool-form-session'
+import { PoolSetupSummary } from '../_ui/pool-setup-summary'
 import { SelectFeeConcentratedWidget } from '../_ui/select-fee-concentrated-widget'
 import { SelectNetworkWidget } from '../_ui/select-network-widget'
 
@@ -77,18 +78,20 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
   const params = use(props.params)
   const chainId = +params.chainId as EvmChainId
   return (
-    <ConcentratedLiquidityURLStateProvider
-      chainId={
-        isSushiSwapV3ChainId(chainId) && isMerklChainId(chainId)
-          ? chainId
-          : EvmChainId.ETHEREUM
-      }
-      supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
-    >
-      <ConcentratedLiquidityProvider>
-        <Incentivize />
-      </ConcentratedLiquidityProvider>
-    </ConcentratedLiquidityURLStateProvider>
+    <PoolFormSession>
+      <ConcentratedLiquidityURLStateProvider
+        chainId={
+          isSushiSwapV3ChainId(chainId) && isMerklChainId(chainId)
+            ? chainId
+            : EvmChainId.ETHEREUM
+        }
+        supportedNetworks={MERKL_SUPPORTED_CHAIN_IDS}
+      >
+        <ConcentratedLiquidityProvider>
+          <Incentivize />
+        </ConcentratedLiquidityProvider>
+      </ConcentratedLiquidityURLStateProvider>
+    </PoolFormSession>
   )
 }
 
@@ -216,318 +219,315 @@ const Incentivize = withCheckerRoot(() => {
   const validEndDate =
     endDate && startDate ? endDate > startDate && endDate > new Date() : true
 
-  return (
-    <DialogProvider>
-      <div className="flex flex-col gap-10">
-        <SelectNetworkWidget
-          title="On which network would you like to add rewards?"
-          selectedNetwork={chainId}
-          onSelect={(chainId) =>
-            router.push(`/${getEvmChainById(chainId).key}/pool/incentivize`)
-          }
-          networks={MERKL_SUPPORTED_CHAIN_IDS}
-        />
-        <SelectTokensWidget
-          title="Which token pair would you like to incentivize?"
-          chainId={chainId}
-          token0={token0}
-          token1={token1}
-          setToken0={setToken0}
-          setToken1={setToken1}
-          includeNative={isEvmWNativeSupported(chainId)}
-        />
-        <SelectFeeConcentratedWidget
-          title="What is the fee tier for this pool?"
-          chainId={chainId}
-          feeAmount={feeAmount}
-          setFeeAmount={setFeeAmount}
-          token1={token1}
-          token0={token0}
-          disableIfNotExists={true}
-        />
-        <Separator />
-        <FormSection
-          title="Duration"
-          description="The time period you want to distribute rewards within"
-        >
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-2">
-              <DateField
-                selected={startDate}
-                onChange={setStartDate}
-                portalId="root-portal"
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                timeCaption="time"
-                startDate={new Date(Date.now() + 5 * 60 * 1000)}
-                minDate={new Date(Date.now() + 5 * 60 * 1000)}
-                dateFormat="MMM d, yyyy HH:mm"
-                placeholderText="Start date"
-                autoComplete="off"
-              />
-              {!validStartDate ? (
-                <FormError>Invalid start date.</FormError>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-2">
-              <DateField
-                selected={endDate}
-                onChange={setEndDate}
-                portalId="root-portal"
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                timeCaption="time"
-                startDate={
-                  startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
-                }
-                minDate={
-                  startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
-                }
-                dateFormat="MMM d, yyyy HH:mm"
-                placeholderText="End date"
-                autoComplete="off"
-              />
-              {!validEndDate ? <FormError>Invalid end date.</FormError> : null}
-            </div>
-          </div>
-        </FormSection>
-        <FormSection
-          title="Rewards"
-          description="How many rewards in total would you like to distribute?"
-        >
-          <Web3Input.Currency
-            id="swap-from"
-            type="INPUT"
-            className="p-3 bg-white dark:bg-slate-800 rounded-xl"
-            chainId={chainId}
-            onSelect={setRewardToken}
-            value={value}
-            onChange={setValue}
-            currency={rewardToken}
-            currencies={rewardTokens}
-            loading={angleRewardTokensLoading}
-            currencyLoading={angleRewardTokensLoading}
-            allowNative={false}
-            hideSearch={true}
-            {...(numHours &&
-              rewardToken &&
-              amount[0] &&
-              minAmount &&
-              amount[0].lt(minAmount) && {
-                error: `Min. ${minAmount.toSignificant(4)} ${
-                  rewardToken.symbol
-                }`,
-              })}
+  const poolStep = {
+    id: 'pool',
+    label: 'Select pool',
+    canContinue: Boolean(token0 && token1 && feeAmount),
+    editLabel: 'Edit pool setup',
+    summary: (
+      <PoolSetupSummary
+        version="V3"
+        chainId={chainId}
+        token0={token0}
+        token1={token1}
+        feeAmount={feeAmount}
+      />
+    ),
+    content: (
+      <>
+        <div className="grid gap-x-6 py-3 sm:grid-cols-2">
+          <SelectNetworkWidget
+            description="Choose the network where the pool is deployed."
+            selectedNetwork={chainId}
+            onSelect={(chainId) =>
+              router.push(`/${getEvmChainById(chainId).key}/pool/incentivize`)
+            }
+            networks={MERKL_SUPPORTED_CHAIN_IDS}
           />
-          <p
-            className={typographyVariants({
-              variant: 'muted',
-              className: 'text-sm',
-            })}
+          <SelectTokensWidget
+            title="Token pair"
+            description="Select the two tokens in the pool you want to reward."
+            chainId={chainId}
+            token0={token0}
+            token1={token1}
+            setToken0={setToken0}
+            setToken1={setToken1}
+            includeNative={isEvmWNativeSupported(chainId)}
+          />
+        </div>
+        <div className="py-3">
+          <SelectFeeConcentratedWidget
+            description="Choose the fee tier of the existing pool."
+            chainId={chainId}
+            feeAmount={feeAmount}
+            setFeeAmount={setFeeAmount}
+            token1={token1}
+            token0={token0}
+            disableIfNotExists
+          />
+        </div>
+      </>
+    ),
+  }
+
+  const rewardsStep = {
+    id: 'rewards',
+    label: 'Configure rewards',
+    content: (
+      <>
+        <div className="py-3">
+          <FormSection
+            title="Reward schedule"
+            description="Choose when rewards start and end."
           >
-            Rewards are distributed per hour. The minimum reward for this
-            distribution is dependent on the selected duration. <br />
-            <br /> Looking to get your token added here?{' '}
-            <Button variant="link" asChild>
-              <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
-                Get in touch with us.
-              </LinkExternal>
-            </Button>
-          </p>
-          <Separator className="!my-10" />
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h1
-                className={typographyVariants({
-                  variant: 'p',
-                  className: 'text-muted-foreground',
-                })}
-              >
-                Customize the distribution formula?
-              </h1>
-              <Switch
-                testdata-id="customize-distribution-switch"
-                checked={customize}
-                onCheckedChange={() => setCustomize((prevState) => !prevState)}
-              />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex min-w-0 flex-col gap-2">
+                <label
+                  htmlFor="reward-start-date"
+                  className="text-sm font-medium"
+                >
+                  Start date
+                </label>
+                <DateField
+                  id="reward-start-date"
+                  variant="outline"
+                  className="pr-10"
+                  selected={startDate}
+                  onChange={setStartDate}
+                  portalId="root-portal"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  startDate={new Date(Date.now() + 5 * 60 * 1000)}
+                  minDate={new Date(Date.now() + 5 * 60 * 1000)}
+                  dateFormat="MMM d, yyyy HH:mm"
+                  placeholderText="Select date and time"
+                  autoComplete="off"
+                />
+                {!validStartDate ? (
+                  <FormError>Invalid start date.</FormError>
+                ) : null}
+              </div>
+              <div className="flex min-w-0 flex-col gap-2">
+                <label
+                  htmlFor="reward-end-date"
+                  className="text-sm font-medium"
+                >
+                  End date
+                </label>
+                <DateField
+                  id="reward-end-date"
+                  variant="outline"
+                  className="pr-10"
+                  selected={endDate}
+                  onChange={setEndDate}
+                  portalId="root-portal"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  timeCaption="time"
+                  startDate={
+                    startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
+                  }
+                  minDate={
+                    startDate ? startDate : new Date(Date.now() + 5 * 60 * 1000)
+                  }
+                  dateFormat="MMM d, yyyy HH:mm"
+                  placeholderText="Select date and time"
+                  autoComplete="off"
+                />
+                {!validEndDate ? (
+                  <FormError>Invalid end date.</FormError>
+                ) : null}
+              </div>
             </div>
-            <div
-              className={classNames(
-                'flex flex-col gap-3',
-                customize ? 'mt-4' : 'hidden',
-              )}
-            >
-              <div className="flex flex-col gap-10">
-                <div className="flex flex-col">
-                  {token0 ? (
-                    <span className="flex items-center gap-2">
-                      <Currency.Icon currency={token0} width={20} height={20} />
-                      {token0?.symbol}
-                    </span>
-                  ) : null}
-                  <div className="grid grid-cols-12 items-center gap-x-4">
-                    <Slider
-                      value={distro1}
-                      onValueChange={setDistro1}
-                      max={100}
-                      step={5}
-                      className="col-span-9 w-full"
-                    />
-                    <div className="col-span-3">
-                      <TextField
-                        isError={totalDistro !== 100}
-                        unit="%"
-                        type="number"
-                        value={distro1[0]}
-                        onValueChange={(val) => setDistro1([+val])}
-                      />
-                    </div>
-                    <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to{' '}
-                      {token0?.symbol} liquidity
-                    </span>
-                  </div>
+          </FormSection>
+        </div>
+        <div className="py-3">
+          <FormSection
+            title="Reward amount"
+            description="Rewards are distributed hourly. The minimum amount depends on the reward token and the duration."
+          >
+            <LiquidityDepositInput
+              id="swap-from"
+              label="Total rewards"
+              chainId={chainId}
+              onSelect={setRewardToken}
+              value={value}
+              onChange={setValue}
+              currency={rewardToken}
+              currencies={rewardTokens}
+              loading={angleRewardTokensLoading}
+              currencyLoading={angleRewardTokensLoading}
+              allowNative={false}
+              hideSearch={true}
+              {...(numHours &&
+                rewardToken &&
+                amount[0] &&
+                minAmount &&
+                amount[0].lt(minAmount) && {
+                  error: `Min. ${minAmount.toSignificant(4)} ${
+                    rewardToken.symbol
+                  }`,
+                })}
+            />
+            <p className="text-sm text-muted-foreground">
+              Can&apos;t find your token?{' '}
+              <LinkExternal href="https://rbieu62gj0f.typeform.com/to/KkrPkOFe">
+                Request a reward token
+              </LinkExternal>
+            </p>
+          </FormSection>
+        </div>
+        <div className="py-3">
+          <FormSection
+            title="Distribution settings"
+            description="Choose how rewards are split and which positions can earn them."
+          >
+            <div className="divide-y divide-accent rounded-2xl border border-accent px-4">
+              <div className="py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <label
+                    htmlFor="customize-distribution"
+                    className="text-sm font-medium"
+                  >
+                    Customize reward split
+                  </label>
+                  <Switch
+                    id="customize-distribution"
+                    testdata-id="customize-distribution-switch"
+                    checked={customize}
+                    onCheckedChange={setCustomize}
+                  />
                 </div>
-                <div className="flex flex-col">
-                  {token1 ? (
-                    <span className="flex items-center gap-2">
-                      <Currency.Icon currency={token1} width={20} height={20} />
-                      {token1?.symbol}
-                    </span>
-                  ) : null}
-                  <div className="grid grid-cols-12 items-center gap-x-4">
-                    <Slider
-                      value={distro2}
-                      onValueChange={setDistro2}
-                      max={100}
-                      step={5}
-                      className="col-span-9 w-full"
-                    />
-                    <div className="col-span-3">
-                      <TextField
-                        isError={totalDistro !== 100}
-                        unit="%"
-                        type="number"
-                        value={distro2[0]}
-                        onValueChange={(val) => setDistro2([+val])}
-                      />
-                    </div>
-                    <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to{' '}
-                      {token1?.symbol} liquidity
-                    </span>
+                {customize && (
+                  <div className="mt-4 space-y-4">
+                    {[
+                      {
+                        id: 'token0',
+                        label: `${token0?.symbol ?? 'Token 1'} liquidity`,
+                        currency: token0,
+                        value: distro1,
+                        setValue: setDistro1,
+                      },
+                      {
+                        id: 'token1',
+                        label: `${token1?.symbol ?? 'Token 2'} liquidity`,
+                        currency: token1,
+                        value: distro2,
+                        setValue: setDistro2,
+                      },
+                      {
+                        id: 'fees',
+                        label: 'Fees generated',
+                        currency: undefined,
+                        value: distro3,
+                        setValue: setDistro3,
+                      },
+                    ].map(({ id, label, currency, value, setValue }) => (
+                      <fieldset key={id} className="min-w-0">
+                        <legend className="mb-1 text-sm font-medium">
+                          <span className="flex items-center gap-2">
+                            {currency && (
+                              <Currency.Icon
+                                disableLink
+                                currency={currency}
+                                width={16}
+                                height={16}
+                              />
+                            )}
+                            {label}
+                          </span>
+                        </legend>
+                        <div className="grid grid-cols-[minmax(0,1fr)_6rem] items-center gap-4">
+                          <Slider
+                            value={value}
+                            onValueChange={setValue}
+                            max={100}
+                            step={5}
+                          />
+                          <TextField
+                            aria-label={`${label} percentage`}
+                            variant="outline"
+                            isError={totalDistro !== 100}
+                            unit="%"
+                            type="number"
+                            value={value[0]}
+                            onValueChange={(val) => setValue([+val])}
+                          />
+                        </div>
+                      </fieldset>
+                    ))}
+                    <p
+                      className={classNames(
+                        'text-sm',
+                        totalDistro !== 100
+                          ? 'text-red'
+                          : 'text-muted-foreground',
+                      )}
+                    >
+                      Allocated {totalDistro}% of 100%
+                    </p>
                   </div>
+                )}
+              </div>
+              <div className="py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <label
+                    htmlFor="exclude-addresses"
+                    className="text-sm font-medium"
+                  >
+                    Exclude addresses from rewards
+                  </label>
+                  <Switch
+                    id="exclude-addresses"
+                    testdata-id="customize-blacklist-switch"
+                    checked={includeBlacklist}
+                    onCheckedChange={setIncludeBlacklist}
+                  />
                 </div>
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-2">Fees</span>
-                  <div className="grid grid-cols-12 items-center gap-x-4">
-                    <Slider
-                      value={distro3}
-                      onValueChange={setDistro3}
-                      max={100}
-                      step={5}
-                      className="col-span-9 w-full"
-                    />
-                    <div className="col-span-3">
-                      <TextField
-                        isError={totalDistro !== 100}
-                        unit="%"
-                        type="number"
-                        value={distro3[0]}
-                        onValueChange={(val) => setDistro3([+val])}
-                      />
-                    </div>
-                    <span className="col-span-9 text-sm text-muted-foreground">
-                      Percentage of rewards that get distributed to fee
-                      generation
-                    </span>
-                  </div>
+                <div hidden={!includeBlacklist} className="mt-3 space-y-2">
+                  <ChipInput
+                    aria-label="Excluded addresses"
+                    variant="outline"
+                    delimiters={[',', ' ', ';', ':']}
+                    values={blacklist}
+                    onValueChange={(value) =>
+                      setBlacklist(value as EvmAddress[])
+                    }
+                    placeholder="Address"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {blacklist.length > 0
+                      ? `${blacklist.length} address${blacklist.length > 1 ? 'es' : ''} excluded.`
+                      : 'Separate addresses with commas.'}
+                  </p>
                 </div>
               </div>
-              <h1
-                className={classNames(
-                  totalDistro !== 100 ? 'text-red' : 'text-muted-foreground',
-                  'text-sm pt-4',
-                )}
-              >
-                You have assigned <b>{totalDistro}%</b> of the available{' '}
-                <b>100%</b>.
-              </h1>
+              <div className="flex items-center justify-between gap-4 py-4">
+                <label
+                  htmlFor="include-out-of-range"
+                  className="text-sm font-medium"
+                >
+                  Reward out-of-range positions
+                </label>
+                <Switch
+                  id="include-out-of-range"
+                  testdata-id="customize-outofrange-switch"
+                  checked={customizeOOR}
+                  onCheckedChange={setCustomizeOOR}
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h1
-                className={typographyVariants({
-                  variant: 'p',
-                  className: 'text-muted-foreground',
-                })}
-              >
-                Exclude any addresses from receiving rewards?
-              </h1>
-              <Switch
-                testdata-id="customize-blacklist-switch"
-                checked={includeBlacklist}
-                onCheckedChange={() =>
-                  setIncludeBlacklist((prevState) => !prevState)
-                }
-              />
-            </div>
-            <div
-              className={classNames(
-                includeBlacklist ? 'flex flex-col gap-2' : 'hidden',
-              )}
-            >
-              <ChipInput
-                delimiters={[',', ' ', ';', ':']}
-                values={blacklist}
-                onValueChange={(value) => setBlacklist(value as EvmAddress[])}
-                placeholder="Address"
-              />
-              <p
-                className={typographyVariants({
-                  variant: 'muted',
-                  className: 'text-sm px-3',
-                })}
-              >
-                {blacklist.length > 0
-                  ? `${blacklist.length} address${
-                      blacklist.length > 1 ? 'es' : ''
-                    } blacklisted.`
-                  : 'The addresses to blacklist, use commas to separate addresses.'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <h1
-              className={typographyVariants({
-                variant: 'p',
-                className: 'text-muted-foreground',
-              })}
-            >
-              Distribute rewards to positions that are out of range?
-            </h1>
-            <Switch
-              testdata-id="customize-outofrange-switch"
-              checked={customizeOOR}
-              onCheckedChange={() => setCustomizeOOR((prevState) => !prevState)}
-            />
-          </div>
-          <Separator className="!my-10" />
-          <p
-            className={typographyVariants({
-              variant: 'muted',
-              className: 'text-sm',
-            })}
-          >
-            In order to incentivize a pool, you must review and agree to{' '}
-            <Button variant="link" asChild>
-              <LinkExternal href="https://docs.angle.money/merkl/incentivizor-tc">
-                {`Merkl's Terms & Conditions`}
-              </LinkExternal>
-            </Button>
+          </FormSection>
+        </div>
+        <div className="space-y-4 py-4">
+          <p className="text-sm text-muted-foreground">
+            To incentivize a pool, review and agree to{' '}
+            <LinkExternal href="https://docs.angle.money/merkl/incentivizor-tc">
+              Merkl’s Terms &amp; Conditions
+            </LinkExternal>
             .
           </p>
           <Checker.Connect>
@@ -742,8 +742,17 @@ const Incentivize = withCheckerRoot(() => {
               </Checker.Guard>
             </Checker.Network>
           </Checker.Connect>
-        </FormSection>
-      </div>
+        </div>
+      </>
+    ),
+  }
+
+  return (
+    <DialogProvider>
+      <MultiStepForm
+        progressLabel="Incentive setup progress"
+        steps={[poolStep, rewardsStep]}
+      />
       {pool && token0 && token1 ? (
         <DialogConfirm
           chainId={chainId}

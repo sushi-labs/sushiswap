@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </Container>
       <section className="flex flex-col flex-1">
-        <Container maxWidth="5xl" className="px-4 pb-10 md:pt-10 pt-5">
+        <Container maxWidth="7xl" className="px-4 pb-10 md:pt-10 pt-5">
           {children}
         </Container>
       </section>

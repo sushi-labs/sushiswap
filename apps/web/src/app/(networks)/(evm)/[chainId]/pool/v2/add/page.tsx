@@ -1,26 +1,35 @@
 'use client'
 
-import { PlusIcon } from '@heroicons/react-v1/solid'
 import { SlippageToleranceStorageKey } from '@sushiswap/hooks'
 import { createToast } from '@sushiswap/notifications'
 import { ZapEventName, sendAnalyticsEvent } from '@sushiswap/telemetry'
-import { Button, Card, Dots, FormSection, Loader } from '@sushiswap/ui'
-import { useRouter } from 'next/navigation'
-import { notFound } from 'next/navigation'
-import React, {
+import {
+  Button,
+  Dots,
+  FormError,
+  FormSection,
+  Loader,
+  MultiStepForm,
+} from '@sushiswap/ui'
+import { notFound, useRouter } from 'next/navigation'
+import {
   type Dispatch,
   type FC,
   type ReactNode,
   type SetStateAction,
+  use,
   useCallback,
   useEffect,
   useMemo,
   useState,
-  use,
 } from 'react'
 import { PriceImpactWarning } from 'src/app/(networks)/_ui/price-impact-warning'
 import { SlippageWarning } from 'src/app/(networks)/_ui/slippage-warning'
 import { DISABLED_CHAIN_IDS, isZapSupportedChainId } from 'src/config'
+import {
+  LiquidityDepositDivider,
+  LiquidityDepositInput,
+} from 'src/lib/components/liquidity-deposit-input'
 import { SelectTokensWidget } from 'src/lib/components/select-tokens-widget'
 import {
   APPROVE_TAG_ADD_LEGACY,
@@ -31,7 +40,6 @@ import { isSushiSwapV2Pool } from 'src/lib/functions'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useV2Zap } from 'src/lib/hooks/use-v2-zap'
 import { warningSeverity } from 'src/lib/swap/warning-severity'
-import { Web3Input } from 'src/lib/wagmi/components/web3-input'
 import { SushiSwapV2PoolState } from 'src/lib/wagmi/hooks/pools/hooks/use-sushi-swap-v2-pools'
 import {
   Checker,
@@ -45,7 +53,6 @@ import { PoolFinder } from 'src/lib/wagmi/systems/pool-finder/pool-finder'
 import { Amount, Percent, ZERO } from 'sushi'
 import {
   EvmChainId,
-  EvmChainKey,
   type EvmCurrency,
   SUSHISWAP_V2_ROUTER_ADDRESS,
   SUSHISWAP_V2_SUPPORTED_CHAIN_IDS,
@@ -67,6 +74,8 @@ import {
   useSendTransaction,
 } from 'wagmi'
 import { useRefetchBalances } from '~evm/_common/ui/balance-provider/use-refetch-balances'
+import { PoolFormSession } from '../../_ui/pool-form-session'
+import { PoolSetupSummary } from '../../_ui/pool-setup-summary'
 import { SelectNetworkWidget } from '../../_ui/select-network-widget'
 import { SelectPositionType } from '../../_ui/select-position-type'
 import { ToggleZapCard } from '../../_ui/toggle-zap-card'
@@ -81,7 +90,11 @@ export default function Page(props: { params: Promise<{ chainId: string }> }) {
     return notFound()
   }
 
-  return <V2PoolPage chainId={chainId} />
+  return (
+    <PoolFormSession>
+      <V2PoolPage chainId={chainId} />
+    </PoolFormSession>
+  )
 }
 
 function V2PoolPage({ chainId }: { chainId: SushiSwapV2ChainId }) {
@@ -219,58 +232,104 @@ function PoolForm({
       'Create Pool'
     )
 
+  const isZapAvailable =
+    isZapSupportedChainId(chainId) && poolState === SushiSwapV2PoolState.EXISTS
+  const isPairInvalid = poolState === SushiSwapV2PoolState.INVALID
+
   return (
-    <Card className="divide-y divide-accent px-4 sm:px-6">
-      <div className="grid gap-x-6 py-3 sm:grid-cols-2">
-        <SelectPositionType chainId={chainId} positionType="v2" />
-        <SelectNetworkWidget
-          networks={networks}
-          selectedNetwork={chainId}
-          onSelect={(chainId) => {
-            if (!isSushiSwapV2ChainId(chainId)) return
-            router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
-          }}
-        />
-      </div>
-      <div className="py-3">
-        <FormSection
-          title="Deposit"
-          description="Select the tokens and amount you want to deposit"
-        >
-          {isZapSupportedChainId(chainId) &&
-          poolState === SushiSwapV2PoolState.EXISTS ? (
-            <ToggleZapCard
-              checked={isZapModeEnabled}
-              onCheckedChange={setIsZapModeEnabled}
-            />
-          ) : null}
-          {isZapModeEnabled ? (
-            <ZapWidget
+    <MultiStepForm
+      progressLabel="Position setup progress"
+      steps={[
+        {
+          id: 'pool',
+          label: 'Select token pair',
+          canContinue: Boolean(token0 && token1 && !isPairInvalid),
+          editLabel: 'Edit pool setup',
+          summary: (
+            <PoolSetupSummary
+              version="V2"
               chainId={chainId}
-              pool={pool}
-              poolState={poolState}
-              title={title}
-            />
-          ) : (
-            <AddLiquidityWidget
-              chainId={chainId}
-              pool={pool}
-              poolState={poolState}
-              title={title}
               token0={token0}
               token1={token1}
-              setToken0={setToken0}
-              setToken1={setToken1}
-              input0={input0}
-              input1={input1}
-              setTypedAmounts={setTypedAmounts}
-              independendField={independendField}
-              setIndependendField={setIndependendField}
             />
-          )}
-        </FormSection>
-      </div>
-    </Card>
+          ),
+          content: (
+            <>
+              <div className="grid gap-x-6 py-3 sm:grid-cols-2">
+                <SelectPositionType chainId={chainId} positionType="v2" />
+                <SelectNetworkWidget
+                  networks={networks}
+                  selectedNetwork={chainId}
+                  onSelect={(chainId) => {
+                    if (!isSushiSwapV2ChainId(chainId)) return
+                    router.push(`/${getEvmChainById(chainId).key}/pool/v2/add`)
+                  }}
+                />
+              </div>
+              <div className="py-3">
+                <SelectTokensWidget
+                  chainId={chainId}
+                  token0={token0}
+                  token1={token1}
+                  setToken0={setToken0}
+                  setToken1={setToken1}
+                  includeNative={isEvmWNativeSupported(chainId)}
+                >
+                  {token0 && token1 && isPairInvalid && (
+                    <FormError>
+                      Choose another token. This pair can’t form a V2 pool.
+                    </FormError>
+                  )}
+                </SelectTokensWidget>
+              </div>
+            </>
+          ),
+        },
+        {
+          id: 'deposit',
+          label: 'Deposit tokens',
+          content: (
+            <div className="py-3">
+              <FormSection
+                title="Deposit"
+                description="Enter the amounts you want to add to the pool."
+              >
+                {isZapAvailable ? (
+                  <ToggleZapCard
+                    checked={isZapModeEnabled}
+                    onCheckedChange={setIsZapModeEnabled}
+                  />
+                ) : null}
+                {isZapAvailable && isZapModeEnabled ? (
+                  <ZapWidget
+                    chainId={chainId}
+                    pool={pool}
+                    poolState={poolState}
+                    title={title}
+                  />
+                ) : (
+                  <AddLiquidityWidget
+                    chainId={chainId}
+                    pool={pool}
+                    poolState={poolState}
+                    title={title}
+                    token0={token0}
+                    token1={token1}
+                    setToken0={setToken0}
+                    setToken1={setToken1}
+                    input0={input0}
+                    input1={input1}
+                    setTypedAmounts={setTypedAmounts}
+                    independendField={independendField}
+                    setIndependendField={setIndependendField}
+                  />
+                )}
+              </FormSection>
+            </div>
+          ),
+        },
+      ]}
+    />
   )
 }
 
@@ -449,10 +508,8 @@ const _ZapWidget: FC<ZapWidgetProps> = ({
 
   return (
     <>
-      <Web3Input.Currency
+      <LiquidityDepositInput
         id="zap-liquidity-token"
-        type="INPUT"
-        className="border border-accent p-4 bg-muted rounded-2xl"
         chainId={chainId}
         value={inputAmount}
         onChange={setInputAmount}
@@ -676,10 +733,8 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <Web3Input.Currency
+        <LiquidityDepositInput
           id="add-liquidity-token0"
-          type="INPUT"
-          className="border border-accent p-4 bg-muted rounded-2xl"
           chainId={chainId}
           value={input0}
           onChange={onChangeToken0TypedAmount}
@@ -693,19 +748,9 @@ const AddLiquidityWidget: FC<AddLiquidityWidgetProps> = ({
           loading={poolState === SushiSwapV2PoolState.LOADING}
           allowNative={isEvmWNativeSupported(chainId)}
         />
-        <div className="left-0 right-0 mt-[-24px] z-10 mb-[-24px] flex items-center justify-center">
-          <div className="p-1 bg-secondary border border-accent rounded-full">
-            <PlusIcon
-              width={16}
-              height={16}
-              className="text-muted-foreground"
-            />
-          </div>
-        </div>
-        <Web3Input.Currency
+        <LiquidityDepositDivider />
+        <LiquidityDepositInput
           id="add-liquidity-token1"
-          type="INPUT"
-          className="border border-accent p-4 bg-muted rounded-2xl"
           chainId={chainId}
           value={input1}
           onChange={onChangeToken1TypedAmount}

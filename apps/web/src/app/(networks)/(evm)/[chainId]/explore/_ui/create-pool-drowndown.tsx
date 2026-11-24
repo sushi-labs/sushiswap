@@ -1,5 +1,4 @@
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -9,7 +8,11 @@ import {
 } from '@sushiswap/ui'
 import type { ReactNode } from 'react'
 import { type ChainId, getChainById } from 'sushi'
-import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/evm'
+import {
+  isMerklChainId,
+  isSushiSwapV2ChainId,
+  isSushiSwapV3ChainId,
+} from 'sushi/evm'
 
 export const CreatePoolDropdown = ({
   chainId,
@@ -23,11 +26,11 @@ export const CreatePoolDropdown = ({
       <DropdownMenuTrigger className="w-full rounded-full">
         {children}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-76" align="end">
+      <DropdownMenuContent className="!max-w-[300px]" align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled={!isSushiSwapV3ChainId(chainId)} asChild>
+          <DropdownMenuItem asChild>
             <LinkInternal
-              href={`/${getChainById(chainId).key}/pool/v3/add`}
+              href={`/${isSushiSwapV3ChainId(chainId) ? getChainById(chainId).key : 'ethereum'}/pool/v3/add`}
               className="flex flex-col !items-start gap-1 cursor-pointer"
             >
               <div className="flex items-center gap-1 font-medium leading-none">
@@ -38,21 +41,33 @@ export const CreatePoolDropdown = ({
               </p>
             </LinkInternal>
           </DropdownMenuItem>
-          {isSushiSwapV2ChainId(chainId) ? (
-            <DropdownMenuItem asChild>
-              <LinkInternal
-                href={`/${getChainById(chainId).key}/pool/v2/add`}
-                className="flex flex-col !items-start gap-1 cursor-pointer"
-              >
-                <div className="flex items-center gap-1 font-medium leading-none">
-                  V2 Position
-                </div>
-                <p className="text-sm leading-snug text-muted-foreground">
-                  Provide liquidity to a V2 liquidity pool.
-                </p>
-              </LinkInternal>
-            </DropdownMenuItem>
-          ) : null}
+          <DropdownMenuItem asChild>
+            <LinkInternal
+              href={`/${isSushiSwapV2ChainId(chainId) ? getChainById(chainId).key : 'ethereum'}/pool/v2/add`}
+              className="flex flex-col !items-start gap-1 cursor-pointer"
+            >
+              <div className="flex items-center gap-1 font-medium leading-none">
+                V2 Position
+              </div>
+              <p className="text-sm leading-snug text-muted-foreground">
+                Provide liquidity to a V2 liquidity pool.
+              </p>
+            </LinkInternal>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <LinkInternal
+              href={`/${isMerklChainId(chainId) && isSushiSwapV3ChainId(chainId) ? getChainById(chainId).key : 'ethereum'}/pool/incentivize`}
+              className="flex flex-col !items-start gap-1 cursor-pointer"
+            >
+              <div className="flex items-center gap-1 font-medium leading-none">
+                Incentivize a Pool
+              </div>
+              <p className="text-sm leading-snug text-muted-foreground">
+                Add rewards to a pool to incentivize liquidity providers joining
+                in.
+              </p>
+            </LinkInternal>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

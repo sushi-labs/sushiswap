@@ -7,7 +7,7 @@ import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { PoolsTable } from '~evm/[chainId]/_ui/pools-table'
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
-import { TableFiltersFarmsOnly } from '../../_ui/table-filters-farms-only';
+import { TableFiltersFarmsOnly } from '../../_ui/table-filters-farms-only'
 
 export default async function PoolsPage(props: {
   params: Promise<{ chainId: string }>

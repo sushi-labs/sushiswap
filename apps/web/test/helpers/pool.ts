@@ -137,8 +137,7 @@ export class PoolPage extends BaseActions {
   }
 
   async createV2Pool(args: CreateV2PoolArgs): Promise<TransactionReceipt> {
-    await this.handleToken(args.token0, 'FIRST')
-    await this.handleToken(args.token1, 'SECOND')
+    await this.selectV2Pair(args.token0, args.token1)
 
     const input0 = this.page.locator('[testdata-id=add-liquidity-token0-input]')
     await expect(input0).toBeEnabled()
@@ -187,16 +186,14 @@ export class PoolPage extends BaseActions {
   }
 
   async addLiquidityV2(args: AddV2LiquidityArgs): Promise<TransactionReceipt> {
-    await this.handleToken(args.token0, 'FIRST')
-    await this.handleToken(args.token1, 'SECOND')
+    await this.selectV2Pair(args.token0, args.token1)
 
     if (isZapSupportedChainId(this.chainId)) {
       const toggleZapLocator = this.page.locator(
         '[testdata-id=toggle-zap-enabled]',
       )
       await expect(toggleZapLocator).toBeVisible()
-      await expect(toggleZapLocator).toBeEnabled()
-      await toggleZapLocator.click()
+      await expect(toggleZapLocator).toHaveAttribute('data-state', 'unchecked')
     }
 
     // Only fill in the token that is not native if we are adding liquidity to an existing pool.
@@ -441,6 +438,14 @@ export class PoolPage extends BaseActions {
   }
 
   // Private helper methods for internal class use
+  private async selectV2Pair(token0: EvmCurrency, token1: EvmCurrency) {
+    await this.handleToken(token0, 'FIRST')
+    await this.handleToken(token1, 'SECOND')
+    await this.page
+      .getByRole('button', { name: 'Continue', exact: true })
+      .click()
+  }
+
   private async handleToken(currency: EvmCurrency, order: 'FIRST' | 'SECOND') {
     const selectorInfix = `token${order === 'FIRST' ? 0 : 1}`
     const tokenSelector = this.page.locator(

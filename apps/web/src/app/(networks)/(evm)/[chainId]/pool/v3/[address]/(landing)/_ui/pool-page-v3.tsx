@@ -58,7 +58,10 @@ const Pool: FC<{ pool: RawV3Pool }> = ({ pool: rawPool }) => {
     })
 
   return (
-    <Container maxWidth="7xl" className="flex flex-col gap-4 md:pt-8 border-t border-transparent md:border-accent">
+    <Container
+      maxWidth="7xl"
+      className="flex flex-col gap-4 md:pt-8 border-t border-transparent md:border-accent"
+    >
       {pool.hasEnabledSteerVault && (
         <Message
           variant="info"

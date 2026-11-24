@@ -72,7 +72,7 @@ export const PoolHeader: FC<PoolHeader> = ({
                   : ''
             }
           >
-            <Button className='!px-8'>Add Liquidity</Button>
+            <Button className="!px-8">Add Liquidity</Button>
           </LinkInternal>
         ) : null}
       </div>
@@ -90,7 +90,6 @@ export const PoolHeader: FC<PoolHeader> = ({
           </Currency.IconList>
           <LinkExternal
             href={getEvmChainById(pool.chainId).getAccountUrl(address)}
-            
           >
             <Button
               asChild
@@ -99,11 +98,11 @@ export const PoolHeader: FC<PoolHeader> = ({
                 'truncate overflow-x-auto !rounded-none font-semibold !text-2xl !text-primary hover:!text-pink'
               }
             >
-                <span className="tracking-wide">
-                  {token0.symbol}/{token1.symbol}
-                </span>
+              <span className="tracking-wide">
+                {token0.symbol}/{token1.symbol}
+              </span>
             </Button>
-            </LinkExternal>
+          </LinkExternal>
           <ProtocolBadge protocol={pool.protocol} size="lg" />
         </div>
 

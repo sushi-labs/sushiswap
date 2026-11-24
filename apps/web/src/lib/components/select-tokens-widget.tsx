@@ -12,6 +12,7 @@ interface SelectTokensWidgetProps<TChainId extends TokenSelectorChainId> {
   setToken0(token: CurrencyFor<TChainId>): void
   setToken1(token: CurrencyFor<TChainId>): void
   title?: string
+  description?: string
   includeNative?: boolean
   children?: ReactNode
 }
@@ -23,14 +24,12 @@ export function SelectTokensWidget<TChainId extends TokenSelectorChainId>({
   setToken0,
   setToken1,
   title = 'Tokens',
+  description = 'Which token pair would you like to add liquidity to?',
   includeNative,
   children,
 }: SelectTokensWidgetProps<TChainId>): ReactElement {
   return (
-    <FormSection
-      title={title}
-      description="Which token pair would you like to add liquidity to?"
-    >
+    <FormSection title={title} description={description}>
       <div className="flex flex-wrap gap-3">
         {[
           { token: token0, onSelect: setToken0 },

@@ -9,6 +9,7 @@ interface SelectNetworkWidgetProps {
   selectedNetwork: EvmChainId
   onSelect(chainId: EvmChainId): void
   title?: string
+  description?: string
 }
 
 export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(
@@ -16,13 +17,10 @@ export const SelectNetworkWidget: FC<SelectNetworkWidgetProps> = memo(
     selectedNetwork,
     onSelect,
     networks,
-    title: _title,
+    description = 'Select the network you would like to provide liquidity on.',
   }) {
     return (
-      <FormSection
-        title="Network"
-        description="Select the network you would like to provide liquidity on."
-      >
+      <FormSection title="Network" description={description}>
         <div>
           <NetworkSelector
             networks={networks}

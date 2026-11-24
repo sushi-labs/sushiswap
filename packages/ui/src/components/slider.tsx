@@ -27,12 +27,12 @@ const Slider = React.forwardRef<
     >
       <SliderPrimitive.Track
         className={classNames(
-          'relative h-2 w-full grow overflow-hidden rounded-full bg-secondary black:bg-white/[0.04]',
+          'relative h-2 w-full grow overflow-hidden rounded-full bg-muted black:bg-white/[0.04]',
           trackClassName,
         )}
       >
         <SliderPrimitive.Range
-          className={classNames('absolute h-full bg-primary', rangeClassName)}
+          className={classNames('absolute h-full bg-pink', rangeClassName)}
         />
       </SliderPrimitive.Track>
       {props.defaultValue ? (
@@ -40,7 +40,7 @@ const Slider = React.forwardRef<
           <SliderPrimitive.Thumb
             key={i}
             className={classNames(
-              'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+              'block h-5 w-5 rounded-full border-2 border-pink bg-pink hover:ring-4 ring-offset-background ring-accent transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
               thumbClassName,
             )}
           />
@@ -50,7 +50,7 @@ const Slider = React.forwardRef<
           <SliderPrimitive.Thumb
             key={i}
             className={classNames(
-              'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
+              'block h-5 w-5 rounded-full border-2 border-pink bg-pink hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
               thumbClassName,
             )}
           />
@@ -58,7 +58,7 @@ const Slider = React.forwardRef<
       ) : (
         <SliderPrimitive.Thumb
           className={classNames(
-            'block h-5 w-5 rounded-full border-2 border-primary bg-blue hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
+            'block h-5 w-5 rounded-full border-2 border-pink bg-pink hover:ring-4 ring-offset-background ring-accent transition-colors disabled:pointer-events-none disabled:opacity-50',
             thumbClassName,
           )}
         />

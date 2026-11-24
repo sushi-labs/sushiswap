@@ -2,7 +2,7 @@
 
 import type { RawV2Pool } from '@sushiswap/graph-client/data-api'
 import { Card } from '@sushiswap/ui'
-import  { type FC, useState } from 'react'
+import { type FC, useState } from 'react'
 import { SushiSwapProtocol } from 'sushi/evm'
 import { PoolChartGraph } from '~evm/[chainId]/pool/_ui/pool-chart-graph'
 import {
@@ -38,16 +38,16 @@ const PoolChartV2: FC<PoolChartV2Props> = ({ pool }) => {
   return (
     <Card>
       <div className="px-6 pt-4 flex flex-wrap items-center justify-between gap-4">
-          <PoolChartTypes
-            charts={charts}
-            selectedChart={chart}
-            setChart={setChart}
-          />
-          <PoolChartPeriods
-            periods={periods}
-            selectedPeriod={period}
-            setPeriod={setPeriod}
-          />
+        <PoolChartTypes
+          charts={charts}
+          selectedChart={chart}
+          setChart={setChart}
+        />
+        <PoolChartPeriods
+          periods={periods}
+          selectedPeriod={period}
+          setPeriod={setPeriod}
+        />
       </div>
       <PoolChartGraph
         chart={chart}

@@ -1,6 +1,5 @@
 import { Toggle, ToggleGroup } from '@sushiswap/ui'
 
-
 export enum PoolChartPeriod {
   Day = '1D',
   Week = '1W',
