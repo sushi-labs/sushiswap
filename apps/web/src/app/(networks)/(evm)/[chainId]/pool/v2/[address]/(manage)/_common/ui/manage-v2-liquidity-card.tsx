@@ -51,20 +51,20 @@ export const ManageV2LiquidityCard: FC<ManageV2LiquidityCardProps> = ({
           <TabsList className="!flex">
             <Link
               href={`/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}/add`}
-              className="flex-1"
+              className="w-full"
             >
-              <TabsTrigger testdata-id="add-tab" value="add" className="flex-1">
+              <TabsTrigger testdata-id="add-tab" value="add" className="w-full">
                 Add
               </TabsTrigger>
             </Link>
             <Link
               href={`/${getEvmChainById(pool.chainId).key}/pool/v2/${pool.address}/remove`}
-              className="flex flex-1"
+              className="w-full"
             >
               <TabsTrigger
                 testdata-id="remove-tab"
                 value="remove"
-                className="flex flex-1"
+                className="w-full"
               >
                 Remove
               </TabsTrigger>

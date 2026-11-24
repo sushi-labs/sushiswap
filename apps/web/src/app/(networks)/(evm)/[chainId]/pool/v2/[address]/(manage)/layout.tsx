@@ -27,38 +27,32 @@ export default async function Layout(props: {
   const referer = headersList.get('referer')
   return (
     <>
-      <Container maxWidth="5xl" className="pt-10 px-4">
+      <Container maxWidth="7xl" className="pt-6 px-4">
         <PoolHeader
-          backUrl={
-            referer?.includes('/pool')
-              ? referer?.toString()
-              : undefined
-          }
+          backUrl={referer?.includes('/pool') ? referer?.toString() : undefined}
           address={pool.address}
           pool={pool}
           apy={{ rewards: pool?.incentiveApr, fees: pool?.feeApr1d }}
         />
       </Container>
-      <section className="flex flex-col flex-1 mt-4">
-        <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent py-10 h-full">
-          <Container maxWidth="5xl" className="px-4">
-            <Message size="sm" variant="info" className="mb-6">
-              <h1 className="py-1 text-lg dark:text-slate-200 text-gray-700">
-                Not seeing your position?
-              </h1>
-              We&apos;re beginning to phase out the staking contracts used for
-              V2 pools to make way for new and improved technology. If you have
-              any staked positions and wish to unstake and claim your rewards,
-              please visit{' '}
-              <LinkExternal href="https://deprecated.sushi.com/farms">
-                <span className="dark:text-slate-300 text-gray-800">
-                  https://deprecated.sushi.com/farms
-                </span>
-              </LinkExternal>
-            </Message>
-            {children}
-          </Container>
-        </div>
+      <section className="flex flex-col flex-1">
+        <Container maxWidth="7xl" className="px-4 py-10">
+          {children}
+          <Message size="sm" variant="info" className="mt-6">
+            <h1 className="py-1 text-lg text-primary">
+              Not seeing your position?
+            </h1>
+            We&apos;re beginning to phase out the staking contracts used for V2
+            pools to make way for new and improved technology. If you have any
+            staked positions and wish to unstake and claim your rewards, please
+            visit{' '}
+            <LinkExternal href="https://deprecated.sushi.com/farms">
+              <span className="text-muted-foreground">
+                https://deprecated.sushi.com/farms
+              </span>
+            </LinkExternal>
+          </Message>
+        </Container>
       </section>
     </>
   )
