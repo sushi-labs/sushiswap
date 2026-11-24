@@ -1,20 +1,39 @@
 'use client'
 
 import type { SushiSwapChainId } from '@sushiswap/graph-client/data-api'
-import {
-  SkeletonChartLoadingStateMask,
-  SkeletonChartXAxe,
-  SkeletonText,
-  Toggle,
-} from '@sushiswap/ui'
+import { CardContent, SkeletonBox, Toggle, ToggleGroup } from '@sushiswap/ui'
 import format from 'date-fns/format'
-import * as echarts from 'echarts'
-import ReactEcharts, { type EChartsOption } from 'echarts-for-react'
+import type {
+  EChartsOption,
+  TooltipComponentFormatterCallbackParams,
+} from 'echarts'
+import ReactEchartsCore from 'echarts-for-react/lib/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { useTheme } from 'next-themes'
-import { type FC, useCallback, useMemo, useState } from 'react'
+import {
+  type ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useTokenPriceChart } from 'src/lib/hooks/api/use-token-price-chart'
 import { formatPercent, formatUSD } from 'sushi'
 import type { EvmAddress } from 'sushi/evm'
+import { SkeletonChart } from '~evm/[chainId]/_ui/skeleton-chart'
+import {
+  getStatsChartAxes,
+  getStatsChartTooltip,
+  getStatsLineStyle,
+  statsChartColors,
+} from '~evm/[chainId]/_ui/stats-chart-options'
+
+echarts.use([CanvasRenderer, LineChart, GridComponent, TooltipComponent])
+
+const chartHeight = 300
 
 enum CHART_DURATION {
   DAY = 'DAY',
@@ -23,15 +42,28 @@ enum CHART_DURATION {
   YEAR = 'YEAR',
 }
 
+const timeframes = {
+  [CHART_DURATION.DAY]: { label: '1D', dateFormat: 'h a' },
+  [CHART_DURATION.WEEK]: { label: '1W', dateFormat: 'MMM d' },
+  [CHART_DURATION.MONTH]: { label: '1M', dateFormat: 'MMM d' },
+  [CHART_DURATION.YEAR]: { label: '1Y', dateFormat: 'MMM d yyyy' },
+}
+
 interface PriceChartProps {
   chainId: SushiSwapChainId
   address: EvmAddress
 }
 
-export const PriceChart: FC<PriceChartProps> = ({ chainId, address }) => {
+export function PriceChart({
+  chainId,
+  address,
+}: PriceChartProps): ReactElement {
   const { resolvedTheme } = useTheme()
 
   const [duration, setDuration] = useState<CHART_DURATION>(CHART_DURATION.DAY)
+  const priceRef = useRef<HTMLSpanElement>(null)
+  const dateRef = useRef<HTMLSpanElement>(null)
+  const diffRef = useRef<HTMLSpanElement>(null)
 
   const { data, isLoading } = useTokenPriceChart({
     chainId,
@@ -51,10 +83,10 @@ export const PriceChart: FC<PriceChartProps> = ({ chainId, address }) => {
     if (!data || data.length === 0)
       return [[], 0, 0, 0, 0, undefined, undefined]
 
-    const transformed = data.map((d) => [d.timestamp * 1000, d.close]) as [
-      number,
-      number,
-    ][]
+    const transformed = data.map<[number, number]>((d) => [
+      d.timestamp * 1000,
+      d.close,
+    ])
 
     const prices = data.map((d) => d.close)
     const min = Math.min(...prices)
@@ -76,215 +108,146 @@ export const PriceChart: FC<PriceChartProps> = ({ chainId, address }) => {
 
   const updateDOMLabels = useCallback(
     (price: number, timestamp: number) => {
-      const priceNode = document.getElementById('hoveredPrice')
-      const dateNode = document.getElementById('hoveredPriceDate')
-      const diffNode = document.getElementById('hoveredPriceDiff')
+      const priceNode = priceRef.current
+      const dateNode = dateRef.current
+      const diffNode = diffRef.current
 
-      if (priceNode) priceNode.innerHTML = formatUSD(price)
+      if (priceNode) priceNode.textContent = formatUSD(price)
       if (dateNode) {
-        dateNode.innerHTML = format(new Date(timestamp), 'dd MMM yyyy HH:mm aa')
+        dateNode.textContent = format(
+          new Date(timestamp),
+          'dd MMM yyyy HH:mm aa',
+        )
       }
 
       if (diffNode && firstPrice > 0) {
         const diff = price - firstPrice
         const percent = (diff / firstPrice) * 100
         const isPositive = percent >= 0
-        diffNode.innerHTML = `${isPositive ? '+' : ''}${percent.toFixed(2)}%`
-        diffNode.className = `ml-1 ${isPositive ? 'text-green' : 'text-red'}`
+        diffNode.textContent = `${isPositive ? '+' : ''}${percent.toFixed(2)}%`
+        diffNode.className = isPositive ? 'text-green' : 'text-red'
       }
     },
     [firstPrice],
   )
 
   const onTooltip = useCallback(
-    (params: { data: [number, number] }[]) => {
-      if (params[0]) {
-        const [ts, price] = params[0].data
-        updateDOMLabels(price, ts)
-      }
+    (params: TooltipComponentFormatterCallbackParams) => {
+      const item = Array.isArray(params) ? params[0] : params
+      const point = item && chartData[item.dataIndex]
+      if (point) updateDOMLabels(point[1], point[0])
+      return ''
     },
-    [updateDOMLabels],
+    [chartData, updateDOMLabels],
   )
 
   const onMouseLeave = useCallback(() => {
     updateDOMLabels(currentPrice, currentDate)
   }, [updateDOMLabels, currentPrice, currentDate])
 
-  const xAxisFormatter = useCallback(
-    (value: number) => {
-      const d = new Date(value)
-      switch (duration) {
-        case CHART_DURATION.DAY:
-          // e.g. “2 PM”
-          return format(d, 'h a')
-        case CHART_DURATION.WEEK:
-        case CHART_DURATION.MONTH:
-          // e.g. “Apr 21”
-          return format(d, 'MMM d')
-        case CHART_DURATION.YEAR:
-          // e.g. “Apr 21 2025”
-          return format(d, 'MMM d yyyy')
-        default:
-          return format(d, 'MMM d yyyy')
-      }
-    },
-    [duration],
-  )
+  const chartOptions = useMemo<EChartsOption>(() => {
+    const axes = getStatsChartAxes({
+      resolvedTheme,
+      dateFormat: timeframes[duration].dateFormat,
+    })
+    const yAxis = Array.isArray(axes.yAxis) ? axes.yAxis[0] : axes.yAxis
 
-  const chartOptions: EChartsOption = useMemo(
-    () => ({
-      tooltip: {
-        trigger: 'axis',
-        formatter: onTooltip,
-      },
-      grid: {
-        top: 10,
-        left: 0,
-        right: 10,
-        bottom: 0,
-        containLabel: true,
-      },
-      xAxis: {
-        type: 'time',
-        splitLine: { show: false },
-        axisLine: { show: false },
-        axisTick: { show: false },
-        axisLabel: {
-          showMinLabel: true,
-          showMaxLabel: false,
-          hideOverlap: true,
-          align: 'left',
-          color: resolvedTheme === 'dark' ? 'white' : 'black',
-          fontSize: 12,
-          // interval: Math.floor(chartData.length / 5),
-          padding: [0, 0, 0, 8],
-          formatter: xAxisFormatter,
-        },
-      },
+    return {
+      ...axes,
+      tooltip: getStatsChartTooltip(onTooltip),
+      color: [statsChartColors.v3],
       yAxis: {
+        ...yAxis,
         type: 'value',
         position: 'right',
         min: yMin,
         max: yMax,
         interval: yMax && yMin ? (yMax - yMin) / 6 : undefined,
-        splitLine: { show: false },
         axisLine: { show: false },
         axisTick: { show: false },
         axisLabel: {
-          color: resolvedTheme === 'dark' ? 'white' : 'black',
-          fontSize: 12,
-          padding: [0, 0, 8, 0],
-          formatter: (v: number) => formatUSD(v),
+          hideOverlap: true,
+          color: '#A0A0A0',
+          formatter: (value: number) => formatUSD(value),
         },
       },
       series: [
         {
           type: 'line',
           data: chartData,
-          smooth: true,
-          showSymbol: false,
-          lineStyle: { color: '#3B7EF6', width: 1 },
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(59,126,246,0.5)' },
-                { offset: 1, color: 'rgba(59,126,246,0)' },
-              ],
-            },
-          },
+          ...getStatsLineStyle(statsChartColors.v3),
         },
       ],
-    }),
-    [chartData, resolvedTheme, yMin, yMax, onTooltip, xAxisFormatter],
-  )
-
-  return isLoading ? (
-    <div>
-      <div className="h-14 flex flex-col gap-1 space-y-2">
-        <SkeletonText className="!h-[26] !w-32" />
-        <SkeletonText fontSize="sm" className="!w-14" />
-      </div>
-      <SkeletonChart type="area" />
-    </div>
-  ) : (
-    <div>
-      <div className="flex justify-between ">
-        <div className="flex flex-col gap-1">
-          <div className="text-2xl font-bold">
-            <span id="hoveredPrice">{formatUSD(currentPrice)}</span>
-          </div>
-          <div className="flex text-sm">
-            <span id="hoveredPriceDate" className="text-muted-foreground" />
-            <span
-              id="hoveredPriceDiff"
-              className={
-                priceChange > 0
-                  ? 'text-green'
-                  : priceChange < 0
-                    ? 'text-red'
-                    : 'text-muted-foreground'
-              }
-            >
-              {priceChange >= 0 ? '+' : ''}
-              {formatPercent(priceChange)}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-1">
-          {Object.values(CHART_DURATION).map((d) => (
-            <Toggle
-              size="xs"
-              pressed={d === duration}
-              onClick={() => setDuration(d)}
-              key={d}
-            >
-              {d === CHART_DURATION.DAY
-                ? '1D'
-                : d === CHART_DURATION.WEEK
-                  ? '1W'
-                  : d === CHART_DURATION.MONTH
-                    ? '1M'
-                    : '1Y'}
-            </Toggle>
-          ))}
-        </div>
-      </div>
-      <ReactEcharts
-        echarts={echarts}
-        option={chartOptions}
-        style={{ height: 300 }}
-        onEvents={{
-          globalout: onMouseLeave,
-        }}
-        onChartReady={(chart) => {
-          setTimeout(() => {
-            chart.resize()
-          }, 0)
-        }}
-      />
-    </div>
-  )
-}
-
-export function SkeletonChart({ type }: { type: 'area' | 'bar' }) {
-  const height = 300
+    }
+  }, [chartData, duration, resolvedTheme, yMin, yMax, onTooltip])
 
   return (
-    <div className="relative flex flex-row">
-      <svg
-        width="100%"
-        height={height}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-      >
-        <SkeletonChartLoadingStateMask type={type} height={height - 20} />
-        <SkeletonChartXAxe height={height - 16} />
-      </svg>
-    </div>
+    <CardContent className="!gap-0 px-4 pb-3 sm:px-6" aria-busy={isLoading}>
+      {isLoading ? (
+        <>
+          <div className="flex flex-col gap-1">
+            <SkeletonBox className="h-8 sm:h-9 w-28" />
+            <SkeletonBox className="h-4 w-16" />
+          </div>
+          <SkeletonChart type="area" height={chartHeight} />
+        </>
+      ) : (
+        <>
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span
+                ref={priceRef}
+                className="text-2xl sm:text-3xl text-primary"
+              >
+                {formatUSD(currentPrice)}
+              </span>
+              <div className="flex flex-wrap items-baseline gap-x-2 text-xs tabular-nums">
+                <span
+                  ref={diffRef}
+                  className={
+                    priceChange > 0
+                      ? 'text-green'
+                      : priceChange < 0
+                        ? 'text-red'
+                        : 'text-muted-foreground'
+                  }
+                >
+                  {priceChange >= 0 ? '+' : ''}
+                  {formatPercent(priceChange)}
+                </span>
+                <span ref={dateRef} className="text-muted-foreground" />
+              </div>
+            </div>
+            <ToggleGroup
+              className="shrink-0"
+              role="group"
+              aria-label="Price chart timeframe"
+            >
+              {Object.values(CHART_DURATION).map((timeframe) => (
+                <Toggle
+                  key={timeframe}
+                  size="xs"
+                  pressed={timeframe === duration}
+                  onClick={() => setDuration(timeframe)}
+                >
+                  {timeframes[timeframe].label}
+                </Toggle>
+              ))}
+            </ToggleGroup>
+          </div>
+          <ReactEchartsCore
+            echarts={echarts}
+            option={chartOptions}
+            style={{ height: chartHeight }}
+            onEvents={{ globalout: onMouseLeave }}
+            onChartReady={(chart) => {
+              setTimeout(() => {
+                chart.resize()
+              }, 0)
+            }}
+          />
+        </>
+      )}
+    </CardContent>
   )
 }

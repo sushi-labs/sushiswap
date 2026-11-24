@@ -1,4 +1,4 @@
-import { Button } from '@sushiswap/ui'
+import { Card } from '@sushiswap/ui'
 import type { FC } from 'react'
 import type { SupportedChainId } from 'src/config'
 import type { EvmToken } from 'sushi/evm'
@@ -20,11 +20,9 @@ export const SwapWidget: FC<SwapWidgetProps> = ({ token1 }) => {
       chainId={token1.chainId as SupportedChainId}
       token1={token1}
     >
-      <div className="flex flex-col gap-4">
+      <Card className="flex flex-col gap-4 !rounded-3xl p-4 lg:p-6">
         <div className="flex items-center justify-between">
-          <Button variant="secondary" size="sm">
-            Swap
-          </Button>
+          <h2 className="text-xl font-semibold">Swap</h2>
           <SwapWidgetSettingsOverlay />
         </div>
         <SwapMaintenanceMessage />
@@ -32,7 +30,7 @@ export const SwapWidget: FC<SwapWidgetProps> = ({ token1 }) => {
         <SwapWidgetSwitchTokensButton />
         <SwapWidgetToken1Input />
         <SwapWidgetTradeButton />
-      </div>
+      </Card>
     </DerivedStateSwapWidgetProvider>
   )
 }

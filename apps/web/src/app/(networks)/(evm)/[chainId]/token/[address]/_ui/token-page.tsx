@@ -1,6 +1,5 @@
 'use client'
 
-import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import type {
   PoolChainId,
   SushiSwapChainId,
@@ -8,10 +7,9 @@ import type {
 } from '@sushiswap/graph-client/data-api'
 import { SushiSwapChainIds } from '@sushiswap/graph-client/data-api'
 import { useIsMounted, useMediaQuery } from '@sushiswap/hooks'
-import { Button, Container, LinkInternal } from '@sushiswap/ui'
+import { Button, Container, LinkInternal, Separator } from '@sushiswap/ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type FC, useMemo } from 'react'
 import { PoolsFiltersProvider } from 'src/app/(networks)/_ui/pools-filters-provider'
@@ -23,6 +21,7 @@ import { TableFiltersFarmsOnly } from '~evm/[chainId]/_ui/table-filters-farms-on
 import { TableFiltersPoolType } from '~evm/[chainId]/_ui/table-filters-pool-type'
 import { TableFiltersResetButton } from '~evm/[chainId]/_ui/table-filters-reset-button'
 import { TokenChart } from './charts/token-chart'
+import { TokenHeader } from './token-header'
 import { TokenInfo } from './token-info'
 
 const SwapWidget = dynamic(() =>
@@ -49,120 +48,65 @@ export const TokenPage: FC<TokenPageProps> = ({
 
   return (
     <>
-      <section className="flex flex-col flex-1">
-        <div className="bg-gray-100 dark:bg-white/[0.02] pt-4 h-full">
-          <Container maxWidth="7xl" className="px-4">
-            <div className="flex gap-x-1.5 items-center text-sm py-4">
-              <Button
-                variant="link"
-                size="sm"
-                className="!font-normal hover:underline !text-accent-foreground"
-              >
-                <LinkInternal href="/">Home</LinkInternal>
-              </Button>
-              <ChevronRightIcon
-                width={16}
-                height={16}
-                className="text-muted-foreground"
-              />
-              <Button
-                variant="link"
-                size="sm"
-                className={
-                  'hover:underline !inline !font-normal !text-muted-foreground capitalize whitespace-nowrap'
-                }
-              >
-                <LinkInternal
-                  href={`/${getEvmChainById(token.chainId).key}/explore/tokens`}
+      <Container
+        maxWidth="7xl"
+        className="flex flex-col gap-6 px-4 pt-6 md:pt-10 pb-[calc(6rem+env(safe-area-inset-bottom))] min-[854px]:pb-10"
+      >
+        <TokenHeader token={token} />
+        <Separator className="hidden md:block" />
+        <div className="grid grid-cols-1 items-start gap-6 min-[854px]:grid-cols-[minmax(0,1fr)_420px]">
+          <TokenChart chainId={chainId} address={token.address} />
+          <div className="hidden min-[854px]:block">
+            <AnimatePresence>
+              {isMounted && isDesktop ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
                 >
-                  Explore
-                </LinkInternal>
-              </Button>
-              <ChevronRightIcon
-                width={16}
-                height={16}
-                className="text-muted-foreground"
-              />
-              <Button
-                variant="link"
-                size="sm"
-                className="hover:underline !inline capitalize whitespace-nowrap !font-medium !text-gray-900 dark:!text-slate-50"
-              >
-                <LinkInternal
-                  href={`/${getEvmChainById(token.chainId).key}/token/${token.address}`}
-                >
-                  {token.symbol}
-                </LinkInternal>
-              </Button>
-            </div>
-
-            <div className="flex flex-col gap-10 mt-6">
-              <div className="flex gap-6">
-                <div className="flex-auto min-w-0">
-                  <TokenChart chainId={chainId} token={token} />
-                </div>
-                <div className="min-[854px]:w-[420px] max-[854px]:hidden">
-                  <AnimatePresence>
-                    {isMounted && isDesktop ? (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        transition={{ duration: 0.5, ease: 'easeOut' }}
-                      >
-                        <div className="w-[420px] flex-none">
-                          <SwapWidget token1={token} />
-                        </div>
-                      </motion.div>
-                    ) : null}
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              <TokenInfo token={token} tokenInfo={tokenInfo} />
-            </div>
-          </Container>
-          <section className="flex flex-col flex-1 mt-10">
-            <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-              <PoolsFiltersProvider url={false}>
-                <Container maxWidth="7xl" className="px-4">
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    <TableFiltersSearchToken />
-                    <TableFiltersPoolType />
-                    <TableFiltersNetwork
-                      network={token.chainId}
-                      supportedNetworks={SushiSwapChainIds}
-                      unsupportedNetworkHref="/ethereum/explore/tokens"
-                      onSelect={(network) =>
-                        router.push(
-                          `/${getEvmChainById(network as SushiSwapChainId).key}/explore/tokens`,
-                        )
-                      }
-                      className="lg:hidden block"
-                    />
-                    <TableFiltersFarmsOnly />
-                    <TableFiltersResetButton />
-                  </div>
-                  <PoolsTable
-                    chainId={token.chainId as PoolChainId}
-                    forcedTokenAddresses={
-                      token.address ? [token.address] : undefined
-                    }
-                  />
-                </Container>
-              </PoolsFiltersProvider>
-            </div>
-          </section>
+                  <SwapWidget token1={token} />
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
         </div>
-      </section>
-      <div className="w-full bottom-0 index-x-0 fixed p-4 z-[500] min-[854px]:hidden">
-        <Link
-          href={`/${getEvmChainById(token.chainId).key}/swap?token1=${token.address}`}
-        >
-          <Button fullWidth size="xl">
+        <TokenInfo token={token} tokenInfo={tokenInfo} />
+        <Separator />
+        <section>
+          <PoolsFiltersProvider url={false}>
+            <div className="flex flex-wrap gap-3 md:mb-4">
+              <TableFiltersSearchToken />
+              <TableFiltersPoolType />
+              <TableFiltersNetwork
+                network={token.chainId}
+                supportedNetworks={SushiSwapChainIds}
+                unsupportedNetworkHref="/ethereum/explore/tokens"
+                onSelect={(network) =>
+                  router.push(
+                    `/${getEvmChainById(network as SushiSwapChainId).key}/explore/tokens`,
+                  )
+                }
+                className="lg:hidden block"
+              />
+              <TableFiltersFarmsOnly />
+              <TableFiltersResetButton />
+            </div>
+            <PoolsTable
+              chainId={token.chainId as PoolChainId}
+              forcedTokenAddresses={token.address ? [token.address] : undefined}
+            />
+          </PoolsFiltersProvider>
+        </section>
+      </Container>
+      <div className="fixed inset-x-0 bottom-0 z-[500] border-t border-accent bg-background p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] min-[854px]:hidden">
+        <Button asChild fullWidth size="xl">
+          <LinkInternal
+            href={`/${getEvmChainById(token.chainId).key}/swap?token1=${token.address}`}
+          >
             Swap
-          </Button>
-        </Link>
+          </LinkInternal>
+        </Button>
       </div>
     </>
   )

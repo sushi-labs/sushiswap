@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import type React from 'react'
 import { Suspense } from 'react'
 import { AMM_SUPPORTED_CHAIN_IDS, POOL_SUPPORTED_NETWORKS } from 'src/config'
-import { isEvmChainId } from 'sushi/evm'
+import { getEvmChainById, isEvmChainId } from 'sushi/evm'
 import { getStaticChainParams } from '~evm/[chainId]/get-static-chain-params'
 import { Header } from '../../header'
 import { GlobalStatsCharts } from '../_ui/global-stats-charts'
@@ -42,7 +42,18 @@ export default async function ExploreLayout(props: {
         networks={POOL_SUPPORTED_NETWORKS.filter(isEvmChainId)}
       />
       <Suspense fallback={null}>
-        <main className="flex flex-col h-full flex-1 animate-slide">
+        <main className="flex flex-col h-full flex-1">
+          <Container maxWidth="7xl" className="px-4 pt-7 md:pt-10 mb-6">
+            <div className="flex flex-col md:gap-2">
+              <h1 className="text-2xl md:text-4xl font-medium">
+                Explore Tokens
+              </h1>
+              <p className="md:text-lg text-muted-foreground">
+                Browse token prices and market data on{' '}
+                {getEvmChainById(chainId).name}.
+              </p>
+            </div>
+          </Container>
           <Container maxWidth="7xl" className="px-4 py-4">
             <GlobalStatsCharts chainId={chainId} />
           </Container>
@@ -50,9 +61,7 @@ export default async function ExploreLayout(props: {
             <NavigationItems chainId={chainId} />
           </Container>
           <section className="flex flex-col flex-1">
-            <div className="bg-gray-50 dark:bg-white/[0.02] border-t border-accent pt-4 pb-10 min-h-screen">
-              <TokensFiltersProvider>{children}</TokensFiltersProvider>
-            </div>
+            <TokensFiltersProvider>{children}</TokensFiltersProvider>
           </section>
         </main>
       </Suspense>

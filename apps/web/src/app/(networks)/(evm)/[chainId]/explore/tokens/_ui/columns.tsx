@@ -14,15 +14,17 @@ import { TokenNameCell } from './token-name-cell'
 export const TOKENS_NAME_COLUMN: ColumnDef<Token, unknown> = {
   id: 'name',
   header: 'Name',
+  size: 300,
   cell: (props) => <TokenNameCell {...props.row.original} />,
   meta: {
     body: {
       skeleton: (
-        <div className="flex items-center w-full gap-2">
-          <div className="flex items-center">
-            <SkeletonCircle radius={26} />
+        <div className="flex items-center w-full gap-3">
+          <SkeletonCircle radius={32} />
+          <div className="w-24 flex flex-col gap-1">
+            <SkeletonText fontSize="sm" />
+            <SkeletonText fontSize="xs" />
           </div>
-          <SkeletonText />
         </div>
       ),
     },
@@ -34,7 +36,9 @@ export const PRICE_COLUMN: ColumnDef<Token, unknown> = {
   header: 'Price',
   accessorFn: (row) => row.price,
   cell: (props) => (
-    <span className="font-medium">{`${formatUSD(props.row.original.price)}`}</span>
+    <span className="font-medium tabular-nums">
+      {formatUSD(props.row.original.price)}
+    </span>
   ),
   meta: {
     body: {
@@ -53,6 +57,7 @@ export const PRICE_CHANGE_1D_COLUMN: ColumnDef<Token, unknown> = {
     return (
       <span
         className={classNames(
+          'font-medium tabular-nums',
           priceChangePercentage1d > 0
             ? 'text-green'
             : priceChangePercentage1d < 0
@@ -77,7 +82,9 @@ export const FDV_COLUMN: ColumnDef<Token, unknown> = {
   header: 'FDV',
   accessorFn: (row) => row.marketCapUSD,
   cell: (props) => (
-    <span className="font-medium">{`${formatUSD(props.row.original.marketCapUSD)}`}</span>
+    <span className="font-medium tabular-nums">
+      {formatUSD(props.row.original.marketCapUSD)}
+    </span>
   ),
   meta: {
     header: {
@@ -92,6 +99,7 @@ export const FDV_COLUMN: ColumnDef<Token, unknown> = {
 
 export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
   id: 'sparkline',
+  header: 'Price trend',
   cell: (props) => (
     <SparklineCell
       data={useMemo(
@@ -99,12 +107,12 @@ export const SPARKLINE_COLUMN: ColumnDef<Token, unknown> = {
         [props.row.original.sparkline7d],
       )}
       width={120}
-      height={40}
+      height={32}
     />
   ),
   meta: {
     body: {
-      skeleton: <SkeletonBox className="w-full h-10" />,
+      skeleton: <SkeletonBox className="w-full max-w-[120px] h-8" />,
     },
   },
 }

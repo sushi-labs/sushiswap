@@ -35,9 +35,7 @@ async function TokenLayoutContent(props: TokenLayoutProps) {
         chainId={chainId}
         networks={POOL_SUPPORTED_NETWORKS.filter(isEvmChainId)}
       />
-      <main className="flex flex-col h-full flex-1 animate-slide">
-        {children}
-      </main>
+      <main className="flex flex-col flex-1">{children}</main>
     </Providers>
   )
 }

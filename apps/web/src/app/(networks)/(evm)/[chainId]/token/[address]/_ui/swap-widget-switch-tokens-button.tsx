@@ -1,12 +1,12 @@
 'use client'
 
-import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon'
 import {
   BrowserEvent,
   InterfaceElementName,
   SwapEventName,
   TraceEvent,
 } from '@sushiswap/telemetry'
+import { SwitchArrowsIcon } from '@sushiswap/ui/icons/switch-arrows-icon'
 import { useDerivedStateSwapWidget } from './derivedstate-swap-widget-provider'
 
 export const SwapWidgetSwitchTokensButton = () => {
@@ -15,7 +15,7 @@ export const SwapWidgetSwitchTokensButton = () => {
   } = useDerivedStateSwapWidget()
 
   return (
-    <div className="left-0 right-0 mt-[-26px] mb-[-26px] flex items-center justify-center">
+    <div className="mt-[-28px] mb-[-28px] flex items-center justify-center">
       <TraceEvent
         events={[BrowserEvent.onClick]}
         name={SwapEventName.SWAP_TOKENS_REVERSED}
@@ -24,10 +24,11 @@ export const SwapWidgetSwitchTokensButton = () => {
         <button
           onClick={switchTokens}
           type="button"
-          className="hover:shadow-sm transition-border z-10 group bg-background p-2 border border-accent transition-all rounded-full cursor-pointer"
+          aria-label="Switch tokens"
+          className="z-10 group bg-background dark:bg-muted px-7 py-3 border border-accent rounded-full shadow-md hover:shadow-sm transition-shadow cursor-pointer"
         >
           <div className="transition-transform rotate-0 group-hover:rotate-180">
-            <ArrowsUpDownIcon strokeWidth={3} className="w-3 h-3 text-blue" />
+            <SwitchArrowsIcon aria-hidden="true" className="w-3.5 h-3.5" />
           </div>
         </button>
       </TraceEvent>

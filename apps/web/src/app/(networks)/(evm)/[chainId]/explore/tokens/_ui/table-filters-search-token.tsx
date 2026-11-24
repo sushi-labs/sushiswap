@@ -26,15 +26,17 @@ export const TableFiltersSearchToken: FC = () => {
   )
 
   return (
-    <div>
+    <div className="w-full md:w-auto">
       <ChipInput
+        aria-label="Search tokens"
+        className="min-w-0"
         size="sm"
         icon={MagnifyingGlassIcon}
         delimiters={[',', ' ', ';', ':', 'Enter']}
         variant="outline"
         values={isPending ? values : (tokenSymbols ?? [])}
         onValueChange={onValueChange}
-        placeholder="Search"
+        placeholder="Search tokens"
         maxValues={3}
       />
     </div>

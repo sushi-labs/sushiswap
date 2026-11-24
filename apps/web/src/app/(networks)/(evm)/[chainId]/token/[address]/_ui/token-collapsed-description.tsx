@@ -11,7 +11,7 @@ export const TokenCollapsedDescription: FC<{ description: string }> = ({
   return (
     <div className="flex flex-col gap-2 items-start">
       <div
-        className={`text-sm prose dark:!prose-invert prose-slate !min-w-full ${
+        className={`text-sm prose dark:!prose-invert !min-w-full !text-muted-foreground prose-a:!text-pink break-words ${
           !isExpanded ? 'line-clamp-3' : ''
         }`}
         dangerouslySetInnerHTML={{
@@ -21,7 +21,7 @@ export const TokenCollapsedDescription: FC<{ description: string }> = ({
       <Button
         variant="link"
         size="sm"
-        className="text-blue-400 hover:text-blue-500 mt-1"
+        aria-expanded={isExpanded}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? 'Show less' : 'Read more'}

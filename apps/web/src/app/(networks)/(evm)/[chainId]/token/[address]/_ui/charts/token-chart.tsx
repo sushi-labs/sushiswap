@@ -1,84 +1,44 @@
 'use client'
 
-import { DocumentDuplicateIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import type { SushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import {
-  ClipboardController,
-  Currency,
+  Button,
+  Card,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  LinkExternal,
-  Separator,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
 } from '@sushiswap/ui'
-import { type FC, useMemo, useState } from 'react'
-import { shortenAddress } from 'sushi'
-import { EvmToken, type SerializedEvmToken, getEvmChainById } from 'sushi/evm'
+import { type ReactElement, useState } from 'react'
+import type { EvmAddress } from 'sushi/evm'
 import { PriceChart } from './price-chart'
 
 type ChartType = 'Price' // | 'Volume' | 'TVL'
 
 interface TokenChartProps {
   chainId: SushiSwapChainId
-  token: SerializedEvmToken
+  address: EvmAddress
 }
 
-export const TokenChart: FC<TokenChartProps> = ({ chainId, token }) => {
+export function TokenChart({
+  chainId,
+  address,
+}: TokenChartProps): ReactElement {
   const [selectedChartType, setSelectedChartType] = useState<ChartType>('Price')
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between">
-        <div className="flex gap-2">
-          <Currency.Icon
-            currency={useMemo(() => new EvmToken(token), [token])}
-            width={36}
-            height={36}
-          />
-          <div className="flex items-end gap-2 flex-wrap">
-            <span className="font-bold text-3xl">{token.name}</span>
-            <span className="font-medium text-lg">{token.symbol}</span>
-            <div className="flex gap-1 items-center mb-[1px]">
-              <ClipboardController hideTooltip>
-                {({ setCopied }) => (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DocumentDuplicateIcon
-                          className="h-4 w-4 cursor-pointer text-blue mb-[1px]"
-                          onClick={() => setCopied(token.address)}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>Copy address</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </ClipboardController>
-              <LinkExternal
-                className="font-medium"
-                href={getEvmChainById(token.chainId).getTokenUrl(token.address)}
-              >
-                {shortenAddress(token.address)}
-              </LinkExternal>
-            </div>
-          </div>
-        </div>
-
+    <Card className="min-w-0 overflow-hidden">
+      <div className="flex items-center px-4 pb-3 pt-4 sm:px-6">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 px-4 py-2 text-sm bg-secondary rounded-xl">
-            {selectedChartType}
-            <ChevronDownIcon width={14} height={14} />
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="sm">
+              {selectedChartType}
+              <ChevronDownIcon aria-hidden="true" className="size-3.5" />
+            </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="start">
             <DropdownMenuGroup>
               <DropdownMenuItem
                 onClick={() => setSelectedChartType('Price')}
@@ -91,13 +51,9 @@ export const TokenChart: FC<TokenChartProps> = ({ chainId, token }) => {
         </DropdownMenu>
       </div>
 
-      <Separator />
-
-      <div>
-        {selectedChartType === 'Price' && (
-          <PriceChart chainId={chainId} address={token.address} />
-        )}
-      </div>
-    </div>
+      {selectedChartType === 'Price' && (
+        <PriceChart chainId={chainId} address={address} />
+      )}
+    </Card>
   )
 }

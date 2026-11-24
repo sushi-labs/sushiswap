@@ -45,6 +45,7 @@ export interface DataTableVirtualProps<TData, TValue> {
   data: TData[]
   loading: boolean
   linkFormatter?: (value: TData) => string
+  linkScroll?: boolean
   externalLink?: boolean
   state?: Partial<TableState>
   manualSorting?: boolean
@@ -130,6 +131,7 @@ export function DataTableVirtualView<TData, TValue>({
   columns,
   loading,
   linkFormatter,
+  linkScroll = false,
   externalLink = false,
   rowRenderer,
   showColumnHeaders = true,
@@ -263,7 +265,7 @@ export function DataTableVirtualView<TData, TValue>({
                           testdata-id={`${testId}-${r}-${i}-td`}
                         >
                           <Link
-                            scroll={false}
+                            scroll={linkScroll}
                             shallow={true}
                             href={linkFormatter(row.original)}
                             target={externalLink ? '_blank' : '_self'}

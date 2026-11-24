@@ -6,22 +6,13 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  DataTable,
+  DataTableSortMenu,
+  ResponsiveDataTable,
   SkeletonText,
 } from '@sushiswap/ui'
-import type {
-  ColumnDef,
-  Row,
-  SortingState,
-  TableState,
-} from '@tanstack/react-table'
-import React, {
-  type FC,
-  type ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
+import { type Row, type SortingState, flexRender } from '@tanstack/react-table'
+import Link from 'next/link'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTokens } from 'src/lib/hooks/api/use-tokens'
 import { getEvmChainById } from 'sushi/evm'
 import {
@@ -39,14 +30,27 @@ const COLUMNS = [
   PRICE_CHANGE_1D_COLUMN,
   FDV_COLUMN,
   SPARKLINE_COLUMN,
-] as ColumnDef<Token, unknown>[]
+]
+
+const SORT_OPTIONS = [
+  { id: 'marketCapUSD', label: 'FDV' },
+  { id: 'price', label: 'Price' },
+  { id: 'priceChangePercentage1d', label: '1 day' },
+]
+
+function getTokenHref(row: Token): string {
+  return `/${getEvmChainById(row.token.chainId).key}/token/${row.token.address}`
+}
 
 interface TokensTableProps {
   chainId: SushiSwapChainId
   onRowClick?(row: Token): void
 }
 
-export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
+export function TokensTable({
+  chainId,
+  onRowClick,
+}: TokensTableProps): ReactNode {
   const { tokenSymbols } = useTokenFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -56,16 +60,6 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
   const { data: tokens, isLoading } = useTokens({
     chainId,
   })
-
-  const state: Partial<TableState> = useMemo(() => {
-    return {
-      sorting,
-      pagination: {
-        pageIndex: 0,
-        pageSize: tokens?.count ?? 0,
-      },
-    }
-  }, [tokens?.count, sorting])
 
   const rowRenderer = useCallback(
     (row: Row<Token>, rowNode: ReactNode) => {
@@ -107,34 +101,86 @@ export const TokensTable: FC<TokensTableProps> = ({ chainId, onRowClick }) => {
   }, [tokens, tokenSymbols])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {isLoading ? (
-            <div className="!w-28 !h-[18px]">
-              <SkeletonText />
-            </div>
-          ) : (
-            <span>
-              Tokens{' '}
-              <span className="text-gray-400 dark:text-slate-500">
-                ({tokens?.count ?? 0})
+    <Card className="!bg-transparent md:!bg-secondary !border-transparent md:!border-accent">
+      <CardHeader className="!px-0 md:!px-6">
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="shrink-0">
+            {isLoading ? (
+              <div className="!w-28 !h-[18px]">
+                <SkeletonText />
+              </div>
+            ) : (
+              <span>
+                Tokens{' '}
+                <span className="text-muted-foreground text-sm font-normal">
+                  ({tokens?.count ?? 0})
+                </span>
               </span>
-            </span>
-          )}
-        </CardTitle>
+            )}
+          </CardTitle>
+          <DataTableSortMenu
+            label="tokens"
+            options={SORT_OPTIONS}
+            sorting={sorting}
+            onSortingChange={setSorting}
+            className="md:hidden"
+          />
+        </div>
       </CardHeader>
-      <DataTable
-        state={state}
+      <ResponsiveDataTable
+        breakpoint="md"
+        sorting={sorting}
         onSortingChange={setSorting}
         loading={isLoading}
-        linkFormatter={(row) =>
-          `/${getEvmChainById(row.token.chainId).key}/token/${row.token.address}`
-        }
-        rowRenderer={rowRenderer}
+        linkFormatter={getTokenHref}
         columns={COLUMNS}
         data={data}
+        desktop={{ rowRenderer, estimateSize: 70, linkScroll: true }}
+        mobile={{
+          rowRenderer: (row) => (
+            <TokenMobileRow row={row} onRowClick={onRowClick} />
+          ),
+        }}
       />
     </Card>
+  )
+}
+
+function TokenMobileRow({
+  row,
+  onRowClick,
+}: Pick<TokensTableProps, 'onRowClick'> & { row: Row<Token> }): ReactNode {
+  const [name, price, change, fdv, trend] = row.getVisibleCells()
+
+  return (
+    <Link
+      href={getTokenHref(row.original)}
+      shallow={true}
+      onClick={onRowClick && (() => onRowClick(row.original))}
+      className="block rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+    >
+      <Card className="p-4">
+        <div className="flex items-center justify-between gap-3">
+          {flexRender(name.column.columnDef.cell, name.getContext())}
+          <div className="w-20 shrink-0">
+            {flexRender(trend.column.columnDef.cell, trend.getContext())}
+          </div>
+        </div>
+        <dl className="mt-4 grid grid-cols-3 gap-2 text-xs">
+          {[price, change, fdv].map((cell) => (
+            <div key={cell.id} className="min-w-0">
+              <dt className="mb-1 text-muted-foreground">
+                {typeof cell.column.columnDef.header === 'string'
+                  ? cell.column.columnDef.header
+                  : null}
+              </dt>
+              <dd className="truncate text-sm">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Card>
+    </Link>
   )
 }

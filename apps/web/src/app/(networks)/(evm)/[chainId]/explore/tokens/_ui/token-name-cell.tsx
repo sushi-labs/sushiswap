@@ -1,15 +1,20 @@
 import type { Token } from '@sushiswap/graph-client/data-api'
 import { Currency } from '@sushiswap/ui'
+import type { ReactElement } from 'react'
 
-export const TokenNameCell = ({ token }: Token) => {
+export function TokenNameCell({ token }: Token): ReactElement {
   return (
-    <div className="flex items-center gap-3">
-      <div className="border-2 border-slate-900 rounded-full">
-        <Currency.Icon currency={token} width={26} height={26} />
+    <div className="flex min-w-0 items-center gap-3">
+      <div className="shrink-0 rounded-full border-2 border-background">
+        <Currency.Icon currency={token} width={28} height={28} />
       </div>
-      <div className="flex gap-2 font-medium">
-        <span className="truncate">{token.name}</span>
-        <span className="text-muted-foreground">{token.symbol}</span>
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <span className="truncate text-sm font-medium text-primary">
+          {token.name}
+        </span>
+        <span className="truncate text-xs text-muted-foreground">
+          {token.symbol}
+        </span>
       </div>
     </div>
   )

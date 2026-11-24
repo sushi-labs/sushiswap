@@ -1,7 +1,6 @@
 import { isSushiSwapChainId } from '@sushiswap/graph-client/data-api'
 import { Container } from '@sushiswap/ui'
 import { notFound } from 'next/navigation'
-import React from 'react'
 import { TableFiltersSearchToken } from './_ui/table-filters-search-token'
 import { TokensTable } from './_ui/tokens-table'
 
@@ -16,8 +15,8 @@ export default async function TokensPage(props: {
   }
 
   return (
-    <Container maxWidth="7xl" className="px-4">
-      <div className="flex flex-wrap gap-3 mb-4">
+    <Container maxWidth="7xl" className="px-4 mb-8">
+      <div className="flex flex-wrap gap-3 md:mb-4">
         <TableFiltersSearchToken />
       </div>
       <TokensTable chainId={chainId} />

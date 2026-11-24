@@ -1,7 +1,7 @@
-import { LinkIcon } from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/20/solid'
 import type { TokenInfo as TokenInfoType } from '@sushiswap/graph-client/data-api'
-import { LinkExternal } from '@sushiswap/ui'
-import type { FC } from 'react'
+import { Card, CardContent, CardHeader, LinkExternal } from '@sushiswap/ui'
+import type { ReactElement } from 'react'
 import { getSafeExternalUrl } from 'src/lib/safe-external-url'
 import { sanitizeTokenDescriptionHtml } from 'src/lib/sanitize-html'
 import { type EvmToken, getEvmChainById } from 'sushi/evm'
@@ -12,83 +12,68 @@ interface TokenInfoProps {
   tokenInfo: TokenInfoType
 }
 
-export const TokenInfo: FC<TokenInfoProps> = ({ token, tokenInfo }) => {
+export function TokenInfo({ token, tokenInfo }: TokenInfoProps): ReactElement {
   // Token metadata is issuer-controlled: only allow http(s) links,
   // and sanitize the description on the server before it reaches the client.
   const websiteUrl = getSafeExternalUrl(tokenInfo?.website)
   const description = tokenInfo?.description
     ? sanitizeTokenDescriptionHtml(tokenInfo.description)
     : undefined
+  const links = [
+    {
+      label: 'Explorer',
+      href: getEvmChainById(token.chainId).getTokenUrl(token.address),
+    },
+    { label: 'Website', href: websiteUrl },
+    {
+      label: 'Twitter',
+      href: tokenInfo?.twitter
+        ? `https://twitter.com/${tokenInfo.twitter}`
+        : undefined,
+    },
+    {
+      label: 'Telegram',
+      href: tokenInfo?.telegram
+        ? `https://t.me/${tokenInfo.telegram}`
+        : undefined,
+    },
+    {
+      label: 'Discord',
+      href: tokenInfo?.discord
+        ? `https://discord.com/${tokenInfo.discord}`
+        : undefined,
+    },
+  ]
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xl font-medium">About {token.name}</span>
-
-        <div className="flex items-center gap-4 flex-wrap">
-          <LinkExternal
-            href={getEvmChainById(token.chainId).getTokenUrl(token.address)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="flex items-center gap-1 text-blue-500 hover:underline">
-              <span className="text-sm">Explorer</span>
-              <LinkIcon width={16} height={16} />
-            </div>
-          </LinkExternal>
-          {websiteUrl ? (
-            <LinkExternal
-              href={websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="flex items-center gap-1 text-blue-500 hover:underline">
-                <span className="text-sm">Website</span>
-                <LinkIcon width={16} height={16} />
-              </div>
-            </LinkExternal>
-          ) : null}
-          {tokenInfo?.twitter ? (
-            <LinkExternal
-              href={`https://twitter.com/${tokenInfo.twitter}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="flex items-center gap-1 text-blue-500 hover:underline">
-                <span className="text-sm">Twitter</span>
-                <LinkIcon width={16} height={16} />
-              </div>
-            </LinkExternal>
-          ) : null}
-          {tokenInfo?.telegram ? (
-            <LinkExternal
-              href={`https://t.me/${tokenInfo.telegram}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="flex items-center gap-1 text-blue-500 hover:underline">
-                <span className="text-sm">Telegram</span>
-                <LinkIcon width={16} height={16} />
-              </div>
-            </LinkExternal>
-          ) : null}
-          {tokenInfo?.discord ? (
-            <LinkExternal
-              href={`https://discord.com/${tokenInfo.discord}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="flex items-center gap-1 text-blue-500 hover:underline">
-                <span className="text-sm">Discord</span>
-                <LinkIcon width={16} height={16} />
-              </div>
-            </LinkExternal>
-          ) : null}
+    <Card>
+      <CardHeader className="!p-4 sm:!p-6">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <h2 className="break-words text-lg font-semibold tracking-tight">
+            About {token.name}
+          </h2>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {links.map(({ label, href }) =>
+              href ? (
+                <LinkExternal key={label} href={href}>
+                  <span className="inline-flex items-center gap-1 text-sm">
+                    {label}
+                    <ArrowTopRightOnSquareIcon
+                      aria-hidden="true"
+                      className="size-3"
+                    />
+                  </span>
+                </LinkExternal>
+              ) : null,
+            )}
+          </div>
         </div>
-      </div>
+      </CardHeader>
       {description ? (
-        <TokenCollapsedDescription description={description} />
+        <CardContent className="!px-4 !pb-4 sm:!px-6 sm:!pb-6">
+          <TokenCollapsedDescription description={description} />
+        </CardContent>
       ) : null}
-    </div>
+    </Card>
   )
 }
