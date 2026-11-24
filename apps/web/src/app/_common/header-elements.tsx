@@ -1,4 +1,5 @@
 import { Bars3Icon } from '@heroicons/react/24/outline'
+import { isSmartPoolChainId } from '@sushiswap/graph-client/data-api'
 import {
   Button,
   type NavigationElement,
@@ -7,8 +8,12 @@ import {
   NavigationListItem,
   NavigationMenuContent,
   NavigationMenuItem,
+  NavigationMenuLink,
   NavigationMenuPrimitive,
   NavigationMenuTrigger,
+  classNames,
+  navigationElementShowMap,
+  navigationMenuTriggerStyle,
 } from '@sushiswap/ui'
 import { POOL_SUPPORTED_NETWORKS } from 'src/config'
 import { ChainId, getChainById } from 'sushi'
@@ -19,6 +24,7 @@ export const EXPLORE_NAVIGATION_LINKS = (
 ): NavigationElementDropdown['items'] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
+  const isVaultChainId = chainId && isSmartPoolChainId(chainId)
   const _isLaunchpadV2ChainId = chainId && isLaunchpadV2ChainId(chainId)
 
   return [
@@ -28,30 +34,36 @@ export const EXPLORE_NAVIGATION_LINKS = (
       description: 'The easiest way to trade.',
     },
     {
-      title: 'Pools',
-      href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/explore/pools`,
-      description: 'Explore top pools.',
-    },
-    {
       title: 'Perps',
       href: `/perps`,
       description: 'Trade perpetual contracts.',
     },
     {
+      title: 'Terminal',
+      href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/terminal`,
+      description: 'Access the trading terminal.',
+    },
+    {
+      title: 'Pools',
+      href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/explore/pools`,
+      description: 'Explore top pools.',
+    },
+    {
+      title: 'Vaults',
+      href: `/${
+        getChainById(isVaultChainId ? chainId : ChainId.ROBINHOOD).key
+      }/vaults`,
+      description: 'Explore top vaults.',
+    },
+    {
+      title: 'Portfolio',
+      href: '/portfolio',
+      description: 'View your portfolio and track your assets.',
+    },
+    {
       title: 'Launchpad',
       href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/launchpad`,
       description: 'Discover and launch tokens with locked Sushi liquidity.',
-    },
-    {
-      title: 'Pool',
-      href: `/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`,
-      description: 'Earn fees by providing liquidity.',
-    },
-
-    {
-      title: 'Claim',
-      href: '/claim',
-      description: 'Claim your fees and rewards.',
     },
     {
       title: 'Stake',
@@ -120,6 +132,7 @@ export const headerElements = ({
 }: HeaderElements = {}): NavigationElement[] => {
   const isPoolChainId =
     chainId && POOL_SUPPORTED_NETWORKS.some((_chainId) => _chainId === chainId)
+  const isVaultChainId = chainId && isSmartPoolChainId(chainId)
   const _isLaunchpadV2ChainId = chainId && isLaunchpadV2ChainId(chainId)
   console.log(`todo: find new place for onramper ${includeOnramper}`)
   return [
@@ -133,7 +146,7 @@ export const headerElements = ({
               <Bars3Icon className="h-5 w-5" />
             </Button>
           </NavigationMenuPrimitive.Trigger>
-          <NavigationMenuContent className="hide-scrollbar">
+          <NavigationMenuContent className="scroll !max-h-[85dvh]">
             <ul className="gap-3 p-4 w-[250px]">
               {EXPLORE_NAVIGATION_LINKS(chainId).map((component) => (
                 <NavigationListItem
@@ -162,8 +175,8 @@ export const headerElements = ({
       type: NavigationElementType.Single,
     },
     {
-      title: 'Launchpad',
-      href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/launchpad`,
+      title: 'Terminal',
+      href: `/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/terminal`,
       show: 'desktop',
       type: NavigationElementType.Single,
     },
@@ -176,24 +189,33 @@ export const headerElements = ({
       type: NavigationElementType.Single,
     },
     {
+      title: 'Vaults',
+      href: `/${
+        getChainById(isVaultChainId ? chainId : ChainId.ROBINHOOD).key
+      }/vaults`,
+      show: 'desktop',
+      type: NavigationElementType.Single,
+    },
+    {
       show: 'desktop',
       type: NavigationElementType.Custom,
       item: (
-        <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>Positions</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="w-[400px] gap-3 p-4">
-              <NavigationListItem
-                title={'Manage'}
-                href={`/${getChainById(isPoolChainId ? chainId : ChainId.ETHEREUM).key}/pool`}
-              >
-                Manage liquidity pool positions.
-              </NavigationListItem>
-              <NavigationListItem title={'Claim'} href={`/claim`}>
-                Claim your fees and rewards.
-              </NavigationListItem>
-            </ul>
-          </NavigationMenuContent>
+        <NavigationMenuItem
+          key={`portfolio:custom`}
+          className={classNames(
+            navigationElementShowMap['desktop'],
+            'md:hidden lg:hidden xl:flex',
+          )}
+        >
+          <NavigationMenuLink
+            href={'/portfolio'}
+            className={classNames(
+              navigationMenuTriggerStyle,
+              'focus:bg-transparent hover:!bg-secondary',
+            )}
+          >
+            Portfolio
+          </NavigationMenuLink>
         </NavigationMenuItem>
       ),
     },
@@ -202,9 +224,22 @@ export const headerElements = ({
       type: NavigationElementType.Custom,
       item: (
         <NavigationMenuItem className={NavigationElementType.Custom}>
-          <NavigationMenuTrigger>Stake</NavigationMenuTrigger>
+          <NavigationMenuTrigger>More</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="w-[400px] gap-3 p-4">
+            <ul className="max-w-[400px] gap-3 p-4">
+              <NavigationListItem
+                title={'Portfolio'}
+                href={`/portfolio`}
+                className="block lg:hidden"
+              >
+                View your portfolio and track your assets.
+              </NavigationListItem>
+              <NavigationListItem
+                title={'Launchpad'}
+                href={`/${getChainById(_isLaunchpadV2ChainId ? chainId : ChainId.ROBINHOOD).key}/launchpad`}
+              >
+                Discover and launch tokens with locked Sushi liquidity.
+              </NavigationListItem>
               <NavigationListItem title={'Stake'} href={`/stake`}>
                 Stake your SUSHI tokens to earn rewards.
               </NavigationListItem>
