@@ -48,7 +48,7 @@ function BaseCookieBanner({
         'fixed bottom-0 right-0 z-50 grid w-full gap-4 rounded-t-2xl p-6 shadow-lg md:right-[50px] md:bottom-[50px] md:w-[720px] md:rounded-2xl',
         variant === 'perps'
           ? 'border border-white/[0.07] bg-perps-background/95 text-perps-muted backdrop-blur-2xl'
-          : 'bg-gray-100 dark:bg-slate-800 black:bg-secondary',
+          : 'bg-secondary black:bg-secondary',
       )}
     >
       <h2 id="cookie-policy-title" className="sr-only">
