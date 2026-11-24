@@ -87,12 +87,10 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
         className={balance?.eq(ZERO) ? 'opacity-40 pointer-events-none' : ''}
       >
         <div className="flex flex-col gap-6">
-          <Card variant="outline" className="p-6">
+          <Card className="p-6 !bg-muted">
             <div className="flex justify-between gap-4">
               <div>
-                <h1 className="py-1 text-3xl text-gray-900 dark:text-slate-50">
-                  {percentage}%
-                </h1>
+                <h1 className="py-1 text-3xl text-primary">{percentage}%</h1>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -140,11 +138,11 @@ export const RemoveSectionWidget: FC<RemoveSectionWidgetProps> = ({
                 type="range"
                 min="1"
                 max="100"
-                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg dark:bg-gray-700"
+                className="w-full h-1 bg-secondary rounded-lg appearance-none cursor-pointer range-lg"
               />
             </div>
           </Card>
-          <Card variant="outline" className="p-6">
+          <Card className="p-6 !bg-muted">
             <CardGroup>
               <CardLabel>You&apos;ll receive at least:</CardLabel>
               <CardCurrencyAmountItem amount={token0Minimum} />

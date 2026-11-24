@@ -13,10 +13,12 @@ export function PoolPosition(): ReactElement {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Position</CardTitle>
+        <CardTitle className="text-sm text-muted-foreground !font-normal">
+          Unstaked Position Value
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <ConnectButton fullWidth variant="secondary" />
+        <ConnectButton fullWidth variant="default" size="xl" />
       </CardContent>
     </Card>
   )

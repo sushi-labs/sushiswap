@@ -4,7 +4,6 @@ import type { V2Pool } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Button } from '@sushiswap/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
-import { isZapSupportedChainId } from 'src/config'
 import { APPROVE_TAG_ADD_LEGACY } from 'src/lib/constants'
 import { useSlippageTolerance } from 'src/lib/hooks/use-slippage-tolerance'
 import { useTokensFromPool } from 'src/lib/hooks/use-tokens-from-pool'
@@ -26,9 +25,7 @@ import { AddSectionWidget } from './add-section-widget'
 import { ZapSectionLegacy } from './zap-section-legacy'
 
 export const AddSectionLegacy: FC<{ pool: V2Pool }> = ({ pool }) => {
-  const [isZapModeEnabled, setIsZapModeEnabled] = useState(
-    isZapSupportedChainId(pool.chainId),
-  )
+  const [isZapModeEnabled, setIsZapModeEnabled] = useState(false)
 
   const { token0, token1 } = useTokensFromPool(pool)
 
@@ -158,8 +155,8 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
         onInput1={onChangeToken1TypedAmount}
         toggleZapMode={toggleZapMode}
       >
-        <Checker.StockTokenRegion token0={token0} token1={token1}>
-          <Checker.Connect fullWidth>
+        <Checker.StockTokenRegion size="xl" token0={token0} token1={token1}>
+          <Checker.Connect fullWidth size="xl">
             <Checker.Guard
               fullWidth
               guardWhen={
@@ -170,13 +167,20 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
                 ].includes(poolState)
               }
               guardText="Pool not found"
+              size="xl"
             >
-              <Checker.Network fullWidth chainId={chainId}>
-                <Checker.Amounts fullWidth chainId={chainId} amounts={amounts}>
+              <Checker.Network fullWidth chainId={chainId} size="xl">
+                <Checker.Amounts
+                  fullWidth
+                  chainId={chainId}
+                  amounts={amounts}
+                  size="xl"
+                >
                   <Checker.Slippage
                     fullWidth
                     slippageTolerance={slippagePercent}
                     text="Continue With High Slippage"
+                    size="xl"
                   >
                     <Checker.ApproveERC20
                       fullWidth
@@ -184,6 +188,7 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
                       className="whitespace-nowrap"
                       amount={parsedInput0}
                       contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
+                      size="xl"
                     >
                       <Checker.ApproveERC20
                         fullWidth
@@ -191,6 +196,7 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
                         className="whitespace-nowrap"
                         amount={parsedInput1}
                         contract={SUSHISWAP_V2_ROUTER_ADDRESS[chainId]}
+                        size="xl"
                       >
                         <Checker.Success tag={APPROVE_TAG_ADD_LEGACY}>
                           <AddSectionReviewModalLegacy
@@ -205,7 +211,9 @@ const _AddSectionLegacy: FC<AddSectionLegacyProps> = ({
                               setTypedAmounts({ input0: '', input1: '' })
                             }}
                           >
-                            <Button fullWidth>Add Liquidity</Button>
+                            <Button size="xl" fullWidth>
+                              Add Liquidity
+                            </Button>
                           </AddSectionReviewModalLegacy>
                         </Checker.Success>
                       </Checker.ApproveERC20>

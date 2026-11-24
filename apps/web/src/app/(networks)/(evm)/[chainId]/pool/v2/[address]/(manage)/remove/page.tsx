@@ -19,7 +19,7 @@ export default async function ManageV2PoolPage(props: {
   const pool = (await getCachedV2Pool({ chainId, address }))!
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_45%] gap-6">
       <div>
         <ManageV2LiquidityCard pool={pool} tab="remove" />
       </div>
