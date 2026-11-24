@@ -155,14 +155,10 @@ export const SidebarConnectView = () => {
             }}
             className="flex w-full flex-col"
           >
-            <div className="flex shrink-0">
-              <TabsList className="!h-auto w-full gap-5 !justify-start !rounded-none !border-0 !bg-transparent !p-0">
+            <div className="flex shrink-0 ">
+              <TabsList variant="underline">
                 {TABS.map((_tab) => (
-                  <TabsTrigger
-                    key={_tab}
-                    value={_tab}
-                    className="!rounded-none !border-0 !border-b-2 !border-b-transparent !px-0 !pt-0 !pb-3 text-base !shadow-none focus-visible:ring-pink data-[state=active]:!border-b-pink data-[state=active]:!bg-transparent data-[state=active]:!text-primary"
-                  >
+                  <TabsTrigger key={_tab} value={_tab} variant="underline">
                     {getNameFromNamespace(_tab)}
                   </TabsTrigger>
                 ))}
