@@ -6,12 +6,16 @@ import {
   CardHeader,
   CardTitle,
   DataTableSortMenu,
+  LinkInternal,
   ResponsiveDataTable,
   Slot,
 } from '@sushiswap/ui'
 import type { DisplayColumnDef, Row, SortingState } from '@tanstack/react-table'
+import { useSearchParams } from 'next/navigation'
 import { type ReactNode, useCallback, useMemo, useState } from 'react'
 import { useSushiV2UserPositions } from 'src/lib/hooks/api/use-sushi-v2-user-positions'
+import { isV3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import { getChainById } from 'sushi'
 import type { SushiSwapV2ChainId } from 'sushi/evm'
 import { useConnection } from 'wagmi'
 import { APR_COLUMN, NAME_COLUMN_POOL, VALUE_COLUMN } from './columns'
@@ -47,6 +51,8 @@ export function V2PositionsTable({
   rowLink,
 }: PositionsTableProps): ReactNode {
   const { address } = useConnection()
+  const searchParams = useSearchParams()
+  const canMigrate = isV3MigrateChainId(chainId)
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'value', desc: true },
   ])
@@ -86,6 +92,14 @@ export function V2PositionsTable({
             <span className="text-muted-foreground text-sm font-normal">
               ({positions?.length ?? 0})
             </span>
+            {canMigrate && positions && positions?.length > 0 ? (
+              <LinkInternal
+                href={`/${getChainById(chainId).key}/migrate?${searchParams.toString()}`}
+                className="text-pink ml-2 text-xs font-normal"
+              >
+                Migrate V2 Positions
+              </LinkInternal>
+            ) : null}
           </CardTitle>
           <DataTableSortMenu
             label="positions"

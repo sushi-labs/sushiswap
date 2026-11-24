@@ -34,12 +34,17 @@ const claimAbi = [
 interface UseClaimRewardsParams {
   rewards: ClaimableRewards
   enabled?: boolean
+  onRewardsSubmitted?(
+    hash: SendTransactionReturnType,
+    receipt: Promise<unknown>,
+  ): void
   onRewardsClaimed?(): void
 }
 
 export const useClaimRewards = ({
   rewards,
   enabled = true,
+  onRewardsSubmitted,
   onRewardsClaimed,
 }: UseClaimRewardsParams) => {
   const { address, chainId } = useConnection()
@@ -65,6 +70,7 @@ export const useClaimRewards = ({
   const onSuccess = useCallback(
     async (data: SendTransactionReturnType) => {
       const receipt = waitForSuccessfulReceipt(client, data)
+      onRewardsSubmitted?.(data, receipt)
 
       const ts = new Date().getTime()
       void createToast({
@@ -102,7 +108,15 @@ export const useClaimRewards = ({
       })
       onRewardsClaimed?.()
     },
-    [client, address, rewards, refetchBalances, queryClient, onRewardsClaimed],
+    [
+      client,
+      address,
+      rewards,
+      refetchBalances,
+      queryClient,
+      onRewardsSubmitted,
+      onRewardsClaimed,
+    ],
   )
 
   const onError = useCallback((e: Error) => {

@@ -16,7 +16,7 @@ import {
   REWARDS_ACTION_COLUMN,
   REWARDS_AMOUNT_COLUMN,
   REWARDS_CHAIN_COLUMN,
-} from './columns'
+} from '~evm/_common/ui/claim-rewards/columns'
 
 const COLUMNS = [
   REWARDS_CHAIN_COLUMN,

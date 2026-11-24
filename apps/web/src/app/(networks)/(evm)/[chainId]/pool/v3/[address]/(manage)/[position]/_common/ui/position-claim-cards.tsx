@@ -34,7 +34,7 @@ import {
   type SushiSwapV3ChainId,
   getEvmChainById,
 } from 'sushi/evm'
-import { ClaimRewardsButton } from '~evm/claim/rewards/_common/ui/claim-rewards-button'
+import { ClaimRewardsButton } from '~evm/_common/ui/claim-rewards/claim-rewards-button'
 import { ConcentratedLiquidityCollectWidget } from './concentrated-liquidity-collect-widget'
 
 interface PositionClaimCardProps {

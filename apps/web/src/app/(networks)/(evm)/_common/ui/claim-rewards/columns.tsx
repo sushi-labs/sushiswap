@@ -40,19 +40,27 @@ export const REWARDS_AMOUNT_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
   },
 }
 
-export const REWARDS_ACTION_COLUMN: ColumnDef<ClaimableRewards, unknown> = {
-  id: 'action',
-  header: 'Action',
-  cell: (props) => <ClaimableRewardsActionCell {...props.row} />,
-  size: 280,
-  meta: {
-    body: {
-      skeleton: (
-        <div className="flex gap-3 w-[280px]">
-          <SkeletonBox className="h-10 w-full" />
-          <SkeletonBox className="h-10 w-full" />
-        </div>
-      ),
+export function createRewardsActionColumn(
+  onClaim?: (rewards: ClaimableRewards) => void,
+): ColumnDef<ClaimableRewards, unknown> {
+  return {
+    id: 'action',
+    header: 'Action',
+    cell: (props) => (
+      <ClaimableRewardsActionCell {...props.row} onClaim={onClaim} />
+    ),
+    size: 280,
+    meta: {
+      body: {
+        skeleton: (
+          <div className="flex gap-3 w-[280px]">
+            <SkeletonBox className="h-10 w-full" />
+            <SkeletonBox className="h-10 w-full" />
+          </div>
+        ),
+      },
     },
-  },
+  }
 }
+
+export const REWARDS_ACTION_COLUMN = createRewardsActionColumn()

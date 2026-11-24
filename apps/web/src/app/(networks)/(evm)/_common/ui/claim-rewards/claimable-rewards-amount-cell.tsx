@@ -17,7 +17,7 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
 }) => {
   const { card, trigger } = useMemo(() => {
     const card = (
-      <div className="flex flex-col gap-5 p-5 w-80">
+      <div className="flex flex-col gap-5 p-5">
         <span className="text-muted-foreground font-medium text-xs">
           Rewards Breakdown
         </span>
@@ -27,7 +27,7 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
               return (
                 <div
                   key={amount.currency.id}
-                  className="flex justify-between text-sm"
+                  className="flex justify-between gap-2 text-sm"
                 >
                   <div className="flex gap-1.5 items-center">
                     <Currency.Icon
@@ -71,11 +71,11 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
       Object.values(original.rewardAmounts).length - rewardTokens.length
 
     const trigger = (
-      <div className="flex gap-2 items-center w-fit">
+      <button type="button" className="flex gap-2 items-center w-fit">
         <span className="font-medium text-sm underline decoration-dotted underline-offset-2">
           {formatUSD(original.totalRewardsUSD)}
         </span>
-        <div className="flex gap-0.5 items-center">
+        <span className="flex gap-0.5 items-center">
           {rewardTokens.map((token) => (
             <Currency.Icon
               key={token.id}
@@ -85,14 +85,14 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
             />
           ))}
           {additionalRewardTokens > 0 ? (
-            <div className="h-4 px-0.5 flex items-center rounded-full bg-[rgba(256,256,256,.04)] border border-[rgba(256,256,256,0.08)]">
+            <span className="h-4 px-0.5 flex items-center rounded-full bg-secondary border border-accent">
               <span className="text-[8px] leading-4 font-semibold text-muted-foreground">
                 +{additionalRewardTokens}
               </span>
-            </div>
+            </span>
           ) : null}
-        </div>
-      </div>
+        </span>
+      </button>
     )
 
     return { card, trigger }
@@ -100,17 +100,20 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
 
   return (
     <>
-      <div className="hidden sm:block">
+      <div className="hidden md:block">
         <HoverCard openDelay={300} closeDelay={0}>
           <HoverCardTrigger asChild className="cursor-pointer">
             {trigger}
           </HoverCardTrigger>
-          <HoverCardContent side="right" className="!p-0">
+          <HoverCardContent
+            side="right"
+            className="w-80 max-w-[var(--radix-hover-card-content-available-width)] !p-0"
+          >
             {card}
           </HoverCardContent>
         </HoverCard>
       </div>
-      <div className="block sm:hidden">
+      <div className="block md:hidden">
         <Popover>
           <PopoverTrigger
             onClick={(e) => e.stopPropagation()}
@@ -119,7 +122,7 @@ export const ClaimableRewardsAmountCell: FC<Row<ClaimableRewards>> = ({
           >
             {trigger}
           </PopoverTrigger>
-          <PopoverContent side="right" className="!p-0">
+          <PopoverContent className="!w-80 max-w-[var(--radix-popover-content-available-width)] overflow-y-auto !p-0">
             {card}
           </PopoverContent>
         </Popover>

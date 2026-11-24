@@ -2,18 +2,18 @@
 import type { PoolChainId } from '@sushiswap/graph-client/data-api'
 import { useIsMounted } from '@sushiswap/hooks'
 import { Card, CardContent } from '@sushiswap/ui'
-import { LinkInternal } from '@sushiswap/ui'
-import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { DataItem } from 'src/app/(networks)/(evm)/_common/ui/data-item'
 import { useSushiV2UserPositions } from 'src/lib/hooks'
-import { isV3MigrateChainId } from 'src/lib/wagmi/hooks/migrate/types'
+import { useClaimableRewards } from 'src/lib/hooks/react-query/rewards/use-claimable-rewards'
 import { useConcentratedLiquidityPositions } from 'src/lib/wagmi/hooks/positions/hooks/use-concentrated-liquidity-positions'
 import { useAccount } from 'src/lib/wallet/hooks/use-account'
 import { formatUSD, getChainById } from 'sushi'
 import { isSushiSwapV2ChainId, isSushiSwapV3ChainId } from 'sushi/evm'
 import { SushiSwapV3ChainIds, isEvmTestnetChainId } from 'sushi/evm'
+import { useConnection } from 'wagmi'
 import { ClaimableFeesDialog } from './claim-fees/claimable-fees-dialog'
+import { ClaimableRewardsDialog } from './claim-rewards/claimable-rewards-dialog'
 import { usePositionFilters } from './position-filters-provider'
 
 const CLAIM_SUPPORTED_CHAIN_IDS = SushiSwapV3ChainIds.filter(
@@ -25,10 +25,23 @@ export const PositionStats = ({
 }: {
   chainId: PoolChainId
 }) => {
-  const searchParams = useSearchParams()
-  const canMigrate = isV3MigrateChainId(chainId)
   const address = useAccount('evm')
+  const { address: rewardsAccount, isConnecting } = useConnection()
   const isMounted = useIsMounted()
+  const {
+    data: rewardsByChain,
+    isLoading: isRewardsLoading,
+    isError: isRewardsError,
+  } = useClaimableRewards({ account: rewardsAccount })
+  const rewards = useMemo(
+    () => (rewardsByChain ? Object.values(rewardsByChain) : []),
+    [rewardsByChain],
+  )
+  const totalUnclaimedRewards = rewards.reduce(
+    (total, reward) => total + reward.totalRewardsUSD,
+    0,
+  )
+  const isRewardsPending = isRewardsLoading || isConnecting || !isMounted
   const {
     state: { tab, hideClosedPositions },
   } = usePositionFilters()
@@ -64,7 +77,7 @@ export const PositionStats = ({
   const isError =
     isV2PositionsError || isV3PositionsError || isAllV3PositionsError
 
-  const { totalPosValue, totalPosCount } = useMemo(() => {
+  const totalPosValue = useMemo(() => {
     const _v3Positions = v3Positions?.filter((pos) =>
       hideClosedPositions ? pos.liquidity !== 0n : true,
     )
@@ -72,12 +85,7 @@ export const PositionStats = ({
       v2Positions?.reduce((acc, pos) => acc + pos.value, 0) ?? 0
     const totalV3PosValue =
       _v3Positions?.reduce((acc, pos) => acc + pos.position.positionUSD, 0) ?? 0
-    const totalPosCount =
-      tab === 'v2' ? (v2Positions?.length ?? 0) : (_v3Positions?.length ?? 0)
-    return {
-      totalPosValue: tab === 'v2' ? totalV2PosValue : totalV3PosValue,
-      totalPosCount,
-    }
+    return tab === 'v2' ? totalV2PosValue : totalV3PosValue
   }, [tab, v2Positions, v3Positions, hideClosedPositions])
 
   const totalUnclaimedFees = useMemo(
@@ -109,24 +117,21 @@ export const PositionStats = ({
           <CardContent className="pt-5">
             <DataItem
               label={
-                canMigrate &&
-                tab === 'v2' &&
-                v2Positions &&
-                v2Positions?.length > 0 ? (
-                  <LinkInternal
-                    href={`/${getChainById(chainId).key}/migrate?${searchParams.toString()}`}
-                    className="text-pink"
-                  >
-                    Migrate V2 Positions
-                  </LinkInternal>
-                ) : (
-                  <div>Positions</div>
-                )
+                <div className="relative">
+                  <div className="pr-36">Total unclaimed rewards</div>
+                  <div className="absolute top-0 right-0 z-[1]">
+                    <ClaimableRewardsDialog
+                      rewards={rewards}
+                      isLoading={isRewardsPending}
+                      isError={isRewardsError}
+                    />
+                  </div>
+                </div>
               }
-              value={totalPosCount}
-              isLoading={isLoading}
-              isError={isError}
-              subLabel={`SushiSwap${tab === 'v2' ? ' V2' : ' V3'}`}
+              value={formatUSD(totalUnclaimedRewards)}
+              isLoading={isRewardsPending}
+              isError={isRewardsError}
+              subLabel="Rewards earned"
             />
           </CardContent>
         </Card>
