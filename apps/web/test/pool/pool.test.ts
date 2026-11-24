@@ -5,7 +5,7 @@ import {
   isSushiSwapV2ChainId,
   isSushiSwapV3ChainId,
 } from 'sushi/evm'
-import { chainId } from '../constants'
+import { chainId, transactionTimeout } from '../constants'
 import { expect, test } from '../fixtures'
 import { PoolPage } from '../helpers/pool'
 import {
@@ -60,6 +60,52 @@ test('switches position types on the same chain and restores the selection on ba
 // Tests will only work for polygon atm
 test.describe('V3', () => {
   test.skip(!isSushiSwapV3ChainId(chainId))
+  test('shows position price history for each period in either pair direction', async ({
+    page,
+    fork,
+    mocks,
+  }) => {
+    const tokenId = await seedV3Position(fork)
+    const pool = new PoolPage(page, chainId, fork)
+    await pool.mockPoolApi(
+      mocks,
+      NATIVE_TOKEN.wrap(),
+      fork.token,
+      SushiSwapV3FeeAmount.HIGH,
+      'SUSHISWAP_V3',
+    )
+    await pool.goToV3Position(fork.token, tokenId)
+
+    const controls = page.getByRole('group', {
+      name: 'Price history timeframe',
+    })
+    const units = `${fork.token.symbol} per ${NATIVE_TOKEN.symbol}`
+    const nativeFirst = NATIVE_TOKEN.wrap().sortsBefore(fork.token)
+    for (const period of ['1D', '1W', '1M', '1Y', 'All Time']) {
+      const button = controls.getByRole('button', { name: period, exact: true })
+      await button.click()
+      await expect(button).toHaveAttribute('aria-pressed', 'true')
+      const chart = page.getByRole('img', {
+        name: `Pool price history in ${units}, ${period === 'All Time' ? 'all time' : period}`,
+        exact: true,
+      })
+      await expect(chart.locator('canvas')).toBeVisible()
+      await expect(chart).toHaveAccessibleDescription(
+        new RegExp(nativeFirst ? 'from 1 to 4 ' : 'from 0\\.25 to 1 '),
+      )
+    }
+
+    await page.getByTitle('Invert price', { exact: true }).click()
+    const inverted = page.getByRole('img', {
+      name: `Pool price history in ${NATIVE_TOKEN.symbol} per ${fork.token.symbol}, all time`,
+      exact: true,
+    })
+    await expect(inverted.locator('canvas')).toBeVisible()
+    await expect(inverted).toHaveAccessibleDescription(
+      new RegExp(nativeFirst ? 'from 0\\.25 to 1 ' : 'from 1 to 4 '),
+    )
+  })
+
   test('Create pool, add a single-sided position and remove the original position', async ({
     page,
     fork,
@@ -174,6 +220,14 @@ for (const version of ['V2', 'V3'] as const) {
     if (tokenId !== undefined) {
       await pool.removeLiquidityV3(fork.token, tokenId)
       expect(await positionLiquidity(fork, tokenId)).toBe(0n)
+      await expect(
+        page
+          .getByRole('status')
+          .filter({ hasText: 'This position is closed.' }),
+      ).toBeVisible({ timeout: transactionTimeout })
+      await expect(
+        page.getByRole('group', { name: 'Price history timeframe' }),
+      ).toHaveCount(0)
     } else {
       await pool.removeLiquidityV2(fork.token)
       expect(await lpBalance(fork)).toBe(0n)

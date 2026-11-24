@@ -14,6 +14,7 @@ import {
   USDG,
   WETH9,
 } from 'sushi/evm'
+import type { Hash, TransactionReceipt } from 'viem'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { AddSectionReviewModalConcentrated } from './add-section-review-modal-concentrated'
 
@@ -22,6 +23,7 @@ const mocks = vi.hoisted(() => ({
   otherWallet: false,
   send: vi.fn(),
   simulate: vi.fn(() => ({ isError: false })),
+  waitForTransactionReceipt: vi.fn(),
 }))
 vi.mock('wagmi', () => ({
   useConnection: () => ({
@@ -31,9 +33,25 @@ vi.mock('wagmi', () => ({
     chain: mocks.connected ? { id: EvmChainId.ROBINHOOD } : undefined,
   }),
   useCall: mocks.simulate,
-  usePublicClient: () => ({}),
-  useSendTransaction: () => ({ mutateAsync: mocks.send, isPending: false }),
+  usePublicClient: () => ({
+    waitForTransactionReceipt: mocks.waitForTransactionReceipt,
+  }),
+  useSendTransaction: ({
+    mutation,
+  }: { mutation: { onSuccess(hash: Hash): void } }) => ({
+    mutateAsync: async (request: unknown) => {
+      const hash = await mocks.send(request)
+      await mutation.onSuccess(hash)
+      return hash
+    },
+    isPending: false,
+  }),
   useWaitForTransactionReceipt: () => ({ status: 'pending' }),
+}))
+vi.mock('@sushiswap/notifications', () => ({
+  createToast: ({ promise }: { promise: Promise<unknown> }) =>
+    promise.catch(() => undefined),
+  createErrorToast: vi.fn(),
 }))
 vi.mock('src/lib/wallet', () => ({
   useWalletConnection: (namespace?: WalletNamespace) => ({
@@ -154,6 +172,7 @@ beforeEach(() => {
   mocks.otherWallet = false
   mocks.send.mockReset()
   mocks.simulate.mockClear()
+  mocks.waitForTransactionReceipt.mockReset()
   container = document.createElement('div')
   root = createRoot(container)
 })
@@ -161,6 +180,48 @@ afterEach(() => {
   act(() => root.unmount())
   vi.restoreAllMocks()
 })
+
+it.each(['success', 'reverted'] as const)(
+  'reports added liquidity only after a successful receipt, receipt status=%s',
+  async (status) => {
+    const hash = '0x1234'
+    const receipt =
+      Promise.withResolvers<
+        Pick<TransactionReceipt, 'status' | 'transactionHash'>
+      >()
+    mocks.send.mockResolvedValue(hash)
+    mocks.waitForTransactionReceipt.mockReturnValue(receipt.promise)
+    const position = fullRangePosition(100n * 10n ** 18n)
+    const onLiquidityAdded = vi.fn()
+    // Clearing the deposit amounts removes the review below Checker.Amounts.
+    const onSuccess = vi.fn(() => root.render(null))
+    await render({
+      position,
+      existingPosition: position,
+      onSuccess,
+      onLiquidityAdded,
+    })
+
+    await act(async () => {
+      container
+        .querySelector<HTMLButtonElement>(
+          '[testdata-id="confirm-add-liquidity-button"]',
+        )
+        ?.click()
+    })
+    expect(onSuccess).toHaveBeenCalledOnce()
+    expect(container.childElementCount).toBe(0)
+    expect(mocks.waitForTransactionReceipt).toHaveBeenCalledWith(
+      expect.objectContaining({ hash }),
+    )
+    expect(onLiquidityAdded).not.toHaveBeenCalled()
+
+    await act(async () => {
+      receipt.resolve({ status, transactionHash: hash })
+    })
+    expect(onLiquidityAdded).toHaveBeenCalledTimes(status === 'success' ? 1 : 0)
+  },
+)
 
 it('shows price bounds, their USD values and the supplied deposit amounts', async () => {
   const token0 = USDG[EvmChainId.ROBINHOOD]

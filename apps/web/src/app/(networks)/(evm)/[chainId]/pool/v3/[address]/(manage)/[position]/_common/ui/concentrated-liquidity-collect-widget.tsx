@@ -9,13 +9,14 @@ import {
   Switch,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { type FC, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
 import { Checker } from 'src/lib/wagmi/systems/checker'
 import { Amount, formatUSD } from 'sushi'
 import {
   type EvmAddress,
-  type EvmChainId,
+  EvmChainId,
   type EvmCurrency,
   EvmNative,
   type Position,
@@ -32,7 +33,8 @@ interface ConcentratedLiquidityCollectWidget {
   isLoading: boolean
   address: EvmAddress | undefined
   amounts: undefined[] | Amount<EvmCurrency>[]
-  fiatValuesAmounts: number[]
+  fiatValuesAmounts: readonly (number | undefined)[]
+  onFeesClaimed?(): void
 }
 
 export const ConcentratedLiquidityCollectWidget: FC<
@@ -47,9 +49,17 @@ export const ConcentratedLiquidityCollectWidget: FC<
   address,
   amounts,
   fiatValuesAmounts,
+  onFeesClaimed,
 }) => {
+  const claimForm = useRef<HTMLDivElement>(null)
   const [receiveWrapped, setReceiveWrapped] = useState(false)
   const nativeToken = useMemo(() => EvmNative.fromChainId(chainId), [chainId])
+
+  useEffect(() => {
+    if (chainId === EvmChainId.ARC) {
+      setReceiveWrapped(true)
+    }
+  }, [chainId])
 
   const positionHasNativeToken = useMemo(() => {
     if (!nativeToken || !token0 || !token1) return false
@@ -83,13 +93,21 @@ export const ConcentratedLiquidityCollectWidget: FC<
           <CardCurrencyAmountItem
             amount={expectedAmount0}
             isLoading={isLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[0])}
+            fiatValue={
+              fiatValuesAmounts[0] === undefined
+                ? undefined
+                : formatUSD(fiatValuesAmounts[0])
+            }
             unwrap={false}
           />
           <CardCurrencyAmountItem
             amount={expectedAmount1}
             isLoading={isLoading}
-            fiatValue={formatUSD(fiatValuesAmounts[1])}
+            fiatValue={
+              fiatValuesAmounts[1] === undefined
+                ? undefined
+                : formatUSD(fiatValuesAmounts[1])
+            }
             unwrap={false}
           />
         </CardGroup>
@@ -101,11 +119,12 @@ export const ConcentratedLiquidityCollectWidget: FC<
             <Switch
               checked={receiveWrapped}
               onCheckedChange={setReceiveWrapped}
+              disabled={chainId === EvmChainId.ARC}
             />
           </div>
         ) : null}
       </CardContent>
-      <CardFooter>
+      <CardFooter ref={claimForm}>
         <ConcentratedLiquidityCollectButton
           position={position ?? undefined}
           positionDetails={positionDetails}
@@ -113,11 +132,20 @@ export const ConcentratedLiquidityCollectWidget: FC<
           token1={expectedAmount1?.currency}
           account={address}
           chainId={chainId}
+          onFeesClaimed={() => {
+            if (claimForm.current) onFeesClaimed?.()
+          }}
         >
           {({ send, isPending }) => (
-            <Checker.Connect fullWidth>
+            <Checker.Connect fullWidth namespace="evm">
               <Checker.Network fullWidth chainId={chainId}>
-                <Button fullWidth size="xl" disabled={isPending} onClick={send}>
+                <Button
+                  fullWidth
+                  size="xl"
+                  disabled={!send}
+                  loading={isPending}
+                  onClick={send}
+                >
                   Collect
                 </Button>
               </Checker.Network>

@@ -1,8 +1,10 @@
 import { createErrorToast, createToast } from '@sushiswap/notifications'
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import type { ClaimableRewards } from 'src/lib/hooks/react-query'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import {
   useConnection,
   usePublicClient,
@@ -32,11 +34,13 @@ const claimAbi = [
 interface UseClaimRewardsParams {
   rewards: ClaimableRewards
   enabled?: boolean
+  onRewardsClaimed?(): void
 }
 
 export const useClaimRewards = ({
   rewards,
   enabled = true,
+  onRewardsClaimed,
 }: UseClaimRewardsParams) => {
   const { address, chainId } = useConnection()
 
@@ -53,16 +57,14 @@ export const useClaimRewards = ({
     },
   })
 
-  const client = usePublicClient()
+  const client = usePublicClient({ chainId: rewards.chainId })
+  const queryClient = useQueryClient()
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
   const onSuccess = useCallback(
-    (data: SendTransactionReturnType) => {
-      const receipt = client.waitForTransactionReceipt({ hash: data })
-      receipt.then(() => {
-        refetchBalances(rewards.chainId)
-      })
+    async (data: SendTransactionReturnType) => {
+      const receipt = waitForSuccessfulReceipt(client, data)
 
       const ts = new Date().getTime()
       void createToast({
@@ -79,8 +81,28 @@ export const useClaimRewards = ({
         groupTimestamp: ts,
         timestamp: ts,
       })
+
+      try {
+        await receipt
+      } catch (error) {
+        logger.error(error, {
+          location: 'useClaimRewards',
+          action: 'waitForReceipt',
+        })
+        return
+      } finally {
+        refetchBalances(rewards.chainId)
+      }
+
+      void queryClient.invalidateQueries({
+        queryKey: [
+          'claimableMerklRewards',
+          { account: rewards.claimArgs[0][0]?.toLowerCase() },
+        ],
+      })
+      onRewardsClaimed?.()
     },
-    [refetchBalances, client, address, rewards.chainId],
+    [client, address, rewards, refetchBalances, queryClient, onRewardsClaimed],
   )
 
   const onError = useCallback((e: Error) => {

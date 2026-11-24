@@ -44,6 +44,7 @@ import {
   useTransactionDeadline,
 } from 'src/lib/wagmi/hooks/utils/hooks/use-transaction-deadline'
 import { Checker } from 'src/lib/wagmi/systems/checker'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import { Amount, formatPercent, formatUSD } from 'sushi'
 import {
   type EvmChainId,
@@ -82,6 +83,7 @@ interface AddSectionReviewModalConcentratedProps
   tokenId: number | string | undefined
   children: ReactNode
   onSuccess: () => void
+  onLiquidityAdded?(): void
   successLink?: string
 }
 
@@ -110,7 +112,8 @@ export const AddSectionReviewModalConcentrated: FC<
   pricesAtTicks,
   ticksAtLimit,
   tokenId,
-  onSuccess: _onSuccess,
+  onSuccess: onSubmitted,
+  onLiquidityAdded,
   successLink,
 }) => {
   const { address, chain } = useConnection()
@@ -122,7 +125,7 @@ export const AddSectionReviewModalConcentrated: FC<
     SlippageToleranceStorageKey.AddLiquidity,
   )
   const { [Bound.LOWER]: priceLower, [Bound.UPPER]: priceUpper } = pricesAtTicks
-  const client = usePublicClient()
+  const client = usePublicClient({ chainId })
 
   const trace = useTrace()
 
@@ -174,7 +177,7 @@ export const AddSectionReviewModalConcentrated: FC<
 
   const onSuccess = useCallback(
     (hash: SendTransactionReturnType) => {
-      _onSuccess()
+      onSubmitted()
 
       if (!token0 || !token1) return
 
@@ -194,10 +197,12 @@ export const AddSectionReviewModalConcentrated: FC<
         ...trace,
       })
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
-        refetchBalances(chainId)
-      })
+      const receiptPromise = waitForSuccessfulReceipt(client, hash)
+        .finally(() => refetchBalances(chainId))
+        .then((receipt) => {
+          onLiquidityAdded?.()
+          return receipt
+        })
 
       const ts = new Date().getTime()
       void createToast({
@@ -205,7 +210,7 @@ export const AddSectionReviewModalConcentrated: FC<
         type: 'mint',
         chainId,
         txHash: hash,
-        promise: receipt,
+        promise: receiptPromise,
         summary: {
           pending: noLiquidity
             ? `Creating the ${token0.symbol}/${token1.symbol} liquidity pool`
@@ -223,7 +228,8 @@ export const AddSectionReviewModalConcentrated: FC<
     },
     [
       refetchBalances,
-      _onSuccess,
+      onSubmitted,
+      onLiquidityAdded,
       token0,
       token1,
       address,

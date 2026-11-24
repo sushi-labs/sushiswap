@@ -1,11 +1,11 @@
-import type { SushiSwapV3ChainId } from 'sushi/evm'
+import type { EvmAddress, SushiSwapV3ChainId } from 'sushi/evm'
 
 import type { Address } from 'viem'
 import type { useConcentratedLiquidityPositions } from './hooks/use-concentrated-liquidity-positions'
 
 export interface ConcentratedLiquidityPosition {
   id: string
-  address: string
+  address: EvmAddress
   chainId: SushiSwapV3ChainId
   nonce: bigint
   tokenId: bigint

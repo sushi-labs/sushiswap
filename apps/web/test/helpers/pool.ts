@@ -332,10 +332,7 @@ export class PoolPage extends BaseActions {
     return receipt
   }
 
-  async removeLiquidityV3(
-    fakeToken: EvmToken,
-    positionId: bigint,
-  ): Promise<void> {
+  async goToV3Position(fakeToken: EvmToken, positionId: bigint): Promise<void> {
     const poolAddress = computeSushiSwapV3PoolAddress({
       factoryAddress:
         SUSHISWAP_V3_FACTORY_ADDRESS[this.chainId as SushiSwapV3ChainId],
@@ -345,32 +342,37 @@ export class PoolPage extends BaseActions {
     })
     const url = `/${this.chainId.toString()}/pool/v3/${poolAddress.toLowerCase()}/${positionId}`
     await this.page.goto(url)
+  }
+
+  async removeLiquidityV3(
+    fakeToken: EvmToken,
+    positionId: bigint,
+  ): Promise<void> {
+    await this.goToV3Position(fakeToken, positionId)
     await this.connect()
 
-    const removeLiquidityTabSelector = this.page.locator(
-      '[testdata-id=remove-tab]',
+    await this.page
+      .getByRole('button', { name: 'Remove Liquidity', exact: true })
+      .click()
+    const dialog = this.page.getByRole('dialog', {
+      name: 'Remove Liquidity',
+      exact: true,
+    })
+    await expect(dialog).toBeVisible()
+    await dialog.locator('[testdata-id=liquidity-max-button]').click()
+
+    const switchNetwork = dialog.locator(
+      `[testdata-id=switch-network-${this.chainId}-button]`,
     )
-    await expect(removeLiquidityTabSelector).toBeVisible()
-    await removeLiquidityTabSelector.click()
-
-    await this.switchNetwork(this.chainId)
-
-    await this.page.locator('[testdata-id=liquidity-max-button]').click()
-    const handleLiquidityLocator = this.page.locator(
-      '[testdata-id=remove-or-add-liquidity-button]',
-    )
-    await expect(handleLiquidityLocator).toBeVisible()
-    await expect(handleLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
-    await handleLiquidityLocator.click()
-
-    const confirmLiquidityLocator = this.page.locator(
+    const confirmRemoval = dialog.locator(
       '[testdata-id=confirm-remove-liquidity-button]',
     )
-    await expect(confirmLiquidityLocator).toBeVisible()
-    await expect(confirmLiquidityLocator).toBeEnabled() // needed, not sure why, my guess is that a web3 call hasn't finished and button shouldn't be enabled yet.
-    await this.transact('Remove V3 liquidity', () =>
-      confirmLiquidityLocator.click(),
-    )
+    await expect(switchNetwork.or(confirmRemoval)).toBeVisible()
+    if (await switchNetwork.isVisible()) await switchNetwork.click()
+
+    await expect(confirmRemoval).toBeEnabled()
+    await this.transact('Remove V3 liquidity', () => confirmRemoval.click())
+    await expect(dialog).toBeHidden({ timeout: transactionTimeout })
 
     const regex = /Successfully removed liquidity from the .* pair/
     await expect(this.page.getByText(regex).first()).toBeVisible({
@@ -623,6 +625,35 @@ export class PoolPage extends BaseActions {
                 },
               },
             }
+
+      if (
+        protocol === 'SUSHISWAP_V3' &&
+        new URL(request.url).hostname ===
+          'gateway-arbitrum.network.thegraph.com'
+      ) {
+        const { operationName, variables } = graphRequest.parse(
+          await request.json(),
+        )
+        if (
+          operationName === 'PoolPriceHistory' &&
+          variables.pool === address
+        ) {
+          const end = Number(variables.to)
+          const interval =
+            end - Number(variables.from) > 31 * 86400 ? 86400 : 3600
+          const lastBucket = Math.floor((end - 1) / interval) * interval
+          return Response.json({
+            data: {
+              _meta: { block: { timestamp: end - 1 } },
+              buckets: [
+                { timestamp: lastBucket, price: '4' },
+                { timestamp: lastBucket - interval, price: '2' },
+              ],
+              previous: [],
+            },
+          })
+        }
+      }
 
       if (request.url.toLowerCase().endsWith('/graphql')) {
         const requestBody = graphRequest.parse(await request.json())

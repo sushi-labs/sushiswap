@@ -176,7 +176,7 @@ html[class="dark"] *.scroll::-webkit-scrollbar-thumb {
   }
 
   input[type="range"]::-webkit-slider-thumb {
-    @apply appearance-none w-6 h-6 bg-blue rounded-full;
+    @apply appearance-none w-6 h-6 bg-pink rounded-full;
   }
 
   .border-sushi-gradient {

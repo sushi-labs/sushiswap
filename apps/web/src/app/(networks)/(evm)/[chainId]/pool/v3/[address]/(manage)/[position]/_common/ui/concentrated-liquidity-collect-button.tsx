@@ -10,8 +10,10 @@ import { type FC, type ReactElement, useCallback, useMemo } from 'react'
 import { logger } from 'src/lib/logger'
 import { isUserRejectedError } from 'src/lib/wagmi/errors'
 import type { ConcentratedLiquidityPosition } from 'src/lib/wagmi/hooks/positions/types'
+import { waitForSuccessfulReceipt } from 'src/lib/wagmi/transactions/wait-for-successful-receipt'
 import { Amount, Fraction } from 'sushi'
 import {
+  type EvmAddress,
   type EvmCurrency,
   NonfungiblePositionManager,
   type Position,
@@ -34,14 +36,15 @@ interface ConcentratedLiquidityCollectButton {
   position: Position | undefined
   token0: EvmCurrency | undefined
   token1: EvmCurrency | undefined
-  account: `0x${string}` | undefined
+  account: EvmAddress | undefined
   chainId: EvmChainId
+  onFeesClaimed?(): void
   children(
     params: Omit<
       ReturnType<typeof useSendTransaction>,
       'mutate' | 'mutateAsync'
     > & { send: (() => Promise<void>) | undefined },
-  ): ReactElement<any>
+  ): ReactElement
 }
 
 export const ConcentratedLiquidityCollectButton: FC<
@@ -54,9 +57,10 @@ export const ConcentratedLiquidityCollectButton: FC<
   children,
   token0,
   token1,
+  onFeesClaimed,
 }) => {
   const { chain } = useConnection()
-  const client = usePublicClient()
+  const client = usePublicClient({ chainId })
 
   const { refetchChain: refetchBalances } = useRefetchBalances()
 
@@ -101,21 +105,24 @@ export const ConcentratedLiquidityCollectButton: FC<
   }, [account, chainId, position, positionDetails, token0, token1])
 
   const onSuccess = useCallback(
-    (hash: SendTransactionReturnType) => {
+    async (hash: SendTransactionReturnType) => {
       if (!position) return
 
-      const receipt = client.waitForTransactionReceipt({ hash })
-      receipt.then(() => {
-        refetchBalances(chainId)
+      sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
+        chain_id: chainId,
+        address: account,
+        source: LiquiditySource.V3,
+        label: [token0?.symbol, token1?.symbol].join('/'),
       })
 
+      const receipt = waitForSuccessfulReceipt(client, hash)
       const ts = new Date().getTime()
       void createToast({
         account,
         type: 'claimRewards',
         chainId,
         txHash: hash,
-        promise: client.waitForTransactionReceipt({ hash }),
+        promise: receipt,
         summary: {
           pending: `Collecting fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
           completed: `Collected fees from your ${position.amount0.currency.symbol}/${position.amount1.currency.symbol} position`,
@@ -124,8 +131,30 @@ export const ConcentratedLiquidityCollectButton: FC<
         timestamp: ts,
         groupTimestamp: ts,
       })
+      try {
+        await receipt
+      } catch (error) {
+        logger.error(error, {
+          location: 'ConcentratedLiquidityCollectButton',
+          action: 'waitForReceipt',
+        })
+        return
+      } finally {
+        refetchBalances(chainId)
+      }
+
+      onFeesClaimed?.()
     },
-    [refetchBalances, account, chainId, client, position],
+    [
+      refetchBalances,
+      account,
+      chainId,
+      client,
+      position,
+      token0,
+      token1,
+      onFeesClaimed,
+    ],
   )
 
   const onError = useCallback((e: Error) => {
@@ -140,17 +169,11 @@ export const ConcentratedLiquidityCollectButton: FC<
     createErrorToast(e?.message, true)
   }, [])
 
-  const { isError: isSimulationError } = useCall({
+  const { isSuccess: isSimulated } = useCall({
     ...prepare,
+    account,
     query: {
-      enabled: Boolean(
-        token0 &&
-          token1 &&
-          account &&
-          position &&
-          positionDetails &&
-          chainId === chain?.id,
-      ),
+      enabled: Boolean(prepare && chainId === chain?.id),
     },
   })
 
@@ -166,27 +189,14 @@ export const ConcentratedLiquidityCollectButton: FC<
   })
 
   const send = useMemo(() => {
-    if (isSimulationError || !prepare) return
+    if (!isSimulated || !prepare || chainId !== chain?.id) return
 
     return async () => {
       try {
         await sendTransactionAsync(prepare)
-        sendAnalyticsEvent(LiquidityEventName.COLLECT_LIQUIDITY_SUBMITTED, {
-          chain_id: prepare.chainId,
-          address: account,
-          source: LiquiditySource.V3,
-          label: [token0?.symbol, token1?.symbol].join('/'),
-        })
       } catch {}
     }
-  }, [
-    isSimulationError,
-    prepare,
-    sendTransactionAsync,
-    account,
-    token0,
-    token1,
-  ])
+  }, [isSimulated, prepare, sendTransactionAsync, chainId, chain?.id])
 
   return children({ ...rest, send })
 }

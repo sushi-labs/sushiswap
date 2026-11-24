@@ -11,7 +11,14 @@ import {
   classNames,
 } from '@sushiswap/ui'
 import { Button } from '@sushiswap/ui'
-import { type FC, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   type EvmCurrency,
   type Position,
@@ -77,6 +84,7 @@ interface ConcentratedLiquidityWidget {
   tokensLoading: boolean
   tokenId: number | string | undefined
   existingPosition: Position | undefined
+  onPositionIncreased?(): void
   onChange?(val: string, input: 'a' | 'b'): void
   successLink?: string
   withTitleAndDescription?: boolean
@@ -242,6 +250,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
   tokensLoading,
   tokenId,
   existingPosition,
+  onPositionIncreased,
   onChange,
   successLink,
   derivedMintInfo: {
@@ -260,6 +269,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
   },
   isLoading,
 }) => {
+  const depositForm = useRef<HTMLDivElement>(null)
   const [slippagePercent] = useSlippageTolerance(
     SlippageToleranceStorageKey.AddLiquidity,
   )
@@ -300,6 +310,7 @@ const WidgetContent: FC<WidgetContentProps> = ({
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks
   return (
     <div
+      ref={depositForm}
       className={classNames(
         !isLoading &&
           (tickLower === undefined ||
@@ -378,6 +389,15 @@ const WidgetContent: FC<WidgetContentProps> = ({
                         ticksAtLimit={ticksAtLimit}
                         tokenId={tokenId}
                         existingPosition={existingPosition}
+                        onLiquidityAdded={() => {
+                          // A dismissed form's receipt can arrive after another form opens.
+                          if (
+                            depositForm.current &&
+                            existingPosition &&
+                            tokenId
+                          )
+                            onPositionIncreased?.()
+                        }}
                         onSuccess={() => {
                           _onFieldAInput('')
                           _onFieldBInput('')

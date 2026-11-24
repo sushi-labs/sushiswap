@@ -32,7 +32,10 @@ export const useClaimableRewards = ({
   enabled = true,
 }: UseClaimableRewardsParams) => {
   return useQuery({
-    queryKey: ['claimableMerklRewards', { account }],
+    queryKey: [
+      'claimableMerklRewards',
+      { account: account?.toLowerCase(), chainIds },
+    ],
     queryFn: async () => {
       if (!account)
         throw new Error('Account is required to fetch claimable rewards')
@@ -46,10 +49,19 @@ export const useClaimableRewards = ({
           _url.searchParams.set('chainId', `${chainId}`)
 
           const res = await fetch(_url.toString())
+          if (!res.ok) {
+            throw new Error(
+              `Merkl rewards request for chain ${chainId} failed (HTTP ${res.status})`,
+            )
+          }
           const json = await res.json()
           return merklRewardsValidator.parse(json)
         }),
       )
+
+      if (res.length && res.every((result) => result.status === 'rejected')) {
+        throw res[0].reason
+      }
 
       const data = res
         .flatMap((result) =>

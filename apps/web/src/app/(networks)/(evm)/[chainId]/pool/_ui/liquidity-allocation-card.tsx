@@ -12,7 +12,7 @@ import type { ReactElement } from 'react'
 import { useAmountUsd } from 'src/lib/hooks/use-amount-usd'
 import { useCurrencyIconColor } from 'src/lib/hooks/use-currency-icon-color'
 import { type Amount, formatUSD } from 'sushi'
-import { type EvmCurrency, unwrapEvmToken } from 'sushi/evm'
+import { EvmChainId, type EvmCurrency, unwrapEvmToken } from 'sushi/evm'
 
 const totalFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -27,7 +27,10 @@ const shareFormatter = new Intl.NumberFormat('en-US', {
 })
 
 function useAllocationAsset(amount: Amount<EvmCurrency> | undefined) {
-  const currency = amount && unwrapEvmToken(amount.currency)
+  const currency =
+    amount && amount.currency.chainId === EvmChainId.ARC
+      ? amount.currency
+      : amount && unwrapEvmToken(amount.currency)
   const color = useCurrencyIconColor(currency)
   const isZero = amount?.amount === 0n
   const { data, isLoading } = useAmountUsd({ amount, enabled: !isZero })
@@ -59,7 +62,7 @@ export function LiquidityAllocationCard({
 
   return (
     <Card className="min-w-0 p-5 text-primary" aria-busy={isValueLoading}>
-      <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+      <h3 className="text-sm text-muted-foreground">{title}</h3>
       <div className="mt-2 break-words text-2xl font-medium sm:text-3xl">
         {isValueLoading ? (
           <SkeletonText fontSize="2xl" className="max-w-44" />
@@ -69,7 +72,7 @@ export function LiquidityAllocationCard({
           totalFormatter.format(total)
         )}
       </div>
-      <div className="mb-2 mt-4 text-xs font-medium text-muted-foreground">
+      <div className="mb-2 mt-4 text-xs text-muted-foreground">
         Asset Allocation
       </div>
       <div

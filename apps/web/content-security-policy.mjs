@@ -47,6 +47,8 @@ const SUSHI_CONNECT_SOURCES = [
   'https://sushi.com',
   'https://*.sushi.com',
   'https://sushi-strapi-cms.herokuapp.com',
+  'https://gateway-arbitrum.network.thegraph.com',
+  'https://api.goldsky.com',
   'https://lb.drpc.live',
   'wss://lb.drpc.live',
   'https://sepolia.drpc.live',
