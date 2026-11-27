@@ -368,8 +368,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       '@sushiswap/graph-client':
         specifier: workspace:*
         version: link:../../packages/graph-client
@@ -907,8 +907,8 @@ importers:
   packages/stellar/contract-bindings/factory:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -920,8 +920,8 @@ importers:
   packages/stellar/contract-bindings/flash-executor:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -933,8 +933,8 @@ importers:
   packages/stellar/contract-bindings/pool:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -946,8 +946,8 @@ importers:
   packages/stellar/contract-bindings/pool-lens:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -962,8 +962,8 @@ importers:
   packages/stellar/contract-bindings/position-manager:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -978,8 +978,8 @@ importers:
   packages/stellar/contract-bindings/router:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -991,8 +991,8 @@ importers:
   packages/stellar/contract-bindings/token:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -1004,8 +1004,8 @@ importers:
   packages/stellar/contract-bindings/zap-router:
     dependencies:
       '@stellar/stellar-sdk':
-        specifier: 16.0.1
-        version: 16.0.1
+        specifier: 16.4.1
+        version: 16.4.1
       buffer:
         specifier: 6.0.3
         version: 6.0.3
@@ -7609,8 +7609,8 @@ packages:
     resolution: {integrity: sha512-HBDNKnxr+ecdaEmbZ0mcKkirOF8tXXEbWSw34P3wT40Tn3g+u+cCH17xAWZymzscq8cojHB8340pR8QNVaD32w==}
     engines: {node: '>=22.0.0', pnpm: '>=10.0.0'}
 
-  '@stellar/stellar-sdk@16.0.1':
-    resolution: {integrity: sha512-bxKohaiyKVqoudRhbOOHeHhHIaeYV5Zab4rCjxhP4Ty1h1ozTLBOv8lWFnZz9ilBzXG8Bb7usQI3rlEcfvUynA==}
+  '@stellar/stellar-sdk@16.4.1':
+    resolution: {integrity: sha512-0kT+ShOUE6dc0smLEsajuizss1hvlGDsCooM88FqgxNOCKpY8IuQPzCs75RNKMSMITz+dX7KZ5qGhQ2EWGMTTg==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -9294,9 +9294,6 @@ packages:
 
   axios@1.13.5:
     resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
-
-  axios@1.16.1:
-    resolution: {integrity: sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==}
 
   axios@1.20.0:
     resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
@@ -24747,12 +24744,12 @@ snapshots:
 
   '@stellar/js-xdr@5.0.0': {}
 
-  '@stellar/stellar-sdk@16.0.1':
+  '@stellar/stellar-sdk@16.4.1':
     dependencies:
       '@noble/ed25519': 3.1.0
       '@noble/hashes': 2.2.0
       '@stellar/js-xdr': 4.0.0
-      axios: 1.16.1
+      axios: 1.20.0
       base32.js: 0.1.0
       bignumber.js: 11.1.5
       buffer: 6.0.3
@@ -28082,16 +28079,6 @@ snapshots:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
-
-  axios@1.16.1:
-    dependencies:
-      follow-redirects: 1.16.0
-      form-data: 4.0.6
-      https-proxy-agent: 5.0.1
-      proxy-from-env: 2.1.0
-    transitivePeerDependencies:
-      - debug
-      - supports-color
 
   axios@1.20.0:
     dependencies:
