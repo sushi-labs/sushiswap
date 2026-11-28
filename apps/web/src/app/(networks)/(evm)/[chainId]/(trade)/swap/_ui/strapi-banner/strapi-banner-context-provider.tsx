@@ -1,12 +1,18 @@
 'use client'
 
-import type { Banner } from '@sushiswap/graph-client/strapi'
 import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import type React from 'react'
 import { createContext, useContext } from 'react'
 
+export interface StrapiBannerData {
+  id: string
+  href?: string
+  src: string
+  alt: string
+}
+
 interface StrapiBannerContext {
-  banner?: Banner
+  banner?: StrapiBannerData
   cookie?: RequestCookie
 }
 
@@ -27,7 +33,7 @@ export function StrapiBannerContextProvider({
   cookie,
   children,
 }: {
-  banner?: Banner
+  banner?: StrapiBannerData
   cookie?: RequestCookie
   children: React.ReactNode
 }) {

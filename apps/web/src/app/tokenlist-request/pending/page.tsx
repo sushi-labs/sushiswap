@@ -24,10 +24,6 @@ import type { ColumnDef, SortingState, TableState } from '@tanstack/react-table'
 import differenceInDays from 'date-fns/differenceInDays'
 import React, { useMemo, useState } from 'react'
 import { usePendingTokens } from 'src/lib/hooks/api/use-pending-token-listings'
-import {
-  type TokenSecurity,
-  isTokenSecurityIssue,
-} from 'src/lib/hooks/react-query/tokens/use-token-security'
 import { TokenSecurityView } from 'src/lib/wagmi/components/token-security-view'
 import { formatNumber, formatUSD, shortenAddress } from 'sushi'
 import {
@@ -37,98 +33,7 @@ import {
   getEvmChainById,
 } from 'sushi/evm'
 import { NavigationItems } from '../navigation-items'
-
-const getTokenSecurity = (security: PendingTokens[number]['security']) => {
-  if (!security) return undefined
-
-  const data = {
-    is_buyable: {
-      goPlus: security.isBuyable ?? undefined,
-    },
-    is_open_source: {
-      goPlus: security.isOpenSource,
-    },
-    is_proxy: {
-      goPlus: security.isProxy,
-    },
-    is_mintable: {
-      goPlus: security.isMintable,
-    },
-    can_take_back_ownership: {
-      goPlus: security.canTakeBackOwnership,
-    },
-    owner_change_balance: {
-      goPlus: security.ownerChangeBalance,
-    },
-    hidden_owner: {
-      goPlus: security.hiddenOwner,
-    },
-    selfdestruct: {
-      goPlus: security.selfDestruct,
-    },
-    external_call: {
-      goPlus: security.externalCall,
-    },
-    gas_abuse: {
-      goPlus: security.gasAbuse,
-    },
-    buy_tax: {
-      goPlus: security.buyTax ?? undefined,
-    },
-    sell_tax: {
-      goPlus: security.sellTax ?? undefined,
-    },
-    is_sell_limit: {
-      goPlus: security.cannotSellAll,
-    },
-    slippage_modifiable: {
-      goPlus: security.slippageModifiable,
-    },
-    is_honeypot: {
-      goPlus: security.isHoneypot,
-    },
-    transfer_pausable: {
-      goPlus: security.transferPausable,
-    },
-    is_blacklisted: {
-      goPlus: security.isBlacklisted,
-    },
-    is_whitelisted: {
-      goPlus: security.isWhitelisted,
-    },
-    is_anti_whale: {
-      goPlus: security.isAntiWhale,
-    },
-    trading_cooldown: {
-      goPlus: security.tradingCooldown,
-    },
-    is_fake_token: {
-      goPlus: !security.isTrueToken,
-    },
-    is_airdrop_scam: {
-      goPlus: security.isAirdropScam,
-    },
-    trust_list: {
-      goPlus: security.trustList,
-    },
-  }
-
-  return {
-    data,
-    isAvailable: true,
-    isHoneypot: data.is_honeypot.goPlus,
-    isFoT: data.buy_tax.goPlus || data.sell_tax.goPlus || undefined,
-    isRisky: Object.entries(data || {}).some(([_key, value]) => {
-      const key = _key as keyof TokenSecurity
-      if (
-        key in isTokenSecurityIssue &&
-        isTokenSecurityIssue[key](value.goPlus)
-      ) {
-        return true
-      }
-    }),
-  }
-}
+import { getPendingTokenSecurity } from './token-security'
 
 const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
   {
@@ -293,7 +198,8 @@ const COLUMNS: ColumnDef<PendingTokens[number], unknown>[] = [
                       })
                     }
                     isTokenSecurityLoading={false}
-                    tokenSecurity={getTokenSecurity(
+                    showDeFi={false}
+                    tokenSecurity={getPendingTokenSecurity(
                       props.row.original.security,
                     )}
                   />

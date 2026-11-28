@@ -4,6 +4,8 @@
     "heybourn.headwind",
     "bradlc.vscode-tailwindcss",
     "GraphQL.vscode-graphql",
-    "biomejs.biome"
+    "biomejs.biome",
+    "TypeScriptTeam.native-preview",
+    "TypeScriptTeam.vscode-typescript-nightly"
   ]
 }

@@ -47,10 +47,11 @@ export const Default = {
   },
 } satisfies Story
 
-export const Variants = (args) => {
+export const Variants = (args: Partial<IconButtonProps>) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <IconButton
+        name="Discord"
         icon={DiscordIcon}
         {...args}
         key={variant}
@@ -62,10 +63,16 @@ export const Variants = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Sizes = (args) => {
+export const Sizes = (args: Partial<IconButtonProps>) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
-      <IconButton icon={DiscordIcon} {...args} key={size} size={size} />
+      <IconButton
+        name="Discord"
+        icon={DiscordIcon}
+        {...args}
+        key={size}
+        size={size}
+      />
     </React.Fragment>
   ))
 

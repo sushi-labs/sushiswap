@@ -2,7 +2,6 @@
   "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node24/tsconfig"],
   "include": ["src"],
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": "src",
     "sourceMap": true,
@@ -10,8 +9,9 @@
     "declarationMap": true,
     "resolveJsonModule": true,
     "target": "ES2020",
+    "types": ["node"],
     "paths": {
-      "src": ["./src/*"]
+      "src/*": ["./src/*"]
     },
     "plugins": [
       {

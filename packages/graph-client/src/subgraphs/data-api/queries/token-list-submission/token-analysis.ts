@@ -36,33 +36,10 @@ export const TokenAnalysisQuery = graphql(
         minimumHolders
       }
       security {
-        isOpenSource
-        isProxy
-        isMintable
-        canTakeBackOwnership
-        ownerChangeBalance
-        hiddenOwner
-        selfDestruct
-        externalCall
-        gasAbuse
-        buyTax
-        sellTax
-        cannotBuy
-        cannotSellAll
-        slippageModifiable
-        isHoneypot
-        transferPausable
-        isBlacklisted
-        isWhitelisted
-        isAntiWhale
-        tradingCooldown
-        isTrueToken
-        isAirdropScam
-        trustList
-        isBuyable
-        isFakeToken
-        isSellLimit
-        holderCount
+        findings {
+          check
+          value
+        }
       }
     }
   }

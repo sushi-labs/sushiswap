@@ -95,7 +95,7 @@ export const Description = {
   },
 } satisfies Story
 
-export const Variants = (args) => {
+export const Variants = (args: React.ComponentProps<typeof TextField>) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <TextField
@@ -110,7 +110,7 @@ export const Variants = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Sizes = (args) => {
+export const Sizes = (args: React.ComponentProps<typeof TextField>) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <TextField

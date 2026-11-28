@@ -1,4 +1,3 @@
-import { getDifficulties } from '@sushiswap/graph-client/strapi'
 import {
   Navigation,
   type NavigationElement,
@@ -6,6 +5,7 @@ import {
 } from '@sushiswap/ui'
 import React from 'react'
 import { EXPLORE_NAVIGATION_LINKS } from '../_common/header-elements'
+import { getAcademyDifficulties } from './academy/filter-options'
 import { DOCS_URL } from './constants'
 
 interface HeaderLink {
@@ -23,7 +23,7 @@ export interface HeaderSection {
 }
 
 export async function Header() {
-  const difficulties = await getDifficulties()
+  const difficulties = await getAcademyDifficulties()
 
   const navData: NavigationElement[] = [
     {
@@ -52,19 +52,14 @@ export async function Header() {
     },
     {
       title: 'Learn',
-      items: difficulties?.flatMap(({ shortDescription, slug }) => {
-        if (!shortDescription) return []
-        const isTechnical = slug === 'technical'
-        return [
-          {
-            title: shortDescription,
-            href: isTechnical
-              ? DOCS_URL
-              : `/academy/explore?difficulty=${slug}`,
-            description: '',
-          },
-        ]
-      }),
+      items: difficulties.map(({ name, shortDescription, slug }) => ({
+        title: shortDescription || name,
+        href:
+          slug === 'technical'
+            ? DOCS_URL
+            : `/academy/explore?difficulty=${slug}`,
+        description: '',
+      })),
       show: 'desktop',
       type: NavigationElementType.Dropdown,
     },

@@ -41,7 +41,7 @@ export const Default = {
   },
 } satisfies Story
 
-export const Variants = (args) => {
+export const Variants = (args: ChipProps) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Chip {...args} variant={variant}>
@@ -53,7 +53,7 @@ export const Variants = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const WithIcon = (args) => {
+export const WithIcon = (args: ChipProps) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Chip {...args} icon={DiscordIcon} variant={variant}>

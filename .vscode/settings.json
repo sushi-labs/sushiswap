@@ -48,6 +48,7 @@
     "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true
   },
+  "js/ts.experimental.useTsgo": true,
   "js/ts.preferences.includePackageJsonAutoImports": "on",
   "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

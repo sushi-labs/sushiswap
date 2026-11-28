@@ -10,7 +10,7 @@ minimumReleaseAgeExclude:
   - sushi
 
 catalog:
-  "typescript": 5.9.3
+  "typescript": 6.0.3
   "utf-8-validate": 6.0.3
   "zod": 4.1.11
 

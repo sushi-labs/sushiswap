@@ -3,18 +3,14 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { Chip } from '@sushiswap/ui'
 import { CircleIcon } from '@sushiswap/ui/icons/circle-icon'
 
-import {
-  type Difficulty,
-  getDifficulties,
-} from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
 import { AcademyIcon } from '../../components/icons'
 import { DOCS_URL } from '../../constants'
 import { DIFFICULTY_ELEMENTS } from '../constants'
+import { type StyledDifficulty, getStyledDifficulties } from '../filter-options'
 
-function DifficultyCard({ difficulty }: { difficulty: Difficulty }) {
-  const slug = difficulty.slug as keyof typeof DIFFICULTY_ELEMENTS
-
+function DifficultyCard({ difficulty }: { difficulty: StyledDifficulty }) {
+  const { slug } = difficulty
   const { color, Icon } = DIFFICULTY_ELEMENTS[slug]
   const isTechnicalCard = slug === 'technical'
 
@@ -55,7 +51,7 @@ function DifficultyCard({ difficulty }: { difficulty: Difficulty }) {
 }
 
 export async function DifficultyCardBar() {
-  const difficulties = await getDifficulties()
+  const difficulties = await getStyledDifficulties()
 
   return (
     <div

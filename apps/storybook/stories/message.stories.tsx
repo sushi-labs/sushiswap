@@ -52,7 +52,7 @@ export const Default = {
   },
 } satisfies Story
 
-export const Variants = (args) => {
+export const Variants = (args: MessageProps) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Message {...args} key={variant} variant={variant}>
@@ -66,7 +66,7 @@ export const Variants = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Sizes = (args) => {
+export const Sizes = (args: MessageProps) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Message {...args} key={size} size={size}>

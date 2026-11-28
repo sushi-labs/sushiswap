@@ -4,9 +4,11 @@ import { Container, LinkInternal } from '@sushiswap/ui'
 import type { Metadata } from 'next'
 import { cacheLife } from 'next/cache'
 import { notFound } from 'next/navigation'
-import type { Article, WithContext } from 'schema-dts'
-import { getGhostBody } from '../../lib/ghost/ghost'
-import { getOptimizedMedia, isMediaVideo } from '../../lib/media'
+import {
+  getArticleJsonLd,
+  getArticleMetadata,
+  loadArticlePage,
+} from '../../lib/articles'
 import { ArticleAuthors } from '../components/article-authors'
 import { ArticleHeader } from '../components/article-header'
 import { ArticleFooter } from './components/article-footer'
@@ -27,13 +29,6 @@ async function getCachedBlogArticles(
   return getBlogArticles(input)
 }
 
-async function getCachedGhostBody(slug: string) {
-  'use cache'
-  cacheLife({ revalidate: 3600 })
-
-  return getGhostBody(slug)
-}
-
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const {
@@ -42,99 +37,29 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     filters: { slug: { eq: params['article-slug'] } },
   })
 
-  if (!article) {
-    return {}
-  }
-
-  const cover = getOptimizedMedia({
-    metadata: article.cover.provider_metadata,
-  })
-
-  const media = isMediaVideo(article.cover.provider_metadata)
-    ? {
-        videos: [{ url: cover }],
-      }
-    : {
-        images: [{ url: cover, alt: article.cover.alternativeText }],
-      }
-
-  return {
-    title: article.title,
-    description: article.description,
-    openGraph: {
-      type: 'article',
-      ...media,
-      publishedTime: article.publishedAt ?? undefined,
-      modifiedTime: article.updatedAt ?? undefined,
-      authors: article.authors.map((author) => author.name),
-      tags: article.categories.reduce<string[]>((acc, el) => {
-        acc.push(el.name)
-        return acc
-      }, []),
-    },
-    twitter: {
-      card: isMediaVideo(article.cover.provider_metadata)
-        ? 'player'
-        : 'summary_large_image',
-      creator: '@SushiSwap',
-    },
-  }
+  return article ? getArticleMetadata(article) : {}
 }
 
 export default async function Page(props: Props) {
-  const params = await props.params
-  let article
-  let moreArticles
-  let body
-
-  try {
-    const articleP = getCachedBlogArticles({
-      filters: { slug: { eq: params['article-slug'] } },
+  const slug = (await props.params)['article-slug']
+  const page = await loadArticlePage(
+    getCachedBlogArticles({
+      filters: { slug: { eq: slug } },
       pagination: { limit: 1 },
-    })
-
-    const moreArticlesP = getCachedBlogArticles({
-      filters: { slug: { ne: params['article-slug'] } },
+    }),
+    getCachedBlogArticles({
+      filters: { slug: { ne: slug } },
       pagination: { limit: 2 },
-    })
+    }),
+  )
 
-    article = (await articleP).articles[0]
-    if (!article.ghostSlug) return notFound()
-    body = await getCachedGhostBody(article.ghostSlug).then(({ html }) => html)
-    moreArticles = (await moreArticlesP).articles
-  } catch {
-    return notFound()
-  }
+  if (!page) return notFound()
 
-  const jsonLd: WithContext<Article> = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.description,
-    author: article.authors.map(({ name, email, handle }) => ({
-      '@type': 'Person',
-      name,
-      email,
-      url: `https://twitter.com/${handle}`,
-    })),
-    datePublished: article.publishedAt ?? undefined,
-    dateModified: article.updatedAt ?? undefined,
-    image: {
-      '@type': 'ImageObject',
-      url: article.cover.url,
-      width: {
-        '@type': 'QuantitativeValue',
-        value: article.cover.width,
-      },
-      height: {
-        '@type': 'QuantitativeValue',
-        value: article.cover.height,
-      },
-      alternateName: article.cover.alternativeText,
-      caption: article.cover.caption,
-    },
-    url: `https://www.sushi.com/blog/${article.slug}`,
-  }
+  const { article, body, moreArticles } = page
+  const jsonLd = getArticleJsonLd(
+    article,
+    `https://www.sushi.com/blog/${article.slug}`,
+  )
 
   return (
     <section className="animate-slide">
@@ -162,7 +87,7 @@ export default async function Page(props: Props) {
         <div
           className="prose dark:!prose-invert prose-slate !min-w-full"
           dangerouslySetInnerHTML={{
-            __html: body || '',
+            __html: body,
           }}
         />
         <div>

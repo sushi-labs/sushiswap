@@ -76,7 +76,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
     isLoading: isTokenSecurityLoading,
     isFetching: isTokenSecurityFetching,
     isError: isTokenSecurityError,
-    isAvailable: tokenSecurity?.isAvailable,
+    isAvailable: tokenSecurity && tokenSecurity.rows.length > 0,
   })
   const isTokenSecurityScanning = tokenSecurityImportState === 'scanning'
   const hasSecurityRisk = Boolean(

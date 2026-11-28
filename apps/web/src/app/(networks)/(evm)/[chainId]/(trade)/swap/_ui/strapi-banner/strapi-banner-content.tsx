@@ -1,19 +1,21 @@
 'use client'
 
 import { XMarkIcon } from '@heroicons/react/20/solid'
-import type { Banner } from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
 import type { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 import Image from 'next/legacy/image'
 import { type MouseEventHandler, useCallback, useMemo, useState } from 'react'
-import { getOptimizedMedia } from 'src/app/(cms)/lib/media'
-import { getSafeExternalUrl } from 'src/lib/safe-external-url'
+import type { StrapiBannerData } from './strapi-banner-context-provider'
 
 export function StrapiBannerContent({
   banner,
   cookie: _cookie,
   className,
-}: { banner: Banner; cookie: RequestCookie | undefined; className?: string }) {
+}: {
+  banner: StrapiBannerData
+  cookie: RequestCookie | undefined
+  className?: string
+}) {
   const [cookie, setCookie] = useState<RequestCookie | undefined>(_cookie)
   const [isImageLoading, setImageLoading] = useState(true)
 
@@ -39,16 +41,11 @@ export function StrapiBannerContent({
     [banner, hiddenBannerIds],
   )
 
-  if (hiddenBannerIds.includes(banner.id) || !banner.image) return null
-
-  const image = banner.image.attributes
-
-  // CMS-controlled link: only allow http(s) targets.
-  const href = getSafeExternalUrl(banner.link)
+  if (hiddenBannerIds.includes(banner.id)) return null
 
   return (
     <a
-      href={href}
+      href={banner.href}
       target="_blank"
       rel="noopener noreferrer"
       className="text-white"
@@ -66,12 +63,8 @@ export function StrapiBannerContent({
           onClick={onHide}
         />
         <Image
-          src={getOptimizedMedia({
-            metadata: image.provider_metadata,
-            width: image.width ?? undefined,
-            height: image.height ?? undefined,
-          })}
-          alt={image.alternativeText || ''}
+          src={banner.src}
+          alt={banner.alt}
           layout="fill"
           onLoad={() => setImageLoading(false)}
           className={classNames(

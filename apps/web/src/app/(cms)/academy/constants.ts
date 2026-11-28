@@ -18,3 +18,11 @@ export const DIFFICULTY_ELEMENTS = {
     Icon: TechnicalUserIcon,
   },
 }
+
+export type StyledDifficultySlug = keyof typeof DIFFICULTY_ELEMENTS
+
+export function isStyledDifficulty(
+  slug: string | null,
+): slug is StyledDifficultySlug {
+  return slug !== null && Object.hasOwn(DIFFICULTY_ELEMENTS, slug)
+}

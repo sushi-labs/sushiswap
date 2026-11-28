@@ -1,8 +1,10 @@
-import { getDifficulties } from '@sushiswap/graph-client/strapi'
+import { getAcademyDifficulties } from '../../../filter-options'
 import { DifficultyFilterDropdownClient } from './difficulty-filter-dropdown-client'
 
 export async function DifficultyFilterDropdown() {
-  const difficulties = await getDifficulties()
+  const difficulties = await getAcademyDifficulties()
 
-  return <DifficultyFilterDropdownClient difficulties={difficulties} />
+  const options = difficulties.map(({ name, slug }) => ({ name, slug }))
+
+  return <DifficultyFilterDropdownClient difficulties={options} />
 }

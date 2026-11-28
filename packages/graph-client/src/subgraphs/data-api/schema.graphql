@@ -2788,7 +2788,41 @@ type PendingToken {
   security: TokenSecurity
 }
 
+enum TokenSecurityCheck {
+  is_open_source
+  is_proxy
+  is_mintable
+  can_take_back_ownership
+  owner_change_balance
+  hidden_owner
+  selfdestruct
+  external_call
+  gas_abuse
+  buy_tax
+  sell_tax
+  transfer_fee
+  is_buyable
+  is_sell_limit
+  slippage_modifiable
+  is_honeypot
+  transfer_pausable
+  is_blacklisted
+  is_whitelisted
+  is_anti_whale
+  trading_cooldown
+  is_fake_token
+  is_airdrop_scam
+  trust_list
+}
+
+type TokenSecurityFinding {
+  check: TokenSecurityCheck!
+  value: Boolean!
+}
+
 type TokenSecurity {
+  """Checks recorded for this scan. Null when no findings were stored."""
+  findings: [TokenSecurityFinding!]
   isOpenSource: Boolean!
   isProxy: Boolean!
   isMintable: Boolean!

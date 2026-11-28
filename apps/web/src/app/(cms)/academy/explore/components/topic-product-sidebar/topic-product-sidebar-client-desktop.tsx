@@ -1,7 +1,6 @@
 'use client'
 
 import { classNames } from '@sushiswap/ui'
-import { useCallback } from 'react'
 import type { TopicProductBarClientGeneric } from './topic-product-sidebar-client'
 
 export function TopicProductBarClientDesktop({
@@ -10,34 +9,21 @@ export function TopicProductBarClientDesktop({
   setValue,
   className,
 }: TopicProductBarClientGeneric) {
-  const FilterButton = useCallback(
-    ({
-      category,
-    }: { category: TopicProductBarClientGeneric['categories'][number] }) => {
-      if (!category.slug) return null
-      const slug = category.slug
-      const isSelected = selectedValue === slug
-
-      return (
-        <div
-          onClick={() => setValue(slug)}
-          onKeyDown={() => setValue(slug)}
-          className={classNames(
-            'text-sm w-full cursor-pointer rounded-xl hover:bg-blue hover:bg-opacity-70 px-4 py-2',
-            isSelected && 'bg-blue bg-opacity-80',
-          )}
-        >
-          {category.name}
-        </div>
-      )
-    },
-    [selectedValue, setValue],
-  )
-
   return (
     <div className={classNames('flex-wrap gap-2 flex sm:gap-1', className)}>
-      {categories.map((category) => (
-        <FilterButton key={category.slug} category={category} />
+      {categories.map(({ name, slug }) => (
+        <button
+          key={slug}
+          type="button"
+          aria-pressed={selectedValue === slug}
+          onClick={() => setValue(slug)}
+          className={classNames(
+            'text-sm text-left w-full cursor-pointer rounded-xl hover:bg-blue hover:bg-opacity-70 px-4 py-2',
+            selectedValue === slug && 'bg-blue bg-opacity-80',
+          )}
+        >
+          {name}
+        </button>
       ))}
     </div>
   )

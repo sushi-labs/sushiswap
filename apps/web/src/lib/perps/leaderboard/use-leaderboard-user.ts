@@ -1,10 +1,17 @@
 import {
   type PerpsLeaderboardTimeframe,
+  type PerpsLeaderboardUser,
   type PerpsPointsSeason,
   getPerpsLeaderboardUser,
 } from '@sushiswap/graph-client/data-api'
 import { useQuery } from '@tanstack/react-query'
 import type { EvmAddress } from 'sushi/evm'
+
+function selectRankedUser(user: PerpsLeaderboardUser) {
+  if (user?.rank == null) return null
+
+  return { ...user, rank: user.rank }
+}
 
 export const useLeaderboardUser = ({
   timeframe = 'SEASON',
@@ -27,6 +34,7 @@ export const useLeaderboardUser = ({
         season,
       })
     },
+    select: selectRankedUser,
     enabled: Boolean(address),
   })
 }

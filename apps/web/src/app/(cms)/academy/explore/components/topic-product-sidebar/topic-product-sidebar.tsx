@@ -1,12 +1,12 @@
-import { getProducts, getTopics } from '@sushiswap/graph-client/strapi'
+import { getAcademyCategories } from '../../../filter-options'
 import { TopicProductSidebarClient } from './topic-product-sidebar-client'
 
 export async function TopicProductSidebar() {
-  const categories = await Promise.all([getTopics(), getProducts()])
+  const categories = await getAcademyCategories()
 
   return (
     <div>
-      <TopicProductSidebarClient categories={categories.flat()} />
+      <TopicProductSidebarClient categories={categories} />
     </div>
   )
 }

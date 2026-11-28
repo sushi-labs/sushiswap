@@ -90,8 +90,8 @@ export const LeaderboardTable = () => {
     sortBy,
     season: seasonToView,
   })
-  const { data: _userData, isLoading: isLoadingUser } = useLeaderboardUser({
-    address: address,
+  const { data: rankedUser, isLoading: isLoadingUser } = useLeaderboardUser({
+    address,
     timeframe: TimeframeToPerpsTimeframe[timeframe],
     season: seasonToView,
   })
@@ -112,19 +112,15 @@ export const LeaderboardTable = () => {
   }, [address, leaderboardData])
 
   const userData = useMemo(() => {
-    if (!_userData) return null
-    const rank = _userData.rank
-    if (rank === null || rank <= 3) return null
-    const userInLeaderboard = leaderboardData?.find(
-      (entry) =>
-        entry.address.toLowerCase() === _userData.address.toLowerCase(),
-    )
+    if (!rankedUser || rankedUser.rank <= 3) return null
 
-    if (userInLeaderboard) {
-      return userInLeaderboard
-    }
-    return { ..._userData, rank }
-  }, [_userData, leaderboardData])
+    return (
+      leaderboardData.find(
+        (entry) =>
+          entry.address.toLowerCase() === rankedUser.address.toLowerCase(),
+      ) ?? rankedUser
+    )
+  }, [rankedUser, leaderboardData])
 
   useEffect(() => {
     if (isLoading || !isConnectedUserInTable) {

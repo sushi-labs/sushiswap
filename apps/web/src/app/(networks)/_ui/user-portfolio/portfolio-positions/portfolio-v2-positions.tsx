@@ -3,12 +3,12 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Currency,
 } from '@sushiswap/ui'
 import React, { type FC } from 'react'
 import { formatUSD } from 'sushi'
 import { type EvmChainId, getEvmChainById } from 'sushi/evm'
 import { PortfolioInfoRow } from '../portfolio-info-row'
+import { PortfolioPositionTokenIcons } from './portfolio-position-token-icons'
 
 interface PortfolioV2PositionssProps {
   positions: PortfolioV2Position[]
@@ -30,18 +30,10 @@ export const PortfolioV2Positions: FC<PortfolioV2PositionssProps> = ({
             position.address
           }/add`}
           icon={
-            <Currency.IconList iconWidth={24} iconHeight={24}>
-              <img
-                className="rounded-full"
-                src={position.token0.logoUrl ?? undefined}
-                alt={position.token0.symbol ?? undefined}
-              />
-              <img
-                className="rounded-full"
-                src={position.token1.logoUrl ?? undefined}
-                alt={position.token1.symbol ?? undefined}
-              />
-            </Currency.IconList>
+            <PortfolioPositionTokenIcons
+              token0={position.token0}
+              token1={position.token1}
+            />
           }
           leftContent={
             <React.Fragment>
