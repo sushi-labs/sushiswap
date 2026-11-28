@@ -66,8 +66,8 @@
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/json-bigint": "1.0.4",
     "@types/node": "24.13.3",
-    "tsc-alias": "1.8.10",
-    "tsx": "4.23.0",
+    "tsc-alias": "1.9.12",
+    "tsx": "4.23.15",
     "typescript": "catalog:",
     "vitest": "2.1.9"
   }
