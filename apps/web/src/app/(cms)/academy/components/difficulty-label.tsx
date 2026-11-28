@@ -1,7 +1,7 @@
 import type { AcademyArticle } from '@sushiswap/graph-client/strapi'
 import { classNames } from '@sushiswap/ui'
 import { CircleIcon } from '@sushiswap/ui/icons/circle-icon'
-import { DIFFICULTY_ELEMENTS } from '../constants'
+import { DIFFICULTY_ELEMENTS, isStyledDifficulty } from '../constants'
 
 interface DifficultyLabel {
   article: AcademyArticle
@@ -10,12 +10,9 @@ interface DifficultyLabel {
 export function DifficultyLabel({ article, isCard }: DifficultyLabel) {
   const difficulty = article.difficulty
 
-  if (!difficulty) return <></>
+  if (!difficulty || !isStyledDifficulty(difficulty.slug)) return null
 
-  const slug = difficulty.slug as keyof typeof DIFFICULTY_ELEMENTS
-  if (!slug) return <></>
-
-  const { color } = DIFFICULTY_ELEMENTS[slug]
+  const { color } = DIFFICULTY_ELEMENTS[difficulty.slug]
 
   return (
     <div className="flex items-center gap-1.5">
@@ -27,7 +24,7 @@ export function DifficultyLabel({ article, isCard }: DifficultyLabel) {
             : 'text-xs font-medium sm:text-sm sm:font-normal',
         )}
       >
-        {difficulty?.label}
+        {difficulty.label}
       </span>
     </div>
   )

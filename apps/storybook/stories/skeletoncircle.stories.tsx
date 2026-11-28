@@ -24,8 +24,8 @@ export default meta
 type Story = StoryObj<typeof SkeletonCircle>
 
 export const Circle = {
-  args: {},
+  args: { radius: 30 },
   render: (args) => {
-    return <SkeletonCircle radius={30} {...args} />
+    return <SkeletonCircle {...args} />
   },
 } satisfies Story

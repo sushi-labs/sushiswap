@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@solana/addresses": "catalog:web3",
-    "gql.tada": "1.11.3",
+    "gql.tada": "1.11.5",
     "graphql": "16.6.0",
     "graphql-request": "7.4.0",
     "json-bigint": "1.0.0",
@@ -61,14 +61,14 @@
     "viem": "catalog:web3"
   },
   "devDependencies": {
-    "@0no-co/graphqlsp": "1.17.3",
+    "@0no-co/graphqlsp": "1.18.0",
     "@tsconfig/node24": "catalog:tsconfig",
     "@tsconfig/strictest": "catalog:tsconfig",
     "@types/json-bigint": "1.0.4",
     "@types/node": "24.13.3",
-    "tsc-alias": "1.8.10",
-    "tsx": "4.23.0",
+    "tsc-alias": "1.9.12",
+    "tsx": "4.23.15",
     "typescript": "catalog:",
-    "vitest": "2.1.9"
+    "vitest": "3.2.7"
   }
 }

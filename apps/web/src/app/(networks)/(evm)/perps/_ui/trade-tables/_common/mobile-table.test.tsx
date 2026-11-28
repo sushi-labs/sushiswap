@@ -78,6 +78,8 @@ describe('MobileTable page scrolling', () => {
     )
     vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(80)
     vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(390)
+    vi.spyOn(Element.prototype, 'clientHeight', 'get').mockReturnValue(640)
+    vi.spyOn(Element.prototype, 'clientWidth', 'get').mockReturnValue(390)
     vi.stubGlobal('scrollY', 0)
     vi.stubGlobal('scrollTo', vi.fn())
     vi.stubGlobal('innerHeight', 640)

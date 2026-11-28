@@ -31,8 +31,8 @@ export function getOptimizedMedia({
   asImage = false,
 }: {
   metadata: Metadata
-  width?: number
-  height?: number
+  width?: number | null
+  height?: number | null
   asImage?: boolean
 }) {
   if (!metadata?.public_id) return ''

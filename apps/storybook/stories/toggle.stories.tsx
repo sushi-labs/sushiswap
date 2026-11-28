@@ -43,7 +43,7 @@ export const Default = {
   },
 } satisfies Story
 
-export const Sizes = (args) => {
+export const Sizes = (args: ToggleProps) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Toggle {...args} key={size} size={size}>
@@ -55,7 +55,7 @@ export const Sizes = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Variants = (args) => {
+export const Variants = (args: ToggleProps) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Toggle {...args} key={variant} variant={variant}>

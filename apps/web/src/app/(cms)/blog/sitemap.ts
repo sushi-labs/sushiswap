@@ -16,16 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
         changeFrequency: 'daily',
       },
-      ...articles.map(
-        (article) =>
-          ({
-            url: `https://www.sushi.com/blog/${article.slug}`,
-            ...(article.updatedAt
-              ? { lastModified: new Date(article.updatedAt) }
-              : {}),
-            changeFrequency: 'weekly',
-          }) as const,
-      ),
+      ...articles.map<MetadataRoute.Sitemap[number]>(({ slug, updatedAt }) => ({
+        url: `https://www.sushi.com/blog/${slug}`,
+        lastModified: updatedAt ? new Date(updatedAt) : undefined,
+        changeFrequency: 'weekly',
+      })),
     ]
   } catch {
     console.error('sitemap: Error fetching blog articles')

@@ -2,34 +2,8 @@
 
 import { ChevronDownIcon } from '@heroicons/react-v1/solid'
 import { classNames } from '@sushiswap/ui'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { TopicProductBarClientGeneric } from './topic-product-sidebar-client'
-
-interface SidebarEntry {
-  category: TopicProductBarClientGeneric['categories'][number]
-  selectedValue: string | undefined
-  setValue: TopicProductBarClientGeneric['setValue']
-}
-
-function SidebarEntry({ category, setValue, selectedValue }: SidebarEntry) {
-  if (!category.slug) return null
-  const slug = category.slug
-
-  return (
-    <div
-      className={classNames(
-        'font-medium w-[160px] max-w-fit',
-        slug === selectedValue
-          ? 'dark:text-gray-100'
-          : 'dark:text-gray-400 text-[#7F7F7F] dark:hover:text-gray-300',
-      )}
-      onClick={() => setValue(slug)}
-      onKeyUp={() => setValue(slug)}
-    >
-      {category.name}
-    </div>
-  )
-}
 
 export function TopicProductBarClientMobile({
   categories,
@@ -39,10 +13,7 @@ export function TopicProductBarClientMobile({
 }: TopicProductBarClientGeneric) {
   const [open, setOpen] = useState(false)
 
-  const selectedCategoryName = useMemo(() => {
-    const category = categories.find((c) => c.slug === selectedValue)
-    return category?.name
-  }, [categories, selectedValue])
+  const selectedCategory = categories.find(({ slug }) => slug === selectedValue)
 
   return (
     <div
@@ -52,22 +23,24 @@ export function TopicProductBarClientMobile({
         className,
       )}
     >
-      <div
-        className="flex justify-between items-center cursor-pointer"
-        onClick={() => setOpen(!open)}
-        onKeyUp={() => setOpen(!open)}
+      <button
+        type="button"
+        aria-expanded={open}
+        className="flex w-full justify-between items-center cursor-pointer"
+        onClick={() => setOpen((open) => !open)}
       >
-        <span>{selectedCategoryName || 'Select category'}</span>
-        <div
+        <span>{selectedCategory?.name ?? 'Select category'}</span>
+        <span
           className={classNames(
             open && 'rotate-180',
             'transition-all text-[#4D5562] h-6 w-6',
           )}
         >
           <ChevronDownIcon />
-        </div>
-      </div>
+        </span>
+      </button>
       <div
+        inert={!open}
         className={classNames(
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
           'transition-[grid-template-rows] grid [&>*]:overflow-hidden',
@@ -75,18 +48,24 @@ export function TopicProductBarClientMobile({
       >
         <div className="space-y-3">
           <div className="h-3" />
-          {categories.map((category) => (
-            <div
-              key={category.name}
-              onClick={() => setOpen(!open)}
-              onKeyUp={() => setOpen(!open)}
+          {categories.map(({ name, slug }) => (
+            <button
+              key={slug}
+              type="button"
+              aria-pressed={slug === selectedValue}
+              onClick={() => {
+                setValue(slug)
+                setOpen(false)
+              }}
+              className={classNames(
+                'block text-left font-medium w-[160px] max-w-fit',
+                slug === selectedValue
+                  ? 'dark:text-gray-100'
+                  : 'dark:text-gray-400 text-[#7F7F7F] dark:hover:text-gray-300',
+              )}
             >
-              <SidebarEntry
-                category={category}
-                selectedValue={selectedValue}
-                setValue={setValue}
-              />
-            </div>
+              {name}
+            </button>
           ))}
         </div>
       </div>

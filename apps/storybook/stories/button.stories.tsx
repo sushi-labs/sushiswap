@@ -65,7 +65,7 @@ export const Default = {
   },
 } satisfies Story
 
-export const Variants = (args) => {
+export const Variants = (args: ButtonProps) => {
   const items = variants.map((variant) => (
     <React.Fragment key={variant}>
       <Button {...args} key={variant} variant={variant}>
@@ -77,7 +77,7 @@ export const Variants = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Sizes = (args) => {
+export const Sizes = (args: ButtonProps) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Button {...args} key={size} size={size}>
@@ -89,7 +89,7 @@ export const Sizes = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const Loading = (args) => {
+export const Loading = (args: ButtonProps) => {
   const items = [true, false].map((loading, i) => (
     <React.Fragment key={i}>
       <Button {...args} key={String(loading)} loading={loading}>
@@ -101,7 +101,7 @@ export const Loading = (args) => {
   return <ViewGroup direction="row">{items}</ViewGroup>
 }
 
-export const WithIcon = (args) => {
+export const WithIcon = (args: ButtonProps) => {
   const items = sizes.map((size) => (
     <React.Fragment key={size}>
       <Button icon={DiscordIcon} {...args} key={size} size={size}>
@@ -112,13 +112,12 @@ export const WithIcon = (args) => {
 
   const items2 = sizes.map((size) => (
     <React.Fragment key={size}>
-      <Button
-        icon={Currency.Icon}
-        iconProps={{ currency: SUSHI[ChainId.ETHEREUM], width: 20, height: 20 }}
-        {...args}
-        key={size}
-        size={size}
-      >
+      <Button {...args} key={size} size={size}>
+        <Currency.Icon
+          currency={SUSHI[ChainId.ETHEREUM]}
+          width={20}
+          height={20}
+        />
         Size {size}
       </Button>
     </React.Fragment>

@@ -5,6 +5,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
+    "types": ["@types/gtag.js", "node"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "esnext",

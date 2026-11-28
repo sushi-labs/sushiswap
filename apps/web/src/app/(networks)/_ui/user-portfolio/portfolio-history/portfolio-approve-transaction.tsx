@@ -52,24 +52,26 @@ export const PortfolioApproveTransaction: FC<{ tx: PortfolioTransaction }> = ({
       }
       rightContent={
         <React.Fragment>
-          <div className="text-sm font-medium flex justify-end items-center gap-x-1 overflow-hidden">
-            {tx.approve.logoUrl ? (
-              <div>
-                <img
-                  className="rounded-full"
-                  src={tx.approve.logoUrl}
-                  width={16}
-                  height={16}
-                  alt={tx.approve.symbol}
-                />
-              </div>
-            ) : null}
+          {tx.approve && (
+            <div className="text-sm font-medium flex justify-end items-center gap-x-1 overflow-hidden">
+              {tx.approve.logoUrl ? (
+                <div>
+                  <img
+                    className="rounded-full"
+                    src={tx.approve.logoUrl}
+                    width={16}
+                    height={16}
+                    alt={tx.approve.symbol}
+                  />
+                </div>
+              ) : null}
 
-            <span className="overflow-hidden overflow-ellipsis">
-              <FormattedNumber number={tx.approve.amount.toString()} />{' '}
-              {tx.approve.symbol}
-            </span>
-          </div>
+              <span className="overflow-hidden overflow-ellipsis">
+                <FormattedNumber number={tx.approve.amount.toString()} />{' '}
+                {tx.approve.symbol}
+              </span>
+            </div>
+          )}
           <div className="text-xs text-muted-foreground overflow-hidden overflow-ellipsis">
             {format(fromUnixTime(tx.timestamp), 'yyyy/MM/dd HH:mm')}
           </div>

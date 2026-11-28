@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["vite/client"],
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "module": "ESNext",

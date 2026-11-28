@@ -65,16 +65,11 @@ export class SwapPage extends BaseActions {
     const approve = this.page.locator('[testdata-id=approve-erc20-button]', {
       hasText: `Approve ${currency.symbol}`,
     })
-    const swap = this.page.locator('[testdata-id=swap-button]')
+    const swap = this.page.locator('[testdata-id=swap-button]:enabled')
     const priceImpact = this.page.locator('[testdata-id=price-impact-checkbox]')
-    await expect
-      .poll(
-        async () =>
-          (await approve.isVisible()) ||
-          (await swap.isEnabled()) ||
-          (await priceImpact.isVisible()),
-      )
-      .toBe(true)
+    await expect(
+      approve.or(swap).or(priceImpact).filter({ visible: true }).first(),
+    ).toBeVisible()
     if (await approve.isVisible()) {
       await expect(approve).toBeEnabled()
       await this.transact(`Approve ${currency.symbol}`, () => approve.click())

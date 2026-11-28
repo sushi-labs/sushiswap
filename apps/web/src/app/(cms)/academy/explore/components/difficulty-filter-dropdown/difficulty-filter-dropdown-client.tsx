@@ -1,7 +1,6 @@
 'use client'
 
 import { XMarkIcon } from '@heroicons/react/24/solid'
-import type { Difficulty } from '@sushiswap/graph-client/strapi'
 import {
   Select,
   SelectContent,
@@ -9,14 +8,14 @@ import {
   SelectTrigger,
   classNames,
 } from '@sushiswap/ui'
-import { useCallback, useState } from 'react'
 import {
   useAcademySearch,
   useSetAcademySearch,
 } from '../../../components/academy-search-provider'
+import type { FilterOption } from '../../../filter-options'
 
 interface DifficultyFilterDropdownClient {
-  difficulties: Difficulty[]
+  difficulties: FilterOption[]
 }
 
 export function DifficultyFilterDropdownClient({
@@ -25,77 +24,48 @@ export function DifficultyFilterDropdownClient({
   const { difficulty: selectedDifficulty } = useAcademySearch()
   const setFilters = useSetAcademySearch()
 
-  const getNameFromSlug = useCallback(
-    (slug: string | undefined) => {
-      if (!slug) return undefined
-
-      return difficulties.find((d) => d.slug === slug)?.name ?? undefined
-    },
-    [difficulties],
+  const selectedOption = difficulties.find(
+    ({ slug }) => slug === selectedDifficulty,
   )
 
-  const getSlugFromName = useCallback(
-    (name: string | undefined) => {
-      if (!name) return undefined
-
-      return difficulties.find((d) => d.name === name)?.slug ?? undefined
-    },
-    [difficulties],
-  )
-
-  const [value, setValue] = useState<string | undefined>(
-    getNameFromSlug(selectedDifficulty),
-  )
-
-  const onSelect = useCallback(
-    (difficultyName: string) => {
-      const isSelected = difficultyName === value
-
-      const newName = isSelected ? undefined : difficultyName
-      setValue(newName)
-
-      const difficultySlug = getSlugFromName(difficultyName)
-      const newDifficulty = isSelected ? undefined : difficultySlug
-
-      setFilters((filters) => {
-        return {
-          ...filters,
-          difficulty: newDifficulty,
-        }
-      })
-    },
-    [getSlugFromName, setFilters, value],
-  )
+  function selectDifficulty(difficulty?: string) {
+    setFilters((filters) => ({ ...filters, difficulty }))
+  }
 
   return (
     <div className="flex gap-2 items-center justify-center w-full">
-      <Select value={value || ''} onValueChange={onSelect}>
+      <Select
+        value={selectedOption?.slug ?? ''}
+        onValueChange={selectDifficulty}
+      >
         <SelectTrigger>
-          <span className={classNames(!value && 'text-slate-400 font-normal')}>
-            {value || 'Select difficulty'}
+          <span
+            className={classNames(
+              !selectedOption && 'text-slate-400 font-normal',
+            )}
+          >
+            {selectedOption?.name ?? 'Select difficulty'}
           </span>
         </SelectTrigger>
         <SelectContent>
-          {difficulties.map((difficulty) =>
-            difficulty.name && difficulty.slug ? (
-              <SelectItem
-                key={difficulty.slug}
-                value={difficulty.name}
-                title={difficulty.name}
-              >
-                {difficulty.name}
-              </SelectItem>
-            ) : null,
-          )}
+          {difficulties.map(({ name, slug }) => (
+            <SelectItem key={slug} value={slug} title={name}>
+              {name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
-      <div
-        className="md:h-5 h-[18px] md:w-5 w-[18px] !cursor-pointer"
-        onClick={() => onSelect(value || '')}
-        onKeyDown={() => onSelect(value || '')}
+      <button
+        type="button"
+        aria-label="Clear difficulty filter"
+        className={classNames(
+          'md:h-5 h-[18px] md:w-5 w-[18px]',
+          !selectedOption && 'invisible',
+        )}
+        onClick={() => selectDifficulty()}
       >
-        <XMarkIcon className={classNames(!value && 'hidden')} />
-      </div>
+        <XMarkIcon />
+      </button>
     </div>
   )
 }

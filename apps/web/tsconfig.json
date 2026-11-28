@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["echarts", "node"],
     "paths": {
       "node_modules/*": ["./node_modules/*"],
       "public/*": ["./public/*"],

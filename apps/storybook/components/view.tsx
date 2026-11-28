@@ -8,6 +8,12 @@ export const View = ({
   direction = 'row',
   justify = 'start',
   children,
+}: {
+  prop: ReactNode
+  value?: string
+  direction?: 'row' | 'column'
+  justify?: string
+  children: ReactNode
 }) => {
   const flexDirection = direction === 'column' ? 'column' : 'row'
   const justifyContent = justify === 'start' ? 'flex-start' : 'space-evenly'
@@ -27,7 +33,17 @@ export const View = ({
   )
 }
 
-export const EnhancedView = ({ prop, value = '', ...props }) => {
+export const EnhancedView = ({
+  prop,
+  value = '',
+  ...props
+}: {
+  prop: ReactNode
+  value?: string
+  children: React.ReactElement<
+    Record<string, unknown> & { children?: ReactNode }
+  >
+}) => {
   const child = React.Children.only(props.children)
   const { children, ...rest } = child.props
 
@@ -60,7 +76,7 @@ export const EnhancedView = ({ prop, value = '', ...props }) => {
   )
 }
 
-export const Badge = ({ children }) => {
+export const Badge = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex items-center space-x-0">
       <span>=&quot;</span>
