@@ -17,7 +17,7 @@
     "@sushiswap/hooks": "workspace:*",
     "@sushiswap/tailwindcss-config": "workspace:*",
     "@sushiswap/ui": "workspace:*",
-    "@tanstack/react-table": "8.9.1",
+    "@tanstack/react-table": "8.21.3",
     "class-variance-authority": "0.7.0",
     "next": "catalog:react",
     "react": "catalog:react",
