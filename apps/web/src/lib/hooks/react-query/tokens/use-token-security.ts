@@ -1,5 +1,5 @@
 import { isTokenScannerChainId } from '@sushiswap/graph-client/de.fi'
-import { useQuery } from '@tanstack/react-query'
+import { type UseQueryResult, useQuery } from '@tanstack/react-query'
 import {
   type TokenSecurity,
   type TokenSecurityResponse,
@@ -272,7 +272,7 @@ export function useTokenSecurity({
 }: {
   enabled?: boolean
   currency: EvmToken | SvmToken | undefined
-}) {
+}): UseQueryResult<TokenSecurityResponse> {
   return useQuery({
     queryKey: ['useTokenSecurity', currency?.id],
     queryFn: () => fetchTokenSecurityQueryFn(currency),

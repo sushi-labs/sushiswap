@@ -49,12 +49,7 @@ export function DifficultyFilterDropdownClient({
         </SelectTrigger>
         <SelectContent>
           {difficulties.map(({ name, slug }) => (
-            <SelectItem
-              key={slug}
-              value={slug}
-              title={name}
-              className="px-4 text-base"
-            >
+            <SelectItem key={slug} value={slug} title={name}>
               {name}
             </SelectItem>
           ))}

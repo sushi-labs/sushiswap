@@ -1,5 +1,6 @@
 import { Currency } from '@sushiswap/ui'
-import { UnknownTokenIcon } from '@sushiswap/ui/icons/UnknownTokenIcon'
+import { UnknownTokenIcon } from '@sushiswap/ui/icons/unknown-token-icon'
+import type { ReactElement } from 'react'
 
 interface PositionToken {
   logoUrl: string | null
@@ -20,7 +21,7 @@ export function PortfolioPositionTokenIcons({
 }: {
   token0: PositionToken
   token1: PositionToken
-}) {
+}): ReactElement {
   return (
     <Currency.IconList iconWidth={24} iconHeight={24}>
       {renderTokenIcon(token0)}

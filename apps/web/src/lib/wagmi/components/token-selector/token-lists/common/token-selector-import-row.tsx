@@ -76,7 +76,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
     isLoading: isTokenSecurityLoading,
     isFetching: isTokenSecurityFetching,
     isError: isTokenSecurityError,
-    isAvailable: tokenSecurity && tokenSecurity.rows.length > 0,
+    isAvailable: tokenSecurity?.isAvailable,
   })
   const isTokenSecurityScanning = tokenSecurityImportState === 'scanning'
   const hasSecurityRisk = Boolean(
@@ -206,7 +206,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
               {tokenSecurity?.isHoneypot
                 ? 'Honeypot Token Detected'
                 : tokenSecurity?.isFoT
-                  ? 'Tax Token Deteceted'
+                  ? 'Transfer Fee Detected'
                   : tokenSecurity?.isRisky
                     ? 'Token Flagged for Risks'
                     : 'Unverified Token'}
@@ -302,7 +302,7 @@ export function TokenSelectorImportRow<TChainId extends TokenSelectorChainId>({
             : tokenSecurityImportState === 'unavailable'
               ? 'The token security scan is unavailable. Retry the scan or explicitly import without security results.'
               : tokenSecurity?.isFoT
-                ? 'This token charges a tax fee on transfer. Tax tokens are not supported in V3. You might not be able to trade, transfer, or withdraw liquidity of this token.'
+                ? 'The security scan reported a fee on token transfers or trades. It can reduce the amount you receive and may affect trading or liquidity operations.'
                 : tokenSecurity?.isRisky
                   ? 'Our security scan has identified risks associated with this token. Proceeding may result in the loss of your funds. Please exercise caution and review the details before continuing.'
                   : 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects. If you purchase this token, you may not be able to sell it back.'}

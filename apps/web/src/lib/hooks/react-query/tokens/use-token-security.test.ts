@@ -49,6 +49,7 @@ it('preserves explicit zero tax and reports risks from a partial scan', async ()
         [currency.address.toLowerCase()]: {
           buy_tax: '0.00',
           sell_tax: '',
+          unsupported_scan_field: '1',
           cannot_buy: null,
           is_honeypot: '1',
         },
