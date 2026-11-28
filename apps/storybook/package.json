@@ -25,12 +25,12 @@
     "sushi": "catalog:web3"
   },
   "devDependencies": {
-    "@storybook/addon-a11y": "10.6.0",
+    "@storybook/addon-a11y": "10.6.9",
     "@storybook/addon-designs": "11.1.4",
-    "@storybook/addon-docs": "10.6.0",
-    "@storybook/addon-links": "10.6.0",
-    "@storybook/nextjs-vite": "10.6.0",
-    "@storybook/react": "10.6.0",
+    "@storybook/addon-docs": "10.6.9",
+    "@storybook/addon-links": "10.6.9",
+    "@storybook/nextjs-vite": "10.6.9",
+    "@storybook/react": "10.6.9",
     "@sushiswap/typescript-config": "workspace:*",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
@@ -39,9 +39,9 @@
     "mockdate": "3.0.5",
     "postcss": "8.5.34",
     "serve": "14.2.0",
-    "storybook": "10.6.0",
+    "storybook": "10.6.9",
     "tailwindcss": "catalog:ui",
     "typescript": "catalog:",
-    "vite": "7.3.6"
+    "vite": "7.3.8"
   }
 }
