@@ -9,23 +9,29 @@ import { EvmToken, isTokenSecurityChainId } from 'sushi/evm'
 import type { SvmToken } from 'sushi/svm'
 import * as z from 'zod'
 
-const bit = z.unknown().transform((value): boolean | null => {
-  if (value === '0' || value === 0 || value === false) return false
-  if (value === '1' || value === 1 || value === true) return true
-  return null
-})
-
-const hasFee = z.unknown().transform((value): boolean | null => {
-  if (
-    typeof value !== 'number' &&
-    (typeof value !== 'string' || !value.trim())
-  ) {
+const bit = z
+  .unknown()
+  .optional()
+  .transform((value): boolean | null => {
+    if (value === '0' || value === 0 || value === false) return false
+    if (value === '1' || value === 1 || value === true) return true
     return null
-  }
+  })
 
-  const rate = Number(value)
-  return Number.isFinite(rate) && rate >= 0 ? rate > 0 : null
-})
+const hasFee = z
+  .unknown()
+  .optional()
+  .transform((value): boolean | null => {
+    if (
+      typeof value !== 'number' &&
+      (typeof value !== 'string' || !value.trim())
+    ) {
+      return null
+    }
+
+    const rate = Number(value)
+    return Number.isFinite(rate) && rate >= 0 ? rate > 0 : null
+  })
 
 const solanaBit = z.preprocess(
   (value) =>
